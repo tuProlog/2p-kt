@@ -225,3 +225,5 @@ publishing {
         dependsOn(*pubs.toTypedArray())
     }
 }
+
+//configurations.forEach { println(it.name) }

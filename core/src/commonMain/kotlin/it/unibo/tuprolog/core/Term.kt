@@ -73,4 +73,8 @@ interface Term {
         get() {
             return false
         }
+
+    fun clone(): Term {
+        return this
+    }
 }

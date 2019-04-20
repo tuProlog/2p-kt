@@ -24,6 +24,14 @@ interface Struct : Term {
     override val isGround: Boolean
         get() = args.all { it.isGround }
 
+    override fun clone(): Term {
+        return if (isGround) {
+            this
+        } else {
+            Struct.of(functor, args.map { it.clone() })
+        }
+    }
+
     val functor: String
 
     val args: Array<Term>

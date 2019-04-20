@@ -15,7 +15,9 @@ interface Var : Term {
 
     val completeName: String
 
-    fun clone(): Var
+    override fun clone(): Var {
+        return Var.of(name)
+    }
 
     val isNameWellFormed: Boolean
 

@@ -99,16 +99,16 @@ fun numOf(number: String): Numeric {
 
 }
 
-inline operator fun Var.div(obj: Any): Substitution {
-    return substitutionOf(this, obj.toTerm())
+inline operator fun Any.div(obj: Any): Substitution {
+    return when {
+        this is Var -> substitutionOf(this, obj.toTerm())
+        this is String -> substitutionOf(this, obj.toTerm())
+        else -> throw IllegalArgumentException("${obj::class} cannot be converted into ${Var::class}")
+    }
 }
 
 inline operator fun String.invoke(term: Any, vararg terms: Any): Term {
     return Struct.of(this, (sequenceOf(term) + sequenceOf(*terms)).map { it.toTerm() })
-}
-
-inline operator fun String.div(obj: Any): Substitution {
-    return substitutionOf(this, obj.toTerm())
 }
 
 fun Any.toTerm(): Term {
@@ -195,6 +195,10 @@ inline fun Array<out Term>.toTerm(): List {
 
 fun substitutionOf(substitution: Substitution, vararg substitutions: Substitution): Substitution {
     return substitutions.fold(substitution) { s1, s2 -> s1 + s2}
+}
+
+fun substitutionOf(v1: Any, t1: Term): Substitution {
+    return v1 / t1
 }
 
 fun substitutionOf(v1: Var, t1: Term): Substitution {
