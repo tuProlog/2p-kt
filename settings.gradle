@@ -1,0 +1,3 @@
+rootProject.name = '2p'
+
+include "2p-core"
