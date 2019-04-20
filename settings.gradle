@@ -1,3 +1,5 @@
 rootProject.name = '2p'
 
-include "2p-core"
+include "core"
+include 'unify'
+
