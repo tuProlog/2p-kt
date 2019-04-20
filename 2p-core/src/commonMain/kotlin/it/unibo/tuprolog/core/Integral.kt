@@ -26,6 +26,10 @@ interface Integral : Numeric {
             return Integral.of(BigInteger.of(integer))
         }
 
+        fun of(integer: Int): Integral {
+            return Integral.of(BigInteger.of(integer))
+        }
+
         fun of(integer: Short): Integral {
             return Integral.of(BigInteger.of(integer.toLong()))
         }

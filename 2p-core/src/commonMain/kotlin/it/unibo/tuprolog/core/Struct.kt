@@ -46,7 +46,7 @@ interface Struct : Term {
     }
 
     companion object {
-        val WELL_FORMED_FUNCTOR_PATTERN = Regex.fromLiteral("""[a-z][A-Za-z_0-9]*""")
+        val WELL_FORMED_FUNCTOR_PATTERN = Regex("""[a-z][A-Za-z_0-9]*""")
 
         fun of(functor: String, arg1: Term, vararg args: Term): Struct {
             return if (args.size == 1 && Empty.EMPTY_LIST_FUNCTOR == functor) {

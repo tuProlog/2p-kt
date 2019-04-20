@@ -18,8 +18,8 @@ fun Term.groundTo(substitution: Substitution, vararg substitutions: Substitution
     return this.groundTo(substitutionOf(substitution, *substitutions))
 }
 
-operator fun Term.get(substitution: Substitution): Term {
-    return this.groundTo(substitution)
+operator fun Term.get(substitution: Substitution, vararg substitutions: Substitution): Term {
+    return this.groundTo(substitution, *substitutions)
 }
 
 fun Substitution.ground(term: Term): Term {
@@ -74,6 +74,10 @@ fun numOf(integer: BigInteger): Integral {
     return Integral.of(integer)
 }
 
+fun numOf(integer: Int): Integral {
+    return Integral.of(integer)
+}
+
 fun numOf(integer: Long): Integral {
     return Integral.of(integer)
 }
@@ -95,12 +99,32 @@ fun numOf(number: String): Numeric {
 
 }
 
-operator fun Var.div(term: Term): Substitution {
+inline operator fun Var.div(term: Term): Substitution {
     return substitutionOf(this, term)
 }
 
-operator fun String.div(term: Term): Substitution {
+inline operator fun String.invoke(term: Term, vararg terms: Term): Term {
+    return Struct.of(this, term, *terms)
+}
+
+inline operator fun String.div(term: Term): Substitution {
     return substitutionOf(this, term)
+}
+
+inline fun String.toTerm(): Atom {
+    return Atom.of(this)
+}
+
+inline fun String.asVar(): Var {
+    return Var.of(this)
+}
+
+inline fun kotlin.collections.List<Term>.toTerm(): List {
+    return List.of(this)
+}
+
+inline fun <T : Term> Array<T>.toTerm(): List {
+    return List.of(*this)
 }
 
 fun substitutionOf(substitution: Substitution, vararg substitutions: Substitution): Substitution {
