@@ -1,9 +1,9 @@
 import it.unibo.tuprolog.core.*
 
-val t = "f"("X".asVar(), numOf(1), listOf(varOf("Y")).toTerm())
+val t =  "f"("X", 1, arrayOf("Y", "Z"))
 
 
 fun main() {
     println(t)
-    println(t["X" / numOf(3), "Y" / "a".toTerm()])
+    println(t["X" / 3, "Y" / "a"])
 }

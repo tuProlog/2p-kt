@@ -99,19 +99,81 @@ fun numOf(number: String): Numeric {
 
 }
 
-inline operator fun Var.div(term: Term): Substitution {
-    return substitutionOf(this, term)
+inline operator fun Var.div(obj: Any): Substitution {
+    return substitutionOf(this, obj.toTerm())
 }
 
-inline operator fun String.invoke(term: Term, vararg terms: Term): Term {
-    return Struct.of(this, term, *terms)
+inline operator fun String.invoke(term: Any, vararg terms: Any): Term {
+    return Struct.of(this, (sequenceOf(term) + sequenceOf(*terms)).map { it.toTerm() })
 }
 
-inline operator fun String.div(term: Term): Substitution {
-    return substitutionOf(this, term)
+inline operator fun String.div(obj: Any): Substitution {
+    return substitutionOf(this, obj.toTerm())
 }
 
-inline fun String.toTerm(): Atom {
+fun Any.toTerm(): Term {
+    return when(this) {
+        is Term -> this
+        is BigDecimal -> this.toTerm()
+        is Double -> this.toTerm()
+        is Float -> this.toTerm()
+        is BigInteger -> this.toTerm()
+        is Long -> this.toTerm()
+        is Int -> this.toTerm()
+        is Short -> this.toTerm()
+        is Byte -> this.toTerm()
+        is String -> this.toTerm()
+        is Array<*> -> this.map { it!!.toTerm() }.toTerm()
+        is Iterable<*> -> this.map { it!!.toTerm() }.toTerm()
+        else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Term::class}")
+    }
+}
+
+inline fun BigInteger.toTerm(): Integral {
+    return Numeric.of(this)
+}
+
+inline fun BigDecimal.toTerm(): Real {
+    return Numeric.of(this)
+}
+
+inline fun Float.toTerm(): Real {
+    return Numeric.of(this)
+}
+
+inline fun Double.toTerm(): Real {
+    return Numeric.of(this)
+}
+
+inline fun Int.toTerm(): Integral {
+    return Numeric.of(this)
+}
+
+inline fun Long.toTerm(): Integral {
+    return Numeric.of(this)
+}
+
+inline fun Short.toTerm(): Integral {
+    return Numeric.of(this)
+}
+
+inline fun Byte.toTerm(): Integral {
+    return Numeric.of(this)
+}
+
+inline fun Number.toTerm(): Numeric {
+    return Numeric.of(this)
+}
+
+inline fun String.toTerm(): Term {
+    return if (Var.WELL_FORMED_NAME_PATTERN.matches(this)) {
+        this.asVar()
+    } else {
+        this.asAtom()
+    }
+}
+
+inline fun String.asAtom(): Atom {
     return Atom.of(this)
 }
 
@@ -123,7 +185,11 @@ inline fun kotlin.collections.List<Term>.toTerm(): List {
     return List.of(this)
 }
 
-inline fun <T : Term> Array<T>.toTerm(): List {
+inline fun Iterable<Term>.toTerm(): List {
+    return List.of(this)
+}
+
+inline fun Array<out Term>.toTerm(): List {
     return List.of(*this)
 }
 

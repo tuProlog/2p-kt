@@ -13,31 +13,39 @@ interface Numeric : Term {
 
     companion object {
 
-        fun of(decimal: BigDecimal): Numeric {
+        fun of(decimal: BigDecimal): Real {
             return Real.of(decimal)
         }
 
-        fun of(decimal: Double): Numeric {
+        fun of(value: Number): Numeric {
+            return Numeric.of(value.toString())
+        }
+
+        fun of(decimal: Double): Real {
             return Real.of(decimal)
         }
 
-        fun of(decimal: Float): Numeric {
+        fun of(decimal: Float): Real {
             return Real.of(decimal)
         }
 
-        fun of(integer: BigInteger): Numeric {
+        fun of(integer: BigInteger): Integral {
             return Integral.of(integer)
         }
 
-        fun of(integer: Long): Numeric {
+        fun of(integer: Int): Integral {
             return Integral.of(integer)
         }
 
-        fun of(integer: Short): Numeric {
+        fun of(integer: Long): Integral {
             return Integral.of(integer)
         }
 
-        fun of(integer: Byte): Numeric {
+        fun of(integer: Short): Integral {
+            return Integral.of(integer)
+        }
+
+        fun of(integer: Byte): Integral {
             return Integral.of(integer)
         }
 
