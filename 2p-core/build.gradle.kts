@@ -50,7 +50,6 @@ kotlin {
             // JVM-specific tests and their dependencies:
             compilations["test"].defaultSourceSet {
                 dependencies {
-                    api("com.github.gciatto:kt-math-js:0.+")
                     implementation(kotlin("test-junit"))
                 }
             }
@@ -68,6 +67,7 @@ kotlin {
             }
             compilations["main"].defaultSourceSet {
                 dependencies {
+                    api("com.github.gciatto:kt-math-js:0.+")
                     implementation(kotlin("stdlib-js"))
                 }
             }

@@ -99,6 +99,10 @@ operator fun Var.div(term: Term): Substitution {
     return substitutionOf(this, term)
 }
 
+operator fun String.div(term: Term): Substitution {
+    return substitutionOf(this, term)
+}
+
 fun substitutionOf(substitution: Substitution, vararg substitutions: Substitution): Substitution {
     return substitutions.fold(substitution) { s1, s2 -> s1 + s2}
 }
