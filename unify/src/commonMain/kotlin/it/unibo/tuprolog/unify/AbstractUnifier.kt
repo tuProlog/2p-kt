@@ -3,8 +3,7 @@ package it.unibo.tuprolog.unify
 import Equation
 import eq
 import it.unibo.tuprolog.core.*
-import org.gciatto.kt.math.BigDecimal
-import kotlin.collections.List
+import io.github.gciatto.kt.math.BigDecimal
 
 abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term>>) : Unifier {
 

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
-import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.BigInteger
+import io.github.gciatto.kt.math.BigDecimal
+import io.github.gciatto.kt.math.BigInteger
 
 internal class IntegralImpl(override val value: BigInteger) :  NumericImpl(), Integral {
 

@@ -23,7 +23,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.github.gciatto:kt-math-metadata:0.+")
+                api("io.github.gciatto:kt-math-metadata:0.+")
                 implementation(kotlin("stdlib-common"))
             }
         }
@@ -38,7 +38,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("com.github.gciatto:kt-math-jvm:0.+")
+                    api("io.github.gciatto:kt-math-jvm:0.+")
                     implementation(kotlin("stdlib-jdk8"))
                 }
             }
@@ -67,7 +67,7 @@ kotlin {
             }
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("com.github.gciatto:kt-math-js:0.+")
+                    api("io.github.gciatto:kt-math-js:0.+")
                     implementation(kotlin("stdlib-js"))
                 }
             }
