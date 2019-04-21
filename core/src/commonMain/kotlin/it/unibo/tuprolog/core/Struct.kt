@@ -76,5 +76,48 @@ interface Struct : Term {
         fun of(functor: String, args: Sequence<Term>): Struct {
             return Struct.of(functor, args.toList())
         }
+
+        fun fold(operator: String, terms: List<Term>, terminal: Term? = null): Struct {
+            return if (terminal === null) {
+                terms.slice(0 until terms.lastIndex - 1)
+                        .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex - 1])) {
+                            a, b -> structOf(operator, a, b)
+                        }
+            } else {
+                terms.slice(0 until terms.lastIndex)
+                        .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) {
+                            a, b -> structOf(operator, a, b)
+                        }
+            }
+        }
+
+        fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct {
+            return fold(operator, terms.toList(), terminal)
+        }
+
+        fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct {
+            return fold(operator, terms.toList(), terminal)
+        }
+
+        fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct {
+            return fold(operator, terms.toList(), terminal)
+        }
+
+        fun conjunction(terms: Sequence<Term>): Struct {
+            return fold(",", terms)
+        }
+
+        fun conjunction(terms: Iterable<Term>): Struct {
+            return fold(",", terms)
+        }
+
+        fun conjunction(terms: List<Term>): Struct {
+            return fold(",", terms)
+        }
+
+        fun conjunction(vararg terms: Term): Struct {
+            return fold(",", *terms)
+        }
+
     }
 }

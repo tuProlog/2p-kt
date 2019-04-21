@@ -1,6 +1,6 @@
 import it.unibo.tuprolog.core.*
 
-val t =  "f"("X", 1, arrayOf("Y", "Z"))
+val t =  clauseOf("fact"(1))
 
 
 fun main() {

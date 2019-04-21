@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import kotlin.collections.List
+
 interface Term {
 
     fun <T : Term> cast(): T {
@@ -77,4 +79,5 @@ interface Term {
     fun clone(): Term {
         return this
     }
+
 }

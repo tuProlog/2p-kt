@@ -9,14 +9,23 @@ interface Unifier {
 
     val context: Substitution
 
-    fun unify(term1: Term, term2: Term): Substitution
+    fun mgu(term1: Term, term2: Term): Substitution
+
+    fun unify(term1: Term, term2: Term): Boolean {
+        return try {
+            mgu(term1, term2)
+            true
+        } catch (e: NoUnifyException) {
+            false
+        }
+    }
 
     companion object {
 
         val default by lazy { naive() }
 
         infix fun Term.unifiesWith(other: Term): Substitution {
-            return default.unify(this, other)
+            return default.mgu(this, other)
         }
 
         fun naive(context: Substitution = emptyMap()) : Unifier {

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import io.github.gciatto.kt.math.BigDecimal
 import io.github.gciatto.kt.math.BigInteger
+import kotlin.collections.List as KtList
 
 typealias Substitution = Map<Var, Term>
 
@@ -44,6 +45,22 @@ inline fun varOf(name: String = Var.ANONYMOUS_VAR_NAME): Var {
 
 inline fun lstOf(vararg terms: Term): List {
     return List.of(*terms)
+}
+
+fun factOf(head: Term): Struct {
+    return clauseOf(head)
+}
+
+fun ruleOf(head: Term, body1: Term, vararg body: Term): Struct {
+    return clauseOf(head, *(arrayOf(body1) + body))
+}
+
+fun clauseOf(head: Term, vararg body: Term): Struct {
+    return when {
+        body.isEmpty() -> Struct.of(":-", head, Truth.of(true))
+        body.size == 1 -> Struct.of(":-", head, body[0])
+        else -> Struct.of(":-", head, Struct.conjunction(*body))
+    }
 }
 
 inline fun coupleOf(term1: Term, vararg terms: Term): Couple {

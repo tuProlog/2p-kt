@@ -78,7 +78,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
         }
     }
 
-    override fun unify(term1: Term, term2: Term): Substitution {
+    override fun mgu(term1: Term, term2: Term): Substitution {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
                 .map { it.toPair() }
                 .toMutableList()
