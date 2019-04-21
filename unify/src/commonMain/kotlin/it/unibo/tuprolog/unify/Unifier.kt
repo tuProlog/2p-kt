@@ -15,6 +15,10 @@ interface Unifier {
 
         val default by lazy { naive() }
 
+        infix fun Term.unifiesWith(other: Term): Substitution {
+            return default.unify(this, other)
+        }
+
         fun naive(context: Substitution = emptyMap()) : Unifier {
             return object : AbstractUnifier(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
