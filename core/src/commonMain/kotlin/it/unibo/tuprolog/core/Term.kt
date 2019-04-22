@@ -56,6 +56,36 @@ interface Term {
             return false
         }
 
+    val isEmptySet: Boolean
+        get() {
+            return false
+        }
+
+    val isSet: Boolean
+        get() {
+            return false
+        }
+
+    val isClause: Boolean
+        get() {
+            return false
+        }
+
+    val isRule: Boolean
+        get() {
+            return false
+        }
+
+    val isFact: Boolean
+        get() {
+            return false
+        }
+
+    val isDirective: Boolean
+        get() {
+            return false
+        }
+
     val isCouple: Boolean
         get() {
             return false

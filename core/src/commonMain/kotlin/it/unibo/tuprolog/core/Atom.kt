@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import kotlin.collections.List
 
 interface Atom : Struct {
+
     override val args: Array<Term>
         get() = arrayOf()
 
@@ -11,6 +12,21 @@ interface Atom : Struct {
 
     override val isAtom: Boolean
         get() = true
+
+    override val isEmptySet: Boolean
+        get() = Empty.EMPTY_SET_FUNCTOR == value
+
+    override val isEmptyList: Boolean
+        get() = Empty.EMPTY_LIST_FUNCTOR == value
+
+    override val isGround: Boolean
+        get() = true
+
+    override val isTrue: Boolean
+        get() = Truth.TRUE_FUNCTOR == value
+
+    override val isFail: Boolean
+        get() = Truth.FAIL_FUNCTOR == value
 
     val value: String
         get() = functor
@@ -22,11 +38,12 @@ interface Atom : Struct {
     companion object {
 
         fun of(value: String): Atom {
-            when (value) {
-                Empty.EMPTY_LIST_FUNCTOR -> return EmptyImpl
-                Truth.TRUE_FUNCTOR -> return TruthImpl.True
-                Truth.FAIL_FUNCTOR -> return TruthImpl.Fail
-                else -> return AtomImpl(value)
+            return when (value) {
+                Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
+                Empty.EMPTY_SET_FUNCTOR -> Empty.set()
+                Truth.TRUE_FUNCTOR -> Truth.`true`()
+                Truth.FAIL_FUNCTOR -> Truth.fail()
+                else -> AtomImpl(value)
             }
         }
     }

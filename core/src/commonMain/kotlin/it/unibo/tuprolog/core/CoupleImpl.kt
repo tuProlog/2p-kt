@@ -14,8 +14,7 @@ internal class CoupleImpl(override val head: Term, override val tail: Term) : St
         unfoldedList.toTypedArray()
     }
 
-    override val functor: String
-        get() = super<StructImpl>.functor
+    override val functor: String = Couple.FUNCTOR
 
     override val args: Array<Term>
         get() = super<StructImpl>.args

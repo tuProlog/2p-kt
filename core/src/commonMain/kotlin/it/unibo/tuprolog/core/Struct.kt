@@ -9,6 +9,15 @@ interface Struct : Term {
 
     val isFunctorWellFormed: Boolean
 
+    override val isClause: Boolean
+        get() = Clause.FUNCTOR == functor
+
+    override val isRule: Boolean
+        get() = isClause && arity == 2
+
+    override val isFact: Boolean
+        get() = isRule && args[1].isTrue
+
     override val isAtom: Boolean
         get() = arity == 0
 
@@ -18,11 +27,23 @@ interface Struct : Term {
     override val isCouple: Boolean
         get() = Couple.FUNCTOR == functor && arity == 2
 
+    override val isSet: Boolean
+        get() = Set.FUNCTOR == functor || isEmptySet
+
+    override val isEmptySet: Boolean
+        get() = Empty.EMPTY_SET_FUNCTOR == functor && arity == 0
+
     override val isEmptyList: Boolean
         get() = Empty.EMPTY_LIST_FUNCTOR == functor && arity == 0
 
     override val isGround: Boolean
         get() = args.all { it.isGround }
+
+    override val isTrue: Boolean
+        get() = isAtom && Truth.TRUE_FUNCTOR == functor
+
+    override val isFail: Boolean
+        get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
     override fun clone(): Term {
         return if (isGround) {
@@ -57,6 +78,7 @@ interface Struct : Term {
         val WELL_FORMED_FUNCTOR_PATTERN = Regex("""[a-z][A-Za-z_0-9]*""")
 
         fun of(functor: String, arg1: Term, vararg args: Term): Struct {
+            TODO("add cases")
             return if (args.size == 1 && Empty.EMPTY_LIST_FUNCTOR == functor) {
                 Couple.of(arg1, args[0])
             } else {
@@ -65,6 +87,7 @@ interface Struct : Term {
         }
 
         fun of(functor: String, args: List<Term>): Struct {
+            TODO("add cases")
             if (args.size == 2 && Couple.FUNCTOR == functor) {
                 return Couple.of(args[0], args[1])
             } else if (args.isEmpty()) {

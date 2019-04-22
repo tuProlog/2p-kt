@@ -4,7 +4,11 @@ import io.github.gciatto.kt.math.BigDecimal
 import io.github.gciatto.kt.math.BigInteger
 
 interface Numeric : Term {
+
     override val isNumber: Boolean
+        get() = true
+
+    override val isGround: Boolean
         get() = true
 
     val decimalValue: BigDecimal
