@@ -13,4 +13,10 @@ internal interface Directive : Clause {
 
     override val isDirective: Boolean
         get() = true
+
+    companion object {
+        fun of(body1: Term, vararg body: Term): Directive {
+            TODO()
+        }
+    }
 }

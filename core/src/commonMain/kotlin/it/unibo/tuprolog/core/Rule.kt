@@ -12,4 +12,16 @@ internal interface Rule : Clause {
 
     override val isDirective: Boolean
         get() = false
+
+    companion object {
+        const val FUNCTOR = ":-"
+
+        fun of(head: Struct, vararg body: Term): Rule {
+            return if (body.isEmpty() || (body.size == 1 && body[0].isTrue)) {
+                Fact.of(head)
+            } else {
+                TODO()
+            }
+        }
+    }
 }

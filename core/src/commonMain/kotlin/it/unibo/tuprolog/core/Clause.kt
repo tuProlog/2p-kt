@@ -41,6 +41,15 @@ interface Clause : Struct {
 
     companion object {
         const val FUNCTOR = ":-"
+
+        fun of(head: Struct? = null, vararg body: Term): Clause {
+            return if (head === null) {
+                Directive.of(body[0], *body.sliceArray(1..body.lastIndex))
+            } else {
+                Rule.of(head, *body)
+            }
+        }
     }
+
 }
 

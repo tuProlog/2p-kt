@@ -80,23 +80,22 @@ interface Struct : Term {
     companion object {
         val WELL_FORMED_FUNCTOR_PATTERN = Regex("""[a-z][A-Za-z_0-9]*""")
 
-        fun of(functor: String, arg1: Term, vararg args: Term): Struct {
-            TODO("add cases")
-            return if (args.size == 1 && Empty.EMPTY_LIST_FUNCTOR == functor) {
-                Couple.of(arg1, args[0])
-            } else {
-                StructImpl(functor, arrayOf(arg1) + args)
-            }
+        fun of(functor: String, vararg args: Term): Struct {
+            return of(functor, args.toList())
         }
 
         fun of(functor: String, args: List<Term>): Struct {
-            TODO("add cases")
-            if (args.size == 2 && Couple.FUNCTOR == functor) {
-                return Couple.of(args[0], args[1])
+            return if (args.size == 2 && Couple.FUNCTOR == functor) {
+                Couple.of(args[0], args[1])
+            } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
+                Rule.of(args[0] as Struct, args[1])
+            } else if (args.size == 1 && Clause.FUNCTOR == functor) {
+                Directive.of(args[0])
             } else if (args.isEmpty()) {
-                return Atom.of(functor)
+                Atom.of(functor)
+            } else {
+                StructImpl(functor, args.toTypedArray())
             }
-            return StructImpl(functor, args.toTypedArray())
         }
 
         fun of(functor: String, args: Sequence<Term>): Struct {
