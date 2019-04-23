@@ -15,6 +15,9 @@ interface Struct : Term {
     override val isRule: Boolean
         get() = isClause && arity == 2
 
+    override val isDirective: Boolean
+        get() = isClause && arity == 1
+
     override val isFact: Boolean
         get() = isRule && args[1].isTrue
 

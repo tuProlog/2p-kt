@@ -30,23 +30,23 @@ internal interface MapList<K, V> : Map<K, V> {
             })
         }
 
-        fun <K, V> of(vararg pairs: Map.Entry<K, V>): MapList<K, V> {
-            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
-                pairs.forEach { put(it.key, it.value) }
-            })
-        }
+//        fun <K, V> of(vararg pairs: Map.Entry<K, V>): MapList<K, V> {
+//            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
+//                pairs.forEach { put(it.key, it.value) }
+//            })
+//        }
 
-        fun <K, V> of(pairs: Sequence<Map.Entry<K, V>>): MapList<K, V> {
-            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
-                pairs.forEach { put(it.key, it.value) }
-            })
-        }
-
-        fun <K, V> of(pairs: Iterable<Map.Entry<K, V>>): MapList<K, V> {
-            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
-                pairs.forEach { put(it.key, it.value) }
-            })
-        }
+//        fun <K, V> of(pairs: Sequence<Map.Entry<K, V>>): MapList<K, V> {
+//            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
+//                pairs.forEach { put(it.key, it.value) }
+//            })
+//        }
+//
+//        fun <K, V> of(pairs: Iterable<Map.Entry<K, V>>): MapList<K, V> {
+//            return LinkedHashMalList(LinkedHashMap<K, V>().apply {
+//                pairs.forEach { put(it.key, it.value) }
+//            })
+//        }
     }
 
     fun toSequence(): Sequence<Pair<K, V>> {
@@ -54,12 +54,12 @@ internal interface MapList<K, V> : Map<K, V> {
     }
 
     operator fun plus(other: MapList<K, V>): MapList<K, V> {
-        return MapList.of(this.asSequence() + other.asSequence())
+        return MapList.of(this.asSequence().map { it.toPair() } + other.asSequence().map { it.toPair() })
     }
 }
 
 internal operator fun <K, V> Map<K, V>.plus(other: MapList<K, V>): MapList<K, V> {
-    return MapList.of(this.asSequence() + other.asSequence())
+    return MapList.of(this.asSequence().map { it.toPair() } + other.asSequence().map { it.toPair() })
 }
 
 private class LinkedHashMalList<K, V>(val wrapped: LinkedHashMap<K, V>) : MapList<K, V> {

@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.core
 
-interface EmptySet : Empty, Set {
+import it.unibo.tuprolog.core.Set as LogicSet
 
+interface EmptySet : Empty, LogicSet {
 
+    override val isEmptySet: Boolean
+        get() = true
 
     override val args: Array<Term>
         get() = super.args

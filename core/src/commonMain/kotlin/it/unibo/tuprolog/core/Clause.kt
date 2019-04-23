@@ -27,7 +27,20 @@ interface Clause : Struct {
             }
         }
 
+    override val isClause: Boolean
+        get() = true
+
+    override val isRule: Boolean
+        get() = head !== null
+
+    override val isFact: Boolean
+        get() = head !== null && body.isTrue
+
+    override val isDirective: Boolean
+        get() = head === null
+
     companion object {
         const val FUNCTOR = ":-"
     }
 }
+
