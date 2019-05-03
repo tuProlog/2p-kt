@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-internal interface Directive : Clause {
+interface Directive : Clause {
 
     override val head: Struct?
         get() = null

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-internal interface Rule : Clause {
+interface Rule : Clause {
 
     override val head: Struct
 
