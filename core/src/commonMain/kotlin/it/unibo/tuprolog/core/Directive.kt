@@ -16,7 +16,7 @@ internal interface Directive : Clause {
 
     companion object {
         fun of(body1: Term, vararg body: Term): Directive {
-            TODO()
+            return DirectiveImpl(Struct.conjunction(sequenceOf(body1) + sequenceOf(*body)))
         }
     }
 }

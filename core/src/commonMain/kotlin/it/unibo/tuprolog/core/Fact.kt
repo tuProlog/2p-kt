@@ -10,7 +10,7 @@ internal interface Fact : Rule {
 
     companion object {
         fun of(head: Struct): Fact {
-            TODO()
+            return FactImpl(head)
         }
     }
 }
