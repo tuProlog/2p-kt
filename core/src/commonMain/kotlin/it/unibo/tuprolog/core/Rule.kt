@@ -20,7 +20,7 @@ interface Rule : Clause {
             return if (body.isEmpty() || (body.size == 1 && body[0].isTrue)) {
                 Fact.of(head)
             } else {
-                RuleImpl(head, Struct.conjunction(*body))
+                RuleImpl(head, Struct.conjunction(listOf(*body)))
             }
         }
     }

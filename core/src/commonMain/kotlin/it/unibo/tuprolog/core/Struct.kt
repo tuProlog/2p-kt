@@ -128,20 +128,24 @@ interface Struct : Term {
             return fold(operator, terms.toList(), terminal)
         }
 
-        fun conjunction(terms: Sequence<Term>): Struct {
-            return fold(",", terms)
+        fun conjunction(terms: Sequence<Term>): Term {
+            return conjunction(terms.toList())
         }
 
-        fun conjunction(terms: Iterable<Term>): Struct {
-            return fold(",", terms)
+//        fun conjunction(terms: Iterable<Term>): Term {
+//            return conjunction(terms.toList())
+//        }
+
+        fun conjunction(terms: List<Term>): Term {
+            return when {
+                terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
+                terms.size == 1 ->  terms[0]
+                else -> fold(",", terms)
+            }
         }
 
-        fun conjunction(terms: List<Term>): Struct {
-            return fold(",", terms)
-        }
-
-        fun conjunction(vararg terms: Term): Struct {
-            return fold(",", *terms)
+        fun conjunction(vararg terms: Term): Term {
+            return conjunction(listOf(*terms))
         }
 
     }

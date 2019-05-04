@@ -1,198 +1,294 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.InvalidClauseException
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.unify.Unifier
+import it.unibo.tuprolog.unify.Unifier.Companion.matches
 
-internal fun <T> List<T>.replace(selector: (T)->Boolean, mapper: (T) -> T): List<T> {
-    return this.map { if (selector(it)) mapper(it) else it }
-}
+sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
-internal fun <K, V> MapList<K, V>.replace(selector: (K, V)->Boolean, mapper: (K, V) -> V): MapList<K, V> {
-    return MapList.of(this.asSequence()
-            .map { if (selector(it.key, it.value)) Pair(it.key, mapper(it.key, it.value)) else it.toPair() })
-}
+    data class RootNode(override val children: MutableList<ReteTree>) : ReteTree(children) {
 
-internal sealed class Rete  {
+        override val header: String
+            get() = "Root"
+
+        override fun canContain(clause: Clause): Boolean {
+            return true
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Directive -> {
+                    children.asSequence()
+                            .filterIsInstance<DirectiveNode>()
+                            .forEach { it.put(clause) }
+                }
+                is Rule -> {
+                    var child = children.find { it.canContain(clause) }
+
+                    if (child === null) {
+                        child = FunctorNode(clause.head.functor, mutableListOf())
+                        children.add(child)
+                    }
+                    child.put(clause)
+                }
+            }
+        }
+
+        override fun clone(): RootNode {
+            return RootNode(children.map { it.clone() }.toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when (clause) {
+                is Directive -> children.asSequence().filterIsInstance<DirectiveNode>().flatMap { it.get(clause) }
+                else -> children.asSequence().filterIsInstance<FunctorNode>().flatMap { it.get(clause) }
+            }
+        }
+    }
+
+    data class DirectiveNode(val directives: MutableList<Directive>) : ReteTree(mutableListOf()) {
+
+        override val header: String
+            get() = "Directives"
+
+        override val clauses: Sequence<Clause>
+            get() = directives.asSequence()
+
+        override fun canContain(clause: Clause): Boolean {
+            return clause is Directive
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Directive -> directives.add(clause)
+            }
+        }
+
+        override fun clone(): DirectiveNode {
+            return DirectiveNode(directives.map { it } .toMutableList())
+        }
+
+        override fun toString(treefy: Boolean): String {
+            return if (treefy) {
+                "$header {" +
+                        directives.joinToString(".\n\t", "\n\t", ".\n") +
+                        "}"
+            } else {
+                toString()
+            }
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when (clause) {
+                is Directive -> directives.asSequence().filter { it matches clause }
+                else -> emptySequence()
+            }
+        }
+
+    }
+
+    data class FunctorNode(val functor: String, override val children: MutableList<ReteTree>) : ReteTree(children) {
+
+        override val header: String
+            get() = "Functor($functor)"
+
+        override fun canContain(clause: Clause): Boolean {
+            return clause is Rule && functor == clause.functor
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Rule -> {
+                    var child = children.find { it.canContain(clause) }
+
+                    if (child === null) {
+                        child = ArityNode(clause.head.arity, mutableListOf())
+                        children.add(child)
+                    }
+                    child.put(clause)
+                }
+            }
+        }
+
+        override fun clone(): FunctorNode {
+            return FunctorNode(functor, children.map { it.clone() }.toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when {
+                clause is Rule && functor == clause.head.functor -> {
+                    children.asSequence().filterIsInstance<ArityNode>().flatMap { it.get(clause) }
+                }
+                else -> emptySequence()
+            }
+        }
+    }
+
+    data class ArityNode(val arity: Int, override val children: MutableList<ReteTree>) : ReteTree(children) {
+
+        override val header: String
+            get() = "Arity($arity)"
+
+        override fun canContain(clause: Clause): Boolean {
+            return arity == clause.head!!.arity
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Rule -> {
+                    var child = children.find { it.canContain(clause) }
+
+                    if (child === null) {
+                        child = ArgNode(0, clause.head[0], mutableListOf())
+                        children.add(child)
+                    }
+                    child.put(clause)
+                }
+            }
+        }
+
+        override fun clone(): ArityNode {
+            return ArityNode(arity, children.map { it.clone() }.toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when {
+                clause is Rule && arity == clause.head.arity -> {
+                    children.asSequence().filterIsInstance<ArgNode>().flatMap { it.get(clause) }
+                }
+                else -> emptySequence()
+            }
+        }
+    }
+
+    data class ArgNode(val index: Int, val term: Term, override val children: MutableList<ReteTree>) : ReteTree(children) {
+
+        override val header: String
+            get() = "Argument($index, $term)"
+
+        override fun canContain(clause: Clause): Boolean {
+            return term matches clause.head!![index]
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Rule -> {
+                    var child = children.find { it.canContain(clause) }
+
+                    if (child === null) {
+                        if (index < clause.head.arity - 1) {
+                            child = ArgNode(index + 1, clause.head[index + 1], mutableListOf())
+                        } else {
+                            child = RuleNode(mutableListOf())
+                        }
+                        children.add(child)
+                    }
+                    child.put(clause)
+                }
+            }
+        }
+
+        override fun clone(): ArgNode {
+            return ArgNode(index, term, children.map { it.clone() }.toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when {
+                clause is Rule && term matches clause.head[index] -> {
+                    if (index == clause.head.arity - 1) {
+                        children.asSequence().filterIsInstance<RuleNode>().flatMap { it.get(clause) }
+                    } else {
+                        children.asSequence().filterIsInstance<ArgNode>().flatMap { it.get(clause) }
+                    }
+                }
+                else -> emptySequence()
+            }
+        }
+    }
+
+    data class RuleNode(val rules: MutableList<Rule>) : ReteTree(mutableListOf()) {
+
+        override val header: String
+            get() = "Rules"
+
+        override val clauses: Sequence<Clause>
+            get() = rules.asSequence()
+
+        override fun canContain(clause: Clause): Boolean {
+            return true
+        }
+
+        override fun put(clause: Clause) {
+            when (clause) {
+                is Rule -> rules.add(clause)
+            }
+        }
+
+        override fun clone(): RuleNode {
+            return RuleNode(rules.map { it } .toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return rules.asSequence()
+        }
+
+        override fun toString(treefy: Boolean): String {
+            return if (treefy) {
+                "$header {" +
+                        rules.joinToString(".\n\t", "\n\t", ".\n") +
+                        "}"
+            } else {
+                toString()
+            }
+        }
+    }
+
+    fun <T : ReteTree> getAs(i: Int): T {
+        return children[i] as T
+    }
+
+    val size: Int
+        get() = children.size
+
+    abstract fun clone(): ReteTree
+
+    internal abstract fun put(clause: Clause)
+
+    protected abstract fun canContain(clause: Clause): Boolean
+
+    abstract fun get(clause: Clause): Sequence<Clause>
+
+    open fun toString(treefy: Boolean): String {
+        return if (treefy) {
+            "$header {" +
+                    children.joinToString(",\n\t", "\n\t", "\n") {
+                        it.toString(treefy).replace("\n", "\n\t")
+                    } +
+                    "}"
+        } else {
+            toString()
+        }
+    }
+
+    open val clauses: Sequence<Clause>
+        get() = children.asSequence().flatMap { it.clauses }
+
+
+    protected abstract val header: String
 
     companion object {
-        fun Term.ensureClause() {
-            if (this !is Struct || this.functor != ":-" || this.arity != 2 || this[0] is Var){
-                throw InvalidClauseException(this)
-            }
-        }
-    }
-
-    data class Root(
-            val childrenByFunctor: MapList<String, List<Functor>>
-    ) : Rete() {
-
-        constructor(clause: Struct)
-                : this(MapList.of(clause[0].cast<Struct>().functor, listOf(Functor(clause)))) {
-            clause.ensureClause()
-        }
-
-        override fun plus(clause: Struct): Root {
-            clause.ensureClause()
-
-            with(clause[0] as Struct) {
-
-                return if (this.functor in childrenByFunctor) {
-                    Root(childrenByFunctor.replace(
-                            { k, _ -> k == this.functor },
-                            { _, v -> v.map { it + clause } }
-                    ))
-                } else {
-                    Root(childrenByFunctor + MapList.of(clause[0].cast<Struct>().functor, listOf(Functor(clause))))
+        fun of(clauses: List<Clause>): ReteTree {
+            return RootNode(mutableListOf()).apply {
+                for (clause in clauses) {
+                    put(clause)
                 }
             }
         }
 
-        override val children: Sequence<Rete>
-            get() = childrenByFunctor.values.asSequence().flatMap { it.asSequence() }
-
-        override fun get(term: Term): Sequence<Term> {
-            return if (term is Struct && term.functor in childrenByFunctor) {
-                childrenByFunctor[term.functor]!!.asSequence().flatMap { it[term] }
-            } else {
-                emptySequence()
-            }
-        }
-
-        override fun contains(term: Term): Boolean {
-            return term is Struct
-                    && term.functor in childrenByFunctor
-                    && childrenByFunctor[term.functor]!!.any { term in it }
-        }
-
-    }
-
-    data class Functor(
-            val functor: String,
-            val childrenByArity: MapList<Int, List<Arity>>
-    ) : Rete() {
-        constructor(clause: Struct)
-                : this(clause[0].cast<Struct>().functor, MapList.of(clause[0].cast<Struct>().arity, listOf(Arity(clause)))) {
-            clause.ensureClause()
-        }
-
-        override fun plus(clause: Struct): Functor {
-            clause.ensureClause()
-
-            return with(clause[0] as Struct) {
-                if (functor != this@Functor.functor) {
-                    this@Functor
-                } else if (this.arity in childrenByArity){
-                    Functor(
-                            functor,
-                            childrenByArity.replace(
-                                    { k, _ -> k == arity },
-                                    { _, v -> v.map { it + clause }}
-                            )
-                    )
-                } else {
-                    Functor(functor, childrenByArity + MapList.of(arity, listOf(Arity(clause))))
-                }
-            }
-        }
-
-        override val children: Sequence<Rete>
-            get() = childrenByArity.values.asSequence().flatMap { it.asSequence() }
-
-        override fun get(term: Term): Sequence<Term> {
-            return if (term is Struct && term.functor == functor && term.arity in childrenByArity) {
-                childrenByArity[term.arity]!!.asSequence().flatMap { it[term] }
-            } else {
-                emptySequence()
-            }
-        }
-
-        override fun contains(term: Term): Boolean {
-            return term is Struct
-                    && term.functor == functor
-                    && term.arity in childrenByArity
-                    && childrenByArity[term.arity]!!.any { term in it }
+        fun of(vararg clauses: Clause): ReteTree {
+            return of(listOf(*clauses))
         }
     }
-
-    data class Arity(
-            val arity: Int,
-            val arguments: List<Term>,
-            override val clauses: List<Term> = emptyList()
-    ) : Rete() {
-
-        constructor(clause: Struct) : this(clause[0].cast<Struct>().arity, listOf(clause[0]), listOf(clause)) {
-            clause.ensureClause()
-        }
-
-        override fun plus(clause: Struct): Arity {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun contains(term: Term): Boolean {
-            return term is Struct
-                    && term.arity == arity
-                    && (0 until arity).all { Unifier.default.unify(term[it], arguments[it]) }
-        }
-    }
-
-    data class Value(
-            val value: Term,
-            override val clauses: List<Term> = emptyList()
-    ) : Rete() {
-
-        constructor(clause: Struct) : this(clause[0], listOf(clause)) {
-            clause.ensureClause()
-        }
-
-        override fun plus(clause: Struct): Rete {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun contains(term: Term): Boolean {
-            return Unifier.default.unify(value, term)
-        }
-    }
-
-//    data class Whatever(
-//            override val clauses: List<Term> = emptyList()
-//    ) : Rete() {
-//
-//        constructor(term: Term) : this(listOf(term))
-//
-//        override fun plus(clause: Struct): Whatever {
-//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//        }
-//
-//        override fun contains(term: Term): Boolean {
-//            return true
-//        }
-//    }
-
-    //    open val childList: List<Rete> = emptyList()
-    open val clauses: List<Term> = emptyList()
-
-    open val children: Sequence<Rete>
-        get() = emptySequence()
-
-
-    abstract operator fun plus(clause: Struct): Rete
-
-    abstract operator fun contains(term: Term): Boolean
-
-    open operator fun get(term: Term): Sequence<Term> {
-        return if (term in this) {
-            clauses.asSequence()
-        } else {
-            emptySequence()
-        }
-    }
-
-    val allTerms: Sequence<Term>
-        get() {
-            return children.flatMap { it.children }
-                    .flatMap { it.clauses.asSequence() }
-        }
 }

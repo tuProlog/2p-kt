@@ -28,6 +28,10 @@ interface Unifier {
             return default.mgu(this, other)
         }
 
+        infix fun Term.matches(other: Term): Boolean {
+            return default.unify(this, other)
+        }
+
         fun naive(context: Substitution = emptyMap()) : Unifier {
             return object : AbstractUnifier(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {

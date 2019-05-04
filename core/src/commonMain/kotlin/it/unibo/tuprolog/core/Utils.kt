@@ -47,20 +47,20 @@ inline fun lstOf(vararg terms: Term): List {
     return List.of(*terms)
 }
 
-fun factOf(head: Term): Struct {
-    return clauseOf(head)
+fun factOf(head: Term): Fact {
+    return Fact.of(head as Struct)
 }
 
-fun ruleOf(head: Term, body1: Term, vararg body: Term): Struct {
-    return clauseOf(head, *(arrayOf(body1) + body))
+fun ruleOf(head: Term, body1: Term, vararg body: Term): Rule {
+    return Rule.of(head as Struct, *(arrayOf(body1) + body))
 }
 
-fun clauseOf(head: Term, vararg body: Term): Struct {
-    return when {
-        body.isEmpty() -> Struct.of(":-", head, Truth.of(true))
-        body.size == 1 -> Struct.of(":-", head, body[0])
-        else -> Struct.of(":-", head, Struct.conjunction(*body))
-    }
+fun directiveOf(body1: Term, vararg body: Term): Directive {
+    return Directive.of(body1, *body)
+}
+
+fun clauseOf(head: Term?, vararg body: Term): Clause {
+    return Clause.of(head as Struct?, *body)
 }
 
 inline fun coupleOf(term1: Term, vararg terms: Term): Couple {

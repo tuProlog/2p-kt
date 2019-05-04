@@ -6,10 +6,13 @@ fun main() {
     val t1 = "person"("name"("N"), "surname"("ciatto"), "age"("2"))
     val t2 = "person"("name"("N"), "surname"("ciatto"("S")), "age"("2"))
 
-    println(t)
-    println(t1)
-    println(t2)
+    println(t)  // person(name(giovanni), surname(S), age(2))
+    println(t1) // person(name(N), surname(ciatto), age('2'))
+    println(t2) // person(name(N), surname(ciatto(S)), age('2'))
 
-    println(t unifiesWith t1)
-    println(t unifiesWith t2)
+
+    println(t unifiesWith t1) // {N=giovanni, S=ciatto}
+    println(t unifiesWith t2) // OccurCheckException: Cannot unify term `person(name(giovanni), surname(S), age(2))`
+                              // with term `person(name(N), surname(ciatto(S)), age('2'))` because variable `S` occurs
+                              // in term `ciatto(S)`
 }
