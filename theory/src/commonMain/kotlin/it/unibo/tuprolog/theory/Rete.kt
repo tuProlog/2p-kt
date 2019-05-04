@@ -20,9 +20,14 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override fun put(clause: Clause) {
             when (clause) {
                 is Directive -> {
-                    children.asSequence()
-                            .filterIsInstance<DirectiveNode>()
-                            .forEach { it.put(clause) }
+                    var child = children.find { it.canContain(clause) }
+
+                    if (child === null) {
+                        child = DirectiveNode(mutableListOf())
+                        children.add(child)
+                    }
+
+                    child.put(clause)
                 }
                 is Rule -> {
                     var child = children.find { it.canContain(clause) }
@@ -95,7 +100,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             get() = "Functor($functor)"
 
         override fun canContain(clause: Clause): Boolean {
-            return clause is Rule && functor == clause.functor
+            return clause is Rule && functor == clause.head.functor
         }
 
         override fun put(clause: Clause) {
@@ -132,7 +137,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             get() = "Arity($arity)"
 
         override fun canContain(clause: Clause): Boolean {
-            return arity == clause.head!!.arity
+            return clause is Rule && arity == clause.head.arity
         }
 
         override fun put(clause: Clause) {

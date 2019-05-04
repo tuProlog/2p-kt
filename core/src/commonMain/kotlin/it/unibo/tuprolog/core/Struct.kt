@@ -105,7 +105,7 @@ interface Struct : Term {
         fun fold(operator: String, terms: List<Term>, terminal: Term? = null): Struct {
             return if (terminal === null) {
                 terms.slice(0 until terms.lastIndex - 1)
-                        .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex - 1])) {
+                        .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) {
                             a, b -> structOf(operator, a, b)
                         }
             } else {
@@ -132,9 +132,9 @@ interface Struct : Term {
             return conjunction(terms.toList())
         }
 
-//        fun conjunction(terms: Iterable<Term>): Term {
-//            return conjunction(terms.toList())
-//        }
+        fun conjunction(terms: Iterable<Term>): Term {
+            return conjunction(terms.toList())
+        }
 
         fun conjunction(terms: List<Term>): Term {
             return when {

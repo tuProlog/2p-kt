@@ -16,7 +16,7 @@ interface Directive : Clause {
 
     companion object {
         fun of(body1: Term, vararg body: Term): Directive {
-            return DirectiveImpl(Struct.conjunction(sequenceOf(body1) + sequenceOf(*body)))
+            return DirectiveImpl(Struct.conjunction((listOf(body1) + listOf(*body))))
         }
     }
 }
