@@ -32,7 +32,7 @@ interface Couple : Struct, LogicList {
     override fun toSequence(): Sequence<Term> {
         return args.asSequence().flatMap {
             if (tail.isList) {
-                sequenceOf(it) + tail.cast<LogicList>().toSequence()
+                sequenceOf(it) + tail.castTo<LogicList>().toSequence()
             } else {
                 sequenceOf(it)
             }

@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.Unifier.Companion.matches
 
 sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
@@ -87,7 +86,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
         override fun get(clause: Clause): Sequence<Clause> {
             return when (clause) {
-                is Directive -> directives.asSequence().filter { it matches clause }
+                is Directive -> directives.asSequence().filter { it structurallyEquals clause }
                 else -> emptySequence()
             }
         }
@@ -174,7 +173,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             get() = "Argument($index, $term)"
 
         override fun canContain(clause: Clause): Boolean {
-            return term matches clause.head!![index]
+            return term structurallyEquals clause.head!![index]
         }
 
         override fun put(clause: Clause) {
@@ -201,7 +200,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
         override fun get(clause: Clause): Sequence<Clause> {
             return when {
-                clause is Rule && term matches clause.head[index] -> {
+                clause is Rule && term structurallyEquals clause.head[index] -> {
                     if (index == clause.head.arity - 1) {
                         children.asSequence().filterIsInstance<RuleNode>().flatMap { it.get(clause) }
                     } else {

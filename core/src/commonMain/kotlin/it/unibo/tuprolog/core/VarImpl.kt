@@ -2,6 +2,10 @@ package it.unibo.tuprolog.core
 
 internal class VarImpl(override val name: String, private val identifier: Int = instanceCount++) : TermImpl(), Var {
 
+    override fun structurallyEquals(other: Term): Boolean {
+        return other is VarImpl
+    }
+
     companion object {
         var instanceCount = 0
     }

@@ -4,9 +4,11 @@ import kotlin.collections.List
 
 interface Term {
 
-    fun <T : Term> cast(): T {
+    fun <T : Term> castTo(): T {
         return this as T
     }
+
+    infix fun structurallyEquals(other: Term): Boolean
 
     val isVariable: Boolean
         get() = false

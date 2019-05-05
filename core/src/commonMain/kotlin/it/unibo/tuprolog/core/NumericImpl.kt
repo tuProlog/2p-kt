@@ -5,6 +5,11 @@ import io.github.gciatto.kt.math.BigInteger
 
 internal abstract class NumericImpl : TermImpl(), Numeric {
 
+    override fun structurallyEquals(other: Term): Boolean {
+        return other is NumericImpl
+                && decimalValue.compareTo(other.decimalValue) == 0
+    }
+    
     abstract override val decimalValue: BigDecimal
 
     abstract override val intValue: BigInteger

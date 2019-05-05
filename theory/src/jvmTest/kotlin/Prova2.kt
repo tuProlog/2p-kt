@@ -8,6 +8,7 @@ val t: List<Clause> = listOf(
         Rule.of("next"("1", "a") as Struct, "a"(1), "b"(2)),
         ruleOf("next"("1", "b"), "a"(1), "b"(3)),
         ruleOf("next"("1", "X"), "a"(1), "b"(3)),
+        ruleOf("next"("1", "Y"), "a"(1), "b"(3)),
         directiveOf("a".toTerm(), "b".toTerm(), "c".toTerm()),
         clauseOf("next"("s", ("X")), "next"("X"))
 )

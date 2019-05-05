@@ -19,7 +19,7 @@ interface Unifier {
             false
         }
     }
-
+    
     companion object {
 
         val default by lazy { naive() }

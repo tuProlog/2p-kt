@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 internal class CoupleImpl(override val head: Term, override val tail: Term) : StructImpl(Couple.FUNCTOR, arrayOf(head, tail)), Couple {
 
     private val unfoldedSequence: Sequence<Term> by lazy {
-        sequenceOf(head) + if (tail.isList) tail.cast<List>().toSequence() else sequenceOf(tail)
+        sequenceOf(head) + if (tail.isList) tail.castTo<List>().toSequence() else sequenceOf(tail)
     }
 
     private val unfoldedList: kotlin.collections.List<Term> by lazy {
