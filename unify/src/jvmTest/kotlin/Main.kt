@@ -12,7 +12,7 @@ fun main() {
 
 
     println(t unifiesWith t1) // {N=giovanni, S=ciatto}
-    println(t unifiesWith t2) // OccurCheckException: Cannot unify term `person(name(giovanni), surname(S), age(2))`
+    println(t unifiesWith t2) // OccurCheckException: Cannot match term `person(name(giovanni), surname(S), age(2))`
                               // with term `person(name(N), surname(ciatto(S)), age('2'))` because variable `S` occurs
                               // in term `ciatto(S)`
 }

@@ -8,6 +8,6 @@ open class NoUnifyException(val term1: Term, val term2: Term, other: Throwable?)
     constructor(term1: Term, term2: Term) : this(term1, term2, null)
 
     override val message: String?
-        get() = "Cannot unify term `${term1}` with term `${term2}`"
+        get() = "Cannot match term `${term1}` with term `${term2}`"
 }
 

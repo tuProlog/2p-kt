@@ -3,6 +3,7 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.get
 import toEquations
 
 interface Unifier {
@@ -11,13 +12,17 @@ interface Unifier {
 
     fun mgu(term1: Term, term2: Term): Substitution
 
-    fun unify(term1: Term, term2: Term): Boolean {
+    fun match(term1: Term, term2: Term): Boolean {
         return try {
             mgu(term1, term2)
             true
         } catch (e: NoUnifyException) {
             false
         }
+    }
+
+    fun unify(term1: Term, term2: Term): Term {
+        return term1[mgu(term1, term2)]
     }
     
     companion object {
@@ -29,7 +34,7 @@ interface Unifier {
         }
 
         infix fun Term.matches(other: Term): Boolean {
-            return default.unify(this, other)
+            return default.match(this, other)
         }
 
         fun naive(context: Substitution = emptyMap()) : Unifier {
