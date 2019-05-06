@@ -17,7 +17,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return true
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Directive -> {
                     var child = children.find { it.canContain(clause) }
@@ -27,7 +27,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                         children.add(child)
                     }
 
-                    child.put(clause)
+                    child.put(clause, before)
                 }
                 is Rule -> {
                     var child = children.find { it.canContain(clause) }
@@ -36,7 +36,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                         child = FunctorNode(clause.head.functor, mutableListOf())
                         children.add(child)
                     }
-                    child.put(clause)
+                    child.put(clause, before)
                 }
             }
         }
@@ -65,9 +65,9 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return clause is Directive
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
-                is Directive -> directives.add(clause)
+                is Directive -> if (before) directives.add(0, clause) else directives.add(clause)
             }
         }
 
@@ -103,7 +103,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return clause is Rule && functor == clause.head.functor
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
                     var child = children.find { it.canContain(clause) }
@@ -112,7 +112,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                         child = ArityNode(clause.head.arity, mutableListOf())
                         children.add(child)
                     }
-                    child.put(clause)
+                    child.put(clause, before)
                 }
             }
         }
@@ -140,7 +140,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return clause is Rule && arity == clause.head.arity
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
                     var child = children.find { it.canContain(clause) }
@@ -149,7 +149,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                         child = ArgNode(0, clause.head[0], mutableListOf())
                         children.add(child)
                     }
-                    child.put(clause)
+                    child.put(clause, before)
                 }
             }
         }
@@ -177,7 +177,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return term structurallyEquals clause.head!![index]
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
                     var child = children.find { it.canContain(clause) }
@@ -190,7 +190,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                         }
                         children.add(child)
                     }
-                    child.put(clause)
+                    child.put(clause, before)
                 }
             }
         }
@@ -225,9 +225,9 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
             return true
         }
 
-        override fun put(clause: Clause) {
+        override fun put(clause: Clause, before: Boolean) {
             when (clause) {
-                is Rule -> rules.add(clause)
+                is Rule -> if (before) rules.add(0, clause) else rules.add(clause)
             }
         }
 
@@ -259,7 +259,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
     abstract fun clone(): ReteTree
 
-    internal abstract fun put(clause: Clause)
+    internal abstract fun put(clause: Clause, before: Boolean = true)
 
     protected abstract fun canContain(clause: Clause): Boolean
 

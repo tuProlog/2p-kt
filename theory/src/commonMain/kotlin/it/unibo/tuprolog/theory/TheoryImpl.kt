@@ -40,11 +40,11 @@ class TheoryImpl : Theory {
     }
 
     override fun assertA(clause: Clause): Theory {
-        return TheoryImpl(clauses + listOf(clause), rete.clone().apply { put(clause) })
+        return TheoryImpl(clauses + listOf(clause), rete.clone().apply { put(clause, before = false) })
     }
 
     override fun assertZ(clause: Clause): Theory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return TheoryImpl(clauses + listOf(clause), rete.clone().apply { put(clause, before = true) })
     }
 
     override fun retract(clause: Clause): Theory {
@@ -57,6 +57,10 @@ class TheoryImpl : Theory {
 
     override fun iterator(): Iterator<Clause> {
         return clauses.iterator()
+    }
+
+    override fun toString(): String {
+        return clauses.joinToString(".\n", "", ".\n")
     }
 
 
