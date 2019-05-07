@@ -2,10 +2,11 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.21"
+    kotlin("multiplatform") version "1.3.31"
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version "0.9.18"
+//    id("com.moowork.node")
 }
 
 repositories {
@@ -59,9 +60,11 @@ kotlin {
             sequenceOf("", "Test").forEach {
                 tasks.getByName<KotlinJsCompile>("compile${it}KotlinJs") {
                     kotlinOptions {
-                        moduleKind = "umd"
-                        noStdlib = true
+                        moduleKind = "commonjs"
+//                        noStdlib = true
                         metaInfo = true
+                        sourceMap = true
+                        sourceMapEmbedSources = "always"
                     }
                 }
             }
@@ -132,7 +135,13 @@ task<DefaultTask>("packAllDokka") {
     group = "documentation"
 }
 
-//tasks.getByName("signArchives").dependsOn("packAllDokka")
+//task<Copy>("populateNodeModules") {
+//    dependsOn("compileKotlin2Js")
+//
+//    from(tasks.getByName<KotlinJsCompile>("compileKotlinJs").kotlinOptions.outputFile)
+//
+//    configurations.getByName("test")
+//}
 
 jarPlatform.forEach {
     val packDokkaForPlatform = "packDokka${capitalize(it)}"
