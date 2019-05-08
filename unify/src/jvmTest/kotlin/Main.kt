@@ -1,5 +1,8 @@
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.unify.Unifier.Companion.unifiesWith
+import it.unibo.tuprolog.unify.Unifier.Companion.mguWith
+import it.unibo.tuprolog.unify.Unifier.Companion.unifyWith
+import it.unibo.tuprolog.unify.Unifier.Companion.matches
+
 
 fun main() {
     val t = "person"("name"("giovanni"), "surname"("S"), "age"(2))
@@ -11,8 +14,11 @@ fun main() {
     println(t2) // person(name(N), surname(ciatto(S)), age('2'))
 
 
-    println(t unifiesWith t1) // {N=giovanni, S=ciatto}
-    println(t unifiesWith t2) // OccurCheckException: Cannot match term `person(name(giovanni), surname(S), age(2))`
-                              // with term `person(name(N), surname(ciatto(S)), age('2'))` because variable `S` occurs
-                              // in term `ciatto(S)`
+    println(t.mguWith(t1)) // {N=giovanni, S=ciatto}
+    println(t.unifyWith(t1)) // person(name(giovanni), surname(ciatto), age(2))
+    println(t.matches(t1)) // true
+
+    println(t.mguWith(t2)) // null
+    println(t.unifyWith(t2)) // null
+    println(t.matches(t2)) // false
 }

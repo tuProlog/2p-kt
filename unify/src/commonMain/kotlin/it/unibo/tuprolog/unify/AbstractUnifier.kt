@@ -42,18 +42,18 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
         return changed
     }
 
-    protected fun equationFor(number: Numeric, atom: Atom): Sequence<Equation<Term, Term>> {
+    protected fun equationFor(number: Numeric, atom: Atom): Sequence<Equation<Term, Term>?> {
         try {
             if (number.decimalValue.compareTo(BigDecimal.of(atom.value)) != 0) {
-                throw NoUnifyException(number, atom)
+                return sequenceOf(null)
             }
             return emptySequence()
         } catch (e: NumberFormatException) {
-            throw NoUnifyException(number, atom, e)
+            return sequenceOf(null)
         }
     }
 
-    protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> {
+    protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>?> {
 
         return when {
             term1 is Var || term2 is Var -> sequenceOf(term1 eq term2)
@@ -72,18 +72,24 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                 if (term1 == term2) {
                     emptySequence()
                 } else {
-                    throw NoUnifyException(term1, term2)
+                    sequenceOf(null)
                 }
             }
         }
     }
 
-    override fun mgu(term1: Term, term2: Term): Substitution {
+    override fun mgu(term1: Term, term2: Term): Substitution? {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
                 .map { it.toPair() }
                 .toMutableList()
 
-        equations.addAll(equationsFor(term1, term2))
+        for (eq in equationsFor(term1, term2)) {
+            if (eq === null) {
+                return null
+            } else {
+                equations.add(eq)
+            }
+        }
 
         var changed = true
 
@@ -108,7 +114,8 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                         }
                         first is Var -> {
                             if ((first as Var).occursInTerm(second)) {
-                                throw OccurCheckException(term1, term2, first as Var, second)
+//                                throw OccurCheckException(term1, term2, first as Var, second)
+                                return null
                             } else {
                                 changed = substitutionOf(first as Any, second).applyToAll(equations, i)
                             }

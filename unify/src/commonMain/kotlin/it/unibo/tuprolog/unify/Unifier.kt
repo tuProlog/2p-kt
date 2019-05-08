@@ -10,27 +10,27 @@ interface Unifier {
 
     val context: Substitution
 
-    fun mgu(term1: Term, term2: Term): Substitution
+    fun mgu(term1: Term, term2: Term): Substitution?
 
     fun match(term1: Term, term2: Term): Boolean {
-        return try {
-            mgu(term1, term2)
-            true
-        } catch (e: NoUnifyException) {
-            false
-        }
+        return mgu(term1, term2) !== null
     }
 
-    fun unify(term1: Term, term2: Term): Term {
-        return term1[mgu(term1, term2)]
+    fun unify(term1: Term, term2: Term): Term? {
+        val substitution = mgu(term1, term2)
+        return if (substitution === null) null else term1[substitution]
     }
     
     companion object {
 
         val default by lazy { naive() }
 
-        infix fun Term.unifiesWith(other: Term): Substitution {
+        infix fun Term.mguWith(other: Term): Substitution? {
             return default.mgu(this, other)
+        }
+
+        infix fun Term.unifyWith(other: Term): Term? {
+            return default.unify(this, other)
         }
 
         infix fun Term.matches(other: Term): Boolean {
