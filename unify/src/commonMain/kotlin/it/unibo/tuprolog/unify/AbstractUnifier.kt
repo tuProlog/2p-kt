@@ -59,7 +59,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
             term1 is Var || term2 is Var -> sequenceOf(term1 eq term2)
             term1 is Struct && term2 is Struct -> {
                 if (term1.functor != term2.functor || term1.arity != term2.arity) {
-                    throw NoUnifyException(term1, term2)
+                    sequenceOf(null)
                 } else {
                     (0 until term1.arity).asSequence().flatMap {
                         equationsFor(term1[it], term2[it])
@@ -78,7 +78,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
         }
     }
 
-    override fun mgu(term1: Term, term2: Term): Substitution? {
+    override fun mgu(term1: Term, term2: Term, occurCheck: Boolean): Substitution? {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
                 .map { it.toPair() }
                 .toMutableList()
@@ -113,8 +113,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                             changed = true
                         }
                         first is Var -> {
-                            if ((first as Var).occursInTerm(second)) {
-//                                throw OccurCheckException(term1, term2, first as Var, second)
+                            if (occurCheck && (first as Var).occursInTerm(second)) {
                                 return null
                             } else {
                                 changed = substitutionOf(first as Any, second).applyToAll(equations, i)

@@ -10,14 +10,14 @@ interface Unifier {
 
     val context: Substitution
 
-    fun mgu(term1: Term, term2: Term): Substitution?
+    fun mgu(term1: Term, term2: Term, occurCheck: Boolean = true): Substitution?
 
-    fun match(term1: Term, term2: Term): Boolean {
-        return mgu(term1, term2) !== null
+    fun match(term1: Term, term2: Term, occurCheck: Boolean = true): Boolean {
+        return mgu(term1, term2, occurCheck) !== null
     }
 
-    fun unify(term1: Term, term2: Term): Term? {
-        val substitution = mgu(term1, term2)
+    fun unify(term1: Term, term2: Term, occurCheck: Boolean = true): Term? {
+        val substitution = mgu(term1, term2, occurCheck)
         return if (substitution === null) null else term1[substitution]
     }
     
@@ -41,6 +41,14 @@ interface Unifier {
             return object : AbstractUnifier(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
                     return name == other.name
+                }
+            }
+        }
+
+        fun strict(context: Substitution = emptyMap()) : Unifier {
+            return object : AbstractUnifier(context.toEquations()) {
+                override fun Var.isEqualTo(other: Var): Boolean {
+                    return completeName == other.completeName
                 }
             }
         }

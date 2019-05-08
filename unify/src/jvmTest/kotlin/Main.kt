@@ -1,4 +1,5 @@
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.unify.Unifier
 import it.unibo.tuprolog.unify.Unifier.Companion.mguWith
 import it.unibo.tuprolog.unify.Unifier.Companion.unifyWith
 import it.unibo.tuprolog.unify.Unifier.Companion.matches
@@ -21,4 +22,6 @@ fun main() {
     println(t.mguWith(t2)) // null
     println(t.unifyWith(t2)) // null
     println(t.matches(t2)) // false
+
+    println(Unifier.default.mgu(t2, t, occurCheck = false)) // false
 }
