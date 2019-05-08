@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.core
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class TestAtom {
 
@@ -66,13 +63,21 @@ class TestAtom {
 
     @Test
     fun atomEquality() {
-        val value = "anAtom"
+        val value1 = "anAtom"
+        val value2 = "anotherAtom"
 
-        val copies = listOf(Atom.of(value), atomOf(value), Struct.of(value), value.toTerm())
+        val atoms1 = listOf(Atom.of(value1), atomOf(value1), Struct.of(value1), value1.toTerm())
+        val atoms2 = listOf(Atom.of(value2), atomOf(value2), Struct.of(value2), value2.toTerm())
 
-        for (a in copies) {
-            for (b in copies) {
+
+        for (a in atoms1) {
+            for (b in atoms1) {
                 assertEquals(a, b)
+                assertTrue(a structurallyEquals b)
+            }
+            for (c in atoms2) {
+                assertNotEquals(a, c)
+                assertFalse(a structurallyEquals c)
             }
         }
     }
@@ -86,9 +91,23 @@ class TestAtom {
     }
 
     @Test
+    fun atomClone() {
+        val values = listOf("anAtom", "AnUppercaseAtom", "a string", "1", "1.3")
+        val atomStrings = listOf("anAtom", "'AnUppercaseAtom'", "'a string'", "'1'", "'1.3'")
+
+        sequenceOf<(String)->Atom>(
+                { Atom.of(it) },
+                { atomOf(it) }
+        ).forEach {
+            assertEquals(atomStrings, values.map(it).map(Atom::toString))
+        }
+
+    }
+
+    @Test
     fun atomToString() {
-        val values = listOf("anAtom", "AnUppercaseAtom", "a string")
-        val atomStrings = listOf("anAtom", "'AnUppercaseAtom'", "'a string'")
+        val values = listOf("anAtom", "AnUppercaseAtom", "a string", "1", "1.3")
+        val atomStrings = listOf("anAtom", "'AnUppercaseAtom'", "'a string'", "'1'", "'1.3'")
 
         sequenceOf<(String)->Atom>(
                 { Atom.of(it) },

@@ -9,6 +9,11 @@ internal abstract class NumericImpl : TermImpl(), Numeric {
         return other is NumericImpl
                 && decimalValue.compareTo(other.decimalValue) == 0
     }
+
+    override fun strictlyEquals(other: Term): Boolean {
+        return other is NumericImpl
+                && decimalValue.compareTo(other.decimalValue) == 0
+    }
     
     abstract override val decimalValue: BigDecimal
 

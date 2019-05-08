@@ -9,6 +9,7 @@ interface Term {
     }
 
     infix fun structurallyEquals(other: Term): Boolean
+    infix fun strictlyEquals(other: Term): Boolean
 
     val isVariable: Boolean
         get() = false
