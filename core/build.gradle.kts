@@ -60,7 +60,7 @@ kotlin {
             sequenceOf("", "Test").forEach {
                 tasks.getByName<KotlinJsCompile>("compile${it}KotlinJs") {
                     kotlinOptions {
-                        moduleKind = "commonjs"
+                        moduleKind = "umd"
 //                        noStdlib = true
                         metaInfo = true
                         sourceMap = true
