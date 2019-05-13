@@ -1,4 +1,6 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
+
+import it.unibo.tuprolog.core.Truth
 
 internal class TruthImpl(private val truth: Boolean) : AtomImpl(if (truth) Truth.TRUE_FUNCTOR else Truth.FAIL_FUNCTOR), Truth {
     override val isTrue: Boolean = truth

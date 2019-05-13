@@ -1,5 +1,7 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import kotlin.collections.List
 
 internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {

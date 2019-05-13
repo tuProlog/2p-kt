@@ -1,5 +1,7 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Term
 import kotlin.collections.List
 
 internal open class AtomImpl(override val functor: String) : StructImpl(functor, arrayOf()), Atom {

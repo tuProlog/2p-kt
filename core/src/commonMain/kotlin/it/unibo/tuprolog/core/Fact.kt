@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.FactImpl
+
 interface Fact : Rule {
 
     override val body: Term

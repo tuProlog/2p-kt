@@ -1,4 +1,7 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
+
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 
 internal class VarImpl(override val name: String, private val identifier: Int = instanceCount++) : TermImpl(), Var {
 

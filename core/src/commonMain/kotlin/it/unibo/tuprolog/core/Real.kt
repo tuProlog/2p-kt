@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import io.github.gciatto.kt.math.BigDecimal
 import io.github.gciatto.kt.math.BigInteger
+import it.unibo.tuprolog.core.impl.RealImpl
 
 interface Real : Numeric {
 

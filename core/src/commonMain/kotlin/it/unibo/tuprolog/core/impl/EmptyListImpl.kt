@@ -1,5 +1,8 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Term
 import kotlin.collections.List
 
 internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {

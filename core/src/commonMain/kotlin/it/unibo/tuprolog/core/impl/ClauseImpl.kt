@@ -1,4 +1,8 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
+
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 
 internal open class ClauseImpl(override val head: Struct?, override val body: Term)
     : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {

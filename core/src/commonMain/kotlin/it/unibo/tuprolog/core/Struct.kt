@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.StructImpl
 import kotlin.collections.List
 
 interface Struct : Term {

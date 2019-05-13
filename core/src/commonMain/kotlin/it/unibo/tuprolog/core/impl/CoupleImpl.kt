@@ -1,4 +1,8 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
+
+import it.unibo.tuprolog.core.Couple
+import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Term
 
 internal class CoupleImpl(override val head: Term, override val tail: Term) : StructImpl(Couple.FUNCTOR, arrayOf(head, tail)), Couple {
 

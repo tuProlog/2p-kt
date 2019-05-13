@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.CoupleImpl
 import kotlin.collections.List
 
 import it.unibo.tuprolog.core.List as LogicList

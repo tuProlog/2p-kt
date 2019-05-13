@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.DirectiveImpl
+
 interface Directive : Clause {
 
     override val head: Struct?

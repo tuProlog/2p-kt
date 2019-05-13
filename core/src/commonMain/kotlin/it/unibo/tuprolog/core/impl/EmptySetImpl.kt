@@ -1,5 +1,7 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.EmptySet
 import kotlin.collections.List
 
 internal object EmptySetImpl : SetImpl(emptyArray()), EmptySet {

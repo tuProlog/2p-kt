@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.EmptyListImpl
+
 interface EmptyList : Empty, List {
 
     override val isCouple: Boolean

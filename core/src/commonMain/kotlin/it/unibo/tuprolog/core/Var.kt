@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.VarImpl
+
 interface Var : Term {
 
     override val isVar: Boolean
