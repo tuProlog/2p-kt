@@ -2,116 +2,71 @@ package it.unibo.tuprolog.core
 
 import kotlin.test.*
 
-class TestAtom {
+class TestAtom : BaseTestAtom() {
 
-    @Test
-    fun atomCreation() {
-        val value = "anAtom"
+    val atomicPattern = """^[a-z][a-zA-Z0-9_]*$""".toRegex()
 
-        val reference = Atom.of(value)
+    override val atomsUnderTest: Array<String> = arrayOf("anAtom", "AnUppercaseAtom", "_anAtomStartingWithUnderscore",
+            "a_snake_cased_atom", "a string", "1", "1.3", "+", ",", "is", "!")
 
-        listOf(atomOf(value), Struct.of(value), value.toTerm()).forEach {
-            assertEquals(reference, it)
-            assertTrue(reference == it)
-            assertTrue(it == reference)
-        }
-    }
-
-    @Test
-    fun atomType() {
-        val value = "anAtom"
-
-        listOf(Atom.of(value), atomOf(value), Struct.of(value), value.toTerm()).forEach {
-            assertTrue(it is Atom)
-            assertTrue(it is Struct)
-            assertTrue(it is Term)
-
-            assertTrue(it !is Numeric)
-            assertTrue(it !is Clause)
-            assertTrue(it !is Var)
-            assertTrue(it !is List)
-            assertTrue(it !is Couple)
-            assertTrue(it !is Set)
-            assertTrue(it !is Empty)
-            assertTrue(it !is Truth)
-        }
-    }
-
-    @Test
-    fun atomValueAndFunctor() {
-        val value = "anAtom"
-
-        listOf(Atom.of(value), atomOf(value), Struct.of(value), value.toTerm()).forEach {
-            assertTrue(it is Atom)
-            assertEquals(value, it.value)
-            assertEquals(value, it.functor)
-        }
-    }
-
-    @Test
-    fun atomZeroArity() {
-        val value = "anAtom"
-
-        listOf(Atom.of(value), atomOf(value), Struct.of(value), value.toTerm()).forEach {
-            assertTrue(it is Atom)
-            assertEquals(0, it.arity)
-            assertTrue(it.args.contentDeepEquals(emptyArray()))
-            assertEquals(emptyList(), it.argsList)
-            assertEquals(emptySequence(), it.argsSequence)
-        }
+    fun getOtherAtoms(thiz: String): Sequence<String> {
+        return atomsUnderTest.asSequence().filter { it != thiz }
     }
 
     @Test
     fun atomEquality() {
-        val value1 = "anAtom"
-        val value2 = "anotherAtom"
 
-        val atoms1 = listOf(Atom.of(value1), atomOf(value1), Struct.of(value1), value1.toTerm())
-        val atoms2 = listOf(Atom.of(value2), atomOf(value2), Struct.of(value2), value2.toTerm())
+        atomsUnderTest.forEach { value1 ->
+            getOtherAtoms(value1).forEach { value2 ->
+
+                val atoms1 = listOf(Atom.of(value1), Struct.of(value1))
+                val atoms2 = listOf(Atom.of(value2), Struct.of(value2))
 
 
-        for (a in atoms1) {
-            for (b in atoms1) {
-                assertEquals(a, b)
-                assertTrue(a structurallyEquals b)
-            }
-            for (c in atoms2) {
-                assertNotEquals(a, c)
-                assertFalse(a structurallyEquals c)
+                for (a in atoms1) {
+                    for (b in atoms1) {
+                        assertEquals(a, b)
+                        assertTrue(a structurallyEquals b)
+                    }
+                    for (c in atoms2) {
+                        assertNotEquals(a, c)
+                        assertFalse(a structurallyEquals c)
+                    }
+                }
             }
         }
     }
 
     @Test
     fun atomicFunctor() {
-        assertTrue(Atom.of("anAtom").isFunctorWellFormed)
-        assertFalse(Atom.of("1").isFunctorWellFormed)
-        assertFalse(Atom.of("AnUppercaseAtom").isFunctorWellFormed)
-        assertFalse(Atom.of("a string").isFunctorWellFormed)
+        atomsUnderTest.filter { it.matches(atomicPattern) }.forEach {
+            listOf(Atom.of(it), Struct.of(it)).map { it as Atom }.forEach {
+                assertTrue { it.isFunctorWellFormed }
+            }
+        }
     }
 
     @Test
     fun atomClone() {
-        val values = listOf("anAtom", "AnUppercaseAtom", "a string", "1", "1.3")
-        val atomStrings = listOf("anAtom", "'AnUppercaseAtom'", "'a string'", "'1'", "'1.3'")
 
-        sequenceOf<(String)->Atom>(
-                { Atom.of(it) },
-                { atomOf(it) }
-        ).forEach {
-            assertEquals(atomStrings, values.map(it).map(Atom::toString))
+        atomsUnderTest.forEach {
+            sequenceOf(Atom.of(it), Struct.of(it)).forEach {
+                assertEquals(it, it.clone())
+                assertSame(it, it.clone())
+                assertTrue(it.structurallyEquals(it.clone()))
+                assertTrue(it.structurallyEquals(it.clone()))
+            }
         }
-
     }
 
     @Test
     fun atomToString() {
-        val values = listOf("anAtom", "AnUppercaseAtom", "a string", "1", "1.3")
-        val atomStrings = listOf("anAtom", "'AnUppercaseAtom'", "'a string'", "'1'", "'1.3'")
+        val values = atomsUnderTest
+        val atomStrings = atomsUnderTest.map { if (it.matches(atomicPattern)) it else "'$it'" }
 
-        sequenceOf<(String)->Atom>(
+        sequenceOf<(String) -> Atom>(
                 { Atom.of(it) },
-                { atomOf(it) }
+                { Struct.of(it) as Atom }
         ).forEach {
             assertEquals(atomStrings, values.map(it).map(Atom::toString))
         }
@@ -119,38 +74,23 @@ class TestAtom {
     }
 
     @Test
-    fun atomTests() {
-        val value = "anAtom"
+    fun notWellKnown() {
+        atomsUnderTest.forEach { value ->
 
-        listOf(Atom.of(value), atomOf(value), Struct.of(value), value.toTerm()).forEach {
-            sequenceOf(
-                it.isAtom,
-                it.isStruct
-            ).forEach { assertTrue(it) }
+            listOf(Atom.of(value), Struct.of(value)).forEach {
 
-            sequenceOf(
-                    it.isNumber,
-                    it.isReal,
-                    it.isInt,
-                    it.isClause,
-                    it.isDirective,
-                    it.isFact,
-                    it.isRule,
-                    it.isTrue,
-                    it.isFail,
-                    it.isList,
-                    it.isCouple,
-                    it.isEmptyList,
-                    it.isEmptySet
-            ).forEach { assertFalse(it) }
+                assertFalse(it.isTrue)
+                assertFalse(it.isFail)
+                assertFalse(it.isList)
+                assertFalse(it.isEmptyList)
+                assertFalse(it.isEmptySet)
 
-            assertTrue(it !is Numeric)
-            assertTrue(it !is Clause)
-            assertTrue(it !is Var)
-            assertTrue(it !is List)
-            assertTrue(it !is Set)
-            assertTrue(it !is Empty)
-            assertTrue(it !is Truth)
+                assertFalse(it is List)
+                assertFalse(it is Set)
+                assertFalse(it is Empty)
+                assertFalse(it is Truth)
+            }
         }
     }
+
 }

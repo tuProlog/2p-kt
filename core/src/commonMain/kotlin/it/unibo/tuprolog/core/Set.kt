@@ -36,6 +36,21 @@ interface Set : Struct {
                 else -> SetImpl(arrayOf(*terms))
             }
         }
+
+        fun of(terms: List<Term>): Set {
+            return when {
+                terms.isEmpty() -> empty()
+                else -> SetImpl(terms.toTypedArray())
+            }
+        }
+
+        fun of(terms: Iterable<Term>): Set {
+            return of(terms.toList())
+        }
+
+        fun of(terms: Sequence<Term>): Set {
+            return of(terms.toList())
+        }
     }
 }
 

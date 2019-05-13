@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-interface EmptyList : Atom, List {
+interface EmptyList : Empty, List {
 
     override val isCouple: Boolean
         get() = false

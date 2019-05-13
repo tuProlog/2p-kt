@@ -35,16 +35,20 @@ inline fun atomOf(value: String): Atom {
     return Atom.of(value)
 }
 
-inline fun structOf(functor: String, arg1: Term, vararg args: Term): Struct {
-    return Struct.of(functor, arg1, *args)
+inline fun structOf(functor: String, vararg args: Term): Struct {
+    return Struct.of(functor, *args)
 }
 
 inline fun varOf(name: String = Var.ANONYMOUS_VAR_NAME): Var {
     return Var.of(name)
 }
 
-inline fun lstOf(vararg terms: Term): List {
-    return List.of(*terms)
+inline fun lstOf(vararg terms: Any): List {
+    return List.of(terms.map { it.toTerm() })
+}
+
+inline fun setOf(vararg terms: Any): Set {
+    return Set.of(terms.map { it.toTerm() })
 }
 
 fun factOf(head: Term): Fact {
