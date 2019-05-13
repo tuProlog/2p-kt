@@ -12,7 +12,7 @@ interface Term {
     infix fun strictlyEquals(other: Term): Boolean
 
     val isVariable: Boolean
-        get() = false
+        get() = isVar
 
     val isVar: Boolean
         get() {
