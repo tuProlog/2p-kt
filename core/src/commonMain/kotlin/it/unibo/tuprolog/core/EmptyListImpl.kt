@@ -19,4 +19,8 @@ internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
     override fun toList(): List<Term> {
         return unfoldedList
     }
+
+    override fun toString(): String {
+        return value
+    }
 }

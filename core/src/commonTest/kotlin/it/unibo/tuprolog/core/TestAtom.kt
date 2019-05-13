@@ -4,8 +4,6 @@ import kotlin.test.*
 
 class TestAtom : BaseTestAtom() {
 
-    val atomicPattern = """^[a-z][a-zA-Z0-9_]*$""".toRegex()
-
     override val atomsUnderTest: Array<String> = arrayOf("anAtom", "AnUppercaseAtom", "_anAtomStartingWithUnderscore",
             "a_snake_cased_atom", "a string", "1", "1.3", "+", ",", "is", "!")
 
@@ -35,42 +33,6 @@ class TestAtom : BaseTestAtom() {
                 }
             }
         }
-    }
-
-    @Test
-    fun atomicFunctor() {
-        atomsUnderTest.filter { it.matches(atomicPattern) }.forEach {
-            listOf(Atom.of(it), Struct.of(it)).map { it as Atom }.forEach {
-                assertTrue { it.isFunctorWellFormed }
-            }
-        }
-    }
-
-    @Test
-    fun atomClone() {
-
-        atomsUnderTest.forEach {
-            sequenceOf(Atom.of(it), Struct.of(it)).forEach {
-                assertEquals(it, it.clone())
-                assertSame(it, it.clone())
-                assertTrue(it.structurallyEquals(it.clone()))
-                assertTrue(it.structurallyEquals(it.clone()))
-            }
-        }
-    }
-
-    @Test
-    fun atomToString() {
-        val values = atomsUnderTest
-        val atomStrings = atomsUnderTest.map { if (it.matches(atomicPattern)) it else "'$it'" }
-
-        sequenceOf<(String) -> Atom>(
-                { Atom.of(it) },
-                { Struct.of(it) as Atom }
-        ).forEach {
-            assertEquals(atomStrings, values.map(it).map(Atom::toString))
-        }
-
     }
 
     @Test
