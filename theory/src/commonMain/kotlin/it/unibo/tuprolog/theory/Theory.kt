@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.*
+import kotlin.collections.List
 
 interface Theory : Iterable<Clause> {
 
@@ -14,7 +12,6 @@ interface Theory : Iterable<Clause> {
         get() = clauses.filterIsInstance<Directive>()
 
     val clauses: List<Clause>
-        get() = toList()
 
     operator fun plus(theory: Theory): Theory
     operator fun plus(clause: Clause): Theory {
@@ -28,7 +25,36 @@ interface Theory : Iterable<Clause> {
     operator fun get(head: Struct): Sequence<Clause>
 
     fun assertA(clause: Clause): Theory
+
+    fun assertA(struct: Struct): Theory {
+        return assertA(Fact.of(struct))
+    }
+
     fun assertZ(clause: Clause): Theory
-    fun retract(clause: Clause): Theory
-    fun retractAll(clause: Clause): Theory
+
+    fun assertZ(struct: Struct): Theory {
+        return assertZ(Fact.of(struct))
+    }
+
+    fun retract(clause: Clause): RetractResult
+
+    fun retract(head: Struct): RetractResult {
+        return retract(Rule.of(head, Var.anonymous()))
+    }
+
+    fun retractAll(clause: Clause): RetractResult
+
+    fun retractAll(head: Struct): RetractResult {
+        return retractAll(Rule.of(head, Var.anonymous()))
+    }
+
+    companion object {
+        fun of(vararg clause: Clause): Theory {
+            return TheoryImpl(listOf(*clause))
+        }
+
+        fun of(clauses: List<Clause>): Theory {
+            return TheoryImpl(clauses)
+        }
+    }
 }

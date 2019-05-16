@@ -7,15 +7,17 @@ class TheoryImpl : Theory {
 
     private val rete: ReteTree
 
-    override val clauses: List<Clause>
+    override val clauses: List<Clause> by lazy {
+        with(this) {
+            return@lazy rete.clauses.toList()
+        }
+    }
 
     constructor(clauses: List<Clause>) {
-        this.clauses = clauses
         rete = ReteTree.of(clauses)
     }
 
-    private constructor(clauses: List<Clause>, reteTree: ReteTree) {
-        this.clauses = clauses
+    private constructor(reteTree: ReteTree) {
         rete = reteTree
     }
 
@@ -40,19 +42,33 @@ class TheoryImpl : Theory {
     }
 
     override fun assertA(clause: Clause): Theory {
-        return TheoryImpl(clauses + listOf(clause), rete.clone().apply { put(clause, before = false) })
+        return TheoryImpl(rete.clone().apply { put(clause, before = true) })
     }
 
     override fun assertZ(clause: Clause): Theory {
-        return TheoryImpl(clauses + listOf(clause), rete.clone().apply { put(clause, before = true) })
+        return TheoryImpl(rete.clone().apply { put(clause, before = false) })
     }
 
-    override fun retract(clause: Clause): Theory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun retract(clause: Clause): RetractResult {
+        val newTheory = rete.clone()
+        val retracted = newTheory.remove(clause).toList()
+
+        return if (retracted.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(TheoryImpl(newTheory), retracted)
+        }
     }
 
-    override fun retractAll(clause: Clause): Theory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun retractAll(clause: Clause): RetractResult {
+        val newTheory = rete.clone()
+        val retracted = newTheory.removeAll(clause).toList()
+
+        return if (retracted.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(TheoryImpl(newTheory), retracted)
+        }
     }
 
     override fun iterator(): Iterator<Clause> {
@@ -63,5 +79,19 @@ class TheoryImpl : Theory {
         return clauses.joinToString(".\n", "", ".\n")
     }
 
+    override fun assertA(struct: Struct): Theory {
+        return super.assertA(struct)
+    }
 
+    override fun assertZ(struct: Struct): Theory {
+        return super.assertZ(struct)
+    }
+
+    override fun retract(head: Struct): RetractResult {
+        return super.retract(head)
+    }
+
+    override fun retractAll(head: Struct): RetractResult {
+        return super.retractAll(head)
+    }
 }

@@ -5,22 +5,30 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unifier.Companion.matches
+import kotlin.math.min
 
 sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
     data class RootNode(override val children: MutableList<ReteTree>) : ReteTree(children) {
-
         override val header: String
             get() = "Root"
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return true
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            return children.find { it.canRemove(clause) } ?.remove(clause, limit) ?: emptySequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Directive -> {
-                    var child = children.find { it.canContain(clause) }
+                    var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
                         child = DirectiveNode(mutableListOf())
@@ -30,7 +38,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                     child.put(clause, before)
                 }
                 is Rule -> {
-                    var child = children.find { it.canContain(clause) }
+                    var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
                         child = FunctorNode(clause.head.functor, mutableListOf())
@@ -61,8 +69,12 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override val clauses: Sequence<Clause>
             get() = directives.asSequence()
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return clause is Directive
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            return emptySequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
@@ -96,17 +108,25 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
     data class FunctorNode(val functor: String, override val children: MutableList<ReteTree>) : ReteTree(children) {
 
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            return children.find { it.canRemove(clause) } ?.remove(clause, limit) ?: emptySequence()
+        }
+
         override val header: String
             get() = "Functor($functor)"
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return clause is Rule && functor == clause.head.functor
         }
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
-                    var child = children.find { it.canContain(clause) }
+                    var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
                         child = ArityNode(clause.head.arity, mutableListOf())
@@ -136,14 +156,22 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override val header: String
             get() = "Arity($arity)"
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return clause is Rule && arity == clause.head.arity
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            return children.find { it.canRemove(clause) } ?.remove(clause, limit) ?: emptySequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
-                    var child = children.find { it.canContain(clause) }
+                    var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
                         child = ArgNode(0, clause.head[0], mutableListOf())
@@ -173,14 +201,26 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override val header: String
             get() = "Argument($index, $term)"
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return term structurallyEquals clause.head!![index]
+        }
+
+        override fun canRemove(clause: Clause): Boolean {
+            return term matches clause.head!![index]
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            return children.find { it.canRemove(clause) } ?.remove(clause, limit) ?: emptySequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Rule -> {
-                    var child = children.find { it.canContain(clause) }
+                    var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
                         if (index < clause.head.arity - 1) {
@@ -221,8 +261,29 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override val clauses: Sequence<Clause>
             get() = rules.asSequence()
 
-        override fun canContain(clause: Clause): Boolean {
+        override fun canPut(clause: Clause): Boolean {
             return true
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            val toTake = if (limit > 0) min(limit, rules.size) else rules.size
+            val result = mutableListOf<Clause>()
+            val i = rules.iterator()
+            var j = 0
+            while (i.hasNext() && j < toTake) {
+                with(i.next()) {
+                    if (this.matches(clause)) {
+                        result.add(this)
+                        i.remove()
+                        j++
+                    }
+                }
+            }
+            return result.asSequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
@@ -259,9 +320,19 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
     abstract fun clone(): ReteTree
 
-    internal abstract fun put(clause: Clause, before: Boolean = true)
+    internal abstract fun put(clause: Clause, before: Boolean = false)
 
-    protected abstract fun canContain(clause: Clause): Boolean
+    internal abstract fun remove(clause: Clause, limit: Int = 1): Sequence<Clause>
+
+    internal fun removeAll(clause: Clause): Sequence<Clause> {
+        return remove(clause, Int.MAX_VALUE)
+    }
+
+    protected abstract fun canPut(clause: Clause): Boolean
+
+    protected open fun canRemove(clause: Clause): Boolean {
+        return canPut(clause)
+    }
 
     abstract fun get(clause: Clause): Sequence<Clause>
 
