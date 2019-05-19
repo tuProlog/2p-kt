@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 import io.github.gciatto.kt.math.BigDecimal
 import io.github.gciatto.kt.math.BigInteger
 
-interface Numeric : Term {
+interface Numeric : Term, Comparable<Numeric> {
 
     override val isNumber: Boolean
         get() = true
@@ -14,6 +14,10 @@ interface Numeric : Term {
     val decimalValue: BigDecimal
 
     val intValue: BigInteger
+
+    override fun compareTo(other: Numeric): Int {
+        return decimalValue.compareTo(other.decimalValue)
+    }
 
     companion object {
 

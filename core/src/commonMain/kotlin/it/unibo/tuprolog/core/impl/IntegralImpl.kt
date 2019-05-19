@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import io.github.gciatto.kt.math.BigDecimal
 import io.github.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.Numeric
 
 internal class IntegralImpl(override val value: BigInteger) :  NumericImpl(), Integral {
 
@@ -19,12 +20,24 @@ internal class IntegralImpl(override val value: BigInteger) :  NumericImpl(), In
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other is IntegralImpl) return false
+        if (other == null || other !is NumericImpl) return false
 
-        return value.compareTo((other as IntegralImpl).value) == 0
+        if (other is IntegralImpl) {
+            return value.compareTo(other.value) == 0
+        } else {
+            return decimalValue.compareTo(other.decimalValue) == 0
+        }
     }
 
     override fun hashCode(): Int {
         return value.hashCode()
+    }
+
+    override fun compareTo(other: Numeric): Int {
+        if (other is IntegralImpl) {
+            return value.compareTo(other.value)
+        } else {
+            return super<NumericImpl>.compareTo(other)
+        }
     }
 }

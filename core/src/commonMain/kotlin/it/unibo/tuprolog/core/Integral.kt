@@ -19,6 +19,21 @@ interface Integral : Numeric {
 
     companion object {
 
+        private fun String.getRadix(): Pair<Int, String> {
+            return when {
+                this.contains("0B", ignoreCase = true) -> {
+                    Pair(2, this.replaceFirst("0B", "").replaceFirst("0b", ""))
+                }
+                this.contains("0O", ignoreCase = true) -> {
+                    Pair(8, this.replaceFirst("0O", "").replaceFirst("0o", ""))
+                }
+                this.contains("0X", ignoreCase = true) -> {
+                    Pair(16, this.replaceFirst("0X", "").replaceFirst("0x", ""))
+                }
+                else -> Pair(10, this)
+            }
+        }
+
         fun of(integer: BigInteger): Integral {
             return IntegralImpl(integer)
         }
@@ -40,7 +55,9 @@ interface Integral : Numeric {
         }
 
         fun of(integer: String): Integral {
-            return Integral.of(BigInteger.of(integer))
+            val trimmed = integer.trim()
+            val radixed = trimmed.getRadix()
+            return Companion.of(radixed.second, radix = radixed.first)
         }
 
         fun of(integer: String, radix: Int): Integral {

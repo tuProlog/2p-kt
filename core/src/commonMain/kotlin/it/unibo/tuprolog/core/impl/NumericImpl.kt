@@ -23,9 +23,9 @@ internal abstract class NumericImpl : TermImpl(), Numeric {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other is NumericImpl) return false
+        if (other == null || other !is NumericImpl) return false
 
-        return decimalValue.compareTo((other as NumericImpl).decimalValue) == 0
+        return decimalValue.compareTo(other.decimalValue) == 0
     }
 
     override fun hashCode(): Int {
@@ -36,5 +36,7 @@ internal abstract class NumericImpl : TermImpl(), Numeric {
         return decimalValue.toString()
     }
 
-
+    override fun compareTo(other: Numeric): Int {
+        return super.compareTo(other)
+    }
 }
