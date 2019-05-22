@@ -19,12 +19,14 @@ repositories {
 group = rootProject.group
 version = rootProject.version
 
+val ktMathVersion: String by project
+
 kotlin {
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("io.github.gciatto:kt-math-metadata:0.0.3")
+                api("io.github.gciatto:kt-math-metadata:$ktMathVersion")
                 implementation(kotlin("stdlib-common"))
             }
         }
@@ -39,7 +41,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("io.github.gciatto:kt-math-jvm:0.0.3")
+                    api("io.github.gciatto:kt-math-jvm:$ktMathVersion")
                     implementation(kotlin("stdlib-jdk8"))
                 }
             }
@@ -70,7 +72,7 @@ kotlin {
             }
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("io.github.gciatto:kt-math-js:0.0.3")
+                    api("io.github.gciatto:kt-math-js:$ktMathVersion")
                     implementation(kotlin("stdlib-js"))
                 }
             }

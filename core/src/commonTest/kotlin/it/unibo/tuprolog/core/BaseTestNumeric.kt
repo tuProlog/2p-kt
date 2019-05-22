@@ -8,6 +8,36 @@ import kotlin.collections.List as KtList
 
 abstract class BaseTestNumeric {
 
+    companion object {
+        fun assertEquals(x: BigDecimal, y: BigDecimal, m: String? = "Failed: $x == $y") {
+            if (m === null) {
+                assertEquals(0, x.compareTo(y))
+                assertEquals(0, y.compareTo(x))
+            } else {
+                assertEquals(0, x.compareTo(y), m)
+                assertEquals(0, y.compareTo(x), m)
+            }
+        }
+
+        fun assertEquals(x: BigInteger, y: BigInteger, m: String? = "Failed: $x == $y") {
+            if (m === null) {
+                assertEquals(0, x.compareTo(y))
+                assertEquals(0, y.compareTo(x))
+            } else {
+                assertEquals(0, x.compareTo(y), m)
+                assertEquals(0, y.compareTo(x), m)
+            }
+        }
+
+        fun assertReprEquals(repr: Any, obj: Any, m: String? = "Failed: $obj.toString() == $repr") {
+            if (m === null) {
+                assertEquals(repr.toString(), obj.toString())
+            } else {
+                assertEquals(repr.toString(), obj.toString(), m)
+            }
+        }
+    }
+
     private val intPattern = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
     private val i = """([0-9]+)"""
     private val d = """(\.[0-9]+)"""
@@ -52,10 +82,10 @@ abstract class BaseTestNumeric {
         for (xy in numbersUnderTest.zip(numbersUnderTestValues)) {
             when (xy.first) {
                 is Integral -> {
-                    assertEquals(0, xy.first.intValue.compareTo(xy.second as BigInteger), "${xy.first.intValue} == ${xy.second} is failing")
+                    assertEquals(xy.first.intValue, xy.second as BigInteger)
                 }
                 is Real -> {
-                    assertEquals(0, xy.first.decimalValue.compareTo(xy.second as BigDecimal), "${xy.first.decimalValue} == ${xy.second} is failing")
+                    assertEquals(xy.first.decimalValue, xy.second as BigDecimal)
                 }
                 else -> throw IllegalArgumentException(xy.first.toString())
             }
