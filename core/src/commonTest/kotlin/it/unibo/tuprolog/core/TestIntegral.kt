@@ -2,7 +2,9 @@ package it.unibo.tuprolog.core
 
 import org.gciatto.kt.math.BigInteger
 
-class TestIntegrals : BaseTestNumeric() {
+import kotlin.collections.List
+
+class TestIntegral : BaseTestNumeric() {
 
     override val numbersUnderTestAsStrings: List<String> = listOf(
             "0",

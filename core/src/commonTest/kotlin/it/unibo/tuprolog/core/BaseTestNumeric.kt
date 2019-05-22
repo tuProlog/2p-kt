@@ -9,7 +9,10 @@ import kotlin.collections.List as KtList
 abstract class BaseTestNumeric {
 
     private val intPattern = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
-    private val realPattern = """^[+\-]?[0-9]+\.[0-9]+([eE] [+\-]? [0-9]+)?$""".toRegex()
+    private val i = """([0-9]+)"""
+    private val d = """(\.[0-9]+)"""
+    private val e = """([eE][+\-]?[0-9]+)"""
+    private val realPattern = "^[+\\-]?(($i$d$e?)|($i$e)|($d$e?))$".toRegex()
 
     abstract val numbersUnderTestAsStrings: KtList<String>
     abstract val numbersUnderTestValues: KtList<Any>
@@ -49,10 +52,10 @@ abstract class BaseTestNumeric {
         for (xy in numbersUnderTest.zip(numbersUnderTestValues)) {
             when (xy.first) {
                 is Integral -> {
-                    assertEquals(xy.second, xy.first.intValue, "${xy.second} == ${xy.first} is failing")
+                    assertEquals(0, xy.first.intValue.compareTo(xy.second as BigInteger), "${xy.first.intValue} == ${xy.second} is failing")
                 }
                 is Real -> {
-                    assertEquals(xy.second, xy.first.intValue, "${xy.second} == ${xy.first} is failing")
+                    assertEquals(0, xy.first.decimalValue.compareTo(xy.second as BigDecimal), "${xy.first.decimalValue} == ${xy.second} is failing")
                 }
                 else -> throw IllegalArgumentException(xy.first.toString())
             }
@@ -122,19 +125,18 @@ abstract class BaseTestNumeric {
     @Test
     fun value() {
         numbersUnderTest.zip(numbersUnderTestValues).forEach {
-            if (it.first is Integral) {
-                with(it.first.castTo<Integral>()) {
+            when(it.first){
+                is Integral -> with(it.first.castTo<Integral>()) {
                     assertEquals(0, value.compareTo(it.second as BigInteger), "$value == ${it.second} is failing")
                     assertEquals(0, this.compareTo(Integral.of(it.second as BigInteger)), "$this == ${Integral.of(it.second as BigInteger)} is failing")
                     assertEquals(0, value.compareTo(intValue), "$value == $intValue is failing")
                 }
-            } else if (it is Real) {
-                with(it.first.castTo<Real>()) {
+                is Real -> with(it.first.castTo<Real>()) {
                     assertEquals(0, value.compareTo(it.second as BigDecimal), "$value == ${it.second} is failing")
                     assertEquals(0, this.compareTo(Real.of(it.second as BigDecimal)), "$this == ${Real.of(it.second as BigDecimal)} is failing")
                     assertEquals(0, value.compareTo(decimalValue), "$value == $decimalValue is failing")
-                }            } else {
-                throw IllegalStateException()
+                }
+                else -> throw IllegalStateException()
             }
         }
     }
@@ -143,8 +145,8 @@ abstract class BaseTestNumeric {
     fun toStringRepresentation() {
         numbersUnderTest.forEach {
             when (it) {
-                is Integral -> assertTrue(it.toString() matches intPattern)
-                is Real -> assertTrue(it.toString() matches realPattern)
+                is Integral -> assertTrue(it.toString() matches intPattern, "$it does not matched $intPattern")
+                is Real -> assertTrue(it.toString() matches realPattern, "$it does not matched $realPattern")
                 else -> throw IllegalArgumentException()
             }
         }
@@ -164,7 +166,7 @@ abstract class BaseTestNumeric {
                         assertTrue(this > lower, "$this > $lower is failing")
                     }
                 }
-                it is Real -> {
+                it.first is Real -> {
                     val greater = Real.of((it.second as BigDecimal) + BigDecimal.ONE)
                     val lower = Real.of((it.second as BigDecimal) - BigDecimal.ONE)
 
