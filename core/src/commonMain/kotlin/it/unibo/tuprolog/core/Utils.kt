@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core
 
-import io.github.gciatto.kt.math.BigDecimal
-import io.github.gciatto.kt.math.BigInteger
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 import kotlin.collections.List as KtList
 
 typealias Substitution = Map<Var, Term>

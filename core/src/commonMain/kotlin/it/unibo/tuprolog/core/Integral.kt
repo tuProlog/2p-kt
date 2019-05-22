@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
-import io.github.gciatto.kt.math.BigDecimal
-import io.github.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.impl.IntegralImpl
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 interface Integral : Numeric {
 
@@ -18,21 +18,6 @@ interface Integral : Numeric {
         get() = value
 
     companion object {
-
-        private fun String.getRadix(): Pair<Int, String> {
-            return when {
-                this.contains("0B", ignoreCase = true) -> {
-                    Pair(2, this.replaceFirst("0B", "").replaceFirst("0b", ""))
-                }
-                this.contains("0O", ignoreCase = true) -> {
-                    Pair(8, this.replaceFirst("0O", "").replaceFirst("0o", ""))
-                }
-                this.contains("0X", ignoreCase = true) -> {
-                    Pair(16, this.replaceFirst("0X", "").replaceFirst("0x", ""))
-                }
-                else -> Pair(10, this)
-            }
-        }
 
         fun of(integer: BigInteger): Integral {
             return IntegralImpl(integer)
@@ -55,9 +40,7 @@ interface Integral : Numeric {
         }
 
         fun of(integer: String): Integral {
-            val trimmed = integer.trim()
-            val radixed = trimmed.getRadix()
-            return Companion.of(radixed.second, radix = radixed.first)
+            return Integral.of(BigInteger.of(integer))
         }
 
         fun of(integer: String, radix: Int): Integral {

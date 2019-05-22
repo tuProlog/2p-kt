@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
-import io.github.gciatto.kt.math.BigInteger
-import kotlin.collections.List
+import org.gciatto.kt.math.BigInteger
 
 class TestIntegrals : BaseTestNumeric() {
 

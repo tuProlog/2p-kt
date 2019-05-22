@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
-import io.github.gciatto.kt.math.BigDecimal
-import io.github.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 internal abstract class NumericImpl : TermImpl(), Numeric {
 

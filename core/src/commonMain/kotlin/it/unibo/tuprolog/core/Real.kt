@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
-import io.github.gciatto.kt.math.BigDecimal
-import io.github.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.impl.RealImpl
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 interface Real : Numeric {
 
