@@ -1,24 +1,6 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
-plugins {
-    kotlin("multiplatform") version "1.3.31"
-    id("maven-publish")
-    signing
-    id("org.jetbrains.dokka") version "0.9.18"
-//    id("com.moowork.node")
-}
-
-repositories {
-    mavenCentral()
-    maven("https://dl.bintray.com/kotlin/dokka")
-    maven("https://jitpack.io")
-    mavenLocal()
-}
-
-group = rootProject.group
-version = rootProject.version
-
 val ktMathVersion: String by project
 
 kotlin {
