@@ -3,19 +3,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 val ktMathVersion: String by project
 
+// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api("io.github.gciatto:kt-math-metadata:$ktMathVersion")
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
             }
         }
 
@@ -24,18 +18,6 @@ kotlin {
             compilations["main"].defaultSourceSet {
                 dependencies {
                     api("io.github.gciatto:kt-math-jvm:$ktMathVersion")
-                    implementation(kotlin("stdlib-jdk8"))
-                }
-            }
-
-            mavenPublication {
-                artifactId = project.name + "-jvm"
-            }
-
-            // JVM-specific tests and their dependencies:
-            compilations["test"].defaultSourceSet {
-                dependencies {
-                    implementation(kotlin("test-junit"))
                 }
             }
         }

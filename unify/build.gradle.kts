@@ -1,6 +1,7 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
+// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
@@ -8,13 +9,6 @@ kotlin {
             dependencies {
 //                api("com.github.gciatto:kt-math-metadata:0.+")
                 api(project(":core"))
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
             }
         }
 
@@ -23,18 +17,6 @@ kotlin {
             compilations["main"].defaultSourceSet {
                 dependencies {
                     api(project(":core"))
-                    implementation(kotlin("stdlib-jdk8"))
-                }
-            }
-
-            mavenPublication {
-                artifactId = project.name + "-jvm"
-            }
-
-            // JVM-specific tests and their dependencies:
-            compilations["test"].defaultSourceSet {
-                dependencies {
-                    implementation(kotlin("test-junit"))
                 }
             }
         }
