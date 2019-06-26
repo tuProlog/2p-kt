@@ -47,18 +47,18 @@ class TestReal : BaseTestNumeric() {
             -BigDecimal.ONE_HALF,
             -BigDecimal.ONE_TENTH,
             -BigDecimal.of("0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001"),
-            BigDecimal.of(Float.MAX_VALUE),
-            BigDecimal.of(Float.MIN_VALUE),
-            BigDecimal.of(Double.MAX_VALUE),
-            BigDecimal.of(Double.MIN_VALUE),
-            -BigDecimal.of(Float.MAX_VALUE),
-            -BigDecimal.of(Float.MIN_VALUE),
-            -BigDecimal.of(Double.MAX_VALUE),
-            -BigDecimal.of(Double.MIN_VALUE)
+            BigDecimal.of(Float.MAX_VALUE.toString()),
+            BigDecimal.of(Float.MIN_VALUE.toString()),
+            BigDecimal.of(Double.MAX_VALUE.toString()),
+            BigDecimal.of(Double.MIN_VALUE.toString()),
+            -BigDecimal.of(Float.MAX_VALUE.toString()),
+            -BigDecimal.of(Float.MIN_VALUE.toString()),
+            -BigDecimal.of(Double.MAX_VALUE.toString()),
+            -BigDecimal.of(Double.MIN_VALUE.toString())
     )
 
     override val numbersUnderTestValues: List<Any> =  numbersUnderTestAsBigDecimals.asSequence()
-            .map { it as Any }
+            .map { it }
             .toList()
 
 }
