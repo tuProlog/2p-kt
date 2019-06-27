@@ -26,10 +26,10 @@ abstract class BaseTestAtom {
 
         atomsUnderTest.forEach {
             sequenceOf(Atom.of(it), Struct.of(it)).forEach {
-                assertEquals(it, it.clone())
-                assertSame(it, it.clone())
-                assertTrue(it.structurallyEquals(it.clone()))
-                assertTrue(it.structurallyEquals(it.clone()))
+                assertEquals(it, it.freshCopy())
+                assertSame(it, it.freshCopy())
+                assertTrue(it.structurallyEquals(it.freshCopy()))
+                assertTrue(it.structurallyEquals(it.freshCopy()))
             }
         }
     }

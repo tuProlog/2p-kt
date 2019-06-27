@@ -21,7 +21,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         Var.WELL_FORMED_NAME_PATTERN.matches(name)
     }
 
-    override fun clone(): Var {
+    override fun freshCopy(): Var {
         return VarImpl(name)
     }
 

@@ -41,7 +41,7 @@ class TestVar {
 
         varsUnderTest.forEach { value ->
             val var1 = Var.of(value)
-            val var2 = var1.clone()
+            val var2 = var1.freshCopy()
 
             assertEquals(var1, var2)
             assertNotSame(var1, var2)

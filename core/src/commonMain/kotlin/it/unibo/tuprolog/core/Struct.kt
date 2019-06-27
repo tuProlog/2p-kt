@@ -49,11 +49,11 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
-    override fun clone(): Term {
+    override fun freshCopy(): Term {
         return if (isGround) {
             this
         } else {
-            Struct.of(functor, args.map { it.clone() })
+            Struct.of(functor, args.map { it.freshCopy() })
         }
     }
 

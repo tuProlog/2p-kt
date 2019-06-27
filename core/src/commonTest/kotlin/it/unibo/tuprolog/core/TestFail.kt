@@ -88,9 +88,9 @@ class TestFail() : BaseTestAtom() {
         )
 
         emptyLists.forEach {
-            assertEquals(it, it.clone())
-            assertSame(it, it.clone())
-            assertTrue(it.structurallyEquals(it.clone()))
+            assertEquals(it, it.freshCopy())
+            assertSame(it, it.freshCopy())
+            assertTrue(it.structurallyEquals(it.freshCopy()))
         }
     }
 }

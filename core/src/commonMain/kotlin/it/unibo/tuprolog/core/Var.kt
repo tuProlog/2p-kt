@@ -17,7 +17,7 @@ interface Var : Term {
 
     val completeName: String
 
-    override fun clone(): Var {
+    override fun freshCopy(): Var {
         return Var.of(name)
     }
 

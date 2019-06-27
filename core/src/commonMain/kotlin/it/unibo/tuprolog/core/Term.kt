@@ -64,7 +64,14 @@ interface Term {
     val isFail: Boolean
         get() = false
 
-    fun clone(): Term = this
+    /**
+     * Returns a fresh copy of this Term.
+     *
+     * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly generated variables.
+     *
+     * Example: "f(X, g(X))".freshCopy() returns something like "f(X_1, g(X_1))"
+     */
+    fun freshCopy(): Term = this
 
     operator fun plus(other: Term): Struct = Struct.of("+", this, other)
 
