@@ -1,8 +1,9 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
+import it.unibo.tuprolog.core.List as PrologList
 
-interface EmptyList : Empty, List {
+interface EmptyList : Empty, PrologList {
 
     override val isCouple: Boolean
         get() = false
@@ -17,7 +18,7 @@ interface EmptyList : Empty, List {
         return arrayOf()
     }
 
-    override fun toList(): kotlin.collections.List<Term> {
+    override fun toList(): List<Term> {
         return emptyList()
     }
 
