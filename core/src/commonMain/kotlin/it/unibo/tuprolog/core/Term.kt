@@ -8,9 +8,6 @@ interface Term {
     infix fun strictlyEquals(other: Term): Boolean
 
     val isVariable: Boolean
-        get() = isVar
-
-    val isVar: Boolean
         get() = false
 
     val isBound: Boolean

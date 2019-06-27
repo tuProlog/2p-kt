@@ -59,7 +59,7 @@ abstract class BaseTestAtom {
                 assertFalse(it.isFact)
                 assertFalse(it.isRule)
                 assertFalse(it.isCouple)
-                assertFalse(it.isVar)
+                assertFalse(it.isVariable)
                 assertFalse(it.isVariable)
                 assertFalse(it.isBound)
             }

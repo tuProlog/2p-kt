@@ -59,7 +59,7 @@ class TestVar {
             assertTrue(it is Var)
             assertTrue(it is Term)
 
-            assertTrue(it.isVar)
+            assertTrue(it.isVariable)
             assertTrue(it.isVariable)
             assertFalse(it.isBound)
 

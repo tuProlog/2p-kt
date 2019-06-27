@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.impl.VarImpl
 
 interface Var : Term {
 
-    override val isVar: Boolean
+    override val isVariable: Boolean
         get() = true
 
     override val isGround: Boolean
