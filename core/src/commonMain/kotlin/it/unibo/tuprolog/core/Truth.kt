@@ -14,9 +14,8 @@ interface Truth : Atom {
         const val TRUE_FUNCTOR = "true"
         const val FAIL_FUNCTOR = "fail"
 
-        fun of(truth: Boolean): Truth {
-            return if (truth) TruthImpl.True else TruthImpl.Fail
-        }
+        fun of(truth: Boolean): Truth =
+                if (truth) TruthImpl.True else TruthImpl.Fail
 
         fun `true`(): Truth = TruthImpl.True
 

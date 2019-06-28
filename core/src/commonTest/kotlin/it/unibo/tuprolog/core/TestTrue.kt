@@ -1,8 +1,9 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsTruth
 import kotlin.test.*
 
-class TestTrue() : BaseTestAtom() {
+class TestTrue : BaseTestAtom() {
 
     override val atomsUnderTest: Array<String>
         get() = arrayOf("true", "true ")
@@ -22,32 +23,13 @@ class TestTrue() : BaseTestAtom() {
         )
 
         emptyLists.forEach {
-            assertTrue(it is Truth)
-            assertTrue(it is Atom)
-            assertTrue(it is Struct)
-
+            assertIsTruth(it)
             assertTrue(it.isTrue)
-            assertTrue(it.isAtom)
-            assertTrue(it.isStruct)
-
-            assertFalse(it is EmptySet)
-            assertFalse(it is Set)
-            assertFalse(it is Couple)
-            assertFalse(it is Clause)
-            assertFalse(it is Number)
-            assertFalse(it is Var)
-
-            assertFalse(it.isEmptySet)
-            assertFalse(it.isSet)
-            assertFalse(it.isCouple)
-            assertFalse(it.isClause)
-            assertFalse(it.isNumber)
-            assertFalse(it.isFail)
         }
     }
 
     @Test
-    fun equality() {
+    fun equality() { // TODO not clear rewrite it
 
         val atoms1 = sequenceOf(
                 Truth.`true`(),
