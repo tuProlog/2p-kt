@@ -1,12 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsEmptyList
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
- * Test class for [EmptyListImpl]
+ * Test class for [EmptyListImpl] and [EmptyList]
  *
  * @author Enrico
  */
@@ -26,11 +28,21 @@ internal class EmptyListImplTest {
 
     @Test
     fun toSequenceReturnValue() {
-        testedObj.toSequence().onEach { fail("Sequence should be empty!") }
+        assertTrue(testedObj.toSequence().toList().isEmpty())
     }
 
     @Test
     fun toListReturnValue() {
         assertTrue(testedObj.toList().isEmpty())
+    }
+
+    @Test
+    fun isPropertiesAndTypeTest() {
+        assertIsEmptyList(testedObj)
+    }
+
+    @Test
+    fun emptyListCompanionReturnsEmptyListImpl() {
+        assertSame(testedObj, EmptyList())
     }
 }

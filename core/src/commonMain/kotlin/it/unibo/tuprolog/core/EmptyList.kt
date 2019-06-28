@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
-import it.unibo.tuprolog.core.List as PrologList
+import it.unibo.tuprolog.core.List as LogicList
 
-interface EmptyList : Empty, PrologList {
+interface EmptyList : Empty, LogicList {
 
     override val isCouple: Boolean
         get() = false

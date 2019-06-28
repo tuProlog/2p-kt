@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.List as LogicList
-
 interface Empty : Atom {
 
     companion object {
