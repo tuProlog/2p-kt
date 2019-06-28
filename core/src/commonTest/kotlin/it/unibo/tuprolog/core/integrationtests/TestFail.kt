@@ -1,5 +1,6 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.integrationtests
 
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsTruth
 import kotlin.test.*
 
