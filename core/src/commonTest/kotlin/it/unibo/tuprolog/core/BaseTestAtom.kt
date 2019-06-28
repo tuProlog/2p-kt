@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.testutils.AtomUtils
 import kotlin.test.*
 
 abstract class BaseTestAtom {
-
-    val atomicPattern = """^[a-z][a-zA-Z0-9_]*$""".toRegex()
 
     abstract val atomsUnderTest: Array<String>
 
@@ -60,7 +59,6 @@ abstract class BaseTestAtom {
                 assertFalse(it.isRule)
                 assertFalse(it.isCouple)
                 assertFalse(it.isVariable)
-                assertFalse(it.isVariable)
                 assertFalse(it.isBound)
             }
         }
@@ -95,7 +93,7 @@ abstract class BaseTestAtom {
     fun toStringRepresentation() {
         val values = atomsUnderTest
         val atomStrings = atomsUnderTest.map {
-            if (it.matches(atomicPattern) || it in listOf("{}", "[]"))
+            if (it.matches(AtomUtils.ATOM_REGEX_PATTERN) || it in listOf("{}", "[]"))
                 it
             else
                 "'$it'"
@@ -112,7 +110,7 @@ abstract class BaseTestAtom {
 
     @Test
     fun atomicFunctor() {
-        atomsUnderTest.filter { it.matches(atomicPattern) }.forEach {
+        atomsUnderTest.filter { it.matches(AtomUtils.ATOM_REGEX_PATTERN) }.forEach {
             listOf(Atom.of(it), Struct.of(it)).map { it as Atom }.forEach {
                 assertTrue { it.isFunctorWellFormed }
             }

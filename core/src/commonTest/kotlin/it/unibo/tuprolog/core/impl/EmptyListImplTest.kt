@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsEmptyList
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -18,7 +18,7 @@ internal class EmptyListImplTest {
 
     @Test
     fun emptyListFunctor() {
-        assertEquals(testedObj.functor, "[]")
+        assertEquals("[]", testedObj.functor)
     }
 
     @Test
@@ -37,12 +37,12 @@ internal class EmptyListImplTest {
     }
 
     @Test
-    fun isPropertiesAndTypeTest() {
-        assertIsEmptyList(testedObj)
+    fun testIsPropertiesAndTypes() {
+        TermTypeAssertionUtils.assertIsEmptyList(testedObj)
     }
 
     @Test
     fun emptyListCompanionReturnsEmptyListImpl() {
-        assertSame(testedObj, EmptyList())
+        assertSame(EmptyList(), testedObj)
     }
 }
