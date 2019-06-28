@@ -8,6 +8,8 @@ import it.unibo.tuprolog.core.Set as LogicSet
 
 /**
  * Utils to assert types in tests, that works only on properties defined in [Term] interface
+ *
+ * @author Enrico
  */
 internal object TermTypeAssertionUtils {
 

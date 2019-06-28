@@ -28,7 +28,7 @@ abstract class BaseTestAtom {
                 assertEquals(it, it.freshCopy())
                 assertSame(it, it.freshCopy())
                 assertTrue(it.structurallyEquals(it.freshCopy()))
-                assertTrue(it.structurallyEquals(it.freshCopy()))
+                assertTrue(it.strictlyEquals(it.freshCopy()))
             }
         }
     }

@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
-class TruthImplTest {
+internal class TruthImplTest {
 
     private val `true` = TruthImpl.True
     private val fail = TruthImpl.Fail
