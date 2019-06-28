@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsEmptyList
 import kotlin.test.*
+import it.unibo.tuprolog.core.List as LogicList
 
-class TestEmptyList() : BaseTestAtom() {
+class TestEmptyList : BaseTestAtom() {
     override val atomsUnderTest: Array<String>
         get() = arrayOf("[]", "[ ]")
 
@@ -10,13 +12,13 @@ class TestEmptyList() : BaseTestAtom() {
     val anotherAtom = atomsUnderTest[1]
 
     @Test
-    fun creation() {
+    fun variousCreationMethods() {
         val emptyLists: Sequence<Term> = sequenceOf(
                 EmptyList(),
                 Empty.list(),
-                List.empty(),
+                LogicList.empty(),
                 lstOf(),
-                List.of(),
+                LogicList.of(),
                 Atom.of(anAtom),
                 atomOf(anAtom),
                 Struct.of(anAtom),
@@ -24,47 +26,22 @@ class TestEmptyList() : BaseTestAtom() {
         )
 
         emptyLists.forEach {
-            assertTrue(it is EmptyList)
-            assertTrue(it is List)
-            assertTrue(it is Empty)
-            assertTrue(it is Atom)
-            assertTrue(it is Struct)
-
-            assertTrue(it.isEmptyList)
-            assertTrue(it.isList)
-            assertTrue(it.isAtom)
-            assertTrue(it.isStruct)
-
-            assertFalse(it is EmptySet)
-            assertFalse(it is Set)
-            assertFalse(it is Couple)
-            assertFalse(it is Clause)
-            assertFalse(it is Number)
-            assertFalse(it is Truth)
-            assertFalse(it is Var)
-
-            assertFalse(it.isEmptySet)
-            assertFalse(it.isSet)
-            assertFalse(it.isCouple)
-            assertFalse(it.isClause)
-            assertFalse(it.isNumber)
-            assertFalse(it.isTrue)
-            assertFalse(it.isFail)
+            assertIsEmptyList(it)
         }
     }
 
     @Test
-    fun equality() {
+    fun equality() { // TODO test not clear, rewrite it
 
         val atoms1 = sequenceOf(
                 EmptyList(),
                 Empty.list(),
-                List.empty(),
-                List.of(),
+                LogicList.empty(),
+                LogicList.of(),
                 Atom.of(anAtom),
                 Struct.of(anAtom)
         )
-        val atoms2 = sequenceOf(
+        val atoms2 = sequenceOf( // duplicated atoms can be removed??
                 Atom.of(anotherAtom),
                 Struct.of(anotherAtom),
                 Atom.of(anotherAtom),
@@ -72,8 +49,6 @@ class TestEmptyList() : BaseTestAtom() {
                 Atom.of(anotherAtom),
                 Struct.of(anotherAtom)
         )
-
-
 
         for (a in atoms1) {
             for (b in atoms1) {
@@ -97,8 +72,8 @@ class TestEmptyList() : BaseTestAtom() {
         val emptyLists: Sequence<Term> = sequenceOf(
                 EmptyList(),
                 Empty.list(),
-                List.empty(),
-                List.of(),
+                LogicList.empty(),
+                LogicList.of(),
                 Atom.of(anAtom),
                 Struct.of(anAtom)
         )
