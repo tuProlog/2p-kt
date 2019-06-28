@@ -1,8 +1,11 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.integrationtests
 
+import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsEmptySet
 import kotlin.test.*
+import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
-class TestEmptySet() : BaseTestAtom() {
+class TestEmptySet : BaseTestAtom() {
 
     override val atomsUnderTest: Array<String>
         get() = arrayOf("{}", "{ }")
@@ -11,57 +14,30 @@ class TestEmptySet() : BaseTestAtom() {
     val anotherAtom = atomsUnderTest[1]
 
     @Test
-    fun creation() {
+    fun variousCreationMethods() {
         val emptyLists: Sequence<Term> = sequenceOf(
                 EmptySet(),
                 Empty.set(),
-                Set.empty(),
+                LogicSet.empty(),
                 setOf(),
-                Set.of(),
+                LogicSet.of(),
                 Atom.of(anAtom),
                 atomOf(anAtom),
                 Struct.of(anAtom),
                 structOf(anAtom)
         )
 
-        emptyLists.forEach {
-            assertTrue(it is EmptySet)
-            assertTrue(it is Set)
-            assertTrue(it is Empty)
-            assertTrue(it is Atom)
-            assertTrue(it is Struct)
-
-            assertTrue(it.isEmptySet)
-            assertTrue(it.isSet)
-            assertTrue(it.isAtom)
-            assertTrue(it.isStruct)
-
-            assertFalse(it is EmptyList)
-            assertFalse(it is List)
-            assertFalse(it is Couple)
-            assertFalse(it is Clause)
-            assertFalse(it is Number)
-            assertFalse(it is Truth)
-            assertFalse(it is Var)
-
-            assertFalse(it.isEmptyList)
-            assertFalse(it.isList)
-            assertFalse(it.isCouple)
-            assertFalse(it.isClause)
-            assertFalse(it.isNumber)
-            assertFalse(it.isTrue)
-            assertFalse(it.isFail)
-        }
+        emptyLists.forEach { assertIsEmptySet(it) }
     }
 
     @Test
-    fun equality() {
+    fun equality() { // TODO test not clear, rewrite it
 
         val atoms1 = sequenceOf(
                 EmptySet(),
                 Empty.set(),
-                Set.empty(),
-                Set.of(),
+                LogicSet.empty(),
+                LogicSet.of(),
                 Atom.of(anAtom),
                 Struct.of(anAtom)
         )
@@ -97,8 +73,8 @@ class TestEmptySet() : BaseTestAtom() {
         val emptyLists: Sequence<Term> = sequenceOf(
                 EmptySet(),
                 Empty.set(),
-                Set.empty(),
-                Set.of(),
+                LogicSet.empty(),
+                LogicSet.of(),
                 Atom.of(anAtom),
                 Struct.of(anAtom)
         )

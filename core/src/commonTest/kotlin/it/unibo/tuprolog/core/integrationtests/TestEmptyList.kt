@@ -26,9 +26,7 @@ class TestEmptyList : BaseTestAtom() {
                 structOf(anAtom)
         )
 
-        emptyLists.forEach {
-            assertIsEmptyList(it)
-        }
+        emptyLists.forEach { assertIsEmptyList(it) }
     }
 
     @Test
