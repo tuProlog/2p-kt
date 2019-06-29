@@ -1,79 +1,38 @@
 package it.unibo.tuprolog.core.integrationtests
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.testutils.EqualityUtils.assertAllVsAllEqualities
+import it.unibo.tuprolog.core.testutils.EqualityUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsTruth
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
-class TestFail : BaseTestAtom() {
+class TestFail {
 
-    override val atomsUnderTest: Array<String>
-        get() = arrayOf("fail", "false")
+    private val correctAtom = "fail"
+    private val notCorrectAtom = "false"
 
-    val anAtom = atomsUnderTest[0]
-    val anotherAtom = atomsUnderTest[1]
+    private val heterogeneousCreatedInstances = listOf(
+            Truth.fail(),
+            Truth.of(false),
+            Atom.of(correctAtom),
+            Struct.of(correctAtom))
 
     @Test
-    fun creation() {
-        val emptyLists: Sequence<Term> = sequenceOf(
-                Truth.fail(),
-                Truth.of(false),
-                Atom.of(anAtom),
-                Struct.of(anAtom)
-        )
-
-        emptyLists.forEach {
+    fun variousCreationMethodsCreateCorrectlyFail() {
+        heterogeneousCreatedInstances.forEach {
             assertIsTruth(it)
             assertTrue(it.isFail)
         }
     }
 
     @Test
-    fun equality() { // TODO not clear rewrite it
+    fun equality() {
+        assertAllVsAllEqualities(heterogeneousCreatedInstances)
 
-        val atoms1 = sequenceOf(
-                Truth.fail(),
-                Truth.of(false),
-                Atom.of(anAtom),
-                Struct.of(anAtom)
-        )
-        val atoms2 = sequenceOf(
-                Atom.of(anotherAtom),
-                Struct.of(anotherAtom),
-                Atom.of(anotherAtom),
-                Struct.of(anotherAtom)
-        )
-
-
-        for (a in atoms1) {
-            for (b in atoms1) {
-                assertEquals(a, b)
-                assertTrue(a structurallyEquals b)
-            }
-            for (c in atoms2) {
-                assertNotEquals(a, c)
-                assertFalse(a structurallyEquals c)
-            }
-        }
-    }
-
-    @Test
-    fun nonAtomicFunctor() {
-        assertTrue(Atom.of(anAtom).isFunctorWellFormed)
-    }
-
-    @Test
-    fun clone() {
-        val emptyLists: Sequence<Term> = sequenceOf(
-                Truth.fail(),
-                Truth.of(false),
-                Atom.of(anAtom),
-                Struct.of(anAtom)
-        )
-
-        emptyLists.forEach {
-            assertEquals(it, it.freshCopy())
-            assertSame(it, it.freshCopy())
-            assertTrue(it.structurallyEquals(it.freshCopy()))
-        }
+        val notFailAtom = Atom.of(notCorrectAtom)
+        heterogeneousCreatedInstances.forEach { correct -> assertNoEqualities(notFailAtom, correct) }
     }
 }

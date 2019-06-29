@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.core.integrationtests
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.testutils.EqualityUtils
+import it.unibo.tuprolog.core.testutils.EqualityUtils.assertAllVsAllEqualities
+import it.unibo.tuprolog.core.testutils.EqualityUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import it.unibo.tuprolog.core.List as LogicList
@@ -11,7 +12,7 @@ class TestEmptyList {
     private val correctAtom = "[]"
     private val notCorrectAtom = "[ ]"
 
-    private val heterogeneousCreatedEmptyListInstances = listOf(
+    private val heterogeneousCreatedInstances = listOf(
             EmptyList(),
             Empty.list(),
             LogicList.empty(),
@@ -20,21 +21,18 @@ class TestEmptyList {
             Atom.of(correctAtom),
             atomOf(correctAtom),
             Struct.of(correctAtom),
-            structOf(correctAtom)
-    )
+            structOf(correctAtom))
 
     @Test
     fun variousCreationMethodsCreateCorrectlyEmptyList() {
-        heterogeneousCreatedEmptyListInstances.forEach(TermTypeAssertionUtils::assertIsEmptyList)
+        heterogeneousCreatedInstances.forEach(TermTypeAssertionUtils::assertIsEmptyList)
     }
 
     @Test
     fun equality() {
-        EqualityUtils.assertAllVsAllEqualities(heterogeneousCreatedEmptyListInstances)
+        assertAllVsAllEqualities(heterogeneousCreatedInstances)
 
         val notEmptyListAtom = Atom.of(notCorrectAtom)
-        heterogeneousCreatedEmptyListInstances.forEach { correct ->
-            EqualityUtils.assertNoEqualities(notEmptyListAtom, correct)
-        }
+        heterogeneousCreatedInstances.forEach { correct -> assertNoEqualities(notEmptyListAtom, correct) }
     }
 }
