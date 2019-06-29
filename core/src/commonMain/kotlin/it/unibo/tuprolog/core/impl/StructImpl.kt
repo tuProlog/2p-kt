@@ -2,23 +2,20 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import kotlin.collections.List
 
 internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
 
-    override fun structurallyEquals(other: Term): Boolean {
-        return other is StructImpl
-                && functor == other.functor
-                && arity == other.arity
-                && (0 until arity).all { args[it] structurallyEquals other[it] }
-    }
+    override fun structurallyEquals(other: Term): Boolean =
+            other is StructImpl
+                    && functor == other.functor
+                    && arity == other.arity
+                    && (0 until arity).all { args[it] structurallyEquals other[it] }
 
-    override fun strictlyEquals(other: Term): Boolean {
-        return other is StructImpl
-                && functor == other.functor
-                && arity == other.arity
-                && (0 until arity).all { args[it] strictlyEquals other[it] }
-    }
+    override fun strictlyEquals(other: Term): Boolean =
+            other is StructImpl
+                    && functor == other.functor
+                    && arity == other.arity
+                    && (0 until arity).all { args[it] strictlyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean by lazy {
         Struct.WELL_FORMED_FUNCTOR_PATTERN.matches(functor)

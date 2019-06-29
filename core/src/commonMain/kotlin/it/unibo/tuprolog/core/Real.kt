@@ -19,20 +19,12 @@ interface Real : Numeric {
 
     companion object {
 
-        fun of(real: BigDecimal): Real {
-            return RealImpl(real)
-        }
+        fun of(real: BigDecimal): Real = RealImpl(real)
 
-        fun of(real: Double): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
+        fun of(real: Double): Real = RealImpl(BigDecimal.of(real))
 
-        fun of(real: Float): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
+        fun of(real: Float): Real = RealImpl(BigDecimal.of(real))
 
-        fun of(real: String): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
+        fun of(real: String): Real = RealImpl(BigDecimal.of(real))
     }
 }

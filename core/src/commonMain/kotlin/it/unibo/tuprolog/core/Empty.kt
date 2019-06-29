@@ -9,6 +9,4 @@ interface Empty : Atom {
         fun list(): EmptyList = EmptyList()
         fun set(): EmptySet = EmptySet()
     }
-
 }
-

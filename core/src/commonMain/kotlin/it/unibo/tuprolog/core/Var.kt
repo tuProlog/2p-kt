@@ -17,9 +17,7 @@ interface Var : Term {
 
     val completeName: String
 
-    override fun freshCopy(): Var {
-        return Var.of(name)
-    }
+    override fun freshCopy(): Var = of(name)
 
     val isNameWellFormed: Boolean
 
@@ -29,12 +27,8 @@ interface Var : Term {
 
         val WELL_FORMED_NAME_PATTERN = Regex("""[A-Z_][A-Za-z_0-9]*""")
 
-        fun of(name: String): Var {
-            return VarImpl(name)
-        }
+        fun of(name: String): Var = VarImpl(name)
 
-        fun anonymous(): Var {
-            return VarImpl(ANONYMOUS_VAR_NAME)
-        }
+        fun anonymous(): Var = VarImpl(ANONYMOUS_VAR_NAME)
     }
 }

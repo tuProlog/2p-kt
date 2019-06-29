@@ -19,32 +19,18 @@ interface Integral : Numeric {
 
     companion object {
 
-        fun of(integer: BigInteger): Integral {
-            return IntegralImpl(integer)
-        }
+        fun of(integer: BigInteger): Integral = IntegralImpl(integer)
 
-        fun of(integer: Long): Integral {
-            return Integral.of(BigInteger.of(integer))
-        }
+        fun of(integer: Long): Integral = of(BigInteger.of(integer))
 
-        fun of(integer: Int): Integral {
-            return Integral.of(BigInteger.of(integer))
-        }
+        fun of(integer: Int): Integral = of(BigInteger.of(integer))
 
-        fun of(integer: Short): Integral {
-            return Integral.of(BigInteger.of(integer.toLong()))
-        }
+        fun of(integer: Short): Integral = of(BigInteger.of(integer.toLong()))
 
-        fun of(integer: Byte): Integral {
-            return Integral.of(BigInteger.of(integer.toLong()))
-        }
+        fun of(integer: Byte): Integral = of(BigInteger.of(integer.toLong()))
 
-        fun of(integer: String): Integral {
-            return Integral.of(BigInteger.of(integer))
-        }
+        fun of(integer: String): Integral = of(BigInteger.of(integer))
 
-        fun of(integer: String, radix: Int): Integral {
-            return Integral.of(BigInteger.of(integer, radix))
-        }
+        fun of(integer: String, radix: Int): Integral = of(BigInteger.of(integer, radix))
     }
 }

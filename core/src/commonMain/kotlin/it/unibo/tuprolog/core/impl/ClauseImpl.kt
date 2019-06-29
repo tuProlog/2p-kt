@@ -13,13 +13,12 @@ internal open class ClauseImpl(override val head: Struct?, override val body: Te
     override val args: Array<Term>
         get() = super<StructImpl>.args
 
-    override fun toString(): String {
-        return if (head === null) {
-            "$functor $body"
-        } else {
-            "$head $functor $body"
-        }
-    }
+    override fun toString(): String =
+            if (head === null) {
+                "$functor $body"
+            } else {
+                "$head $functor $body"
+            }
 
 }
 

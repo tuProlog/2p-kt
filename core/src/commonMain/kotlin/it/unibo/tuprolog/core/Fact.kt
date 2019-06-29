@@ -11,8 +11,6 @@ interface Fact : Rule {
         get() = true
 
     companion object {
-        fun of(head: Struct): Fact {
-            return FactImpl(head)
-        }
+        fun of(head: Struct): Fact = FactImpl(head)
     }
 }

@@ -14,21 +14,13 @@ interface EmptyList : Empty, LogicList {
     override val isEmptyList: Boolean
         get() = true
 
-    override fun toArray(): Array<Term> {
-        return arrayOf()
-    }
+    override fun toArray(): Array<Term> = arrayOf()
 
-    override fun toList(): List<Term> {
-        return emptyList()
-    }
+    override fun toList(): List<Term> = emptyList()
 
-    override fun toSequence(): Sequence<Term> {
-        return emptySequence()
-    }
+    override fun toSequence(): Sequence<Term> = emptySequence()
 
     companion object {
-        operator fun invoke(): EmptyList {
-            return EmptyListImpl
-        }
+        operator fun invoke(): EmptyList = EmptyListImpl
     }
 }

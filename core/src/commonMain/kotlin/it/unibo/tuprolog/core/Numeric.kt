@@ -15,55 +15,33 @@ interface Numeric : Term, Comparable<Numeric> {
 
     val intValue: BigInteger
 
-    override fun compareTo(other: Numeric): Int {
-        return decimalValue.compareTo(other.decimalValue)
-    }
+    override fun compareTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
     companion object {
 
-        fun of(decimal: BigDecimal): Real {
-            return Real.of(decimal)
-        }
+        fun of(decimal: BigDecimal): Real = Real.of(decimal)
 
-        fun of(value: Number): Numeric {
-            return Numeric.of(value.toString())
-        }
+        fun of(value: Number): Numeric = of(value.toString())
 
-        fun of(decimal: Double): Real {
-            return Real.of(decimal)
-        }
+        fun of(decimal: Double): Real = Real.of(decimal)
 
-        fun of(decimal: Float): Real {
-            return Real.of(decimal)
-        }
+        fun of(decimal: Float): Real = Real.of(decimal)
 
-        fun of(integer: BigInteger): Integral {
-            return Integral.of(integer)
-        }
+        fun of(integer: BigInteger): Integral = Integral.of(integer)
 
-        fun of(integer: Int): Integral {
-            return Integral.of(integer)
-        }
+        fun of(integer: Int): Integral = Integral.of(integer)
 
-        fun of(integer: Long): Integral {
-            return Integral.of(integer)
-        }
+        fun of(integer: Long): Integral = Integral.of(integer)
 
-        fun of(integer: Short): Integral {
-            return Integral.of(integer)
-        }
+        fun of(integer: Short): Integral = Integral.of(integer)
 
-        fun of(integer: Byte): Integral {
-            return Integral.of(integer)
-        }
+        fun of(integer: Byte): Integral = Integral.of(integer)
 
-        fun of(number: String): Numeric {
-            try {
-                return Integral.of(number)
-            } catch (ex: NumberFormatException) {
-                return Real.of(number)
-            }
-
-        }
+        fun of(number: String): Numeric =
+                try {
+                    Integral.of(number)
+                } catch (ex: NumberFormatException) {
+                    Real.of(number)
+                }
     }
 }

@@ -7,6 +7,8 @@ internal open class AtomImpl(override val functor: String) : StructImpl(functor,
 
     override val args: Array<Term> = super<StructImpl>.args
 
+    // TODO: 29/06/2019 missing structurallyEquals override??
+
     override fun strictlyEquals(other: Term): Boolean =
             other is AtomImpl
                     && value == other.value
