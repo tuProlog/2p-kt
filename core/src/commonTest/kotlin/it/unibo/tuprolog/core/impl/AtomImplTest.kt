@@ -1,11 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AtomUtils
-import it.unibo.tuprolog.core.testutils.EqualityUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,6 +11,8 @@ import kotlin.test.assertTrue
 
 /**
  * Test class for [AtomImpl] and [Atom]
+ *
+ * @author Enrico
  */
 internal class AtomImplTest {
 
@@ -104,37 +103,7 @@ internal class AtomImplTest {
     }
 
     @Test
-    fun atomFunctorAndValueAreTheSame() {
-        correctNonSpecialAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
-    }
-
-    @Test
-    fun atomOfWorksAsExpected() {
-        val toBeTested = correctNonSpecialAtoms.map { Atom.of(it) }
-
-        EqualityUtils.assertEqualities(toBeTested, correctNonSpecialAtomInstances)
-    }
-
-    @Test
-    fun atomOfWorksWithNotableAtoms() {
-        val notableAtoms = listOf("[]", "{}", "true", "fail")
-        val notableAtomInstances = listOf(EmptyList(), EmptySet(), Truth.`true`(), Truth.fail())
-        val toBeTested = notableAtoms.map { Atom.of(it) }
-
-        EqualityUtils.assertEqualities(toBeTested, notableAtomInstances)
-    }
-
-    @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
         correctNonSpecialAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
-    }
-
-    @Test
-    fun atomIsAValidFunctor() {
-        correctNonSpecialAtoms.zip(correctNonSpecialAtomInstances)
-                .filter { (atomString, _) -> atomString.matches(Atom.ATOM_REGEX_PATTERN) }
-                .forEach { (_, atomInstance) ->
-                    assertTrue { atomInstance.isFunctorWellFormed }
-                }
     }
 }
