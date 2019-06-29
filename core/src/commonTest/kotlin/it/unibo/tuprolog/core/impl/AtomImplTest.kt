@@ -31,7 +31,7 @@ internal class AtomImplTest {
             "is",
             "!"
     )
-    private val correctNonSpecialAtomInstances = correctNonSpecialAtoms.map { AtomImpl(it) }
+    private val correctNonSpecialAtomInstances = correctNonSpecialAtoms.map(::AtomImpl)
     // for special atoms are intended atoms for which there's a known subclass, like: true, fail, [], {}
 
     @Test
@@ -43,17 +43,17 @@ internal class AtomImplTest {
 
     @Test
     fun noArguments() {
-        correctNonSpecialAtomInstances.forEach { AtomUtils.assertNoArguments(it) }
+        correctNonSpecialAtomInstances.forEach(AtomUtils::assertNoArguments)
     }
 
     @Test
     fun zeroArity() {
-        correctNonSpecialAtomInstances.forEach { AtomUtils.assertZeroArity(it) }
+        correctNonSpecialAtomInstances.forEach(AtomUtils::assertZeroArity)
     }
 
     @Test
     fun testIsPropertiesAndTypes() {
-        correctNonSpecialAtomInstances.forEach { TermTypeAssertionUtils.assertIsAtom(it) }
+        correctNonSpecialAtomInstances.forEach(TermTypeAssertionUtils::assertIsAtom)
     }
 
     @Test
@@ -105,14 +105,14 @@ internal class AtomImplTest {
 
     @Test
     fun atomFunctorAndValueAreTheSame() {
-        correctNonSpecialAtomInstances.forEach { AtomUtils.assertSameValueAndFunctor(it) }
+        correctNonSpecialAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
     }
 
     @Test
     fun atomOfWorksAsExpected() {
         val toBeTested = correctNonSpecialAtoms.map { Atom.of(it) }
 
-        EqualityUtils.assertElementsEqualities(toBeTested, correctNonSpecialAtomInstances)
+        EqualityUtils.assertEqualities(toBeTested, correctNonSpecialAtomInstances)
     }
 
     @Test
@@ -121,14 +121,12 @@ internal class AtomImplTest {
         val notableAtomInstances = listOf(EmptyList(), EmptySet(), Truth.`true`(), Truth.fail())
         val toBeTested = notableAtoms.map { Atom.of(it) }
 
-        EqualityUtils.assertElementsEqualities(toBeTested, notableAtomInstances)
+        EqualityUtils.assertEqualities(toBeTested, notableAtomInstances)
     }
 
     @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
-        val testAtom = correctNonSpecialAtomInstances.first()
-
-        AtomUtils.assertFreshCopyIsItself(testAtom)
+        correctNonSpecialAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
     }
 
     @Test
