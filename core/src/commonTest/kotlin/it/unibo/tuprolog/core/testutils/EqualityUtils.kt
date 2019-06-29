@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 internal object EqualityUtils {
 
     /**
-     * Utility function to test all types of equalities of two Term lists
+     * Utility function to test all types of equalities (normal, strict and structural) of two Term lists
      */
     fun assertElementsEqualities(toBeTested: Iterable<Term>, correct: Iterable<Term>) {
         toBeTested.zip(correct).forEach { (toTestAtom, correctAtom) ->

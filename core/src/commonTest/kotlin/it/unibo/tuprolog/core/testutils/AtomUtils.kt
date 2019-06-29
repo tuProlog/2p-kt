@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -10,8 +11,6 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal object AtomUtils {
-
-    internal val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()
 
     /**
      * Asserts that no arguments are present in an Atom
@@ -40,6 +39,9 @@ internal object AtomUtils {
      * Asserts that a freshCopy of an Atom is the Atom itself
      */
     internal fun assertFreshCopyIsItself(atom: Atom) {
+        assertEquals(atom, atom.freshCopy())
+        assertTrue(atom structurallyEquals atom.freshCopy())
+        assertTrue(atom strictlyEquals atom.freshCopy())
         assertSame(atom, atom.freshCopy())
     }
 }

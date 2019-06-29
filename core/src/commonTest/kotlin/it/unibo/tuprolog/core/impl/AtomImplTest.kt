@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 internal class AtomImplTest {
 
     // these could be randomly generated from some library in future, maybe starting from Atom regex
-    private val correctAtoms = arrayOf(
+    private val correctNonSpecialAtoms = arrayOf(
             "anAtom",
             "AnUppercaseAtom",
             "_anAtomStartingWithUnderscore",
@@ -31,28 +31,29 @@ internal class AtomImplTest {
             "is",
             "!"
     )
-    private val correctAtomInstances = correctAtoms.map { AtomImpl(it) }
+    private val correctNonSpecialAtomInstances = correctNonSpecialAtoms.map { AtomImpl(it) }
+    // for special atoms are intended atoms for which there's a known subclass, like: true, fail, [], {}
 
     @Test
     fun functorCorrectness() {
-        correctAtoms.zip(correctAtomInstances).forEach { (string, instance) ->
+        correctNonSpecialAtoms.zip(correctNonSpecialAtomInstances).forEach { (string, instance) ->
             assertEquals(string, instance.functor)
         }
     }
 
     @Test
     fun noArguments() {
-        correctAtomInstances.forEach { AtomUtils.assertNoArguments(it) }
+        correctNonSpecialAtomInstances.forEach { AtomUtils.assertNoArguments(it) }
     }
 
     @Test
     fun zeroArity() {
-        correctAtomInstances.forEach { AtomUtils.assertZeroArity(it) }
+        correctNonSpecialAtomInstances.forEach { AtomUtils.assertZeroArity(it) }
     }
 
     @Test
     fun testIsPropertiesAndTypes() {
-        correctAtomInstances.forEach { TermTypeAssertionUtils.assertIsAtom(it) }
+        correctNonSpecialAtomInstances.forEach { TermTypeAssertionUtils.assertIsAtom(it) }
     }
 
     @Test
@@ -104,14 +105,14 @@ internal class AtomImplTest {
 
     @Test
     fun atomFunctorAndValueAreTheSame() {
-        correctAtomInstances.forEach { AtomUtils.assertSameValueAndFunctor(it) }
+        correctNonSpecialAtomInstances.forEach { AtomUtils.assertSameValueAndFunctor(it) }
     }
 
     @Test
     fun atomOfWorksAsExpected() {
-        val toBeTested = correctAtoms.map { Atom.of(it) }
+        val toBeTested = correctNonSpecialAtoms.map { Atom.of(it) }
 
-        EqualityUtils.assertElementsEqualities(toBeTested, correctAtomInstances)
+        EqualityUtils.assertElementsEqualities(toBeTested, correctNonSpecialAtomInstances)
     }
 
     @Test
@@ -125,8 +126,17 @@ internal class AtomImplTest {
 
     @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
-        val testAtom = correctAtomInstances.first()
+        val testAtom = correctNonSpecialAtomInstances.first()
 
         AtomUtils.assertFreshCopyIsItself(testAtom)
+    }
+
+    @Test
+    fun atomIsAValidFunctor() {
+        correctNonSpecialAtoms.zip(correctNonSpecialAtomInstances)
+                .filter { (atomString, _) -> atomString.matches(Atom.ATOM_REGEX_PATTERN) }
+                .forEach { (_, atomInstance) ->
+                    assertTrue { atomInstance.isFunctorWellFormed }
+                }
     }
 }
