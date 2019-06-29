@@ -83,26 +83,6 @@ internal class AtomImplTest {
     }
 
     @Test
-    fun emptySetAtomDetected() {
-        assertTrue(AtomImpl("{}").isEmptySet)
-    }
-
-    @Test
-    fun emptyListAtomDetected() {
-        assertTrue(AtomImpl("[]").isEmptyList)
-    }
-
-    @Test
-    fun trueAtomDetected() {
-        assertTrue(AtomImpl("true").isTrue)
-    }
-
-    @Test
-    fun failAtomDetected() {
-        assertTrue(AtomImpl("fail").isFail)
-    }
-
-    @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
         correctNonSpecialAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
     }

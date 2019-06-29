@@ -43,6 +43,26 @@ internal class AtomTest {
     }
 
     @Test
+    fun emptySetAtomDetected() {
+        assertTrue(Atom.of("{}").isEmptySet)
+    }
+
+    @Test
+    fun emptyListAtomDetected() {
+        assertTrue(Atom.of("[]").isEmptyList)
+    }
+
+    @Test
+    fun trueAtomDetected() {
+        assertTrue(Atom.of("true").isTrue)
+    }
+
+    @Test
+    fun failAtomDetected() {
+        assertTrue(Atom.of("fail").isFail)
+    }
+
+    @Test
     fun atomOfWorksAsExpected() {
         val toBeTested = correctNonSpecialAtoms.map { Atom.of(it) }
 
