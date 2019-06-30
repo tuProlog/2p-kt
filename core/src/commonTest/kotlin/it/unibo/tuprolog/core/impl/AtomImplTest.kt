@@ -16,43 +16,55 @@ import kotlin.test.assertTrue
  */
 internal class AtomImplTest {
 
-    // these could be randomly generated from some library in future, maybe starting from Atom regex
-    private val correctNonSpecialAtoms = arrayOf(
-            "anAtom",
-            "AnUppercaseAtom",
-            "_anAtomStartingWithUnderscore",
-            "a_snake_cased_atom",
-            "a string",
-            "1",
-            "1.3",
-            "+",
-            ",",
-            "is",
-            "!"
-    )
-    private val correctNonSpecialAtomInstances = correctNonSpecialAtoms.map(::AtomImpl)
-    // for special atoms are intended atoms for which there's a known subclass, like: true, fail, [], {}
+    private val correctAtoms = AtomUtils.specialAtoms + AtomUtils.nonSpecialAtoms
+    private val correctAtomInstances = correctAtoms.map(::AtomImpl)
 
     @Test
     fun functorCorrectness() {
-        correctNonSpecialAtoms.zip(correctNonSpecialAtomInstances).forEach { (string, instance) ->
-            assertEquals(string, instance.functor)
+        correctAtoms.zip(correctAtomInstances).forEach { (atomString, atomInstance) ->
+            assertEquals(atomString, atomInstance.functor)
         }
     }
 
     @Test
+    fun atomFunctorAndValueAreTheSame() {
+        correctAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
+    }
+
+    @Test
     fun noArguments() {
-        correctNonSpecialAtomInstances.forEach(AtomUtils::assertNoArguments)
+        correctAtomInstances.forEach(AtomUtils::assertNoArguments)
     }
 
     @Test
     fun zeroArity() {
-        correctNonSpecialAtomInstances.forEach(AtomUtils::assertZeroArity)
+        correctAtomInstances.forEach(AtomUtils::assertZeroArity)
     }
 
     @Test
-    fun testIsPropertiesAndTypes() {
-        correctNonSpecialAtomInstances.forEach(TermTypeAssertionUtils::assertIsAtom)
+    fun testNonSpecialAtomIsPropertiesAndTypes() {
+        AtomUtils.nonSpecialAtoms.map(::AtomImpl)
+                .forEach(TermTypeAssertionUtils::assertIsAtom)
+    }
+
+    @Test
+    fun emptySetAtomDetected() {
+        assertTrue(AtomImpl("{}").isEmptySet)
+    }
+
+    @Test
+    fun emptyListAtomDetected() {
+        assertTrue(AtomImpl("[]").isEmptyList)
+    }
+
+    @Test
+    fun trueAtomDetected() {
+        assertTrue(AtomImpl("true").isTrue)
+    }
+
+    @Test
+    fun failAtomDetected() {
+        assertTrue(AtomImpl("fail").isFail)
     }
 
     @Test
@@ -84,6 +96,6 @@ internal class AtomImplTest {
 
     @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
-        correctNonSpecialAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
+        correctAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
     }
 }

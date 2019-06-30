@@ -1,85 +1,58 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.AtomImpl
 import it.unibo.tuprolog.core.testutils.AtomUtils
-import it.unibo.tuprolog.core.testutils.EqualityUtils
+import it.unibo.tuprolog.core.testutils.EqualityUtils.assertEqualities
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Test class for [Atom] and its companion object
+ * Test class for [Atom] companion object
  *
  * @author Enrico
  */
 internal class AtomTest {
 
-    private val correctNonSpecialAtoms = arrayOf(
-            "anAtom",
-            "AnUppercaseAtom",
-            "_anAtomStartingWithUnderscore",
-            "a_snake_cased_atom",
-            "a string",
-            "1",
-            "1.3",
-            "+",
-            ",",
-            "is",
-            "!"
-    )
-    private val correctNonSpecialAtomInstances = correctNonSpecialAtoms.map { Atom.of(it) }
-
-    private val correctSpecialAtoms = listOf(
-            "[]",
-            "{}",
-            "true",
-            "fail"
-    )
-    private val correctSpecialAtomInstances = correctSpecialAtoms.map { Atom.of(it) }
-
-
-    @Test
-    fun atomFunctorAndValueAreTheSame() {
-        (correctNonSpecialAtomInstances + correctSpecialAtomInstances)
-                .forEach(AtomUtils::assertSameValueAndFunctor)
-    }
-
     @Test
     fun emptySetAtomDetected() {
-        assertTrue(Atom.of("{}").isEmptySet)
+        assertEqualities(Atom.of("{}"), Empty.set())
     }
 
     @Test
     fun emptyListAtomDetected() {
-        assertTrue(Atom.of("[]").isEmptyList)
+        assertEqualities(Atom.of("[]"), Empty.list())
     }
 
     @Test
     fun trueAtomDetected() {
-        assertTrue(Atom.of("true").isTrue)
+        assertEqualities(Atom.of("true"), Truth.`true`())
     }
 
     @Test
     fun failAtomDetected() {
-        assertTrue(Atom.of("fail").isFail)
+        assertEqualities(Atom.of("fail"), Truth.fail())
     }
 
     @Test
     fun atomOfWorksAsExpected() {
-        val toBeTested = correctNonSpecialAtoms.map { Atom.of(it) }
+        val correctInstances = AtomUtils.nonSpecialAtoms.map(::AtomImpl)
+        val toBeTested = AtomUtils.nonSpecialAtoms.map { Atom.of(it) }
 
-        EqualityUtils.assertEqualities(toBeTested, correctNonSpecialAtomInstances)
+        assertEqualities(toBeTested, correctInstances)
     }
 
     @Test
     fun atomOfWorksWithNotableAtoms() {
-        val notableAtomInstances = listOf(EmptyList(), EmptySet(), Truth.`true`(), Truth.fail())
+        val correctInstances = listOf(EmptyList(), EmptySet(), Truth.`true`(), Truth.fail())
+        val toBeTested = AtomUtils.specialAtoms.map { Atom.of(it) }
 
-        EqualityUtils.assertEqualities(correctSpecialAtomInstances, notableAtomInstances)
+        assertEqualities(toBeTested, correctInstances)
     }
 
     @Test
     fun atomIsAValidFunctor() {
-        val correctAtoms = correctNonSpecialAtoms + correctSpecialAtoms
-        val correctAtomInstances = correctNonSpecialAtomInstances + correctSpecialAtomInstances
+        val correctAtoms = AtomUtils.specialAtoms + AtomUtils.nonSpecialAtoms
+        val correctAtomInstances = correctAtoms.map { Atom.of(it) }
 
         correctAtoms.zip(correctAtomInstances)
                 .filter { (atomString, _) -> atomString.matches(Atom.ATOM_REGEX_PATTERN) }
