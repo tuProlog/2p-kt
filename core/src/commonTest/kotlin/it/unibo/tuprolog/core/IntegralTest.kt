@@ -68,4 +68,10 @@ internal class IntegralTest {
 
         EqualityUtils.assertEqualities(toTest, correct)
     }
+
+    @Test
+    fun integralsRespectItsRegexPattern() {
+        IntegralUtils.stringNumbers.forEach { it matches Integral.INTEGRAL_REGEX_PATTERN }
+        IntegralUtils.stringNumbers.map { Integral.of(it) }.forEach { it.toString() matches Integral.INTEGRAL_REGEX_PATTERN }
+    }
 }
