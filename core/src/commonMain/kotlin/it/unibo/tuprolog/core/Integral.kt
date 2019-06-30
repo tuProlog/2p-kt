@@ -18,19 +18,14 @@ interface Integral : Numeric {
         get() = value
 
     companion object {
+        val INTEGRAL_REGEX_PATTERN = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
 
         fun of(integer: BigInteger): Integral = IntegralImpl(integer)
-
         fun of(integer: Long): Integral = of(BigInteger.of(integer))
-
         fun of(integer: Int): Integral = of(BigInteger.of(integer))
-
         fun of(integer: Short): Integral = of(BigInteger.of(integer.toLong()))
-
         fun of(integer: Byte): Integral = of(BigInteger.of(integer.toLong()))
-
         fun of(integer: String): Integral = of(BigInteger.of(integer))
-
         fun of(integer: String, radix: Int): Integral = of(BigInteger.of(integer, radix))
     }
 }
