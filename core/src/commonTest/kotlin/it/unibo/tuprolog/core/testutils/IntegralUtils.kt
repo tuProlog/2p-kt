@@ -46,9 +46,9 @@ internal object IntegralUtils {
      * Contains only numbers representable with Long
      */
     internal val onlyLongs by lazy {
-        bigIntegers.mapNotNull { bigInt ->
+        bigIntegers.mapNotNull {
             try {
-                bigInt.toLongExact().let { bigInt }
+                it.toLongExact()
             } catch (e: Exception) {
                 null
             }
@@ -59,9 +59,9 @@ internal object IntegralUtils {
      * Contains only numbers representable with Int
      */
     internal val onlyInts by lazy {
-        bigIntegers.mapNotNull { bigInt ->
+        bigIntegers.mapNotNull {
             try {
-                bigInt.toIntExact().let { bigInt }
+                it.toIntExact()
             } catch (e: Exception) {
                 null
             }
@@ -72,9 +72,9 @@ internal object IntegralUtils {
      * Contains only numbers representable with Short
      */
     internal val onlyShorts by lazy {
-        bigIntegers.mapNotNull { bigInt ->
+        bigIntegers.mapNotNull {
             try {
-                bigInt.toShortExact().let { bigInt }
+                it.toShortExact()
             } catch (e: Exception) {
                 null
             }
@@ -85,9 +85,9 @@ internal object IntegralUtils {
      * Contains only numbers representable with Byte
      */
     internal val onlyBytes by lazy {
-        bigIntegers.mapNotNull { bigInt ->
+        bigIntegers.mapNotNull {
             try {
-                bigInt.toByteExact().let { bigInt }
+                it.toByteExact()
             } catch (e: Exception) {
                 null
             }

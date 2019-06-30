@@ -23,7 +23,7 @@ internal class IntegralTest {
 
     @Test
     fun integralOfLong() {
-        val correct = IntegralUtils.onlyLongs.map(::IntegralImpl)
+        val correct = IntegralUtils.onlyLongs.map { BigInteger.of(it) }.map(::IntegralImpl)
         val toTest = IntegralUtils.onlyLongs.map { Integral.of(it) }
 
         EqualityUtils.assertEqualities(toTest, correct)
@@ -31,7 +31,7 @@ internal class IntegralTest {
 
     @Test
     fun integralOfInt() {
-        val correct = IntegralUtils.onlyInts.map(::IntegralImpl)
+        val correct = IntegralUtils.onlyInts.map { BigInteger.of(it) }.map(::IntegralImpl)
         val toTest = IntegralUtils.onlyInts.map { Integral.of(it) }
 
         EqualityUtils.assertEqualities(toTest, correct)
@@ -39,7 +39,7 @@ internal class IntegralTest {
 
     @Test
     fun integralOfShort() {
-        val correct = IntegralUtils.onlyShorts.map(::IntegralImpl)
+        val correct = IntegralUtils.onlyShorts.map { BigInteger.of(it.toLong()) }.map(::IntegralImpl)
         val toTest = IntegralUtils.onlyShorts.map { Integral.of(it) }
 
         EqualityUtils.assertEqualities(toTest, correct)
@@ -47,7 +47,7 @@ internal class IntegralTest {
 
     @Test
     fun integralOfByte() {
-        val correct = IntegralUtils.onlyBytes.map(::IntegralImpl)
+        val correct = IntegralUtils.onlyBytes.map { BigInteger.of(it.toLong()) }.map(::IntegralImpl)
         val toTest = IntegralUtils.onlyBytes.map { Integral.of(it) }
 
         EqualityUtils.assertEqualities(toTest, correct)
