@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IntegralUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -23,15 +24,15 @@ class IntegralImplTest {
 
     @Test
     fun correctValue() {
-        IntegralUtils.bigIntegers.zip(integralInstances).forEach { (expectedValue, integral) ->
-            assertEquals(expectedValue, integral.value)
+        onCorrespondingItems(IntegralUtils.bigIntegers, integralInstances.map { it.value }) { expectedValue, integralValue ->
+            assertEquals(expectedValue, integralValue)
         }
     }
 
     @Test
     fun correctIntValue() {
-        IntegralUtils.bigIntegers.zip(integralInstances).forEach { (expectedValue, integral) ->
-            assertEquals(expectedValue, integral.intValue)
+        onCorrespondingItems(IntegralUtils.bigIntegers, integralInstances.map { it.intValue }) { expectedValue, integralIntValue ->
+            assertEquals(expectedValue, integralIntValue)
         }
     }
 
@@ -39,8 +40,8 @@ class IntegralImplTest {
     fun correctDecimalValue() {
         val expectedDecimals = IntegralUtils.bigIntegers.map { BigDecimal.of(it) }
 
-        expectedDecimals.zip(integralInstances).forEach { (expectedValue, integral) ->
-            assertEquals(expectedValue, integral.decimalValue)
+        onCorrespondingItems(expectedDecimals, integralInstances.map { it.decimalValue }) { expectedValue, integralDecimalValue ->
+            assertEquals(expectedValue, integralDecimalValue)
         }
     }
 
@@ -48,8 +49,8 @@ class IntegralImplTest {
     fun correctToString() {
         val expectedToString = IntegralUtils.bigIntegers.map { it.toString() }
 
-        expectedToString.zip(integralInstances).forEach { (expectedString, integral) ->
-            assertEquals(expectedString, integral.toString())
+        onCorrespondingItems(expectedToString, integralInstances.map { it.toString() }) { expectedString, integralToString ->
+            assertEquals(expectedString, integralToString)
         }
     }
 

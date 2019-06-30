@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.RealImpl
-import it.unibo.tuprolog.core.testutils.EqualityUtils
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
 import kotlin.test.Test
@@ -19,7 +20,7 @@ internal class RealTest {
         val correct = RealUtils.bigDecimals.map(::RealImpl)
         val toTest = RealUtils.bigDecimals.map { Real.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -27,7 +28,7 @@ internal class RealTest {
         val correct = RealUtils.decimalsAsDoubles.map { BigDecimal.of(it) }.map(::RealImpl)
         val toTest = RealUtils.decimalsAsDoubles.map { Real.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -35,7 +36,7 @@ internal class RealTest {
         val correct = RealUtils.decimalsAsFloats.map { BigDecimal.of(it) }.map(::RealImpl)
         val toTest = RealUtils.decimalsAsFloats.map { Real.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -43,7 +44,7 @@ internal class RealTest {
         val correct = RealUtils.bigDecimals.map(::RealImpl)
         val toTest = RealUtils.stringNumbers.map { Real.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test

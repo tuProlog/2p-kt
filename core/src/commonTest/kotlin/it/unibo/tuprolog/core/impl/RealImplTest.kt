@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -22,15 +23,15 @@ internal class RealImplTest {
 
     @Test
     fun correctValue() {
-        RealUtils.bigDecimals.zip(realInstances).forEach { (expectedValue, real) ->
-            assertEquals(expectedValue, real.value)
+        onCorrespondingItems(RealUtils.bigDecimals, realInstances.map { it.value }) { expectedValue, realValue ->
+            assertEquals(expectedValue, realValue)
         }
     }
 
     @Test
     fun correctDecimalValue() {
-        RealUtils.bigDecimals.zip(realInstances).forEach { (expectedValue, real) ->
-            assertEquals(expectedValue, real.decimalValue)
+        onCorrespondingItems(RealUtils.bigDecimals, realInstances.map { it.decimalValue }) { expectedValue, realDecimalValue ->
+            assertEquals(expectedValue, realDecimalValue)
         }
     }
 
@@ -38,8 +39,8 @@ internal class RealImplTest {
     fun correctIntValue() {
         val expectedIntegrals = RealUtils.bigDecimals.map { it.toBigInteger() }
 
-        expectedIntegrals.zip(realInstances).forEach { (expectedValue, real) ->
-            assertEquals(expectedValue, real.intValue)
+        onCorrespondingItems(expectedIntegrals, realInstances.map { it.intValue }) { expectedValue, realIntValue ->
+            assertEquals(expectedValue, realIntValue)
         }
     }
 
@@ -47,8 +48,8 @@ internal class RealImplTest {
     fun correctToString() {
         val expectedToString = RealUtils.bigDecimals.map { it.toString() }
 
-        expectedToString.zip(realInstances).forEach { (expectedString, integral) ->
-            assertEquals(expectedString, integral.toString())
+        onCorrespondingItems(expectedToString, realInstances.map { it.toString() }) { expectedString, realToString ->
+            assertEquals(expectedString, realToString)
         }
     }
 

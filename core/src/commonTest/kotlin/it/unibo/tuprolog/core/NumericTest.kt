@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.testutils.EqualityUtils
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.IntegralUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import kotlin.test.Test
@@ -17,7 +18,7 @@ internal class NumericTest {
         val correct = RealUtils.bigDecimals.map { Real.of(it) }
         val toTest = RealUtils.bigDecimals.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -30,8 +31,8 @@ internal class NumericTest {
         @Suppress("USELESS_CAST") val toTestIntegral =
                 IntegralUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTestReal, correctReal)
-        EqualityUtils.assertEqualities(toTestIntegral, correctIntegral)
+        onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
+        onCorrespondingItems(toTestIntegral, correctIntegral, ::assertEqualities)
     }
 
     @Test
@@ -39,7 +40,7 @@ internal class NumericTest {
         val correct = RealUtils.decimalsAsDoubles.map { Real.of(it) }
         val toTest = RealUtils.decimalsAsDoubles.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -47,7 +48,7 @@ internal class NumericTest {
         val correct = RealUtils.decimalsAsFloats.map { Real.of(it) }
         val toTest = RealUtils.decimalsAsFloats.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -55,7 +56,7 @@ internal class NumericTest {
         val correct = IntegralUtils.bigIntegers.map { Integral.of(it) }
         val toTest = IntegralUtils.bigIntegers.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -63,7 +64,7 @@ internal class NumericTest {
         val correct = IntegralUtils.onlyInts.map { Integral.of(it) }
         val toTest = IntegralUtils.onlyInts.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -71,7 +72,7 @@ internal class NumericTest {
         val correct = IntegralUtils.onlyLongs.map { Integral.of(it) }
         val toTest = IntegralUtils.onlyLongs.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -79,7 +80,7 @@ internal class NumericTest {
         val correct = IntegralUtils.onlyShorts.map { Integral.of(it) }
         val toTest = IntegralUtils.onlyShorts.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -87,7 +88,7 @@ internal class NumericTest {
         val correct = IntegralUtils.onlyBytes.map { Integral.of(it) }
         val toTest = IntegralUtils.onlyBytes.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTest, correct)
+        onCorrespondingItems(toTest, correct, ::assertEqualities)
     }
 
     @Test
@@ -98,7 +99,7 @@ internal class NumericTest {
         val correctReal = RealUtils.stringNumbers.map { Real.of(it) }
         val toTestReal = RealUtils.stringNumbers.map { Numeric.of(it) }
 
-        EqualityUtils.assertEqualities(toTestIntegral, correctIntegral)
-        EqualityUtils.assertEqualities(toTestReal, correctReal)
+        onCorrespondingItems(toTestIntegral, correctIntegral, ::assertEqualities)
+        onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
     }
 }

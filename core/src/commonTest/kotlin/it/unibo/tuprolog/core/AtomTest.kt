@@ -1,8 +1,9 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.AtomImpl
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
-import it.unibo.tuprolog.core.testutils.EqualityUtils.assertEqualities
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -38,7 +39,7 @@ internal class AtomTest {
         val correctInstances = AtomUtils.nonSpecialAtoms.map(::AtomImpl)
         val toBeTested = AtomUtils.nonSpecialAtoms.map { Atom.of(it) }
 
-        assertEqualities(toBeTested, correctInstances)
+        onCorrespondingItems(toBeTested, correctInstances, ::assertEqualities)
     }
 
     @Test
@@ -46,7 +47,7 @@ internal class AtomTest {
         val correctInstances = listOf(EmptyList(), EmptySet(), Truth.`true`(), Truth.fail())
         val toBeTested = AtomUtils.specialAtoms.map { Atom.of(it) }
 
-        assertEqualities(toBeTested, correctInstances)
+        onCorrespondingItems(toBeTested, correctInstances, ::assertEqualities)
     }
 
     @Test

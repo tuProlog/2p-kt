@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core.integrationtests
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.testutils.EqualityUtils.assertAllVsAllEqualities
-import it.unibo.tuprolog.core.testutils.EqualityUtils.assertNoEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAllEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import it.unibo.tuprolog.core.Set.Companion as LogicSet

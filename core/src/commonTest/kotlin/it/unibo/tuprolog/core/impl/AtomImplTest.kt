@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -21,8 +22,8 @@ internal class AtomImplTest {
 
     @Test
     fun functorCorrectness() {
-        AtomUtils.mixedAtoms.zip(mixedAtomInstances).forEach { (atomString, atomInstance) ->
-            assertEquals(atomString, atomInstance.functor)
+        onCorrespondingItems(AtomUtils.mixedAtoms, mixedAtomInstances.map { it.functor }) { atomString, atomInstanceFunctor ->
+            assertEquals(atomString, atomInstanceFunctor)
         }
     }
 
