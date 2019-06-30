@@ -2,7 +2,10 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Test class for [EmptyListImpl] and [EmptyList]
@@ -16,11 +19,6 @@ internal class EmptyListImplTest {
     @Test
     fun emptyListFunctor() {
         assertEquals("[]", testedObj.functor)
-    }
-
-    @Test
-    fun functorDoesNotRespectStructRegex() {
-        assertFalse(testedObj.isFunctorWellFormed)
     }
 
     @Test
@@ -39,12 +37,17 @@ internal class EmptyListImplTest {
     }
 
     @Test
+    fun toStringShouldWorkAsExpected() {
+        assertEquals("[]", testedObj.toString())
+    }
+
+    @Test
     fun testIsPropertiesAndTypes() {
         TermTypeAssertionUtils.assertIsEmptyList(testedObj)
     }
 
     @Test
-    fun emptyListCompanionReturnsEmptyListImpl() {
-        assertSame(EmptyList(), testedObj)
+    fun functorDoesNotRespectStructRegex() {
+        assertFalse(testedObj.isFunctorWellFormed)
     }
 }

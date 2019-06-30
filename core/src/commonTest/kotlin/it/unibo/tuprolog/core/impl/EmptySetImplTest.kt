@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertSame
 
 /**
  * Test class for [EmptySetImpl] and [EmptySet]
@@ -23,11 +22,6 @@ internal class EmptySetImplTest {
     }
 
     @Test
-    fun functorDoesNotRespectStructRegex() {
-        assertFalse(testedObj.isFunctorWellFormed)
-    }
-
-    @Test
     fun emptyArguments() {
         AtomUtils.assertNoArguments(testedObj)
     }
@@ -38,7 +32,7 @@ internal class EmptySetImplTest {
     }
 
     @Test
-    fun emptyListCompanionReturnsEmptyListImpl() {
-        assertSame(EmptySet(), testedObj)
+    fun functorDoesNotRespectStructRegex() {
+        assertFalse(testedObj.isFunctorWellFormed)
     }
 }
