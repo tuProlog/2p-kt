@@ -38,7 +38,6 @@ abstract class BaseTestNumeric {
         }
     }
 
-    private val intPattern = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
     private val i = """([0-9]+)"""
     private val d = """(\.[0-9]+)"""
     private val e = """([eE][+\-]?[0-9]+)"""
@@ -64,7 +63,7 @@ abstract class BaseTestNumeric {
     fun creationAsNumbers1() {
         val creation = numbersUnderTestAsStrings.map {
             when {
-                it.matches(intPattern) -> Integral.of(it)
+                it.matches(Integral.INTEGRAL_REGEX_PATTERN) -> Integral.of(it)
                 it.matches(realPattern) -> Real.of(it)
                 else -> throw IllegalArgumentException(it)
             }
@@ -110,7 +109,7 @@ abstract class BaseTestNumeric {
             val it = Numeric.of(str)
 
             when {
-                str.matches(intPattern) -> assertTrue(it is Integral)
+                str.matches(Integral.INTEGRAL_REGEX_PATTERN) -> assertTrue(it is Integral)
                 str.matches(realPattern) -> assertTrue(it is Real)
                 else -> throw IllegalArgumentException()
             }
@@ -118,14 +117,14 @@ abstract class BaseTestNumeric {
             assertTrue(it is Term)
 
             when {
-                str.matches(intPattern) -> assertTrue(it.isInt)
+                str.matches(Integral.INTEGRAL_REGEX_PATTERN) -> assertTrue(it.isInt)
                 str.matches(realPattern) -> assertTrue(it.isReal)
                 else -> throw IllegalArgumentException()
             }
             assertTrue(it.isNumber)
 
             when {
-                str.matches(intPattern) -> assertFalse(it is Real)
+                str.matches(Integral.INTEGRAL_REGEX_PATTERN) -> assertFalse(it is Real)
                 str.matches(realPattern) -> assertFalse(it is Integral)
                 else -> throw IllegalArgumentException()
             }
@@ -135,7 +134,7 @@ abstract class BaseTestNumeric {
             assertFalse(it is Couple)
 
             when {
-                str.matches(intPattern) -> assertFalse(it.isReal)
+                str.matches(Integral.INTEGRAL_REGEX_PATTERN) -> assertFalse(it.isReal)
                 str.matches(realPattern) -> assertFalse(it.isInt)
                 else -> throw IllegalArgumentException()
             }
@@ -175,7 +174,7 @@ abstract class BaseTestNumeric {
     fun toStringRepresentation() {
         numbersUnderTest.forEach {
             when (it) {
-                is Integral -> assertTrue(it.toString() matches intPattern, "$it does not matched $intPattern")
+                is Integral -> assertTrue(it.toString() matches Integral.INTEGRAL_REGEX_PATTERN, "$it does not matched $Integral.INTEGRAL_REGEX_PATTERN")
                 is Real -> assertTrue(it.toString() matches realPattern, "$it does not matched $realPattern")
                 else -> throw IllegalArgumentException()
             }
