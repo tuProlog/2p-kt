@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IntegralUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
@@ -94,5 +95,10 @@ class IntegralImplTest {
 
         assertFalse(oneIntegral structurallyEquals oneAtom)
         assertFalse(oneAtom structurallyEquals oneIntegral)
+    }
+
+    @Test
+    fun integralFreshCopyShouldReturnTheInstanceItself() {
+        integralInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
     }
 }

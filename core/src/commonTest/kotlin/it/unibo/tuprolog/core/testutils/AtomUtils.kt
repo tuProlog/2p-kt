@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
-import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -70,15 +69,5 @@ internal object AtomUtils {
      */
     internal fun assertSameValueAndFunctor(atom: Atom) {
         assertSame(atom.value, atom.functor)
-    }
-
-    /**
-     * Asserts that a freshCopy of an Atom is the Atom itself
-     */
-    internal fun assertFreshCopyIsItself(atom: Atom) {
-        assertEquals(atom, atom.freshCopy())
-        assertTrue(atom structurallyEquals atom.freshCopy())
-        assertTrue(atom strictlyEquals atom.freshCopy())
-        assertSame(atom, atom.freshCopy())
     }
 }
