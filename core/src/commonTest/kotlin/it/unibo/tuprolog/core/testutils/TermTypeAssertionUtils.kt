@@ -58,25 +58,59 @@ internal object TermTypeAssertionUtils {
     /**
      * Checks passed term to be a Numeric or fails otherwise
      */
-    fun assertIsNumeric(any: Any) {
+    private fun commonNumericAssertions(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Numeric)
 
-        TODO()
+        assertTrue(any.isNumber)
+        assertTrue(any.isGround)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCouple)
+        assertFalse(any.isStruct)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+
+        assertFalse(any is Var)
+        assertFalse(any is Struct)
+        assertFalse(any is Clause)
+        assertFalse(any is Couple)
     }
 
     /**
      * Checks passed term to be a Real or fails otherwise
      */
     fun assertIsReal(any: Any) {
+        commonNumericAssertions(any)
 
-        TODO()
+        assertTrue(any is Real)
+
+        assertTrue(any.isReal)
+
+        assertFalse(any.isInt)
     }
 
     /**
      * Checks passed term to be an Integral or fails otherwise
      */
     fun assertIsIntegral(any: Any) {
+        commonNumericAssertions(any)
 
-        TODO()
+        assertTrue(any is Integral)
+
+        assertTrue(any.isInt)
+
+        assertFalse(any.isReal)
     }
 
     /**

@@ -41,7 +41,7 @@ internal class AtomImplTest {
     }
 
     @Test
-    fun testNonSpecialAtomIsPropertiesAndTypes() {
+    fun testIsPropertiesAndTypesForNonSpecialAtom() {
         AtomUtils.nonSpecialAtoms.map(::AtomImpl)
                 .forEach(TermTypeAssertionUtils::assertIsAtom)
     }
