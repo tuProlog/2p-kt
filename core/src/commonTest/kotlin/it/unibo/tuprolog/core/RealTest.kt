@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.testutils.EqualityUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 /**
  * Test class for [Real] companion object
@@ -49,5 +50,20 @@ internal class RealTest {
     fun realRespectItsRegexPattern() {
         RealUtils.stringNumbers.forEach { it matches Real.REAL_REGEX_PATTERN }
         RealUtils.stringNumbers.map { Real.of(it) }.forEach { it.toString() matches Real.REAL_REGEX_PATTERN }
+    }
+
+    @Test
+    fun infinityHandling() {
+        assertFailsWith<NumberFormatException> { Real.of(Double.NEGATIVE_INFINITY) }
+        assertFailsWith<NumberFormatException> { Real.of(Double.POSITIVE_INFINITY) }
+
+        assertFailsWith<NumberFormatException> { Real.of(Float.NEGATIVE_INFINITY) }
+        assertFailsWith<NumberFormatException> { Real.of(Float.POSITIVE_INFINITY) }
+    }
+
+    @Test
+    fun notANumberHandling() {
+        assertFailsWith<NumberFormatException> { Real.of(Double.NaN) }
+        assertFailsWith<NumberFormatException> { Real.of(Float.NaN) }
     }
 }
