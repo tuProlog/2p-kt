@@ -51,7 +51,7 @@ internal class AtomTest {
 
     @Test
     fun atomIsAValidFunctor() {
-        val correctAtoms = AtomUtils.specialAtoms + AtomUtils.nonSpecialAtoms
+        val correctAtoms = AtomUtils.mixedAtoms
         val correctAtomInstances = correctAtoms.map { Atom.of(it) }
 
         correctAtoms.zip(correctAtomInstances)

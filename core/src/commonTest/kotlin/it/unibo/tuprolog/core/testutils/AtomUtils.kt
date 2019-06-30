@@ -42,6 +42,14 @@ internal object AtomUtils {
     }
 
     /**
+     * A mix of special and non special atoms
+     *
+     * @see specialAtoms
+     * @see nonSpecialAtoms
+     */
+    internal val mixedAtoms by lazy { nonSpecialAtoms + specialAtoms }
+
+    /**
      * Asserts that no arguments are present in an Atom
      */
     internal fun assertNoArguments(atom: Atom) {

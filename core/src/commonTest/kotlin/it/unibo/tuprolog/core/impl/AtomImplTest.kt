@@ -16,29 +16,28 @@ import kotlin.test.assertTrue
  */
 internal class AtomImplTest {
 
-    private val correctAtoms = AtomUtils.specialAtoms + AtomUtils.nonSpecialAtoms
-    private val correctAtomInstances = correctAtoms.map(::AtomImpl)
+    private val mixedAtomInstances = AtomUtils.mixedAtoms.map(::AtomImpl)
 
     @Test
     fun functorCorrectness() {
-        correctAtoms.zip(correctAtomInstances).forEach { (atomString, atomInstance) ->
+        AtomUtils.mixedAtoms.zip(mixedAtomInstances).forEach { (atomString, atomInstance) ->
             assertEquals(atomString, atomInstance.functor)
         }
     }
 
     @Test
     fun atomFunctorAndValueAreTheSame() {
-        correctAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
+        mixedAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
     }
 
     @Test
     fun noArguments() {
-        correctAtomInstances.forEach(AtomUtils::assertNoArguments)
+        mixedAtomInstances.forEach(AtomUtils::assertNoArguments)
     }
 
     @Test
     fun zeroArity() {
-        correctAtomInstances.forEach(AtomUtils::assertZeroArity)
+        mixedAtomInstances.forEach(AtomUtils::assertZeroArity)
     }
 
     @Test
@@ -96,6 +95,6 @@ internal class AtomImplTest {
 
     @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
-        correctAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
+        mixedAtomInstances.forEach(AtomUtils::assertFreshCopyIsItself)
     }
 }
