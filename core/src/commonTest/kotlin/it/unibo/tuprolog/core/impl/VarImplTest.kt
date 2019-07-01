@@ -7,10 +7,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [VarImpl] and [Var]
@@ -34,6 +31,14 @@ internal class VarImplTest {
     fun correctName() {
         onCorrespondingItems(VarUtils.mixedVars, mixedVarInstances.map { it.name }) { expectedName, varName ->
             assertEquals(expectedName, varName)
+        }
+    }
+
+    @Test
+    fun nameHandlingForDifferentInstancesOfSameVar() {
+        onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstInstance, secondInstance ->
+            assertEquals(firstInstance.name, secondInstance.name)
+            assertNotEquals(firstInstance.completeName, secondInstance.completeName)
         }
     }
 
@@ -97,9 +102,13 @@ internal class VarImplTest {
         val refreshedVarInstances = mixedVarInstances.map { it.freshCopy() }
 
         onCorrespondingItems(refreshedVarInstances, mixedVarInstances) { refreshedVar, originalVar ->
+            assertEquals(refreshedVar.name, originalVar.name)
+            assertNotEquals(refreshedVar.completeName, originalVar.completeName)
+
             assertEquals(refreshedVar, originalVar)
             assertStructurallyEquals(refreshedVar, originalVar)
             assertNotStrictlyEquals(refreshedVar, originalVar)
+            assertNotSame(refreshedVar, originalVar)
         }
     }
 

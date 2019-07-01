@@ -5,10 +5,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.VarUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [Var] companion object
@@ -31,6 +28,8 @@ internal class VarTest {
         onCorrespondingItems(correctInstances, toBeTested) { correct, underTest ->
             assertEquals(correct, underTest)
             assertStructurallyEquals(correct, underTest)
+            assertNotStrictlyEquals(correct, underTest)
+            assertNotSame(correct, underTest)
         }
     }
 
@@ -42,5 +41,6 @@ internal class VarTest {
         assertEquals(Var.of("_"), anonymousVarInstance)
         assertStructurallyEquals(Var.of("_"), anonymousVarInstance)
         assertNotStrictlyEquals(Var.of("_"), anonymousVarInstance)
+        assertNotSame(Var.of("_"), anonymousVarInstance)
     }
 }
