@@ -63,7 +63,7 @@ internal object AssertionUtils {
             expected.zip(actual).forEach { (expected, actual) -> assertion(expected, actual) }
 
     /**
-     * Asserts all types of qualities (normal, strict, and structural) for each [Term] versus all the [Term]s (itself included).
+     * Asserts the [assertion] for each [E] versus all the [E]s (itself included).
      */
     fun <E> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
         val toTestItems = toBeTested.count()
