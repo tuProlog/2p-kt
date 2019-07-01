@@ -9,12 +9,6 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(project(":dsl"))
-            }
-        }
-
         // Default source set for JVM-specific sources and dependencies:
         jvm {
             compilations["main"].defaultSourceSet {
