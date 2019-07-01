@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -18,7 +19,16 @@ import kotlin.test.assertTrue
  */
 internal class VarImplTest {
 
+    /**
+     * Contains mixed variables instances, correctly and incorrectly named
+     */
     private val mixedVarInstances = VarUtils.mixedVars.map { VarImpl(it) }
+
+    /**
+     * Contains same mixed variables instances created a second time
+     * @see mixedVarInstances
+     */
+    private val mixedVarsSecondInstance = VarUtils.mixedVars.map { VarImpl(it) }
 
     @Test
     fun correctName() {
@@ -41,21 +51,71 @@ internal class VarImplTest {
     }
 
     @Test
-    fun strictlyAndStructurallyEqualsWorksAsExpected() {
+    fun providingIdentifierOverridesProgressiveInstanceCountNaming() {
         assertEqualities(VarImpl("Var", 0), VarImpl("Var", 0))
-
-        val firstlyCreatedVars = VarUtils.mixedVars.map { VarImpl(it) }
-        val secondlyCreatedVars = VarUtils.mixedVars.map { VarImpl(it) }
-
-        onCorrespondingItems(firstlyCreatedVars, firstlyCreatedVars, ::assertEqualities)
-
-        onCorrespondingItems(firstlyCreatedVars, secondlyCreatedVars, ::assertStructurallyEquals)
-        onCorrespondingItems(firstlyCreatedVars, secondlyCreatedVars, ::assertNotStrictlyEquals)
     }
 
-    // TODO Work in Progress!!
+    @Test
+    fun sameVarInstancesAreEquals() {
+        onCorrespondingItems(mixedVarInstances, mixedVarInstances, ::assertEqualities)
+    }
 
-    // TODO anonymous test and is Well formed (move regex)
+    @Test
+    fun strictlyEqualsWorksAsExpected() {
+        onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance, ::assertNotStrictlyEquals)
+    }
+
+    @Test
+    fun structurallyEqualsWorksAsExpected() {
+        onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance, ::assertStructurallyEquals)
+    }
+
+    @Test
+    fun equalsWorksAsExpected() {
+        onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstCreatedVar, secondCreatedVar ->
+            assertEquals(firstCreatedVar, secondCreatedVar)
+        }
+    }
+
+    @Test
+    fun anonymousVarDetection() {
+        VarUtils.mixedVars.filter { it != Var.ANONYMOUS_VAR_NAME }.map { VarImpl(it) }.forEach { nonAnonymousVarInstance ->
+            assertFalse { nonAnonymousVarInstance.isAnonymous }
+        }
+
+        assertTrue(VarImpl("_").isAnonymous)
+    }
+
+    @Test
+    fun testIsNameWellFormedProperty() {
+        VarUtils.correctlyNamedVars.map { VarImpl(it) }.forEach { assertTrue { it.isNameWellFormed } }
+        VarUtils.incorrectlyNamedVars.map { VarImpl(it) }.forEach { assertFalse { it.isNameWellFormed } }
+    }
+
+    @Test
+    fun freshCopyWorksAsExpected() {
+        val refreshedVarInstances = mixedVarInstances.map { it.freshCopy() }
+
+        onCorrespondingItems(refreshedVarInstances, mixedVarInstances) { refreshedVar, originalVar ->
+            assertEquals(refreshedVar, originalVar)
+            assertStructurallyEquals(refreshedVar, originalVar)
+            assertNotStrictlyEquals(refreshedVar, originalVar)
+        }
+    }
+
+    @Test
+    fun toStringWorksAsExpected() {
+        val correctNamedVarsToString = VarUtils.correctlyNamedVars.map { VarImpl(it).toString() }
+        val incorrectNamedVarsToString = VarUtils.incorrectlyNamedVars.map { VarImpl(it).toString() }
+
+        onCorrespondingItems(correctNamedVarsToString, VarUtils.correctlyNamedVars) { underTestToString, varName ->
+            assertEquals(varName, underTestToString)
+        }
+
+        onCorrespondingItems(incorrectNamedVarsToString, VarUtils.incorrectlyNamedVars) { underTestToString, varName ->
+            assertEquals("¿$varName?", underTestToString)
+        }
+    }
 
     @Test
     fun testIsPropertiesAndTypes() {

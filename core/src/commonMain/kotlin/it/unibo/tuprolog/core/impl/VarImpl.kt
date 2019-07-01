@@ -16,7 +16,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
     override val isAnonymous: Boolean = super.isAnonymous
 
     override val isNameWellFormed: Boolean by lazy {
-        Var.WELL_FORMED_NAME_PATTERN.matches(name)
+        Var.VAR_REGEX_PATTERN.matches(name)
     }
 
     override fun strictlyEquals(other: Term): Boolean =

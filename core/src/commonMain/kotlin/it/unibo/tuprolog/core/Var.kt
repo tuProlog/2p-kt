@@ -25,7 +25,7 @@ interface Var : Term {
 
         const val ANONYMOUS_VAR_NAME = "_"
 
-        val WELL_FORMED_NAME_PATTERN = Regex("""[A-Z_][A-Za-z_0-9]*""")
+        val VAR_REGEX_PATTERN = "[A-Z_][A-Za-z_0-9]*".toRegex()
 
         fun of(name: String): Var = VarImpl(name)
 
