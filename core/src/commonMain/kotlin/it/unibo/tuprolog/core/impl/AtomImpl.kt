@@ -2,20 +2,18 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
-import kotlin.collections.List
 
 internal open class AtomImpl(override val functor: String) : StructImpl(functor, arrayOf()), Atom {
 
     override val args: Array<Term> = super<StructImpl>.args
 
-    override fun strictlyEquals(other: Term): Boolean {
-        return other is AtomImpl
-                && value == other.value
-    }
+    // TODO: 29/06/2019 missing structurallyEquals override??
 
-    override val argsList: List<Term> by lazy {
-        emptyList<Term>()
-    }
+    override fun strictlyEquals(other: Term): Boolean =
+            other is AtomImpl
+                    && value == other.value
+
+    override val argsList: List<Term> by lazy { emptyList<Term>() }
 
     override val isGround: Boolean
         get() = super<Atom>.isGround

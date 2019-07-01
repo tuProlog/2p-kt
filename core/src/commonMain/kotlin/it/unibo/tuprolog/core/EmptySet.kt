@@ -15,9 +15,6 @@ interface EmptySet : Empty, LogicSet {
         get() = super.value
 
     companion object {
-        operator fun invoke(): EmptySet {
-            return EmptySetImpl
-        }
+        operator fun invoke(): EmptySet = EmptySetImpl
     }
 }
-

@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Couple
-import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.List as LogicList
 
 internal class CoupleImpl(override val head: Term, override val tail: Term) : StructImpl(Couple.FUNCTOR, arrayOf(head, tail)), Couple {
 
     private val unfoldedSequence: Sequence<Term> by lazy {
-        sequenceOf(head) + if (tail.isList) tail.castTo<List>().toSequence() else sequenceOf(tail)
+        sequenceOf(head) + if (tail.isList) tail.castTo<LogicList>().toSequence() else sequenceOf(tail)
     }
 
-    private val unfoldedList: kotlin.collections.List<Term> by lazy {
+    private val unfoldedList: List<Term> by lazy {
         unfoldedSequence.toList()
     }
 
@@ -23,21 +23,11 @@ internal class CoupleImpl(override val head: Term, override val tail: Term) : St
     override val args: Array<Term>
         get() = super<StructImpl>.args
 
-    override fun toArray(): Array<Term> {
-        return unfoldedArray
-    }
+    override fun toArray(): Array<Term> = unfoldedArray
 
-    override fun toSequence(): Sequence<Term> {
-        return unfoldedSequence
-    }
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun toList(): kotlin.collections.List<Term> {
-        return unfoldedList
-    }
+    override fun toList(): List<Term> = unfoldedList
 
-    override fun toString(): String {
-        return unfoldedList.joinToString(", ", "[", "]")
-    }
-
-
+    override fun toString(): String = unfoldedList.joinToString(", ", "[", "]")
 }

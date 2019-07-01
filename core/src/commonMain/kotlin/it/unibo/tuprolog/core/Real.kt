@@ -18,21 +18,14 @@ interface Real : Numeric {
         get() = value.toBigInteger()
 
     companion object {
+        private const val i = """([0-9]+)"""
+        private const val d = """(\.[0-9]+)"""
+        private const val e = """([eE][+\-]?[0-9]+)"""
+        val REAL_REGEX_PATTERN = "^[+\\-]?(($i$d$e?)|($i$e)|($d$e?))$".toRegex()
 
-        fun of(real: BigDecimal): Real {
-            return RealImpl(real)
-        }
-
-        fun of(real: Double): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
-
-        fun of(real: Float): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
-
-        fun of(real: String): Real {
-            return RealImpl(BigDecimal.of(real))
-        }
+        fun of(real: BigDecimal): Real = RealImpl(real)
+        fun of(real: Double): Real = of(BigDecimal.of(real))
+        fun of(real: Float): Real = of(BigDecimal.of(real))
+        fun of(real: String): Real = of(BigDecimal.of(real))
     }
 }

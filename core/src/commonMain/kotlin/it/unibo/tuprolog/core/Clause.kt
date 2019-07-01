@@ -10,22 +10,10 @@ interface Clause : Struct {
     val body: Term
 
     override val args: Array<Term>
-        get() {
-            return if (head === null) {
-                arrayOf(body)
-            } else {
-                arrayOf(head!!, body)
-            }
-        }
+        get() = (if (head === null) arrayOf(body) else arrayOf(head!!, body))
 
     override val arity: Int
-        get() {
-            return if (head === null) {
-                1
-            } else {
-                2
-            }
-        }
+        get() = (if (head === null) 1 else 2)
 
     override val isClause: Boolean
         get() = true
@@ -42,14 +30,12 @@ interface Clause : Struct {
     companion object {
         const val FUNCTOR = ":-"
 
-        fun of(head: Struct? = null, vararg body: Term): Clause {
-            return if (head === null) {
-                Directive.of(body[0], *body.sliceArray(1..body.lastIndex))
-            } else {
-                Rule.of(head, *body)
-            }
-        }
+        fun of(head: Struct? = null, vararg body: Term): Clause =
+                if (head === null) {
+                    Directive.of(body[0], *body.sliceArray(1..body.lastIndex))
+                } else {
+                    Rule.of(head, *body)
+                }
     }
 
 }
-

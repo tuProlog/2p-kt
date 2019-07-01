@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.impl.VarImpl
 
 interface Var : Term {
 
-    override val isVar: Boolean
+    override val isVariable: Boolean
         get() = true
 
     override val isGround: Boolean
@@ -17,9 +17,7 @@ interface Var : Term {
 
     val completeName: String
 
-    override fun clone(): Var {
-        return Var.of(name)
-    }
+    override fun freshCopy(): Var = of(name)
 
     val isNameWellFormed: Boolean
 
@@ -27,14 +25,10 @@ interface Var : Term {
 
         const val ANONYMOUS_VAR_NAME = "_"
 
-        val WELL_FORMED_NAME_PATTERN = Regex("""[A-Z_][A-Za-z_0-9]*""")
+        val VAR_REGEX_PATTERN = "[A-Z_][A-Za-z_0-9]*".toRegex()
 
-        fun of(name: String): Var {
-            return VarImpl(name)
-        }
+        fun of(name: String): Var = VarImpl(name)
 
-        fun anonymous(): Var {
-            return VarImpl(ANONYMOUS_VAR_NAME)
-        }
+        fun anonymous(): Var = VarImpl(ANONYMOUS_VAR_NAME)
     }
 }
