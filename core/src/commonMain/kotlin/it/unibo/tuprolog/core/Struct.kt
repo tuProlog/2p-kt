@@ -78,18 +78,14 @@ interface Struct : Term {
 
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
-        fun of(functor: String, args: List<Term>): Struct =
-                if (args.size == 2 && Couple.FUNCTOR == functor) {
-                    Couple.of(args[0], args[1])
-                } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
-                    Rule.of(args[0] as Struct, args[1])
-                } else if (args.size == 1 && Clause.FUNCTOR == functor) {
-                    Directive.of(args[0])
-                } else if (args.isEmpty()) {
-                    Atom.of(functor)
-                } else {
-                    StructImpl(functor, args.toTypedArray())
-                }
+        fun of(functor: String, args: List<Term>): Struct = when {
+            args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args[0], args[1])
+            args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct -> Rule.of(args[0] as Struct, args[1])
+            args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args[0])
+            Set.FUNCTOR == functor -> Set.of(args)
+            args.isEmpty() -> Atom.of(functor)
+            else -> StructImpl(functor, args.toTypedArray())
+        }
 
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
