@@ -65,7 +65,7 @@ internal object AssertionUtils {
     /**
      * Asserts the [assertion] for each [E] versus all the [E]s (itself included).
      */
-    fun <E> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
+    fun <E : Any> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
         val toTestItems = toBeTested.count()
         val repeatedElementsSequence = toBeTested.flatMap { underTestItem ->
             generateSequence { underTestItem }.take(toTestItems).asIterable()
