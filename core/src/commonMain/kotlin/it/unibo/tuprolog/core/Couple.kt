@@ -42,7 +42,7 @@ interface Couple : Struct, LogicList {
 
         fun of(head: Term, tail: Term): Couple = CoupleImpl(head, tail)
 
-        fun last(head: Term): Couple = Couple.of(head, Empty.list())
+        fun last(head: Term): Couple = of(head, Empty.list())
     }
 
     //    @Override

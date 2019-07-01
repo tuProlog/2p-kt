@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Couple
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
+import it.unibo.tuprolog.core.testutils.CoupleUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.*
 
@@ -16,27 +18,14 @@ import kotlin.test.*
  */
 internal class CoupleImplTest {
 
-    private val headOfFirstList = Var.of("H")
-    private val tailOfFirstList = Empty.list()
-    private val oneElementList = CoupleImpl(headOfFirstList, tailOfFirstList)
-    private val unfoldedFirstList = listOf(headOfFirstList)
+    private val oneElementList = CoupleUtils.oneElementList(::CoupleImpl)
+    private val twoElementList = CoupleUtils.twoElementList(::CoupleImpl)
+    private val threeElementList = CoupleUtils.threeElementList(::CoupleImpl)
 
-    private val headOfSecondList = Var.of("H")
-    private val tailOfSecondList = Var.of("T")
-    private val twoElementList = CoupleImpl(headOfSecondList, tailOfSecondList)
-    private val unfoldedSecondList = listOf(headOfSecondList, tailOfSecondList)
-
-    private val headOfThirdList = Atom.of("bigList")
-    private val tailOfThirdListFirstElement = Integral.of(4)
-    private val tailOfThirdListSecondElement = Real.of(1.5)
-    private val tailOfThirdList = CoupleImpl(tailOfThirdListFirstElement, tailOfThirdListSecondElement)
-    private val threeElementList = CoupleImpl(headOfThirdList, tailOfThirdList)
-    private val unfoldedThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
-
-    private val coupleInstances = listOf(oneElementList, twoElementList, threeElementList)
-    private val coupleInstancesHeads = listOf(headOfFirstList, headOfSecondList, headOfThirdList)
-    private val coupleInstancesTails = listOf(tailOfFirstList, tailOfSecondList, tailOfThirdList)
-    private val coupleInstancesUnfoldedLists = listOf(unfoldedFirstList, unfoldedSecondList, unfoldedThirdList)
+    private val coupleInstances = CoupleUtils.coupleInstances(::CoupleImpl)
+    private val coupleInstancesHeads = CoupleUtils.coupleInstancesHeads
+    private val coupleInstancesTails = CoupleUtils.coupleInstancesTails(::CoupleImpl)
+    private val coupleInstancesUnfoldedLists = CoupleUtils.coupleInstancesUnfoldedLists
 
     @Test
     fun coupleFunctor() {
