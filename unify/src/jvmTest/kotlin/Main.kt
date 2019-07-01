@@ -1,4 +1,5 @@
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.dsl.*
 import it.unibo.tuprolog.unify.Unifier
 import it.unibo.tuprolog.unify.Unifier.Companion.mguWith
 import it.unibo.tuprolog.unify.Unifier.Companion.unifyWith

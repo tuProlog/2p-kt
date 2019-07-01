@@ -4,14 +4,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+//                api("com.github.gciatto:kt-math-metadata:0.+")
                 api(project(":core"))
-                api(project(":unify"))
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-                implementation(project(":dsl"))
             }
         }
 
@@ -20,7 +14,6 @@ kotlin {
             compilations["main"].defaultSourceSet {
                 dependencies {
                     api(project(":core"))
-                    api(project(":unify"))
                 }
             }
         }
@@ -29,7 +22,6 @@ kotlin {
             compilations["main"].defaultSourceSet {
                 dependencies {
                     api(project(":core"))
-                    api(project(":unify"))
                 }
             }
         }

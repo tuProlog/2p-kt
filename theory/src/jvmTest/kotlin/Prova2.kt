@@ -1,4 +1,5 @@
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.dsl.*
 import it.unibo.tuprolog.theory.ReteTree
 import it.unibo.tuprolog.theory.Theory
 import org.gciatto.kt.math.BigDecimal
@@ -16,12 +17,12 @@ val t: List<Clause> = listOf(
 )
 
 fun main() {
-//    val tt: Theory = Theory.of(t)
-//    println(ReteTree.of(t).toString(true))
-//    println(tt.assertA(Struct.of("next", Atom.of("0"))))
-//    println(tt.retractAll(Struct.of("next", Atom.of("0"))))
-//
-//    println(tt.get(Struct.of("next", Atom.of("0"))).first())
+    val tt: Theory = Theory.of(t)
+    println(ReteTree.of(t).toString(true))
+    println(tt.assertA(Struct.of("next", Atom.of("0"))))
+    println(tt.retractAll(Struct.of("next", Atom.of("0"))))
+
+    println(tt.get(Struct.of("next", Atom.of("0"))).first())
 
     println(BigDecimal.PI)
 }

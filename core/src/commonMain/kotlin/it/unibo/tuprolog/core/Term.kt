@@ -113,59 +113,21 @@ interface Term {
         return this
     }
 
-    operator fun plus(other: Term): Struct {
-        return Struct.of("+", this, other)
+    fun groundTo(substitution: Substitution): Term {
+        return when {
+            this.isGround -> this
+            this is Var -> substitution[this] ?: this
+            this is Struct -> Struct.of(this.functor, this.argsList.map { it.groundTo(substitution) })
+            else -> this
+        }
     }
 
-    operator fun minus(other: Term): Struct {
-        return Struct.of("-", this, other)
+    fun groundTo(substitution: Substitution, vararg substitutions: Substitution): Term {
+        return this.groundTo(substitutionOf(substitution, *substitutions))
     }
 
-    operator fun times(other: Term): Struct {
-        return Struct.of("*", this, other)
+    operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
+        return this.groundTo(substitution, *substitutions)
     }
 
-    operator fun div(other: Term): Struct {
-        return Struct.of("/", this, other)
-    }
-
-    infix fun greaterThan(other: Term): Struct {
-        return Struct.of(">", this, other)
-    }
-
-    infix fun greaterThanOrEqualsTo(other: Term): Struct {
-        return Struct.of(">=", this, other)
-    }
-
-    infix fun nonLowerThan(other: Term): Struct {
-        return this greaterThanOrEqualsTo other
-    }
-
-    infix fun lowerThan(other: Term): Struct {
-        return Struct.of("<", this, other)
-    }
-
-    infix fun lowerThanOrEqualsTo(other: Term): Struct {
-        return Struct.of("=<", this, other)
-    }
-
-    infix fun nonGreaterThan(other: Term): Struct {
-        return this lowerThanOrEqualsTo other
-    }
-
-    infix fun intDiv(other: Term): Struct {
-        return Struct.of("//", this, other)
-    }
-
-    operator fun rem(other: Term): Struct {
-        return Struct.of("rem", this, other)
-    }
-
-    infix fun pow(other: Term): Struct {
-        return Struct.of("**", this, other)
-    }
-
-    infix fun sup(other: Term): Struct {
-        return Struct.of("^", this, other)
-    }
 }
