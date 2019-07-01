@@ -227,7 +227,7 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be an Empty or fails otherwise
+     * Type testing common to Empty subclasses
      */
     private fun commonEmptyAssertions(any: Any) {
         commonAtomAssertions(any)

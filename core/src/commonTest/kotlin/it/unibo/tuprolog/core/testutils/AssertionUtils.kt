@@ -65,15 +65,14 @@ internal object AssertionUtils {
     /**
      * Asserts all types of qualities (normal, strict, and structural) for each [Term] versus all the [Term]s (itself included).
      */
-    fun assertAllVsAllEqualities(toBeTested: Iterable<Term>) {
+    fun <E> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
         val toTestItems = toBeTested.count()
-        val repeatedElementsSequence = toBeTested.flatMap { testTerm ->
-            generateSequence { testTerm }.take(toTestItems).asIterable()
+        val repeatedElementsSequence = toBeTested.flatMap { underTestItem ->
+            generateSequence { underTestItem }.take(toTestItems).asIterable()
         }
         val repeatedSequenceOfElements = generateSequence { toBeTested }
                 .take(toTestItems).flatten().asIterable()
 
-        onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements,
-                AssertionUtils::assertEqualities)
+        onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements, assertion)
     }
 }
