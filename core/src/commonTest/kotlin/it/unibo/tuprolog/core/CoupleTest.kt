@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.CoupleUtils
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 /**
  * Test class for [Couple] companion object
@@ -30,6 +29,5 @@ internal class CoupleTest {
         val toBeTested = Couple.last(onlyElement)
 
         assertEqualities(correctInstance, toBeTested)
-        assertEquals(1, toBeTested.args.size)
     }
 } 
