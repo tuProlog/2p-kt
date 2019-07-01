@@ -1,4 +1,5 @@
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.dsl.*
 
 val t =  clauseOf("fact a"(1))
 

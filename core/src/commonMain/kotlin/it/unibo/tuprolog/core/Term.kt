@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.core
 
+import kotlin.collections.List
+
 interface Term {
 
-    fun <T : Term> castTo(): T = this as T
+    fun <T : Term> castTo(): T {
+        return this as T
+    }
 
     infix fun structurallyEquals(other: Term): Boolean
     infix fun strictlyEquals(other: Term): Boolean
@@ -35,4 +39,21 @@ interface Term {
      * Example: "f(X, g(X))".freshCopy() returns something like "f(X_1, g(X_1))"
      */
     fun freshCopy(): Term = this
+
+    fun groundTo(substitution: Substitution): Term {
+        return when {
+            this.isGround -> this
+            this is Var -> substitution[this] ?: this
+            this is Struct -> Struct.of(this.functor, this.argsList.map { it.groundTo(substitution) })
+            else -> this
+        }
+    }
+
+    fun groundTo(substitution: Substitution, vararg substitutions: Substitution): Term {
+        return this.groundTo(substitutionOf(substitution, *substitutions))
+    }
+
+    operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
+        return this.groundTo(substitution, *substitutions)
+    }
 }

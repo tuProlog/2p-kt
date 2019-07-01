@@ -9,6 +9,12 @@ plugins {
 //    id("com.moowork.node") version "1.3.1"
 }
 
+repositories {
+    maven {
+        url = uri("https://plugins.gradle.org/m2/")
+    }
+}
+
 // apply next commands to all subprojects
 subprojects {
 

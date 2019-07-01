@@ -3,7 +3,6 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.get
 import toEquations
 
 interface Unifier {
