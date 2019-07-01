@@ -105,7 +105,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                                 changed = true
                                 equations[i] = null
                             } else {
-                                changed = substitutionOf(first as Any, second).applyToAll(equations, i)
+                                changed = substitutionOf(first as Var, second).applyToAll(equations, i)
                             }
                         }
                         second is Var -> {
@@ -116,7 +116,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                             if (occurCheck && (first as Var).occursInTerm(second)) {
                                 return null
                             } else {
-                                changed = substitutionOf(first as Any, second).applyToAll(equations, i)
+                                changed = substitutionOf(first as Var, second).applyToAll(equations, i)
                             }
                         }
                         else -> {

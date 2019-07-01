@@ -3,3 +3,4 @@ rootProject.name = '2p'
 include "core"
 include "unify"
 include "theory"
+include "dsl"

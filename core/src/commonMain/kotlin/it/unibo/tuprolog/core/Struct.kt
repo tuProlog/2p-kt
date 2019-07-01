@@ -73,10 +73,6 @@ interface Struct : Term {
 
     operator fun get(index: Int): Term = getArgAt(index)
 
-    infix fun impliedBy(other: Term): Rule = Rule.of(this, other)
-
-    fun impliedBy(vararg other: Term): Rule = this impliedBy conjunction(*other)
-
     companion object {
         val WELL_FORMED_FUNCTOR_PATTERN = Regex("""^[a-z][A-Za-z_0-9]*$""")
 
