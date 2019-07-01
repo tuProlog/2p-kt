@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Term
-import kotlin.collections.List
 
 internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
 
@@ -11,19 +10,11 @@ internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
     private val unfoldedSequence: Sequence<Term> = emptySequence()
     private val unfoldedArray: Array<Term> = emptyArray()
 
-    override fun toArray(): Array<Term> {
-        return unfoldedArray
-    }
+    override fun toArray(): Array<Term> = unfoldedArray
 
-    override fun toSequence(): Sequence<Term> {
-        return unfoldedSequence
-    }
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun toList(): List<Term> {
-        return unfoldedList
-    }
+    override fun toList(): List<Term> = unfoldedList
 
-    override fun toString(): String {
-        return value
-    }
+    override fun toString(): String = value
 }

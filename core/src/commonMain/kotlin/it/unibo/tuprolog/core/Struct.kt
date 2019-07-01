@@ -49,13 +49,12 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
-    override fun clone(): Term {
-        return if (isGround) {
-            this
-        } else {
-            Struct.of(functor, args.map { it.clone() })
-        }
-    }
+    override fun freshCopy(): Term =
+            if (isGround) {
+                this
+            } else {
+                of(functor, args.map { it.freshCopy() })
+            }
 
     val functor: String
 
@@ -70,92 +69,68 @@ interface Struct : Term {
     val argsSequence: Sequence<Term>
         get() = sequenceOf(*args)
 
-    fun getArgAt(index: Int): Term {
-        return args[index]
-    }
+    fun getArgAt(index: Int): Term = args[index]
 
-    operator fun get(index: Int): Term {
-        return getArgAt(index)
-    }
+    operator fun get(index: Int): Term = getArgAt(index)
 
-    infix fun impliedBy(other: Term): Rule {
-        return Rule.of(this, other)
-    }
+    infix fun impliedBy(other: Term): Rule = Rule.of(this, other)
 
-    fun impliedBy(vararg other: Term): Rule {
-        return this impliedBy conjunction(*other)
-    }
+    fun impliedBy(vararg other: Term): Rule = this impliedBy conjunction(*other)
 
     companion object {
         val WELL_FORMED_FUNCTOR_PATTERN = Regex("""^[a-z][A-Za-z_0-9]*$""")
 
-        fun of(functor: String, vararg args: Term): Struct {
-            return of(functor, args.toList())
-        }
+        fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
-        fun of(functor: String, args: List<Term>): Struct {
-            return if (args.size == 2 && Couple.FUNCTOR == functor) {
-                Couple.of(args[0], args[1])
-            } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
-                Rule.of(args[0] as Struct, args[1])
-            } else if (args.size == 1 && Clause.FUNCTOR == functor) {
-                Directive.of(args[0])
-            } else if (args.isEmpty()) {
-                Atom.of(functor)
-            } else {
-                StructImpl(functor, args.toTypedArray())
-            }
-        }
+        fun of(functor: String, args: List<Term>): Struct =
+                if (args.size == 2 && Couple.FUNCTOR == functor) {
+                    Couple.of(args[0], args[1])
+                } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
+                    Rule.of(args[0] as Struct, args[1])
+                } else if (args.size == 1 && Clause.FUNCTOR == functor) {
+                    Directive.of(args[0])
+                } else if (args.isEmpty()) {
+                    Atom.of(functor)
+                } else {
+                    StructImpl(functor, args.toTypedArray())
+                }
 
-        fun of(functor: String, args: Sequence<Term>): Struct {
-            return Struct.of(functor, args.toList())
-        }
+        fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
-        fun fold(operator: String, terms: List<Term>, terminal: Term? = null): Struct {
-            return if (terminal === null) {
-                terms.slice(0 until terms.lastIndex - 1)
-                        .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) {
-                            a, b -> structOf(operator, a, b)
-                        }
-            } else {
-                terms.slice(0 until terms.lastIndex)
-                        .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) {
-                            a, b -> structOf(operator, a, b)
-                        }
-            }
-        }
+        fun fold(operator: String, terms: List<Term>, terminal: Term? = null): Struct =
+                if (terminal === null) {
+                    terms.slice(0 until terms.lastIndex - 1)
+                            .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
+                                structOf(operator, a, b)
+                            }
+                } else {
+                    terms.slice(0 until terms.lastIndex)
+                            .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
+                                structOf(operator, a, b)
+                            }
+                }
 
-        fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct {
-            return fold(operator, terms.toList(), terminal)
-        }
+        fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
+                fold(operator, terms.toList(), terminal)
 
-        fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct {
-            return fold(operator, terms.toList(), terminal)
-        }
+        fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct =
+                fold(operator, terms.toList(), terminal)
 
-        fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct {
-            return fold(operator, terms.toList(), terminal)
-        }
+        fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
+                fold(operator, terms.toList(), terminal)
 
-        fun conjunction(terms: Sequence<Term>): Term {
-            return conjunction(terms.toList())
-        }
+        fun conjunction(terms: Sequence<Term>): Term = conjunction(terms.toList())
 
-        fun conjunction(terms: Iterable<Term>): Term {
-            return conjunction(terms.toList())
-        }
+        fun conjunction(terms: Iterable<Term>): Term = conjunction(terms.toList())
 
-        fun conjunction(terms: List<Term>): Term {
-            return when {
-                terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
-                terms.size == 1 ->  terms[0]
-                else -> fold(",", terms)
-            }
-        }
+        fun conjunction(terms: List<Term>): Term =
+                when {
+                    terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
+                    terms.size == 1 -> terms[0]
+                    else -> fold(",", terms)
+                }
 
-        fun conjunction(vararg terms: Term): Term {
-            return conjunction(listOf(*terms))
-        }
+        fun conjunction(vararg terms: Term): Term = conjunction(listOf(*terms))
 
     }
 }

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
-internal class IntegralImpl(override val value: BigInteger) :  NumericImpl(), Integral {
+internal class IntegralImpl(override val value: BigInteger) : NumericImpl(), Integral {
 
     override val decimalValue: BigDecimal by lazy {
         BigDecimal.of(intValue)
@@ -14,30 +14,23 @@ internal class IntegralImpl(override val value: BigInteger) :  NumericImpl(), In
     override val intValue: BigInteger
         get() = value
 
-    override fun toString(): String {
-        return value.toString()
-    }
+    override fun toString(): String = value.toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other !is NumericImpl) return false
 
-        if (other is IntegralImpl) {
-            return value.compareTo(other.value) == 0
-        } else {
-            return decimalValue.compareTo(other.decimalValue) == 0
+        return when (other) {
+            is IntegralImpl -> value.compareTo(other.value) == 0
+            else -> decimalValue.compareTo(other.decimalValue) == 0
         }
     }
 
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+    override fun hashCode(): Int = value.hashCode()
 
-    override fun compareTo(other: Numeric): Int {
-        if (other is IntegralImpl) {
-            return value.compareTo(other.value)
-        } else {
-            return super<NumericImpl>.compareTo(other)
-        }
-    }
+    override fun compareTo(other: Numeric): Int =
+            when (other) {
+                is IntegralImpl -> value.compareTo(other.value)
+                else -> super<NumericImpl>.compareTo(other)
+            }
 }

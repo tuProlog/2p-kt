@@ -1,14 +1,12 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Set as LogicSet
 
-internal open class SetImpl(override val args: Array<Term>) : StructImpl(Set.FUNCTOR, args), Set {
+internal open class SetImpl(override val args: Array<Term>) : StructImpl(LogicSet.FUNCTOR, args), LogicSet {
 
     override val functor: String
-        get() = super<Set>.functor
+        get() = super<LogicSet>.functor
 
-    override fun toString(): String {
-        return "{${args.joinToString(", ")}}"
-    }
+    override fun toString(): String = "{${args.joinToString(", ")}}"
 }

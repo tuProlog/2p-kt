@@ -59,7 +59,7 @@ fun Number.toTerm(): Numeric {
 }
 
 fun String.toTerm(): Term {
-    return if (Var.WELL_FORMED_NAME_PATTERN.matches(this)) {
+    return if (Var.VAR_REGEX_PATTERN.matches(this)) {
         this.asVar()
     } else {
         this.asAtom()
