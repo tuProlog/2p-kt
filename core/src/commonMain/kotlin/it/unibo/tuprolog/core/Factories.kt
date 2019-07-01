@@ -3,23 +3,23 @@ package it.unibo.tuprolog.core
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
-inline fun atomOf(value: String): Atom {
+fun atomOf(value: String): Atom {
     return Atom.of(value)
 }
 
-inline fun structOf(functor: String, vararg args: Term): Struct {
+fun structOf(functor: String, vararg args: Term): Struct {
     return Struct.of(functor, *args)
 }
 
-inline fun varOf(name: String = Var.ANONYMOUS_VAR_NAME): Var {
+fun varOf(name: String = Var.ANONYMOUS_VAR_NAME): Var {
     return Var.of(name)
 }
 
-inline fun lstOf(vararg terms: Any): List {
+fun lstOf(vararg terms: Any): List {
     return List.of(terms.map { it.toTerm() })
 }
 
-inline fun setOf(vararg terms: Any): Set {
+fun setOf(vararg terms: Any): Set {
     return Set.of(terms.map { it.toTerm() })
 }
 
@@ -39,15 +39,15 @@ fun clauseOf(head: Term?, vararg body: Term): Clause {
     return Clause.of(head as Struct?, *body)
 }
 
-inline fun coupleOf(term1: Term, vararg terms: Term): Couple {
+fun coupleOf(term1: Term, vararg terms: Term): Couple {
     return List.from(sequenceOf(term1) + sequenceOf(*terms)) as Couple
 }
 
-inline fun anonymous(): Term {
+fun anonymous(): Term {
     return Var.anonymous()
 }
 
-inline fun whatever(): Term {
+fun whatever(): Term {
     return Var.anonymous()
 }
 
