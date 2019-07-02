@@ -195,7 +195,7 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be a Conjunction or fails otherwise
+     * Checks passed term to be a Tuple or fails otherwise
      */
     fun assertIsConjunction(any: Any) {
 

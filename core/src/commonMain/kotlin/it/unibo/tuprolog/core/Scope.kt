@@ -26,9 +26,15 @@ interface Scope {
 
     fun structOf(functor: String, args: Sequence<Term>): Struct
 
+    fun tupleOf(vararg terms: Term): Tuple
+
+    fun tupleOf(terms: Iterable<Term>): Tuple
+
     fun listOf(vararg terms: Term): LogicList
 
     fun listOf(terms: Iterable<Term>): LogicList
+
+    fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
 
     fun setOf(vararg terms: Term): LogicSet
 

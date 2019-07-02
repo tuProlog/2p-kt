@@ -19,6 +19,7 @@ interface Term {
     val isInt: Boolean get() = false
     val isReal: Boolean get() = false
     val isList: Boolean get() = false
+    val isTuple: Boolean get() = false
     val isEmptySet: Boolean get() = false
     val isSet: Boolean get() = false
     val isClause: Boolean get() = false

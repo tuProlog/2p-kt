@@ -13,6 +13,14 @@ interface List : Struct {
 
     val unfoldedArray: Array<Term>
 
+    val size: Int
+        get() =
+            if (unfoldedList.last() is EmptyList) {
+                unfoldedList.size - 1
+            } else {
+                unfoldedList.size
+            }
+
     fun toArray(): Array<Term> =
             if (unfoldedArray.last() is EmptyList) {
                 unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
@@ -35,7 +43,8 @@ interface List : Struct {
             if (isGround) {
                 this
             } else {
-                scope.listOf(argsSequence.map { it.freshCopy(scope) }.takeWhile { it !is EmptyList }.asIterable())
+                val cloned = unfoldedList.map { it.freshCopy(scope) }
+                scope.listFrom(cloned.subList(0, cloned.lastIndex), cloned.last())
             }
 
     companion object {

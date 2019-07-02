@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.SetImpl
+import kotlin.collections.List as KtList
 
 interface Set : Struct {
 
@@ -13,11 +14,17 @@ interface Set : Struct {
     override val functor: String
         get() = FUNCTOR
 
-    fun toArray(): Array<Term> = args
+    val unfoldedSequence: Sequence<Term>
 
-    fun toList(): kotlin.collections.List<Term> = args.toList()
+    val unfoldedList: KtList<Term>
 
-    fun toSequence(): Sequence<Term> = args.asSequence()
+    val unfoldedArray: Array<Term>
+
+    fun toArray(): Array<Term> = unfoldedArray
+
+    fun toList(): KtList<Term> = unfoldedList
+
+    fun toSequence(): Sequence<Term> = unfoldedSequence
 
     override fun freshCopy(): Set = super.freshCopy() as Set
 
@@ -33,16 +40,13 @@ interface Set : Struct {
 
         fun empty(): EmptySet = EmptySet()
 
-        fun of(vararg terms: Term): Set =
-                when {
-                    terms.isEmpty() -> empty()
-                    else -> SetImpl(arrayOf(*terms))
-                }
+        fun of(vararg terms: Term): Set = of(terms.toList())
 
-        fun of(terms: Collection<Term>): Set =
+        fun of(terms: KtList<Term>): Set =
                 when {
                     terms.isEmpty() -> empty()
-                    else -> SetImpl(terms.toTypedArray())
+                    terms.size == 1 -> SetImpl(terms[0])
+                    else -> SetImpl(Tuple.of(terms))
                 }
 
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
