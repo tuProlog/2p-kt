@@ -13,6 +13,14 @@ interface List : Struct {
 
     val unfoldedArray: Array<Term>
 
+    val size: Int
+        get() =
+            if (unfoldedList.last() is EmptyList) {
+                unfoldedList.size - 1
+            } else {
+                unfoldedList.size
+            }
+
     fun toArray(): Array<Term> =
             if (unfoldedArray.last() is EmptyList) {
                 unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)

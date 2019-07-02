@@ -19,6 +19,7 @@ interface Term {
     val isInt: Boolean get() = false
     val isReal: Boolean get() = false
     val isList: Boolean get() = false
+    val isConjunction: Boolean get() = false
     val isEmptySet: Boolean get() = false
     val isSet: Boolean get() = false
     val isClause: Boolean get() = false
@@ -69,6 +70,4 @@ interface Term {
     operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
         return this.groundTo(substitution, *substitutions)
     }
-
-    val isConjunction: Boolean
 }
