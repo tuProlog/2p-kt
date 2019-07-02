@@ -28,13 +28,14 @@ interface List : Struct {
 
         fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
 
-        fun from(items: KtList<Term>, last: Term? = null): List =
-                if (last === null) {
-                    val tail = Couple.of(items[items.lastIndex - 1], items[items.lastIndex])
-                    items.slice(0 until items.size - 2).foldRight(tail) { h, t -> Couple.of(h, t) }
-                } else {
-                    items.foldRight<Term, List>(Empty.list()) { h, t -> Couple.of(h, t) }
-                }
+        fun from(items: KtList<Term>, last: Term? = null): List {
+            require(items.isNotEmpty()) {
+                "Input list for method ${List::class.qualifiedName}.from(${KtList::class.qualifiedName}, ${Term::class.qualifiedName}) cannot be empty"
+            }
+
+            val finalItem = if (last === null) Empty.list() else last
+            return items.foldRight(finalItem) { head, tail -> Couple.of(head, tail) } as List
+        }
 
         fun of(vararg items: Term): List = from(items.toList(), Empty.list())
 
