@@ -46,6 +46,14 @@ interface Tuple : Struct {
 
         const val FUNCTOR = ","
 
+        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::`true`): Term {
+            return when {
+                terms.isEmpty() -> default()
+                terms.size == 1 -> terms[0]
+                else -> of(terms.toList())
+            }
+        }
+
         fun of(left: Term, right: Term): Tuple {
             return TupleImpl(left, right)
         }
