@@ -3,6 +3,8 @@ package it.unibo.tuprolog.scoping
 import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import it.unibo.tuprolog.core.List as LogicList
+import it.unibo.tuprolog.core.Set as LogicSet
 
 interface Scope {
 
@@ -22,9 +24,15 @@ interface Scope {
 
     fun structOf(functor: String, vararg args: Term): Struct
 
-    fun listOf(vararg terms: Term): List
+    fun structOf(functor: String, args: Sequence<Term>): Struct
 
-    fun setOf(vararg terms: Term): Set
+    fun listOf(vararg terms: Term): LogicList
+
+    fun listOf(terms: Iterable<Term>): LogicList
+
+    fun setOf(vararg terms: Term): LogicSet
+
+    fun setOf(terms: Iterable<Term>): LogicSet
 
     fun factOf(head: Struct): Fact
 
@@ -36,29 +44,33 @@ interface Scope {
 
     fun coupleOf(head: Term, tail: Term): Couple
 
-    fun anonymous(): Term
+    fun anonymous(): Var
 
-    fun whatever(): Term
+    fun whatever(): Var
 
-    fun numOf(decimal: BigDecimal): Real
+    fun numOf(value: BigDecimal): Real
 
-    fun numOf(decimal: Double): Real
+    fun numOf(value: Double): Real
 
-    fun numOf(decimal: Float): Real
+    fun numOf(value: Float): Real
 
-    fun numOf(integer: BigInteger): Integral
+    fun numOf(value: BigInteger): Integral
 
-    fun numOf(integer: Int): Integral
+    fun numOf(value: Int): Integral
 
-    fun numOf(integer: Long): Integral
+    fun numOf(value: Long): Integral
 
-    fun numOf(integer: Short): Integral
+    fun numOf(value: Short): Integral
 
-    fun numOf(integer: Byte): Integral
+    fun numOf(value: Byte): Integral
 
-    fun numOf(number: String): Numeric
+    fun numOf(value: String): Numeric
 
     companion object {
+
+        fun empty(): Scope {
+            return ScopeImpl(mutableMapOf())
+        }
 
         fun of(vararg vars: Var): Scope {
             val variables: MutableMap<String, Var> = mutableMapOf()
