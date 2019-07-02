@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
@@ -18,11 +20,19 @@ import kotlin.test.*
  */
 internal class SetImplTest {
 
-    private val mixedSetsInstances = SetUtils.mixedSets.map(::SetImpl)
+    private val mixedSetsInstances = SetUtils.mixedSets.map(this::newSet)
+
+    private fun newSet(terms: Array<Term>): SetImpl {
+        return if (terms.isEmpty()) {
+            EmptySetImpl
+        } else {
+            SetImpl(Tuple.wrapIfNeeded(*terms))
+        }
+    }
 
     @Test
     fun setFunctor() {
-        mixedSetsInstances.forEach { assertEquals(it.functor, Set.FUNCTOR) }
+        mixedSetsInstances.forEach { assertEquals(it.functor, ",") }
     }
 
     @Test
@@ -49,8 +59,8 @@ internal class SetImplTest {
 
     @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
-        val groundSetsInstances = SetUtils.groundSets.map { SetImpl(it) }
-        val nonGroundSetsInstances = SetUtils.notGroundSets.map { SetImpl(it) }
+        val groundSetsInstances = SetUtils.groundSets.map(this::newSet)
+        val nonGroundSetsInstances = SetUtils.notGroundSets.map(this::newSet)
 
         groundSetsInstances.forEach { assertTrue { it.isGround } }
         nonGroundSetsInstances.forEach { assertFalse { it.isGround } }
@@ -58,7 +68,7 @@ internal class SetImplTest {
 
     @Test
     fun emptySetDetected() {
-        assertTrue(SetImpl(arrayOf()).isEmptySet)
+        assertTrue(SetImpl(null).isEmptySet)
     }
 
     @Test
@@ -101,14 +111,14 @@ internal class SetImplTest {
     @Test
     fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
         val setVar = Var.of("A")
-        val setWithSameVarName = SetImpl(arrayOf(setVar, setVar, setVar))
+        val setWithSameVarName = newSet(arrayOf(setVar, setVar, setVar))
 
         assertAllVsAll(setWithSameVarName.argsList) { anElement, anotherElement ->
             assertEqualities(anElement, anotherElement)
             assertSame(anElement, anotherElement)
         }
 
-        val setCopied = setWithSameVarName.freshCopy() as Set
+//        val setCopied = setWithSameVarName.freshCopy() as Set
 
         // TODO this will not work now, to implement correct freshCopy (Issue #14)
         // assertAllVsAll(setCopied.argsList, ::assertEqualities)

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.EmptySetImpl
 import it.unibo.tuprolog.core.impl.SetImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
@@ -14,7 +15,15 @@ import kotlin.test.assertSame
  */
 internal class SetTest {
 
-    private val correctInstances by lazy { SetUtils.mixedSets.map(::SetImpl) }
+    private val correctInstances by lazy {
+        SetUtils.mixedSets.map {
+            if (it.isEmpty()) {
+                EmptySetImpl
+            } else {
+                SetImpl(Tuple.wrapIfNeeded(*it))
+            }
+        }
+    }
 
     @Test
     fun emptyReturnsEmptySet() {
@@ -60,12 +69,12 @@ internal class SetTest {
 
     @Test
     fun setOfEmptySequenceOfTerms() {
-        assertEqualities(Empty.set(), Set.of(emptySequence()))
+        assertEqualities(Empty.set(), Set.of(emptyList()))
     }
 
     @Test
     fun setOfSequenceOfTerms() {
-        val toBeTested = SetUtils.mixedSets.map { Set.of(it.asSequence()) }
+        val toBeTested = SetUtils.mixedSets.map { Set.of(it.toList()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
