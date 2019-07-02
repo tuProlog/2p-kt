@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.testutils.AtomUtils
+import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,5 +35,15 @@ internal class EmptySetImplTest {
     @Test
     fun functorDoesNotRespectStructRegex() {
         assertFalse(testedObj.isFunctorWellFormed)
+    }
+
+    @Test
+    fun emptySetFreshCopyShouldReturnTheInstanceItself() {
+        ConstantUtils.assertFreshCopyIsItself(testedObj)
+    }
+
+    @Test
+    fun emptySetFreshCopyWithScopeShouldReturnTheInstanceItself() {
+        ConstantUtils.assertFreshCopyWithScopeIsItself(testedObj)
     }
 }
