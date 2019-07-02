@@ -7,11 +7,27 @@ interface List : Struct {
     override val isList: Boolean
         get() = true
 
-    fun toArray(): Array<Term>
+    val unfoldedSequence: Sequence<Term>
 
-    fun toList(): KtList<Term>
+    val unfoldedList: KtList<Term>
 
-    fun toSequence(): Sequence<Term>
+    val unfoldedArray: Array<Term>
+
+    fun toArray(): Array<Term> =
+            if (unfoldedArray.last() is EmptyList) {
+                unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
+            } else {
+                unfoldedArray
+            }
+
+    fun toList(): KtList<Term> =
+            if (unfoldedList.last() is EmptyList) {
+                unfoldedList.slice(0 until unfoldedArray.lastIndex)
+            } else {
+                unfoldedList
+            }
+
+    fun toSequence(): Sequence<Term> = toList().asSequence()
 
     override fun freshCopy(): List = super.freshCopy() as List
 
@@ -29,8 +45,13 @@ interface List : Struct {
         fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
 
         fun from(items: KtList<Term>, last: Term? = null): List {
-            require(items.isNotEmpty()) {
-                "Input list for method ${List::class.qualifiedName}.from(${KtList::class.qualifiedName}, ${Term::class.qualifiedName}) cannot be empty"
+            if (items.isEmpty() && last !is EmptyList && last !== null) {
+                val methodName = "${List::class.qualifiedName}.from(${KtList::class.qualifiedName}, ${Term::class.qualifiedName})"
+
+                throw IllegalArgumentException(
+                        "Input list for method $methodName cannot be empty if the last item is `$last`"
+                )
+
             }
 
             val finalItem = if (last === null) Empty.list() else last

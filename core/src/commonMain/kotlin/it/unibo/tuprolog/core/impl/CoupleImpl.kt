@@ -7,15 +7,15 @@ import it.unibo.tuprolog.core.List as LogicList
 
 internal class CoupleImpl(override val head: Term, override val tail: Term) : StructImpl(Couple.FUNCTOR, arrayOf(head, tail)), Couple {
 
-    private val unfoldedSequence: Sequence<Term> by lazy {
-        sequenceOf(head) + if (tail.isList) tail.castTo<LogicList>().toSequence() else sequenceOf(tail)
+    override val unfoldedSequence: Sequence<Term> by lazy {
+        sequenceOf(head) + if (tail.isList) tail.castTo<LogicList>().unfoldedSequence else sequenceOf(tail)
     }
 
-    private val unfoldedList: List<Term> by lazy {
+    override val unfoldedList: List<Term> by lazy {
         unfoldedSequence.toList()
     }
 
-    private val unfoldedArray: Array<Term> by lazy {
+    override val unfoldedArray: Array<Term> by lazy {
         unfoldedList.toTypedArray()
     }
 
@@ -23,12 +23,6 @@ internal class CoupleImpl(override val head: Term, override val tail: Term) : St
 
     override val args: Array<Term>
         get() = super<StructImpl>.args
-
-    override fun toArray(): Array<Term> = unfoldedArray
-
-    override fun toSequence(): Sequence<Term> = unfoldedSequence
-
-    override fun toList(): List<Term> = unfoldedList
 
     override fun toString(): String {
         val ending = if (unfoldedList.last() is EmptyList) {
