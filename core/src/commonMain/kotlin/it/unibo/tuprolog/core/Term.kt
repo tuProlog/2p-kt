@@ -69,4 +69,6 @@ interface Term {
     operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
         return this.groundTo(substitution, *substitutions)
     }
+
+    val isConjunction: Boolean
 }
