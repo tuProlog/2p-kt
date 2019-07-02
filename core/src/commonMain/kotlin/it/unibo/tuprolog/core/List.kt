@@ -7,11 +7,27 @@ interface List : Struct {
     override val isList: Boolean
         get() = true
 
-    fun toArray(): Array<Term>
+    val unfoldedSequence: Sequence<Term>
 
-    fun toList(): KtList<Term>
+    val unfoldedList: KtList<Term>
 
-    fun toSequence(): Sequence<Term>
+    val unfoldedArray: Array<Term>
+
+    fun toArray(): Array<Term> =
+            if (unfoldedArray.last() is EmptyList) {
+                unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
+            } else {
+                unfoldedArray
+            }
+
+    fun toList(): KtList<Term> =
+            if (unfoldedList.last() is EmptyList) {
+                unfoldedList.slice(0 until unfoldedArray.lastIndex)
+            } else {
+                unfoldedList
+            }
+
+    fun toSequence(): Sequence<Term> = toList().asSequence()
 
     override fun freshCopy(): List = super.freshCopy() as List
 
@@ -28,13 +44,17 @@ interface List : Struct {
 
         fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
 
-        fun from(items: KtList<Term>, last: Term? = null): List =
-                if (last === null) {
-                    val tail = Couple.of(items[items.lastIndex - 1], items[items.lastIndex])
-                    items.slice(0 until items.size - 2).foldRight(tail) { h, t -> Couple.of(h, t) }
-                } else {
-                    items.foldRight<Term, List>(Empty.list()) { h, t -> Couple.of(h, t) }
-                }
+        fun from(items: KtList<Term>, last: Term? = null): List {
+            if (items.isEmpty() && last !is EmptyList && last !== null) {
+                throw IllegalArgumentException(
+                        "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
+                )
+
+            }
+
+            val finalItem = if (last === null) Empty.list() else last
+            return items.foldRight(finalItem) { head, tail -> Couple.of(head, tail) } as List
+        }
 
         fun of(vararg items: Term): List = from(items.toList(), Empty.list())
 
