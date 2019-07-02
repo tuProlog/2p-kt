@@ -46,10 +46,8 @@ interface List : Struct {
 
         fun from(items: KtList<Term>, last: Term? = null): List {
             if (items.isEmpty() && last !is EmptyList && last !== null) {
-                val methodName = "${List::class.qualifiedName}.from(${KtList::class.qualifiedName}, ${Term::class.qualifiedName})"
-
                 throw IllegalArgumentException(
-                        "Input list for method $methodName cannot be empty if the last item is `$last`"
+                        "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
                 )
 
             }
