@@ -34,6 +34,8 @@ interface Scope {
 
     fun listOf(terms: Iterable<Term>): LogicList
 
+    fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
+
     fun setOf(vararg terms: Term): LogicSet
 
     fun setOf(terms: Iterable<Term>): LogicSet

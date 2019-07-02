@@ -43,7 +43,8 @@ interface List : Struct {
             if (isGround) {
                 this
             } else {
-                scope.listOf(argsSequence.map { it.freshCopy(scope) }.takeWhile { it !is EmptyList }.asIterable())
+                val cloned = unfoldedList.map { it.freshCopy(scope) }
+                scope.listFrom(cloned.subList(0, cloned.lastIndex), cloned.last())
             }
 
     companion object {
