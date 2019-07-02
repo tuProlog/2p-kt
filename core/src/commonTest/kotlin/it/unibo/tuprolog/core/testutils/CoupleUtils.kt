@@ -18,17 +18,21 @@ internal object CoupleUtils {
     internal fun oneElementList(constructor: (Term, Term) -> Couple) = constructor(headOfFirstList, tailOfFirstList)
 
     private val headOfSecondList = Var.of("H")
-    private val tailOfSecondList = Var.of("T")
-    private val unfoldedSecondList = listOf(headOfSecondList, tailOfSecondList)
+    private val tailOfSecondListElement = Var.of("T")
+    private fun tailOfSecondList(constructor: (Term, Term) -> Couple) = constructor(tailOfSecondListElement, Empty.list())
+    private val unfoldedSecondList = listOf(headOfSecondList, tailOfSecondListElement)
     /**
      * Constructs a Couple with two Terms
      */
-    internal fun twoElementList(constructor: (Term, Term) -> Couple) = constructor(headOfSecondList, tailOfSecondList)
+    internal fun twoElementList(constructor: (Term, Term) -> Couple) =
+            constructor(headOfSecondList, tailOfSecondList(constructor))
 
     private val headOfThirdList = Atom.of("bigList")
     private val tailOfThirdListFirstElement = Integral.of(4)
     private val tailOfThirdListSecondElement = Real.of(1.5)
-    private fun tailOfThirdList(constructor: (Term, Term) -> Couple) = constructor(tailOfThirdListFirstElement, tailOfThirdListSecondElement)
+    private fun tailOfThirdList(constructor: (Term, Term) -> Couple) =
+            constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
+
     private val unfoldedThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
     /**
      * Constructs a Couple with three Terms
@@ -51,7 +55,7 @@ internal object CoupleUtils {
      * Couple tails (needs constructor because the three element list's tail is a Couple itself)
      */
     internal fun coupleInstancesTails(constructor: (Term, Term) -> Couple) =
-            listOf(tailOfFirstList, tailOfSecondList, tailOfThirdList(constructor))
+            listOf(tailOfFirstList, tailOfSecondList(constructor), tailOfThirdList(constructor))
 
     /**
      * Couples (of 1, 2, 3 elements respectively) "unfolded list" representation
