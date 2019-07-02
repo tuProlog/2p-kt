@@ -32,14 +32,13 @@ internal class SetImplTest {
 
     @Test
     fun setFunctor() {
-        mixedSetsInstances.forEach { assertEquals(it.functor, ",") }
+        mixedSetsInstances.forEach { assertEquals(it.functor, "{}") }
     }
 
     @Test
     fun argsCorrect() {
         onCorrespondingItems(SetUtils.mixedSets, mixedSetsInstances.map { it.args }) { expectedArgs, actualArgs ->
-            assertEquals(expectedArgs.toList(), actualArgs.toList())
-            assertTrue { expectedArgs.contentDeepEquals(actualArgs) }
+            assertEquals(Tuple.wrapIfNeeded(*expectedArgs), actualArgs.first()) // TODO review it!!
         }
     }
 
