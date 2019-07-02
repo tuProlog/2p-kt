@@ -3,6 +3,8 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Couple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.CoupleUtils
@@ -20,6 +22,7 @@ internal class CoupleImplTest {
     private val oneElementList = CoupleUtils.oneElementList(::CoupleImpl)
     private val twoElementList = CoupleUtils.twoElementList(::CoupleImpl)
     private val threeElementList = CoupleUtils.threeElementList(::CoupleImpl)
+    private val twoElementListWithPipe = CoupleUtils.twoElementListWithPipe(::CoupleImpl)
 
     private val coupleInstances = CoupleUtils.coupleInstances(::CoupleImpl)
     private val coupleInstancesHeads = CoupleUtils.coupleInstancesHeads
@@ -96,7 +99,7 @@ internal class CoupleImplTest {
 
     @Test
     fun toStringWorksAsExpected() {
-        val coupleInstanceStringRepr = listOf("[H]", "[H, T]", "[bigList, 4, 1.5]")
+        val coupleInstanceStringRepr = listOf("[H]", "[H, T]", "[bigList, 4, 1.5]", "[Head | Tail]")
 
         onCorrespondingItems(coupleInstanceStringRepr, coupleInstances.map { it.toString() }) { expectedString, actualString ->
             assertEquals(expectedString, actualString)
@@ -107,6 +110,7 @@ internal class CoupleImplTest {
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
         assertFalse(oneElementList.isGround)
         assertFalse(twoElementList.isGround)
+        assertFalse(twoElementListWithPipe.isGround)
         assertTrue(threeElementList.isGround)
     }
 
@@ -138,9 +142,23 @@ internal class CoupleImplTest {
         assertEqualities(coupleWithSameVarName.head, coupleWithSameVarName.tail)
         assertSame(coupleWithSameVarName.head, coupleWithSameVarName.tail)
 
-        val coupleCopied = coupleWithSameVarName.freshCopy() as Couple
+        val coupleCopied = coupleWithSameVarName.freshCopy()
 
-        // TODO this will not work now, to implement correct freshCopy (Issue #14)
-        // assertEqualities(coupleCopied.head, coupleCopied.tail)
+        assertEqualities(coupleCopied.head, coupleCopied.tail)
+        assertSame(coupleCopied.head, coupleCopied.tail)
+    }
+
+    @Test
+    fun freshCopyMergesDifferentVariablesWithSameName() {
+        val coupleWithSameVarName = CoupleImpl(Var.of("A"), Var.of("A"))
+
+        assertStructurallyEquals(coupleWithSameVarName.head, coupleWithSameVarName.tail)
+        assertNotStrictlyEquals(coupleWithSameVarName.head, coupleWithSameVarName.tail)
+        assertNotSame(coupleWithSameVarName.head, coupleWithSameVarName.tail)
+
+        val coupleCopied = coupleWithSameVarName.freshCopy()
+
+        assertEqualities(coupleCopied.head, coupleCopied.tail)
+        assertSame(coupleCopied.head, coupleCopied.tail)
     }
 }
