@@ -14,6 +14,8 @@ import kotlin.test.assertSame
  */
 internal class SetTest {
 
+    private val correctInstances by lazy { SetUtils.mixedSets.map(::SetImpl) }
+
     @Test
     fun emptyReturnsEmptySet() {
         assertEqualities(Empty.set(), Set.empty())
@@ -27,7 +29,6 @@ internal class SetTest {
 
     @Test
     fun setOfVarargTerms() {
-        val correctInstances = SetUtils.mixedSets.map(::SetImpl)
         val toBeTested = SetUtils.mixedSets.map { Set.of(*it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
@@ -40,7 +41,6 @@ internal class SetTest {
 
     @Test
     fun setOfCollectionOfTerms() {
-        val correctInstances = SetUtils.mixedSets.map(::SetImpl)
         val toBeTested = SetUtils.mixedSets.map { Set.of(it.toList() as Collection<Term>) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
@@ -53,7 +53,6 @@ internal class SetTest {
 
     @Test
     fun setOfIterableOfTerms() {
-        val correctInstances = SetUtils.mixedSets.map(::SetImpl)
         val toBeTested = SetUtils.mixedSets.map { Set.of(it.toList() as Iterable<Term>) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
@@ -66,7 +65,6 @@ internal class SetTest {
 
     @Test
     fun setOfSequenceOfTerms() {
-        val correctInstances = SetUtils.mixedSets.map(::SetImpl)
         val toBeTested = SetUtils.mixedSets.map { Set.of(it.asSequence()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
