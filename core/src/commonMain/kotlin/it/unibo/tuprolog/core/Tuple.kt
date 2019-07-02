@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.ConjunctionImpl
+import it.unibo.tuprolog.core.impl.TupleImpl
 import kotlin.collections.List as KtList
 
-interface Conjunction : Struct {
+interface Tuple : Struct {
 
-    override val isConjunction: Boolean
+    override val isTuple: Boolean
         get() = true
 
     override val functor: String
@@ -33,38 +33,38 @@ interface Conjunction : Struct {
 
     fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun freshCopy(): Conjunction = super.freshCopy() as Conjunction
+    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
-    override fun freshCopy(scope: Scope): Conjunction =
+    override fun freshCopy(scope: Scope): Tuple =
             if (isGround) {
                 this
             } else {
-                scope.conjunctionOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+                scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
             }
 
     companion object {
 
         const val FUNCTOR = ","
 
-        fun of(left: Term, right: Term): Conjunction {
-            return ConjunctionImpl(left, right)
+        fun of(left: Term, right: Term): Tuple {
+            return TupleImpl(left, right)
         }
 
-        fun of(left: Term, right: Term, others: Term): Conjunction {
+        fun of(left: Term, right: Term, others: Term): Tuple {
             return of(listOf(left, right, others))
         }
 
-        fun of(terms: Iterable<Term>): Conjunction {
+        fun of(terms: Iterable<Term>): Tuple {
             return of(terms.toList())
         }
 
-        fun of(terms: KtList<Term>): Conjunction {
+        fun of(terms: KtList<Term>): Tuple {
             require(terms.size >= 2) {
-                "Conjunctions require at least 2 terms"
+                "Tuples require at least 2 terms"
             }
 
             return terms.slice(0 until terms.lastIndex)
-                    .foldRight(terms.last()) { l, r -> ConjunctionImpl(l, r) } as Conjunction
+                    .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
         }
     }
 }

@@ -20,12 +20,12 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return LogicList.of(*terms)
     }
 
-    override fun conjunctionOf(terms: Iterable<Term>): Conjunction {
-        return Conjunction.of(terms.toList())
+    override fun tupleOf(terms: Iterable<Term>): Tuple {
+        return Tuple.of(terms.toList())
     }
 
-    override fun conjunctionOf(vararg terms: Term): Conjunction {
-        return Conjunction.of(terms.toList())
+    override fun tupleOf(vararg terms: Term): Tuple {
+        return Tuple.of(terms.toList())
     }
 
     override fun contains(variable: Var): Boolean {

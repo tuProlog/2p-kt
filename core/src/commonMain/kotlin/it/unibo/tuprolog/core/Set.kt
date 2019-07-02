@@ -46,7 +46,7 @@ interface Set : Struct {
                 when {
                     terms.isEmpty() -> empty()
                     terms.size == 1 -> SetImpl(terms[0])
-                    else -> SetImpl(Conjunction.of(terms))
+                    else -> SetImpl(Tuple.of(terms))
                 }
 
         fun of(terms: Iterable<Term>): Set = of(terms.toList())

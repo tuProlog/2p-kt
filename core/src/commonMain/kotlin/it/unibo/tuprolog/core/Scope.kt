@@ -26,9 +26,9 @@ interface Scope {
 
     fun structOf(functor: String, args: Sequence<Term>): Struct
 
-    fun conjunctionOf(vararg terms: Term): Conjunction
+    fun tupleOf(vararg terms: Term): Tuple
 
-    fun conjunctionOf(terms: Iterable<Term>): Conjunction
+    fun tupleOf(terms: Iterable<Term>): Tuple
 
     fun listOf(vararg terms: Term): LogicList
 

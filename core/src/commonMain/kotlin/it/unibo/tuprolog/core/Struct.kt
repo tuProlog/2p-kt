@@ -22,8 +22,8 @@ interface Struct : Term {
     override val isFact: Boolean
         get() = isRule && args[1].isTrue
 
-    override val isConjunction: Boolean
-        get() = functor == Conjunction.FUNCTOR && arity == 2
+    override val isTuple: Boolean
+        get() = functor == Tuple.FUNCTOR && arity == 2
 
     override val isAtom: Boolean
         get() = arity == 0
@@ -88,7 +88,7 @@ interface Struct : Term {
                     args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args[0], args[1])
                     args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct -> Rule.of(args[0] as Struct, args[1])
                     args.size == 2 && Set.FUNCTOR == functor -> Set.of(args)
-                    args.size == 2 && Conjunction.FUNCTOR == functor -> Conjunction.of(args)
+                    args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
                     args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args[0])
                     args.isEmpty() -> Atom.of(functor)
                     else -> StructImpl(functor, args.toTypedArray())
