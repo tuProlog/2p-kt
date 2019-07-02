@@ -1,0 +1,124 @@
+package it.unibo.tuprolog.core.impl
+
+import it.unibo.tuprolog.core.Couple
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.ConstantUtils
+import it.unibo.tuprolog.core.testutils.CoupleUtils
+import it.unibo.tuprolog.core.testutils.StructUtils
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
+import kotlin.test.*
+
+/**
+ * Test class for [CoupleImpl] and [Couple]
+ *
+ * @author Enrico
+ */
+internal class CoupleImplTest {
+
+    private val oneElementList = CoupleUtils.oneElementList(::CoupleImpl)
+    private val twoElementList = CoupleUtils.twoElementList(::CoupleImpl)
+    private val threeElementList = CoupleUtils.threeElementList(::CoupleImpl)
+
+    private val coupleInstances = CoupleUtils.coupleInstances(::CoupleImpl)
+    private val coupleInstancesHeads = CoupleUtils.coupleInstancesHeads
+    private val coupleInstancesTails = CoupleUtils.coupleInstancesTails(::CoupleImpl)
+    private val coupleInstancesUnfoldedLists = CoupleUtils.coupleInstancesUnfoldedLists
+
+    @Test
+    fun coupleFunctor() {
+        coupleInstances.forEach { assertEquals(it.functor, ".") }
+    }
+
+    @Test
+    fun headCorrect() {
+        onCorrespondingItems(coupleInstancesHeads, coupleInstances.map { it.head }, ::assertEqualities)
+    }
+
+    @Test
+    fun tailCorrect() {
+        onCorrespondingItems(coupleInstancesTails, coupleInstances.map { it.tail }, ::assertEqualities)
+    }
+
+    @Test
+    fun argsCorrect() {
+        val coupleInstancesArgs = coupleInstancesHeads.zip(coupleInstancesTails).map { (head, tail) -> arrayOf(head, tail) }
+
+        onCorrespondingItems(coupleInstancesArgs, coupleInstances.map { it.args }) { expectedArgs, actualArgs ->
+            assertEquals(expectedArgs.toList(), actualArgs.toList())
+            assertTrue { expectedArgs.contentDeepEquals(actualArgs) }
+        }
+    }
+
+    @Test
+    fun toListReturnValue() {
+        onCorrespondingItems(coupleInstancesUnfoldedLists, coupleInstances.map { it.toList() }) { expectedList, actualList ->
+            assertEquals(expectedList, actualList)
+        }
+    }
+
+    @Test
+    fun toArrayReturnValue() {
+        onCorrespondingItems(coupleInstancesUnfoldedLists, coupleInstances.map { it.toArray().toList() }) { expectedList, actualList ->
+            assertEquals(expectedList, actualList)
+        }
+    }
+
+    @Test
+    fun toSequenceReturnValue() {
+        onCorrespondingItems(coupleInstancesUnfoldedLists, coupleInstances.map { it.toSequence().toList() }) { expectedList, actualList ->
+            assertEquals(expectedList, actualList)
+        }
+    }
+
+    @Test
+    fun toStringWorksAsExpected() {
+        val coupleInstanceStringRepr = listOf("[H]", "[H, T]", "[bigList, 4, 1.5]")
+
+        onCorrespondingItems(coupleInstanceStringRepr, coupleInstances.map { it.toString() }) { expectedString, actualString ->
+            assertEquals(expectedString, actualString)
+        }
+    }
+
+    @Test
+    fun isGroundTrueOnlyIfNoVariablesArePresent() {
+        assertFalse(oneElementList.isGround)
+        assertFalse(twoElementList.isGround)
+        assertTrue(threeElementList.isGround)
+    }
+
+    @Test
+    fun testIsPropertiesAndTypes() {
+        coupleInstances.forEach(TermTypeAssertionUtils::assertIsCouple)
+    }
+
+    @Test
+    fun twoArity() {
+        coupleInstances.forEach { assertEquals(it.arity, 2) }
+    }
+
+    @Test
+    fun freshCopyShouldReturnInstanceItselfIfGround() {
+        coupleInstances.filter { it.isGround }.forEach(ConstantUtils::assertFreshCopyIsItself)
+    }
+
+    @Test
+    fun freshCopyShouldRenewVariables() {
+        coupleInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+    }
+
+    @Test
+    fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
+        val coupleVar = Var.of("A")
+        val coupleWithSameVarName = CoupleImpl(coupleVar, coupleVar)
+
+        assertEqualities(coupleWithSameVarName.head, coupleWithSameVarName.tail)
+        assertSame(coupleWithSameVarName.head, coupleWithSameVarName.tail)
+
+        val coupleCopied = coupleWithSameVarName.freshCopy() as Couple
+
+        // TODO this will not work now, to implement correct freshCopy (Issue #14)
+        // assertEqualities(coupleCopied.head, coupleCopied.tail)
+    }
+}
