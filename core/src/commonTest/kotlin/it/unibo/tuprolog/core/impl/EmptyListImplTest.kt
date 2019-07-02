@@ -23,6 +23,21 @@ internal class EmptyListImplTest {
     }
 
     @Test
+    fun unfoldedListContainsEmptyList() {
+        assertEquals(listOf(EmptyListImpl), testedObj.unfoldedList)
+    }
+
+    @Test
+    fun unfoldedSequenceContainsEmptyList() {
+        assertEquals(sequenceOf(EmptyListImpl).toList(), testedObj.unfoldedSequence.toList())
+    }
+
+    @Test
+    fun unfoldedArrayContainsEmptyList() {
+        assertTrue(arrayOf(EmptyListImpl).contentDeepEquals(testedObj.unfoldedArray))
+    }
+
+    @Test
     fun toArrayReturnValue() {
         assertTrue(testedObj.toArray().isEmpty())
     }
