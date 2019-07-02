@@ -25,14 +25,14 @@ internal class ListTest {
 
     @Test
     fun fromListOfTermsWithoutLastSpecified() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun fromListOfTermsSpecifyingLast() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it.dropLast(1), it.last()) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it.dropLast(1), it.last()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -55,14 +55,14 @@ internal class ListTest {
 
     @Test
     fun fromIterableOfTermsWithoutLastSpecified() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it as Iterable<Term>) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it as Iterable<Term>) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun fromIterableOfTermsSpecifyingLast() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it.dropLast(1) as Iterable<Term>, it.last()) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it.dropLast(1) as Iterable<Term>, it.last()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -85,14 +85,14 @@ internal class ListTest {
 
     @Test
     fun fromSequenceOfTermsWithoutLastSpecified() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it.asSequence()) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it.asSequence()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun fromSequenceOfTermsSpecifyingLast() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it.dropLast(1).asSequence(), it.last()) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.from(it.dropLast(1).asSequence(), it.last()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -120,14 +120,14 @@ internal class ListTest {
 
     @Test
     fun ofVarargTerms() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.of(*it.toTypedArray()) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.of(*it.toTypedArray()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun ofIterableOfTerms() {
-        val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.of(it as Iterable<Term>) }
+        val toBeTested = CoupleUtils.coupleInstancesElementLists.map { LogicList.of(it as Iterable<Term>) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
