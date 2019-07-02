@@ -17,17 +17,13 @@ interface Var : Term {
 
     val completeName: String
 
-    override fun freshCopy(): Var {
-        return super.freshCopy() as Var
-    }
+    override fun freshCopy(): Var = super.freshCopy() as Var
 
-    override fun freshCopy(scope: Scope): Var {
-        return if (isAnonymous) {
-            scope.anonymous()
-        } else {
-            scope.varOf(name)
-        }
-    }
+    override fun freshCopy(scope: Scope): Var =
+            when {
+                isAnonymous -> scope.anonymous()
+                else -> scope.varOf(name)
+            }
 
     val isNameWellFormed: Boolean
 

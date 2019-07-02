@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
@@ -7,6 +8,8 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils
+import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
+import it.unibo.tuprolog.core.testutils.VarUtils.assertSameVariable
 import kotlin.test.*
 
 /**
@@ -101,15 +104,30 @@ internal class VarImplTest {
     fun freshCopyWorksAsExpected() {
         val refreshedVarInstances = mixedVarInstances.map { it.freshCopy() }
 
-        onCorrespondingItems(refreshedVarInstances, mixedVarInstances) { refreshedVar, originalVar ->
-            assertEquals(refreshedVar.name, originalVar.name)
-            assertNotEquals(refreshedVar.completeName, originalVar.completeName)
+        onCorrespondingItems(refreshedVarInstances, mixedVarInstances, ::assertDifferentVariableExceptForName)
+    }
 
-            assertEquals(refreshedVar, originalVar)
-            assertStructurallyEquals(refreshedVar, originalVar)
-            assertNotStrictlyEquals(refreshedVar, originalVar)
-            assertNotSame(refreshedVar, originalVar)
-        }
+    @Test
+    fun freshCopyWithScopeAndNoMatchingVariablesInsideIt() {
+        val refreshedVarInstances = mixedVarInstances.map { it.freshCopy(Scope.empty()) }
+
+        onCorrespondingItems(refreshedVarInstances, mixedVarInstances, ::assertDifferentVariableExceptForName)
+    }
+
+    @Test
+    fun freshCopyWithScopeAndMatchingVariableInsideIt() {
+        val notAnonymousVarInstances = mixedVarInstances.filterNot { it.isAnonymous }
+        val refreshedNamedVarInstances = notAnonymousVarInstances.map { it.freshCopy(Scope.of(it)) }
+
+        onCorrespondingItems(refreshedNamedVarInstances, notAnonymousVarInstances, ::assertSameVariable)
+    }
+
+    @Test
+    fun freshCopyOfAnonymousVariableAlwaysReturnsDifferentVariable() {
+        val anonymousVar = VarImpl("_")
+        val refreshedAnonymous = anonymousVar.freshCopy(Scope.of("_"))
+
+        assertDifferentVariableExceptForName(anonymousVar, refreshedAnonymous)
     }
 
     @Test
