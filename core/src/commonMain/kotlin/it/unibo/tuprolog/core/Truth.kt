@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TruthImpl
+import it.unibo.tuprolog.scoping.Scope
 
 interface Truth : Atom {
 
@@ -9,6 +10,10 @@ interface Truth : Atom {
 
     override val isFail: Boolean
         get() = FAIL_FUNCTOR == functor
+
+    override fun freshCopy(): Truth = this
+
+    override fun freshCopy(scope: Scope): Truth = this
 
     companion object {
         const val TRUE_FUNCTOR = "true"

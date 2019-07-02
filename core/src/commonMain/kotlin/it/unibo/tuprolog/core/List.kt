@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.scoping.Scope
 import kotlin.collections.List as KtList
 
 interface List : Struct {
@@ -12,6 +13,15 @@ interface List : Struct {
     fun toList(): KtList<Term>
 
     fun toSequence(): Sequence<Term>
+
+    override fun freshCopy(): List = super.freshCopy() as List
+
+    override fun freshCopy(scope: Scope): List =
+            if (isGround) {
+                this
+            } else {
+                scope.listOf(argsSequence.map { it.freshCopy(scope) }.takeWhile { it !is EmptyList }.asIterable())
+            }
 
     companion object {
 

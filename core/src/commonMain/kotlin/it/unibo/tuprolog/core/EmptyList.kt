@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
+import it.unibo.tuprolog.scoping.Scope
 import it.unibo.tuprolog.core.List as LogicList
 
 interface EmptyList : Empty, LogicList {
@@ -19,6 +20,10 @@ interface EmptyList : Empty, LogicList {
     override fun toList(): List<Term> = emptyList()
 
     override fun toSequence(): Sequence<Term> = emptySequence()
+
+    override fun freshCopy(): EmptyList = this
+
+    override fun freshCopy(scope: Scope): EmptyList = this
 
     companion object {
         operator fun invoke(): EmptyList = EmptyListImpl

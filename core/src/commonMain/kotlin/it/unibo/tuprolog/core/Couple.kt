@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.CoupleImpl
+import it.unibo.tuprolog.scoping.Scope
 import it.unibo.tuprolog.core.List as LogicList
 
 interface Couple : Struct, LogicList {
@@ -37,28 +38,15 @@ interface Couple : Struct, LogicList {
 
     override fun toList(): List<Term> = toSequence().toList()
 
+    override fun freshCopy(): Couple = super<LogicList>.freshCopy() as Couple
+
+    override fun freshCopy(scope: Scope): Couple = super<LogicList>.freshCopy(scope) as Couple
+
     companion object {
         const val FUNCTOR = "."
 
         fun of(head: Term, tail: Term): Couple = CoupleImpl(head, tail)
 
-        fun last(head: Term): Couple = Couple.of(head, Empty.list())
+        fun last(head: Term): Couple = of(head, Empty.list())
     }
-
-    //    @Override
-    //    default String toJava(boolean inline) {
-    //        if (inline) {
-    //            return Couple.class.getSimpleName()
-    //                    + ".of("
-    //                    + streamArgs().map(it -> it.toJava(inline)).collect(Collectors.joining(", "))
-    //                    + ")";
-    //        } else {
-    //            return Couple.class.getSimpleName()
-    //                    + ".of(\n    "
-    //                    + streamArgs().map(it -> it.toJava(inline))
-    //                        .map(it -> it.replace("\n", "\n    "))
-    //                        .collect(Collectors.joining(",\n    "))
-    //                    + "\n)";
-    //        }
-    //    }
 }

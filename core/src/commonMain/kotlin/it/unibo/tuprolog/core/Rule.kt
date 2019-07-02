@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.RuleImpl
+import it.unibo.tuprolog.scoping.Scope
 
 interface Rule : Clause {
 
@@ -14,6 +15,10 @@ interface Rule : Clause {
 
     override val isDirective: Boolean
         get() = false
+
+    override fun freshCopy(): Rule = super.freshCopy() as Rule
+
+    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
 
     companion object {
         const val FUNCTOR = ":-"

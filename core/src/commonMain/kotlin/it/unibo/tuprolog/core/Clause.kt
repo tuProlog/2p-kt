@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.scoping.Scope
+
 interface Clause : Struct {
 
     override val functor: String
@@ -26,6 +28,10 @@ interface Clause : Struct {
 
     override val isDirective: Boolean
         get() = head === null
+
+    override fun freshCopy(): Clause = super.freshCopy() as Clause
+
+    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 
     companion object {
         const val FUNCTOR = ":-"

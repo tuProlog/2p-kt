@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.RealImpl
+import it.unibo.tuprolog.scoping.Scope
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -16,6 +17,10 @@ interface Real : Numeric {
 
     override val intValue: BigInteger
         get() = value.toBigInteger()
+
+    override fun freshCopy(): Real = this
+
+    override fun freshCopy(scope: Scope): Real = this
 
     companion object {
         private const val i = """([0-9]+)"""

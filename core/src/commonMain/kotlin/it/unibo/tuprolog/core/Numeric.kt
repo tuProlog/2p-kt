@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.scoping.Scope
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -14,6 +15,10 @@ interface Numeric : Term, Comparable<Numeric> {
     val decimalValue: BigDecimal
 
     val intValue: BigInteger
+
+    override fun freshCopy(): Numeric = this
+
+    override fun freshCopy(scope: Scope): Numeric = this
 
     override fun compareTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 

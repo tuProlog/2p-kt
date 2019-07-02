@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.DirectiveImpl
+import it.unibo.tuprolog.scoping.Scope
 
 interface Directive : Clause {
 
@@ -15,6 +16,10 @@ interface Directive : Clause {
 
     override val isDirective: Boolean
         get() = true
+
+    override fun freshCopy(): Directive = super.freshCopy() as Directive
+
+    override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 
     companion object {
         fun of(body1: Term, vararg body: Term): Directive =

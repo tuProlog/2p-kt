@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.StructImpl
-import kotlin.collections.List
+import it.unibo.tuprolog.scoping.Scope
+import kotlin.collections.List as KtList
 
 interface Struct : Term {
 
@@ -49,11 +50,13 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
-    override fun freshCopy(): Term =
+    override fun freshCopy(): Term = super.freshCopy() as Struct
+
+    override fun freshCopy(scope: Scope): Struct =
             if (isGround) {
                 this
             } else {
-                of(functor, args.map { it.freshCopy() })
+                scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
             }
 
     val functor: String
@@ -63,7 +66,7 @@ interface Struct : Term {
     val arity: Int
         get() = args.size
 
-    val argsList: List<Term>
+    val argsList: KtList<Term>
         get() = listOf(*args)
 
     val argsSequence: Sequence<Term>
@@ -78,7 +81,7 @@ interface Struct : Term {
 
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
-        fun of(functor: String, args: List<Term>): Struct =
+        fun of(functor: String, args: KtList<Term>): Struct =
                 if (args.size == 2 && Couple.FUNCTOR == functor) {
                     Couple.of(args[0], args[1])
                 } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
@@ -93,7 +96,7 @@ interface Struct : Term {
 
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
-        fun fold(operator: String, terms: List<Term>, terminal: Term? = null): Struct =
+        fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
                 if (terminal === null) {
                     terms.slice(0 until terms.lastIndex - 1)
                             .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
@@ -119,7 +122,7 @@ interface Struct : Term {
 
         fun conjunction(terms: Iterable<Term>): Term = conjunction(terms.toList())
 
-        fun conjunction(terms: List<Term>): Term =
+        fun conjunction(terms: KtList<Term>): Term =
                 when {
                     terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
                     terms.size == 1 -> terms[0]
