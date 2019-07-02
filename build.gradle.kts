@@ -44,6 +44,7 @@ subprojects {
             val commonMain by getting {
                 dependencies {
                     implementation(kotlin("stdlib-common"))
+                    implementation(kotlin("reflect"))
                 }
             }
             val commonTest by getting {
