@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Couple
+import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -29,5 +30,12 @@ internal class CoupleImpl(override val head: Term, override val tail: Term) : St
 
     override fun toList(): List<Term> = unfoldedList
 
-    override fun toString(): String = unfoldedList.joinToString(", ", "[", "]")
+    override fun toString(): String {
+        val ending = if (unfoldedList.last() is EmptyList) {
+            "]"
+        } else {
+            " | ${unfoldedList.last()}]"
+        }
+        return unfoldedSequence.take(unfoldedList.size - 1).joinToString(", ", "[", ending)
+    }
 }
