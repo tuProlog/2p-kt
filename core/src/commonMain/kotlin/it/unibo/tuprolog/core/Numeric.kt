@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.Scope
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 

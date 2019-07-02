@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.Scope
 import kotlin.collections.List as KtList
 
 interface List : Struct {

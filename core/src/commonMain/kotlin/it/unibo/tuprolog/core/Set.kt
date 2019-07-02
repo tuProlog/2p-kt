@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.SetImpl
-import it.unibo.tuprolog.scoping.Scope
 
 interface Set : Struct {
 

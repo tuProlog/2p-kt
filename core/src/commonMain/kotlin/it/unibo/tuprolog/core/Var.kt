@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
-import it.unibo.tuprolog.scoping.Scope
 
 interface Var : Term {
 

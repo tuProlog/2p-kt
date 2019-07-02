@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.FactImpl
-import it.unibo.tuprolog.scoping.Scope
 
 interface Fact : Rule {
 

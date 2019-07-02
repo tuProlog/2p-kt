@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.Scope
-
 interface Term {
 
     fun <T : Term> castTo(): T {

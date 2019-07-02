@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.scoping
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.scoping.ScopeImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
@@ -16,7 +16,7 @@ interface Scope {
 
     operator fun get(variable: String): Var?
 
-    fun where (lambda: Scope.() -> Unit): Scope
+    fun where(lambda: Scope.() -> Unit): Scope
 
     fun varOf(name: String): Var
 

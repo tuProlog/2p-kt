@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.Scope
-
 interface Empty : Atom {
 
     override fun freshCopy(): Empty = this

@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.DirectiveImpl
-import it.unibo.tuprolog.scoping.Scope
 
 interface Directive : Clause {
 

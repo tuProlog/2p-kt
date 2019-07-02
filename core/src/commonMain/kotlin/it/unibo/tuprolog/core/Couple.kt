@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.CoupleImpl
-import it.unibo.tuprolog.scoping.Scope
 import it.unibo.tuprolog.core.List as LogicList
 
 interface Couple : Struct, LogicList {
