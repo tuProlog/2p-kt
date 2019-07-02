@@ -37,6 +37,10 @@ interface Couple : Struct, LogicList {
 
     override fun toList(): List<Term> = toSequence().toList()
 
+    override fun freshCopy(): Couple = super<LogicList>.freshCopy() as Couple
+
+    override fun freshCopy(scope: Scope): Couple = super<LogicList>.freshCopy(scope) as Couple
+
     companion object {
         const val FUNCTOR = "."
 
@@ -44,21 +48,4 @@ interface Couple : Struct, LogicList {
 
         fun last(head: Term): Couple = of(head, Empty.list())
     }
-
-    //    @Override
-    //    default String toJava(boolean inline) {
-    //        if (inline) {
-    //            return Couple.class.getSimpleName()
-    //                    + ".of("
-    //                    + streamArgs().map(it -> it.toJava(inline)).collect(Collectors.joining(", "))
-    //                    + ")";
-    //        } else {
-    //            return Couple.class.getSimpleName()
-    //                    + ".of(\n    "
-    //                    + streamArgs().map(it -> it.toJava(inline))
-    //                        .map(it -> it.replace("\n", "\n    "))
-    //                        .collect(Collectors.joining(",\n    "))
-    //                    + "\n)";
-    //        }
-    //    }
 }

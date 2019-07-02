@@ -16,6 +16,10 @@ interface Directive : Clause {
     override val isDirective: Boolean
         get() = true
 
+    override fun freshCopy(): Directive = super.freshCopy() as Directive
+
+    override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
+
     companion object {
         fun of(body1: Term, vararg body: Term): Directive =
                 DirectiveImpl(Struct.conjunction((listOf(body1) + listOf(*body))))

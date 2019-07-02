@@ -19,6 +19,15 @@ interface Set : Struct {
 
     fun toSequence(): Sequence<Term> = args.asSequence()
 
+    override fun freshCopy(): Set = super.freshCopy() as Set
+
+    override fun freshCopy(scope: Scope): Set =
+            if (isGround) {
+                this
+            } else {
+                scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+            }
+
     companion object {
         const val FUNCTOR = "{}"
 
@@ -37,8 +46,6 @@ interface Set : Struct {
                 }
 
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
-
-        fun of(terms: Sequence<Term>): Set = of(terms.toList())
     }
 }
 

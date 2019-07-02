@@ -2,6 +2,10 @@ package it.unibo.tuprolog.core
 
 interface Empty : Atom {
 
+    override fun freshCopy(): Empty = this
+
+    override fun freshCopy(scope: Scope): Empty = this
+
     companion object {
         const val EMPTY_LIST_FUNCTOR = "[]"
         const val EMPTY_SET_FUNCTOR = Set.FUNCTOR
