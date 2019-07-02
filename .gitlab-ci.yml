@@ -1,0 +1,23 @@
+image: gciatto/my-images:jdk12-alpine-gradle531
+
+variables:
+  GOPTS: "--no-daemon --console=plain"
+
+before_script:
+  - chmod +x gradlew
+
+cache:
+  paths:
+    - /root/.gradle/
+    - gradle/
+    - build/
+    - .gradle/wrapper
+    - .gradle/caches
+
+build:
+  stage: build
+  script: ./gradlew assemble $GOPTS
+
+test:
+  stage: test
+  script: ./gradlew check $GOPTS
