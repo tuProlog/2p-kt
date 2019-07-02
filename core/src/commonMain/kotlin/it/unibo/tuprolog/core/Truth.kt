@@ -10,6 +10,10 @@ interface Truth : Atom {
     override val isFail: Boolean
         get() = FAIL_FUNCTOR == functor
 
+    override fun freshCopy(): Truth = this
+
+    override fun freshCopy(scope: Scope): Truth = this
+
     companion object {
         const val TRUE_FUNCTOR = "true"
         const val FAIL_FUNCTOR = "fail"

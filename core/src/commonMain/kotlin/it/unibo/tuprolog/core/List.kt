@@ -13,6 +13,15 @@ interface List : Struct {
 
     fun toSequence(): Sequence<Term>
 
+    override fun freshCopy(): List = super.freshCopy() as List
+
+    override fun freshCopy(scope: Scope): List =
+            if (isGround) {
+                this
+            } else {
+                scope.listOf(argsSequence.map { it.freshCopy(scope) }.takeWhile { it !is EmptyList }.asIterable())
+            }
+
     companion object {
 
         fun from(items: Iterable<Term>, last: Term? = null): List = from(items.toList(), last)

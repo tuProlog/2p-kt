@@ -17,6 +17,10 @@ interface Real : Numeric {
     override val intValue: BigInteger
         get() = value.toBigInteger()
 
+    override fun freshCopy(): Real = this
+
+    override fun freshCopy(scope: Scope): Real = this
+
     companion object {
         private const val i = """([0-9]+)"""
         private const val d = """(\.[0-9]+)"""

@@ -20,6 +20,10 @@ interface EmptyList : Empty, LogicList {
 
     override fun toSequence(): Sequence<Term> = emptySequence()
 
+    override fun freshCopy(): EmptyList = this
+
+    override fun freshCopy(scope: Scope): EmptyList = this
+
     companion object {
         operator fun invoke(): EmptyList = EmptyListImpl
     }

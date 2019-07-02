@@ -34,6 +34,9 @@ interface Atom : Struct {
     override val argsList: kotlin.collections.List<Term>
         get() = emptyList()
 
+    override fun freshCopy(): Atom = this
+
+    override fun freshCopy(scope: Scope): Atom = this
 
     companion object {
         val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()

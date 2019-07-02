@@ -17,6 +17,10 @@ interface Integral : Numeric {
     override val intValue: BigInteger
         get() = value
 
+    override fun freshCopy(): Integral = this
+
+    override fun freshCopy(scope: Scope): Integral = this
+
     companion object {
         val INTEGRAL_REGEX_PATTERN = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
 

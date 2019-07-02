@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.core
 
-import kotlin.collections.List
-
 interface Term {
 
     fun <T : Term> castTo(): T {
+        @Suppress("UNCHECKED_CAST")
         return this as T
     }
 
@@ -32,13 +31,27 @@ interface Term {
     val isFail: Boolean get() = false
 
     /**
-     * Returns a fresh copy of this Term.
+     * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the currenct one in any aspect,
+     * except variables directly or indirectly contained into this Term, which are refreshed.
+     * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly
+     * generated variables.
      *
-     * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly generated variables.
+     * Variables are refreshed consistently, meaning that, if more variables exists within this Term having the same
+     * name, all fresh copies of such variables will have the same complete name.
      *
-     * Example: "f(X, g(X))".freshCopy() returns something like "f(X_1, g(X_1))"
+     * Example: "f(X, g(X))".freshCopy() returns something like "f(X_1, g(X_1))" instead of "f(X_1, g(X_2))"
      */
-    fun freshCopy(): Term = this
+    fun freshCopy(): Term = freshCopy(Scope.empty())
+
+    /**
+     * Returns a fresh copy of this Term, similarly to `freshCopy`, possibly reusing variables from the provided scope,
+     * if any
+     *
+     * @see freshCopy
+     * @param scope the Scope containing variables to be used in copying
+     *
+     */
+    fun freshCopy(scope: Scope): Term = this
 
     fun groundTo(substitution: Substitution): Term {
         return when {

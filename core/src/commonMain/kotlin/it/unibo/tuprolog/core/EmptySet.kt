@@ -14,6 +14,10 @@ interface EmptySet : Empty, LogicSet {
     override val value: String
         get() = super.value
 
+    override fun freshCopy(): EmptySet = this
+
+    override fun freshCopy(scope: Scope): EmptySet = this
+
     companion object {
         operator fun invoke(): EmptySet = EmptySetImpl
     }
