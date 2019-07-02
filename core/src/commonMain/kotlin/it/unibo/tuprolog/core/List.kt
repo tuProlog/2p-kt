@@ -27,5 +27,7 @@ interface List : Struct {
         fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
 
         fun of(vararg items: Term): List = from(items.toList())
+
+        fun of(items: Iterable<Term>): List = from(items.toList())
     }
 }

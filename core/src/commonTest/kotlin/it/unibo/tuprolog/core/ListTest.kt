@@ -26,9 +26,7 @@ internal class ListTest {
     @Test
     fun fromListOfTermsWithoutLastSpecified() {
         val toBeTested = CoupleUtils.coupleInstancesUnfoldedLists.map { LogicList.from(it) }
-        onCorrespondingItems(correctInstances, toBeTested) { expected, actual ->
-            println(expected)
-            println(actual)
-        }
+
+        onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 }
