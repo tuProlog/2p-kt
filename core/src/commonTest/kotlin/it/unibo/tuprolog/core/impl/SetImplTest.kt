@@ -2,12 +2,12 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.testutils.AssertionUtils
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.SetUtils
+import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.*
 
@@ -95,19 +95,11 @@ internal class SetImplTest {
 
     @Test
     fun freshCopyShouldRenewVariables() {
-        val groundSetInstances = mixedSetsInstances.filterNot { it.isGround }
-        val copiedSetInstances = groundSetInstances.map { it.freshCopy() }
-
-        onCorrespondingItems(groundSetInstances, copiedSetInstances) { original, copy ->
-            assertEquals(original, copy)
-            AssertionUtils.assertStructurallyEquals(original, copy)
-            AssertionUtils.assertNotStrictlyEquals(original, copy)
-            assertNotSame(original, copy)
-        }
+        mixedSetsInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
     }
 
     @Test
-    fun freshCopyShouldRenewVariablesAccountingOfTheirNames() {
+    fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
         val setVar = Var.of("A")
         val setWithSameVarName = SetImpl(arrayOf(setVar, setVar, setVar))
 

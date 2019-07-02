@@ -3,11 +3,10 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Couple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.CoupleUtils
+import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.*
 
@@ -106,19 +105,11 @@ internal class CoupleImplTest {
 
     @Test
     fun freshCopyShouldRenewVariables() {
-        val groundCoupleInstances = coupleInstances.filterNot { it.isGround }
-        val copiedCoupleInstances = groundCoupleInstances.map { it.freshCopy() }
-
-        onCorrespondingItems(groundCoupleInstances, copiedCoupleInstances) { original, copy ->
-            assertEquals(original, copy)
-            assertStructurallyEquals(original, copy)
-            assertNotStrictlyEquals(original, copy)
-            assertNotSame(original, copy)
-        }
+        coupleInstances.filterNot { it.isGround }.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
     }
 
     @Test
-    fun freshCopyShouldRenewVariablesAccountingOfTheirNames() {
+    fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
         val coupleVar = Var.of("A")
         val coupleWithSameVarName = CoupleImpl(coupleVar, coupleVar)
 
