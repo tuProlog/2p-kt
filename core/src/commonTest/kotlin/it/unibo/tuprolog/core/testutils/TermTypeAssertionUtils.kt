@@ -40,6 +40,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is Struct)
@@ -80,6 +81,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Var)
         assertFalse(any is Struct)
@@ -143,6 +145,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isCouple)
         assertFalse(any.isVariable)
         assertFalse(any.isBound)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is Clause)
@@ -197,9 +200,38 @@ internal object TermTypeAssertionUtils {
     /**
      * Checks passed term to be a Tuple or fails otherwise
      */
-    fun assertIsConjunction(any: Any) {
+    fun assertIsTuple(any: Any) {
 
-        TODO()
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is Tuple)
+
+        assertTrue(any.isStruct)
+        assertTrue(any.isTuple)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCouple)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is Atom)
+        assertFalse(any is Clause)
+        assertFalse(any is Couple)
+        assertFalse(any is Var)
     }
 
     /**
@@ -238,6 +270,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
@@ -272,6 +305,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is LogicList)

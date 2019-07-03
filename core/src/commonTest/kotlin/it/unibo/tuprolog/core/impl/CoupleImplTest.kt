@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Couple
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.CoupleUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Test class for [CoupleImpl] and [Couple]
@@ -135,30 +135,7 @@ internal class CoupleImplTest {
     }
 
     @Test
-    fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
-        val coupleVar = Var.of("A")
-        val coupleWithSameVarName = CoupleImpl(coupleVar, coupleVar)
-
-        assertEqualities(coupleWithSameVarName.head, coupleWithSameVarName.tail)
-        assertSame(coupleWithSameVarName.head, coupleWithSameVarName.tail)
-
-        val coupleCopied = coupleWithSameVarName.freshCopy()
-
-        assertEqualities(coupleCopied.head, coupleCopied.tail)
-        assertSame(coupleCopied.head, coupleCopied.tail)
-    }
-
-    @Test
     fun freshCopyMergesDifferentVariablesWithSameName() {
-        val coupleWithSameVarName = CoupleImpl(Var.of("A"), Var.of("A"))
-
-        assertStructurallyEquals(coupleWithSameVarName.head, coupleWithSameVarName.tail)
-        assertNotStrictlyEquals(coupleWithSameVarName.head, coupleWithSameVarName.tail)
-        assertNotSame(coupleWithSameVarName.head, coupleWithSameVarName.tail)
-
-        val coupleCopied = coupleWithSameVarName.freshCopy()
-
-        assertEqualities(coupleCopied.head, coupleCopied.tail)
-        assertSame(coupleCopied.head, coupleCopied.tail)
+        StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName(::CoupleImpl)
     }
 }

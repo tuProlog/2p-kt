@@ -52,7 +52,7 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
-    override fun freshCopy(): Term = super.freshCopy() as Struct
+    override fun freshCopy(): Struct = super.freshCopy() as Struct
 
     override fun freshCopy(scope: Scope): Struct =
             if (isGround) {
