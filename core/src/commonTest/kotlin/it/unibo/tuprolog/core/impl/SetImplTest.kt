@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Set
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
@@ -20,25 +19,42 @@ import kotlin.test.*
  */
 internal class SetImplTest {
 
-    private val mixedSetsInstances = SetUtils.mixedSets.map(this::newSet)
-
-    private fun newSet(terms: Array<Term>): SetImpl {
-        return if (terms.isEmpty()) {
-            EmptySetImpl
-        } else {
-            SetImpl(Tuple.wrapIfNeeded(*terms))
-        }
-    }
+    private val mixedSetsInstances = SetUtils.mixedSetsTupleWrapped.map(::SetImpl)
 
     @Test
     fun setFunctor() {
-        mixedSetsInstances.forEach { assertEquals(it.functor, "{}") }
+        mixedSetsInstances.forEach { assertEquals("{}", it.functor) }
     }
 
     @Test
     fun argsCorrect() {
-        onCorrespondingItems(SetUtils.mixedSets, mixedSetsInstances.map { it.args }) { expectedArgs, actualArgs ->
-            assertEquals(Tuple.wrapIfNeeded(*expectedArgs), actualArgs.first()) // TODO review it!!
+        onCorrespondingItems(SetUtils.mixedSetsTupleWrapped, mixedSetsInstances.map { it.args.first() }, ::assertEqualities)
+    }
+
+    @Test
+    fun unfoldedListCorrect() {
+        val correctElementLists = SetUtils.mixedSets.map { it.toList() }
+
+        onCorrespondingItems(correctElementLists, mixedSetsInstances.map { it.unfoldedList }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun unfoldedSequenceCorrect() {
+        val correctElementLists = SetUtils.mixedSets.map { it.toList() }
+
+        onCorrespondingItems(correctElementLists, mixedSetsInstances.map { it.unfoldedSequence.toList() }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun unfoldedArrayCorrect() {
+        val correctElementLists = SetUtils.mixedSets.map { it.toList() }
+
+        onCorrespondingItems(correctElementLists, mixedSetsInstances.map { it.unfoldedArray.toList() }) { expectedList, actualList ->
+            assertEquals(expectedList, actualList)
         }
     }
 
@@ -58,8 +74,8 @@ internal class SetImplTest {
 
     @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
-        val groundSetsInstances = SetUtils.groundSets.map(this::newSet)
-        val nonGroundSetsInstances = SetUtils.notGroundSets.map(this::newSet)
+        val groundSetsInstances = SetUtils.groundSetsTupleWrapped.map(::SetImpl)
+        val nonGroundSetsInstances = SetUtils.notGroundSetsTupleWrapped.map(::SetImpl)
 
         groundSetsInstances.forEach { assertTrue { it.isGround } }
         nonGroundSetsInstances.forEach { assertFalse { it.isGround } }
@@ -108,19 +124,15 @@ internal class SetImplTest {
     }
 
     @Test
-    fun freshCopyShouldRenewVariablesTakingAccountOfTheirNames() {
-        val setVar = Var.of("A")
-        val setWithSameVarName = newSet(arrayOf(setVar, setVar, setVar))
+    fun freshCopyMergesDifferentVariablesWithSameName() {
+        val setWithSameVarName = SetImpl(Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")))
 
         assertAllVsAll(setWithSameVarName.argsList) { anElement, anotherElement ->
             assertEqualities(anElement, anotherElement)
             assertSame(anElement, anotherElement)
         }
 
-//        val setCopied = setWithSameVarName.freshCopy() as Set
-
-        // TODO this will not work now, to implement correct freshCopy (Issue #14)
-        // assertAllVsAll(setCopied.argsList, ::assertEqualities)
+        val setCopied = setWithSameVarName.freshCopy()
+        assertAllVsAll(setCopied.argsList, ::assertEqualities)
     }
-
 }

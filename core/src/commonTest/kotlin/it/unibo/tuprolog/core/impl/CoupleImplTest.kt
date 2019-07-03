@@ -32,7 +32,7 @@ internal class CoupleImplTest {
 
     @Test
     fun coupleFunctor() {
-        coupleInstances.forEach { assertEquals(it.functor, ".") }
+        coupleInstances.forEach { assertEquals(".", it.functor) }
     }
 
     @Test

@@ -17,7 +17,7 @@ import kotlin.test.assertSame
  */
 internal class TupleTest {
 
-    val correctInstances = TupleUtils.tupleInstances(::TupleImpl)
+    private val correctInstances = TupleUtils.tupleInstances(::TupleImpl)
 
     @Test
     fun wrapIfNeededWithNoArgs() {
