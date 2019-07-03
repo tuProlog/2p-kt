@@ -107,6 +107,15 @@ internal class CoupleImplTest {
     }
 
     @Test
+    fun sizeCorrect() {
+        val correctSizes = coupleInstancesElementLists.map { it.size }
+
+        onCorrespondingItems(correctSizes, coupleInstances.map { it.size }) { expectedSize, actualSize ->
+            assertEquals(expectedSize, actualSize)
+        }
+    }
+
+    @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
         assertFalse(oneElementList.isGround)
         assertFalse(twoElementList.isGround)

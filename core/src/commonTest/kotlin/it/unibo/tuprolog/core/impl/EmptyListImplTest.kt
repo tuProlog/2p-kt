@@ -58,6 +58,11 @@ internal class EmptyListImplTest {
     }
 
     @Test
+    fun sizeShouldBeZero() {
+        assertEquals(0, testedObj.size)
+    }
+
+    @Test
     fun testIsPropertiesAndTypes() {
         TermTypeAssertionUtils.assertIsEmptyList(testedObj)
     }
