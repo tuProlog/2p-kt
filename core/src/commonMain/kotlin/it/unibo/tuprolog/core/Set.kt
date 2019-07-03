@@ -45,7 +45,7 @@ interface Set : Struct {
         fun of(terms: KtList<Term>): Set =
                 when {
                     terms.isEmpty() -> empty()
-                    terms.size == 1 -> SetImpl(terms[0])
+                    terms.size == 1 -> SetImpl(terms.single())
                     else -> SetImpl(Tuple.of(terms))
                 }
 

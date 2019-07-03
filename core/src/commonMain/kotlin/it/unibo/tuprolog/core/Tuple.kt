@@ -49,7 +49,7 @@ interface Tuple : Struct {
         fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::`true`): Term =
                 when {
                     terms.isEmpty() -> default()
-                    terms.size == 1 -> terms[0]
+                    terms.size == 1 -> terms.single()
                     else -> of(terms.toList())
                 }
 
