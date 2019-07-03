@@ -22,7 +22,5 @@ internal class TupleImpl(override val left: Term, override val right: Term) : St
     override val args: Array<Term>
         get() = super<StructImpl>.args
 
-    override fun toString(): String {
-        return unfoldedSequence.joinToString(", ", "(", ")")
-    }
+    override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
 }
