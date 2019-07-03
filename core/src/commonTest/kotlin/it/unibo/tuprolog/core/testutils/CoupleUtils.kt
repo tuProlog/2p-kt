@@ -13,7 +13,7 @@ internal object CoupleUtils {
     private val tailOfFirstList = Empty.list()
     private val elementsOfFirstList = listOf(headOfFirstList)
     /**
-     * Constructs a Couple with one Term
+     * Constructs a non ground Couple with one Term
      */
     internal fun oneElementList(constructor: (Term, Term) -> Couple) = constructor(headOfFirstList, tailOfFirstList)
 
@@ -23,7 +23,7 @@ internal object CoupleUtils {
     private fun tailOfSecondList(constructor: (Term, Term) -> Couple) = constructor(tailOfSecondListElement, Empty.list())
     private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
     /**
-     * Constructs a Couple with two Terms
+     * Constructs a non ground Couple with two Terms
      */
     internal fun twoElementList(constructor: (Term, Term) -> Couple) =
             constructor(headOfSecondList, tailOfSecondList(constructor))
@@ -37,7 +37,7 @@ internal object CoupleUtils {
 
     private val elementsOfThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
     /**
-     * Constructs a Couple with three Terms
+     * Constructs a ground Couple with three Terms
      */
     internal fun threeElementList(constructor: (Term, Term) -> Couple) = constructor(headOfThirdList, tailOfThirdList(constructor))
 
@@ -46,56 +46,95 @@ internal object CoupleUtils {
     private val tailOfFourthList = Var.of("Tail")
     private val elementsOfFourthList = listOf(headOfFourthList, tailOfFourthList)
     /**
-     * Constructs a Couple with two Terms, without terminal emptyList
+     * Constructs a non ground Couple with two Terms, without terminal emptyList
      */
     internal fun twoElementListWithPipe(constructor: (Term, Term) -> Couple) =
             constructor(headOfFourthList, tailOfFourthList)
 
+    private val headOfFifthList = Atom.of("head")
+    private val tailOfFifthListFirstElement = Var.of("M")
+    private val tailOfFifthListSecondElement = Var.of("N")
+    private fun tailOfFifthList(constructor: (Term, Term) -> Couple) =
+            constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
+
+    private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
     /**
-     * Returns all constructed Couples (of 1, 2, 3, 2 elements respectively)
+     * Constructs a non ground Couple with three Terms, without terminal EmptyList
      */
-    internal fun coupleInstances(constructor: (Term, Term) -> Couple) =
+    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Couple) = constructor(headOfFifthList, tailOfFifthList(constructor))
+
+
+    /**
+     * Returns only those Couples that are terminated with an EmptyList
+     */
+    internal fun onlyCoupleEmptyListTerminated(constructor: (Term, Term) -> Couple) =
             listOf(
                     oneElementList(constructor),
                     twoElementList(constructor),
-                    threeElementList(constructor),
-                    twoElementListWithPipe(constructor)
+                    threeElementList(constructor)
             )
 
     /**
-     * Couple heads
+     * Returns only those Couples that *NOT* terminate with an EmptyList
      */
-    internal val coupleInstancesHeads by lazy {
-        listOf(headOfFirstList, headOfSecondList, headOfThirdList, headOfFourthList)
+    internal fun onlyCouplePipeTerminated(constructor: (Term, Term) -> Couple) =
+            listOf(
+                    twoElementListWithPipe(constructor),
+                    threeElementListWithPipe(constructor)
+            )
+
+
+    /**
+     * Returns all Couples mixing [onlyCoupleEmptyListTerminated] and [onlyCouplePipeTerminated]
+     */
+    internal fun mixedCoupleInstances(constructor: (Term, Term) -> Couple) =
+            onlyCoupleEmptyListTerminated(constructor) + onlyCouplePipeTerminated(constructor)
+
+
+    /**
+     * All Couple heads
+     */
+    internal val mixedCoupleInstancesHeads by lazy {
+        listOf(headOfFirstList, headOfSecondList, headOfThirdList, headOfFourthList, headOfFifthList)
     }
 
     /**
-     * Couple tails (needs constructor because some tails are Couples themselves)
+     * All Couple tails (needs constructor because some tails are Couples themselves)
      */
-    internal fun coupleInstancesTails(constructor: (Term, Term) -> Couple) =
+    internal fun mixedCoupleInstancesTails(constructor: (Term, Term) -> Couple) =
             listOf(
                     tailOfFirstList,
                     tailOfSecondList(constructor),
                     tailOfThirdList(constructor),
-                    tailOfFourthList
+                    tailOfFourthList,
+                    tailOfFifthList(constructor)
             )
 
-    /**
-     * Couples (of 1, 2, 3, 2 elements respectively) elements lists
-     */
-    internal val coupleInstancesElementLists by lazy {
-        listOf(elementsOfFirstList, elementsOfSecondList, elementsOfThirdList, elementsOfFourthList)
+    internal val onlyCoupleEmptyListTerminatedElementLists by lazy {
+        listOf(elementsOfFirstList, elementsOfSecondList, elementsOfThirdList)
+    }
+
+    internal val onlyCouplePipeTerminatedElementLists by lazy {
+        listOf(elementsOfFourthList, elementsOfFifthList)
     }
 
     /**
-     * Couples (of 1, 2, 3, 2 elements respectively) "unfolded list" representation
+     * All Couples elements lists
      */
-    internal val coupleInstancesUnfoldedLists by lazy {
+    internal val mixedCoupleInstancesElementLists by lazy {
+        onlyCoupleEmptyListTerminatedElementLists + onlyCouplePipeTerminatedElementLists
+    }
+
+    /**
+     * All Couples "unfolded list" representation
+     */
+    internal val mixedCoupleInstancesUnfoldedLists by lazy {
         listOf(
                 elementsOfFirstList + Empty.list(),
                 elementsOfSecondList + Empty.list(),
                 elementsOfThirdList + Empty.list(),
-                elementsOfFourthList
+                elementsOfFourthList,
+                elementsOfFifthList
         )
     }
 }

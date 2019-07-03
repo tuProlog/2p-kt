@@ -57,10 +57,8 @@ interface List : Struct {
         fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
 
         fun from(items: KtList<Term>, last: Term? = null): List {
-            if (items.isEmpty() && last !is EmptyList && last !== null) {
-                throw IllegalArgumentException(
-                        "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
-                )
+            require(items.isNotEmpty() || last is EmptyList || last === null) {
+                "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
             }
 
             val finalItem = if (last === null) empty() else last

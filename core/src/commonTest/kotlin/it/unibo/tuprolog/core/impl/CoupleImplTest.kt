@@ -19,16 +19,11 @@ import kotlin.test.assertTrue
  */
 internal class CoupleImplTest {
 
-    private val oneElementList = CoupleUtils.oneElementList(::CoupleImpl)
-    private val twoElementList = CoupleUtils.twoElementList(::CoupleImpl)
-    private val threeElementList = CoupleUtils.threeElementList(::CoupleImpl)
-    private val twoElementListWithPipe = CoupleUtils.twoElementListWithPipe(::CoupleImpl)
-
-    private val coupleInstances = CoupleUtils.coupleInstances(::CoupleImpl)
-    private val coupleInstancesHeads = CoupleUtils.coupleInstancesHeads
-    private val coupleInstancesTails = CoupleUtils.coupleInstancesTails(::CoupleImpl)
-    private val coupleInstancesElementLists = CoupleUtils.coupleInstancesElementLists
-    private val coupleInstancesUnfoldedLists = CoupleUtils.coupleInstancesUnfoldedLists
+    private val coupleInstances = CoupleUtils.mixedCoupleInstances(::CoupleImpl)
+    private val coupleInstancesHeads = CoupleUtils.mixedCoupleInstancesHeads
+    private val coupleInstancesTails = CoupleUtils.mixedCoupleInstancesTails(::CoupleImpl)
+    private val coupleInstancesElementLists = CoupleUtils.mixedCoupleInstancesElementLists
+    private val coupleInstancesUnfoldedLists = CoupleUtils.mixedCoupleInstancesUnfoldedLists
 
     @Test
     fun coupleFunctor() {
@@ -117,10 +112,11 @@ internal class CoupleImplTest {
 
     @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
-        assertFalse(oneElementList.isGround)
-        assertFalse(twoElementList.isGround)
-        assertFalse(twoElementListWithPipe.isGround)
-        assertTrue(threeElementList.isGround)
+        assertFalse(CoupleUtils.oneElementList(::CoupleImpl).isGround)
+        assertFalse(CoupleUtils.twoElementList(::CoupleImpl).isGround)
+        assertFalse(CoupleUtils.twoElementListWithPipe(::CoupleImpl).isGround)
+        assertFalse(CoupleUtils.threeElementListWithPipe(::CoupleImpl).isGround)
+        assertTrue(CoupleUtils.threeElementList(::CoupleImpl).isGround)
     }
 
     @Test

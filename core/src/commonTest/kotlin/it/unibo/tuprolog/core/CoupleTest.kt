@@ -15,8 +15,8 @@ internal class CoupleTest {
 
     @Test
     fun coupleOfWorksAsExpected() {
-        val correctInstances = CoupleUtils.coupleInstances(::CoupleImpl)
-        val toBeTested = CoupleUtils.coupleInstances { head, tail -> Couple.of(head, tail) }
+        val correctInstances = CoupleUtils.mixedCoupleInstances(::CoupleImpl)
+        val toBeTested = CoupleUtils.mixedCoupleInstances { head, tail -> Couple.of(head, tail) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
