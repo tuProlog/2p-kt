@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.ScopeImpl
+import it.unibo.tuprolog.core.impl.ScopeImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
@@ -74,9 +74,7 @@ interface Scope {
 
     companion object {
 
-        fun empty(): Scope {
-            return ScopeImpl(mutableMapOf())
-        }
+        fun empty(): Scope = ScopeImpl(mutableMapOf())
 
         fun of(vararg vars: Var): Scope {
             val variables: MutableMap<String, Var> = mutableMapOf()
