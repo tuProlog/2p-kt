@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Atom
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -57,17 +56,4 @@ internal object AtomUtils {
         assertTrue(atom.argsSequence.toList().isEmpty())
     }
 
-    /**
-     * Asserts that arity is zero in an Atom
-     */
-    internal fun assertZeroArity(atom: Atom) {
-        assertTrue(atom.arity == 0)
-    }
-
-    /**
-     * Asserts that value and functor are the same in an Atom
-     */
-    internal fun assertSameValueAndFunctor(atom: Atom) {
-        assertSame(atom.value, atom.functor)
-    }
 }

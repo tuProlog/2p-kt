@@ -6,10 +6,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [AtomImpl] and [Atom]
@@ -29,7 +26,7 @@ internal class AtomImplTest {
 
     @Test
     fun atomFunctorAndValueAreTheSame() {
-        mixedAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
+        mixedAtomInstances.forEach { assertSame(it.value, it.functor) }
     }
 
     @Test
@@ -39,7 +36,7 @@ internal class AtomImplTest {
 
     @Test
     fun zeroArity() {
-        mixedAtomInstances.forEach(AtomUtils::assertZeroArity)
+        mixedAtomInstances.forEach { assertEquals(0, it.arity) }
     }
 
     @Test
