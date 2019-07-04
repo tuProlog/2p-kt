@@ -36,12 +36,12 @@ internal class SetTest {
 
     @Test
     fun setOfEmptyIterableOfTerms() {
-        assertEqualities(Empty.set(), Set.of(emptyList<Term>() as Iterable<Term>))
+        assertEqualities(Empty.set(), Set.of(emptyList<Term>().asIterable()))
     }
 
     @Test
     fun setOfIterableOfTerms() {
-        val toBeTested = SetUtils.mixedSets.map { Set.of(it.toList() as Iterable<Term>) }
+        val toBeTested = SetUtils.mixedSets.map { Set.of(it.toList().asIterable()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

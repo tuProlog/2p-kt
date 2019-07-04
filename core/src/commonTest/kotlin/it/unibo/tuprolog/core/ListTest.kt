@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.CoupleUtils
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -43,7 +43,7 @@ internal class ListTest {
 
     @Test
     fun ofEmptyIterable() {
-        val toBeTested = LogicList.of(emptyList<Term>() as Iterable<Term>)
+        val toBeTested = LogicList.of(emptyList<Term>().asIterable())
 
         assertEqualities(Empty.list(), toBeTested)
         assertSame(Empty.list(), toBeTested)
@@ -51,13 +51,13 @@ internal class ListTest {
 
     @Test
     fun ofIterableOfTerms() {
-        val toBeTested = emptyTerminatedElementLists.map { LogicList.of(it as Iterable<Term>) }
+        val toBeTested = emptyTerminatedElementLists.map { LogicList.of(it.asIterable()) }
         onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun fromEmptyIterableWithoutLastSpecifiedBehavesLikeOfMethod() {
-        val toBeTested = LogicList.from(emptyList<Term>() as Iterable<Term>)
+        val toBeTested = LogicList.from(emptyList<Term>().asIterable())
 
         assertEqualities(Empty.list(), toBeTested)
         assertSame(Empty.list(), toBeTested)
@@ -65,7 +65,7 @@ internal class ListTest {
 
     @Test
     fun fromEmptyIterableSpecifyingLastAsEmptyList() {
-        val toBeTested = LogicList.from(emptyList<Term>() as Iterable<Term>, Empty.list())
+        val toBeTested = LogicList.from(emptyList<Term>().asIterable(), Empty.list())
 
         assertEqualities(Empty.list(), toBeTested)
         assertSame(Empty.list(), toBeTested)
@@ -73,12 +73,12 @@ internal class ListTest {
 
     @Test
     fun fromEmptyIterableSpecifyingLast() {
-        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>() as Iterable<Term>, Truth.fail()) }
+        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.fail()) }
     }
 
     @Test
     fun fromIterableWithoutLastSpecifiedBehavesLikeOfMethod() {
-        val toBeTested = emptyTerminatedElementLists.map { LogicList.from(it as Iterable<Term>) }
+        val toBeTested = emptyTerminatedElementLists.map { LogicList.from(it.asIterable()) }
 
         onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
     }

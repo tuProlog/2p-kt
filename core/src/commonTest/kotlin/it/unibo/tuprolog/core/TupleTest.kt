@@ -84,7 +84,7 @@ internal class TupleTest {
 
     @Test
     fun tupleOfIterable() {
-        val toBeTested = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.toList() as Iterable<Term>) }
+        val toBeTested = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it.toList().asIterable()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
