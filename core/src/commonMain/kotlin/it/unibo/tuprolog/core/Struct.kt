@@ -35,7 +35,7 @@ interface Struct : Term {
         get() = Couple.FUNCTOR == functor && arity == 2
 
     override val isSet: Boolean
-        get() = Set.FUNCTOR == functor || isEmptySet
+        get() = (Set.FUNCTOR == functor && arity == 1) || isEmptySet
 
     override val isEmptySet: Boolean
         get() = Empty.EMPTY_SET_FUNCTOR == functor && arity == 0
@@ -97,17 +97,26 @@ interface Struct : Term {
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
         fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
-                if (terminal === null) {
-                    terms.slice(0 until terms.lastIndex - 1)
-                            .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
-                                structOf(operator, a, b)
-                            }
-                } else {
-                    terms.slice(0 until terms.lastIndex)
-                            .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
-                                structOf(operator, a, b)
-                            }
+                when {
+                    operator == Couple.FUNCTOR && terminal == EmptyList() -> List.of(terms)
+                    operator == Couple.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
+                    operator == Tuple.FUNCTOR -> Tuple.of(terms + if (terminal === null) listOf() else terminal)
+                    terminal === null -> {
+                        require(terms.size >= 2) { "Struct requires at least two terms to fold" }
+                        terms.slice(0 until terms.lastIndex - 1)
+                                .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
+                                    structOf(operator, a, b)
+                                }
+                    }
+                    else -> {
+                        require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
+                        terms.slice(0 until terms.lastIndex)
+                                .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
+                                    structOf(operator, a, b)
+                                }
+                    }
                 }
+
 
         fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
                 fold(operator, terms.toList(), terminal)
