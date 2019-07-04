@@ -18,6 +18,7 @@ internal object FactUtils {
                 Truth.`true`()
         )
     }
+
     /**
      * Contains non ground Facts, with variables
      */
