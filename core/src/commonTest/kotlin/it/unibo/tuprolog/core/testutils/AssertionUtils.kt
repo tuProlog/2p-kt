@@ -14,6 +14,11 @@ import kotlin.test.assertTrue
 internal object AssertionUtils {
 
     /**
+     * Utility extension function to drop last element of a List
+     */
+    fun <T> List<T>.dropLast(): List<T> = this.dropLast(1)
+
+    /**
      * Asserts mutual structural equality for two [Term]s
      */
     fun assertStructurallyEquals(expected: Term, actual: Term) {

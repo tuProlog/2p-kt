@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.CoupleUtils
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -84,7 +85,7 @@ internal class ListTest {
 
     @Test
     fun fromIterableSpecifyingLast() {
-        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast(1), it.last()) }
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast(), it.last()) }
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
@@ -119,7 +120,7 @@ internal class ListTest {
 
     @Test
     fun fromSequenceSpecifyingLast() {
-        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast(1).asSequence(), it.last()) }
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast().asSequence(), it.last()) }
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
