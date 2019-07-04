@@ -22,6 +22,6 @@ interface Directive : Clause {
 
     companion object {
         fun of(body1: Term, vararg body: Term): Directive =
-                DirectiveImpl(Struct.conjunction((listOf(body1) + listOf(*body))))
+                DirectiveImpl(Tuple.wrapIfNeeded(body1, *body))
     }
 }
