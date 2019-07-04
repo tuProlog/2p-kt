@@ -75,10 +75,10 @@ internal object StructUtils {
                 Tuple.FUNCTOR to arrayOf<Term>(Atom.of("left"), Atom.of("right")),
                 Clause.FUNCTOR to arrayOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
                 Clause.FUNCTOR to arrayOf<Term>(Atom.of("myDirective")),
-                Clause.FUNCTOR to arrayOf(Var.of("MyFact"), Truth.`true`()),
+                Clause.FUNCTOR to arrayOf(Atom.of("myFact"), Truth.`true`()),
                 "myAtom" to arrayOf(),
                 Empty.EMPTY_LIST_FUNCTOR to arrayOf(),
-                Empty.EMPTY_LIST_FUNCTOR to arrayOf(),
+                Empty.EMPTY_SET_FUNCTOR to arrayOf(),
                 Truth.TRUE_FUNCTOR to arrayOf(),
                 Truth.FAIL_FUNCTOR to arrayOf()
         )
