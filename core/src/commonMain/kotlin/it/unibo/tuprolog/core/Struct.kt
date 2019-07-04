@@ -79,7 +79,11 @@ interface Struct : Term {
     operator fun get(index: Int): Term = getArgAt(index)
 
     companion object {
-        val WELL_FORMED_FUNCTOR_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
+
+        /**
+         * The pattern of a well-formed functor for a Struct
+         */
+        val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
