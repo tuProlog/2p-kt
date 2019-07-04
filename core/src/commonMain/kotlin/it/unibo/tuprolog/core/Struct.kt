@@ -79,7 +79,7 @@ interface Struct : Term {
     operator fun get(index: Int): Term = getArgAt(index)
 
     companion object {
-        val WELL_FORMED_FUNCTOR_PATTERN = Regex("""^[a-z][A-Za-z_0-9]*$""")
+        val WELL_FORMED_FUNCTOR_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
@@ -87,7 +87,7 @@ interface Struct : Term {
                 when {
                     args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args[0], args[1])
                     args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct -> Rule.of(args[0] as Struct, args[1])
-                    args.size == 2 && Set.FUNCTOR == functor -> Set.of(args)
+                    args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
                     args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
                     args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args[0])
                     args.isEmpty() -> Atom.of(functor)
@@ -117,19 +117,6 @@ interface Struct : Term {
 
         fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
                 fold(operator, terms.toList(), terminal)
-
-        fun conjunction(terms: Sequence<Term>): Term = conjunction(terms.toList())
-
-        fun conjunction(terms: Iterable<Term>): Term = conjunction(terms.toList())
-
-        fun conjunction(terms: KtList<Term>): Term =
-                when {
-                    terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
-                    terms.size == 1 -> terms[0]
-                    else -> fold(",", terms)
-                }
-
-        fun conjunction(vararg terms: Term): Term = conjunction(listOf(*terms))
 
     }
 }
