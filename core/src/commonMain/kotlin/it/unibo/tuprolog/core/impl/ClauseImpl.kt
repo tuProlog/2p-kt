@@ -14,10 +14,9 @@ internal open class ClauseImpl(override val head: Struct?, override val body: Te
         get() = super<StructImpl>.args
 
     override fun toString(): String =
-            if (head === null) {
-                "$functor $body"
-            } else {
-                "$head $functor $body"
+            when (head) {
+                null -> "$functor $body"
+                else -> "$head $functor $body"
             }
 
 }

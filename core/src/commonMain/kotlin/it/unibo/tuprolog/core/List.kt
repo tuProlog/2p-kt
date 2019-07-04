@@ -61,7 +61,7 @@ interface List : Struct {
                 "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
             }
 
-            val finalItem = if (last === null) empty() else last
+            val finalItem = last ?: empty()
             return items.foldRight(finalItem) { head, tail -> Couple.of(head, tail) } as List
         }
     }
