@@ -31,7 +31,7 @@ internal object StructUtils {
      * Asserts that doing a freshCopy over created term (created trough passed [constructor]) with two different Variables instances
      * that share the same name, after the copy those variables will be tied to each other
      */
-    internal fun <T : Struct> assertFreshCopyMergesDifferentVariablesWithSameName(constructor: (Term, Term) -> T) {
+    internal fun <T : Struct> assertFreshCopyMergesDifferentVariablesWithSameName(constructor: (Var, Var) -> T) {
         val termWithSameVarName = constructor(Var.of("A"), Var.of("A"))
 
         val firstVarBefore = termWithSameVarName.args[0]

@@ -236,8 +236,8 @@ internal class StructImplTest {
 
     @Test
     fun freshCopyMergesDifferentVariablesWithSameName() {
-        StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName { term1, term2 ->
-            StructImpl("myFunc", arrayOf(term1, term2))
+        StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName { var1, var2 ->
+            StructImpl("myFunc", arrayOf(var1, var2))
         }
     }
 

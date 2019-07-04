@@ -54,12 +54,10 @@ interface Struct : Term {
 
     override fun freshCopy(): Struct = super.freshCopy() as Struct
 
-    override fun freshCopy(scope: Scope): Struct =
-            if (isGround) {
-                this
-            } else {
-                scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
-            }
+    override fun freshCopy(scope: Scope): Struct = when {
+        isGround -> this
+        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
+    }
 
     val functor: String
 
