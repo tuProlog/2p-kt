@@ -87,12 +87,11 @@ interface Struct : Term {
 
         fun of(functor: String, args: KtList<Term>): Struct =
                 when {
-                    args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args[0], args[1])
-                    args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct -> Rule.of(args[0] as Struct, args[1])
-                    args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct -> Fact.of(args[0] as Struct)
+                    args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args.first(), args.last())
+                    args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct -> Rule.of(args.first() as Struct, args.last())
                     args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
                     args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
-                    args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args[0])
+                    args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
                     args.isEmpty() -> Atom.of(functor)
                     else -> StructImpl(functor, args.toTypedArray())
                 }
