@@ -22,7 +22,6 @@ internal class StructImplTest {
 
     private val mixedStructInstances = StructUtils.mixedStructs.map { (functor, args) -> StructImpl(functor, args) }
     private val nonSpecialStructInstances = StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
-    private val specialStructInstances = StructUtils.specialStructs.map { (functor, args) -> StructImpl(functor, args) }
     private val groundStructInstances = StructUtils.groundStructs.map { (functor, args) -> StructImpl(functor, args) }
     private val nonGroundStructInstances = StructUtils.nonGroundStructs.map { (functor, args) -> StructImpl(functor, args) }
 
@@ -89,11 +88,11 @@ internal class StructImplTest {
 
     @Test
     fun toStringWorksAsExpected() {
-        val correctToStrings = nonSpecialStructInstances.map {
+        val correctToStrings = mixedStructInstances.map {
             (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
                     (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
         }
-        onCorrespondingItems(correctToStrings, nonSpecialStructInstances.map { it.toString() }) { expected, actual ->
+        onCorrespondingItems(correctToStrings, mixedStructInstances.map { it.toString() }) { expected, actual ->
             assertEquals(expected, actual)
         }
     }
