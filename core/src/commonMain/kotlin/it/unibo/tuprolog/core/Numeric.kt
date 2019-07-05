@@ -24,7 +24,6 @@ interface Numeric : Term, Comparable<Numeric> {
     companion object {
 
         fun of(decimal: BigDecimal): Real = Real.of(decimal)
-        fun of(value: Number): Numeric = of(value.toString())
         fun of(decimal: Double): Real = Real.of(decimal)
         fun of(decimal: Float): Real = Real.of(decimal)
         fun of(integer: BigInteger): Integral = Integral.of(integer)
@@ -32,6 +31,12 @@ interface Numeric : Term, Comparable<Numeric> {
         fun of(integer: Long): Integral = Integral.of(integer)
         fun of(integer: Short): Integral = Integral.of(integer)
         fun of(integer: Byte): Integral = Integral.of(integer)
+
+        fun of(value: Number): Numeric = when (value) {
+            // avoiding string format is necessary for "floats", to maintain full precision during conversions
+            is Float -> of(value)
+            else -> of(value.toString())
+        }
 
         fun of(number: String): Numeric =
                 try {
