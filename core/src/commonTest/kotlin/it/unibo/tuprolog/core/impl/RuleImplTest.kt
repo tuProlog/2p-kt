@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.testutils.RuleUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -62,5 +63,29 @@ internal class RuleImplTest {
     @Test
     fun freshCopyShouldRenewVariables() {
         nonGroundRulesInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
+    }
+
+    @Test
+    fun functorCorrect() {
+        mixedRulesInstances.forEach { assertEquals(":-", it.functor) }
+    }
+
+    @Test
+    fun argsCorrect() {
+        val correctArgs = RuleUtils.mixedRules.map { (head, body) -> arrayOf(head, body) }
+
+        onCorrespondingItems(correctArgs, mixedRulesInstances.map { it.args }) { expected, actual ->
+            assertEquals(expected.toList(), actual.toList())
+            assertTrue { expected.contentDeepEquals(actual) }
+        }
+    }
+
+    @Test
+    fun toStringWorksAsExpected() {
+        val correctToStrings = mixedRulesInstances.map { "${it.head} ${it.functor} ${it.body}" }
+
+        onCorrespondingItems(correctToStrings, mixedRulesInstances.map { it.toString() }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
     }
 }
