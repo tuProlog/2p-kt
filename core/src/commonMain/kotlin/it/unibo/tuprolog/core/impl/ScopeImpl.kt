@@ -8,6 +8,35 @@ import it.unibo.tuprolog.core.Set as LogicSet
 
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
 
+    ////////////////////
+    // Scope specific //
+    ////////////////////
+
+    override fun contains(variable: Var): Boolean = variable.name in _variables
+
+    override fun contains(variable: String): Boolean = variable in _variables
+
+    override fun get(variable: String): Var? = _variables[variable]
+
+    override val variables: Map<String, Var>
+        get() = _variables.toMap()
+
+    override fun varOf(name: String): Var {
+        if (name !in _variables) {
+            _variables[name] = Var.of(name)
+        }
+        return _variables[name]!!
+    }
+
+    override fun where(lambda: Scope.() -> Unit): Scope {
+        this.lambda()
+        return this
+    }
+
+    ///////////////
+    // Factories //
+    ///////////////
+
     override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
 
     override fun listOf(terms: Iterable<Term>): LogicList = LogicList.of(terms)
@@ -20,12 +49,6 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms.toList())
 
     override fun tupleOf(vararg terms: Term): Tuple = Tuple.of(terms.toList())
-
-    override fun contains(variable: Var): Boolean = variable.name in _variables
-
-    override fun contains(variable: String): Boolean = variable in _variables
-
-    override fun get(variable: String): Var? = _variables[variable]
 
     override fun atomOf(value: String): Atom = Atom.of(value)
 
@@ -67,19 +90,4 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun numOf(value: Byte): Integral = Numeric.of(value)
 
     override fun numOf(value: String): Numeric = Numeric.of(value)
-
-    override val variables: Map<String, Var>
-        get() = _variables.toMap()
-
-    override fun varOf(name: String): Var {
-        if (name !in _variables) {
-            _variables[name] = Var.of(name)
-        }
-        return _variables[name]!!
-    }
-
-    override fun where(lambda: Scope.() -> Unit): Scope {
-        this.lambda()
-        return this
-    }
 }
