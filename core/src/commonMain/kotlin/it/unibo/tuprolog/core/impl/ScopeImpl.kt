@@ -33,9 +33,9 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return this
     }
 
-    ///////////////
-    // Factories //
-    ///////////////
+    ///////////////////////
+    // General Factories //
+    ///////////////////////
 
     override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
 
@@ -61,7 +61,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun factOf(head: Struct): Fact = Fact.of(head)
 
     override fun ruleOf(head: Struct, body1: Term, vararg body: Term): Rule =
-            Rule.of(head, *(arrayOf(body1) + arrayOf(*body)))
+            Rule.of(head, body1, *body)
 
     override fun directiveOf(body1: Term, vararg body: Term): Directive = Directive.of(body1, *body)
 

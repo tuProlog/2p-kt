@@ -62,10 +62,10 @@ internal object AssertionUtils {
     }
 
     /**
-     * Asserts the [assertion] for corresponding items in order
+     * Executes the [function] with corresponding items in order
      */
-    fun <E> onCorrespondingItems(expected: Iterable<E>, actual: Iterable<E>, assertion: (E, E) -> Unit) =
-            expected.zip(actual).forEach { (expected, actual) -> assertion(expected, actual) }
+    fun <A, B> onCorrespondingItems(expected: Iterable<A>, actual: Iterable<B>, function: (A, B) -> Unit) =
+            expected.zip(actual).forEach { (expected, actual) -> function(expected, actual) }
 
     /**
      * Asserts the [assertion] for each [E] versus all the [E]s (itself included).
