@@ -22,6 +22,9 @@ interface Struct : Term {
     override val isFact: Boolean
         get() = isRule && args[1].isTrue
 
+    override val isTuple: Boolean
+        get() = functor == Tuple.FUNCTOR && arity == 2
+
     override val isAtom: Boolean
         get() = arity == 0
 
@@ -32,7 +35,7 @@ interface Struct : Term {
         get() = Couple.FUNCTOR == functor && arity == 2
 
     override val isSet: Boolean
-        get() = Set.FUNCTOR == functor || isEmptySet
+        get() = (Set.FUNCTOR == functor && arity == 1) || isEmptySet
 
     override val isEmptySet: Boolean
         get() = Empty.EMPTY_SET_FUNCTOR == functor && arity == 0
@@ -49,14 +52,12 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
-    override fun freshCopy(): Term = super.freshCopy() as Struct
+    override fun freshCopy(): Struct = super.freshCopy() as Struct
 
-    override fun freshCopy(scope: Scope): Struct =
-            if (isGround) {
-                this
-            } else {
-                scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
-            }
+    override fun freshCopy(scope: Scope): Struct = when {
+        isGround -> this
+        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
+    }
 
     val functor: String
 
@@ -76,37 +77,48 @@ interface Struct : Term {
     operator fun get(index: Int): Term = getArgAt(index)
 
     companion object {
-        val WELL_FORMED_FUNCTOR_PATTERN = Regex("""^[a-z][A-Za-z_0-9]*$""")
 
-        fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
+        /**
+         * The pattern of a well-formed functor for a Struct
+         */
+        val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         fun of(functor: String, args: KtList<Term>): Struct =
-                if (args.size == 2 && Couple.FUNCTOR == functor) {
-                    Couple.of(args[0], args[1])
-                } else if (args.size == 2 && Clause.FUNCTOR == functor && args[0] is Struct) {
-                    Rule.of(args[0] as Struct, args[1])
-                } else if (args.size == 1 && Clause.FUNCTOR == functor) {
-                    Directive.of(args[0])
-                } else if (args.isEmpty()) {
-                    Atom.of(functor)
-                } else {
-                    StructImpl(functor, args.toTypedArray())
+                when {
+                    args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args.first(), args.last())
+                    args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct -> Rule.of(args.first() as Struct, args.last())
+                    args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
+                    args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
+                    args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
+                    args.isEmpty() -> Atom.of(functor)
+                    else -> StructImpl(functor, args.toTypedArray())
                 }
+
+        fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
         fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
-                if (terminal === null) {
-                    terms.slice(0 until terms.lastIndex - 1)
-                            .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
-                                structOf(operator, a, b)
-                            }
-                } else {
-                    terms.slice(0 until terms.lastIndex)
-                            .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
-                                structOf(operator, a, b)
-                            }
+                when {
+                    operator == Couple.FUNCTOR && terminal == EmptyList() -> List.of(terms)
+                    operator == Couple.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
+                    operator == Tuple.FUNCTOR -> Tuple.of(terms + if (terminal === null) listOf() else listOf(terminal))
+                    terminal === null -> {
+                        require(terms.size >= 2) { "Struct requires at least two terms to fold" }
+                        terms.slice(0 until terms.lastIndex - 1)
+                                .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
+                                    structOf(operator, a, b)
+                                }
+                    }
+                    else -> {
+                        require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
+                        terms.slice(0 until terms.lastIndex)
+                                .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
+                                    structOf(operator, a, b)
+                                }
+                    }
                 }
+
 
         fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
                 fold(operator, terms.toList(), terminal)
@@ -116,19 +128,6 @@ interface Struct : Term {
 
         fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
                 fold(operator, terms.toList(), terminal)
-
-        fun conjunction(terms: Sequence<Term>): Term = conjunction(terms.toList())
-
-        fun conjunction(terms: Iterable<Term>): Term = conjunction(terms.toList())
-
-        fun conjunction(terms: KtList<Term>): Term =
-                when {
-                    terms.isEmpty() -> throw IllegalArgumentException("At least one term should be provided as input")
-                    terms.size == 1 -> terms[0]
-                    else -> fold(",", terms)
-                }
-
-        fun conjunction(vararg terms: Term): Term = conjunction(listOf(*terms))
 
     }
 }

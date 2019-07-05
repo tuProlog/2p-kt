@@ -5,6 +5,12 @@ import it.unibo.tuprolog.core.Term
 
 internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
 
+    override val isGround: Boolean by lazy { super<Struct>.isGround }
+
+    override val argsList: List<Term> by lazy { super.argsList }
+
+    override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
+
     override fun structurallyEquals(other: Term): Boolean =
             other is StructImpl
                     && functor == other.functor
@@ -18,7 +24,7 @@ internal open class StructImpl(override val functor: String, override val args: 
                     && (0 until arity).all { args[it] strictlyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean by lazy {
-        Struct.WELL_FORMED_FUNCTOR_PATTERN.matches(functor)
+        functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
     }
 
     override fun equals(other: Any?): Boolean {
@@ -44,11 +50,5 @@ internal open class StructImpl(override val functor: String, override val args: 
                     if (arity > 0) "(${args.joinToString(", ")})" else ""
                 )
     }
-
-    override val isGround: Boolean by lazy { super<Struct>.isGround }
-
-    override val argsList: List<Term> by lazy { super.argsList }
-
-    override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
 
 }

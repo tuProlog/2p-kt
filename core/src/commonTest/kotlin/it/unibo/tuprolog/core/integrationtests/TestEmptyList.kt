@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.core.integrationtests
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAllEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
@@ -30,7 +31,7 @@ class TestEmptyList {
 
     @Test
     fun equality() {
-        assertAllVsAllEqualities(heterogeneousCreatedInstances)
+        assertAllVsAll(heterogeneousCreatedInstances, ::assertEqualities)
 
         val notEmptyListAtom = Atom.of(notCorrectAtom)
         heterogeneousCreatedInstances.forEach { correct -> assertNoEqualities(notEmptyListAtom, correct) }

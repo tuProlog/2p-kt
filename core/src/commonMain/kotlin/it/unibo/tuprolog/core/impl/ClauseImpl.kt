@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
-internal open class ClauseImpl(override val head: Struct?, override val body: Term)
+internal abstract class ClauseImpl(override val head: Struct?, override val body: Term)
     : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {
 
     override val functor: String
@@ -14,10 +14,9 @@ internal open class ClauseImpl(override val head: Struct?, override val body: Te
         get() = super<StructImpl>.args
 
     override fun toString(): String =
-            if (head === null) {
-                "$functor $body"
-            } else {
-                "$head $functor $body"
+            when (head) {
+                null -> "$functor $body"
+                else -> "$head $functor $body"
             }
 
 }

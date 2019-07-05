@@ -98,7 +98,12 @@ internal class RealImplTest {
     }
 
     @Test
-    fun integralFreshCopyShouldReturnTheInstanceItself() {
+    fun realFreshCopyShouldReturnTheInstanceItself() {
         realInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+    }
+
+    @Test
+    fun realFreshCopyWithScopeShouldReturnTheInstanceItself() {
+        realInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
 }

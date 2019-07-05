@@ -2,13 +2,14 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.testutils.AssertionUtils
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -29,7 +30,7 @@ internal class AtomImplTest {
 
     @Test
     fun atomFunctorAndValueAreTheSame() {
-        mixedAtomInstances.forEach(AtomUtils::assertSameValueAndFunctor)
+        mixedAtomInstances.forEach { assertSame(it.value, it.functor) }
     }
 
     @Test
@@ -39,7 +40,7 @@ internal class AtomImplTest {
 
     @Test
     fun zeroArity() {
-        mixedAtomInstances.forEach(AtomUtils::assertZeroArity)
+        mixedAtomInstances.forEach { assertEquals(0, it.arity) }
     }
 
     @Test
@@ -68,19 +69,18 @@ internal class AtomImplTest {
         assertTrue(AtomImpl("fail").isFail)
     }
 
+
+    /* TODO enable this test, after solving Issue #10
+
     @Test
     fun strictlyEqualsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.`true`()
 
-        // TODO review this behaviour, this is maybe incorrect
-        assertTrue(trueStruct strictlyEquals trueAtom)
-        assertFalse(trueAtom strictlyEquals trueStruct)
-
-        assertTrue(trueAtom strictlyEquals trueTruth)
-        assertTrue(trueTruth strictlyEquals trueAtom)
-    }
+        AssertionUtils.assertNotStrictlyEquals(trueAtom, trueStruct)
+        AssertionUtils.assertNotStrictlyEquals(trueAtom, trueTruth)
+    }*/
 
     @Test
     fun structurallyEqualsWorksAsExpected() {
@@ -88,15 +88,17 @@ internal class AtomImplTest {
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.`true`()
 
-        assertTrue(trueStruct structurallyEquals trueAtom)
-        assertTrue(trueAtom structurallyEquals trueStruct)
-
-        assertTrue(trueAtom structurallyEquals trueTruth)
-        assertTrue(trueTruth structurallyEquals trueAtom)
+        AssertionUtils.assertStructurallyEquals(trueAtom, trueStruct)
+        AssertionUtils.assertStructurallyEquals(trueAtom, trueTruth)
     }
 
     @Test
     fun atomFreshCopyShouldReturnTheInstanceItself() {
         mixedAtomInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+    }
+
+    @Test
+    fun atomFreshCopyWithScopeShouldReturnTheInstanceItself() {
+        mixedAtomInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
 }

@@ -40,19 +40,12 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is Struct)
         assertFalse(any is Clause)
         assertFalse(any is Couple)
-    }
-
-    /**
-     * Checks passed term to be a Constant or fails otherwise
-     */
-    fun assertIsConstant(any: Any) {
-
-        TODO()
     }
 
     /**
@@ -80,6 +73,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Var)
         assertFalse(any is Struct)
@@ -114,11 +108,38 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be a Struct or fails otherwise
+     * Checks passed term to be *exactly* a Struct or fails otherwise
      */
     fun assertIsStruct(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
 
-        TODO()
+        assertTrue(any.isStruct)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCouple)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+        assertFalse(any.isTuple)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is Var)
+        assertFalse(any is Clause)
+        assertFalse(any is Couple)
+        assertFalse(any is Tuple)
     }
 
     /**
@@ -143,6 +164,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isCouple)
         assertFalse(any.isVariable)
         assertFalse(any.isBound)
+        assertFalse(any.isTuple)
 
         assertFalse(any is Numeric)
         assertFalse(any is Clause)
@@ -151,7 +173,7 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be exactly an Atom or fails otherwise
+     * Checks passed term to be *exactly* an Atom or fails otherwise
      */
     fun assertIsAtom(any: Any) {
         commonAtomAssertions(any)
@@ -195,39 +217,116 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be a Conjunction or fails otherwise
+     * Checks passed term to be a Tuple or fails otherwise
      */
-    fun assertIsConjunction(any: Any) {
+    fun assertIsTuple(any: Any) {
 
-        TODO()
-    }
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is Tuple)
 
-    /**
-     * Checks passed term to be a List or fails otherwise
-     */
-    fun assertIsList(any: Any) {
+        assertTrue(any.isStruct)
+        assertTrue(any.isTuple)
 
-        TODO()
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCouple)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is Atom)
+        assertFalse(any is Clause)
+        assertFalse(any is Couple)
+        assertFalse(any is Var)
     }
 
     /**
      * Checks passed term to be a Couple or fails otherwise
      */
     fun assertIsCouple(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is LogicList)
+        assertTrue(any is Couple)
 
-        TODO()
+        assertTrue(any.isStruct)
+        assertTrue(any.isList)
+        assertTrue(any.isCouple)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isAtom)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+        assertFalse(any.isTuple)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is Atom)
+        assertFalse(any is Clause)
+        assertFalse(any is Var)
     }
 
     /**
      * Checks passed term to be a Set or fails otherwise
      */
     fun assertIsSet(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is LogicSet)
 
-        TODO()
+        assertTrue(any.isStruct)
+        assertTrue(any.isSet)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCouple)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+        assertFalse(any.isTuple)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is LogicList)
+        assertFalse(any is Clause)
+        assertFalse(any is Couple)
+        assertFalse(any is Var)
     }
 
     /**
-     * Checks passed term to be an Empty or fails otherwise
+     * Type testing common to Empty subclasses
      */
     private fun commonEmptyAssertions(any: Any) {
         commonAtomAssertions(any)
@@ -279,34 +378,81 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be a Clause or fails otherwise
+     * Type testing common to Clause subclasses
      */
-    fun assertIsClause(any: Any) {
+    private fun commonClauseAssertions(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is Clause)
 
-        TODO()
+        assertTrue(any.isStruct)
+        assertTrue(any.isClause)
+
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isCouple)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+        assertFalse(any.isTuple)
+
+        assertFalse(any is Var)
+        assertFalse(any is Numeric)
+        assertFalse(any is Couple)
+        assertFalse(any is LogicSet)
+        assertFalse(any is LogicList)
+        assertFalse(any is Atom)
     }
 
     /**
      * Checks passed term to be a Rule or fails otherwise
      */
     fun assertIsRule(any: Any) {
+        commonClauseAssertions(any)
 
-        TODO()
+        assertTrue(any is Rule)
+        assertTrue(any.isRule)
+
+        assertFalse(any.isDirective)
+        assertFalse(any is Directive)
     }
 
     /**
      * Checks passed term to be a Directive or fails otherwise
      */
     fun assertIsDirective(any: Any) {
+        commonClauseAssertions(any)
 
-        TODO()
+        assertTrue(any is Directive)
+        assertTrue(any.isDirective)
+
+        assertFalse(any.isRule)
+        assertFalse(any.isFact)
+
+        assertFalse(any is Rule)
+        assertFalse(any is Fact)
     }
 
     /**
      * Checks passed term to be a Fact or fails otherwise
      */
     fun assertIsFact(any: Any) {
+        commonClauseAssertions(any)
 
-        TODO()
+        assertTrue(any is Rule)
+        assertTrue(any is Fact)
+
+        assertTrue(any.isRule)
+        assertTrue(any.isFact)
+
+        assertFalse(any.isDirective)
+        assertFalse(any is Directive)
     }
 }

@@ -8,12 +8,6 @@ interface EmptySet : Empty, LogicSet {
     override val isEmptySet: Boolean
         get() = true
 
-    override val args: Array<Term>
-        get() = super.args
-
-    override val value: String
-        get() = super.value
-
     override fun freshCopy(): EmptySet = this
 
     override fun freshCopy(scope: Scope): EmptySet = this

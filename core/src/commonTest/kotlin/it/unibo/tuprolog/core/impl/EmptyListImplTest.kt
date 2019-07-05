@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,6 +20,21 @@ internal class EmptyListImplTest {
     @Test
     fun emptyListFunctor() {
         assertEquals("[]", testedObj.functor)
+    }
+
+    @Test
+    fun unfoldedListContainsEmptyList() {
+        assertEquals(listOf(EmptyListImpl), testedObj.unfoldedList)
+    }
+
+    @Test
+    fun unfoldedSequenceContainsEmptyList() {
+        assertEquals(sequenceOf(EmptyListImpl).toList(), testedObj.unfoldedSequence.toList())
+    }
+
+    @Test
+    fun unfoldedArrayContainsEmptyList() {
+        assertTrue(arrayOf(EmptyListImpl).contentDeepEquals(testedObj.unfoldedArray))
     }
 
     @Test
@@ -42,6 +58,11 @@ internal class EmptyListImplTest {
     }
 
     @Test
+    fun sizeShouldBeZero() {
+        assertEquals(0, testedObj.size)
+    }
+
+    @Test
     fun testIsPropertiesAndTypes() {
         TermTypeAssertionUtils.assertIsEmptyList(testedObj)
     }
@@ -49,5 +70,15 @@ internal class EmptyListImplTest {
     @Test
     fun functorDoesNotRespectStructRegex() {
         assertFalse(testedObj.isFunctorWellFormed)
+    }
+
+    @Test
+    fun emptyListFreshCopyShouldReturnTheInstanceItself() {
+        ConstantUtils.assertFreshCopyIsItself(testedObj)
+    }
+
+    @Test
+    fun emptyListFreshCopyWithScopeShouldReturnTheInstanceItself() {
+        ConstantUtils.assertFreshCopyWithScopeIsItself(testedObj)
     }
 }

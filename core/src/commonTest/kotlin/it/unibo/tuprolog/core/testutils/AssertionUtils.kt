@@ -14,6 +14,11 @@ import kotlin.test.assertTrue
 internal object AssertionUtils {
 
     /**
+     * Utility extension function to drop last element of a List
+     */
+    fun <T> List<T>.dropLast(): List<T> = this.dropLast(1)
+
+    /**
      * Asserts mutual structural equality for two [Term]s
      */
     fun assertStructurallyEquals(expected: Term, actual: Term) {
@@ -57,23 +62,22 @@ internal object AssertionUtils {
     }
 
     /**
-     * Asserts the [assertion] for corresponding items in order
+     * Executes the [function] with corresponding items in order
      */
-    fun <E> onCorrespondingItems(expected: Iterable<E>, actual: Iterable<E>, assertion: (E, E) -> Unit) =
-            expected.zip(actual).forEach { (expected, actual) -> assertion(expected, actual) }
+    fun <A, B> onCorrespondingItems(expected: Iterable<A>, actual: Iterable<B>, function: (A, B) -> Unit) =
+            expected.zip(actual).forEach { (expected, actual) -> function(expected, actual) }
 
     /**
-     * Asserts all types of qualities (normal, strict, and structural) for each [Term] versus all the [Term]s (itself included).
+     * Asserts the [assertion] for each [E] versus all the [E]s (itself included).
      */
-    fun assertAllVsAllEqualities(toBeTested: Iterable<Term>) {
+    fun <E : Any> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
         val toTestItems = toBeTested.count()
-        val repeatedElementsSequence = toBeTested.flatMap { testTerm ->
-            generateSequence { testTerm }.take(toTestItems).asIterable()
+        val repeatedElementsSequence = toBeTested.flatMap { underTestItem ->
+            generateSequence { underTestItem }.take(toTestItems).asIterable()
         }
         val repeatedSequenceOfElements = generateSequence { toBeTested }
                 .take(toTestItems).flatten().asIterable()
 
-        onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements,
-                AssertionUtils::assertEqualities)
+        onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements, assertion)
     }
 }

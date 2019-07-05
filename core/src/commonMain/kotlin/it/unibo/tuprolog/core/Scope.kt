@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.scoping.ScopeImpl
+import it.unibo.tuprolog.core.impl.ScopeImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
@@ -26,9 +26,15 @@ interface Scope {
 
     fun structOf(functor: String, args: Sequence<Term>): Struct
 
+    fun tupleOf(vararg terms: Term): Tuple
+
+    fun tupleOf(terms: Iterable<Term>): Tuple
+
     fun listOf(vararg terms: Term): LogicList
 
     fun listOf(terms: Iterable<Term>): LogicList
+
+    fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
 
     fun setOf(vararg terms: Term): LogicSet
 
@@ -68,36 +74,17 @@ interface Scope {
 
     companion object {
 
-        fun empty(): Scope {
-            return ScopeImpl(mutableMapOf())
-        }
+        fun empty(): Scope = ScopeImpl(mutableMapOf())
 
-        fun of(vararg vars: Var): Scope {
-            val variables: MutableMap<String, Var> = mutableMapOf()
-            for (v in vars) {
-                variables[v.name] = v
-            }
-            return ScopeImpl(variables)
-        }
+        fun of(vararg vars: String): Scope = of(*vars) {}
 
-        fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope {
-            val scope = of(*vars)
-            scope.where(lambda)
-            return scope
-        }
+        fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope =
+                of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
 
-        fun of(vararg vars: String): Scope {
-            val variables: MutableMap<String, Var> = mutableMapOf()
-            for (v in vars) {
-                variables[v] = Var.of(v)
-            }
-            return ScopeImpl(variables)
-        }
+        fun of(vararg vars: Var): Scope = of(*vars) {}
 
-        fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope {
-            val scope = of(*vars)
-            scope.where(lambda)
-            return scope
-        }
+        fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
+                ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
+                        .where(lambda)
     }
 }

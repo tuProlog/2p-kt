@@ -24,19 +24,6 @@ interface Couple : Struct, LogicList {
     override val arity: Int
         get() = 2
 
-    override fun toArray(): Array<Term> = toList().toTypedArray()
-
-    override fun toSequence(): Sequence<Term> =
-            args.asSequence().flatMap {
-                if (tail.isList) {
-                    sequenceOf(it) + tail.castTo<LogicList>().toSequence()
-                } else {
-                    sequenceOf(it)
-                }
-            }
-
-    override fun toList(): List<Term> = toSequence().toList()
-
     override fun freshCopy(): Couple = super<LogicList>.freshCopy() as Couple
 
     override fun freshCopy(scope: Scope): Couple = super<LogicList>.freshCopy(scope) as Couple

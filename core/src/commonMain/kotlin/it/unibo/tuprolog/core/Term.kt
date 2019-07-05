@@ -2,10 +2,8 @@ package it.unibo.tuprolog.core
 
 interface Term {
 
-    fun <T : Term> castTo(): T {
-        @Suppress("UNCHECKED_CAST")
-        return this as T
-    }
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Term> castTo(): T = this as T
 
     infix fun structurallyEquals(other: Term): Boolean
     infix fun strictlyEquals(other: Term): Boolean
@@ -19,6 +17,7 @@ interface Term {
     val isInt: Boolean get() = false
     val isReal: Boolean get() = false
     val isList: Boolean get() = false
+    val isTuple: Boolean get() = false
     val isEmptySet: Boolean get() = false
     val isSet: Boolean get() = false
     val isClause: Boolean get() = false

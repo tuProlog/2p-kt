@@ -76,4 +76,4 @@ infix fun Term.sup(other: Term): Struct {
 
 infix fun Struct.impliedBy(other: Term): Rule = Rule.of(this, other)
 
-fun Struct.impliedBy(vararg other: Term): Rule = this impliedBy Struct.conjunction(*other)
+fun Struct.impliedBy(vararg other: Term): Rule = this impliedBy Tuple.wrapIfNeeded(*other)

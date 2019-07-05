@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,6 +16,8 @@ internal class TruthImplTest {
 
     private val `true` = TruthImpl.True
     private val fail = TruthImpl.Fail
+
+    private val truthInstances = listOf(`true`, fail)
 
     @Test
     fun truthFunctor() {
@@ -32,5 +35,15 @@ internal class TruthImplTest {
     fun testIsPropertiesAndTypesForFail() {
         TermTypeAssertionUtils.assertIsTruth(fail)
         assertTrue(fail.isFail)
+    }
+
+    @Test
+    fun truthFreshCopyShouldReturnTheInstanceItself() {
+        truthInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
+    }
+
+    @Test
+    fun truthFreshCopyWithScopeShouldReturnTheInstanceItself() {
+        truthInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
 }
