@@ -76,32 +76,15 @@ interface Scope {
 
         fun empty(): Scope = ScopeImpl(mutableMapOf())
 
-        fun of(vararg vars: Var): Scope {
-            val variables: MutableMap<String, Var> = mutableMapOf()
-            for (v in vars) {
-                variables[v.name] = v
-            }
-            return ScopeImpl(variables)
-        }
+        fun of(vararg vars: String): Scope = of(*vars) {}
 
-        fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope {
-            val scope = of(*vars)
-            scope.where(lambda)
-            return scope
-        }
+        fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope =
+                of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
 
-        fun of(vararg vars: String): Scope {
-            val variables: MutableMap<String, Var> = mutableMapOf()
-            for (v in vars) {
-                variables[v] = Var.of(v)
-            }
-            return ScopeImpl(variables)
-        }
+        fun of(vararg vars: Var): Scope = of(*vars) {}
 
-        fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope {
-            val scope = of(*vars)
-            scope.where(lambda)
-            return scope
-        }
+        fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
+                ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
+                        .where(lambda)
     }
 }

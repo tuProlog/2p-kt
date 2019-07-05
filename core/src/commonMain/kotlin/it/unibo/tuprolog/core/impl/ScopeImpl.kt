@@ -90,4 +90,19 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun numOf(value: Byte): Integral = Numeric.of(value)
 
     override fun numOf(value: String): Numeric = Numeric.of(value)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ScopeImpl
+
+        if (_variables != other._variables) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return _variables.hashCode()
+    }
 }
