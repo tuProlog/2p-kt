@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Integral
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -11,10 +10,6 @@ internal class IntegralImpl(override val value: BigInteger) : NumericImpl(), Int
     override val decimalValue: BigDecimal by lazy {
         BigDecimal.of(intValue)
     }
-
-    override fun strictlyEquals(other: Term): Boolean =
-            other is IntegralImpl && other::class == this::class
-                    && decimalValue.compareTo(other.decimalValue) == 0
 
     override val intValue: BigInteger
         get() = value
