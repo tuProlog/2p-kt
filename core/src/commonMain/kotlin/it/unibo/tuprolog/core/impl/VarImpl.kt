@@ -20,7 +20,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
     }
 
     override fun strictlyEquals(other: Term): Boolean =
-            other is VarImpl
+            other is VarImpl && other::class == this::class
                     && completeName == other.completeName
 
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
