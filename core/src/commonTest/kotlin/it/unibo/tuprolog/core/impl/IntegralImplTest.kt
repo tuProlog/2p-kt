@@ -2,6 +2,11 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStrictlyEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.IntegralUtils
@@ -79,23 +84,25 @@ class IntegralImplTest {
     @Test
     fun strictlyEqualsWorksAsExpected() {
         val oneIntegral = IntegralImpl(BigInteger.of(1))
+        val oneReal = Real.of(1.0)
         val oneAtom = Atom.of("1")
 
-        assertTrue(oneIntegral strictlyEquals oneIntegral)
+        assertStrictlyEquals(oneIntegral, oneIntegral)
 
-        assertFalse(oneIntegral strictlyEquals oneAtom)
-        assertFalse(oneAtom strictlyEquals oneIntegral)
+        assertNotStrictlyEquals(oneIntegral, oneReal)
+        assertNotStrictlyEquals(oneIntegral, oneAtom)
     }
 
     @Test
     fun structurallyEqualsWorksAsExpected() {
         val oneIntegral = IntegralImpl(BigInteger.of(1))
+        val oneReal = Real.of(1.0)
         val oneAtom = Atom.of("1")
 
-        assertTrue(oneIntegral structurallyEquals oneIntegral)
+        assertStructurallyEquals(oneIntegral, oneIntegral)
+        assertStructurallyEquals(oneIntegral, oneReal)
 
-        assertFalse(oneIntegral structurallyEquals oneAtom)
-        assertFalse(oneAtom structurallyEquals oneIntegral)
+        assertNotStructurallyEquals(oneIntegral, oneAtom)
     }
 
     @Test
