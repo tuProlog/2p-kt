@@ -36,7 +36,7 @@ interface Unifier {
             return default.match(this, other)
         }
 
-        fun naive(context: Substitution = emptyMap()) : Unifier {
+        fun naive(context: Substitution = Substitution.empty()) : Unifier {
             return object : AbstractUnifier(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
                     return name == other.name
@@ -44,7 +44,7 @@ interface Unifier {
             }
         }
 
-        fun strict(context: Substitution = emptyMap()) : Unifier {
+        fun strict(context: Substitution = Substitution.empty()) : Unifier {
             return object : AbstractUnifier(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
                     return completeName == other.completeName

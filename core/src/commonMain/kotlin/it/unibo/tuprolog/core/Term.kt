@@ -62,7 +62,7 @@ interface Term {
     }
 
     fun groundTo(substitution: Substitution, vararg substitutions: Substitution): Term {
-        return this.groundTo(substitutionOf(substitution, *substitutions))
+        return this.groundTo(Substitution.of(substitution, *substitutions))
     }
 
     operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
