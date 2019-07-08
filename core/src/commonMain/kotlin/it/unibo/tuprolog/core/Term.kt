@@ -52,20 +52,16 @@ interface Term {
      */
     fun freshCopy(scope: Scope): Term = this
 
-    fun groundTo(substitution: Substitution): Term {
-        return when {
-            this.isGround -> this
-            this is Var -> substitution[this] ?: this
-            this is Struct -> Struct.of(this.functor, this.argsList.map { it.groundTo(substitution) })
-            else -> this
-        }
+    fun groundTo(substitution: Substitution): Term = when {
+        this.isGround -> this
+        this is Var -> substitution[this] ?: this
+        this is Struct -> Struct.of(this.functor, this.argsList.map { it.groundTo(substitution) })
+        else -> this
     }
 
-    fun groundTo(substitution: Substitution, vararg substitutions: Substitution): Term {
-        return this.groundTo(Substitution.of(substitution, *substitutions))
-    }
+    fun groundTo(substitution: Substitution, vararg substitutions: Substitution): Term =
+            groundTo(Substitution.of(substitution, *substitutions))
 
-    operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term {
-        return this.groundTo(substitution, *substitutions)
-    }
+    operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term =
+            groundTo(substitution, *substitutions)
 }

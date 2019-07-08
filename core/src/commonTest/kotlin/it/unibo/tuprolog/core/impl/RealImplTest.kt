@@ -106,4 +106,9 @@ internal class RealImplTest {
     fun realFreshCopyWithScopeShouldReturnTheInstanceItself() {
         realInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
+
+    @Test
+    fun groundToAlwaysReturnsTheInstanceItself() {
+        realInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    }
 }
