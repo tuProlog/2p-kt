@@ -19,6 +19,11 @@ internal object AssertionUtils {
     fun <T> List<T>.dropLast(): List<T> = this.dropLast(1)
 
     /**
+     * Utility extension function to drop first element of a List
+     */
+    fun <T> List<T>.dropFirst(): List<T> = this.drop(1)
+
+    /**
      * Asserts mutual structural equality for two [Term]s
      */
     fun assertStructurallyEquals(expected: Term, actual: Term) {
