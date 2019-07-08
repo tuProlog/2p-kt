@@ -10,7 +10,10 @@ import it.unibo.tuprolog.core.Var
  * @author Enrico
  */
 internal class SuccessSubstitutionImpl(private val _mappings: Map<Var, Term>)
-    : Substitution, Map<Var, Term> by _mappings{
+    : Substitution, Map<Var, Term> by _mappings {
+
+    override val isFailed = false
+    override val isSuccess = true
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

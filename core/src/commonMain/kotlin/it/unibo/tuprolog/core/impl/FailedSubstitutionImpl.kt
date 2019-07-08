@@ -9,4 +9,7 @@ import it.unibo.tuprolog.core.Var
  *
  * @author Enrico
  */
-internal object FailedSubstitutionImpl : Substitution, Map<Var, Term> by emptyMap()
+internal object FailedSubstitutionImpl : Substitution, Map<Var, Term> by emptyMap() {
+    override val isFailed = true
+    override val isSuccess = false
+}

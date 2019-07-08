@@ -6,10 +6,7 @@ import it.unibo.tuprolog.core.impl.SuccessSubstitutionImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [Substitution] companion object
@@ -27,13 +24,33 @@ internal class SubstitutionTest {
     }
 
     @Test
+    fun failedSubstitutionIsFailed() {
+        assertTrue(Substitution.failed().isFailed)
+    }
+
+    @Test
+    fun failedSubstitutionIsNotSuccess() {
+        assertFalse(Substitution.failed().isSuccess)
+    }
+
+    @Test
     fun emptyReturnsAnEmptySubstitution() {
         assertTrue(Substitution.empty().isEmpty())
     }
 
     @Test
-    fun emptyReturnsSuccessfulSubstitution() {
+    fun emptyReturnsSuccessfulSubstitutionInstance() {
         assertTrue(Substitution.empty() is SuccessSubstitutionImpl)
+    }
+
+    @Test
+    fun emptySubstitutionIsSuccess() {
+        assertTrue(Substitution.empty().isSuccess)
+    }
+
+    @Test
+    fun emptySubstitutionIsNotFailed() {
+        assertFalse(Substitution.empty().isFailed)
     }
 
     @Test

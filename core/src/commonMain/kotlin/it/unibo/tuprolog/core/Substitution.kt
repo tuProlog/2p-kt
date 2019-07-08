@@ -11,6 +11,16 @@ import it.unibo.tuprolog.core.impl.SuccessSubstitutionImpl
 interface Substitution : Map<Var, Term> {
 
     /**
+     * Whether this Substitution is a failed one
+     */
+    val isFailed: Boolean
+
+    /**
+     * Whether this Substitution is a successful one
+     */
+    val isSuccess: Boolean
+
+    /**
      * Applies the Substitution to the given Term
      */
     fun ground(term: Term): Term = term[this]

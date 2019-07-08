@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.StructUtils
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -19,6 +20,16 @@ internal class FailedSubstitutionImplTest {
     @Test
     fun failedSubstitutionIsEmpty() {
         assertTrue(failedSubstitution.isEmpty())
+    }
+
+    @Test
+    fun isFailedIsTrue() {
+        assertTrue(failedSubstitution.isFailed)
+    }
+
+    @Test
+    fun isSuccessIsFalse() {
+        assertFalse(failedSubstitution.isSuccess)
     }
 
     @Test

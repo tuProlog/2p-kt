@@ -6,9 +6,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 /**
  * Test class for [SuccessSubstitutionImpl] and [Substitution]
@@ -22,6 +20,21 @@ internal class SuccessSubstitutionImplTest {
     private val xAtom = Atom.of("x")
     private val aVarToXAtomSubstitution = SuccessSubstitutionImpl(mapOf(aVar to xAtom))
     private val bVarToXAtomSubstitution = SuccessSubstitutionImpl(mapOf(bVar to xAtom))
+
+    private val substitutions by lazy {
+        SubstitutionUtils.mixedSubstitutions.map(::SuccessSubstitutionImpl) +
+                listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
+    }
+
+    @Test
+    fun isSuccessIsTrue() {
+        substitutions.forEach { assertTrue { it.isSuccess } }
+    }
+
+    @Test
+    fun isFailedIsFalse() {
+        substitutions.forEach { assertFalse { it.isFailed } }
+    }
 
     @Test
     fun shouldSubstituteVariableWithProvidedSubstitution() {
