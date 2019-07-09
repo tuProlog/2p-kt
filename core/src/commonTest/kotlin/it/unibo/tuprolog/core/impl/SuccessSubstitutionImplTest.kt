@@ -18,11 +18,11 @@ internal class SuccessSubstitutionImplTest {
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
     private val xAtom = Atom.of("x")
-    private val aVarToXAtomSubstitution = SuccessSubstitutionImpl(mapOf(aVar to xAtom))
-    private val bVarToXAtomSubstitution = SuccessSubstitutionImpl(mapOf(bVar to xAtom))
+    private val aVarToXAtomSubstitution = Substitution.Success(mapOf(aVar to xAtom))
+    private val bVarToXAtomSubstitution = Substitution.Success(mapOf(bVar to xAtom))
 
     private val substitutions by lazy {
-        SubstitutionUtils.mixedSubstitutions.map(::SuccessSubstitutionImpl) +
+        SubstitutionUtils.mixedSubstitutions.map(Substitution::Success) +
                 listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
@@ -54,7 +54,7 @@ internal class SuccessSubstitutionImplTest {
 
     @Test
     fun equalsWorksAsExpected() {
-        assertEquals(SuccessSubstitutionImpl(mapOf(aVar to xAtom)), SuccessSubstitutionImpl(mapOf(aVar to xAtom)))
+        assertEquals(Substitution.Success(mapOf(aVar to xAtom)), Substitution.Success(mapOf(aVar to xAtom)))
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 

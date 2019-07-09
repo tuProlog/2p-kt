@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Substitution.Companion.asSuccessSubstitution
-import it.unibo.tuprolog.core.impl.FailedSubstitutionImpl
-import it.unibo.tuprolog.core.impl.SuccessSubstitutionImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
@@ -15,12 +13,12 @@ import kotlin.test.*
  */
 internal class SubstitutionTest {
 
-    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(::SuccessSubstitutionImpl) }
+    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Success) }
 
     @Test
     fun failedShouldReturnTheFailedSubstitutionInstance() {
-        assertEquals(FailedSubstitutionImpl, Substitution.failed())
-        assertSame(FailedSubstitutionImpl, Substitution.failed())
+        assertEquals(Substitution.Fail, Substitution.failed())
+        assertSame(Substitution.Fail, Substitution.failed())
     }
 
     @Test
@@ -40,7 +38,7 @@ internal class SubstitutionTest {
 
     @Test
     fun emptyReturnsSuccessfulSubstitutionInstance() {
-        assertTrue(Substitution.empty() is SuccessSubstitutionImpl)
+        assertTrue(Substitution.empty() is Substitution.Success)
     }
 
     @Test
@@ -89,7 +87,7 @@ internal class SubstitutionTest {
 
     @Test
     fun ofSubstitutions() {
-        val correct = SuccessSubstitutionImpl(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
+        val correct = Substitution.Success(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
         val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
 
         assertEquals(correct, toBeTested)
