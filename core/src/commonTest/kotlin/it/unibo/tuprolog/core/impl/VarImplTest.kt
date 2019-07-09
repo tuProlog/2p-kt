@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
@@ -147,5 +149,33 @@ internal class VarImplTest {
     @Test
     fun testIsPropertiesAndTypes() {
         mixedVarInstances.forEach(TermTypeAssertionUtils::assertIsVar)
+    }
+
+    @Test
+    fun groundToReplacesVariableIfCorrectSubstitution() {
+        val myAtom = Atom.of("hello")
+        val myVar = Var.of("X")
+
+        val toBeTested1 = myVar.apply(Substitution.of(myVar to myAtom))
+        val toBeTested2 = myVar.apply(Substitution.of(myVar to myAtom), Substitution.empty())
+        val toBeTested3 = myVar[Substitution.of(myVar to myAtom)]
+
+        assertEqualities(myAtom, toBeTested1)
+        assertEqualities(myAtom, toBeTested2)
+        assertEqualities(myAtom, toBeTested3)
+    }
+
+    @Test
+    fun groundToDoesntReplaceAnythingIfNoCorrespondingVariableFound() {
+        val myAtom = Atom.of("hello")
+        val myVar = Var.of("X")
+
+        val toBeTested1 = myVar.apply(Substitution.of(Var.of("A") to myAtom))
+        val toBeTested2 = myVar.apply(Substitution.empty(), Substitution.empty())
+        val toBeTested3 = myVar[Substitution.of(Var.anonymous() to myAtom)]
+
+        assertEqualities(myVar, toBeTested1)
+        assertEqualities(myVar, toBeTested2)
+        assertEqualities(myVar, toBeTested3)
     }
 }

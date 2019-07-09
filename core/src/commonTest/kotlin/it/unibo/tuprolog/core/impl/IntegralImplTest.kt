@@ -114,4 +114,9 @@ class IntegralImplTest {
     fun integralFreshCopyWithScopeShouldReturnTheInstanceItself() {
         integralInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
+
+    @Test
+    fun groundToAlwaysReturnsTheInstanceItself() {
+        integralInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    }
 }

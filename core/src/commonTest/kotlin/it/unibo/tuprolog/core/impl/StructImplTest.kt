@@ -262,4 +262,35 @@ internal class StructImplTest {
             }
         }
     }
+
+    @Test
+    fun groundToReplacesVariableIfCorrectSubstitution() {
+        val myAtom = Atom.of("hello")
+        val myVar = Var.of("X")
+        val myStruct = Struct.of("f", myVar)
+
+        val correct = Struct.of("f", myAtom)
+        val toBeTested1 = myStruct.apply(Substitution.of(myVar to myAtom))
+        val toBeTested2 = myStruct.apply(Substitution.of(myVar to myAtom), Substitution.empty())
+        val toBeTested3 = myStruct[Substitution.of(myVar to myAtom)]
+
+        assertEqualities(correct, toBeTested1)
+        assertEqualities(correct, toBeTested2)
+        assertEqualities(correct, toBeTested3)
+    }
+
+    @Test
+    fun groundToDoesntReplaceAnythingIfNoCorrespondingVariableFound() {
+        val myAtom = Atom.of("hello")
+        val myVar = Var.of("X")
+        val myStruct = Struct.of("f", myVar)
+
+        val toBeTested1 = myStruct.apply(Substitution.of(Var.of("A") to myAtom))
+        val toBeTested2 = myStruct.apply(Substitution.empty(), Substitution.empty())
+        val toBeTested3 = myStruct[Substitution.of(Var.anonymous() to myAtom)]
+
+        assertEqualities(myStruct, toBeTested1)
+        assertEqualities(myStruct, toBeTested2)
+        assertEqualities(myStruct, toBeTested3)
+    }
 }

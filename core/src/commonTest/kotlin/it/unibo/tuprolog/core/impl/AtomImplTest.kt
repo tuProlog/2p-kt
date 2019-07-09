@@ -99,4 +99,9 @@ internal class AtomImplTest {
     fun atomFreshCopyWithScopeShouldReturnTheInstanceItself() {
         mixedAtomInstances.forEach(ConstantUtils::assertFreshCopyWithScopeIsItself)
     }
+
+    @Test
+    fun groundToAlwaysReturnsTheInstanceItself() {
+        mixedAtomInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    }
 }

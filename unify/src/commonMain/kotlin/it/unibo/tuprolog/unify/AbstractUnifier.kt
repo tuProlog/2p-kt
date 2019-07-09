@@ -3,14 +3,14 @@ package it.unibo.tuprolog.unify
 import Equation
 import eq
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Substitution.Companion.asSuccessSubstitution
 import org.gciatto.kt.math.BigDecimal
-
 abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term>>) : Unifier {
 
     constructor() : this(emptyList())
 
     override val context: Substitution by lazy {
-        _context.toMap()
+        _context.toMap().asSuccessSubstitution()
     }
 
     protected abstract fun Var.isEqualTo(other: Var): Boolean
@@ -105,7 +105,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                                 changed = true
                                 equations[i] = null
                             } else {
-                                changed = substitutionOf(first as Var, second).applyToAll(equations, i)
+                                changed = Substitution.of(first as Var, second).applyToAll(equations, i)
                             }
                         }
                         second is Var -> {
@@ -116,7 +116,7 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
                             if (occurCheck && (first as Var).occursInTerm(second)) {
                                 return null
                             } else {
-                                changed = substitutionOf(first as Var, second).applyToAll(equations, i)
+                                changed = Substitution.of(first as Var, second).applyToAll(equations, i)
                             }
                         }
                         else -> {
@@ -130,6 +130,6 @@ abstract class AbstractUnifier(private val _context: Iterable<Equation<Var, Term
 
         return equations.filterNotNull()
                 .filterIsInstance<Equation<Var, Term>>()
-                .toMap()
+                .toMap().asSuccessSubstitution()
     }
 }

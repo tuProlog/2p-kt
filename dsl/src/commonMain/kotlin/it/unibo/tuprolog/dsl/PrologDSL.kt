@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.*
 
 operator fun Any.div(obj: Any): Substitution {
     return when {
-        this is Var -> substitutionOf(this, obj.toTerm())
-        this is String -> substitutionOf(Var.of(this), obj.toTerm())
+        this is Var -> Substitution.of(this, obj.toTerm())
+        this is String -> Substitution.of(Var.of(this), obj.toTerm())
         else -> throw IllegalArgumentException("${obj::class} cannot be converted into ${Var::class}")
     }
 }
