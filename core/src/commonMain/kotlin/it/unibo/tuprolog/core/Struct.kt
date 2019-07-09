@@ -29,10 +29,10 @@ interface Struct : Term {
         get() = arity == 0
 
     override val isList: Boolean
-        get() = isCouple || isEmptyList
+        get() = isCons || isEmptyList
 
-    override val isCouple: Boolean
-        get() = Couple.FUNCTOR == functor && arity == 2
+    override val isCons: Boolean
+        get() = Cons.FUNCTOR == functor && arity == 2
 
     override val isSet: Boolean
         get() = (Set.FUNCTOR == functor && arity == 1) || isEmptySet
@@ -85,7 +85,7 @@ interface Struct : Term {
 
         fun of(functor: String, args: KtList<Term>): Struct =
                 when {
-                    args.size == 2 && Couple.FUNCTOR == functor -> Couple.of(args.first(), args.last())
+                    args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
                     args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct -> Rule.of(args.first() as Struct, args.last())
                     args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
                     args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
@@ -100,8 +100,8 @@ interface Struct : Term {
 
         fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
                 when {
-                    operator == Couple.FUNCTOR && terminal == EmptyList() -> List.of(terms)
-                    operator == Couple.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
+                    operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
+                    operator == Cons.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
                     operator == Tuple.FUNCTOR -> Tuple.of(terms + if (terminal === null) listOf() else listOf(terminal))
                     terminal === null -> {
                         require(terms.size >= 2) { "Struct requires at least two terms to fold" }

@@ -67,7 +67,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun clauseOf(head: Struct?, vararg body: Term): Clause = Clause.of(head, *body)
 
-    override fun coupleOf(head: Term, tail: Term): Couple = Couple.of(head, tail)
+    override fun consOf(head: Term, tail: Term): Cons = Cons.of(head, tail)
 
     override fun anonymous(): Var = Var.anonymous()
 
@@ -79,15 +79,15 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun numOf(value: Float): Real = Numeric.of(value)
 
-    override fun numOf(value: BigInteger): Integral = Numeric.of(value)
+    override fun numOf(value: BigInteger): Integer = Numeric.of(value)
 
-    override fun numOf(value: Int): Integral = Numeric.of(value)
+    override fun numOf(value: Int): Integer = Numeric.of(value)
 
-    override fun numOf(value: Long): Integral = Numeric.of(value)
+    override fun numOf(value: Long): Integer = Numeric.of(value)
 
-    override fun numOf(value: Short): Integral = Numeric.of(value)
+    override fun numOf(value: Short): Integer = Numeric.of(value)
 
-    override fun numOf(value: Byte): Integral = Numeric.of(value)
+    override fun numOf(value: Byte): Integer = Numeric.of(value)
 
     override fun numOf(value: String): Numeric = Numeric.of(value)
 

@@ -62,7 +62,7 @@ interface List : Struct {
             }
 
             val finalItem = last ?: empty()
-            return items.foldRight(finalItem) { head, tail -> Couple.of(head, tail) } as List
+            return items.foldRight(finalItem) { head, tail -> Cons.of(head, tail) } as List
         }
     }
 }

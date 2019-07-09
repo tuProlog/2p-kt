@@ -9,7 +9,7 @@ interface Tuple : Struct {
         get() = true
 
     override val functor: String
-        get() = Couple.FUNCTOR
+        get() = Cons.FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(left, right)

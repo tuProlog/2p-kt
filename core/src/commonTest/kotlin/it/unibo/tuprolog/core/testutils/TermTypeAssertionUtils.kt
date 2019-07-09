@@ -31,7 +31,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isStruct)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
@@ -45,7 +45,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Numeric)
         assertFalse(any is Struct)
         assertFalse(any is Clause)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
     }
 
     /**
@@ -64,7 +64,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isStruct)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
@@ -78,7 +78,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Var)
         assertFalse(any is Struct)
         assertFalse(any is Clause)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
     }
 
     /**
@@ -95,12 +95,12 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be an Integral or fails otherwise
+     * Checks passed term to be an Integer or fails otherwise
      */
-    fun assertIsIntegral(any: Any) {
+    fun assertIsInteger(any: Any) {
         commonNumericAssertions(any)
 
-        assertTrue(any is Integral)
+        assertTrue(any is Integer)
 
         assertTrue(any.isInt)
 
@@ -125,7 +125,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
         assertFalse(any.isSet)
@@ -138,7 +138,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Numeric)
         assertFalse(any is Var)
         assertFalse(any is Clause)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
         assertFalse(any is Tuple)
     }
 
@@ -161,7 +161,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isVariable)
         assertFalse(any.isBound)
         assertFalse(any.isTuple)
@@ -169,7 +169,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Numeric)
         assertFalse(any is Clause)
         assertFalse(any is Var)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
     }
 
     /**
@@ -237,7 +237,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
         assertFalse(any.isSet)
@@ -249,22 +249,22 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
         assertFalse(any is Clause)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
         assertFalse(any is Var)
     }
 
     /**
-     * Checks passed term to be a Couple or fails otherwise
+     * Checks passed term to be a Cons or fails otherwise
      */
-    fun assertIsCouple(any: Any) {
+    fun assertIsCons(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
         assertTrue(any is LogicList)
-        assertTrue(any is Couple)
+        assertTrue(any is Cons)
 
         assertTrue(any.isStruct)
         assertTrue(any.isList)
-        assertTrue(any.isCouple)
+        assertTrue(any.isCons)
 
         assertFalse(any.isVariable)
         assertFalse(any.isBound)
@@ -309,7 +309,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isDirective)
         assertFalse(any.isFact)
         assertFalse(any.isRule)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
         assertFalse(any.isEmptyList)
@@ -321,7 +321,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Numeric)
         assertFalse(any is LogicList)
         assertFalse(any is Clause)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
         assertFalse(any is Var)
     }
 
@@ -393,7 +393,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isNumber)
         assertFalse(any.isReal)
         assertFalse(any.isInt)
-        assertFalse(any.isCouple)
+        assertFalse(any.isCons)
         assertFalse(any.isAtom)
         assertFalse(any.isList)
         assertFalse(any.isSet)
@@ -405,7 +405,7 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(any is Var)
         assertFalse(any is Numeric)
-        assertFalse(any is Couple)
+        assertFalse(any is Cons)
         assertFalse(any is LogicSet)
         assertFalse(any is LogicList)
         assertFalse(any is Atom)

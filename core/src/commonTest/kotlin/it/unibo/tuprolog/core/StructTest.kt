@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.impl.StructImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
-import it.unibo.tuprolog.core.testutils.CoupleUtils
+import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
 import kotlin.test.Test
@@ -33,13 +33,13 @@ internal class StructTest {
     }
 
     @Test
-    fun structOfCreatesCoupleIfNeeded() {
-        val coupleStructs = StructUtils.mixedStructs.filter { (functor, args) ->
-            args.size == 2 && Couple.FUNCTOR == functor
+    fun structOfCreatesConsIfNeeded() {
+        val consStructs = StructUtils.mixedStructs.filter { (functor, args) ->
+            args.size == 2 && Cons.FUNCTOR == functor
         }
 
-        val correctInstances = coupleStructs.map { (_, args) -> Couple.of(args.first(), args.last()) }
-        val toBeTested = coupleStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val correctInstances = consStructs.map { (_, args) -> Cons.of(args.first(), args.last()) }
+        val toBeTested = consStructs.map { (functor, args) -> Struct.of(functor, *args) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -103,17 +103,17 @@ internal class StructTest {
     }
 
     @Test
-    fun structFoldCanCreateFoldedCoupleInstancesEmptyListTerminated() {
-        val correctInstances = CoupleUtils.onlyCoupleEmptyListTerminatedElementLists.map { List.of(it) }
-        val toBeTested = CoupleUtils.onlyCoupleEmptyListTerminatedElementLists.map { Struct.fold(Couple.FUNCTOR, it, EmptyList()) }
+    fun structFoldCanCreateFoldedConsInstancesEmptyListTerminated() {
+        val correctInstances = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { List.of(it) }
+        val toBeTested = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it, EmptyList()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
-    fun structFoldCanCreateFoldedCoupleInstancesPipeTerminated() {
-        val correctInstances = CoupleUtils.onlyCouplePipeTerminatedElementLists.map { List.from(it.dropLast(), it.last()) }
-        val toBeTested = CoupleUtils.onlyCouplePipeTerminatedElementLists.map { Struct.fold(Couple.FUNCTOR, it) }
+    fun structFoldCanCreateFoldedConsInstancesPipeTerminated() {
+        val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { List.from(it.dropLast(), it.last()) }
+        val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

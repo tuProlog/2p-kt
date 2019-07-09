@@ -48,7 +48,7 @@ interface Scope {
 
     fun clauseOf(head: Struct?, vararg body: Term): Clause
 
-    fun coupleOf(head: Term, tail: Term): Couple
+    fun consOf(head: Term, tail: Term): Cons
 
     fun anonymous(): Var
 
@@ -60,15 +60,15 @@ interface Scope {
 
     fun numOf(value: Float): Real
 
-    fun numOf(value: BigInteger): Integral
+    fun numOf(value: BigInteger): Integer
 
-    fun numOf(value: Int): Integral
+    fun numOf(value: Int): Integer
 
-    fun numOf(value: Long): Integral
+    fun numOf(value: Long): Integer
 
-    fun numOf(value: Short): Integral
+    fun numOf(value: Short): Integer
 
-    fun numOf(value: Byte): Integral
+    fun numOf(value: Byte): Integer
 
     fun numOf(value: String): Numeric
 

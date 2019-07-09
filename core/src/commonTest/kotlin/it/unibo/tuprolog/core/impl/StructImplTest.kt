@@ -157,18 +157,18 @@ internal class StructImplTest {
     }
 
     @Test
-    fun coupleDetected() {
-        val isCouple: (Struct) -> Boolean = { aStruct -> aStruct.functor == Couple.FUNCTOR && aStruct.arity == 2 }
+    fun consDetected() {
+        val isCons: (Struct) -> Boolean = { aStruct -> aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 }
 
-        mixedStructInstances.filter(isCouple).forEach { assertTrue { it.isCouple } }
-        mixedStructInstances.filterNot(isCouple).forEach { assertFalse { it.isCouple } }
+        mixedStructInstances.filter(isCons).forEach { assertTrue { it.isCons } }
+        mixedStructInstances.filterNot(isCons).forEach { assertFalse { it.isCons } }
     }
 
     @Test
     fun listDetected() {
         val isList: (Struct) -> Boolean =
                 { aStruct ->
-                    aStruct.functor == Couple.FUNCTOR && aStruct.arity == 2 ||
+                    aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
                             aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
                 }
 

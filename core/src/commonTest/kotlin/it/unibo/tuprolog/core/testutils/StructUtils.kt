@@ -41,10 +41,10 @@ internal object StructUtils {
         AssertionUtils.assertNotStrictlyEquals(firstVarBefore, secondVarBefore)
         assertNotSame(firstVarBefore, secondVarBefore)
 
-        val coupleCopied = termWithSameVarName.freshCopy()
+        val consCopied = termWithSameVarName.freshCopy()
 
-        val firstVarAfter = coupleCopied.args[0]
-        val secondVarAfter = coupleCopied.args[1]
+        val firstVarAfter = consCopied.args[0]
+        val secondVarAfter = consCopied.args[1]
 
         AssertionUtils.assertEqualities(firstVarAfter, secondVarAfter)
         assertSame(firstVarAfter, secondVarAfter)
@@ -58,8 +58,8 @@ internal object StructUtils {
                 "ciao" to arrayOf<Term>(Truth.`true`()),
                 "myFunctor" to arrayOf<Term>(Atom.of("hello"), Atom.of("world"), Atom.of("!")),
                 "varFunctor" to arrayOf<Term>(Var.of("A"), Var.of("B")),
-                "{}" to arrayOf<Term>(Integral.of(1), Integral.of(2), Integral.of(3)),
-                "[]" to arrayOf<Term>(Integral.of(1), Integral.of(2), Integral.of(3)),
+                "{}" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
+                "[]" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
                 "." to arrayOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
                 "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.`true`())
         )
@@ -70,7 +70,7 @@ internal object StructUtils {
      */
     internal val specialStructs by lazy {
         listOf(
-                Couple.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
+                Cons.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
                 LogicSet.FUNCTOR to arrayOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
                 Tuple.FUNCTOR to arrayOf<Term>(Atom.of("left"), Atom.of("right")),
                 Clause.FUNCTOR to arrayOf<Term>(Atom.of("rule1"), Atom.of("rule2")),

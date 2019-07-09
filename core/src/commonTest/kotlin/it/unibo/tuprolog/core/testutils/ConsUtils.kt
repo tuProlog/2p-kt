@@ -3,71 +3,71 @@ package it.unibo.tuprolog.core.testutils
 import it.unibo.tuprolog.core.*
 
 /**
- * Utils singleton for testing [Couple]
+ * Utils singleton for testing [Cons]
  *
  * @author Enrico
  */
-internal object CoupleUtils {
+internal object ConsUtils {
 
     private val headOfFirstList = Var.of("H")
     private val tailOfFirstList = Empty.list()
     private val elementsOfFirstList = listOf(headOfFirstList)
     /**
-     * Constructs a non ground Couple with one Term
+     * Constructs a non ground Cons with one Term
      */
-    internal fun oneElementList(constructor: (Term, Term) -> Couple) = constructor(headOfFirstList, tailOfFirstList)
+    internal fun oneElementList(constructor: (Term, Term) -> Cons) = constructor(headOfFirstList, tailOfFirstList)
 
 
     private val headOfSecondList = Var.of("H")
     private val tailOfSecondListElement = Var.of("T")
-    private fun tailOfSecondList(constructor: (Term, Term) -> Couple) = constructor(tailOfSecondListElement, Empty.list())
+    private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
     private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
     /**
-     * Constructs a non ground Couple with two Terms
+     * Constructs a non ground Cons with two Terms
      */
-    internal fun twoElementList(constructor: (Term, Term) -> Couple) =
+    internal fun twoElementList(constructor: (Term, Term) -> Cons) =
             constructor(headOfSecondList, tailOfSecondList(constructor))
 
 
     private val headOfThirdList = Atom.of("bigList")
-    private val tailOfThirdListFirstElement = Integral.of(4)
+    private val tailOfThirdListFirstElement = Integer.of(4)
     private val tailOfThirdListSecondElement = Real.of(1.5)
-    private fun tailOfThirdList(constructor: (Term, Term) -> Couple) =
+    private fun tailOfThirdList(constructor: (Term, Term) -> Cons) =
             constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
 
     private val elementsOfThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
     /**
-     * Constructs a ground Couple with three Terms
+     * Constructs a ground Cons with three Terms
      */
-    internal fun threeElementList(constructor: (Term, Term) -> Couple) = constructor(headOfThirdList, tailOfThirdList(constructor))
+    internal fun threeElementList(constructor: (Term, Term) -> Cons) = constructor(headOfThirdList, tailOfThirdList(constructor))
 
 
     private val headOfFourthList = Var.of("Head")
     private val tailOfFourthList = Var.of("Tail")
     private val elementsOfFourthList = listOf(headOfFourthList, tailOfFourthList)
     /**
-     * Constructs a non ground Couple with two Terms, without terminal emptyList
+     * Constructs a non ground Cons with two Terms, without terminal emptyList
      */
-    internal fun twoElementListWithPipe(constructor: (Term, Term) -> Couple) =
+    internal fun twoElementListWithPipe(constructor: (Term, Term) -> Cons) =
             constructor(headOfFourthList, tailOfFourthList)
 
     private val headOfFifthList = Atom.of("head")
     private val tailOfFifthListFirstElement = Var.of("M")
     private val tailOfFifthListSecondElement = Var.of("N")
-    private fun tailOfFifthList(constructor: (Term, Term) -> Couple) =
+    private fun tailOfFifthList(constructor: (Term, Term) -> Cons) =
             constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
 
     private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
     /**
-     * Constructs a non ground Couple with three Terms, without terminal EmptyList
+     * Constructs a non ground Cons with three Terms, without terminal EmptyList
      */
-    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Couple) = constructor(headOfFifthList, tailOfFifthList(constructor))
+    internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) = constructor(headOfFifthList, tailOfFifthList(constructor))
 
 
     /**
-     * Returns only those Couples that are terminated with an EmptyList
+     * Returns only those Cons that are terminated with an EmptyList
      */
-    internal fun onlyCoupleEmptyListTerminated(constructor: (Term, Term) -> Couple) =
+    internal fun onlyConsEmptyListTerminated(constructor: (Term, Term) -> Cons) =
             listOf(
                     oneElementList(constructor),
                     twoElementList(constructor),
@@ -75,9 +75,9 @@ internal object CoupleUtils {
             )
 
     /**
-     * Returns only those Couples that *NOT* terminate with an EmptyList
+     * Returns only those Cons that *NOT* terminate with an EmptyList
      */
-    internal fun onlyCouplePipeTerminated(constructor: (Term, Term) -> Couple) =
+    internal fun onlyConsPipeTerminated(constructor: (Term, Term) -> Cons) =
             listOf(
                     twoElementListWithPipe(constructor),
                     threeElementListWithPipe(constructor)
@@ -85,23 +85,23 @@ internal object CoupleUtils {
 
 
     /**
-     * Returns all Couples mixing [onlyCoupleEmptyListTerminated] and [onlyCouplePipeTerminated]
+     * Returns all Cons mixing [onlyConsEmptyListTerminated] and [onlyConsPipeTerminated]
      */
-    internal fun mixedCoupleInstances(constructor: (Term, Term) -> Couple) =
-            onlyCoupleEmptyListTerminated(constructor) + onlyCouplePipeTerminated(constructor)
+    internal fun mixedConsInstances(constructor: (Term, Term) -> Cons) =
+            onlyConsEmptyListTerminated(constructor) + onlyConsPipeTerminated(constructor)
 
 
     /**
-     * All Couple heads
+     * All Cons heads
      */
-    internal val mixedCoupleInstancesHeads by lazy {
+    internal val mixedConsInstancesHeads by lazy {
         listOf(headOfFirstList, headOfSecondList, headOfThirdList, headOfFourthList, headOfFifthList)
     }
 
     /**
-     * All Couple tails (needs constructor because some tails are Couples themselves)
+     * All Cons tails (needs constructor because some tails are Cons themselves)
      */
-    internal fun mixedCoupleInstancesTails(constructor: (Term, Term) -> Couple) =
+    internal fun mixedConsInstancesTails(constructor: (Term, Term) -> Cons) =
             listOf(
                     tailOfFirstList,
                     tailOfSecondList(constructor),
@@ -110,25 +110,25 @@ internal object CoupleUtils {
                     tailOfFifthList(constructor)
             )
 
-    internal val onlyCoupleEmptyListTerminatedElementLists by lazy {
+    internal val onlyConsEmptyListTerminatedElementLists by lazy {
         listOf(elementsOfFirstList, elementsOfSecondList, elementsOfThirdList)
     }
 
-    internal val onlyCouplePipeTerminatedElementLists by lazy {
+    internal val onlyConsPipeTerminatedElementLists by lazy {
         listOf(elementsOfFourthList, elementsOfFifthList)
     }
 
     /**
-     * All Couples elements lists
+     * All Cons elements lists
      */
-    internal val mixedCoupleInstancesElementLists by lazy {
-        onlyCoupleEmptyListTerminatedElementLists + onlyCouplePipeTerminatedElementLists
+    internal val mixedConsInstancesElementLists by lazy {
+        onlyConsEmptyListTerminatedElementLists + onlyConsPipeTerminatedElementLists
     }
 
     /**
-     * All Couples "unfolded list" representation
+     * All Cons "unfolded list" representation
      */
-    internal val mixedCoupleInstancesUnfoldedLists by lazy {
+    internal val mixedConsInstancesUnfoldedLists by lazy {
         listOf(
                 elementsOfFirstList + Empty.list(),
                 elementsOfSecondList + Empty.list(),

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.CoupleImpl
+import it.unibo.tuprolog.core.impl.ConsImpl
 import it.unibo.tuprolog.core.List as LogicList
 
-interface Couple : Struct, LogicList {
+interface Cons : Struct, LogicList {
 
-    override val isCouple: Boolean
+    override val isCons: Boolean
         get() = true
 
     override val isEmptyList: Boolean
@@ -24,15 +24,15 @@ interface Couple : Struct, LogicList {
     override val arity: Int
         get() = 2
 
-    override fun freshCopy(): Couple = super<LogicList>.freshCopy() as Couple
+    override fun freshCopy(): Cons = super<LogicList>.freshCopy() as Cons
 
-    override fun freshCopy(scope: Scope): Couple = super<LogicList>.freshCopy(scope) as Couple
+    override fun freshCopy(scope: Scope): Cons = super<LogicList>.freshCopy(scope) as Cons
 
     companion object {
         const val FUNCTOR = "."
 
-        fun of(head: Term, tail: Term): Couple = CoupleImpl(head, tail)
+        fun of(head: Term, tail: Term): Cons = ConsImpl(head, tail)
 
-        fun last(head: Term): Couple = of(head, Empty.list())
+        fun singleton(head: Term): Cons = of(head, Empty.list())
     }
 }

@@ -24,7 +24,7 @@ interface Term {
     val isRule: Boolean get() = false
     val isFact: Boolean get() = false
     val isDirective: Boolean get() = false
-    val isCouple: Boolean get() = false
+    val isCons: Boolean get() = false
     val isEmptyList: Boolean get() = false
     val isTrue: Boolean get() = false
     val isFail: Boolean get() = false

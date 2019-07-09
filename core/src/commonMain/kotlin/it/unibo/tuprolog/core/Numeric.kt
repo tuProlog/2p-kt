@@ -26,11 +26,11 @@ interface Numeric : Term, Comparable<Numeric> {
         fun of(decimal: BigDecimal): Real = Real.of(decimal)
         fun of(decimal: Double): Real = Real.of(decimal)
         fun of(decimal: Float): Real = Real.of(decimal)
-        fun of(integer: BigInteger): Integral = Integral.of(integer)
-        fun of(integer: Int): Integral = Integral.of(integer)
-        fun of(integer: Long): Integral = Integral.of(integer)
-        fun of(integer: Short): Integral = Integral.of(integer)
-        fun of(integer: Byte): Integral = Integral.of(integer)
+        fun of(integer: BigInteger): Integer = Integer.of(integer)
+        fun of(integer: Int): Integer = Integer.of(integer)
+        fun of(integer: Long): Integer = Integer.of(integer)
+        fun of(integer: Short): Integer = Integer.of(integer)
+        fun of(integer: Byte): Integer = Integer.of(integer)
 
         fun of(value: Number): Numeric = when (value) {
             // avoiding string format is necessary for "floats", to maintain full precision during conversions
@@ -40,7 +40,7 @@ interface Numeric : Term, Comparable<Numeric> {
 
         fun of(number: String): Numeric =
                 try {
-                    Integral.of(number)
+                    Integer.of(number)
                 } catch (ex: NumberFormatException) {
                     Real.of(number)
                 }

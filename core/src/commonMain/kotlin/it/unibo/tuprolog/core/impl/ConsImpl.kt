@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Couple
+import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.List as LogicList
 
-internal class CoupleImpl(override val head: Term, override val tail: Term) : StructImpl(Couple.FUNCTOR, arrayOf(head, tail)), Couple {
+internal class ConsImpl(override val head: Term, override val tail: Term) : StructImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
 
     override val unfoldedSequence: Sequence<Term> by lazy {
         sequenceOf(head) + if (tail.isList) tail.castTo<LogicList>().unfoldedSequence else sequenceOf(tail)
@@ -19,7 +19,7 @@ internal class CoupleImpl(override val head: Term, override val tail: Term) : St
         unfoldedList.toTypedArray()
     }
 
-    override val functor: String = Couple.FUNCTOR
+    override val functor: String = Cons.FUNCTOR
 
     override val args: Array<Term>
         get() = super<StructImpl>.args

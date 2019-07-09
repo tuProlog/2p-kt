@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
-internal class IntegralImpl(override val value: BigInteger) : NumericImpl(), Integral {
+internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
 
     override val decimalValue: BigDecimal by lazy {
         BigDecimal.of(intValue)
@@ -21,7 +21,7 @@ internal class IntegralImpl(override val value: BigInteger) : NumericImpl(), Int
         if (other == null || other !is NumericImpl) return false
 
         return when (other) {
-            is IntegralImpl -> value.compareTo(other.value) == 0
+            is IntegerImpl -> value.compareTo(other.value) == 0
             else -> decimalValue.compareTo(other.decimalValue) == 0
         }
     }
@@ -30,7 +30,7 @@ internal class IntegralImpl(override val value: BigInteger) : NumericImpl(), Int
 
     override fun compareTo(other: Numeric): Int =
             when (other) {
-                is IntegralImpl -> value.compareTo(other.value)
+                is IntegerImpl -> value.compareTo(other.value)
                 else -> super<NumericImpl>.compareTo(other)
             }
 }
