@@ -16,7 +16,7 @@ internal object SetUtils {
         listOf(
                 arrayOf(Truth.`true`()),
                 arrayOf(Atom.of("hey"), Atom.of("!")),
-                arrayOf(Integral.of(1), Real.of(1.5), Truth.fail(), Atom.of("ciao"))
+                arrayOf(Integer.of(1), Real.of(1.5), Truth.fail(), Atom.of("ciao"))
         )
     }
     /**

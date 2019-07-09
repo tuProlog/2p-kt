@@ -30,7 +30,7 @@ internal object CoupleUtils {
 
 
     private val headOfThirdList = Atom.of("bigList")
-    private val tailOfThirdListFirstElement = Integral.of(4)
+    private val tailOfThirdListFirstElement = Integer.of(4)
     private val tailOfThirdListSecondElement = Real.of(1.5)
     private fun tailOfThirdList(constructor: (Term, Term) -> Couple) =
             constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))

@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core.testutils
 
-import it.unibo.tuprolog.core.Integral
+import it.unibo.tuprolog.core.Integer
 import org.gciatto.kt.math.BigInteger
 
 /**
- * Utils singleton for testing [Integral]
+ * Utils singleton for testing [Integer]
  *
  * @author Enrico
  */
-internal object IntegralUtils {
+internal object IntegerUtils {
 
     /**
      * Map from an integer in string format to it's corresponding BigInteger instance
@@ -33,12 +33,12 @@ internal object IntegralUtils {
     }
 
     /**
-     * Contains testing integral values in string format
+     * Contains testing integer values in string format
      */
     internal val stringNumbers by lazy { stringToIntegerCorrectnessMap.keys }
 
     /**
-     * Contains testing integral values instances
+     * Contains testing integer values instances
      */
     internal val bigIntegers by lazy { stringToIntegerCorrectnessMap.values }
 

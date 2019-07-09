@@ -40,9 +40,9 @@ internal class RealImplTest {
 
     @Test
     fun correctIntValue() {
-        val expectedIntegrals = RealUtils.bigDecimals.map { it.toBigInteger() }
+        val expectedIntegers = RealUtils.bigDecimals.map { it.toBigInteger() }
 
-        onCorrespondingItems(expectedIntegrals, realInstances.map { it.intValue }) { expectedValue, realIntValue ->
+        onCorrespondingItems(expectedIntegers, realInstances.map { it.intValue }) { expectedValue, realIntValue ->
             assertEquals(expectedValue, realIntValue)
         }
     }

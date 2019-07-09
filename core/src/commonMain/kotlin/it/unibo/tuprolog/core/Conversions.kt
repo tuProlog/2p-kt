@@ -20,7 +20,7 @@ fun Any.toTerm(): Term = when (this) {
     else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Term::class}")
 }
 
-fun BigInteger.toTerm(): Integral = Numeric.of(this)
+fun BigInteger.toTerm(): Integer = Numeric.of(this)
 
 fun BigDecimal.toTerm(): Real = Numeric.of(this)
 
@@ -28,13 +28,13 @@ fun Float.toTerm(): Real = Numeric.of(this)
 
 fun Double.toTerm(): Real = Numeric.of(this)
 
-fun Int.toTerm(): Integral = Numeric.of(this)
+fun Int.toTerm(): Integer = Numeric.of(this)
 
-fun Long.toTerm(): Integral = Numeric.of(this)
+fun Long.toTerm(): Integer = Numeric.of(this)
 
-fun Short.toTerm(): Integral = Numeric.of(this)
+fun Short.toTerm(): Integer = Numeric.of(this)
 
-fun Byte.toTerm(): Integral = Numeric.of(this)
+fun Byte.toTerm(): Integer = Numeric.of(this)
 
 fun Number.toTerm(): Numeric = Numeric.of(this)
 

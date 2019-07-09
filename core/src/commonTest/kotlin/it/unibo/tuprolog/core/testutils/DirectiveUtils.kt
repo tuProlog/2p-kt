@@ -16,8 +16,8 @@ internal object DirectiveUtils {
         listOf(
                 Struct.of("assert", Struct.of("son", Atom.of("jack"), Atom.of("bob"))),
                 Tuple.wrapIfNeeded(
-                        Struct.of("assertZ", Struct.of("money", Integral.of(50))),
-                        Struct.of("assertA", Struct.of("debt", Integral.of(30))))
+                        Struct.of("assertZ", Struct.of("money", Integer.of(50))),
+                        Struct.of("assertA", Struct.of("debt", Integer.of(30))))
 
         )
     }

@@ -20,8 +20,8 @@ internal class ConversionsTest {
 
     @Test
     fun bigIntegersToTerm() {
-        val correct = IntegralUtils.bigIntegers.map { Integral.of(it) }
-        val toBeTested = IntegralUtils.bigIntegers.map { it.toTerm() }
+        val correct = IntegerUtils.bigIntegers.map { Integer.of(it) }
+        val toBeTested = IntegerUtils.bigIntegers.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
@@ -52,32 +52,32 @@ internal class ConversionsTest {
 
     @Test
     fun intToTerm() {
-        val correct = IntegralUtils.onlyInts.map { Integral.of(it) }
-        val toBeTested = IntegralUtils.onlyInts.map { it.toTerm() }
+        val correct = IntegerUtils.onlyInts.map { Integer.of(it) }
+        val toBeTested = IntegerUtils.onlyInts.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun longToTerm() {
-        val correct = IntegralUtils.onlyLongs.map { Integral.of(it) }
-        val toBeTested = IntegralUtils.onlyLongs.map { it.toTerm() }
+        val correct = IntegerUtils.onlyLongs.map { Integer.of(it) }
+        val toBeTested = IntegerUtils.onlyLongs.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun shortToTerm() {
-        val correct = IntegralUtils.onlyShorts.map { Integral.of(it) }
-        val toBeTested = IntegralUtils.onlyShorts.map { it.toTerm() }
+        val correct = IntegerUtils.onlyShorts.map { Integer.of(it) }
+        val toBeTested = IntegerUtils.onlyShorts.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun byteToTerm() {
-        val correct = IntegralUtils.onlyBytes.map { Integral.of(it) }
-        val toBeTested = IntegralUtils.onlyBytes.map { it.toTerm() }
+        val correct = IntegerUtils.onlyBytes.map { Integer.of(it) }
+        val toBeTested = IntegerUtils.onlyBytes.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
@@ -85,7 +85,7 @@ internal class ConversionsTest {
     @Test
     fun numberToTerm() {
         @Suppress("USELESS_CAST")
-        val numberValues = (with(IntegralUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+        val numberValues = (with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
                 with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }).map { it as Number }
 
         val correct = numberValues.map { Numeric.of(it) }
@@ -163,13 +163,13 @@ internal class ConversionsTest {
 
     @Test
     fun anyToTermContainsAllConversions() {
-        val numberValues = (with(IntegralUtils) { bigIntegers + onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+        val numberValues = (with(IntegerUtils) { bigIntegers + onlyBytes + onlyInts + onlyShorts + onlyLongs } +
                 with(RealUtils) { bigDecimals + decimalsAsDoubles + decimalsAsFloats })
 
         val invalidTestAtoms: (String) -> Boolean = { atomString ->
             atomString matches Var.VAR_REGEX_PATTERN ||
                     atomString matches Real.REAL_REGEX_PATTERN ||
-                    atomString matches Integral.INTEGRAL_REGEX_PATTERN
+                    atomString matches Integer.INTEGER_REGEX_PATTERN
         }
 
         val correct =

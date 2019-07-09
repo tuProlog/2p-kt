@@ -95,12 +95,12 @@ internal object TermTypeAssertionUtils {
     }
 
     /**
-     * Checks passed term to be an Integral or fails otherwise
+     * Checks passed term to be an Integer or fails otherwise
      */
-    fun assertIsIntegral(any: Any) {
+    fun assertIsInteger(any: Any) {
         commonNumericAssertions(any)
 
-        assertTrue(any is Integral)
+        assertTrue(any is Integer)
 
         assertTrue(any.isInt)
 

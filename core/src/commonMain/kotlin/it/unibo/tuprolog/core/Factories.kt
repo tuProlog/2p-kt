@@ -63,29 +63,29 @@ fun numOf(decimal: Float): Real {
     return Real.of(decimal)
 }
 
-fun numOf(integer: BigInteger): Integral {
-    return Integral.of(integer)
+fun numOf(integer: BigInteger): Integer {
+    return Integer.of(integer)
 }
 
-fun numOf(integer: Int): Integral {
-    return Integral.of(integer)
+fun numOf(integer: Int): Integer {
+    return Integer.of(integer)
 }
 
-fun numOf(integer: Long): Integral {
-    return Integral.of(integer)
+fun numOf(integer: Long): Integer {
+    return Integer.of(integer)
 }
 
-fun numOf(integer: Short): Integral {
-    return Integral.of(integer)
+fun numOf(integer: Short): Integer {
+    return Integer.of(integer)
 }
 
-fun numOf(integer: Byte): Integral {
-    return Integral.of(integer)
+fun numOf(integer: Byte): Integer {
+    return Integer.of(integer)
 }
 
 fun numOf(number: String): Numeric {
     return try {
-        Integral.of(number)
+        Integer.of(number)
     } catch (ex: NumberFormatException) {
         Real.of(number)
     }

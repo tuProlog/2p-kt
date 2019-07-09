@@ -17,7 +17,7 @@ internal object RuleUtils {
                 Struct.of("parent", Atom.of("bob"), Atom.of("jack"))
                         to Struct.of("son", Atom.of("jack"), Atom.of("bob")),
 
-                Struct.of("money", Integral.of(100)) to Atom.of("win")
+                Struct.of("money", Integer.of(100)) to Atom.of("win")
         )
     }
 
