@@ -6,20 +6,20 @@ import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import kotlin.test.*
 
 /**
- * Test class for [Substitution.Success] and [Substitution]
+ * Test class for [Substitution.Unifier] and [Substitution]
  *
  * @author Enrico
  */
-internal class SubstitutionSuccessTest {
+internal class SubstitutionUnifierTest {
 
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
     private val xAtom = Atom.of("x")
-    private val aVarToXAtomSubstitution = Substitution.Success(mapOf(aVar to xAtom))
-    private val bVarToXAtomSubstitution = Substitution.Success(mapOf(bVar to xAtom))
+    private val aVarToXAtomSubstitution = Substitution.Unifier(mapOf(aVar to xAtom))
+    private val bVarToXAtomSubstitution = Substitution.Unifier(mapOf(bVar to xAtom))
 
     private val substitutions by lazy {
-        SubstitutionUtils.mixedSubstitutions.map(Substitution::Success) +
+        SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) +
                 listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
@@ -51,7 +51,7 @@ internal class SubstitutionSuccessTest {
 
     @Test
     fun equalsWorksAsExpected() {
-        assertEquals(Substitution.Success(mapOf(aVar to xAtom)), Substitution.Success(mapOf(aVar to xAtom)))
+        assertEquals(Substitution.Unifier(mapOf(aVar to xAtom)), Substitution.Unifier(mapOf(aVar to xAtom)))
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 

@@ -9,9 +9,9 @@ package it.unibo.tuprolog.core
 sealed class Substitution : Map<Var, Term> {
 
     /**
-     * Creates a new Successful Substitution with given mappings
+     * Creates a new Successful Substitution (aka Unifier) with given mappings
      */
-    data class Success(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
+    data class Unifier(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
         override val isSuccess: Boolean = true
     }
 
@@ -28,7 +28,7 @@ sealed class Substitution : Map<Var, Term> {
     open val isFailed: Boolean = false
 
     /**
-     * Whether this Substitution is a successful one
+     * Whether this Substitution is a successful one (is a Unifier)
      */
     open val isSuccess: Boolean = false
 
@@ -48,15 +48,15 @@ sealed class Substitution : Map<Var, Term> {
         fun failed(): Substitution = Fail
 
         /**
-         * Returns empty successful substitution instance
+         * Returns empty successful substitution (aka Unifier) instance
          */
-        fun empty(): Substitution = emptyMap<Var, Term>().asSuccessSubstitution()
+        fun empty(): Substitution = emptyMap<Var, Term>().asUnifier()
 
         /**
-         * Conversion from a raw Map<Var, Term> to Successful Substitution type
+         * Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type
          */
-        fun Map<Var, Term>.asSuccessSubstitution(): Substitution =
-                Success(this)
+        fun Map<Var, Term>.asUnifier(): Substitution =
+                Unifier(this)
 
         /**
          * Creates a Substitution of given Variable with given Term
@@ -72,12 +72,12 @@ sealed class Substitution : Map<Var, Term> {
          * Crates a Substitution from given substitution pairs
          */
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution =
-                mapOf(substitutionPair, *substitutionPairs).asSuccessSubstitution()
+                mapOf(substitutionPair, *substitutionPairs).asUnifier()
 
         /**
          * Creates a new Substitution from given substitutions
          */
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
-                substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asSuccessSubstitution()
+                substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asUnifier()
     }
 }

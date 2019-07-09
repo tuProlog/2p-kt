@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Substitution.Companion.asSuccessSubstitution
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
@@ -13,7 +13,7 @@ import kotlin.test.*
  */
 internal class SubstitutionTest {
 
-    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Success) }
+    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) }
 
     @Test
     fun failedShouldReturnTheFailedSubstitutionInstance() {
@@ -38,7 +38,7 @@ internal class SubstitutionTest {
 
     @Test
     fun emptyReturnsSuccessfulSubstitutionInstance() {
-        assertTrue(Substitution.empty() is Substitution.Success)
+        assertTrue(Substitution.empty() is Substitution.Unifier)
     }
 
     @Test
@@ -52,8 +52,8 @@ internal class SubstitutionTest {
     }
 
     @Test
-    fun asSuccessSubstitutionConvertsAMapVarTermToSubstitution() {
-        val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asSuccessSubstitution() }
+    fun asUnifierConvertsAMapVarTermToSubstitution() {
+        val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asUnifier() }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
@@ -87,7 +87,7 @@ internal class SubstitutionTest {
 
     @Test
     fun ofSubstitutions() {
-        val correct = Substitution.Success(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
+        val correct = Substitution.Unifier(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
         val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
 
         assertEquals(correct, toBeTested)
