@@ -41,10 +41,10 @@ internal object StructUtils {
         AssertionUtils.assertNotStrictlyEquals(firstVarBefore, secondVarBefore)
         assertNotSame(firstVarBefore, secondVarBefore)
 
-        val coupleCopied = termWithSameVarName.freshCopy()
+        val consCopied = termWithSameVarName.freshCopy()
 
-        val firstVarAfter = coupleCopied.args[0]
-        val secondVarAfter = coupleCopied.args[1]
+        val firstVarAfter = consCopied.args[0]
+        val secondVarAfter = consCopied.args[1]
 
         AssertionUtils.assertEqualities(firstVarAfter, secondVarAfter)
         assertSame(firstVarAfter, secondVarAfter)
@@ -70,7 +70,7 @@ internal object StructUtils {
      */
     internal val specialStructs by lazy {
         listOf(
-                Couple.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
+                Cons.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
                 LogicSet.FUNCTOR to arrayOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
                 Tuple.FUNCTOR to arrayOf<Term>(Atom.of("left"), Atom.of("right")),
                 Clause.FUNCTOR to arrayOf<Term>(Atom.of("rule1"), Atom.of("rule2")),

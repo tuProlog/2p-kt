@@ -67,7 +67,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun clauseOf(head: Struct?, vararg body: Term): Clause = Clause.of(head, *body)
 
-    override fun coupleOf(head: Term, tail: Term): Couple = Couple.of(head, tail)
+    override fun consOf(head: Term, tail: Term): Cons = Cons.of(head, tail)
 
     override fun anonymous(): Var = Var.anonymous()
 

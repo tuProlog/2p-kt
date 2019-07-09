@@ -48,7 +48,7 @@ interface Scope {
 
     fun clauseOf(head: Struct?, vararg body: Term): Clause
 
-    fun coupleOf(head: Term, tail: Term): Couple
+    fun consOf(head: Term, tail: Term): Cons
 
     fun anonymous(): Var
 

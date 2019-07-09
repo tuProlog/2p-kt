@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
-import it.unibo.tuprolog.core.testutils.CoupleUtils
+import it.unibo.tuprolog.core.testutils.ConsUtils
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
@@ -16,11 +16,11 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 internal class ListTest {
 
-    private val emptyTerminatedInstances = CoupleUtils.onlyCoupleEmptyListTerminated(Couple.Companion::of)
-    private val pipedListInstances = CoupleUtils.onlyCouplePipeTerminated(Couple.Companion::of)
+    private val emptyTerminatedInstances = ConsUtils.onlyConsEmptyListTerminated(Cons.Companion::of)
+    private val pipedListInstances = ConsUtils.onlyConsPipeTerminated(Cons.Companion::of)
 
-    private val emptyTerminatedElementLists = CoupleUtils.onlyCoupleEmptyListTerminatedElementLists
-    private val pipeTerminatedElementLists = CoupleUtils.onlyCouplePipeTerminatedElementLists
+    private val emptyTerminatedElementLists = ConsUtils.onlyConsEmptyListTerminatedElementLists
+    private val pipeTerminatedElementLists = ConsUtils.onlyConsPipeTerminatedElementLists
 
     @Test
     fun emptyReturnsEmptyList() {

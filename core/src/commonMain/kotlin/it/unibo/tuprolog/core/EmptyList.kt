@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.List as LogicList
 
 interface EmptyList : Empty, LogicList {
 
-    override val isCouple: Boolean
+    override val isCons: Boolean
         get() = false
 
     override val isList: Boolean

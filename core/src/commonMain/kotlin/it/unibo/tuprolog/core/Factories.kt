@@ -39,8 +39,8 @@ fun clauseOf(head: Term?, vararg body: Term): Clause {
     return Clause.of(head as Struct?, *body)
 }
 
-fun coupleOf(term1: Term, vararg terms: Term): Couple {
-    return List.from(sequenceOf(term1) + sequenceOf(*terms)) as Couple
+fun consOf(term1: Term, vararg terms: Term): Cons {
+    return List.from(sequenceOf(term1) + sequenceOf(*terms)) as Cons
 }
 
 fun anonymous(): Term {

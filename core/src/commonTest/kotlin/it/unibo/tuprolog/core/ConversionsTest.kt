@@ -131,32 +131,32 @@ internal class ConversionsTest {
 
     @Test
     fun listOfTermsToTerm() {
-        val correct = CoupleUtils.mixedCoupleInstancesElementLists.map { List.of(it) }
-        val toBeTested = CoupleUtils.mixedCoupleInstancesElementLists.map { it.toTerm() }
+        val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
+        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun sequenceOfTermsToTerm() {
-        val correct = CoupleUtils.mixedCoupleInstancesElementLists.map { List.of(it) }
-        val toBeTested = CoupleUtils.mixedCoupleInstancesElementLists.map { it.asSequence().toTerm() }
+        val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
+        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asSequence().toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun iterableOfTermsToTerm() {
-        val correct = CoupleUtils.mixedCoupleInstancesElementLists.map { List.of(it) }
-        val toBeTested = CoupleUtils.mixedCoupleInstancesElementLists.map { it.asIterable().toTerm() }
+        val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
+        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.asIterable().toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun arrayOfTermsToTerm() {
-        val correct = CoupleUtils.mixedCoupleInstancesElementLists.map { List.of(it) }
-        val toBeTested = CoupleUtils.mixedCoupleInstancesElementLists.map { it.toTypedArray().toTerm() }
+        val correct = ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
+        val toBeTested = ConsUtils.mixedConsInstancesElementLists.map { it.toTypedArray().toTerm() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
@@ -182,12 +182,12 @@ internal class ConversionsTest {
                     }
                 } + VarUtils.correctlyNamedVars.map { Var.of(it) } +
                         AtomUtils.mixedAtoms.filterNot(invalidTestAtoms).map { Atom.of(it) } +
-                        CoupleUtils.mixedCoupleInstancesElementLists.map { List.of(it) }
+                        ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
 
         val toBeTested = (numberValues +
                 VarUtils.correctlyNamedVars +
                 AtomUtils.mixedAtoms.filterNot(invalidTestAtoms) +
-                CoupleUtils.mixedCoupleInstancesElementLists)
+                ConsUtils.mixedConsInstancesElementLists)
                 .map { it.toTerm() }
 
 
