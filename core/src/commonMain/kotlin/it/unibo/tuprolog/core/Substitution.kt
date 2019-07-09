@@ -1,24 +1,33 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.FailedSubstitutionImpl
-import it.unibo.tuprolog.core.impl.SuccessSubstitutionImpl
-
 /**
  * An interface representing a mapping between Variables and their Term substitutions
  *
  * @author Enrico
  */
-interface Substitution : Map<Var, Term> {
+sealed class Substitution : Map<Var, Term> {
+
+    data class Success(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
+
+        override val isSuccess: Boolean
+            get() = true
+    }
+
+    object Fail : Substitution(), Map<Var, Term> by emptyMap() {
+
+        override val isFailed: Boolean
+            get() = true
+    }
 
     /**
      * Whether this Substitution is a failed one
      */
-    val isFailed: Boolean
+    open val isFailed: Boolean = false
 
     /**
      * Whether this Substitution is a successful one
      */
-    val isSuccess: Boolean
+    open val isSuccess: Boolean = false
 
     /**
      * Applies the Substitution to the given Term
@@ -33,7 +42,7 @@ interface Substitution : Map<Var, Term> {
         /**
          * Returns failed substitution instance
          */
-        fun failed(): Substitution = FailedSubstitutionImpl
+        fun failed(): Substitution = Fail
 
         /**
          * Returns empty successful substitution instance
@@ -44,7 +53,7 @@ interface Substitution : Map<Var, Term> {
          * Conversion from a raw Map<Var, Term> to Successful Substitution type
          */
         fun Map<Var, Term>.asSuccessSubstitution(): Substitution =
-                SuccessSubstitutionImpl(this)
+                Success(this)
 
         /**
          * Creates a Substitution of given Variable with given Term
