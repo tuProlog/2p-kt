@@ -36,6 +36,6 @@ internal class FailedSubstitutionImplTest {
     fun failedSubstitutionApplicationDoesntChangeTerms() {
         val someTerms = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, *args) }
 
-        someTerms.forEach { term -> assertEqualities(term, failedSubstitution.ground(term)) }
+        someTerms.forEach { term -> assertEqualities(term, failedSubstitution.applyTo(term)) }
     }
 }

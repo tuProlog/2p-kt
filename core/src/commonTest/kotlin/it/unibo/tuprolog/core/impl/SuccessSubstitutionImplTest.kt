@@ -39,7 +39,7 @@ internal class SuccessSubstitutionImplTest {
     @Test
     fun shouldSubstituteVariableWithProvidedSubstitution() {
         val correct = SubstitutionUtils.termsWith(xAtom)
-        val toBeTested = SubstitutionUtils.termsWith(aVar).map { aVarToXAtomSubstitution.ground(it) }
+        val toBeTested = SubstitutionUtils.termsWith(aVar).map { aVarToXAtomSubstitution.applyTo(it) }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
@@ -47,7 +47,7 @@ internal class SuccessSubstitutionImplTest {
     @Test
     fun shouldNotSubstituteNotCorrespondingVariable() {
         val correct = SubstitutionUtils.termsWith(aVar)
-        val toBeTested = SubstitutionUtils.termsWith(aVar).map { bVarToXAtomSubstitution.ground(it) }
+        val toBeTested = SubstitutionUtils.termsWith(aVar).map { bVarToXAtomSubstitution.applyTo(it) }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }

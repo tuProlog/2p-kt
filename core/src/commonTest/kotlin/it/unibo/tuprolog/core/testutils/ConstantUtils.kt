@@ -28,14 +28,14 @@ internal object ConstantUtils {
     }
 
     /**
-     * Assert that groundTo called (in its variants) on a Constant is the Constant itself
+     * Assert that apply called (in its variants) on a Constant is the Constant itself
      */
     internal fun assertGroundToIsItself(constant: Term) { // TODO even here
-        assertEqualities(constant, constant.groundTo(Substitution.empty()))
-        assertSame(constant, constant.groundTo(Substitution.empty()))
+        assertEqualities(constant, constant.apply(Substitution.empty()))
+        assertSame(constant, constant.apply(Substitution.empty()))
 
-        assertEqualities(constant, constant.groundTo(Substitution.empty(), Substitution.empty()))
-        assertSame(constant, constant.groundTo(Substitution.empty(), Substitution.empty()))
+        assertEqualities(constant, constant.apply(Substitution.empty(), Substitution.empty()))
+        assertSame(constant, constant.apply(Substitution.empty(), Substitution.empty()))
 
         assertEqualities(constant, constant[Substitution.empty()])
         assertSame(constant, constant[Substitution.empty()])

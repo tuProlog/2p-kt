@@ -156,8 +156,8 @@ internal class VarImplTest {
         val myAtom = Atom.of("hello")
         val myVar = Var.of("X")
 
-        val toBeTested1 = myVar.groundTo(Substitution.of(myVar to myAtom))
-        val toBeTested2 = myVar.groundTo(Substitution.of(myVar to myAtom), Substitution.empty())
+        val toBeTested1 = myVar.apply(Substitution.of(myVar to myAtom))
+        val toBeTested2 = myVar.apply(Substitution.of(myVar to myAtom), Substitution.empty())
         val toBeTested3 = myVar[Substitution.of(myVar to myAtom)]
 
         assertEqualities(myAtom, toBeTested1)
@@ -170,8 +170,8 @@ internal class VarImplTest {
         val myAtom = Atom.of("hello")
         val myVar = Var.of("X")
 
-        val toBeTested1 = myVar.groundTo(Substitution.of(Var.of("A") to myAtom))
-        val toBeTested2 = myVar.groundTo(Substitution.empty(), Substitution.empty())
+        val toBeTested1 = myVar.apply(Substitution.of(Var.of("A") to myAtom))
+        val toBeTested2 = myVar.apply(Substitution.empty(), Substitution.empty())
         val toBeTested3 = myVar[Substitution.of(Var.anonymous() to myAtom)]
 
         assertEqualities(myVar, toBeTested1)

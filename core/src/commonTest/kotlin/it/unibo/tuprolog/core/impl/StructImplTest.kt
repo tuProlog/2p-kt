@@ -271,8 +271,8 @@ internal class StructImplTest {
         val myStruct = Struct.of("f", myVar)
 
         val correct = Struct.of("f", myAtom)
-        val toBeTested1 = myStruct.groundTo(Substitution.of(myVar to myAtom))
-        val toBeTested2 = myStruct.groundTo(Substitution.of(myVar to myAtom), Substitution.empty())
+        val toBeTested1 = myStruct.apply(Substitution.of(myVar to myAtom))
+        val toBeTested2 = myStruct.apply(Substitution.of(myVar to myAtom), Substitution.empty())
         val toBeTested3 = myStruct[Substitution.of(myVar to myAtom)]
 
         assertEqualities(correct, toBeTested1)
@@ -286,8 +286,8 @@ internal class StructImplTest {
         val myVar = Var.of("X")
         val myStruct = Struct.of("f", myVar)
 
-        val toBeTested1 = myStruct.groundTo(Substitution.of(Var.of("A") to myAtom))
-        val toBeTested2 = myStruct.groundTo(Substitution.empty(), Substitution.empty())
+        val toBeTested1 = myStruct.apply(Substitution.of(Var.of("A") to myAtom))
+        val toBeTested2 = myStruct.apply(Substitution.empty(), Substitution.empty())
         val toBeTested3 = myStruct[Substitution.of(Var.anonymous() to myAtom)]
 
         assertEqualities(myStruct, toBeTested1)

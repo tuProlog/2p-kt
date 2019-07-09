@@ -23,7 +23,7 @@ interface Substitution : Map<Var, Term> {
     /**
      * Applies the Substitution to the given Term
      */
-    fun ground(term: Term): Term = term[this]
+    fun applyTo(term: Term): Term = term[this]
 
     /**
      * Substitution companion with factory functionality
@@ -69,8 +69,3 @@ interface Substitution : Map<Var, Term> {
                 substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asSuccessSubstitution()
     }
 }
-
-// TODO can this be removed?
-//fun Array<Substitution>.ground(term: Term): Term {
-//    return term[substitutionOf(this[0], *this.sliceArray(1..lastIndex))]
-//}
