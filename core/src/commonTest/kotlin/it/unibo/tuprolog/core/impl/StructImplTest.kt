@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
@@ -58,8 +59,6 @@ internal class StructImplTest {
         }
     }
 
-    /* TODO enable this, after solving Issue #10
-
     @Test
     fun strictlyEqualsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
@@ -68,7 +67,7 @@ internal class StructImplTest {
 
         assertNotStrictlyEquals(trueStruct, trueAtom)
         assertNotStrictlyEquals(trueStruct, trueTruth)
-    }*/
+    }
 
     @Test
     fun structurallyEqualsWorksAsExpected() {
