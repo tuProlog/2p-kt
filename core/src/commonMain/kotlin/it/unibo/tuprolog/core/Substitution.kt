@@ -4,19 +4,22 @@ package it.unibo.tuprolog.core
  * An interface representing a mapping between Variables and their Term substitutions
  *
  * @author Enrico
+ * @author Giovanni
  */
 sealed class Substitution : Map<Var, Term> {
 
+    /**
+     * Creates a new Successful Substitution with given mappings
+     */
     data class Success(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
-
-        override val isSuccess: Boolean
-            get() = true
+        override val isSuccess: Boolean = true
     }
 
+    /**
+     * The Failed Substitution instance
+     */
     object Fail : Substitution(), Map<Var, Term> by emptyMap() {
-
-        override val isFailed: Boolean
-            get() = true
+        override val isFailed: Boolean = true
     }
 
     /**

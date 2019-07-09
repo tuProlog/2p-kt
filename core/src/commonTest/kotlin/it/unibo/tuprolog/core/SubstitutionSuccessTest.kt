@@ -1,19 +1,16 @@
-package it.unibo.tuprolog.core.impl
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import kotlin.test.*
 
 /**
- * Test class for [SuccessSubstitutionImpl] and [Substitution]
+ * Test class for [Substitution.Success] and [Substitution]
  *
  * @author Enrico
  */
-internal class SuccessSubstitutionImplTest {
+internal class SubstitutionSuccessTest {
 
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")

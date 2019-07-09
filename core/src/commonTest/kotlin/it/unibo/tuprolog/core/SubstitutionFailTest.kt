@@ -1,7 +1,5 @@
-package it.unibo.tuprolog.core.impl
+package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.StructUtils
 import kotlin.test.Test
@@ -9,11 +7,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Test class for [FailedSubstitutionImpl] and [Substitution]
+ * Test class for [Substitution.Fail] and [Substitution]
  *
  * @author Enrico
  */
-internal class FailedSubstitutionImplTest {
+internal class SubstitutionFailTest {
 
     private val failedSubstitution = Substitution.Fail
 
