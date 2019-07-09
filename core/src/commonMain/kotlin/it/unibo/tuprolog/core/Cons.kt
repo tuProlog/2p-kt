@@ -33,6 +33,6 @@ interface Cons : Struct, LogicList {
 
         fun of(head: Term, tail: Term): Cons = ConsImpl(head, tail)
 
-        fun last(head: Term): Cons = of(head, Empty.list())
+        fun singleton(head: Term): Cons = of(head, Empty.list())
     }
 }

@@ -30,7 +30,7 @@ internal object SetUtils {
     internal val notGroundSets by lazy {
         listOf(
                 arrayOf(Var.of("MyVar")),
-                arrayOf(Var.of("A"), Var.anonymous(), Cons.last(Var.of("Var")))
+                arrayOf(Var.of("A"), Var.anonymous(), Cons.singleton(Var.of("Var")))
         )
     }
 

@@ -22,11 +22,11 @@ internal class ConsTest {
     }
 
     @Test
-    fun consLastWorksAsExpected() {
+    fun consSingletonWorksAsExpected() {
         val onlyElement = Var.anonymous()
 
         val correctInstance = ConsImpl(onlyElement, Empty.list())
-        val toBeTested = Cons.last(onlyElement)
+        val toBeTested = Cons.singleton(onlyElement)
 
         assertEqualities(correctInstance, toBeTested)
     }
