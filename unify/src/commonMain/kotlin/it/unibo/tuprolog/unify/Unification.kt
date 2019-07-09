@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import toEquations
 
-interface Unifier {
+interface Unification {
 
     val context: Substitution
 
@@ -36,16 +36,16 @@ interface Unifier {
             return default.match(this, other)
         }
 
-        fun naive(context: Substitution = Substitution.empty()) : Unifier {
-            return object : AbstractUnifier(context.toEquations()) {
+        fun naive(context: Substitution = Substitution.empty()) : Unification {
+            return object : AbstractUnificationStrategy(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
                     return name == other.name
                 }
             }
         }
 
-        fun strict(context: Substitution = Substitution.empty()) : Unifier {
-            return object : AbstractUnifier(context.toEquations()) {
+        fun strict(context: Substitution = Substitution.empty()) : Unification {
+            return object : AbstractUnificationStrategy(context.toEquations()) {
                 override fun Var.isEqualTo(other: Var): Boolean {
                     return completeName == other.completeName
                 }

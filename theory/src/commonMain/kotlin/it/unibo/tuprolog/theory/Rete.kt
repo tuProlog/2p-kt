@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.Unifier.Companion.matches
+import it.unibo.tuprolog.unify.Unification.Companion.matches
 import kotlin.math.min
 
 sealed class ReteTree(open val children: MutableList<ReteTree>) {
