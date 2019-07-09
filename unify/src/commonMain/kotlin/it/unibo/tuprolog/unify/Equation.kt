@@ -1,5 +1,5 @@
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asSuccessSubstitution
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.toTerm
@@ -27,7 +27,7 @@ fun <A : Term, B : Term> Equation<A, B>.swap(): Equation<B, A> {
 }
 
 fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution {
-    return mapOf<Var, Term>(this).asSuccessSubstitution()
+    return mapOf<Var, Term>(this).asUnifier()
 }
 
 fun Substitution.toEquations(): List<Equation<Var, Term>> {

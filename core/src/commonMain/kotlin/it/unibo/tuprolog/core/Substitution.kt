@@ -48,14 +48,14 @@ sealed class Substitution : Map<Var, Term> {
         fun failed(): Substitution = Fail
 
         /**
-         * Returns empty successful substitution instance
+         * Returns empty successful substitution (aka Unifier) instance
          */
-        fun empty(): Substitution = emptyMap<Var, Term>().asSuccessSubstitution()
+        fun empty(): Substitution = emptyMap<Var, Term>().asUnifier()
 
         /**
-         * Conversion from a raw Map<Var, Term> to Successful Substitution type
+         * Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type
          */
-        fun Map<Var, Term>.asSuccessSubstitution(): Substitution =
+        fun Map<Var, Term>.asUnifier(): Substitution =
                 Unifier(this)
 
         /**
@@ -72,12 +72,12 @@ sealed class Substitution : Map<Var, Term> {
          * Crates a Substitution from given substitution pairs
          */
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution =
-                mapOf(substitutionPair, *substitutionPairs).asSuccessSubstitution()
+                mapOf(substitutionPair, *substitutionPairs).asUnifier()
 
         /**
          * Creates a new Substitution from given substitutions
          */
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
-                substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asSuccessSubstitution()
+                substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asUnifier()
     }
 }

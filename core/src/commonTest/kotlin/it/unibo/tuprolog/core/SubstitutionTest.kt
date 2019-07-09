@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Substitution.Companion.asSuccessSubstitution
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
@@ -52,8 +52,8 @@ internal class SubstitutionTest {
     }
 
     @Test
-    fun asSuccessSubstitutionConvertsAMapVarTermToSubstitution() {
-        val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asSuccessSubstitution() }
+    fun asUnifierConvertsAMapVarTermToSubstitution() {
+        val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asUnifier() }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
