@@ -13,7 +13,7 @@ import kotlin.test.*
  */
 internal class SubstitutionTest {
 
-    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Success) }
+    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) }
 
     @Test
     fun failedShouldReturnTheFailedSubstitutionInstance() {
@@ -38,7 +38,7 @@ internal class SubstitutionTest {
 
     @Test
     fun emptyReturnsSuccessfulSubstitutionInstance() {
-        assertTrue(Substitution.empty() is Substitution.Success)
+        assertTrue(Substitution.empty() is Substitution.Unifier)
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class SubstitutionTest {
 
     @Test
     fun ofSubstitutions() {
-        val correct = Substitution.Success(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
+        val correct = Substitution.Unifier(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
         val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
 
         assertEquals(correct, toBeTested)

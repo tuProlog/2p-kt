@@ -9,9 +9,9 @@ package it.unibo.tuprolog.core
 sealed class Substitution : Map<Var, Term> {
 
     /**
-     * Creates a new Successful Substitution with given mappings
+     * Creates a new Successful Substitution (aka Unifier) with given mappings
      */
-    data class Success(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
+    data class Unifier(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
         override val isSuccess: Boolean = true
     }
 
@@ -28,7 +28,7 @@ sealed class Substitution : Map<Var, Term> {
     open val isFailed: Boolean = false
 
     /**
-     * Whether this Substitution is a successful one
+     * Whether this Substitution is a successful one (is a Unifier)
      */
     open val isSuccess: Boolean = false
 
@@ -56,7 +56,7 @@ sealed class Substitution : Map<Var, Term> {
          * Conversion from a raw Map<Var, Term> to Successful Substitution type
          */
         fun Map<Var, Term>.asSuccessSubstitution(): Substitution =
-                Success(this)
+                Unifier(this)
 
         /**
          * Creates a Substitution of given Variable with given Term
