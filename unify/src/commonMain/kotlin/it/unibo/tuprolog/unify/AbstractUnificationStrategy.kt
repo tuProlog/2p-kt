@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import Equation
-import eq
+import `=`
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import org.gciatto.kt.math.BigDecimal
@@ -56,7 +56,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
     protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>?> {
 
         return when {
-            term1 is Var || term2 is Var -> sequenceOf(term1 eq term2)
+            term1 is Var || term2 is Var -> sequenceOf(term1 `=` term2)
             term1 is Struct && term2 is Struct -> {
                 if (term1.functor != term2.functor || term1.arity != term2.arity) {
                     sequenceOf(null)
@@ -109,7 +109,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
                             }
                         }
                         second is Var -> {
-                            equations[i] = second eq first
+                            equations[i] = second `=` first
                             changed = true
                         }
                         first is Var -> {

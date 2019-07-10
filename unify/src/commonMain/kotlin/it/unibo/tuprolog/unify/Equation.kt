@@ -3,6 +3,7 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.toTerm
+import kotlin.js.JsName
 
 typealias Equation<A, B> = Pair<A, B>
 
@@ -14,11 +15,13 @@ fun equationOf(first: Any, second: Any): Equation<Term, Term> {
     return Pair(first.toTerm(), second.toTerm())
 }
 
-infix fun <A : Term, B : Term> A.eq(that: B): Equation<A, B> {
+@JsName("termEq")
+infix fun <A : Term, B : Term> A.`=`(that: B): Equation<A, B> {
     return equationOf(this, that)
 }
 
-infix fun Any.eq(that: Any): Equation<Term, Term> {
+@JsName("anyEq")
+infix fun Any.`=`(that: Any): Equation<Term, Term> {
     return equationOf(this.toTerm(), that.toTerm())
 }
 
@@ -31,5 +34,5 @@ fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution {
 }
 
 fun Substitution.toEquations(): List<Equation<Var, Term>> {
-    return this.entries.map { it.key eq it.value }
+    return this.entries.map { it.key `=` it.value }
 }
