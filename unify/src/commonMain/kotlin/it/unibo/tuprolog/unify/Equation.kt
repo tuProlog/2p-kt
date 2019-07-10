@@ -1,40 +1,58 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.toTerm
 import kotlin.js.JsName
 
-typealias Equation<A, B> = Pair<A, B>
+/**
+ * A class representing an Equation of logic terms, to be unified;
+ *
+ * LHS stands for Left-Hand side and RHS stands for Right-Hand side, of the Equation
+ */
+data class Equation<out A : Term, out B : Term>(
+        /** The left-hand side of the equation */
+        val lhs: A,
+        /** The right-hand side of the equation */
+        val rhs: B) {
 
-fun <A : Term, B : Term> equationOf(first: A, second: B): Equation<A, B> {
-    return Pair(first, second)
+    /** Swaps the [Equation]; eg. A=B becomes B=A */
+    fun swap(): Equation<B, A> = Equation(rhs, lhs)
+
+    /** Transforms this [Equation] to an equivalent [Pair] */
+    fun toPair(): Pair<A, B> = Pair(lhs, rhs)
+
+    /** Equation companion object */
+    companion object {
+
+        /** Creates an Equation with provided left-hand and right-hand sides */
+        fun <A : Term, B : Term> of(lhs: A, rhs: B): Equation<A, B> = Equation(lhs, rhs)
+
+        /**
+         * Creates an Equation with provided objects, prior transforming them to [Term]s;
+         *
+         * An exception could be thrown if given objects cannot be converted to [Term]s
+         */
+        fun of(lhs: Any, rhs: Any): Equation<Term, Term> = of(lhs.toTerm(), rhs.toTerm())
+
+        /** Creates an [Equation] from the given [Pair] */
+        fun <A : Term, B : Term> from(pair: Pair<A, B>): Equation<A, B> = Equation(pair.first, pair.second)
+    }
 }
 
-fun equationOf(first: Any, second: Any): Equation<Term, Term> {
-    return Pair(first.toTerm(), second.toTerm())
-}
-
+/** Symbolic equation creation */
 @JsName("termEq")
-infix fun <A : Term, B : Term> A.`=`(that: B): Equation<A, B> {
-    return equationOf(this, that)
-}
+infix fun <A : Term, B : Term> A.`=`(that: B): Equation<A, B> = Equation(this, that)
 
+/**
+ * Symbolic equation creation; could throw an exception if given objects are not convertible to [Term]s
+ */
 @JsName("anyEq")
-infix fun Any.`=`(that: Any): Equation<Term, Term> {
-    return equationOf(this.toTerm(), that.toTerm())
-}
+infix fun Any.`=`(that: Any): Equation<Term, Term> = Equation.of(this, that)
 
-fun <A : Term, B : Term> Equation<A, B>.swap(): Equation<B, A> {
-    return Pair(second, first)
-}
+/** Transforms an [Equation] of a [Var] with a [Term] to the corresponding [Substitution] */
+fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution = Substitution.of(this.toPair())
 
-fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution {
-    return mapOf<Var, Term>(this).asUnifier()
-}
-
-fun Substitution.toEquations(): List<Equation<Var, Term>> {
-    return this.entries.map { it.key `=` it.value }
-}
+/** Transforms a [Substitution] into the list of corresponding [Equation]s */
+fun Substitution.toEquations(): List<Equation<Var, Term>> = this.entries.map { (variable, term) -> variable `=` term }

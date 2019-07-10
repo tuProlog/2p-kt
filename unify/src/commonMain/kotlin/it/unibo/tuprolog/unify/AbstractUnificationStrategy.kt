@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import org.gciatto.kt.math.BigDecimal
+
 abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
 
     // FIXME: if a failed context is passed in, from the constructor, the unification should immediately fail!
@@ -12,7 +13,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
     constructor() : this(emptyList())
 
     override val context: Substitution by lazy {
-        _context.toMap().asUnifier()
+        _context.map { it.toPair() }.toMap().asUnifier()
     }
 
     protected abstract fun Var.isEqualTo(other: Var): Boolean
@@ -32,11 +33,11 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
             if (i == except || equations[i] == null) continue
 
             with(equations[i]!!) {
-                val newFirst = first[this@applyToAll]
-                val newSecond = second[this@applyToAll]
-                changed = changed || first !== newFirst || second !== newSecond
+                val newLhs = lhs[this@applyToAll]
+                val newRhs = rhs[this@applyToAll]
+                changed = changed || lhs !== newLhs || rhs !== newRhs
                 if (changed) {
-                    equations[i] = Pair(newFirst, newSecond)
+                    equations[i] = Equation(newLhs, newRhs)
                 }
             }
         }
@@ -82,7 +83,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
 
     override fun mgu(term1: Term, term2: Term, occurCheck: Boolean): Substitution {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
-                .map { it.toPair() }
+                .map { Equation.from(it.toPair()) }
                 .toMutableList()
 
         for (eq in equationsFor(term1, term2)) {
@@ -102,30 +103,30 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
 
                 with(equations[i]!!) {
                     when {
-                        first is Var && second is Var -> {
-                            if ((first as Var).isEqualTo(second as Var)) {
+                        lhs is Var && rhs is Var -> {
+                            if ((lhs as Var).isEqualTo(rhs as Var)) {
                                 changed = true
                                 // TODO notice that this may be inefficient in case MutableList is an alias for ArrayList
                                 // an optimization may enforce the employment of a LinkedList, e.g. through a template method
                                 equations.removeAt(i)
                             } else {
-                                changed = Substitution.of(first as Var, second).applyToAll(equations, i)
+                                changed = Substitution.of(lhs as Var, rhs).applyToAll(equations, i)
                             }
                         }
-                        second is Var -> {
-                            equations[i] = second `=` first
+                        rhs is Var -> {
+                            equations[i] = rhs `=` lhs
                             changed = true
                         }
-                        first is Var -> {
-                            if (occurCheck && (first as Var).occursInTerm(second)) {
+                        lhs is Var -> {
+                            if (occurCheck && (lhs as Var).occursInTerm(rhs)) {
                                 return failed()
                             } else {
-                                changed = Substitution.of(first as Var, second).applyToAll(equations, i)
+                                changed = Substitution.of(lhs as Var, rhs).applyToAll(equations, i)
                             }
                         }
                         else -> {
                             changed = true
-                            equations.addAll(equationsFor(first, second))
+                            equations.addAll(equationsFor(lhs, rhs))
                         }
                     }
                 }
@@ -134,6 +135,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
 
         return equations.filterNotNull()
                 .filterIsInstance<Equation<Var, Term>>()
+                .map { it.toPair() }
                 .toMap().asUnifier()
     }
 }
