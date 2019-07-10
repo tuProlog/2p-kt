@@ -1,3 +1,5 @@
+package it.unibo.tuprolog.unify
+
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term

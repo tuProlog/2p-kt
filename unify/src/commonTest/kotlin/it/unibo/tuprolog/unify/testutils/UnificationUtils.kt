@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.unify.testutils
 
-import Equation
-import `=`
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.unify.Unification
+import it.unibo.tuprolog.unify.`=`
 import kotlin.test.assertEquals
 import kotlin.collections.List as KtList
 

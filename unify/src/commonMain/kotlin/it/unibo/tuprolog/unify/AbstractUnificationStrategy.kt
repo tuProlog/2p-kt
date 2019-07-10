@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.unify
 
-import Equation
-import `=`
+
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Substitution.Companion.failed
