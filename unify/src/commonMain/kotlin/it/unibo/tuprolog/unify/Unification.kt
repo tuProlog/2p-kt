@@ -9,15 +9,15 @@ interface Unification {
 
     val context: Substitution
 
-    fun mgu(term1: Term, term2: Term, occurCheck: Boolean = true): Substitution?
+    fun mgu(term1: Term, term2: Term, occurCheck: Boolean = true): Substitution
 
     fun match(term1: Term, term2: Term, occurCheck: Boolean = true): Boolean {
-        return mgu(term1, term2, occurCheck) !== null
+        return mgu(term1, term2, occurCheck) !== Substitution.failed()
     }
 
     fun unify(term1: Term, term2: Term, occurCheck: Boolean = true): Term? {
         val substitution = mgu(term1, term2, occurCheck)
-        return if (substitution === null) null else term1[substitution]
+        return if (substitution.isFailed) null else term1[substitution]
     }
     
     companion object {

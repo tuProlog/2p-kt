@@ -4,6 +4,7 @@ import Equation
 import `=`
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.core.Substitution.Companion.failed
 import org.gciatto.kt.math.BigDecimal
 abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
 
@@ -78,14 +79,14 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
         }
     }
 
-    override fun mgu(term1: Term, term2: Term, occurCheck: Boolean): Substitution? {
+    override fun mgu(term1: Term, term2: Term, occurCheck: Boolean): Substitution {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
                 .map { it.toPair() }
                 .toMutableList()
 
         for (eq in equationsFor(term1, term2)) {
             if (eq === null) {
-                return null
+                return failed()
             } else {
                 equations.add(eq)
             }
@@ -114,7 +115,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
                         }
                         first is Var -> {
                             if (occurCheck && (first as Var).occursInTerm(second)) {
-                                return null
+                                return failed()
                             } else {
                                 changed = Substitution.of(first as Var, second).applyToAll(equations, i)
                             }
