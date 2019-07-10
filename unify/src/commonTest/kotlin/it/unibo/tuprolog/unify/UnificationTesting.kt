@@ -25,15 +25,15 @@ internal class UnificationTesting {
         assertUnifiedTermCorrectForMultipleEq(UnificationUtils.successSequenceOfUnification, Unification.Companion::naive, false)
     }
 
-//    @Test
-//    fun sequenceOfEquationsFailedUnification() {
-//        assertMguCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
-//        assertMguCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
-//
-//        assertMatchCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
-//        assertMatchCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
-//
-//        assertUnifiedTermCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
-//        assertUnifiedTermCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
-//    }
+    @Test
+    fun sequenceOfEquationsFailedUnification() {
+        assertMguCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
+        assertMguCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
+
+        assertMatchCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
+        assertMatchCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
+
+        assertUnifiedTermCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, true)
+        assertUnifiedTermCorrectForMultipleEq(UnificationUtils.failSequenceOfUnification, Unification.Companion::naive, false)
+    }
 }

@@ -99,14 +99,16 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
         while (changed) {
             changed = false
             for (i in equations.indices) {
-                if (equations[i] === null) continue
+                if (equations[i] === null) return failed()
 
                 with(equations[i]!!) {
                     when {
                         first is Var && second is Var -> {
                             if ((first as Var).isEqualTo(second as Var)) {
                                 changed = true
-                                equations[i] = null
+                                // TODO notice that this may be inefficient in case MutableList is an alias for ArrayList
+                                // an optimization may enforce the employment of a LinkedList, e.g. through a template method
+                                equations.removeAt(i)
                             } else {
                                 changed = Substitution.of(first as Var, second).applyToAll(equations, i)
                             }
