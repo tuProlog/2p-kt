@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.unify
 
-import `=`
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
