@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
-interface Numeric : Term, Comparable<Numeric> {
+interface Numeric : Constant, Comparable<Numeric> {
 
     override val isNumber: Boolean
         get() = true

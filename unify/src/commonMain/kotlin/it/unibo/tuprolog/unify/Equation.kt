@@ -1,58 +1,93 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.toTerm
+import it.unibo.tuprolog.core.*
+import kotlin.collections.List
 import kotlin.js.JsName
+import kotlin.reflect.KClass
+
 
 /**
  * A class representing an Equation of logic terms, to be unified;
  *
  * LHS stands for Left-Hand side and RHS stands for Right-Hand side, of the Equation
  */
-data class Equation<out A : Term, out B : Term>(
+sealed class Equation<out A : Term, out B : Term>(
         /** The left-hand side of the equation */
-        val lhs: A,
+        open val lhs: A?,
         /** The right-hand side of the equation */
-        val rhs: B) {
+        open val rhs: B?) {
 
-    /** Swaps the [Equation]; eg. A=B becomes B=A */
-    fun swap(): Equation<B, A> = Equation(rhs, lhs)
+    data class Identity<out A : Term, out B: Term>(override val lhs: A, override val rhs: B) : Equation<A, B>(lhs, rhs)
 
-    /** Transforms this [Equation] to an equivalent [Pair] */
-    fun toPair(): Pair<A, B> = Pair(lhs, rhs)
+    data class Assignment<out A : Var, out B: Term>(override val lhs: A, override val rhs: B) : Equation<A, B>(lhs, rhs)
+
+    data class Comparison<out A : Term, out B: Term>(override val lhs: A, override val rhs: B) : Equation<A, B>(lhs, rhs)
+
+    object Contradiction: Equation<Nothing, Nothing>(null, null)
+
+    fun toPair(): Pair<A, B> = Pair(lhs!!, rhs!!)
+
+    fun swap(): Equation<B, A> = of(rhs, lhs)
+
 
     /** Equation companion object */
     companion object {
 
         /** Creates an Equation with provided left-hand and right-hand sides */
-        fun <A : Term, B : Term> of(lhs: A, rhs: B): Equation<A, B> = Equation(lhs, rhs)
+        fun <A : Term, B : Term> of(lhs: A?, rhs: B?, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<A, B> {
+            return when {
+                lhs === null || rhs === null -> Contradiction
+                lhs is Var && rhs is Var -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Assignment(lhs, rhs)
+                lhs is Var -> Assignment(lhs, rhs)
+                lhs is Constant && rhs is Constant -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Contradiction
+                (lhs is Constant &&  rhs !is Constant) || (lhs !is Constant &&  rhs is Constant) -> Contradiction
+                lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) -> Contradiction
+                else -> Comparison(lhs, rhs)
+            }
+        }
 
-        /**
-         * Creates an Equation with provided objects, prior transforming them to [Term]s;
-         *
-         * An exception could be thrown if given objects cannot be converted to [Term]s
-         */
-        fun of(lhs: Any, rhs: Any): Equation<Term, Term> = of(lhs.toTerm(), rhs.toTerm())
+        fun <A : Term, B : Term> allOf(pair: Pair<A?, B?>, equalityChecker: (Term, Term)->Boolean = Term::equals): Sequence<Equation<Term, Term>> {
+            return allOf(pair.first, pair.second, equalityChecker)
+        }
 
-        /** Creates an [Equation] from the given [Pair] */
-        fun <A : Term, B : Term> from(pair: Pair<A, B>): Equation<A, B> = Equation(pair.first, pair.second)
+        fun <A : Term, B : Term> allOf(lhs: A?, rhs: B?, equalityChecker: (Term, Term)->Boolean = Term::equals): Sequence<Equation<Term, Term>>  {
+            return when {
+                lhs === null || rhs === null ->
+                    sequenceOf(Contradiction)
+                lhs is Var && rhs is Var ->
+                    if (equalityChecker(lhs, rhs))
+                        sequenceOf(Identity(lhs, rhs))
+                    else
+                        sequenceOf(Assignment(lhs, rhs))
+                lhs is Var ->
+                    sequenceOf(Assignment(lhs, rhs))
+                lhs is Constant && rhs is Constant ->
+                    if (equalityChecker(lhs, rhs))
+                        sequenceOf(Identity(lhs, rhs))
+                    else
+                        sequenceOf(Contradiction)
+                (lhs is Constant &&  rhs !is Constant) || (lhs !is Constant &&  rhs is Constant) ->
+                    sequenceOf(Contradiction)
+                lhs is Struct && rhs is Struct ->
+                    if (lhs.arity == rhs.arity && lhs.functor == rhs.functor)
+                        lhs.argsSequence.zip(rhs.argsSequence).flatMap { allOf(it, equalityChecker) }
+                    else
+                        sequenceOf(Contradiction)
+                else ->
+                    sequenceOf(Comparison(lhs, rhs))
+            }
+        }
+
+
+            /** Creates an [Equation] from the given [Pair] */
+        fun <A : Term, B : Term> from(pair: Pair<A?, B?>, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<A, B> =
+                Equation.of(pair.first, pair.second, equalityChecker)
     }
 }
-
-/** Symbolic equation creation */
-@JsName("termEq")
-infix fun <A : Term, B : Term> A.`=`(that: B): Equation<A, B> = Equation(this, that)
-
-/**
- * Symbolic equation creation; could throw an exception if given objects are not convertible to [Term]s
- */
-@JsName("anyEq")
-infix fun Any.`=`(that: Any): Equation<Term, Term> = Equation.of(this, that)
 
 /** Transforms an [Equation] of a [Var] with a [Term] to the corresponding [Substitution] */
 fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution = Substitution.of(this.toPair())
 
 /** Transforms a [Substitution] into the list of corresponding [Equation]s */
-fun Substitution.toEquations(): List<Equation<Var, Term>> = this.entries.map { (variable, term) -> variable `=` term }
+fun Substitution.toEquations(): List<Equation<Var, Term>> =
+        this.entries.map { (variable, term) ->  Equation.Assignment(variable, term) }

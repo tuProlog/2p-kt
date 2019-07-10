@@ -3,23 +3,6 @@ package it.unibo.tuprolog.core
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
-fun Any.toTerm(): Term = when (this) {
-    is Term -> this
-    is BigDecimal -> this.toTerm()
-    is Double -> this.toTerm()
-    is Float -> this.toTerm()
-    is BigInteger -> this.toTerm()
-    is Long -> this.toTerm()
-    is Int -> this.toTerm()
-    is Short -> this.toTerm()
-    is Byte -> this.toTerm()
-    is String -> this.toTerm()
-    is Array<*> -> this.map { it!!.toTerm() }.toTerm()
-    is Sequence<*> -> this.map { it!!.toTerm() }.toTerm()
-    is Iterable<*> -> this.map { it!!.toTerm() }.toTerm()
-    else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Term::class}")
-}
-
 fun BigInteger.toTerm(): Integer = Numeric.of(this)
 
 fun BigDecimal.toTerm(): Real = Numeric.of(this)

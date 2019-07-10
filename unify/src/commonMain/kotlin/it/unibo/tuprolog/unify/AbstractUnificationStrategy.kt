@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.unify
 
-
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Substitution.Companion.failed
-import org.gciatto.kt.math.BigDecimal
+import it.unibo.tuprolog.unify.Equation.*
 
 abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
 
@@ -16,28 +15,30 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
         _context.map { it.toPair() }.toMap().asUnifier()
     }
 
-    protected abstract fun Var.isEqualTo(other: Var): Boolean
+    protected abstract fun checkTermsEquality(first: Term, second: Term): Boolean
 
-    protected fun Var.occursInTerm(term: Term): Boolean {
-        return when {
-            term is Var -> this@occursInTerm.isEqualTo(term)
-            term is Struct -> term.args.any { this@occursInTerm.occursInTerm(it) }
+    private val termsEqualityChecker: (Term, Term)->Boolean = { a, b -> checkTermsEquality(a, b) }
+
+    protected fun occurrenceCheck(variable: Var, term: Term): Boolean {
+        return when (term) {
+            is Var -> checkTermsEquality(variable, term)
+            is Struct -> term.args.any { occurrenceCheck(variable, it) }
             else -> false
         }
     }
 
-    protected fun Substitution.applyToAll(equations: MutableList<Equation<Term, Term>?>, except: Int): Boolean {
+    protected fun applySubstitutionToEquations(substitution: Substitution, equations: MutableList<Equation<Term, Term>>, exceptIndex: Int): Boolean {
         var changed = false
 
-        for (i in equations.indices) {
-            if (i == except || equations[i] == null) continue
+        for (index in equations.indices) {
+            if (index == exceptIndex || equations[index] is Contradiction) continue
 
-            with(equations[i]!!) {
-                val newLhs = lhs[this@applyToAll]
-                val newRhs = rhs[this@applyToAll]
+            with(equations[index]) {
+                val newLhs = lhs!![substitution]
+                val newRhs = rhs!![substitution]
                 changed = changed || lhs !== newLhs || rhs !== newRhs
                 if (changed) {
-                    equations[i] = Equation(newLhs, newRhs)
+                    equations[index] = Equation.of(newLhs, newRhs, termsEqualityChecker)
                 }
             }
         }
@@ -45,41 +46,9 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
         return changed
     }
 
-    protected fun equationFor(number: Numeric, atom: Atom): Sequence<Equation<Term, Term>?> {
-        try {
-            if (number.decimalValue.compareTo(BigDecimal.of(atom.value)) != 0) {
-                return sequenceOf(null)
-            }
-            return emptySequence()
-        } catch (e: NumberFormatException) {
-            return sequenceOf(null)
-        }
-    }
+    protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> =
+        Equation.allOf(term1, term2, termsEqualityChecker)
 
-    protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>?> {
-
-        return when {
-            term1 is Var || term2 is Var -> sequenceOf(term1 `=` term2)
-            term1 is Struct && term2 is Struct -> {
-                if (term1.functor != term2.functor || term1.arity != term2.arity) {
-                    sequenceOf(null)
-                } else {
-                    (0 until term1.arity).asSequence().flatMap {
-                        equationsFor(term1[it], term2[it])
-                    }
-                }
-            }
-            term1 is Numeric && term2 is Atom -> equationFor(term1, term2)
-            term1 is Atom && term2 is Numeric -> equationFor(term2, term1)
-            else -> {
-                if (term1 == term2) {
-                    emptySequence()
-                } else {
-                    sequenceOf(null)
-                }
-            }
-        }
-    }
 
     override fun mgu(term1: Term, term2: Term, occurCheck: Boolean): Substitution {
         val equations: MutableList<Equation<Term, Term>?> = context.entries
@@ -88,7 +57,7 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
 
         for (eq in equationsFor(term1, term2)) {
             if (eq === null) {
-                return failed()
+                return Substitution.failed()
             } else {
                 equations.add(eq)
             }

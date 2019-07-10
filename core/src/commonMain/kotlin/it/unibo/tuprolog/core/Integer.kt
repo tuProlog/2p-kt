@@ -9,7 +9,7 @@ interface Integer : Numeric {
     override val isInt: Boolean
         get() = true
 
-    val value: BigInteger
+    override val value: BigInteger
 
     override val decimalValue: BigDecimal
         get() = BigDecimal.of(value)
