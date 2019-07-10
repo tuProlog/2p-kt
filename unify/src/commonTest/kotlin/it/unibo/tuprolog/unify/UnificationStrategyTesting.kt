@@ -16,53 +16,53 @@ internal class UnificationStrategyTesting {
 
     @Test
     fun mguWorksAsExpectedWithPositiveExamples() {
-        assertMguCorrect(naiveStrategy, UnificationUtils.successfulUnificationMgus, true)
-        assertMguCorrect(naiveStrategy, UnificationUtils.successfulUnificationMgus, false)
+        assertMguCorrect(UnificationUtils.successfulUnifications, naiveStrategy, true)
+        assertMguCorrect(UnificationUtils.successfulUnifications, naiveStrategy, false)
     }
 
     @Test
     fun matchWorksAsExpectedWithPositiveExamples() {
-        assertMatchCorrect(naiveStrategy, UnificationUtils.successfulUnificationMatches, true)
-        assertMatchCorrect(naiveStrategy, UnificationUtils.successfulUnificationMatches, false)
+        assertMatchCorrect(UnificationUtils.successfulUnifications, naiveStrategy, true)
+        assertMatchCorrect(UnificationUtils.successfulUnifications, naiveStrategy, false)
     }
 
     @Test
     fun unifyWorksAsExpectedWithPositiveExamples() {
-        assertUnifiedTermCorrect(naiveStrategy, UnificationUtils.successfulUnificationTerms, true)
-        assertUnifiedTermCorrect(naiveStrategy, UnificationUtils.successfulUnificationTerms, false)
+        assertUnifiedTermCorrect(UnificationUtils.successfulUnifications, naiveStrategy, true)
+        assertUnifiedTermCorrect(UnificationUtils.successfulUnifications, naiveStrategy, false)
     }
 
     @Test
     fun mguWorksAsExpectedWithNegativeExamples() {
-        assertMguCorrect(naiveStrategy, UnificationUtils.failedUnificationMgus, true)
-        assertMguCorrect(naiveStrategy, UnificationUtils.failedUnificationMgus, false)
+        assertMguCorrect(UnificationUtils.failedUnifications, naiveStrategy, true)
+        assertMguCorrect(UnificationUtils.failedUnifications, naiveStrategy, false)
     }
 
     @Test
     fun matchWorksAsExpectedWithNegativeExamples() {
-        assertMatchCorrect(naiveStrategy, UnificationUtils.failedUnificationMatches, true)
-        assertMatchCorrect(naiveStrategy, UnificationUtils.failedUnificationMatches, false)
+        assertMatchCorrect(UnificationUtils.failedUnifications, naiveStrategy, true)
+        assertMatchCorrect(UnificationUtils.failedUnifications, naiveStrategy, false)
     }
 
     @Test
     fun unifyWorksAsExpectedWithNegativeExamples() {
-        assertUnifiedTermCorrect(naiveStrategy, UnificationUtils.failedUnificationTerms, true)
-        assertUnifiedTermCorrect(naiveStrategy, UnificationUtils.failedUnificationTerms, false)
+        assertUnifiedTermCorrect(UnificationUtils.failedUnifications, naiveStrategy, true)
+        assertUnifiedTermCorrect(UnificationUtils.failedUnifications, naiveStrategy, false)
     }
 
     @Test
     fun mguWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertMguCorrect(naiveStrategy, UnificationUtils.occurCheckFailedUnificationMgus, true)
+        assertMguCorrect(UnificationUtils.occurCheckFailedUnifications, naiveStrategy, true)
     }
 
     @Test
     fun matchWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertMatchCorrect(naiveStrategy, UnificationUtils.occurCheckFailedUnificationMatches, true)
+        assertMatchCorrect(UnificationUtils.occurCheckFailedUnifications, naiveStrategy, true)
     }
 
     @Test
     fun unifyWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertUnifiedTermCorrect(naiveStrategy, UnificationUtils.occurCheckFailedUnificationTerms, true)
+        assertUnifiedTermCorrect(UnificationUtils.occurCheckFailedUnifications, naiveStrategy, true)
     }
 
     @Test
@@ -70,12 +70,11 @@ internal class UnificationStrategyTesting {
         val xVar = Var.of("X")
         val structWithX = Struct.of("f", xVar)
 
-        val correctMguMap = mapOf((xVar `=` structWithX) to Substitution.of(xVar, structWithX))
-        val correctMatchMap = mapOf((xVar `=` structWithX) to true)
-        val correctUnifiedTermMap = mapOf((xVar `=` structWithX) to structWithX)
+        val correctnessMap = mapOf((xVar `=` structWithX) to
+                Triple(Substitution.of(xVar, structWithX), true, structWithX))
 
-        assertMguCorrect(naiveStrategy, correctMguMap, false)
-        assertMatchCorrect(naiveStrategy, correctMatchMap, false)
-        assertUnifiedTermCorrect(naiveStrategy, correctUnifiedTermMap, false)
+        assertMguCorrect(correctnessMap, naiveStrategy, false)
+        assertMatchCorrect(correctnessMap, naiveStrategy, false)
+        assertUnifiedTermCorrect(correctnessMap, naiveStrategy, false)
     }
 }

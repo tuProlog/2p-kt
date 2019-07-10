@@ -5,6 +5,7 @@ import `=`
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unification
 import kotlin.test.assertEquals
+import kotlin.collections.List as KtList
 
 /**
  * Utils singleton for testing [Unification]
@@ -93,106 +94,162 @@ internal object UnificationUtils {
 
 
     /**
-     * Returns same equations as [unifications] but maps only to their Most General Unifier
-     */
-    private fun <T1 : Term, T2 : Term> equationToMgu(unifications: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>) =
-            unifications.mapValues { it.value.first }
-
-    /**
-     * Returns same equations as [unifications] but maps only to their "match boolean value"
-     */
-    private fun <T1 : Term, T2 : Term> equationToMatch(unifications: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>) =
-            unifications.mapValues { it.value.second }
-
-    /**
-     * Returns same equations as [unifications] but maps only to their resulting unified Term
-     */
-    private fun <T1 : Term, T2 : Term> equationToUnifiedTerm(unifications: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>) =
-            unifications.mapValues { it.value.third }
-
-    /**
-     * Contains the same equations as per [successfulUnifications] but maps only to their Most General Unifier
-     */
-    internal val successfulUnificationMgus by lazy { equationToMgu(successfulUnifications) }
-    /**
-     * Contains the same equations as per [successfulUnifications] but maps only to their match response
-     */
-    internal val successfulUnificationMatches by lazy { equationToMatch(successfulUnifications) }
-    /**
-     * Contains the same equations as per [successfulUnifications] but maps only to their unified Term
-     */
-    internal val successfulUnificationTerms by lazy { equationToUnifiedTerm(successfulUnifications) }
-
-    /**
-     * Contains the same equations as per [failedUnifications] but maps only to their Most General Unifier
-     */
-    internal val failedUnificationMgus by lazy { equationToMgu(failedUnifications) }
-    /**
-     * Contains the same equations as per [failedUnifications] but maps only to their match response
-     */
-    internal val failedUnificationMatches by lazy { equationToMatch(failedUnifications) }
-    /**
-     * Contains the same equations as per [failedUnifications] but maps only to their unified Term
-     */
-    internal val failedUnificationTerms by lazy { equationToUnifiedTerm(failedUnifications) }
-
-    /**
-     * Contains the same equations as per [occurCheckFailedUnifications] but maps only to their Most General Unifier
-     */
-    internal val occurCheckFailedUnificationMgus by lazy { equationToMgu(occurCheckFailedUnifications) }
-    /**
-     * Contains the same equations as per [occurCheckFailedUnifications] but maps only to their match response
-     */
-    internal val occurCheckFailedUnificationMatches by lazy { equationToMatch(occurCheckFailedUnifications) }
-    /**
-     * Contains the same equations as per [occurCheckFailedUnifications] but maps only to their unified Term
-     */
-    internal val occurCheckFailedUnificationTerms by lazy { equationToUnifiedTerm(occurCheckFailedUnifications) }
-
-
-    /**
-     * Asserts that mgu computed with [unificationStrategy] is equals to that present in [equationsToExpectedMgu]
+     * Asserts that mgu computed with [unificationStrategy] over [equation] is equals to [expectedMgu], optionally enabling [occurCheck]
      */
     internal fun <T1 : Term, T2 : Term> assertMguCorrect(
+            equation: Equation<T1, T2>,
+            expectedMgu: Substitution,
             unificationStrategy: Unification,
-            equationsToExpectedMgu: Map<Equation<T1, T2>, Substitution>,
             occurCheck: Boolean
     ) {
-        equationsToExpectedMgu.forEach { (equation, correctMgu) ->
-            val (equationLhs, equationRhs) = equation
+        val (equationLhs, equationRhs) = equation
 
-            assertEquals(correctMgu, unificationStrategy.mgu(equationLhs, equationRhs, occurCheck), "$equationLhs=$equationRhs mgu?")
-        }
+        assertEquals(
+                expectedMgu,
+                unificationStrategy.mgu(equationLhs, equationRhs, occurCheck),
+                "$equationLhs=$equationRhs mgu?"
+        )
     }
 
     /**
-     * Asserts that matching computed with [unificationStrategy] is equals to that present in [equationsToExpectedMatch]
+     * Asserts that match computed with [unificationStrategy] over [equation] is equals to [expectedMatch], optionally enabling [occurCheck]
      */
     internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
+            equation: Equation<T1, T2>,
+            expectedMatch: Boolean,
             unificationStrategy: Unification,
-            equationsToExpectedMatch: Map<Equation<T1, T2>, Boolean>,
             occurCheck: Boolean
     ) {
-        equationsToExpectedMatch.forEach { (equation, correctMatch) ->
-            val (equationLhs, equationRhs) = equation
+        val (equationLhs, equationRhs) = equation
 
-            assertEquals(correctMatch, unificationStrategy.match(equationLhs, equationRhs, occurCheck), "$equationLhs=$equationRhs match?")
+        assertEquals(
+                expectedMatch,
+                unificationStrategy.match(equationLhs, equationRhs, occurCheck),
+                "$equationLhs=$equationRhs match?"
+        )
+    }
+
+    /**
+     * Asserts that unified term computed with [unificationStrategy] over [equation] is equals to [expectedUnifiedTerm], optionally enabling [occurCheck]
+     */
+    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
+            equation: Equation<T1, T2>,
+            expectedUnifiedTerm: Term?,
+            unificationStrategy: Unification,
+            occurCheck: Boolean
+    ) {
+        val (equationLhs, equationRhs) = equation
+
+        assertEquals(
+                expectedUnifiedTerm,
+                unificationStrategy.unify(equationLhs, equationRhs, occurCheck),
+                "$equationLhs=$equationRhs unify?"
+        )
+    }
+
+    /**
+     * Asserts that mgu computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     */
+    internal fun <T1 : Term, T2 : Term> assertMguCorrect(
+            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategy: Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equation, correctTriple) ->
+            assertMguCorrect(equation, correctTriple.first, unificationStrategy, occurCheck)
         }
     }
 
     /**
-     * Asserts that unified term computed with [unificationStrategy] is equals to that present in [equationsToExpectedTerm]
+     * Asserts that matching computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
      */
-    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
+    internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
+            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
             unificationStrategy: Unification,
-            equationsToExpectedTerm: Map<Equation<T1, T2>, Term?>,
             occurCheck: Boolean
     ) {
-        equationsToExpectedTerm.forEach { (equation, correctTerm) ->
-            val (equationLhs, equationRhs) = equation
-
-            assertEquals(correctTerm, unificationStrategy.unify(equationLhs, equationRhs, occurCheck), "$equationLhs=$equationRhs unify?")
+        correctnessMap.forEach { (equation, correctTriple) ->
+            assertMatchCorrect(equation, correctTriple.second, unificationStrategy, occurCheck)
         }
     }
 
+    /**
+     * Asserts that unified term computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     */
+    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
+            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategy: Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equation, correctTriple) ->
+            assertUnifiedTermCorrect(equation, correctTriple.third, unificationStrategy, occurCheck)
+        }
+    }
+
+
+    /**
+     * Utility function to calculate the unifier for more than one equation, passing created context among different unification
+     */
+    private fun <T1 : Term, T2 : Term> multipleEquationMgu(
+            equations: KtList<Equation<T1, T2>>,
+            unificationStrategyConstructor: (Substitution) -> Unification
+    ): Substitution {
+        var context = Substitution.empty()
+
+        // enrich the context with subsequent equations
+        equations.forEach { equation ->
+            val (equationLhs, equationRhs) = equation
+            context = unificationStrategyConstructor(context).mgu(equationLhs, equationRhs)
+        }
+        return context
+    }
+
+
+    /**
+     * Asserts that creating unification strategy with [unificationStrategyConstructor] and computing the mgu over [correctnessMap] keys,
+     * that contain multiple equations, results in [correctnessMap] correct values
+     */
+    internal fun <T1 : Term, T2 : Term> assertMguCorrectForMultipleEq(
+            correctnessMap: Map<KtList<Equation<T1, T2>>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategyConstructor: (Substitution) -> Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equations, correctTriple) ->
+            val context = multipleEquationMgu(equations.dropLast(1), unificationStrategyConstructor)
+
+            assertMguCorrect(mapOf(equations.last() to correctTriple), unificationStrategyConstructor(context), occurCheck)
+        }
+    }
+
+    /**
+     * Asserts that creating unification strategy with [unificationStrategyConstructor] and computing the matching over [correctnessMap] keys,
+     * that contain multiple equations, results in [correctnessMap] correct values
+     */
+    internal fun <T1 : Term, T2 : Term> assertMatchCorrectForMultipleEq(
+            correctnessMap: Map<KtList<Equation<T1, T2>>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategyConstructor: (Substitution) -> Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equations, correctTriple) ->
+            val context = multipleEquationMgu(equations.dropLast(1), unificationStrategyConstructor)
+
+            assertMatchCorrect(mapOf(equations.last() to correctTriple), unificationStrategyConstructor(context), occurCheck)
+        }
+    }
+
+    /**
+     * Asserts that creating unification strategy with [unificationStrategyConstructor] and computing the unified term over [correctnessMap] keys,
+     * that contain multiple equations, results in [correctnessMap] correct values
+     */
+    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrectForMultipleEq(
+            correctnessMap: Map<KtList<Equation<T1, T2>>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategyConstructor: (Substitution) -> Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equations, correctTriple) ->
+            val context = multipleEquationMgu(equations.dropLast(1), unificationStrategyConstructor)
+
+            assertUnifiedTermCorrect(mapOf(equations.last() to correctTriple), unificationStrategyConstructor(context), occurCheck)
+        }
+    }
 }

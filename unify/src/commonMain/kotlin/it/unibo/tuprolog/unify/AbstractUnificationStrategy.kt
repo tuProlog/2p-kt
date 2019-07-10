@@ -8,6 +8,8 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import org.gciatto.kt.math.BigDecimal
 abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
 
+    // FIXME: if a failed context is passed in, from the constructor, the unification should immediately fail!
+
     constructor() : this(emptyList())
 
     override val context: Substitution by lazy {
