@@ -10,15 +10,7 @@ import it.unibo.tuprolog.unify.Equation.*
 
 abstract class AbstractUnificationStrategy(override val context: Substitution = empty()) : Unification {
 
-    private val contextEquations: Iterable<Equation<Var, Term>> by lazy {
-        context.toEquations().apply {
-            forEach { eq ->
-                when (eq) {
-                    is Contradiction -> throw IllegalArgumentException("Invalid equation in context: $eq")
-                }
-            }
-        }
-    }
+    private val contextEquations: Iterable<Equation<Var, Term>> by lazy { context.toEquations() }
 
     protected abstract fun checkTermsEquality(first: Term, second: Term): Boolean
 
