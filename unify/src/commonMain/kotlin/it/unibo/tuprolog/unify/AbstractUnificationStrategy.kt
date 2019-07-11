@@ -2,32 +2,27 @@ package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 
-abstract class AbstractUnificationStrategy : Unification {
+abstract class AbstractUnificationStrategy(override val context: Substitution = empty()) : Unification {
 
-    private val _context: Iterable<Equation<Var, Term>>
-
-    constructor(context: Iterable<Equation<Var, Term>> = emptyList()) {
-        _context = context
-        for (eq in context) {
-            if (eq is Contradiction) {
-                throw IllegalArgumentException("Invalid equation in context: $eq")
+    private val contextEquations: Iterable<Equation<Var, Term>> by lazy {
+        context.toEquations().apply {
+            forEach { eq ->
+                when (eq) {
+                    is Contradiction -> throw IllegalArgumentException("Invalid equation in context: $eq")
+                }
             }
         }
     }
 
-    override val context: Substitution
-        get() = _context.map { it.toPair() }.toMap().asUnifier()
-
-
     protected abstract fun checkTermsEquality(first: Term, second: Term): Boolean
 
-    private val termsEqualityChecker: (Term, Term)->Boolean = { a, b -> checkTermsEquality(a, b) }
+    private val termsEqualityChecker: (Term, Term) -> Boolean = { a, b -> checkTermsEquality(a, b) }
 
     protected fun occurrenceCheck(variable: Var, term: Term): Boolean {
         return when (term) {
@@ -59,11 +54,13 @@ abstract class AbstractUnificationStrategy : Unification {
     }
 
     protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> =
-        Equation.allOf(term1, term2, termsEqualityChecker)
+            Equation.allOf(term1, term2, termsEqualityChecker)
 
 
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
-        val equations = (_context + equationsFor(term1, term2)).toMutableList()
+        if (context.isFailed) return failed()
+
+        val equations = (contextEquations + equationsFor(term1, term2)).toMutableList()
 
         var changed = true
 

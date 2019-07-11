@@ -35,13 +35,13 @@ interface Unification {
         }
 
         fun naive(context: Substitution = Substitution.empty()) : Unification {
-            return object : AbstractUnificationStrategy(context.toEquations()) {
+            return object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
             }
         }
 
         fun strict(context: Substitution = Substitution.empty()) : Unification {
-            return object : AbstractUnificationStrategy(context.toEquations()) {
+            return object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term): Boolean = first strictlyEquals second
             }
         }

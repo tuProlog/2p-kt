@@ -88,7 +88,8 @@ internal object UnificationUtils {
      */
     internal val failSequenceOfUnification by lazy {
         mapOf(
-                listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple
+                listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple,
+                listOf(xVar `=` aAtom, bAtom `=` xVar, yVar `=` aAtom) to failedResultsTriple
         )
     }
 

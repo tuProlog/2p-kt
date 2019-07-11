@@ -90,7 +90,7 @@ sealed class Equation<out A : Term, out B : Term>(
 fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution =
         Substitution.of(this.toPair())
 
-/** Creater a [Substitution] out of a [Iterable] of [Equation]s assigning [Var]s to [Term]s  */
+/** Creates a [Substitution] out of a [Iterable] of [Equation]s assigning [Var]s to [Term]s  */
 fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution =
         Substitution.of(this.map { it.toPair() })
 
