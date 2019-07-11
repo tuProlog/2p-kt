@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.*
+import kotlin.collections.List as KtList
 
 /**
  * A class representing an Equation of logic terms, to be unified;
@@ -93,7 +94,7 @@ fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution 
         Substitution.of(this.map { it.toPair() })
 
 /** Transforms a [Substitution] into the list of corresponding [Equation]s */
-fun Substitution.toEquations(): List<Equation<Var, Term>> =
+fun Substitution.toEquations(): KtList<Equation<Var, Term>> =
         this.entries.map { (variable, term) ->  Equation.Assignment(variable, term) }
 
 infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)
