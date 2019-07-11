@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.*
-import kotlin.collections.List
-import kotlin.js.JsName
-import kotlin.reflect.KClass
 
 
 /**
@@ -92,8 +89,15 @@ sealed class Equation<out A : Term, out B : Term>(
 }
 
 /** Transforms an [Equation] of a [Var] with a [Term] to the corresponding [Substitution] */
-fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution = Substitution.of(this.toPair())
+fun <A : Var, B : Term> Equation<A, B>.toSubstitution(): Substitution =
+        Substitution.of(this.toPair())
+
+/** Creater a [Substitution] out of a [Iterable] of [Equation]s assigning [Var]s to [Term]s  */
+fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution =
+        Substitution.of(this.map { it.toPair() })
 
 /** Transforms a [Substitution] into the list of corresponding [Equation]s */
 fun Substitution.toEquations(): List<Equation<Var, Term>> =
         this.entries.map { (variable, term) ->  Equation.Assignment(variable, term) }
+
+infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)

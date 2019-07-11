@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Substitution.Companion.failed
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 
 abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
@@ -27,21 +30,25 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
         }
     }
 
-    protected fun applySubstitutionToEquations(substitution: Substitution,
-                                               equations: Sequence<Equation<Term, Term>>,
-                                               exceptIndex: Int): Sequence<Pair<Boolean, Equation<Term, Term>>> {
+    private fun applySubstitutionToEquations(substitution: Substitution, equations: MutableList<Equation<Term, Term>>,
+                                             exceptIndex: Int): Boolean {
 
-        return equations.mapIndexed { i, eq ->
-            if (i == exceptIndex) {
-                Pair(false, eq)
-            } else {
-                val newLhs = eq.lhs!![substitution]
-                val newRhs = eq.rhs!![substitution]
-                val changed = eq.lhs !== newLhs || eq.rhs !== newRhs
-                Pair(changed, Equation.of(newLhs, newRhs, termsEqualityChecker))
+        var changed = false
+
+        for (i in equations.indices) {
+            if (i == exceptIndex || equations[i] is Contradiction || equations[i] is Identity) continue
+
+            with(equations[i]) {
+                val newLhs = lhs!![substitution]
+                val newRhs = rhs!![substitution]
+                if (lhs !== newLhs || rhs !== newRhs) {
+                    equations[i] = Equation.of(newLhs, newRhs, termsEqualityChecker)
+                    changed = true
+                }
             }
-
         }
+
+        return changed
     }
 
     protected fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> =
@@ -49,66 +56,46 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
 
 
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
-        var equations = _context.asSequence() + equationsFor(term1, term2)
+        val equations = (_context + equationsFor(term1, term2)).toMutableList()
 
         var changed = true
 
         while (changed) {
+
             changed = false
 
-            val rewriting: Sequence<Equation<Term, Term>> = emptySequence()
+            val i = equations.listIterator()
 
-            for (eq in equations) {
-                when {
-                    eq is Contradiction -> {
-                        return Substitution.failed()
-                    }
-                    eq is Identity -> {
-                        /* just skip it */
-                    }
-                    eq is Assignment -> {
-                        if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs))
-                            return Substitution.failed()
-                        else
+            while (i.hasNext()) {
 
+                i.next().also {
+                    when (it) {
+                        is Contradiction -> {
+                            return failed()
+                        }
+                        is Identity -> {
+                            i.remove()
+                            changed = true
+                        }
+                        is Assignment -> {
+                            if (occurCheckEnabled && occurrenceCheck(it.lhs as Var, it.rhs)) {
+                                return failed()
+                            } else {
+                                changed = applySubstitutionToEquations(Substitution.of(it.lhs as Var, it.rhs), equations, i.previousIndex())
+                            }
+                        }
+                        is Comparison -> {
+                            i.remove()
+                            for (eq in equationsFor(it.lhs, it.rhs)) {
+                                i.add(eq)
+                            }
+                            changed = true
+                        }
                     }
                 }
             }
+        }
 
-
-//            for (i in equations.indices) {
-//                if (equations[i] === null) return failed()
-//
-//                with(equations[i]!!) {
-//                    when {
-//                        lhs is Var && rhs is Var -> {
-//                            if ((lhs as Var).isEqualTo(rhs as Var)) {
-//                                changed = true
-//                                // TODO notice that this may be inefficient in case MutableList is an alias for ArrayList
-//                                // an optimization may enforce the employment of a LinkedList, e.g. through a template method
-//                                equations.removeAt(i)
-//                            } else {
-//                                changed = Substitution.of(lhs as Var, rhs).applyToAll(equations, i)
-//                            }
-//                        }
-//                        rhs is Var -> {
-//                            equations[i] = rhs `=` lhs
-//                            changed = true
-//                        }
-//                        lhs is Var -> {
-//                            if (occurCheckEnabled && (lhs as Var).occursInTerm(rhs)) {
-//                                return failed()
-//                            } else {
-//                                changed = Substitution.of(lhs as Var, rhs).applyToAll(equations, i)
-//                            }
-//                        }
-//                        else -> {
-//                            changed = true
-//                            equations.addAll(equationsFor(lhs, rhs))
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        return equations.filterIsInstance<Assignment<Var, Term>>().toSubstitution()
     }
 }

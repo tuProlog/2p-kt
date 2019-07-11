@@ -55,8 +55,7 @@ sealed class Substitution : Map<Var, Term> {
         /**
          * Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type
          */
-        fun Map<Var, Term>.asUnifier(): Substitution =
-                Unifier(this)
+        fun Map<Var, Term>.asUnifier(): Substitution = Unifier(this)
 
         /**
          * Creates a Substitution of given Variable with given Term
@@ -73,6 +72,12 @@ sealed class Substitution : Map<Var, Term> {
          */
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution =
                 mapOf(substitutionPair, *substitutionPairs).asUnifier()
+
+        /**
+         * Crates a Substitution from given substitution pairs
+         */
+        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution =
+                substitutionPairs.toMap().asUnifier()
 
         /**
          * Creates a new Substitution from given substitutions
