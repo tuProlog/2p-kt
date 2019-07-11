@@ -27,18 +27,27 @@ sealed class Equation<out A : Term, out B : Term>(
 
     fun toPair(): Pair<A, B> = Pair(lhs!!, rhs!!)
 
-    fun swap(): Equation<B, A> = of(rhs, lhs)
+    fun swap(): Equation<Term, Term> = of(rhs, lhs)
+
+    fun apply(substitution: Substitution, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<Term, Term> {
+        return Equation.of(lhs!![substitution], rhs!![substitution], equalityChecker)
+    }
 
 
     /** Equation companion object */
     companion object {
 
-        /** Creates an Equation with provided left-hand and right-hand sides */
-        fun <A : Term, B : Term> of(lhs: A?, rhs: B?, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<A, B> {
+        fun <A : Term, B : Term> of(pair: Pair<A?, B?>, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<Term, Term> {
+            return of(pair.first, pair.second, equalityChecker)
+        }
+
+            /** Creates an Equation with provided left-hand and right-hand sides */
+        fun <A : Term, B : Term> of(lhs: A?, rhs: B?, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<Term, Term> {
             return when {
                 lhs === null || rhs === null -> Contradiction
                 lhs is Var && rhs is Var -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Assignment(lhs, rhs)
                 lhs is Var -> Assignment(lhs, rhs)
+                rhs is Var -> Assignment(rhs, lhs)
                 lhs is Constant && rhs is Constant -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Contradiction
                 (lhs is Constant &&  rhs !is Constant) || (lhs !is Constant &&  rhs is Constant) -> Contradiction
                 lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) -> Contradiction
@@ -61,6 +70,8 @@ sealed class Equation<out A : Term, out B : Term>(
                         sequenceOf(Assignment(lhs, rhs))
                 lhs is Var ->
                     sequenceOf(Assignment(lhs, rhs))
+                rhs is Var ->
+                    sequenceOf(Assignment(rhs, lhs))
                 lhs is Constant && rhs is Constant ->
                     if (equalityChecker(lhs, rhs))
                         sequenceOf(Identity(lhs, rhs))
@@ -77,11 +88,6 @@ sealed class Equation<out A : Term, out B : Term>(
                     sequenceOf(Comparison(lhs, rhs))
             }
         }
-
-
-            /** Creates an [Equation] from the given [Pair] */
-        fun <A : Term, B : Term> from(pair: Pair<A?, B?>, equalityChecker: (Term, Term)->Boolean = Term::equals): Equation<A, B> =
-                Equation.of(pair.first, pair.second, equalityChecker)
     }
 }
 
