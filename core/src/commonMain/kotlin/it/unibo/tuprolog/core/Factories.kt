@@ -15,12 +15,12 @@ fun varOf(name: String = Var.ANONYMOUS_VAR_NAME): Var {
     return Var.of(name)
 }
 
-fun lstOf(vararg terms: Any): List {
-    return List.of(terms.map { it.toTerm() })
+fun lstOf(vararg terms: Term): List {
+    return List.of(terms.map { it })
 }
 
-fun setOf(vararg terms: Any): Set {
-    return Set.of(terms.map { it.toTerm() })
+fun setOf(vararg terms: Term): Set {
+    return Set.of(terms.map { it })
 }
 
 fun factOf(head: Term): Fact {

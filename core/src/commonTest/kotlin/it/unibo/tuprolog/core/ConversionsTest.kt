@@ -4,12 +4,8 @@ import it.unibo.tuprolog.core.testutils.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
-import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.BigInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.fail
 
 /**
  * Test class for conversions to [Term]
@@ -161,49 +157,50 @@ internal class ConversionsTest {
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
 
-    @Test
-    fun anyToTermContainsAllConversions() {
-        val numberValues = (with(IntegerUtils) { bigIntegers + onlyBytes + onlyInts + onlyShorts + onlyLongs } +
-                with(RealUtils) { bigDecimals + decimalsAsDoubles + decimalsAsFloats })
 
-        val invalidTestAtoms: (String) -> Boolean = { atomString ->
-            atomString matches Var.VAR_REGEX_PATTERN ||
-                    atomString matches Real.REAL_REGEX_PATTERN ||
-                    atomString matches Integer.INTEGER_REGEX_PATTERN
-        }
-
-        val correct =
-                numberValues.map {
-                    when (it) {
-                        is BigDecimal -> Numeric.of(it)
-                        is BigInteger -> Numeric.of(it)
-                        is Number -> Numeric.of(it)
-                        else -> fail("Cannot reach this")
-                    }
-                } + VarUtils.correctlyNamedVars.map { Var.of(it) } +
-                        AtomUtils.mixedAtoms.filterNot(invalidTestAtoms).map { Atom.of(it) } +
-                        ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
-
-        val toBeTested = (numberValues +
-                VarUtils.correctlyNamedVars +
-                AtomUtils.mixedAtoms.filterNot(invalidTestAtoms) +
-                ConsUtils.mixedConsInstancesElementLists)
-                .map { it.toTerm() }
-
-
-        onCorrespondingItems(correct, toBeTested) { expected, actual ->
-            when {
-                expected.isVariable -> {
-                    assertStructurallyEquals(expected, actual)
-                    assertEquals(expected, actual)
-                }
-                else -> assertEqualities(expected, actual)
-            }
-        }
-    }
-
-    @Test
-    fun anyToTermThrowsExceptionIfNoMatchingTypeIsFound() {
-        assertFailsWith<IllegalArgumentException> { false.toTerm() }
-    }
+//    @Test
+//    fun anyToTermContainsAllConversions() {
+//        val numberValues = (with(IntegerUtils) { bigIntegers + onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+//                with(RealUtils) { bigDecimals + decimalsAsDoubles + decimalsAsFloats })
+//
+//        val invalidTestAtoms: (String) -> Boolean = { atomString ->
+//            atomString matches Var.VAR_REGEX_PATTERN ||
+//                    atomString matches Real.REAL_REGEX_PATTERN ||
+//                    atomString matches Integer.INTEGER_REGEX_PATTERN
+//        }
+//
+//        val correct =
+//                numberValues.map {
+//                    when (it) {
+//                        is BigDecimal -> Numeric.of(it)
+//                        is BigInteger -> Numeric.of(it)
+//                        is Number -> Numeric.of(it)
+//                        else -> fail("Cannot reach this")
+//                    }
+//                } + VarUtils.correctlyNamedVars.map { Var.of(it) } +
+//                        AtomUtils.mixedAtoms.filterNot(invalidTestAtoms).map { Atom.of(it) } +
+//                        ConsUtils.mixedConsInstancesElementLists.map { List.of(it) }
+//
+//        val toBeTested = (numberValues +
+//                VarUtils.correctlyNamedVars +
+//                AtomUtils.mixedAtoms.filterNot(invalidTestAtoms) +
+//                ConsUtils.mixedConsInstancesElementLists)
+//                .map { it.toTerm() }
+//
+//
+//        onCorrespondingItems(correct, toBeTested) { expected, actual ->
+//            when {
+//                expected.isVariable -> {
+//                    assertStructurallyEquals(expected, actual)
+//                    assertEquals(expected, actual)
+//                }
+//                else -> assertEqualities(expected, actual)
+//            }
+//        }
+//    }
+//
+//    @Test
+//    fun anyToTermThrowsExceptionIfNoMatchingTypeIsFound() {
+//        assertFailsWith<IllegalArgumentException> { false.toTerm() }
+//    }
 }

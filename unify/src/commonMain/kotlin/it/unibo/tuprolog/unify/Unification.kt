@@ -2,7 +2,6 @@ package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 
 interface Unification {
 
@@ -37,17 +36,13 @@ interface Unification {
 
         fun naive(context: Substitution = Substitution.empty()) : Unification {
             return object : AbstractUnificationStrategy(context.toEquations()) {
-                override fun Var.isEqualTo(other: Var): Boolean {
-                    return name == other.name
-                }
+                override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
             }
         }
 
         fun strict(context: Substitution = Substitution.empty()) : Unification {
             return object : AbstractUnificationStrategy(context.toEquations()) {
-                override fun Var.isEqualTo(other: Var): Boolean {
-                    return completeName == other.completeName
-                }
+                override fun checkTermsEquality(first: Term, second: Term): Boolean = first strictlyEquals second
             }
         }
     }

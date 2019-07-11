@@ -102,7 +102,7 @@ internal object UnificationUtils {
             unificationStrategy: Unification,
             occurCheck: Boolean
     ) {
-        val (equationLhs, equationRhs) = equation
+        val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedMgu,
@@ -120,7 +120,7 @@ internal object UnificationUtils {
             unificationStrategy: Unification,
             occurCheck: Boolean
     ) {
-        val (equationLhs, equationRhs) = equation
+        val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedMatch,
@@ -138,7 +138,7 @@ internal object UnificationUtils {
             unificationStrategy: Unification,
             occurCheck: Boolean
     ) {
-        val (equationLhs, equationRhs) = equation
+        val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedUnifiedTerm,
@@ -198,7 +198,7 @@ internal object UnificationUtils {
 
         // enrich the context with subsequent equations
         equations.forEach { equation ->
-            val (equationLhs, equationRhs) = equation
+            val (equationLhs, equationRhs) = equation.toPair()
             context = unificationStrategyConstructor(context).mgu(equationLhs, equationRhs)
         }
         return context

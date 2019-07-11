@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.AtomImpl
 
-interface Atom : Struct {
+interface Atom : Struct, Constant {
 
     override val args: Array<Term>
         get() = arrayOf()
@@ -28,7 +28,7 @@ interface Atom : Struct {
     override val isFail: Boolean
         get() = Truth.FAIL_FUNCTOR == value
 
-    val value: String
+    override val value: String
         get() = functor
 
     override val argsList: kotlin.collections.List<Term>

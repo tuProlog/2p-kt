@@ -9,7 +9,7 @@ interface Real : Numeric {
     override val isReal: Boolean
         get() = true
 
-    val value: BigDecimal
+    override val value: BigDecimal
 
     override val decimalValue: BigDecimal
         get() = value

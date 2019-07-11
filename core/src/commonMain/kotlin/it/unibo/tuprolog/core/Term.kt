@@ -13,6 +13,7 @@ interface Term {
     val isGround: Boolean get() = true
     val isStruct: Boolean get() = false
     val isAtom: Boolean get() = false
+    val isConstant: Boolean get() = false
     val isNumber: Boolean get() = false
     val isInt: Boolean get() = false
     val isReal: Boolean get() = false
