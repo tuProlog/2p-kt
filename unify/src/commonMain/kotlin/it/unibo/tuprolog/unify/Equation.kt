@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.*
+import kotlin.js.JsName
 import kotlin.collections.List as KtList
 
 /**
@@ -97,4 +98,5 @@ fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution 
 fun Substitution.toEquations(): KtList<Equation<Var, Term>> =
         this.entries.map { (variable, term) ->  Equation.Assignment(variable, term) }
 
+@JsName("termEq")
 infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)
