@@ -8,15 +8,22 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 
-abstract class AbstractUnificationStrategy(private val _context: Iterable<Equation<Var, Term>>) : Unification {
+abstract class AbstractUnificationStrategy : Unification {
 
-    // FIXME: if a failed context is passed in, from the constructor, the unification should immediately fail!
+    private val _context: Iterable<Equation<Var, Term>>
 
-    constructor() : this(emptyList())
-
-    override val context: Substitution by lazy {
-        _context.map { it.toPair() }.toMap().asUnifier()
+    constructor(context: Iterable<Equation<Var, Term>> = emptyList()) {
+        _context = context
+        for (eq in context) {
+            if (eq is Contradiction) {
+                throw IllegalArgumentException("Invalid equation in context: $eq")
+            }
+        }
     }
+
+    override val context: Substitution
+        get() = _context.map { it.toPair() }.toMap().asUnifier()
+
 
     protected abstract fun checkTermsEquality(first: Term, second: Term): Boolean
 
@@ -39,8 +46,8 @@ abstract class AbstractUnificationStrategy(private val _context: Iterable<Equati
             if (i == exceptIndex || equations[i] is Contradiction || equations[i] is Identity) continue
 
             with(equations[i]) {
-                val newLhs = lhs!![substitution]
-                val newRhs = rhs!![substitution]
+                val newLhs = lhs[substitution]
+                val newRhs = rhs[substitution]
                 if (lhs !== newLhs || rhs !== newRhs) {
                     equations[i] = Equation.of(newLhs, newRhs, termsEqualityChecker)
                     changed = true
