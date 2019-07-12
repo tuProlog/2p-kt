@@ -51,7 +51,7 @@ sealed class Equation<out A : Term, out B : Term>(
                     lhs is Var -> Assignment(lhs, rhs)
                     rhs is Var -> Assignment(rhs, lhs)
                     lhs is Constant && rhs is Constant -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Contradiction(lhs, rhs)
-                    (lhs is Constant && rhs !is Constant) || (lhs !is Constant && rhs is Constant) -> Contradiction(lhs, rhs)
+                    lhs is Constant || rhs is Constant -> Contradiction(lhs, rhs)
                     lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) -> Contradiction(lhs, rhs)
                     else -> Comparison(lhs, rhs)
                 }
