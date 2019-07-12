@@ -27,6 +27,10 @@ internal object UnificationUtils {
      */
     internal val successfulUnifications by lazy {
         mapOf(
+                *EquationUtils.allIdentityEquations.map { (lhs, rhs) ->
+                    (lhs `=` rhs) to Triple(Substitution.empty(), true, lhs)
+                }.toTypedArray(),
+
                 (aAtom `=` aAtom) to Triple(Substitution.empty(), true, aAtom),
                 (xVar `=` xVar) to Triple(Substitution.empty(), true, xVar),
                 (aAtom `=` xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
@@ -55,6 +59,10 @@ internal object UnificationUtils {
      */
     internal val failedUnifications by lazy {
         mapOf(
+                *EquationUtils.allContradictionEquations.map { (lhs, rhs) ->
+                    (lhs `=` rhs) to failedResultsTriple
+                }.toTypedArray(),
+
                 (aAtom `=` bAtom) to failedResultsTriple,
                 (Struct.of("f", aAtom) `=` Struct.of("g", aAtom)) to failedResultsTriple,
                 (Struct.of("f", xVar) `=` Struct.of("g", yVar)) to failedResultsTriple,
