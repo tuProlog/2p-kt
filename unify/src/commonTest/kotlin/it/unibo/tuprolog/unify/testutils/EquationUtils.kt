@@ -3,6 +3,9 @@ package it.unibo.tuprolog.unify.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Equation
 import kotlin.test.assertTrue
+import kotlin.test.fail
+import it.unibo.tuprolog.core.List.Companion as LogicList
+import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
 /**
  * Utils singleton for testing [Equation]
@@ -30,6 +33,9 @@ internal object EquationUtils {
     /** A list of equations, that at last should be interpreted as Identities, exploring them in deep */
     internal val deepIdentityEquations by lazy {
         listOf(
+                LogicList.of(Atom.of("a"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
+                LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to LogicList.from(listOf(Atom.of("a")), last = Var.of("V")),
+                LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Real.of(1.5), Var.anonymous()),
                 Struct.of("f", Var.of("A")) to Struct.of("f", Var.of("A")),
                 Fact.of(Struct.of("aa", Var.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"))),
                 Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())) to
@@ -99,6 +105,9 @@ internal object EquationUtils {
     /** A list of equations, that at last should be interpreted as Contradictions, exploring them in deep */
     internal val deepContradictionEquations by lazy {
         listOf(
+                LogicList.of(Atom.of("b"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
+                LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to LogicList.from(listOf(Atom.of("b")), last = Var.of("V")),
+                LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Integer.of(1), Var.anonymous()),
                 Struct.of("f", Atom.of("A")) to Struct.of("f", Atom.of("B")),
                 Fact.of(Struct.of("aa", Atom.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"), Var.of("A"))),
                 Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())) to
@@ -125,7 +134,6 @@ internal object EquationUtils {
     internal val mixedShuffledAllEquations by lazy {
         allIdentityEquations + assignmentEquationsShuffled + comparisonEquations + allContradictionEquations
     }
-
 
     /** Asserts that all given equations are Identities instances */
     internal fun <T : Equation<*, *>> assertAllIdentities(equationSequence: Sequence<T>) =
@@ -156,5 +164,13 @@ internal object EquationUtils {
             assertTrue("${equationSequence.toList()} at least one Assignment") {
                 equationSequence.any { it is Equation.Assignment<*, *> }
             }
+
+    /** A function to count in how many equations will be transformed a term */
+    internal fun countDeepGeneratedEquations(term: Term): Int = when (term) {
+        is Var -> 1
+        is Constant -> 1
+        is Struct -> term.argsSequence.sumBy { countDeepGeneratedEquations(it) }
+        else -> fail("Should never be there")
+    }
 
 }

@@ -9,6 +9,8 @@ import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyAssignment
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyContradiction
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertNoComparisons
+import it.unibo.tuprolog.unify.testutils.EquationUtils.assertNoIdentities
+import it.unibo.tuprolog.unify.testutils.EquationUtils.countDeepGeneratedEquations
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -71,6 +73,12 @@ internal class EquationTest {
     }
 
     @Test
+    fun equationOfShouldReturnCorrectNumberOfEquations() {
+        assertEquals(EquationUtils.mixedAllEquations.count(),
+                EquationUtils.mixedAllEquations.map { Equation.of(it) }.count())
+    }
+
+    @Test
     fun equationOfAutomaticallySwapsAssignments() {
         val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
                 EquationUtils.assignmentEquations.map { Equation.of(it) }
@@ -113,6 +121,14 @@ internal class EquationTest {
             assertAnyContradiction(eqSequence)
             assertNoComparisons(eqSequence)
         }
+    }
+
+    @Test
+    fun equationAllOfShouldReturnCorrectNumberOfEquations() {
+        val correct = EquationUtils.allIdentityEquations.sumBy { (lhs, _) -> countDeepGeneratedEquations(lhs) }
+        val toBeTested = EquationUtils.allIdentityEquations.flatMap { Equation.allOf(it).asIterable() }.count()
+
+        assertEquals(correct, toBeTested)
     }
 
     @Test
@@ -161,34 +177,30 @@ internal class EquationTest {
 
     @Test
     fun equationOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
-        EquationUtils.mixedAllEquations.map { (lhs, rhs) -> Equation.of(lhs, rhs, { _, _ -> false }) }.forEach {
-            assertFalse { it is Equation.Identity<*> }
-        }
+        assertNoIdentities(EquationUtils.mixedAllEquations.map { (lhs, rhs) ->
+            Equation.of(lhs, rhs, { _, _ -> false })
+        }.asSequence())
     }
 
     @Test
     fun equationOfPairUsesProvidedEqualityCheckerToTestIdentity() {
-        EquationUtils.mixedAllEquations.map { Equation.of(it) { _, _ -> false } }.forEach {
-            assertFalse { it is Equation.Identity<*> }
-        }
+        assertNoIdentities(EquationUtils.mixedAllEquations.map {
+            Equation.of(it) { _, _ -> false }
+        }.asSequence())
     }
 
     @Test
     fun equationAllOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
-        EquationUtils.mixedAllEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable() }
-                .flatten()
-                .forEach {
-                    assertFalse { it is Equation.Identity<*> }
-                }
+        assertNoIdentities(EquationUtils.mixedAllEquations.flatMap { (lhs, rhs) ->
+            Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
+        }.asSequence())
     }
 
     @Test
     fun equationAllOfPairUsesProvidedEqualityCheckerToTestIdentity() {
-        EquationUtils.mixedAllEquations.map { Equation.allOf(it) { _, _ -> false }.asIterable() }
-                .flatten()
-                .forEach {
-                    assertFalse { it is Equation.Identity<*> }
-                }
+        assertNoIdentities(EquationUtils.mixedAllEquations.flatMap {
+            Equation.allOf(it) { _, _ -> false }.asIterable()
+        }.asSequence())
     }
 
     @Test

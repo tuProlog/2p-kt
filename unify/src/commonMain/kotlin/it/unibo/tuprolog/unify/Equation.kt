@@ -67,29 +67,14 @@ sealed class Equation<out A : Term, out B : Term>(
         /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
         fun <A : Term, B : Term> allOf(lhs: A, rhs: B, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation<Term, Term>> =
                 when {
-                    lhs is Var && rhs is Var ->
-                        if (equalityChecker(lhs, rhs))
-                            sequenceOf(Identity(lhs, rhs))
-                        else
-                            sequenceOf(Assignment(lhs, rhs))
-                    lhs is Var ->
-                        sequenceOf(Assignment(lhs, rhs))
-                    rhs is Var ->
-                        sequenceOf(Assignment(rhs, lhs))
-                    lhs is Constant && rhs is Constant ->
-                        if (equalityChecker(lhs, rhs))
-                            sequenceOf(Identity(lhs, rhs))
-                        else
-                            sequenceOf(Contradiction(lhs, rhs))
-                    (lhs is Constant && rhs !is Constant) || (lhs !is Constant && rhs is Constant) ->
-                        sequenceOf(Contradiction(lhs, rhs))
-                    lhs is Struct && rhs is Struct ->
-                        if (lhs.arity == rhs.arity && lhs.functor == rhs.functor)
-                            lhs.argsSequence.zip(rhs.argsSequence).flatMap { allOf(it, equalityChecker) }
-                        else
-                            sequenceOf(Contradiction(lhs, rhs))
-                    else ->
-                        sequenceOf(Comparison(lhs, rhs))
+                    (lhs !is Constant && rhs !is Constant && lhs !is Var && rhs !is Var) &&
+                            lhs is Struct && rhs is Struct &&
+                            lhs.arity == rhs.arity &&
+                            lhs.functor == rhs.functor ->
+
+                        lhs.argsSequence.zip(rhs.argsSequence).flatMap { allOf(it, equalityChecker) }
+
+                    else -> sequenceOf(of(lhs, rhs, equalityChecker))
                 }
     }
 }
