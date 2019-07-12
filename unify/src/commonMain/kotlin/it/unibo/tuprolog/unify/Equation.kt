@@ -44,10 +44,6 @@ sealed class Equation<out A : Term, out B : Term>(
     /** Equation companion object */
     companion object {
 
-        /** Creates an Equation from given [Pair] */
-        fun <A : Term, B : Term> of(pair: Pair<A, B>, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation<Term, Term> =
-                of(pair.first, pair.second, equalityChecker)
-
         /** Creates an Equation with provided left-hand and right-hand sides */
         fun <A : Term, B : Term> of(lhs: A, rhs: B, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation<Term, Term> =
                 when {
@@ -59,6 +55,10 @@ sealed class Equation<out A : Term, out B : Term>(
                     lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) -> Contradiction(lhs, rhs)
                     else -> Comparison(lhs, rhs)
                 }
+
+        /** Creates an Equation from given [Pair] */
+        fun <A : Term, B : Term> of(pair: Pair<A, B>, equalityChecker: (Term, Term) -> Boolean = Term::equals): Equation<Term, Term> =
+                of(pair.first, pair.second, equalityChecker)
 
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         fun <A : Term, B : Term> allOf(pair: Pair<A, B>, equalityChecker: (Term, Term) -> Boolean = Term::equals): Sequence<Equation<Term, Term>> =
