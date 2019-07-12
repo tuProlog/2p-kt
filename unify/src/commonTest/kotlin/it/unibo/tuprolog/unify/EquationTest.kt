@@ -2,6 +2,7 @@ package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.testutils.EquationUtils
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
@@ -207,5 +208,45 @@ internal class EquationTest {
         val toBeTested = (aAtom `=` Var.of("A")).apply(Substitution.of("A", aAtom)) { _, _ -> false }
 
         assertFalse(toBeTested is Equation.Identity<*>)
+    }
+
+    @Test
+    fun equationToSubstitutionWorksAsExpected() {
+        val correct = EquationUtils.assignmentEquations.map { Substitution.of(it) }
+
+        @Suppress("UNCHECKED_CAST")
+        val toBeTested = EquationUtils.assignmentEquations
+                .map { Equation.of(it) as Equation<Var, Term> }
+                .map { it.toSubstitution() }
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun iterableOfEquationsToSubstitutionWorksAsExpected() {
+        val correct = Substitution.of(EquationUtils.assignmentEquations)
+
+        @Suppress("UNCHECKED_CAST")
+        val toBeTested = EquationUtils.assignmentEquations
+                .map { Equation.of(it) as Equation<Var, Term> }
+                .toSubstitution()
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun toEquationsWorksAsExpected() {
+        val correct = EquationUtils.assignmentEquations.map { Equation.of(it) }
+        val toBeTested = EquationUtils.assignmentEquations.map { Substitution.of(it) }.flatMap { it.toEquations() }
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun symbolicEqualsCreatesCorrectEquationInstances() {
+        val correct = EquationUtils.mixedAllEquations.map { Equation.of(it) }
+        val toBeTested = EquationUtils.mixedAllEquations.map { (lhs, rhs) -> lhs `=` rhs }
+
+        assertEquals(correct, toBeTested)
     }
 }
