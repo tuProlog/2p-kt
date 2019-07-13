@@ -87,6 +87,8 @@ internal object UnificationUtils {
                 listOf(xVar `=` yVar, yVar `=` aAtom) to
                         Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
                 listOf(aAtom `=` yVar, xVar `=` yVar) to
+                        Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+                listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` aAtom) to
                         Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom)
         )
     }
@@ -97,7 +99,8 @@ internal object UnificationUtils {
     internal val failSequenceOfUnification by lazy {
         mapOf(
                 listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple,
-                listOf(xVar `=` aAtom, bAtom `=` xVar, yVar `=` aAtom) to failedResultsTriple
+                listOf(xVar `=` aAtom, bAtom `=` xVar, yVar `=` aAtom) to failedResultsTriple,
+                listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` bAtom) to failedResultsTriple
         )
     }
 
@@ -121,6 +124,19 @@ internal object UnificationUtils {
     }
 
     /**
+     * Asserts that mgu computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     */
+    internal fun <T1 : Term, T2 : Term> assertMguCorrect(
+            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategy: Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equation, correctTriple) ->
+            assertMguCorrect(equation, correctTriple.first, unificationStrategy, occurCheck)
+        }
+    }
+
+    /**
      * Asserts that match computed with [unificationStrategy] over [equation] is equals to [expectedMatch], optionally enabling [occurCheck]
      */
     internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
@@ -139,6 +155,19 @@ internal object UnificationUtils {
     }
 
     /**
+     * Asserts that matching computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     */
+    internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
+            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
+            unificationStrategy: Unification,
+            occurCheck: Boolean
+    ) {
+        correctnessMap.forEach { (equation, correctTriple) ->
+            assertMatchCorrect(equation, correctTriple.second, unificationStrategy, occurCheck)
+        }
+    }
+
+    /**
      * Asserts that unified term computed with [unificationStrategy] over [equation] is equals to [expectedUnifiedTerm], optionally enabling [occurCheck]
      */
     internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
@@ -154,32 +183,6 @@ internal object UnificationUtils {
                 unificationStrategy.unify(equationLhs, equationRhs, occurCheck),
                 "$equationLhs=$equationRhs unify?"
         )
-    }
-
-    /**
-     * Asserts that mgu computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
-     */
-    internal fun <T1 : Term, T2 : Term> assertMguCorrect(
-            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
-        correctnessMap.forEach { (equation, correctTriple) ->
-            assertMguCorrect(equation, correctTriple.first, unificationStrategy, occurCheck)
-        }
-    }
-
-    /**
-     * Asserts that matching computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
-     */
-    internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
-            correctnessMap: Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
-        correctnessMap.forEach { (equation, correctTriple) ->
-            assertMatchCorrect(equation, correctTriple.second, unificationStrategy, occurCheck)
-        }
     }
 
     /**
