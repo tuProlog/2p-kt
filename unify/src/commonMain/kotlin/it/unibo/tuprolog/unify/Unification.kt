@@ -23,30 +23,28 @@ interface Unification {
 
     companion object {
 
+        /** The default unification strategy that uses plain equals to determine [Term]s identity */
         val default by lazy { naive() }
 
-        infix fun Term.mguWith(other: Term): Substitution? {
-            return default.mgu(this, other)
-        }
+        /** Computes the Most General Unifier, using [default] unification strategy */
+        infix fun Term.mguWith(other: Term): Substitution? = default.mgu(this, other)
 
-        infix fun Term.unifyWith(other: Term): Term? {
-            return default.unify(this, other)
-        }
+        /** Computes whether the two terms match, using [default] unification strategy */
+        infix fun Term.matches(other: Term): Boolean = default.match(this, other)
 
-        infix fun Term.matches(other: Term): Boolean {
-            return default.match(this, other)
-        }
+        /** Computes the unified term, using [default] unification strategy */
+        infix fun Term.unifyWith(other: Term): Term? = default.unify(this, other)
 
-        fun naive(context: Substitution = Substitution.empty()): Unification {
-            return object : AbstractUnificationStrategy(context) {
-                override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
-            }
-        }
+        /** Creates naive unification strategy, with given context, that checks [Term]s identity with it's [equals] */
+        fun naive(context: Substitution = Substitution.empty()): Unification =
+                object : AbstractUnificationStrategy(context) {
+                    override fun checkTermsEquality(first: Term, second: Term) = first == second
+                }
 
-        fun strict(context: Substitution = Substitution.empty()): Unification {
-            return object : AbstractUnificationStrategy(context) {
-                override fun checkTermsEquality(first: Term, second: Term): Boolean = first strictlyEquals second
-            }
-        }
+        /** Creates a strict unification strategy, with given context, that checks [Term]s identity with [Term.strictlyEquals] */
+        fun strict(context: Substitution = Substitution.empty()): Unification =
+                object : AbstractUnificationStrategy(context) {
+                    override fun checkTermsEquality(first: Term, second: Term) = first strictlyEquals second
+                }
     }
 }

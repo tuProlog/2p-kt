@@ -1,13 +1,11 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.testutils.UnificationUtils
 import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMatchCorrect
 import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMguCorrect
 import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertUnifiedTermCorrect
+import it.unibo.tuprolog.unify.testutils.UnificationUtils.forEquationSequence
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,14 +16,21 @@ import kotlin.test.assertEquals
  */
 internal class AbstractUnificationStrategyTest {
 
-    /** A concrete strategy to test abstract class behaviour */
-    private val myStrategy = object : AbstractUnificationStrategy() {
-        override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
+    /** A concrete strategy constructor */
+    private val myStrategyConstructor: (Substitution) -> Unification = {
+        object : AbstractUnificationStrategy(it) {
+            override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
+        }
     }
 
+    /** A concrete strategy to test abstract class behaviour */
+    private val myStrategy = myStrategyConstructor(Substitution.empty())
+
     @Test
-    fun contextShouldBeEmptyIfNotSpecified() {
-        assertEquals(Substitution.empty(), myStrategy.context)
+    fun contextPropertyWorksAsExpected() {
+        val mySubstitution = Substitution.of("A", Atom.of("a"))
+
+        assertEquals(mySubstitution, myStrategyConstructor(mySubstitution).context)
     }
 
     @Test
@@ -90,5 +95,29 @@ internal class AbstractUnificationStrategyTest {
         assertMguCorrect(correctnessMap, myStrategy, false)
         assertMatchCorrect(correctnessMap, myStrategy, false)
         assertUnifiedTermCorrect(correctnessMap, myStrategy, false)
+    }
+
+    @Test
+    fun sequenceOfEquationsSuccessUnification() {
+        forEquationSequence(::assertMguCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertMguCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, false)
+
+        forEquationSequence(::assertMatchCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertMatchCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, false)
+
+        forEquationSequence(::assertUnifiedTermCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertUnifiedTermCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor, false)
+    }
+
+    @Test
+    fun sequenceOfEquationsFailedUnification() {
+        forEquationSequence(::assertMguCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertMguCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, false)
+
+        forEquationSequence(::assertMatchCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertMatchCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, false)
+
+        forEquationSequence(::assertUnifiedTermCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, true)
+        forEquationSequence(::assertUnifiedTermCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor, false)
     }
 }
