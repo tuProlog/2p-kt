@@ -5,6 +5,7 @@ import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.unify.Unification
 import it.unibo.tuprolog.unify.`=`
 import kotlin.test.assertEquals
+import it.unibo.tuprolog.core.List.Companion as LogicList
 import kotlin.collections.List as KtList
 
 /**
@@ -75,7 +76,8 @@ internal object UnificationUtils {
      */
     internal val occurCheckFailedUnifications by lazy {
         mapOf(
-                (xVar `=` Struct.of("f", xVar)) to failedResultsTriple
+                (xVar `=` Struct.of("f", xVar)) to failedResultsTriple,
+                (xVar `=` LogicList.from(listOf(aAtom, bAtom), xVar)) to failedResultsTriple
         )
     }
 
