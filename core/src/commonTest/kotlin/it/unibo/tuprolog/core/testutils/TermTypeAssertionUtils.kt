@@ -41,11 +41,13 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Numeric)
         assertFalse(any is Struct)
         assertFalse(any is Clause)
         assertFalse(any is Cons)
+        assertFalse(any is Constant)
     }
 
     /**
@@ -53,8 +55,10 @@ internal object TermTypeAssertionUtils {
      */
     private fun commonNumericAssertions(any: Any) {
         assertTrue(any is Term)
+        assertTrue(any is Constant)
         assertTrue(any is Numeric)
 
+        assertTrue(any.isConstant)
         assertTrue(any.isNumber)
         assertTrue(any.isGround)
 
@@ -134,12 +138,14 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Numeric)
         assertFalse(any is Var)
         assertFalse(any is Clause)
         assertFalse(any is Cons)
         assertFalse(any is Tuple)
+        assertFalse(any is Constant)
     }
 
     /**
@@ -148,10 +154,12 @@ internal object TermTypeAssertionUtils {
     private fun commonAtomAssertions(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
+        assertTrue(any is Constant)
         assertTrue(any is Atom)
 
-        assertTrue(any.isAtom)
         assertTrue(any.isStruct)
+        assertTrue(any.isConstant)
+        assertTrue(any.isAtom)
         assertTrue(any.isGround)
 
         assertFalse(any.isNumber)
@@ -220,7 +228,6 @@ internal object TermTypeAssertionUtils {
      * Checks passed term to be a Tuple or fails otherwise
      */
     fun assertIsTuple(any: Any) {
-
         assertTrue(any is Term)
         assertTrue(any is Struct)
         assertTrue(any is Tuple)
@@ -245,12 +252,14 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isEmptySet)
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
         assertFalse(any is Clause)
         assertFalse(any is Cons)
         assertFalse(any is Var)
+        assertFalse(any is Constant)
     }
 
     /**
@@ -282,11 +291,13 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
         assertFalse(any is Clause)
         assertFalse(any is Var)
+        assertFalse(any is Constant)
     }
 
     /**
@@ -317,12 +328,14 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Numeric)
         assertFalse(any is LogicList)
         assertFalse(any is Clause)
         assertFalse(any is Cons)
         assertFalse(any is Var)
+        assertFalse(any is Constant)
     }
 
     /**
@@ -402,6 +415,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isConstant)
 
         assertFalse(any is Var)
         assertFalse(any is Numeric)
@@ -409,6 +423,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is LogicSet)
         assertFalse(any is LogicList)
         assertFalse(any is Atom)
+        assertFalse(any is Constant)
     }
 
     /**
