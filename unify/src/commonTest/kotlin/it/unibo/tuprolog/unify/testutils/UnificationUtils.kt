@@ -8,8 +8,19 @@ import kotlin.test.assertEquals
 import it.unibo.tuprolog.core.List.Companion as LogicList
 import kotlin.collections.List as KtList
 
+/** Represents the Unification Mgu function */
+private typealias MguStrategy<T1, T2> = (T1, T2) -> Substitution
+
+/** Represents the Unification Match function */
+private typealias MatchStrategy<T1, T2> = (T1, T2) -> Boolean
+
+/** Represents teh Unification Unify function */
+private typealias UnifyStrategy<T1, T2> = (T1, T2) -> Term?
+
+
 /** A typealias to simplify method signature writing */
 private typealias CorrectnessMap<T1, T2> = Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>
+
 
 /**
  * Utils singleton for testing [Unification]
@@ -111,106 +122,75 @@ internal object UnificationUtils {
 
 
     /**
-     * Asserts that mgu computed with [unificationStrategy] over [equation] is equals to [expectedMgu], optionally enabling [occurCheck]
+     * Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu]
      */
     internal fun <T1 : Term, T2 : Term> assertMguCorrect(
-            equation: Equation<T1, T2>,
-            expectedMgu: Substitution,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
+            equation: Equation<T1, T2>, expectedMgu: Substitution, mguStrategy: MguStrategy<T1, T2>) {
+
         val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedMgu,
-                unificationStrategy.mgu(equationLhs, equationRhs, occurCheck),
+                mguStrategy(equationLhs, equationRhs),
                 "$equationLhs=$equationRhs mgu?"
         )
     }
 
     /**
-     * Asserts that mgu computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     * Asserts that mgu computed with [mguStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
      */
-    internal fun <T1 : Term, T2 : Term> assertMguCorrect(
-            correctnessMap: CorrectnessMap<T1, T2>,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
-        correctnessMap.forEach { (equation, correctTriple) ->
-            assertMguCorrect(equation, correctTriple.first, unificationStrategy, occurCheck)
-        }
-    }
+    internal fun <T1 : Term, T2 : Term> assertMguCorrect(correctnessMap: CorrectnessMap<T1, T2>, mguStrategy: MguStrategy<T1, T2>) =
+            correctnessMap.forEach { (equation, correctTriple) -> assertMguCorrect(equation, correctTriple.first, mguStrategy) }
 
     /**
-     * Asserts that match computed with [unificationStrategy] over [equation] is equals to [expectedMatch], optionally enabling [occurCheck]
+     * Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch]
      */
     internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
-            equation: Equation<T1, T2>,
-            expectedMatch: Boolean,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
+            equation: Equation<T1, T2>, expectedMatch: Boolean, matchStrategy: MatchStrategy<T1, T2>) {
+
         val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedMatch,
-                unificationStrategy.match(equationLhs, equationRhs, occurCheck),
+                matchStrategy(equationLhs, equationRhs),
                 "$equationLhs=$equationRhs match?"
         )
     }
 
     /**
-     * Asserts that matching computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     * Asserts that matching computed with [matchStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
      */
-    internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
-            correctnessMap: CorrectnessMap<T1, T2>,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
-        correctnessMap.forEach { (equation, correctTriple) ->
-            assertMatchCorrect(equation, correctTriple.second, unificationStrategy, occurCheck)
-        }
-    }
+    internal fun <T1 : Term, T2 : Term> assertMatchCorrect(correctnessMap: CorrectnessMap<T1, T2>, matchStrategy: MatchStrategy<T1, T2>) =
+            correctnessMap.forEach { (equation, correctTriple) -> assertMatchCorrect(equation, correctTriple.second, matchStrategy) }
 
     /**
-     * Asserts that unified term computed with [unificationStrategy] over [equation] is equals to [expectedUnifiedTerm], optionally enabling [occurCheck]
+     * Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm]
      */
     internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
-            equation: Equation<T1, T2>,
-            expectedUnifiedTerm: Term?,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
+            equation: Equation<T1, T2>, expectedUnifiedTerm: Term?, unifyStrategy: UnifyStrategy<T1, T2>) {
+
         val (equationLhs, equationRhs) = equation.toPair()
 
         assertEquals(
                 expectedUnifiedTerm,
-                unificationStrategy.unify(equationLhs, equationRhs, occurCheck),
+                unifyStrategy(equationLhs, equationRhs),
                 "$equationLhs=$equationRhs unify?"
         )
     }
 
     /**
-     * Asserts that unified term computed with [unificationStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
+     * Asserts that unified term computed with [unifyStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
      */
-    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
-            correctnessMap: CorrectnessMap<T1, T2>,
-            unificationStrategy: Unification,
-            occurCheck: Boolean
-    ) {
-        correctnessMap.forEach { (equation, correctTriple) ->
-            assertUnifiedTermCorrect(equation, correctTriple.third, unificationStrategy, occurCheck)
-        }
-    }
+    internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(correctnessMap: CorrectnessMap<T1, T2>, unifyStrategy: UnifyStrategy<T1, T2>) =
+            correctnessMap.forEach { (equation, correctTriple) -> assertUnifiedTermCorrect(equation, correctTriple.third, unifyStrategy) }
 
 
     /**
-     * Utility function to calculate the unifier for more than one equation, passing created context among different unification
+     * Utility function to calculate the unifier for more than one equation, passing created context through different unification
      */
     private fun <T1 : Term, T2 : Term> multipleEquationMgu(
-            equations: KtList<Equation<T1, T2>>,
-            unificationStrategyConstructor: (Substitution) -> Unification
-    ): Substitution {
+            equations: KtList<Equation<T1, T2>>, unificationStrategyConstructor: (Substitution) -> Unification): Substitution {
+
         var context = Substitution.empty()
 
         // enrich the context with subsequent equations
@@ -225,19 +205,19 @@ internal object UnificationUtils {
      * Utility function to work with Sequence of Equations to be solved within same context;
      *
      * It calculates mgu for the equation list except for the last equation, piggy-backing the context created;
-     * the last equation is used to launch the [lastEquationAssertion] and verify if solving equations consecutively,
+     * the last equation is used to launch the [lastEquationAssertion] and verify at last if solving equations consecutively,
      * results in expected [correctnessMap] keys
      */
-    internal fun <T1 : Term, T2 : Term> forEquationSequence(
-            lastEquationAssertion: (CorrectnessMap<T1, T2>, Unification, Boolean) -> Unit,
+    internal fun <T1 : Term, T2 : Term, O> forEquationSequence(
+            lastEquationAssertion: (CorrectnessMap<T1, T2>, (T1, T2) -> O) -> Unit,
             correctnessMap: Map<KtList<Equation<T1, T2>>, Triple<Substitution, Boolean, Term?>>,
             unificationStrategyConstructor: (Substitution) -> Unification,
-            occurCheck: Boolean
+            unificationStrategyUse: (Substitution, T1, T2) -> O
     ) {
         correctnessMap.forEach { (equations, correctTriple) ->
             val context = multipleEquationMgu(equations.dropLast(1), unificationStrategyConstructor)
 
-            lastEquationAssertion(mapOf(equations.last() to correctTriple), unificationStrategyConstructor(context), occurCheck)
+            lastEquationAssertion(mapOf(equations.last() to correctTriple)) { term1, term2 -> unificationStrategyUse(context, term1, term2) }
         }
     }
 }

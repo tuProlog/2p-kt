@@ -6,6 +6,10 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import it.unibo.tuprolog.unify.Unification.Companion.unifyWith
+import it.unibo.tuprolog.unify.testutils.UnificationUtils
+import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMatchCorrect
+import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMguCorrect
+import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertUnifiedTermCorrect
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +21,6 @@ import kotlin.test.assertEquals
 internal class UnificationTest {
 
     private val aVar = Var.of("A")
-    private val aAtom = Atom.of("a")
     private val myExampleContext = Substitution.of("A", Atom.of("a"))
 
     @Test
@@ -65,16 +68,22 @@ internal class UnificationTest {
 
     @Test
     fun mguWithFunctionWorksAsExpected() {
-        assertEquals(Unification.default.mgu(aVar, aAtom), aVar mguWith aAtom)
+        val toTestUnification = UnificationUtils.successfulUnifications + UnificationUtils.failedUnifications
+
+        assertMguCorrect(toTestUnification) { term1, term2 -> term1 mguWith term2 }
     }
 
     @Test
     fun matchesFunctionWorksAsExpected() {
-        assertEquals(Unification.default.match(aVar, aAtom), aVar matches aAtom)
+        val toTestUnification = UnificationUtils.successfulUnifications + UnificationUtils.failedUnifications
+
+        assertMatchCorrect(toTestUnification) { term1, term2 -> term1 matches term2 }
     }
 
     @Test
     fun unifyWithFunctionWorksAsExpected() {
-        assertEquals(Unification.default.unify(aVar, aAtom), aVar unifyWith aAtom)
+        val toTestUnification = UnificationUtils.successfulUnifications + UnificationUtils.failedUnifications
+
+        assertUnifiedTermCorrect(toTestUnification) { term1, term2 -> term1 unifyWith term2 }
     }
 }

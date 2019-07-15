@@ -27,7 +27,7 @@ interface Unification {
         val default by lazy { naive() }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
-        infix fun Term.mguWith(other: Term): Substitution? = default.mgu(this, other)
+        infix fun Term.mguWith(other: Term): Substitution = default.mgu(this, other)
 
         /** Computes whether the two terms match, using [default] unification strategy */
         infix fun Term.matches(other: Term): Boolean = default.match(this, other)
