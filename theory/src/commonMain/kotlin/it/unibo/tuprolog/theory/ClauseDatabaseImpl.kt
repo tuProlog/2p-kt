@@ -1,21 +1,22 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
+import kotlin.collections.List as KtList
 
 class ClauseDatabaseImpl : ClauseDatabase {
 
+    override val rules: KtList<Rule> by lazy { super.rules }
+    override val directives: KtList<Directive> by lazy { super.directives }
+
     private val rete: ReteTree
 
-    override val clauses: List<Clause> by lazy {
+    override val clauses: KtList<Clause> by lazy {
         with(this) {
             return@lazy rete.clauses.toList()
         }
     }
 
-    constructor(clauses: List<Clause>) {
+    constructor(clauses: KtList<Clause>) {
         rete = ReteTree.of(clauses)
     }
 
