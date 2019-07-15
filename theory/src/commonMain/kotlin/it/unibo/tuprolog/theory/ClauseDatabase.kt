@@ -1,20 +1,20 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import kotlin.collections.List
+import kotlin.collections.List as KtList
 
-interface Theory : Iterable<Clause> {
+interface ClauseDatabase : Iterable<Clause> {
 
-    val rules: List<Rule>
+    val rules: KtList<Rule>
         get() = clauses.filterIsInstance<Rule>()
 
-    val directives: List<Directive>
+    val directives: KtList<Directive>
         get() = clauses.filterIsInstance<Directive>()
 
-    val clauses: List<Clause>
+    val clauses: KtList<Clause>
 
-    operator fun plus(theory: Theory): Theory
-    operator fun plus(clause: Clause): Theory {
+    operator fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase
+    operator fun plus(clause: Clause): ClauseDatabase {
         return assertZ(clause)
     }
 
@@ -24,15 +24,15 @@ interface Theory : Iterable<Clause> {
     operator fun get(clause: Clause): Sequence<Clause>
     operator fun get(head: Struct): Sequence<Clause>
 
-    fun assertA(clause: Clause): Theory
+    fun assertA(clause: Clause): ClauseDatabase
 
-    fun assertA(struct: Struct): Theory {
+    fun assertA(struct: Struct): ClauseDatabase {
         return assertA(Fact.of(struct))
     }
 
-    fun assertZ(clause: Clause): Theory
+    fun assertZ(clause: Clause): ClauseDatabase
 
-    fun assertZ(struct: Struct): Theory {
+    fun assertZ(struct: Struct): ClauseDatabase {
         return assertZ(Fact.of(struct))
     }
 
@@ -49,12 +49,12 @@ interface Theory : Iterable<Clause> {
     }
 
     companion object {
-        fun of(vararg clause: Clause): Theory {
-            return TheoryImpl(listOf(*clause))
+        fun of(vararg clause: Clause): ClauseDatabase {
+            return ClauseDatabaseImpl(listOf(*clause))
         }
 
-        fun of(clauses: List<Clause>): Theory {
-            return TheoryImpl(clauses)
+        fun of(clauses: KtList<Clause>): ClauseDatabase {
+            return ClauseDatabaseImpl(clauses)
         }
     }
 }

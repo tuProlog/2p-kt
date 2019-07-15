@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
-import kotlin.collections.List
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 
-class TheoryImpl : Theory {
+class ClauseDatabaseImpl : ClauseDatabase {
 
     private val rete: ReteTree
 
@@ -21,8 +23,8 @@ class TheoryImpl : Theory {
         rete = reteTree
     }
 
-    override fun plus(theory: Theory): Theory {
-        return TheoryImpl(clauses + theory.clauses)
+    override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase {
+        return ClauseDatabaseImpl(clauses + clauseDatabase.clauses)
     }
 
     override fun contains(clause: Clause): Boolean {
@@ -41,12 +43,12 @@ class TheoryImpl : Theory {
         return get(Rule.of(head, Var.anonymous()))
     }
 
-    override fun assertA(clause: Clause): Theory {
-        return TheoryImpl(rete.clone().apply { put(clause, before = true) })
+    override fun assertA(clause: Clause): ClauseDatabase {
+        return ClauseDatabaseImpl(rete.clone().apply { put(clause, before = true) })
     }
 
-    override fun assertZ(clause: Clause): Theory {
-        return TheoryImpl(rete.clone().apply { put(clause, before = false) })
+    override fun assertZ(clause: Clause): ClauseDatabase {
+        return ClauseDatabaseImpl(rete.clone().apply { put(clause, before = false) })
     }
 
     override fun retract(clause: Clause): RetractResult {
@@ -56,7 +58,7 @@ class TheoryImpl : Theory {
         return if (retracted.isEmpty()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(TheoryImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
         }
     }
 
@@ -67,7 +69,7 @@ class TheoryImpl : Theory {
         return if (retracted.isEmpty()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(TheoryImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
         }
     }
 
@@ -79,11 +81,11 @@ class TheoryImpl : Theory {
         return clauses.joinToString(".\n", "", ".\n")
     }
 
-    override fun assertA(struct: Struct): Theory {
+    override fun assertA(struct: Struct): ClauseDatabase {
         return super.assertA(struct)
     }
 
-    override fun assertZ(struct: Struct): Theory {
+    override fun assertZ(struct: Struct): ClauseDatabase {
         return super.assertZ(struct)
     }
 
