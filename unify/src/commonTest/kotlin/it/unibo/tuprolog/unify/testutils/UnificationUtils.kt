@@ -116,7 +116,9 @@ internal object UnificationUtils {
         mapOf(
                 listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple,
                 listOf(xVar `=` aAtom, bAtom `=` xVar, yVar `=` aAtom) to failedResultsTriple,
-                listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` bAtom) to failedResultsTriple
+                listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` bAtom) to failedResultsTriple,
+                listOf(xVar `=` Struct.of("f", yVar, xVar), yVar `=` Struct.of("f", xVar, yVar)) to failedResultsTriple,
+                listOf(xVar `=` Struct.of("f", yVar), yVar `=` Struct.of("f", xVar), aAtom `=` bAtom) to failedResultsTriple
         )
     }
 
