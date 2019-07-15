@@ -36,10 +36,9 @@ interface Tuple : Struct {
     override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
     override fun freshCopy(scope: Scope): Tuple =
-            if (isGround) {
-                this
-            } else {
-                scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+            when {
+                isGround -> this
+                else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
             }
 
     companion object {
