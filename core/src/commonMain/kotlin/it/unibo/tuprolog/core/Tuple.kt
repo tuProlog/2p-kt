@@ -9,7 +9,7 @@ interface Tuple : Struct {
         get() = true
 
     override val functor: String
-        get() = Cons.FUNCTOR
+        get() = FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(left, right)
@@ -36,10 +36,9 @@ interface Tuple : Struct {
     override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
     override fun freshCopy(scope: Scope): Tuple =
-            if (isGround) {
-                this
-            } else {
-                scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+            when {
+                isGround -> this
+                else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
             }
 
     companion object {

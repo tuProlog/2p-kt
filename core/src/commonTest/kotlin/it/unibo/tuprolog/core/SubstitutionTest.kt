@@ -86,6 +86,18 @@ internal class SubstitutionTest {
     }
 
     @Test
+    fun ofIterableVariableTermPairs() {
+        val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.map { Substitution.of(it) }
+
+        onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun ofEmptyIterable() {
+        assertEquals(Substitution.empty(), Substitution.of(emptyList()))
+    }
+
+    @Test
     fun ofSubstitutions() {
         val correct = Substitution.Unifier(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
         val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
