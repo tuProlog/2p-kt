@@ -31,7 +31,7 @@ internal object ConstantUtils {
     /**
      * Assert that apply called (in its variants) on a Constant is the Constant itself
      */
-    internal fun assertGroundToIsItself(constant: Constant) {
+    internal fun assertApplyingSubstitutionIsItself(constant: Constant) {
         assertEqualities(constant, constant.apply(Substitution.empty()))
         assertSame(constant, constant.apply(Substitution.empty()))
 
