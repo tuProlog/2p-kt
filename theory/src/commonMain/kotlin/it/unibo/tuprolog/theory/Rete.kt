@@ -355,7 +355,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
     protected abstract val header: String
 
     companion object {
-        fun of(clauses: List<Clause>): ReteTree {
+        fun of(clauses: Iterable<Clause>): ReteTree {
             return RootNode(mutableListOf()).apply {
                 for (clause in clauses) {
                     put(clause)
