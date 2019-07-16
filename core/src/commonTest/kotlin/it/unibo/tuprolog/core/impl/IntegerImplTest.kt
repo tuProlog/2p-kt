@@ -116,7 +116,7 @@ class IntegerImplTest {
     }
 
     @Test
-    fun groundToAlwaysReturnsTheInstanceItself() {
-        integerInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    fun applyAlwaysReturnsTheInstanceItself() {
+        integerInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
     }
 }

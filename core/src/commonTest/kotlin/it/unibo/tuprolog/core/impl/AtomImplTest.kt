@@ -101,7 +101,7 @@ internal class AtomImplTest {
     }
 
     @Test
-    fun groundToAlwaysReturnsTheInstanceItself() {
-        mixedAtomInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    fun applyAlwaysReturnsTheInstanceItself() {
+        mixedAtomInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
     }
 }
