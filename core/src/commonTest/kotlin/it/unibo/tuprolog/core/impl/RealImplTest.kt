@@ -109,7 +109,7 @@ internal class RealImplTest {
     }
 
     @Test
-    fun groundToAlwaysReturnsTheInstanceItself() {
-        realInstances.forEach(ConstantUtils::assertGroundToIsItself)
+    fun applyAlwaysReturnsTheInstanceItself() {
+        realInstances.forEach(ConstantUtils::assertApplyingSubstitutionIsItself)
     }
 }

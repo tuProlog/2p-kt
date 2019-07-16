@@ -264,7 +264,7 @@ internal class StructImplTest {
     }
 
     @Test
-    fun groundToReplacesVariableIfCorrectSubstitution() {
+    fun applyReplacesVariableIfCorrectSubstitution() {
         val myAtom = Atom.of("hello")
         val myVar = Var.of("X")
         val myStruct = Struct.of("f", myVar)
@@ -280,7 +280,7 @@ internal class StructImplTest {
     }
 
     @Test
-    fun groundToDoesntReplaceAnythingIfNoCorrespondingVariableFound() {
+    fun applyDoesntReplaceAnythingIfNoCorrespondingVariableFound() {
         val myAtom = Atom.of("hello")
         val myVar = Var.of("X")
         val myStruct = Struct.of("f", myVar)
