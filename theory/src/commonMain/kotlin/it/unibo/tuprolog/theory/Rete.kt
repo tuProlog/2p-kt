@@ -15,10 +15,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         override val header: String
             get() = "Root"
 
-        override fun canPut(clause: Clause): Boolean {
-            return true
-        }
-
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             if (limit == 0) {
                 return emptySequence()
@@ -88,12 +84,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         override val clauses: Sequence<Clause>
             get() = directives.asSequence()
 
-        override fun canPut(clause: Clause): Boolean {
-            return clause is Directive
-        }
-
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            return emptySequence()
+            TODO()
         }
 
         override fun put(clause: Clause, before: Boolean) {
@@ -143,10 +135,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         override val header: String
             get() = "Functor($functor)"
 
-        override fun canPut(clause: Clause): Boolean {
-            return clause is Rule && functor == clause.head.functor
-        }
-
         override fun put(clause: Clause, before: Boolean) {
             when {
                 clause is Rule && functor == clause.head.functor -> {
@@ -176,57 +164,20 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class ArityNode(val arity: Int, override val children: MutableMap<Term, ReteTree<*>> = mutableMapOf())
-        : ReteTree<Term>(children) {
+    data class ArityNode(val arity: Int, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
+        : ReteTree<Term?>(children) {
 
         override val header: String
             get() = "Arity($arity)"
 
-        override fun canPut(clause: Clause): Boolean {
-            return clause is Rule && arity == clause.head.arity
-        }
-
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            return when {
-                limit == 0 -> {
-                    emptySequence()
-                }
-                clause is Rule -> {
-                    if (clause.head in children) {
-                        children[clause.head]!!.remove(clause, limit)
-                    } else {
-                        children.entries
-                                .find { it.key.matches(clause.head) }
-                                ?.value
-                                ?.remove(clause, limit)
-                                ?: emptySequence()
-                    }
-                }
-                else -> emptySequence()
-            }
+            // remove should employ unification
+            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
         }
 
         override fun put(clause: Clause, before: Boolean) {
-            when (clause) {
-                is Rule -> {
-                    var child: ReteTree<*>? = if (clause.head in children) {
-                        children[clause.head]
-                    } else {
-                        children.entries.find { it.key.matches(clause.head) }?.value
-                    }
-
-                    if (child == null) {
-                        child = if (clause.head.arity > 0) {
-                            NoArgsNode()
-                        } else {
-                            ArgNode(0, clause.head)
-                        }
-                        children[clause.head] = child
-                    }
-
-                    child.put(clause, before)
-                }
-            }
+            // put should employ structurally equals
+            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
         }
 
         override fun clone(): ArityNode {
@@ -234,20 +185,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
-            return when (clause) {
-                is Rule -> {
-                    if (clause.head in children) {
-                        children[clause.head]!!.get(clause)
-                    } else {
-                        children.entries
-                                .find { it.key.matches(clause.head) }
-                                ?.value
-                                ?.get(clause)
-                                ?: emptySequence()
-                    }
-                }
-                else -> emptySequence()
-            }
+            // get should employ unification
+            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
         }
     }
 
@@ -256,14 +195,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
         override val header: String
             get() = "NoArguments"
-
-        override fun canPut(clause: Clause): Boolean {
-            return clause is Rule && clause.head.arity == 0
-        }
-
-        override fun canRemove(clause: Clause): Boolean {
-            return canPut(clause)
-        }
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             return when {
@@ -312,43 +243,23 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         override val header: String
             get() = "Argument($index, $term)"
 
-        override fun canPut(clause: Clause): Boolean {
-            return clause is Rule && term structurallyEquals clause.head[index]
-        }
-
-        override fun canRemove(clause: Clause): Boolean {
-            return term matches clause.head!![index]
-        }
-
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            if (limit == 0) {
-                return emptySequence()
-            }
-
-            TODO()
+            // remove should employ unification equals
+            TODO("remember that children are indexed by i-th argument")
         }
 
         override fun put(clause: Clause, before: Boolean) {
-
+            // put should employ structurallyEquals
+            TODO("remember that children are indexed by i-th argument")
         }
 
         override fun clone(): ArgNode {
-            TODO()
-//            return ArgNode(index, term, children.map { it.clone() }.toMutableList())
+            return ArgNode(index, term, children.clone({ it }, { it.clone() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
-            TODO()
-//            return when {
-//                clause is Rule && term structurallyEquals clause.head[index] -> {
-//                    if (index == clause.head.arity - 1) {
-//                        children.asSequence().filterIsInstance<RuleNode>().flatMap { it.get(clause) }
-//                    } else {
-//                        children.asSequence().filterIsInstance<ArgNode>().flatMap { it.get(clause) }
-//                    }
-//                }
-//                else -> emptySequence()
-//            }
+            // get should employ unification
+            TODO("remember that children are indexed by i-th argument")
         }
     }
 
@@ -359,10 +270,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
         override val clauses: Sequence<Clause>
             get() = rules.asSequence()
-
-        override fun canPut(clause: Clause): Boolean {
-            return true
-        }
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             if (limit == 0) {
@@ -410,9 +317,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    val size: Int
-        get() = children.size
-
     abstract fun clone(): ReteTree<K>
 
     internal abstract fun put(clause: Clause, before: Boolean = false)
@@ -421,12 +325,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
     internal fun removeAll(clause: Clause): Sequence<Clause> {
         return remove(clause, Int.MAX_VALUE)
-    }
-
-    protected abstract fun canPut(clause: Clause): Boolean
-
-    protected open fun canRemove(clause: Clause): Boolean {
-        return canPut(clause)
     }
 
     abstract fun get(clause: Clause): Sequence<Clause>
