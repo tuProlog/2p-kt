@@ -102,7 +102,7 @@ interface Struct : Term {
                 when {
                     operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
                     operator == Cons.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
-                    operator == Tuple.FUNCTOR -> Tuple.of(terms + if (terminal === null) listOf() else listOf(terminal))
+                    operator == Tuple.FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
                     terminal === null -> {
                         require(terms.size >= 2) { "Struct requires at least two terms to fold" }
                         terms.slice(0 until terms.lastIndex - 1)

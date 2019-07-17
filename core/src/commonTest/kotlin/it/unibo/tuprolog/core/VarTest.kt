@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.VarUtils
+import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.*
 
 /**
@@ -25,12 +27,7 @@ internal class VarTest {
         val correctInstances = VarUtils.mixedVars.map { VarImpl(it) }
         val toBeTested = VarUtils.mixedVars.map { Var.of(it) }
 
-        onCorrespondingItems(correctInstances, toBeTested) { correct, underTest ->
-            assertEquals(correct, underTest)
-            assertStructurallyEquals(correct, underTest)
-            assertNotStrictlyEquals(correct, underTest)
-            assertNotSame(correct, underTest)
-        }
+        onCorrespondingItems(correctInstances, toBeTested, ::assertDifferentVariableExceptForName)
     }
 
     @Test
@@ -38,9 +35,11 @@ internal class VarTest {
         val anonymousVarInstance = Var.anonymous()
         assertEquals("_", anonymousVarInstance.name)
 
-        assertEquals(Var.of("_"), anonymousVarInstance)
+        assertEqualities(anonymousVarInstance, anonymousVarInstance)
+
         assertStructurallyEquals(Var.of("_"), anonymousVarInstance)
         assertNotStrictlyEquals(Var.of("_"), anonymousVarInstance)
+        assertNotEquals(Var.of("_"), anonymousVarInstance)
         assertNotSame(Var.of("_"), anonymousVarInstance)
     }
 }

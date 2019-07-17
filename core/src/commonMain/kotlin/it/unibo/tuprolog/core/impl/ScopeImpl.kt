@@ -102,7 +102,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return true
     }
 
-    override fun hashCode(): Int {
-        return _variables.hashCode()
-    }
+    override fun hashCode(): Int = _variables.hashCode()
+
+    override fun toString(): String = variables.toString()
 }

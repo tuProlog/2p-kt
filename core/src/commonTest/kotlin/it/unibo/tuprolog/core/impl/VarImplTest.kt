@@ -83,7 +83,7 @@ internal class VarImplTest {
     @Test
     fun equalsWorksAsExpected() {
         onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstCreatedVar, secondCreatedVar ->
-            assertEquals(firstCreatedVar, secondCreatedVar)
+            assertNotEquals(firstCreatedVar, secondCreatedVar)
         }
     }
 
@@ -138,11 +138,11 @@ internal class VarImplTest {
         val incorrectNamedVarsToString = VarUtils.incorrectlyNamedVars.map { VarImpl(it).toString() }
 
         onCorrespondingItems(correctNamedVarsToString, VarUtils.correctlyNamedVars) { underTestToString, varName ->
-            assertEquals(varName, underTestToString)
+            assertTrue { underTestToString.matches("${varName}__[0-9]*".toRegex()) }
         }
 
         onCorrespondingItems(incorrectNamedVarsToString, VarUtils.incorrectlyNamedVars) { underTestToString, varName ->
-            assertEquals("¿$varName?", underTestToString)
+            assertTrue { underTestToString.matches("¿${varName}__[0-9]*\\?".toRegex()) }
         }
     }
 

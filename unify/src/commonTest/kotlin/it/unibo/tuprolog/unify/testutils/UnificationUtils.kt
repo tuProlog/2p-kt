@@ -31,8 +31,8 @@ internal object UnificationUtils {
 
     private val aAtom = Atom.of("a")
     private val bAtom = Atom.of("b")
-    private val xVar get() = Var.of("X") // this syntax will create a new var every time
-    private val yVar get() = Var.of("Y")
+    private val xVar = Var.of("X")
+    private val yVar = Var.of("Y")
 
     private val failedResultsTriple: Triple<Substitution, Boolean, Term?> =
             Triple(Substitution.failed(), false, null)
@@ -50,6 +50,8 @@ internal object UnificationUtils {
                 (xVar `=` xVar) to Triple(Substitution.empty(), true, xVar),
                 (aAtom `=` xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
                 (xVar `=` yVar) to Triple(Substitution.of(xVar, yVar), true, yVar),
+                with(Scope.empty()) { (xVar `=` varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
+                Var.anonymous().let { (xVar `=` it) to Triple(Substitution.of(xVar, it), true, it) },
                 (Struct.of("f", aAtom, xVar) `=` Struct.of("f", aAtom, bAtom)) to
                         Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
                 (Struct.of("f", xVar) `=` Struct.of("f", yVar)) to

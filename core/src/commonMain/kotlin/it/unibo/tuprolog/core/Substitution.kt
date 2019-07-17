@@ -63,7 +63,7 @@ sealed class Substitution : Map<Var, Term> {
         fun of(variable: Var, withTerm: Term): Substitution = of(variable to withTerm)
 
         /**
-         * Creates a Substitution of given Variable name with given Term
+         * Creates a Substitution from the new Variable, with given name, to given Term
          */
         fun of(variable: String, withTerm: Term): Substitution = of(Var.of(variable) to withTerm)
 

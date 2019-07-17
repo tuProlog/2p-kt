@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ScopeUtils
+import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
 import kotlin.test.*
 
 /**
@@ -44,9 +45,7 @@ internal class ScopeImplTest {
 
     @Test
     fun variablesCorrect() {
-        onCorrespondingItems(ScopeUtils.mixedScopes, mixedScopeInstances.map { it.variables }) { expected, actual ->
-            assertEquals(expected, actual)
-        }
+        onCorrespondingItems(ScopeUtils.mixedScopes, mixedScopeInstances.map { it.variables }, ::assertScopeCorrectContents)
     }
 
     @Test
@@ -83,5 +82,17 @@ internal class ScopeImplTest {
         mixedScopeInstances.forEach { aScope ->
             assertFailsWith<IllegalStateException> { aScope.where { throw IllegalStateException() } }
         }
+    }
+
+    @Test
+    fun scopeEqualsWorksAsExpected() {
+        val toTestEmptyScope = ScopeImpl(ScopeUtils.emptyScope)
+        val toTestNonEmptyScopes = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
+        val toTestMixedScopes = ScopeUtils.mixedScopes.map(::ScopeImpl)
+
+        assertEquals(emptyScopeInstance, toTestEmptyScope)
+
+        assertNotEquals(nonEmptyScopeInstances, toTestNonEmptyScopes)
+        assertNotEquals(mixedScopeInstances, toTestMixedScopes)
     }
 }
