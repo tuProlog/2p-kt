@@ -83,7 +83,7 @@ internal class VarImplTest {
     @Test
     fun equalsWorksAsExpected() {
         onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance) { firstCreatedVar, secondCreatedVar ->
-            assertEquals(firstCreatedVar, secondCreatedVar)
+            assertNotEquals(firstCreatedVar, secondCreatedVar)
         }
     }
 

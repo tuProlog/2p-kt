@@ -36,9 +36,9 @@ internal object VarUtils {
         assertEquals(expected.name, actual.name)
         assertNotEquals(expected.completeName, actual.completeName)
 
-        assertEquals(expected, actual)
         AssertionUtils.assertStructurallyEquals(expected, actual)
         AssertionUtils.assertNotStrictlyEquals(expected, actual)
+        assertNotEquals(expected, actual)
         assertNotSame(expected, actual)
     }
 
