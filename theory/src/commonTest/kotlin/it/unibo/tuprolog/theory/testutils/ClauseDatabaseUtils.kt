@@ -2,6 +2,7 @@ package it.unibo.tuprolog.theory.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.assertTrue
 
 /**
  * Utils singleton for testing [ClauseDatabase]
@@ -13,7 +14,7 @@ internal object ClauseDatabaseUtils {
     /** Contains well formed clauses that will need to be rewritten, because they contain variables in body top level */
     internal val toBeRewrittenWellFormedClauses by lazy {
         listOf(
-                Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")), // TODO re-enable this
+                Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")),
                 Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable"))
         )
     }
@@ -30,6 +31,13 @@ internal object ClauseDatabaseUtils {
         ) + toBeRewrittenWellFormedClauses
     }
 
+    /** Contains a pair which has in its first element half clauses from [wellFormedClauses] in the second element the other half */
+    internal val wellFormedClausesHelves by lazy {
+        wellFormedClauses.withIndex().partition { it.index % 2 == 0 }.run {
+            Pair(first.map { it.value }, second.map { it.value })
+        }
+    }
+
     /** Contains not well formed clauses (with [Numeric] values in body) */
     internal val notWellFormedClauses by lazy {
         listOf(
@@ -39,4 +47,15 @@ internal object ClauseDatabaseUtils {
         )
     }
 
+    /** Asserts that the two collections contain the same elements */
+    internal fun <E> assertContentsEquals(expected: Collection<E>, actual: Collection<E>) {
+        assertTrue(expected.containsAll(actual))
+        assertTrue(actual.containsAll(expected))
+    }
+
+    // TODO enable after solving Issue #29, deleting above method
+//    /** Asserts that the two collections contain the same elements */
+//    internal fun <E : Comparable<E>> assertContentsEquals(expected: Collection<E>, actual: Collection<E>) {
+//        assertEquals(expected.sorted(), actual.sorted())
+//    }
 }
