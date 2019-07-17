@@ -86,4 +86,16 @@ internal class ScopeImplTest {
             assertFailsWith<IllegalStateException> { aScope.where { throw IllegalStateException() } }
         }
     }
+
+    @Test
+    fun scopeEqualsWorksAsExpected() {
+        val toTestEmptyScope = ScopeImpl(ScopeUtils.emptyScope)
+        val toTestNonEmptyScopes = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)
+        val toTestMixedScopes = ScopeUtils.mixedScopes.map(::ScopeImpl)
+
+        assertEquals(emptyScopeInstance, toTestEmptyScope)
+
+        assertNotEquals(nonEmptyScopeInstances, toTestNonEmptyScopes)
+        assertNotEquals(mixedScopeInstances, toTestMixedScopes)
+    }
 }
