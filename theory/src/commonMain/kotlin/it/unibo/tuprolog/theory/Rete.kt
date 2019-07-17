@@ -7,9 +7,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 import kotlin.math.min
 
-sealed class ReteTree(open val children: MutableList<ReteTree>) {
+sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>>) {
 
-    data class RootNode(override val children: MutableList<ReteTree>) : ReteTree(children) {
+    data class RootNode(override val children: MutableMap<String?, ReteTree<*>>) : ReteTree<String?>(children) {
         override val header: String
             get() = "Root"
 
@@ -22,27 +22,38 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                 return emptySequence()
             }
 
-            return children.find { it.canRemove(clause) } ?.remove(clause, limit) ?: emptySequence()
+            val child: ReteTree<*>? = when (clause) {
+                is Directive -> {
+                    children[null]
+                }
+                is Rule -> {
+                    children[clause.head.functor]
+                }
+                else -> throw IllegalArgumentException()
+            }
+
+            return child?.remove(clause, limit) ?: emptySequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
                 is Directive -> {
-                    var child = children.find { it.canPut(clause) }
+                    var child: DirectiveNode? = children[null] as DirectiveNode?
 
                     if (child === null) {
                         child = DirectiveNode(mutableListOf())
-                        children.add(child)
+                        children[null] = child
                     }
 
                     child.put(clause, before)
                 }
                 is Rule -> {
-                    var child = children.find { it.canPut(clause) }
+                    val functor: String = clause.head.functor
+                    var child: FunctorNode? = children[functor] as FunctorNode?
 
                     if (child === null) {
                         child = FunctorNode(clause.head.functor, mutableListOf())
-                        children.add(child)
+                        children[functor] = child
                     }
                     child.put(clause, before)
                 }
@@ -50,18 +61,23 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         }
 
         override fun clone(): RootNode {
-            return RootNode(children.map { it.clone() }.toMutableList())
+            return RootNode(mutableMapOf(*children.map { it.key to it.value }.toList().toTypedArray()))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
             return when (clause) {
-                is Directive -> children.asSequence().filterIsInstance<DirectiveNode>().flatMap { it.get(clause) }
-                else -> children.asSequence().filterIsInstance<FunctorNode>().flatMap { it.get(clause) }
+                is Directive -> {
+                    children[null]?.get(clause) ?: emptySequence()
+                }
+                is Rule -> {
+                    children[clause.head.functor]?.get(clause) ?: emptySequence()
+                }
+                else -> emptySequence()
             }
         }
     }
 
-    data class DirectiveNode(val directives: MutableList<Directive>) : ReteTree(mutableListOf()) {
+    data class DirectiveNode(val directives: MutableList<Directive>) : ReteTree<Nothing>(mutableMapOf()) {
 
         override val header: String
             get() = "Directives"
@@ -106,7 +122,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
 
     }
 
-    data class FunctorNode(val functor: String, override val children: MutableList<ReteTree>) : ReteTree(children) {
+    data class FunctorNode(val functor: String, override val children: MutableMap<Int, ArityNode>) : ReteTree<Int>(children) {
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             if (limit == 0) {
@@ -151,7 +167,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         }
     }
 
-    data class ArityNode(val arity: Int, override val children: MutableList<ReteTree>) : ReteTree(children) {
+    data class ArityNode(val arity: Int, override val children: MutableMap<Term, ReteTree<*>>) : ReteTree<Term>(children) {
 
         override val header: String
             get() = "Arity($arity)"
