@@ -194,7 +194,11 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         override fun get(clause: Clause): Sequence<Clause> {
             return when {
                 clause is Rule && arity == clause.head.arity -> {
-                    children.asSequence().filterIsInstance<ArgNode>().flatMap { it.get(clause) }
+                    if (arity == 0) {
+                        children.asSequence().filterIsInstance<NoArgsNode>().flatMap { it.get(clause) }
+                    } else {
+                        children.asSequence().filterIsInstance<ArgNode>().flatMap { it.get(clause) }
+                    }
                 }
                 else -> emptySequence()
             }

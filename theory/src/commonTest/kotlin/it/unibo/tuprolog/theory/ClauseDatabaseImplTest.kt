@@ -7,6 +7,7 @@ import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils.assertContentsEqua
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [ClauseDatabaseImpl] and [ClauseDatabase]
@@ -65,25 +66,29 @@ internal class ClauseDatabaseImplTest {
         assertContentsEquals(clauseDatabase.clauses.toList(), toBeTested.clauses.toList())
     }
 
-//    @Test
-//    fun containsClause() {
-//        ClauseDatabaseUtils.wellFormedClauses.forEach {
-//            assertTrue { it in clauseDatabase }
-//        }
-//
+    @Test
+    fun containsClause() {
+        ClauseDatabaseUtils.wellFormedClauses.forEach {
+            assertTrue { it in clauseDatabase }
+        }
+
+        // TODO Issue #32 needs to be solved to get this working
 //        ClauseDatabaseUtils.notWellFormedClauses.forEach {
 //            assertFalse { it in clauseDatabase }
 //        }
-//    }
-//
-//    @Test
-//    fun containsStruct() {
+    }
+
+    @Test
+    fun containsStruct() {
+
+        // TODO Issue #34 need to be solved to get this working
 //        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
 //            assertTrue { it.head in clauseDatabase }
 //        }
-//
+
+        // TODO Issue #32 needs to be solved to get this working
 //        ClauseDatabaseUtils.notWellFormedClauses.filterIsInstance<Rule>().forEach {
 //            assertFalse { it.head in clauseDatabase }
 //        }
-//    }
+    }
 }
