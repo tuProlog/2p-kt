@@ -68,8 +68,8 @@ internal object AssertionUtils {
      * Asserts not equality of all types (normal, strict and structural) for two [Term]s
      */
     fun assertNoEqualities(expected: Term, actual: Term) {
-        assertNotStructurallyEquals(expected, actual)
         assertNotEquals(expected, actual)
+        assertNotStructurallyEquals(expected, actual)
         assertNotStrictlyEquals(expected, actual)
     }
 
