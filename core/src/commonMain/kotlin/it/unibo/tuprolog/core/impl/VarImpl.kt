@@ -40,5 +40,5 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         return true
     }
 
-    override fun hashCode(): Int = name.hashCode()
+    override fun hashCode(): Int = completeName.hashCode()
 }
