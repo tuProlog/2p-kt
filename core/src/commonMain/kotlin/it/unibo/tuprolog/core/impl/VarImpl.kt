@@ -27,7 +27,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
 
     override fun freshCopy(): Var = VarImpl(name)
 
-    override fun toString(): String = if (isNameWellFormed) name else "¿$name?"
+    override fun toString(): String = if (isNameWellFormed) completeName else "¿$completeName?"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,10 +35,10 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
 
         other as VarImpl
 
-        if (name != other.name) return false
+        if (completeName != other.completeName) return false
 
         return true
     }
 
-    override fun hashCode(): Int = name.hashCode()
+    override fun hashCode(): Int = completeName.hashCode()
 }

@@ -169,8 +169,10 @@ internal class EquationTest {
 
     @Test
     fun swapCannotInvertAssignments() {
-        val correct = EquationUtils.assignmentEquations.map { Equation.of(it) }
-        val toBeTested = EquationUtils.assignmentEquations.map { Equation.of(it) }.map(Equation<*, *>::swap)
+        val nonVarToVarAssignments = EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVariable && rhs.isVariable }
+
+        val correct = nonVarToVarAssignments.map { Equation.of(it) }
+        val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation<*, *>::swap)
 
         assertEquals(correct, toBeTested)
     }
@@ -206,12 +208,19 @@ internal class EquationTest {
     @Test
     fun applyWorksAsExpected() {
         val aAtom = Atom.of("a")
+        val myVar = Var.of("A")
 
-        val correct = aAtom `=` aAtom
-        val toBeTested = (aAtom `=` Var.of("A")).apply(Substitution.of("A", aAtom))
+        val correct1 = aAtom `=` aAtom
+        val toBeTested1 = (aAtom `=` myVar).apply(Substitution.of(myVar, aAtom))
 
-        assertEquals(correct, toBeTested)
-        assertTrue(toBeTested is Equation.Identity<*>)
+        assertEquals(correct1, toBeTested1)
+        assertTrue(toBeTested1 is Equation.Identity<*>)
+
+        val correct2 = (aAtom `=` myVar)
+        val toBeTested2 = (aAtom `=` myVar).apply(Substitution.of(Var.of("A"), aAtom))
+
+        assertEquals(correct2, toBeTested2)
+        assertTrue(toBeTested2 is Equation.Assignment<*, *>)
     }
 
     @Test

@@ -28,7 +28,8 @@ internal object SubstitutionUtils {
                 mapOf(Var.of("A") to Struct.of("f", Atom.of("ciao")),
                         Var.of("B") to Empty.list()),
                 mapOf(Var.of("Var") to Struct.of("f", Var.of("A"), Var.of("B"))),
-                mapOf(Var.of("Z") to Struct.of("f", Var.of("Z")))
+                mapOf(Var.of("Z") to Struct.of("f", Var.of("Z"))),
+                mapOf(Var.anonymous() to Var.of("A"))
         )
     }
 
