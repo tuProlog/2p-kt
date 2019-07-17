@@ -13,7 +13,7 @@ internal object ClauseDatabaseUtils {
     /** Contains well formed clauses that will need to be rewritten, because they contain variables in body top level */
     internal val toBeRewrittenWellFormedClauses by lazy {
         listOf(
-//                Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")), TODO re-enable this
+                Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")), // TODO re-enable this
                 Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable"))
         )
     }

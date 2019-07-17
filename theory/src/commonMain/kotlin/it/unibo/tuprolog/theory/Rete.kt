@@ -174,8 +174,13 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                     var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
-                        child = ArgNode(0, clause.head[0], mutableListOf())
-                        children.add(child)
+                        if (clause.head.arity > 0) {
+                            child = ArgNode(0, clause.head[0], mutableListOf())
+                            children.add(child)
+                        } else {
+                            child = NoArgsNode(mutableListOf())
+                            children.add(child)
+                        }
                     }
                     child.put(clause, before)
                 }
@@ -196,13 +201,62 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         }
     }
 
+    data class NoArgsNode(override val children: MutableList<ReteTree>) : ReteTree(children) {
+
+        override val header: String
+            get() = "NoArguments"
+
+        override fun canPut(clause: Clause): Boolean {
+            return clause is Rule && clause.head.arity == 0
+        }
+
+        override fun canRemove(clause: Clause): Boolean {
+            return canPut(clause)
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            return children.find { it.canRemove(clause) }?.remove(clause, limit) ?: emptySequence()
+        }
+
+        override fun put(clause: Clause, before: Boolean) {
+            when (clause) {
+                is Rule -> {
+                    var child = children.find { it.canPut(clause) }
+
+                    if (child === null) {
+                        child = RuleNode(mutableListOf())
+                        children.add(child)
+                    }
+                    child.put(clause, before)
+                }
+            }
+        }
+
+        override fun clone(): NoArgsNode {
+            return NoArgsNode(children.map { it.clone() }.toMutableList())
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> {
+            return when {
+                clause is Rule && clause.head.arity == 0 -> {
+                    children.asSequence().filterIsInstance<RuleNode>().flatMap { it.get(clause) }
+                }
+                else -> emptySequence()
+            }
+        }
+    }
+
     data class ArgNode(val index: Int, val term: Term, override val children: MutableList<ReteTree>) : ReteTree(children) {
 
         override val header: String
             get() = "Argument($index, $term)"
 
         override fun canPut(clause: Clause): Boolean {
-            return term structurallyEquals clause.head!![index]
+            return clause is Rule && term structurallyEquals clause.head[index]
         }
 
         override fun canRemove(clause: Clause): Boolean {
@@ -223,10 +277,10 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
                     var child = children.find { it.canPut(clause) }
 
                     if (child === null) {
-                        if (index < clause.head.arity - 1) {
-                            child = ArgNode(index + 1, clause.head[index + 1], mutableListOf())
+                        child = if (index < clause.head.arity - 1) {
+                            ArgNode(index + 1, clause.head[index + 1], mutableListOf())
                         } else {
-                            child = RuleNode(mutableListOf())
+                            RuleNode(mutableListOf())
                         }
                         children.add(child)
                     }
@@ -311,6 +365,7 @@ sealed class ReteTree(open val children: MutableList<ReteTree>) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : ReteTree> getAs(i: Int): T {
         return children[i] as T
     }
