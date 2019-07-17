@@ -35,7 +35,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
 
         other as VarImpl
 
-        if (name != other.name) return false
+        if (completeName != other.completeName) return false
 
         return true
     }
