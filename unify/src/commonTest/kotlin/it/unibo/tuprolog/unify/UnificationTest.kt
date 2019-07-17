@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unification.Companion.matches
@@ -25,7 +26,9 @@ internal class UnificationTest {
 
     @Test
     fun naiveCreatesAUnificationStrategyThatUsesEqualsToCheckTermIdentity() {
-        assertEquals(Substitution.empty(), Unification.naive().mgu(Var.of("A"), Var.of("A")))
+        with(Scope.empty()) {
+            assertEquals(Substitution.of(varOf("A"), aVar), Unification.naive().mgu(varOf("A"), aVar))
+        }
         assertEquals(Substitution.empty(), Unification.naive().mgu(aVar, aVar))
     }
 
@@ -62,7 +65,9 @@ internal class UnificationTest {
 
     @Test
     fun defaultUnificationStrategyUsesEqualsToCheckTermsIdentity() {
-        assertEquals(Substitution.empty(), Unification.default.mgu(Var.of("A"), Var.of("A")))
+        with(Scope.empty()) {
+            assertEquals(Substitution.of(varOf("A"), aVar), Unification.default.mgu(varOf("A"), aVar))
+        }
         assertEquals(Substitution.empty(), Unification.default.mgu(aVar, aVar))
     }
 
