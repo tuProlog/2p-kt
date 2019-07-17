@@ -80,11 +80,9 @@ internal class ClauseDatabaseImplTest {
 
     @Test
     fun containsStruct() {
-
-        // TODO Issue #34 need to be solved to get this working
-//        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-//            assertTrue { it.head in clauseDatabase }
-//        }
+        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
+            assertTrue { it.head in clauseDatabase }
+        }
 
         // TODO Issue #32 needs to be solved to get this working
 //        ClauseDatabaseUtils.notWellFormedClauses.filterIsInstance<Rule>().forEach {
