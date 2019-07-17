@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ScopeUtils
+import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.*
 
 /**
@@ -44,8 +45,9 @@ internal class ScopeImplTest {
 
     @Test
     fun variablesCorrect() {
-        onCorrespondingItems(ScopeUtils.mixedScopes, mixedScopeInstances.map { it.variables }) { expected, actual ->
-            assertEquals(expected, actual)
+        onCorrespondingItems(ScopeUtils.mixedScopes, mixedScopeInstances.map { it.variables }) { expectedMap, actualMap ->
+            assertEquals(expectedMap.keys, actualMap.keys)
+            onCorrespondingItems(expectedMap.values, actualMap.values, ::assertDifferentVariableExceptForName)
         }
     }
 
