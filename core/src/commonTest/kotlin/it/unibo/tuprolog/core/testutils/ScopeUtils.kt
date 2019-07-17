@@ -2,7 +2,9 @@ package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ScopeUtils.nonEmptyScopes
+import kotlin.test.assertEquals
 
 /**
  * Utils singleton for testing [Scope]
@@ -47,4 +49,9 @@ internal object ScopeUtils {
     internal val mixedScopes
         get() = nonEmptyScopes + emptyScope
 
+    /** Asserts that two Scope Maps have same keys (Var names) and, on the value side, only Var name in common */
+    internal fun assertScopeCorrectContents(expected: Map<String, Var>, actual: Map<String, Var>) {
+        assertEquals(expected.keys, actual.keys)
+        onCorrespondingItems(expected.values, actual.values, VarUtils::assertDifferentVariableExceptForName)
+    }
 }
