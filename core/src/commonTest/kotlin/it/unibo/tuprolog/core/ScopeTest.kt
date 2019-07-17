@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.ScopeImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ScopeUtils
+import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -25,21 +26,26 @@ internal class ScopeTest {
     }
 
     @Test
-    fun scopeOfVarargVariablesWorksAsExpected() {
-        val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(*it.toTypedArray()) }
+    @Suppress("RemoveRedundantSpreadOperator")
+    fun scopeOfNoVarargReturnsEmptyScope() {
+        assertEquals(Scope.empty(), Scope.of(*emptyArray<String>()))
+        assertEquals(Scope.empty(), Scope.of(*emptyArray<String>(), lambda = {}))
+        assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>()))
+        assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>(), lambda = {}))
+    }
 
-        onCorrespondingItems(correctNonEmptyScopeInstances, toBeTested) { expected, actual ->
-            assertEquals(expected, actual)
-        }
+    @Test
+    fun scopeOfVarargVariablesWorksAsExpected() {
+        val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
+
+        onCorrespondingItems(correctNonEmptyScopeInstances.map { it.variables }, toBeTested, ::assertScopeCorrectContents)
     }
 
     @Test
     fun scopeOfVarargStringsWorksAsExpected() {
-        val toBeTested = ScopeUtils.nonEmptyScopeVarNames.map { Scope.of(*it.toTypedArray()) }
+        val toBeTested = ScopeUtils.nonEmptyScopeVarNames.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
 
-        onCorrespondingItems(correctNonEmptyScopeInstances, toBeTested) { expected, actual ->
-            assertEquals(expected, actual)
-        }
+        onCorrespondingItems(correctNonEmptyScopeInstances.map { it.variables }, toBeTested, ::assertScopeCorrectContents)
     }
 
     @Test

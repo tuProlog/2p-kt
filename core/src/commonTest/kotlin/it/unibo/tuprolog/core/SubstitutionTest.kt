@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
+import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.*
 
 /**
@@ -73,7 +74,10 @@ internal class SubstitutionTest {
         val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
                 .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
 
-        onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+        onCorrespondingItems(correct, toBeTested) { expectedMap, actualMap ->
+            onCorrespondingItems(expectedMap.keys, actualMap.keys, ::assertDifferentVariableExceptForName)
+            assertEquals(expectedMap.values.toList(), actualMap.values.toList())
+        }
     }
 
     @Test

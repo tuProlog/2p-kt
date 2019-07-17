@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.*
-import kotlin.test.assertEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import it.unibo.tuprolog.core.Set as LogicSet
@@ -16,14 +18,14 @@ internal object StructUtils {
     /**
      * Asserts that passed term with variables, when copied, renews variables contained;
      *
-     * This means that copied Term will be structurallyEquals to the original, but not the same and not strictlyEquals
+     * This means that copied Term will be structurallyEquals to the original, but not equals, not the same and not strictlyEquals
      */
     internal fun <T : Term> assertFreshCopyRenewsContainedVariables(withVariables: T) {
         val copy = withVariables.freshCopy()
 
-        assertEquals(withVariables, copy)
-        AssertionUtils.assertStructurallyEquals(withVariables, copy)
-        AssertionUtils.assertNotStrictlyEquals(withVariables, copy)
+        assertStructurallyEquals(withVariables, copy)
+        assertNotStrictlyEquals(withVariables, copy)
+        assertNotEquals(withVariables, copy)
         assertNotSame(withVariables, copy)
     }
 
@@ -37,8 +39,8 @@ internal object StructUtils {
         val firstVarBefore = termWithSameVarName.args[0]
         val secondVarBefore = termWithSameVarName.args[1]
 
-        AssertionUtils.assertStructurallyEquals(firstVarBefore, secondVarBefore)
-        AssertionUtils.assertNotStrictlyEquals(firstVarBefore, secondVarBefore)
+        assertStructurallyEquals(firstVarBefore, secondVarBefore)
+        assertNotStrictlyEquals(firstVarBefore, secondVarBefore)
         assertNotSame(firstVarBefore, secondVarBefore)
 
         val consCopied = termWithSameVarName.freshCopy()

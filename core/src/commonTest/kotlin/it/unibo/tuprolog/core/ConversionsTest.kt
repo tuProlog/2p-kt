@@ -2,10 +2,9 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 /**
  * Test class for conversions to [Term]
@@ -103,10 +102,7 @@ internal class ConversionsTest {
         val correct = VarUtils.correctlyNamedVars.map { Var.of(it) }
         val toBeTested = VarUtils.correctlyNamedVars.map { it.asVar() }
 
-        onCorrespondingItems(correct, toBeTested) { correctVar, underTest ->
-            assertEquals(correctVar, underTest)
-            assertStructurallyEquals(correctVar, underTest)
-        }
+        onCorrespondingItems(correct, toBeTested, ::assertDifferentVariableExceptForName)
     }
 
     @Test
@@ -117,12 +113,9 @@ internal class ConversionsTest {
         onCorrespondingItems(correctAtoms, toBeTestedAtoms, ::assertEqualities)
 
         val correctVars = VarUtils.correctlyNamedVars.map { Var.of(it) }
-        val toBeTestedVars = VarUtils.correctlyNamedVars.map { it.toTerm() }
+        val toBeTestedVars = VarUtils.correctlyNamedVars.map { it.toTerm() as Var }
 
-        onCorrespondingItems(correctVars, toBeTestedVars) { correctVar, underTest ->
-            assertEquals(correctVar, underTest)
-            assertStructurallyEquals(correctVar, underTest)
-        }
+        onCorrespondingItems(correctVars, toBeTestedVars, ::assertDifferentVariableExceptForName)
     }
 
     @Test

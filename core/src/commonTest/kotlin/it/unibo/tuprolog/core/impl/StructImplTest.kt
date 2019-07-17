@@ -280,6 +280,20 @@ internal class StructImplTest {
     }
 
     @Test
+    fun applyDoesntReplaceAnythingIfNotExactlySameVariableFound() {
+        val myAtom = Atom.of("hello")
+        val myStruct = Struct.of("f", Var.of("X"))
+
+        val toBeTested1 = myStruct.apply(Substitution.of(Var.of("X") to myAtom))
+        val toBeTested2 = myStruct.apply(Substitution.of(Var.of("X") to myAtom), Substitution.empty())
+        val toBeTested3 = myStruct[Substitution.of(Var.of("X") to myAtom)]
+
+        assertEqualities(myStruct, toBeTested1)
+        assertEqualities(myStruct, toBeTested2)
+        assertEqualities(myStruct, toBeTested3)
+    }
+
+    @Test
     fun applyDoesntReplaceAnythingIfNoCorrespondingVariableFound() {
         val myAtom = Atom.of("hello")
         val myVar = Var.of("X")
