@@ -25,23 +25,30 @@ internal object EquationUtils {
                 Atom.of("X") to Atom.of("X"),
                 Real.of("1.5") to Real.of("1.5"),
                 Integer.of(0) to Integer.of(0),
-                Var.anonymous() to Var.anonymous(),
-                Var.of("X") to Var.of("X")
+                Var.anonymous().let { it to it },
+                with(Scope.empty()) { varOf("X") to varOf("X") }
         )
     }
 
     /** A list of equations, that at last should be interpreted as Identities, exploring them in deep */
     internal val deepIdentityEquations by lazy {
         listOf(
-                LogicList.of(Atom.of("a"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
-                LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to LogicList.from(listOf(Atom.of("a")), last = Var.of("V")),
-                LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Real.of(1.5), Var.anonymous()),
-                Struct.of("f", Var.of("A")) to Struct.of("f", Var.of("A")),
-                Fact.of(Struct.of("aa", Var.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"))),
-                Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())) to
-                        Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())),
-                Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail()) to
-                        Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail())
+                with(Scope.empty()) { listOf(atomOf("a"), varOf("V")) to listOf(atomOf("a"), varOf("V")) },
+                with(Scope.empty()) {
+                    listFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
+                            listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
+                },
+                Var.anonymous().let { anonymous -> setOf(numOf(1.5), anonymous) to setOf(numOf(1.5), anonymous) },
+                with(Scope.empty()) { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
+                with(Scope.empty()) { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
+                with(Scope.empty()) {
+                    directiveOf(atomOf("here"), structOf("f", Truth.`true`())) to
+                            directiveOf(atomOf("here"), structOf("f", Truth.`true`()))
+                },
+                with(Scope.empty()) {
+                    ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail()) to
+                            ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail())
+                }
         )
     }
 
@@ -57,19 +64,21 @@ internal object EquationUtils {
                 Var.of("X") to Empty.set(),
                 Var.of("X") to Atom.of("a"),
                 Var.of("X") to Atom.of("X"),
+                Var.of("X") to Var.of("X"),
                 Var.anonymous() to Real.of("1.5"),
                 Var.anonymous() to Integer.of(0),
                 Var.anonymous() to Struct.of("f", Var.of("A")),
                 Var.anonymous() to Fact.of(Struct.of("aa", Var.of("A"))),
                 Var.anonymous() to Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())),
-                Var.anonymous() to Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail())
+                Var.anonymous() to Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail()),
+                Var.anonymous() to Var.anonymous()
         )
     }
 
     /** The same equations present in [assignmentEquations] but equations on even positions are swapped: Term to Var */
     internal val assignmentEquationsShuffled by lazy {
         assignmentEquations.mapIndexed { i, (variable, term) ->
-            if (i % 2 == 0)
+            if (i % 2 == 0 || term.isVariable) // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
                 variable to term
             else
                 term to variable
