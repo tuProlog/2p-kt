@@ -47,6 +47,11 @@ internal class FactImplTest {
     }
 
     @Test
+    fun isWellFormedAlwaysTrue() {
+        mixedFactInstances.forEach { assertTrue { it.isWellFormed } }
+    }
+
+    @Test
     fun testIsPropertiesAndTypes() {
         mixedFactInstances.forEach(TermTypeAssertionUtils::assertIsFact)
     }

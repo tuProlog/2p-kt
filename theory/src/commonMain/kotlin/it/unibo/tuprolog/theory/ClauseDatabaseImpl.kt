@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.*
 import kotlin.collections.List as KtList
 
-internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteTree) : ClauseDatabase {
+internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteTree<*>) : ClauseDatabase {
 
     /** Construct a Clause database from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses))

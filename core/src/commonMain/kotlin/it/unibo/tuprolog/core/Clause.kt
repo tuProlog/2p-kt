@@ -9,6 +9,15 @@ interface Clause : Struct {
 
     val body: Term
 
+    /**
+     * Checks whether this Clause is wellFormed
+     *
+     * A Clause is said to be "well formed" if:
+     * - its head isn't a Numeric or a Var
+     * - its body isn't a Numeric and doesn't contain a Numeric in arguments place, for notable Structs with functors ','/2, ';'/2 and '->'/2
+     */
+    val isWellFormed: Boolean
+
     override val args: Array<Term>
         get() = (if (head === null) arrayOf(body) else arrayOf(head!!, body))
 
