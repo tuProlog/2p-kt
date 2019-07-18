@@ -94,7 +94,7 @@ internal class ConsImplTest {
 
     @Test
     fun toStringWorksAsExpected() {
-        val consInstanceStringRepr = listOf("[H__0]", "[H__1, T__2]", "[bigList, 4, 1.5]", "[Head__3 | Tail__4]")
+        val consInstanceStringRepr = listOf("[H_0]", "[H_1, T_2]", "[bigList, 4, 1.5]", "[Head_3 | Tail_4]")
 
         onCorrespondingItems(consInstanceStringRepr, consInstances.map { it.toString() }) { expectedString, actualString ->
             assertEquals(expectedString, actualString)

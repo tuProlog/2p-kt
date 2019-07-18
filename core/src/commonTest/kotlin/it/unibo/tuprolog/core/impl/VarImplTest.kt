@@ -138,11 +138,11 @@ internal class VarImplTest {
         val incorrectNamedVarsToString = VarUtils.incorrectlyNamedVars.map { VarImpl(it).toString() }
 
         onCorrespondingItems(correctNamedVarsToString, VarUtils.correctlyNamedVars) { underTestToString, varName ->
-            assertTrue { underTestToString.matches("${varName}__[0-9]*".toRegex()) }
+            assertTrue { underTestToString.matches("${varName}_[0-9]*".toRegex()) }
         }
 
         onCorrespondingItems(incorrectNamedVarsToString, VarUtils.incorrectlyNamedVars) { underTestToString, varName ->
-            assertTrue { underTestToString.matches("¿${varName}__[0-9]*\\?".toRegex()) }
+            assertTrue { underTestToString.matches("¿${varName}_[0-9]*\\?".toRegex()) }
         }
     }
 
