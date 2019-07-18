@@ -1,11 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
 internal abstract class ClauseImpl(override val head: Struct?, override val body: Term)
     : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {
+
+    override val isWellFormed: Boolean by lazy { clauseBodyWellFormedCheck(body) }
 
     override val functor: String
         get() = super<Clause>.functor
@@ -19,5 +22,21 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
                 else -> "$head $functor $body"
             }
 
-}
+    companion object {
 
+        /** Contains notable functor in determining if a Clause is well-formed */
+        private val notableFunctorsForClause = listOf(",", ";", "->")
+
+        /** Checks that a Term respects [isWellFormed] described specification */
+        private fun clauseBodyWellFormedCheck(term: Term): Boolean =
+                when (term) {
+                    is Numeric -> false
+                    is Struct -> when {
+                        term.functor in notableFunctorsForClause && term.arity == 2 ->
+                            term.argsSequence.all(::clauseBodyWellFormedCheck)
+                        else -> true
+                    }
+                    else -> true
+                }
+    }
+}
