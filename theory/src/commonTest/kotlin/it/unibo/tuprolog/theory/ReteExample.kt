@@ -12,10 +12,13 @@ fun main() {
             Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             Rule.of(Struct.of("f", Atom.of("a")), Atom.of("do_something")),
             Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X"))), Atom.of("do_something_else")),
-            Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous()))),
-            Rule.of(Struct.of("f",Atom.of("a")),Var.of("Variable"))
+            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+            with(Scope.empty()) {
+                ruleOf(structOf("g", structOf("c", varOf("A"), varOf("B"))), varOf("A"))
+            },
+            Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous())))
     )
     println(theory.toString(true))
 
-//    println(theory.get(Clause.of(Struct.of("f"))))
+    println(theory.get(Clause.of(Struct.of("f", Var.anonymous()), Var.anonymous())).toList())
 }

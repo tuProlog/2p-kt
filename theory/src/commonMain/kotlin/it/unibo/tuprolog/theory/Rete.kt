@@ -174,7 +174,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         override fun get(clause: Clause): Sequence<Clause> {
             return when (clause) {
                 is Rule -> {
-                    children[clause.arity]?.get(clause) ?: emptySequence()
+                    children[clause.head.arity]?.get(clause) ?: emptySequence()
                 }
                 else -> emptySequence()
             }
@@ -195,13 +195,18 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                 clause.head.arity > 0 -> {
                     val firstArg: Term = clause.head[0]
 
-                    children.entries.asSequence()
+                    val removed: MutableList<Clause> = mutableListOf()
+                    for (child in children.entries.asSequence()
                             .filter { it.key !== null }
                             .filter { it.value is ArgNode }
                             .filter { it.key!!.matches(firstArg) }
-                            .map { it.value }
-                            .flatMap { it.removeAll(clause) }
-                            .take(limit)
+                            .map { it.value }) {
+
+                        removed += child.remove(clause, limit - removed.size)
+                        if (removed.size == limit) break
+                    }
+
+                    removed.asSequence()
                 }
                 else -> {
                     children[null]?.remove(clause, limit) ?: emptySequence()
@@ -228,7 +233,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
                     if (child === null) {
                         child = ArgNode(0, firstArg)
-                        children[null] = child
+                        children[firstArg] = child
                     }
 
                     child.put(clause, before)
@@ -333,13 +338,18 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                 index < clause.head.arity - 1 -> {
                     val nextArg: Term = clause.head[index + 1]
 
-                    children.entries.asSequence()
+                    val removed: MutableList<Clause> = mutableListOf()
+                    for (child in children.entries.asSequence()
                             .filter { it.key !== null }
                             .filter { it.value is ArgNode }
                             .filter { it.key!!.matches(nextArg) }
-                            .map { it.value }
-                            .flatMap { it.removeAll(clause) }
-                            .take(limit)
+                            .map { it.value }) {
+
+                        removed += child.remove(clause, limit - removed.size)
+                        if (removed.size == limit) break
+                    }
+
+                    removed.asSequence()
                 }
                 else -> {
                     children[null]?.remove(clause, limit) ?: emptySequence()
@@ -366,7 +376,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
                     if (child === null) {
                         child = ArgNode(index + 1, nextArg)
-                        children[null] = child
+                        children[nextArg] = child
                     }
 
                     child.put(clause, before)
@@ -441,7 +451,9 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
-                is Rule -> if (before) rules.add(0, clause) else rules.add(clause)
+                is Rule -> {
+                    if (before) rules.add(0, clause) else rules.add(clause)
+                }
             }
         }
 
