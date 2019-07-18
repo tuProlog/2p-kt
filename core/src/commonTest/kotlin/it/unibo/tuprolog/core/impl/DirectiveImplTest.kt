@@ -20,9 +20,11 @@ import kotlin.test.assertTrue
  */
 internal class DirectiveImplTest {
 
-    private val mixedDirectivesInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
     private val groundDirectivesInstances = DirectiveUtils.groundDirectives.map(::DirectiveImpl)
     private val nonGroundDirectivesInstances = DirectiveUtils.nonGroundDirectives.map(::DirectiveImpl)
+    private val wellFormedDirectivesInstances = DirectiveUtils.wellFormedDirectives.map(::DirectiveImpl)
+    private val nonWellFormedDirectivesInstances = DirectiveUtils.nonWellFormedDirectives.map(::DirectiveImpl)
+    private val mixedDirectivesInstances = DirectiveUtils.mixedDirectives.map(::DirectiveImpl)
 
     @Test
     fun headNull() {
@@ -32,6 +34,16 @@ internal class DirectiveImplTest {
     @Test
     fun bodyCorrect() {
         onCorrespondingItems(DirectiveUtils.mixedDirectives, mixedDirectivesInstances.map { it.body }, ::assertEqualities)
+    }
+
+    @Test
+    fun isWellFormedReturnsTrueIfDirectiveWellFormed() {
+        wellFormedDirectivesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
+    }
+
+    @Test
+    fun isWellFormedReturnsFalseIfDirectiveNotWellFormed() {
+        nonWellFormedDirectivesInstances.forEach { assertFalse("$it isWellFormed should be false") { it.isWellFormed } }
     }
 
     @Test
@@ -62,7 +74,7 @@ internal class DirectiveImplTest {
 
     @Test
     fun argsCorrect() {
-        val correctArgs = DirectiveUtils.mixedDirectives.map{ arrayOf(it)}
+        val correctArgs = DirectiveUtils.mixedDirectives.map { arrayOf(it) }
 
         onCorrespondingItems(correctArgs, mixedDirectivesInstances.map { it.args }) { expected, actual ->
             assertEquals(expected.toList(), actual.toList())

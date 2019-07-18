@@ -42,12 +42,12 @@ internal class RuleImplTest {
     }
 
     @Test
-    fun isWellFormedReturnsTrueIfClauseWellFormed() {
+    fun isWellFormedReturnsTrueIfRuleWellFormed() {
         wellFormedRulesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
     }
 
     @Test
-    fun isWellFormedReturnsFalseIfClauseNotWellFormed() {
+    fun isWellFormedReturnsFalseIfRuleNotWellFormed() {
         nonWellFormedRulesInstances.forEach { assertFalse("$it isWellFormed should be false") { it.isWellFormed } }
     }
 
