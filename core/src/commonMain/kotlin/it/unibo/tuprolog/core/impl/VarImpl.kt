@@ -10,7 +10,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
     }
 
     override val completeName: String by lazy {
-        "${name}__$identifier"
+        "${name}_$identifier"
     }
 
     override val isAnonymous: Boolean = super.isAnonymous
@@ -20,8 +20,7 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
     }
 
     override fun strictlyEquals(other: Term): Boolean =
-            other is VarImpl && other::class == this::class
-                    && completeName == other.completeName
+            other is VarImpl && other::class == this::class && completeName == other.completeName
 
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
 
