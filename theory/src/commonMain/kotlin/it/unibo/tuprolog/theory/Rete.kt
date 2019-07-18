@@ -85,7 +85,24 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             get() = directives.asSequence()
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            TODO()
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            val toTake = if (limit > 0) min(limit, directives.size) else directives.size
+            val result = mutableListOf<Clause>()
+            val i = directives.iterator()
+            var j = 0
+            while (i.hasNext() && j < toTake) {
+                with(i.next()) {
+                    if (this.matches(clause)) {
+                        result.add(this)
+                        i.remove()
+                        j++
+                    }
+                }
+            }
+            return result.asSequence()
         }
 
         override fun put(clause: Clause, before: Boolean) {
@@ -171,13 +188,62 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             get() = "Arity($arity)"
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            // remove should employ unification
-            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
+            return when {
+                limit == 0 || clause !is Rule -> {
+                    emptySequence()
+                }
+                clause.head.arity > 0 -> {
+                    val firstArg: Term = clause.head[0]
+
+                    children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(firstArg) }
+                            .map { it.value }
+                            .flatMap { it.removeAll(clause) }
+                            .take(limit)
+                }
+                else -> {
+                    children[null]?.remove(clause, limit) ?: emptySequence()
+                }
+            }
         }
 
         override fun put(clause: Clause, before: Boolean) {
-            // put should employ structurally equals
-            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
+            when {
+                clause !is Rule -> {
+                    return
+                }
+                clause.head.arity > 0 -> {
+                    val firstArg: Term = clause.head[0]
+                    var child: ArgNode? = children[firstArg] as ArgNode?
+
+                    if (child === null) {
+                        child = children.entries.asSequence()
+                                .filter { it.key !== null }
+                                .filter { it.value is ArgNode }
+                                .find { it.key!! structurallyEquals firstArg }
+                                ?.value as ArgNode?
+                    }
+
+                    if (child === null) {
+                        child = ArgNode(0, firstArg)
+                        children[null] = child
+                    }
+
+                    child.put(clause, before)
+                }
+                else -> {
+                    var child: NoArgsNode? = children[null] as NoArgsNode?
+
+                    if (child === null) {
+                        child = NoArgsNode()
+                        children[null] = child
+                    }
+
+                    child.put(clause, before)
+                }
+            }
         }
 
         override fun clone(): ArityNode {
@@ -185,8 +251,24 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
-            // get should employ unification
-            TODO("remember that children are indexed by 1st argument, if any, or null, otherwise")
+            return when {
+                clause !is Rule -> {
+                    emptySequence()
+                }
+                clause.head.arity > 0 -> {
+                    val firstArg: Term = clause.head[0]
+
+                    children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(firstArg) }
+                            .map { it.value }
+                            .flatMap { it.get(clause) }
+                }
+                else -> {
+                    children[null]?.get(clause) ?: emptySequence()
+                }
+            }
         }
     }
 
@@ -237,20 +319,69 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class ArgNode(val index: Int, val term: Term, override val children: MutableMap<Term, ReteTree<*>> = mutableMapOf())
-        : ReteTree<Term>(children) {
+    data class ArgNode(val index: Int, val term: Term, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
+        : ReteTree<Term?>(children) {
 
         override val header: String
             get() = "Argument($index, $term)"
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            // remove should employ unification equals
-            TODO("remember that children are indexed by i-th argument")
+            return when {
+                limit == 0 || clause !is Rule -> {
+                    emptySequence()
+                }
+                index < clause.head.arity - 1 -> {
+                    val nextArg: Term = clause.head[index + 1]
+
+                    children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(nextArg) }
+                            .map { it.value }
+                            .flatMap { it.removeAll(clause) }
+                            .take(limit)
+                }
+                else -> {
+                    children[null]?.remove(clause, limit) ?: emptySequence()
+                }
+            }
         }
 
         override fun put(clause: Clause, before: Boolean) {
-            // put should employ structurallyEquals
-            TODO("remember that children are indexed by i-th argument")
+            when {
+                clause !is Rule -> {
+                    return
+                }
+                index < clause.head.arity - 1 -> {
+                    val nextArg: Term = clause.head[index + 1]
+                    var child: ArgNode? = children[nextArg] as ArgNode?
+
+                    if (child === null) {
+                        child = children.entries.asSequence()
+                                .filter { it.key !== null }
+                                .filter { it.value is ArgNode }
+                                .find { it.key!! structurallyEquals nextArg }
+                                ?.value as ArgNode?
+                    }
+
+                    if (child === null) {
+                        child = ArgNode(index + 1, nextArg)
+                        children[null] = child
+                    }
+
+                    child.put(clause, before)
+                }
+                else -> {
+                    var child: RuleNode? = children[null] as RuleNode?
+
+                    if (child === null) {
+                        child = RuleNode()
+                        children[null] = child
+                    }
+
+                    child.put(clause, before)
+                }
+            }
         }
 
         override fun clone(): ArgNode {
@@ -258,8 +389,24 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
-            // get should employ unification
-            TODO("remember that children are indexed by i-th argument")
+            return when {
+                clause !is Rule -> {
+                    emptySequence()
+                }
+                index < clause.head.arity - 1 -> {
+                    val nextArg: Term = clause.head[index + 1]
+
+                    children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(nextArg) }
+                            .map { it.value }
+                            .flatMap { it.get(clause) }
+                }
+                else -> {
+                    children[null]?.get(clause) ?: emptySequence()
+                }
+            }
         }
     }
 
