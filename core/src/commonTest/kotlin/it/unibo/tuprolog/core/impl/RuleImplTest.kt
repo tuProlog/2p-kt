@@ -21,9 +21,11 @@ import kotlin.test.assertTrue
  */
 internal class RuleImplTest {
 
-    private val mixedRulesInstances = RuleUtils.mixedRules.map { (head, body) -> RuleImpl(head, body) }
     private val groundRulesInstances = RuleUtils.groundRules.map { (head, body) -> RuleImpl(head, body) }
     private val nonGroundRulesInstances = RuleUtils.nonGroundRules.map { (head, body) -> RuleImpl(head, body) }
+    private val wellFormedRulesInstances = RuleUtils.wellFormedRules.map { (head, body) -> RuleImpl(head, body) }
+    private val nonWellFormedRulesInstances = RuleUtils.nonWellFormedRules.map { (head, body) -> RuleImpl(head, body) }
+    private val mixedRulesInstances = RuleUtils.mixedRules.map { (head, body) -> RuleImpl(head, body) }
 
     @Test
     fun headCorrect() {
@@ -37,6 +39,16 @@ internal class RuleImplTest {
         val correctBodies = RuleUtils.mixedRules.map { (_, body) -> body }
 
         onCorrespondingItems(correctBodies, mixedRulesInstances.map { it.body }, ::assertEqualities)
+    }
+
+    @Test
+    fun isWellFormedReturnsTrueIfClauseWellFormed() {
+        wellFormedRulesInstances.forEach { assertTrue("$it isWellFormed should be true") { it.isWellFormed } }
+    }
+
+    @Test
+    fun isWellFormedReturnsFalseIfClauseNotWellFormed() {
+        nonWellFormedRulesInstances.forEach { assertFalse("$it isWellFormed should be false") { it.isWellFormed } }
     }
 
     @Test
