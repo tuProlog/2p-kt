@@ -420,13 +420,20 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class RuleNode(val rules: MutableList<Rule> = mutableListOf()) : ReteTree<Nothing>() {
+    data class RuleNode(private val rules: MutableList<Rule> = mutableListOf()) : ReteTree<Nothing>() {
 
-        override val header: String
-            get() = "Rules"
+        override val header = "Rules"
 
         override val clauses: Sequence<Clause>
             get() = rules.asSequence()
+
+        override fun put(clause: Clause, before: Boolean) {
+            when (clause) {
+                is Rule -> if (before) rules.add(0, clause) else rules.add(clause)
+            }
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> = clauses.filter { it matches clause }
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             if (limit == 0) {
@@ -449,21 +456,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             return result.asSequence()
         }
 
-        override fun put(clause: Clause, before: Boolean) {
-            when (clause) {
-                is Rule -> {
-                    if (before) rules.add(0, clause) else rules.add(clause)
-                }
-            }
-        }
-
-        override fun deepCopy(): RuleNode {
-            return RuleNode(rules.map { it }.toMutableList())
-        }
-
-        override fun get(clause: Clause): Sequence<Clause> {
-            return rules.asSequence().filter { it matches clause }
-        }
+        override fun deepCopy(): RuleNode = RuleNode(rules.toMutableList())
 
         override fun toString(treefy: Boolean): String {
             return if (treefy) {
@@ -508,7 +501,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
     companion object {
 
-        private fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K)-> K, deepCopyValue: (V)-> V): MutableMap<K, V> {
+        private fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K) -> K, deepCopyValue: (V) -> V): MutableMap<K, V> {
             return entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
         }
 
