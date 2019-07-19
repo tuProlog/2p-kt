@@ -15,6 +15,8 @@ internal object ClauseDatabaseUtils {
     internal val toBeRewrittenWellFormedClauses by lazy {
         listOf(
                 Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")),
+                Clause.of(Atom.of("a"), Var.anonymous()),
+                Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
                 Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable"))
         )
     }
@@ -27,6 +29,10 @@ internal object ClauseDatabaseUtils {
                 Directive.of(Atom.of("execute_this")),
                 Rule.of(Struct.of("f", Atom.of("a")), Atom.of("do_something")),
                 Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+                Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous()))),
+                with(Scope.empty()) {
+                    ruleOf(structOf("g", structOf("c", varOf("A"), varOf("B"))), varOf("A"))
+                },
                 Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous())))
         ) + toBeRewrittenWellFormedClauses
     }

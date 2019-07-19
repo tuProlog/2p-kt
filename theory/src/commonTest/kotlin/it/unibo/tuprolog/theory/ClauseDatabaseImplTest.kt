@@ -16,33 +16,33 @@ import kotlin.test.assertTrue
  */
 internal class ClauseDatabaseImplTest {
 
-    private lateinit var clauseDatabase: ClauseDatabase
+    private lateinit var wellFormedClauseDatabase: ClauseDatabase
 
     @BeforeTest
     fun init() {
-        clauseDatabase = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
+        wellFormedClauseDatabase = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
     }
 
     @Test
     fun clausesCorrect() {
-        assertEquals(ClauseDatabaseUtils.wellFormedClauses.count(), clauseDatabase.clauses.count())
-        assertContentsEquals(ClauseDatabaseUtils.wellFormedClauses, clauseDatabase.clauses.toList())
+        assertEquals(ClauseDatabaseUtils.wellFormedClauses.count(), wellFormedClauseDatabase.clauses.count())
+        assertContentsEquals(ClauseDatabaseUtils.wellFormedClauses, wellFormedClauseDatabase.clauses.toList())
     }
 
     @Test
     fun rulesCorrect() {
         val rules = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>()
 
-        assertEquals(rules.count(), clauseDatabase.rules.count())
-        assertContentsEquals(rules, clauseDatabase.rules.toList())
+        assertEquals(rules.count(), wellFormedClauseDatabase.rules.count())
+        assertContentsEquals(rules, wellFormedClauseDatabase.rules.toList())
     }
 
     @Test
     fun directivesCorrect() {
         val directives = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Directive>()
 
-        assertEquals(directives.count(), clauseDatabase.directives.count())
-        assertContentsEquals(directives, clauseDatabase.directives.toList())
+        assertEquals(directives.count(), wellFormedClauseDatabase.directives.count())
+        assertContentsEquals(directives, wellFormedClauseDatabase.directives.toList())
     }
 
     @Test
@@ -51,8 +51,8 @@ internal class ClauseDatabaseImplTest {
 
         val toBeTested = ClauseDatabaseImpl(firstHalfClauses) + ClauseDatabaseImpl(secondHalfClauses)
 
-        assertEquals(clauseDatabase.clauses.count(), toBeTested.count())
-        assertContentsEquals(clauseDatabase.clauses.toList(), toBeTested.clauses.toList())
+        assertEquals(wellFormedClauseDatabase.clauses.count(), toBeTested.count())
+        assertContentsEquals(wellFormedClauseDatabase.clauses.toList(), toBeTested.clauses.toList())
     }
 
     @Test
@@ -62,31 +62,31 @@ internal class ClauseDatabaseImplTest {
         var toBeTested: ClauseDatabase = ClauseDatabaseImpl(firstHalfClauses)
         secondHalfClauses.forEach { toBeTested += it }
 
-        assertEquals(clauseDatabase.clauses.count(), toBeTested.count())
-        assertContentsEquals(clauseDatabase.clauses.toList(), toBeTested.clauses.toList())
+        assertEquals(wellFormedClauseDatabase.clauses.count(), toBeTested.count())
+        assertContentsEquals(wellFormedClauseDatabase.clauses.toList(), toBeTested.clauses.toList())
     }
 
     @Test
     fun containsClause() {
         ClauseDatabaseUtils.wellFormedClauses.forEach {
-            assertTrue { it in clauseDatabase }
+            assertTrue { it in wellFormedClauseDatabase }
         }
 
         // TODO Issue #32 needs to be solved to get this working
 //        ClauseDatabaseUtils.notWellFormedClauses.forEach {
-//            assertFalse { it in clauseDatabase }
+//            assertFalse { it in wellFormedClauseDatabase }
 //        }
     }
 
     @Test
     fun containsStruct() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { it.head in clauseDatabase }
+            assertTrue { it.head in wellFormedClauseDatabase }
         }
 
         // TODO Issue #32 needs to be solved to get this working
 //        ClauseDatabaseUtils.notWellFormedClauses.filterIsInstance<Rule>().forEach {
-//            assertFalse { it.head in clauseDatabase }
+//            assertFalse { it.head in wellFormedClauseDatabase }
 //        }
     }
 }
