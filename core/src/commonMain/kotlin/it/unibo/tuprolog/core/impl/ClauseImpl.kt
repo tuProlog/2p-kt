@@ -8,7 +8,9 @@ import it.unibo.tuprolog.core.Term
 internal abstract class ClauseImpl(override val head: Struct?, override val body: Term)
     : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {
 
-    override val isWellFormed: Boolean by lazy { clauseBodyWellFormedCheck(body) }
+    override val isWellFormed: Boolean by lazy {
+        body.deepVisitNotableStructArgs({ bodyTerm -> bodyTerm !is Numeric }, Boolean::and)
+    }
 
     override val functor: String
         get() = super<Clause>.functor
@@ -27,16 +29,21 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
         /** Contains notable functor in determining if a Clause is well-formed */
         private val notableFunctorsForClause = listOf(",", ";", "->")
 
-        /** Checks that a Term respects [isWellFormed] described specification */
-        private fun clauseBodyWellFormedCheck(term: Term): Boolean =
-                when (term) {
-                    is Numeric -> false
+        /** Utility method to visit deeply Terms that have notable functor,
+         * applying [visitorAction] and aggregating results with [resultAggregator] */
+        private fun <VisitResult> Term.deepVisitNotableStructArgs(
+                visitorAction: (Term) -> VisitResult,
+                resultAggregator: (VisitResult, VisitResult) -> VisitResult
+        ): VisitResult =
+                when (this) {
                     is Struct -> when {
-                        term.functor in notableFunctorsForClause && term.arity == 2 ->
-                            term.argsSequence.all(::clauseBodyWellFormedCheck)
-                        else -> true
+                        functor in notableFunctorsForClause && arity == 2 ->
+                            this.argsSequence.map { arg ->
+                                arg.deepVisitNotableStructArgs(visitorAction, resultAggregator)
+                            }.reduce(resultAggregator)
+                        else -> visitorAction(this)
                     }
-                    else -> true
+                    else -> visitorAction(this)
                 }
     }
 }
