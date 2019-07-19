@@ -25,13 +25,13 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
 
     override fun assertA(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.clone().apply { put(clause, before = true) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = true) })
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.clone().apply { put(clause, before = false) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = false) })
 
     override fun retract(clause: Clause): RetractResult {
-        val newTheory = reteTree.clone()
+        val newTheory = reteTree.deepCopy()
         val retracted = newTheory.remove(clause).toList()
 
         return if (retracted.isEmpty()) {
@@ -42,7 +42,7 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     }
 
     override fun retractAll(clause: Clause): RetractResult {
-        val newTheory = reteTree.clone()
+        val newTheory = reteTree.deepCopy()
         val retracted = newTheory.removeAll(clause).toList()
 
         return if (retracted.isEmpty()) {

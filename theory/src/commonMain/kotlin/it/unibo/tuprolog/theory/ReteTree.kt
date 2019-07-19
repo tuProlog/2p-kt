@@ -58,8 +58,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): RootNode {
-            return RootNode(children.clone({ it }, { it.clone() }))
+        override fun deepCopy(): RootNode {
+            return RootNode(children.deepCopy({ it }, { it.deepCopy() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
@@ -111,7 +111,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): DirectiveNode {
+        override fun deepCopy(): DirectiveNode {
             return DirectiveNode(directives.map { it }.toMutableList())
         }
 
@@ -167,8 +167,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): FunctorNode {
-            return FunctorNode(functor, children.clone({ it }, { it.clone() }))
+        override fun deepCopy(): FunctorNode {
+            return FunctorNode(functor, children.deepCopy({ it }, { it.deepCopy() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
@@ -251,8 +251,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): ArityNode {
-            return ArityNode(arity, children.clone({ it }, { it.clone() }))
+        override fun deepCopy(): ArityNode {
+            return ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
@@ -310,8 +310,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): NoArgsNode {
-            return NoArgsNode(children.clone({ it }, { it.clone() }))
+        override fun deepCopy(): NoArgsNode {
+            return NoArgsNode(children.deepCopy({ it }, { it.deepCopy() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
@@ -394,8 +394,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): ArgNode {
-            return ArgNode(index, term, children.clone({ it }, { it.clone() }))
+        override fun deepCopy(): ArgNode {
+            return ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
         }
 
         override fun get(clause: Clause): Sequence<Clause> {
@@ -457,7 +457,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun clone(): RuleNode {
+        override fun deepCopy(): RuleNode {
             return RuleNode(rules.map { it }.toMutableList())
         }
 
@@ -476,7 +476,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    abstract fun clone(): ReteTree<K>
+    abstract fun deepCopy(): ReteTree<K>
 
     internal abstract fun put(clause: Clause, before: Boolean = false)
 
@@ -508,8 +508,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
     companion object {
 
-        private fun <K, V> MutableMap<K, V>.clone(cloneKey: (K)-> K, cloneValue: (V)-> V): MutableMap<K, V> {
-            return entries.map { cloneKey(it.key) to cloneValue(it.value) }.toMap(mutableMapOf())
+        private fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K)-> K, deepCopyValue: (V)-> V): MutableMap<K, V> {
+            return entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
         }
 
         fun of(clauses: Iterable<Clause>): ReteTree<*> {
