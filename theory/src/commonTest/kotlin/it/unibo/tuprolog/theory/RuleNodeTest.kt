@@ -9,6 +9,7 @@ import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 /**
  * Test class for [ReteTree.RuleNode]
@@ -20,8 +21,8 @@ internal class RuleNodeTest {
     private lateinit var emptyRuleNode: ReteTree.RuleNode
     private lateinit var filledRuleNode: ReteTree.RuleNode
 
-    private val aRule: Rule = Fact.of(Atom.of("a"))
-    private val aDirective: Directive = Directive.of(Truth.`true`())
+    private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
+    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
@@ -125,5 +126,14 @@ internal class RuleNodeTest {
 
         assertReteNodeClausesCorrect(emptyRuleNode, emptyList())
         assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
+    }
+
+    @Test
+    fun deepCopyDoesNotCopyIndexedInstances() {
+        emptyRuleNode.put(aRule)
+
+        val independentCopy = emptyRuleNode.deepCopy()
+
+        assertSame(emptyRuleNode.clauses.single(), independentCopy.clauses.single())
     }
 }
