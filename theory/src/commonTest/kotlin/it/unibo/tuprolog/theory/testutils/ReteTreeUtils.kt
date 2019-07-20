@@ -97,6 +97,7 @@ internal object ReteTreeUtils {
     /** Asserts that rete node is empty */
     internal fun assertReteNodeEmpty(reteNode: ReteTree<*>) {
         assertTrue(reteNode.clauses.none())
+        assertTrue(reteNode.children.none())
     }
 
     /** Asserts that rete node clauses are the same as expected */

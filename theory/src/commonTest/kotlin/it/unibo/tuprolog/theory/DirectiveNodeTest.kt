@@ -28,6 +28,12 @@ internal class DirectiveNodeTest {
     }
 
     @Test
+    fun childrenEmpty() {
+        assertTrue(emptyDirectiveNode.children.isEmpty())
+        assertTrue(filledDirectiveNode.children.isEmpty())
+    }
+
+    @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyDirectiveNode)
         assertReteNodeClausesCorrect(filledDirectiveNode, ReteTreeUtils.directives)

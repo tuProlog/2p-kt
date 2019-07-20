@@ -28,6 +28,12 @@ internal class RuleNodeTest {
     }
 
     @Test
+    fun childrenEmpty() {
+        assertTrue(emptyRuleNode.children.isEmpty())
+        assertTrue(filledRuleNode.children.isEmpty())
+    }
+
+    @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyRuleNode)
         assertReteNodeClausesCorrect(filledRuleNode, ReteTreeUtils.rules)
