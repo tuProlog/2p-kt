@@ -14,9 +14,6 @@ interface Fact : Rule {
 
     override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         fun of(head: Struct): Fact = FactImpl(head)
     }

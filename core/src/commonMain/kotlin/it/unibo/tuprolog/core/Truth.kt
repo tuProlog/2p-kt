@@ -14,9 +14,6 @@ interface Truth : Atom {
 
     override fun freshCopy(scope: Scope): Truth = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         const val TRUE_FUNCTOR = "true"
         const val FAIL_FUNCTOR = "fail"

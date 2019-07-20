@@ -41,9 +41,6 @@ interface Tuple : Struct {
                 else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
             }
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
 
         const val FUNCTOR = ","
