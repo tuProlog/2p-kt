@@ -20,6 +20,9 @@ interface Directive : Clause {
 
     override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 
+    override fun <T> accept(visitor: TermVisitor<T>): T =
+            visitor.visit(this)
+
     companion object {
         fun of(body1: Term, vararg body: Term): Directive =
                 DirectiveImpl(Tuple.wrapIfNeeded(body1, *body))

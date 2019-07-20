@@ -40,6 +40,9 @@ interface Clause : Struct {
 
     override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 
+    override fun <T> accept(visitor: TermVisitor<T>): T =
+            visitor.visit(this)
+
     companion object {
         const val FUNCTOR = ":-"
 

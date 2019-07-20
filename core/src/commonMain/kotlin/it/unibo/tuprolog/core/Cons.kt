@@ -28,6 +28,9 @@ interface Cons : Struct, LogicList {
 
     override fun freshCopy(scope: Scope): Cons = super<LogicList>.freshCopy(scope) as Cons
 
+    override fun <T> accept(visitor: TermVisitor<T>): T =
+            visitor.visit(this)
+
     companion object {
         const val FUNCTOR = "."
 

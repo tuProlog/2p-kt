@@ -21,6 +21,9 @@ interface Numeric : Constant, Comparable<Numeric> {
 
     override fun compareTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
+    override fun <T> accept(visitor: TermVisitor<T>): T =
+            visitor.visit(this)
+
     companion object {
 
         fun of(decimal: BigDecimal): Real = Real.of(decimal)

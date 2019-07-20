@@ -76,6 +76,9 @@ interface Struct : Term {
 
     operator fun get(index: Int): Term = getArgAt(index)
 
+    override fun <T> accept(visitor: TermVisitor<T>): T =
+            visitor.visit(this)
+
     companion object {
 
         /**
