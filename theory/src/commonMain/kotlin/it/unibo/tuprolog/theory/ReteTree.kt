@@ -75,14 +75,24 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class DirectiveNode(val directives: MutableList<Directive> = mutableListOf())
+    data class DirectiveNode(private val directives: MutableList<Directive> = mutableListOf())
         : ReteTree<Nothing>() {
 
-        override val header: String
-            get() = "Directives"
+        override val header = "Directives"
 
         override val clauses: Sequence<Clause>
             get() = directives.asSequence()
+
+        override fun put(clause: Clause, before: Boolean) {
+            when (clause) {
+                is Directive -> if (before) directives.add(0, clause) else directives.add(clause)
+            }
+        }
+
+        override fun get(clause: Clause): Sequence<Clause> = when (clause) {
+            is Directive -> clauses.filter { it matches clause }
+            else -> emptySequence() // only performance purposes type-check
+        }
 
         override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
             if (limit == 0) {
@@ -105,15 +115,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             return result.asSequence()
         }
 
-        override fun put(clause: Clause, before: Boolean) {
-            when (clause) {
-                is Directive -> if (before) directives.add(0, clause) else directives.add(clause)
-            }
-        }
-
-        override fun deepCopy(): DirectiveNode {
-            return DirectiveNode(directives.map { it }.toMutableList())
-        }
+        override fun deepCopy(): DirectiveNode = DirectiveNode(directives.toMutableList())
 
         override fun toString(treefy: Boolean): String {
             return if (treefy) {
@@ -122,13 +124,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                         "}"
             } else {
                 toString()
-            }
-        }
-
-        override fun get(clause: Clause): Sequence<Clause> {
-            return when (clause) {
-                is Directive -> directives.asSequence().filter { it matches clause }
-                else -> emptySequence()
             }
         }
 

@@ -6,10 +6,7 @@ import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNod
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
+import kotlin.test.*
 
 /**
  * Test class for [ReteTree.RuleNode]
@@ -68,6 +65,13 @@ internal class RuleNodeTest {
     fun getClause() {
         ReteTreeUtils.rulesQueryResultsMap.forEach { (query, result) ->
             assertEquals(result, filledRuleNode.get(query).toList())
+        }
+    }
+
+    @Test
+    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
+        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
+            assertTrue { filledRuleNode.get(query).none() }
         }
     }
 

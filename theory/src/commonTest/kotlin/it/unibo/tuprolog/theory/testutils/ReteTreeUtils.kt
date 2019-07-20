@@ -51,6 +51,44 @@ internal object ReteTreeUtils {
         )
     }
 
+    /** Contains some well-formed directives */
+    internal val directives by lazy {
+        listOf(
+                Directive.of(Truth.`true`()),
+                Directive.of(Truth.fail()),
+                Directive.of(Atom.of("a")),
+                Directive.of(Atom.of("other")),
+                Directive.of(Struct.of("a", Atom.of("other"))),
+                Directive.of(Struct.of("other", Integer.of(1))),
+                Directive.of(Atom.of("a"), Atom.of("other")),
+                Directive.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
+                Directive.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+                Directive.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
+                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+                Directive.of(Struct.of("a", Atom.of("a")), Empty.set()),
+                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
+        )
+    }
+
+    /** Contains a map of queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
+    internal val directivesQueryResultsMap by lazy {
+        mapOf(
+                Directive.of(Truth.`true`()) to listOf(Directive.of(Truth.`true`())),
+                Directive.of(Empty.list()) to emptyList(),
+                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to directives.takeLast(5),
+                Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))).run {
+                    this to directives.filter { it matches this }
+                },
+                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
+                    this to directives.filter { it matches this }
+                }
+        )
+    }
+
     /** Asserts that rete node has correct elements count */
     internal fun assertReteNodeElementCount(reteNode: ReteTree<*>, expectedCount: Int) {
         assertEquals(expectedCount, reteNode.clauses.count())
@@ -78,11 +116,11 @@ internal object ReteTreeUtils {
 
     /** Asserts that calling [removeAction] onto [reteNode] results in [removedExpected] elements removed */
     internal fun assertRemovedFromReteNode(reteNode: ReteTree<*>, removedExpected: Iterable<Clause>, removeAction: ReteTree<*>.() -> Sequence<Clause>) {
-        val allRulesCount = reteNode.clauses.count()
+        val allClauseCount = reteNode.clauses.count()
 
         val removedActual = reteNode.removeAction()
 
         assertEquals(removedExpected, removedActual.toList())
-        assertReteNodeElementCount(reteNode, allRulesCount - removedExpected.count())
+        assertReteNodeElementCount(reteNode, allClauseCount - removedExpected.count())
     }
 }
