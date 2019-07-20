@@ -23,13 +23,13 @@ fun Number.toTerm(): Numeric = Numeric.of(this)
 
 fun String.toTerm(): Term =
         when {
-            this matches Var.VAR_REGEX_PATTERN -> this.asVar()
-            else -> this.asAtom()
+            this matches Var.VAR_REGEX_PATTERN -> this.toVar()
+            else -> this.toAtom()
         }
 
-fun String.asAtom(): Atom = Atom.of(this)
+fun String.toAtom(): Atom = Atom.of(this)
 
-fun String.asVar(): Var = Var.of(this)
+fun String.toVar(): Var = Var.of(this)
 
 fun kotlin.collections.List<Term>.toTerm(): List = List.of(this)
 
