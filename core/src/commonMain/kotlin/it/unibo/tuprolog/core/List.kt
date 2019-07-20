@@ -44,9 +44,6 @@ interface List : Struct {
                 }
             }
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
 
         fun empty(): List = Empty.list()

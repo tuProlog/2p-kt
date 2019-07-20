@@ -38,9 +38,6 @@ interface Atom : Struct, Constant {
 
     override fun freshCopy(scope: Scope): Atom = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()
 

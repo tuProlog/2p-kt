@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core
 
 interface TermVisitor<T> {
 
-    val defaultValue: T
+    fun defaultValue(term: Term): T
 
     fun visit(term: Term): T =
             when (term) {
@@ -12,11 +12,11 @@ interface TermVisitor<T> {
                 else -> visitTerm(term)
             }
 
-    fun visitTerm(term: Term): T = defaultValue
+    fun visitTerm(term: Term): T = defaultValue(term)
 
     fun visit(term: Var): T = visitVar(term)
 
-    fun visitVar(term: Var): T = defaultValue
+    fun visitVar(term: Var): T = defaultValue(term)
 
     fun visit(term: Constant): T =
             when (term) {
@@ -25,7 +25,7 @@ interface TermVisitor<T> {
                 else -> visitConstant(term)
             }
 
-    fun visitConstant(term: Constant): T = defaultValue
+    fun visitConstant(term: Constant): T = defaultValue(term)
 
     fun visit(term: Struct): T =
             when (term) {
@@ -37,7 +37,7 @@ interface TermVisitor<T> {
                 else -> visitStruct(term)
             }
 
-    fun visitStruct(term: Struct): T = defaultValue
+    fun visitStruct(term: Struct): T = defaultValue(term)
 
     fun visit(term: Atom): T =
             when (term) {
@@ -46,11 +46,11 @@ interface TermVisitor<T> {
                 else -> visitAtom(term)
             }
 
-    fun visitAtom(term: Atom): T = defaultValue
+    fun visitAtom(term: Atom): T = defaultValue(term)
 
     fun visit(term: Truth): T = visitTruth(term)
 
-    fun visitTruth(term: Truth): T = defaultValue
+    fun visitTruth(term: Truth): T = defaultValue(term)
 
     fun visit(term: Numeric): T =
             when (term) {
@@ -59,15 +59,15 @@ interface TermVisitor<T> {
                 else -> visitNumeric(term)
             }
 
-    fun visitNumeric(term: Numeric): T = defaultValue
+    fun visitNumeric(term: Numeric): T = defaultValue(term)
 
     fun visit(term: Integer): T = visitInteger(term)
 
-    fun visitInteger(term: Integer): T = defaultValue
+    fun visitInteger(term: Integer): T = defaultValue(term)
 
     fun visit(term: Real): T = visitReal(term)
 
-    fun visitReal(term: Real): T = defaultValue
+    fun visitReal(term: Real): T = defaultValue(term)
 
     fun visit(term: Set): T =
             when (term) {
@@ -75,7 +75,7 @@ interface TermVisitor<T> {
                 else -> visitSet(term)
             }
 
-    fun visitSet(term: Set): T = defaultValue
+    fun visitSet(term: Set): T = defaultValue(term)
 
     fun visit(term: Empty): T =
             when (term) {
@@ -84,11 +84,11 @@ interface TermVisitor<T> {
                 else -> visitEmpty(term)
             }
 
-    fun visitEmpty(term: Empty): T = defaultValue
+    fun visitEmpty(term: Empty): T = defaultValue(term)
 
     fun visit(term: EmptySet): T = visitEmptySet(term)
 
-    fun visitEmptySet(term: EmptySet): T = defaultValue
+    fun visitEmptySet(term: EmptySet): T = defaultValue(term)
 
     fun visit(term: List): T =
             when(term) {
@@ -97,19 +97,19 @@ interface TermVisitor<T> {
                 else -> visitList(term)
             }
 
-    fun visitList(term: List): T = defaultValue
+    fun visitList(term: List): T = defaultValue(term)
 
     fun visit(term: Cons): T = visitCons(term)
 
-    fun visitCons(term: Cons): T = defaultValue
+    fun visitCons(term: Cons): T = defaultValue(term)
 
     fun visit(term: EmptyList): T = visitEmptyList(term)
 
-    fun visitEmptyList(term: EmptyList): T = defaultValue
+    fun visitEmptyList(term: EmptyList): T = defaultValue(term)
 
     fun visit(term: Tuple): T = visitTuple(term)
 
-    fun visitTuple(term: Tuple): T = defaultValue
+    fun visitTuple(term: Tuple): T = defaultValue(term)
 
     fun visit(term: Clause): T =
             when(term) {
@@ -118,7 +118,7 @@ interface TermVisitor<T> {
                 else -> visitClause(term)
             }
 
-    fun visitClause(term: Clause): T = defaultValue
+    fun visitClause(term: Clause): T = defaultValue(term)
 
     fun visit(term: Rule): T =
             when (term) {
@@ -126,13 +126,13 @@ interface TermVisitor<T> {
                 else -> visitRule(term)
             }
 
-    fun visitRule(term: Rule): T = defaultValue
+    fun visitRule(term: Rule): T = defaultValue(term)
 
     fun visit(term: Fact): T = visitFact(term)
 
-    fun visitFact(term: Fact): T = defaultValue
+    fun visitFact(term: Fact): T = defaultValue(term)
 
     fun visit(term: Directive): T = visitDirective(term)
 
-    fun visitDirective(term: Directive): T = defaultValue
+    fun visitDirective(term: Directive): T = defaultValue(term)
 }

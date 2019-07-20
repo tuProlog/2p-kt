@@ -27,9 +27,6 @@ interface Var : Term {
 
     val isNameWellFormed: Boolean
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
 
         const val ANONYMOUS_VAR_NAME = "_"

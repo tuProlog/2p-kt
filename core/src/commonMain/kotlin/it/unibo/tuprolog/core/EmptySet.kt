@@ -12,9 +12,6 @@ interface EmptySet : Empty, LogicSet {
 
     override fun freshCopy(scope: Scope): EmptySet = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         operator fun invoke(): EmptySet = EmptySetImpl
     }

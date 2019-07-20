@@ -21,9 +21,6 @@ interface Real : Numeric {
 
     override fun freshCopy(scope: Scope): Real = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         private const val i = """([0-9]+)"""
         private const val d = """(\.[0-9]+)"""

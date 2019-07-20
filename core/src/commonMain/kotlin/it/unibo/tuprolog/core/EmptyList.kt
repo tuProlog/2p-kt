@@ -24,9 +24,6 @@ interface EmptyList : Empty, LogicList {
 
     override fun freshCopy(scope: Scope): EmptyList = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         operator fun invoke(): EmptyList = EmptyListImpl
     }

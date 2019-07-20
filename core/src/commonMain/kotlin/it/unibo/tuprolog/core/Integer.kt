@@ -21,9 +21,6 @@ interface Integer : Numeric {
 
     override fun freshCopy(scope: Scope): Integer = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         val INTEGER_REGEX_PATTERN = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
 

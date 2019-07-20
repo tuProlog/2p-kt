@@ -19,9 +19,6 @@ interface Rule : Clause {
 
     override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
-
     companion object {
         const val FUNCTOR = ":-"
 
