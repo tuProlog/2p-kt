@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.libraries.Signature
 
 data class Response(
         val signature: Signature,
