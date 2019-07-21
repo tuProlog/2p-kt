@@ -8,21 +8,28 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     /** Construct a Clause database from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses))
 
-
     override val clauses: KtList<Clause> by lazy { reteTree.clauses.toList() }
 
     override val rules: KtList<Rule> by lazy { super.rules.toList() }
-    override val directives: KtList<Directive> by lazy { super.directives.toList() }
 
+
+    override val directives: KtList<Directive> by lazy { super.directives.toList() }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
             ClauseDatabaseImpl(clauses + clauseDatabase.clauses)
-
     override fun contains(clause: Clause): Boolean = reteTree.get(clause).any()
+
+
     override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
 
+    override fun contains(functor: String, arity: Int): Boolean =
+            reteTree.get(functor, arity).any()
+
     override fun get(clause: Clause): Sequence<Clause> = reteTree.get(clause)
+
     override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
+
+    override fun get(functor: String, arity: Int): Sequence<Clause> = reteTree.get(functor, arity)
 
     override fun assertA(clause: Clause): ClauseDatabase =
             ClauseDatabaseImpl(reteTree.clone().apply { put(clause, before = true) })
