@@ -14,9 +14,9 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(project(":core"))
-                    api(project(":unify"))
-                    api(project(":theory"))
+//                    api(project(":core"))
+//                    api(project(":unify"))
+//                    api(project(":theory"))
                 }
             }
         }
@@ -24,9 +24,9 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(project(":core"))
-                    api(project(":unify"))
-                    api(project(":theory"))
+//                    api(project(":core"))
+//                    api(project(":unify"))
+//                    api(project(":theory"))
                 }
             }
         }
