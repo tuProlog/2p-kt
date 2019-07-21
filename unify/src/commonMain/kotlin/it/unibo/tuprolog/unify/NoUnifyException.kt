@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TuprologRuntimeException
+import it.unibo.tuprolog.core.TuprologException
 
-open class NoUnifyException(private val term1: Term, private val term2: Term, other: Throwable?) : TuprologRuntimeException(other) {
+open class NoUnifyException(private val term1: Term, private val term2: Term, other: Throwable?) : TuprologException(other) {
 
     constructor(term1: Term, term2: Term) : this(term1, term2, null)
 
