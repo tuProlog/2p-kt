@@ -20,5 +20,8 @@ fun main() {
     )
     println(theory.toString(true))
 
-    println(theory.get(Clause.of(Struct.of("f", Var.anonymous()), Var.anonymous())).toList())
+//    println(theory.get(Clause.of(Struct.of("f", Var.anonymous()), Var.anonymous())).joinToString("\n"))
+
+    println(theory.get("f", 1).joinToString("\n", "[", "]"))
+    println(theory.get("f", 2).joinToString("\n", "[", "]"))
 }

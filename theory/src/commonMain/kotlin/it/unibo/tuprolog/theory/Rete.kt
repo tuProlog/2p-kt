@@ -11,7 +11,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
     data class RootNode(override val children: MutableMap<String?, ReteTree<*>> = mutableMapOf())
         : ReteTree<String?>(children) {
-
         override val header: String
             get() = "Root"
 
@@ -73,6 +72,10 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                 else -> emptySequence()
             }
         }
+
+        override fun get(functor: String, arity: Int): Sequence<Clause> {
+            return children[functor]?.get(functor, arity) ?: emptySequence()
+        }
     }
 
     data class DirectiveNode(val directives: MutableList<Directive> = mutableListOf())
@@ -132,6 +135,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
+        override fun get(functor: String, arity: Int): Sequence<Clause> = emptySequence()
     }
 
     data class FunctorNode(val functor: String, override val children: MutableMap<Int, ArityNode> = mutableMapOf())
@@ -178,6 +182,10 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                 }
                 else -> emptySequence()
             }
+        }
+
+        override fun get(functor: String, arity: Int): Sequence<Clause> {
+            return children[arity]?.get(functor, arity) ?: emptySequence()
         }
     }
 
@@ -487,6 +495,8 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
     }
 
     abstract fun get(clause: Clause): Sequence<Clause>
+
+    open fun get(functor: String, arity: Int): Sequence<Clause> = clauses
 
     open fun toString(treefy: Boolean): String {
         return if (treefy) {
