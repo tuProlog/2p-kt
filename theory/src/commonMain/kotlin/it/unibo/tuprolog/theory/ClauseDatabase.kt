@@ -66,9 +66,12 @@ interface ClauseDatabase : Iterable<Clause> {
     companion object {
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(vararg clause: Clause): ClauseDatabase = ClauseDatabaseImpl(clause.toList())
+        fun of(vararg clause: Clause): ClauseDatabase = ClauseDatabaseImpl(clause.asIterable())
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.toList())
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.asIterable())
+
+        /** Creates a ClauseDatabase with given clauses */
+        fun of(clauses: Sequence<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.asIterable())
     }
 }
