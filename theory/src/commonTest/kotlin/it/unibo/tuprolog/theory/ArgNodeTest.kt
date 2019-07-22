@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
 import kotlin.test.*
@@ -28,9 +30,9 @@ internal class ArgNodeTest {
     private lateinit var argNodeTwoIndexAndAAtom: ReteTree.ArgNode
     private lateinit var argNodeTwoIndexAndBAtom: ReteTree.ArgNode
 
-    private lateinit var zeroIndexArgNodes: Iterable<ReteTree.ArgNode>
-    private lateinit var twoIndexArgNodes: Iterable<ReteTree.ArgNode>
-    private lateinit var allArgNodes: Iterable<ReteTree.ArgNode>
+    private lateinit var zeroIndexEmptyArgNodes: Iterable<ReteTree.ArgNode>
+    private lateinit var twoIndexEmptyArgNodes: Iterable<ReteTree.ArgNode>
+    private lateinit var allEmptyArgNodes: Iterable<ReteTree.ArgNode>
     private lateinit var allFilledArgNodes: Iterable<ReteTree.ArgNode>
 
     @BeforeTest
@@ -40,9 +42,9 @@ internal class ArgNodeTest {
         argNodeTwoIndexAndAAtom = ReteTree.ArgNode(2, aAtom)
         argNodeTwoIndexAndBAtom = ReteTree.ArgNode(2, bAtom)
 
-        zeroIndexArgNodes = listOf(argNodeZeroIndexAndAAtom, argNodeZeroIndexAndBAtom)
-        twoIndexArgNodes = listOf(argNodeTwoIndexAndAAtom, argNodeTwoIndexAndBAtom)
-        allArgNodes = zeroIndexArgNodes + twoIndexArgNodes
+        zeroIndexEmptyArgNodes = listOf(argNodeZeroIndexAndAAtom, argNodeZeroIndexAndBAtom)
+        twoIndexEmptyArgNodes = listOf(argNodeTwoIndexAndAAtom, argNodeTwoIndexAndBAtom)
+        allEmptyArgNodes = zeroIndexEmptyArgNodes + twoIndexEmptyArgNodes
 
         allFilledArgNodes = listOf(
                 ReteTree.ArgNode(0, aAtom), ReteTree.ArgNode(0, bAtom),
@@ -57,7 +59,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseDoesntInsertAnythingIfNotARule() {
-        allArgNodes.forEach {
+        allEmptyArgNodes.forEach {
             it.put(Directive.of(aAtom))
 
             assertReteNodeEmpty(it)
@@ -66,7 +68,8 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseInsertsDirectlyRuleNodeChildIfNoMoreArgumentAfterThatIndexArePresent() {
-        allArgNodes.forEach {
+        // notice that, no check is made to ensure that inserted clause has correct "term" at correct "index"
+        allEmptyArgNodes.forEach {
             it.put(aAtomAsFirstHeadArgRule)
 
             assertEquals(aAtomAsFirstHeadArgRuleNode, it.children[null])
@@ -74,7 +77,7 @@ internal class ArgNodeTest {
 
         init() // side-effects cleaning needed
 
-        twoIndexArgNodes.forEach {
+        twoIndexEmptyArgNodes.forEach {
             it.put(aAtomAsThirdHeadArgRule)
 
             assertEquals(aAtomAsThirdHeadArgRuleNode, it.children[null])
@@ -83,7 +86,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseCreatesArgNodeChildrenIfMoreArgumentsArePresentAfterItsIndex() {
-        zeroIndexArgNodes.forEach {
+        zeroIndexEmptyArgNodes.forEach {
             it.put(aAtomAsThirdHeadArgRule)
 
             val childOfZeroIndexArgNode = it.children[aAtomAsThirdHeadArgRule.head[1]] as ReteTree.ArgNode
@@ -95,7 +98,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseCreatesDifferentChildrenForDifferentArguments() {
-        zeroIndexArgNodes.forEach {
+        zeroIndexEmptyArgNodes.forEach {
             it.put(Fact.of(Struct.of("f", aAtom, Empty.list())))
             it.put(Fact.of(Struct.of("f", aAtom, Empty.set())))
 
@@ -105,7 +108,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseReusesStructurallyEqualsChildren() {
-        zeroIndexArgNodes.forEach {
+        zeroIndexEmptyArgNodes.forEach {
             it.put(Fact.of(Struct.of("f", aAtom, Var.of("A"))))
             it.put(Fact.of(Struct.of("f", aAtom, Var.anonymous())))
 
@@ -115,7 +118,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseForwardsCorrectlyTheBeforeFlagToChildren() {
-        zeroIndexArgNodes.forEach {
+        zeroIndexEmptyArgNodes.forEach {
             val clauses = listOf(
                     Fact.of(Struct.of("f", aAtom, Var.of("A"))),
                     Fact.of(Struct.of("f", aAtom, Var.anonymous())))
@@ -151,8 +154,71 @@ internal class ArgNodeTest {
     }
 
     @Test
-    fun removeClauseWithZeroLimitDoesNothing() {
-        // TODO
+    fun removeFromEmptyNodeDoesNothing() {
+        allEmptyArgNodes.forEach { assertNoChangesInReteNode(it) { remove(aAtomAsFirstHeadArgRule) } }
     }
 
+    @Test
+    fun removeClauseWithZeroLimitDoesNothing() {
+        allFilledArgNodes.forEach { argNode ->
+            aAtomRules.forEach {
+                assertNoChangesInReteNode(argNode) { remove(it, limit = 0) }
+            }
+        }
+    }
+
+    @Test
+    fun removeClauseWithLimitWorksAsExpected() {
+        allFilledArgNodes.forEach { argNode ->
+            init() // needed side-effects cleaning
+
+            val oneArgClause = Fact.of(Struct.of("f", Var.anonymous()))
+            argNode.put(oneArgClause, true)
+
+            assertRemovedFromReteNode(argNode, listOf(oneArgClause)) { remove(oneArgClause, limit = 1) }
+        }
+    }
+
+    @Test
+    fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
+        allFilledArgNodes.forEach { argNode ->
+            init() // needed side-effects cleaning
+
+            val oneArgClause = Fact.of(Struct.of("f", Var.anonymous()))
+            argNode.put(oneArgClause, true)
+
+            assertRemovedFromReteNode(argNode, listOf(oneArgClause, aAtomAsFirstHeadArgRule)) { remove(oneArgClause, limit = -1) }
+        }
+    }
+
+    @Test
+    fun removeAllClausesWorksAsExpected() {
+        allFilledArgNodes.forEach { argNode ->
+            init() // needed side-effects cleaning
+
+            val threeArgClause = Fact.of(Struct.of("f", aAtom, bAtom, Var.anonymous()))
+            argNode.put(threeArgClause)
+
+            assertRemovedFromReteNode(argNode, listOf(aAtomAsThirdHeadArgRule, threeArgClause)) { removeAll(threeArgClause) }
+        }
+    }
+
+    @Test
+    fun deepCopyCreatesIndependentInstance() {
+        allEmptyArgNodes.forEach { argNode ->
+            aAtomRules.forEach { aRule ->
+                argNode.put(aRule)
+
+                val independentCopy = argNode.deepCopy()
+
+                assertReteNodeClausesCorrect(argNode, listOf(aRule))
+                assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
+
+                argNode.remove(aRule)
+
+                assertReteNodeClausesCorrect(argNode, emptyList())
+                assertReteNodeClausesCorrect(independentCopy, listOf(aRule))
+            }
+        }
+    }
 }

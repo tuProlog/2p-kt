@@ -117,11 +117,14 @@ internal object ReteTreeUtils {
 
     /** Asserts that calling [removeAction] onto [reteNode] results in [removedExpected] elements removed */
     internal fun assertRemovedFromReteNode(reteNode: ReteTree<*>, removedExpected: Iterable<Clause>, removeAction: ReteTree<*>.() -> Sequence<Clause>) {
-        val allClauseCount = reteNode.clauses.count()
+        val allClauses = reteNode.clauses.asIterable()
+        val allClauseCount = allClauses.count()
+        val remainingClausesExpected = allClauses - removedExpected
 
         val removedActual = reteNode.removeAction()
 
         assertEquals(removedExpected, removedActual.toList())
         assertReteNodeElementCount(reteNode, allClauseCount - removedExpected.count())
+        assertReteNodeClausesCorrect(reteNode, remainingClausesExpected)
     }
 }
