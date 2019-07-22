@@ -319,45 +319,21 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class ArgNode(val index: Int, val term: Term, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
+    data class ArgNode(private val index: Int, private val term: Term, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
         : ReteTree<Term?>(children) {
 
-        override val header: String
-            get() = "Argument($index, $term)"
-
-        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            return when {
-                limit == 0 || clause !is Rule -> {
-                    emptySequence()
-                }
-                index < clause.head.arity - 1 -> {
-                    val nextArg: Term = clause.head[index + 1]
-
-                    val removed: MutableList<Clause> = mutableListOf()
-                    for (child in children.entries.asSequence()
-                            .filter { it.key !== null }
-                            .filter { it.value is ArgNode }
-                            .filter { it.key!!.matches(nextArg) }
-                            .map { it.value }) {
-
-                        removed += child.remove(clause, limit - removed.size)
-                        if (removed.size == limit) break
-                    }
-
-                    removed.asSequence()
-                }
-                else -> {
-                    children[null]?.remove(clause, limit) ?: emptySequence()
-                }
-            }
+        init {
+            require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
         }
+
+        override val header = "Argument($index, $term)"
 
         override fun put(clause: Clause, before: Boolean) {
             when {
                 clause !is Rule -> {
                     return
                 }
-                index < clause.head.arity - 1 -> {
+                index < clause.head.arity - 1 -> { // if more arguments after "index" arg
                     val nextArg: Term = clause.head[index + 1]
                     var child: ArgNode? = children[nextArg] as ArgNode?
 
@@ -389,10 +365,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun deepCopy(): ArgNode {
-            return ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
-        }
-
         override fun get(clause: Clause): Sequence<Clause> {
             return when {
                 clause !is Rule -> {
@@ -413,6 +385,35 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                 }
             }
         }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            return when {
+                limit == 0 || clause !is Rule -> {
+                    emptySequence()
+                }
+                index < clause.head.arity - 1 -> {
+                    val nextArg: Term = clause.head[index + 1]
+
+                    val removed: MutableList<Clause> = mutableListOf()
+                    for (child in children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(nextArg) }
+                            .map { it.value }) {
+
+                        removed += child.remove(clause, limit - removed.size)
+                        if (removed.size == limit) break
+                    }
+
+                    removed.asSequence()
+                }
+                else -> {
+                    children[null]?.remove(clause, limit) ?: emptySequence()
+                }
+            }
+        }
+
+        override fun deepCopy(): ArgNode = ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
     }
 
     data class RuleNode(private val rules: MutableList<Rule> = mutableListOf()) : ReteTree<Nothing>() {
