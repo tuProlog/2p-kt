@@ -176,38 +176,14 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
         }
     }
 
-    data class ArityNode(val arity: Int, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
+    data class ArityNode(private val arity: Int, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
         : ReteTree<Term?>(children) {
 
-        override val header: String
-            get() = "Arity($arity)"
-
-        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            return when {
-                limit == 0 || clause !is Rule -> {
-                    emptySequence()
-                }
-                clause.head.arity > 0 -> {
-                    val firstArg: Term = clause.head[0]
-
-                    val removed: MutableList<Clause> = mutableListOf()
-                    for (child in children.entries.asSequence()
-                            .filter { it.key !== null }
-                            .filter { it.value is ArgNode }
-                            .filter { it.key!!.matches(firstArg) }
-                            .map { it.value }) {
-
-                        removed += child.remove(clause, limit - removed.size)
-                        if (removed.size == limit) break
-                    }
-
-                    removed.asSequence()
-                }
-                else -> {
-                    children[null]?.remove(clause, limit) ?: emptySequence()
-                }
-            }
+        init {
+            require(arity >= 0) { "ArityNode arity should be greater than or equal to 0" }
         }
+
+        override val header = "Arity($arity)"
 
         override fun put(clause: Clause, before: Boolean) {
             when {
@@ -246,10 +222,6 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun deepCopy(): ArityNode {
-            return ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
-        }
-
         override fun get(clause: Clause): Sequence<Clause> {
             return when {
                 clause !is Rule -> {
@@ -269,6 +241,37 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                     children[null]?.get(clause) ?: emptySequence()
                 }
             }
+        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            return when {
+                limit == 0 || clause !is Rule -> {
+                    emptySequence()
+                }
+                clause.head.arity > 0 -> {
+                    val firstArg: Term = clause.head[0]
+
+                    val removed: MutableList<Clause> = mutableListOf()
+                    for (child in children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(firstArg) }
+                            .map { it.value }) {
+
+                        removed += child.remove(clause, limit - removed.size)
+                        if (removed.size == limit) break
+                    }
+
+                    removed.asSequence()
+                }
+                else -> {
+                    children[null]?.remove(clause, limit) ?: emptySequence()
+                }
+            }
+        }
+
+        override fun deepCopy(): ArityNode {
+            return ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
         }
     }
 

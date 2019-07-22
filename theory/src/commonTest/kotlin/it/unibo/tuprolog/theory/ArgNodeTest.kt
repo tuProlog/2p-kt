@@ -68,7 +68,7 @@ internal class ArgNodeTest {
 
     @Test
     fun putClauseInsertsDirectlyRuleNodeChildIfNoMoreArgumentAfterThatIndexArePresent() {
-        // notice that, no check is made to ensure that inserted clause has correct "term" at correct "index"
+        // notice that no check is made, at this level, to ensure that inserted clause has correct "term" at correct "index"
         allEmptyArgNodes.forEach {
             it.put(aAtomAsFirstHeadArgRule)
 
@@ -81,6 +81,17 @@ internal class ArgNodeTest {
             it.put(aAtomAsThirdHeadArgRule)
 
             assertEquals(aAtomAsThirdHeadArgRuleNode, it.children[null])
+        }
+    }
+
+    @Test
+    fun putClauseInsertsAsChildEvenNoArgsHeadedRules() {
+        // note that no check is made, at this level, to guarantee that no args headed rules should not be inserted there
+        val noArgsHeadedRule = Fact.of(aAtom)
+        allEmptyArgNodes.forEach {
+            it.put(noArgsHeadedRule)
+
+            assertEquals(ReteTree.RuleNode(mutableListOf(noArgsHeadedRule)), it.children[null])
         }
     }
 
