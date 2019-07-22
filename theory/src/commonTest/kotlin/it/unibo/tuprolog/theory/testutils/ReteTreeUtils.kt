@@ -36,6 +36,9 @@ internal object ReteTreeUtils {
         )
     }
 
+    /** Contains some well-formed rules with no args head */
+    internal val noArgHeadedRules by lazy { rules.filter { it.head.isAtom } }
+
     /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand)*/
     internal val rulesQueryResultsMap by lazy {
         mapOf(

@@ -131,6 +131,7 @@ internal class ArgNodeTest {
 
     @Test
     fun clausesCorrect() {
+        allEmptyArgNodes.forEach { assertReteNodeEmpty(it) }
         allFilledArgNodes.forEach { assertReteNodeClausesCorrect(it, aAtomRules) }
     }
 

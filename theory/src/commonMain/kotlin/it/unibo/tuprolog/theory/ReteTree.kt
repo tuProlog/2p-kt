@@ -275,20 +275,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
     data class NoArgsNode(override val children: MutableMap<Nothing?, RuleNode> = mutableMapOf())
         : ReteTree<Nothing?>(children) {
 
-        override val header: String
-            get() = "NoArguments"
-
-        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            return when {
-                limit == 0 || children.isEmpty() -> {
-                    emptySequence()
-                }
-                clause is Rule -> {
-                    children[null]?.remove(clause, limit) ?: emptySequence()
-                }
-                else -> emptySequence()
-            }
-        }
+        override val header = "NoArguments"
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
@@ -305,18 +292,26 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun deepCopy(): NoArgsNode {
-            return NoArgsNode(children.deepCopy({ it }, { it.deepCopy() }))
-        }
-
-        override fun get(clause: Clause): Sequence<Clause> {
-            return when (clause) {
-                is Rule -> {
-                    children[null]?.get(clause) ?: emptySequence()
+        override fun get(clause: Clause): Sequence<Clause> =
+                when (clause) {
+                    is Rule -> {
+                        children[null]?.get(clause) ?: emptySequence()
+                    }
+                    else -> emptySequence()
                 }
-                else -> emptySequence()
-            }
-        }
+
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> =
+                when {
+                    limit == 0 || children.isEmpty() -> {
+                        emptySequence()
+                    }
+                    clause is Rule -> {
+                        children[null]?.remove(clause, limit) ?: emptySequence()
+                    }
+                    else -> emptySequence()
+                }
+
+        override fun deepCopy(): NoArgsNode = NoArgsNode(children.deepCopy({ it }, { it.deepCopy() }))
     }
 
     data class ArgNode(private val index: Int, private val term: Term, override val children: MutableMap<Term?, ReteTree<*>> = mutableMapOf())
