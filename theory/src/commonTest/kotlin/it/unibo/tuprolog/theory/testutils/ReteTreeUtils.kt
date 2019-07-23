@@ -41,7 +41,13 @@ internal object ReteTreeUtils {
     /** Contains some well-formed rules with no args head */
     internal val noArgHeadedRules by lazy { rules.filter { it.head.isAtom } }
 
-    /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand)*/
+    /** Contains some well-formed wules with "a" functor */
+    internal val aFunctorRules by lazy { rules.filter { it.head.functor == "a" } }
+
+    /** Contains some well-formed wules with "f" functor */
+    internal val fFunctorRules by lazy { rules.filter { it.head.functor == "f" } }
+
+    /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand) */
     internal val rulesQueryResultsMap by lazy {
         mapOf(
                 Fact.of(Truth.`true`()) to listOf(Fact.of(Truth.`true`())),
@@ -55,6 +61,9 @@ internal object ReteTreeUtils {
                 }
         )
     }
+
+    /** Contains a map of queries and results made excluding queries with non "a" functor from [rulesQueryResultsMap] */
+    internal val aFunctorRulesQueryResultsMap by lazy { rulesQueryResultsMap.filterKeys { it.head.functor == "a" } }
 
     /** Contains some well-formed directives */
     internal val directives by lazy {
