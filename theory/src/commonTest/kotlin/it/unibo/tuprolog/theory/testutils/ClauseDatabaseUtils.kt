@@ -55,7 +55,9 @@ internal object ClauseDatabaseUtils {
 
     /** Asserts that the two collections contain the same elements */
     internal fun <E> assertContentsEquals(expected: Collection<E>, actual: Collection<E>) {
-        assertTrue(expected.containsAll(actual))
+        assertTrue("\nExpected:\t$expected\nActual:\t\t$actual") {
+            expected.containsAll(actual)
+        }
         assertTrue(actual.containsAll(expected))
     }
 

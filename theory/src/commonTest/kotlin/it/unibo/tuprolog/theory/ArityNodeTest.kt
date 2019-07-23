@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertCorrectAndPartialOrderRespected
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRuleHeadPartialOrderingRespected
@@ -148,37 +149,41 @@ internal class ArityNodeTest {
         filledArityNodes.forEach { assertNoChangesInReteNode(it) { remove(aRule) } }
     }
 
-// TODO
+    @Test
+    fun removeClauseWithLimitWorksAsExpected() {
+        for (limit in 0..10) {
+            ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+                init() // because removal of side-effects is needed
 
-//    @Test
-//    fun removeClauseWithLimitWorksAsExpected() {
-//        for (limit in 0..10) {
-//            ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-//                init() // because removal of side-effects is needed
-//
-//                filledArityNodes.forEach { assertRemovedFromReteNode(it, allMatching.take(limit)) { remove(query, limit) } }
-//            }
-//        }
-//    }
-//
-//    @Test
-//    fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
-//        val negativeLimit = -1
-//        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-//            init() // because removal of side-effects is needed
-//
-//            filledArityNodes.forEach { assertRemovedFromReteNode(it, allMatching) { remove(query, negativeLimit) } }
-//        }
-//    }
-//
-//    @Test
-//    fun removeAllClause() {
-//        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
-//            init() // because removal of side-effects is needed
-//
-//            filledArityNodes.forEach { assertRemovedFromReteNode(it, allMatching) { removeAll(query) } }
-//        }
-//    }
+                filledArityNodes.forEach {
+                    assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching, limit) { remove(query, limit) }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
+        val negativeLimit = -1
+        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+            init() // because removal of side-effects is needed
+
+            filledArityNodes.forEach {
+                assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching) { remove(query, negativeLimit) }
+            }
+        }
+    }
+
+    @Test
+    fun removeAllClause() {
+        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+            init() // because removal of side-effects is needed
+
+            filledArityNodes.forEach {
+                assertRemovedFromReteNodeRespectingPartialOrder(it, allMatching) { removeAll(query) }
+            }
+        }
+    }
 
     @Test
     fun deepCopyCreatesIndependentInstance() {

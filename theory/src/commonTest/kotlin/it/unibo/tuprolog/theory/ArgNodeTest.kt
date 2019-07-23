@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
 import kotlin.test.*
@@ -187,7 +187,9 @@ internal class ArgNodeTest {
             val oneArgClause = Fact.of(Struct.of("f", Var.anonymous()))
             argNode.put(oneArgClause, true)
 
-            assertRemovedFromReteNode(argNode, listOf(oneArgClause)) { remove(oneArgClause, limit = 1) }
+            assertRemovedFromReteNodeRespectingPartialOrder(argNode, listOf(oneArgClause), 1) {
+                remove(oneArgClause, limit = 1)
+            }
         }
     }
 
@@ -199,7 +201,9 @@ internal class ArgNodeTest {
             val oneArgClause = Fact.of(Struct.of("f", Var.anonymous()))
             argNode.put(oneArgClause, true)
 
-            assertRemovedFromReteNode(argNode, listOf(oneArgClause, aAtomAsFirstHeadArgRule)) { remove(oneArgClause, limit = -1) }
+            assertRemovedFromReteNodeRespectingPartialOrder(argNode, listOf(oneArgClause, aAtomAsFirstHeadArgRule)) {
+                remove(oneArgClause, limit = -1)
+            }
         }
     }
 
@@ -209,9 +213,11 @@ internal class ArgNodeTest {
             init() // needed side-effects cleaning
 
             val threeArgClause = Fact.of(Struct.of("f", aAtom, bAtom, Var.anonymous()))
-            argNode.put(threeArgClause)
+            argNode.put(threeArgClause, true)
 
-            assertRemovedFromReteNode(argNode, listOf(aAtomAsThirdHeadArgRule, threeArgClause)) { removeAll(threeArgClause) }
+            assertRemovedFromReteNodeRespectingPartialOrder(argNode, listOf(threeArgClause, aAtomAsThirdHeadArgRule)) {
+                removeAll(threeArgClause)
+            }
         }
     }
 
