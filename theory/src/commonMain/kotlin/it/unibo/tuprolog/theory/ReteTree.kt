@@ -138,7 +138,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
                     emptySequence()
                 }
                 clause is Rule -> {
-                    children[clause.arity]?.remove(clause, limit) ?: emptySequence()
+                    children[clause.head.arity]?.remove(clause, limit) ?: emptySequence()
                 }
                 else -> emptySequence()
             }
