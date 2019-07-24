@@ -482,20 +482,12 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
 
     companion object {
 
-        private fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K) -> K, deepCopyValue: (V) -> V): MutableMap<K, V> {
-            return entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
-        }
+        private fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K) -> K, deepCopyValue: (V) -> V): MutableMap<K, V> =
+                entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
 
-        fun of(clauses: Iterable<Clause>): ReteTree<*> {
-            return RootNode().apply {
-                for (clause in clauses) {
-                    put(clause)
-                }
-            }
-        }
+        fun of(clauses: Iterable<Clause>): ReteTree<*> =
+                RootNode().apply { clauses.forEach { put(it) } }
 
-        fun of(vararg clauses: Clause): ReteTree<*> {
-            return of(listOf(*clauses))
-        }
+        fun of(vararg clauses: Clause): ReteTree<*> = of(listOf(*clauses))
     }
 }
