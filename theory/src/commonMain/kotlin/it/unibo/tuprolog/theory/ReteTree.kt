@@ -12,26 +12,7 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
     data class RootNode(override val children: MutableMap<String?, ReteTree<*>> = mutableMapOf())
         : ReteTree<String?>(children) {
 
-        override val header: String
-            get() = "Root"
-
-        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
-            if (limit == 0) {
-                return emptySequence()
-            }
-
-            val child: ReteTree<*>? = when (clause) {
-                is Directive -> {
-                    children[null]
-                }
-                is Rule -> {
-                    children[clause.head.functor]
-                }
-                else -> throw IllegalStateException()
-            }
-
-            return child?.remove(clause, limit) ?: emptySequence()
-        }
+        override val header = "Root"
 
         override fun put(clause: Clause, before: Boolean) {
             when (clause) {
@@ -58,21 +39,36 @@ sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mut
             }
         }
 
-        override fun deepCopy(): RootNode {
-            return RootNode(children.deepCopy({ it }, { it.deepCopy() }))
-        }
+        override fun get(clause: Clause): Sequence<Clause> =
+                when (clause) {
+                    is Directive -> {
+                        children[null]?.get(clause) ?: emptySequence()
+                    }
+                    is Rule -> {
+                        children[clause.head.functor]?.get(clause) ?: emptySequence()
+                    }
+                    else -> emptySequence()
+                }
 
-        override fun get(clause: Clause): Sequence<Clause> {
-            return when (clause) {
+        override fun remove(clause: Clause, limit: Int): Sequence<Clause> {
+            if (limit == 0) {
+                return emptySequence()
+            }
+
+            val child: ReteTree<*>? = when (clause) {
                 is Directive -> {
-                    children[null]?.get(clause) ?: emptySequence()
+                    children[null]
                 }
                 is Rule -> {
-                    children[clause.head.functor]?.get(clause) ?: emptySequence()
+                    children[clause.head.functor]
                 }
-                else -> emptySequence()
+                else -> throw IllegalStateException()
             }
+
+            return child?.remove(clause, limit) ?: emptySequence()
         }
+
+        override fun deepCopy(): RootNode = RootNode(children.deepCopy({ it }, { it.deepCopy() }))
     }
 
     data class DirectiveNode(private val directives: MutableList<Directive> = mutableListOf())

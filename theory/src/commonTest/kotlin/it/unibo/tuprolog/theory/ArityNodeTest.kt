@@ -2,12 +2,12 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertCorrectAndPartialOrderRespected
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRuleHeadPartialOrderingRespected
 import kotlin.test.*
 
 /**
@@ -126,7 +126,7 @@ internal class ArityNodeTest {
     @Test
     fun getClause() {
         ReteTreeUtils.rulesQueryResultsMap.forEach { (query, result) ->
-            filledArityNodes.forEach { assertRuleHeadPartialOrderingRespected(result, it.get(query).map { r -> r as Rule }.toList()) }
+            filledArityNodes.forEach { assertClauseHeadPartialOrderingRespected(result, it.get(query).toList()) }
         }
     }
 

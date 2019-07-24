@@ -103,6 +103,12 @@ internal object ReteTreeUtils {
         )
     }
 
+    /** Contains well-formed mixed [rules] and [directives] */
+    internal val mixedClauses by lazy { rules + directives }
+
+    /** Contains a map of queries and results obtained by [rulesQueryResultsMap] and [directivesQueryResultsMap] */
+    internal val mixedClausesQueryResultsMap by lazy { rulesQueryResultsMap + directivesQueryResultsMap }
+
     /** Asserts that rete node has correct elements count */
     internal fun assertReteNodeElementCount(reteNode: ReteTree<*>, expectedCount: Int) {
         assertEquals(expectedCount, reteNode.clauses.count())
@@ -146,7 +152,7 @@ internal object ReteTreeUtils {
      * respecting the partial ordering; this means that removed elements can be taken in every order BUT respecting the partial order */
     internal fun assertRemovedFromReteNodeRespectingPartialOrder(
             reteNode: ReteTree<*>,
-            toRemoveMatched: Iterable<Rule>,
+            toRemoveMatched: Iterable<Clause>,
             removeLimit: Int = Int.MAX_VALUE,
             removeAction: ReteTree<*>.() -> Sequence<Clause>
     ) {
@@ -157,8 +163,8 @@ internal object ReteTreeUtils {
         val removedActualSequence = reteNode.removeAction()
         assertReteNodeElementCount(reteNode, allClauseCount - correctNumberOfRemoved)
 
-        val removedActual = partialOrderingHeadRuleMap(removedActualSequence.map { it as Rule }.asIterable())
-        val removeMatchExpected = partialOrderingHeadRuleMap(toRemoveMatched)
+        val removedActual = partialOrderingHeadClauseMap(removedActualSequence.asIterable())
+        val removeMatchExpected = partialOrderingHeadClauseMap(toRemoveMatched)
 
         val checkerMap = removedActual.mapValues {
             it.value.zip(removeMatchExpected[it.key] ?: emptyList())
@@ -167,57 +173,55 @@ internal object ReteTreeUtils {
 
         assertEquals(expectedRemovedList, actualRemovedList)
 
-        assertRuleHeadPartialOrderingRespected(
-                allClauses.map { it as Rule } - expectedRemovedList,
-                reteNode.clauses.asIterable().map { it as Rule }
-        )
+        assertClauseHeadPartialOrderingRespected(allClauses - expectedRemovedList, reteNode.clauses.asIterable())
     }
 
-    /** Asserts that [actualRules] respect partial ordering (checking for Rules head structural equality) imposed by [expectedRules] iteration order */
-    internal fun assertRuleHeadPartialOrderingRespected(expectedRules: Iterable<Rule>, actualRules: Iterable<Rule>) {
-//        assertEquals(expectedRules.toList().sorted(), reteNode.clauses.toList().sorted()) TODO enable after solving issue #29 and delete two below assertions
-        assertTrue("\nExpected:\t$expectedRules\nActual:\t\t$actualRules") {
-            expectedRules.toList().containsAll(actualRules.toList())
+    /** Asserts that [actualClauses] respect partial ordering (checking for Clauses head structural equality) imposed by [expectedClauses] iteration order */
+    internal fun assertClauseHeadPartialOrderingRespected(expectedClauses: Iterable<Clause>, actualClauses: Iterable<Clause>) {
+//        assertEquals(expectedClauses.toList().sorted(), reteNode.clauses.toList().sorted()) TODO enable after solving issue #29 and delete two below assertions
+        assertTrue("\nExpected:\t$expectedClauses\nActual:\t\t$actualClauses") {
+            expectedClauses.toList().containsAll(actualClauses.toList())
         }
-        assertTrue(actualRules.toList().containsAll(expectedRules.toList()))
+        assertTrue(actualClauses.toList().containsAll(expectedClauses.toList()))
 
-        actualRules.forEachStructurallyEqualsHead(partialOrderingHeadRuleMap(expectedRules).toMutableMap(),
-                onPresentEntry = { rule, entry ->
+        actualClauses.forEachStructurallyEqualsHead(partialOrderingHeadClauseMap(expectedClauses).toMutableMap(),
+                onPresentEntry = { clause, entry ->
                     when {
-                        entry.value.none() -> fail("Rule $rule not indexed under its head Struct")
-                        entry.value.first() == rule -> entry.setValue(entry.value - rule)
-                        else -> fail("Partial ordering not respected: $rule should come after these ${entry.value - rule}")
+                        entry.value.none() -> fail("Clause $clause not indexed under its head Struct")
+                        entry.value.first() == clause -> entry.setValue(entry.value - clause)
+                        else -> fail("Partial ordering not respected: $clause should come after these ${entry.value - clause}")
                     }
                 },
-                onMissingEntry = { rule, _ -> fail("Rule $rule not expected among these: $expectedRules") }
+                onMissingEntry = { clause, _ -> fail("Clause $clause not expected among these: $expectedClauses") }
         )
     }
 
-    /** Asserts that ReteTree node respects partial ordering (checking for Rules head structural equality) imposed by [expectedRules] iteration order */
-    internal fun assertCorrectAndPartialOrderRespected(reteNode: ReteTree<*>, expectedRules: Iterable<Rule>) =
-            assertRuleHeadPartialOrderingRespected(expectedRules, reteNode.clauses.map { it as Rule }.asIterable())
+    /** Asserts that ReteTree node respects partial ordering (checking for Clauses head structural equality) imposed by [expectedClauses] iteration order */
+    internal fun assertCorrectAndPartialOrderRespected(reteNode: ReteTree<*>, expectedClauses: Iterable<Clause>) =
+            assertClauseHeadPartialOrderingRespected(expectedClauses, reteNode.clauses.asIterable())
 
-    /** Creates a Map containing for each structurallyEquals Rule.head the rules ordered (according to [rules] iteration order),
+    /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),
      * constructing the overall partial ordering */
-    private fun partialOrderingHeadRuleMap(rules: Iterable<Rule>): Map<Struct, Iterable<Rule>> =
-            mutableMapOf<Struct, Iterable<Rule>>().also { resultMap ->
-                rules.forEachStructurallyEqualsHead(resultMap,
-                        onPresentEntry = { rule, entry -> entry.setValue(entry.value + rule) },
-                        onMissingEntry = { rule, map -> map[rule.head] = mutableListOf(rule) }
+    private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Struct?, Iterable<Clause>> =
+            mutableMapOf<Struct?, Iterable<Clause>>().also { resultMap ->
+                clauses.forEachStructurallyEqualsHead(resultMap,
+                        onPresentEntry = { clause, entry -> entry.setValue(entry.value + clause) },
+                        onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) }
                 )
             }.toMap()
 
 
-    /** Utility function to iterate over rules with partial ordering map, doing actions on found or missing entry */
-    private fun Iterable<Rule>.forEachStructurallyEqualsHead(
-            partialOrderingMap: MutableMap<Struct, Iterable<Rule>>,
-            onPresentEntry: (Rule, MutableMap.MutableEntry<Struct, Iterable<Rule>>) -> Unit,
-            onMissingEntry: (Rule, MutableMap<Struct, Iterable<Rule>>) -> Unit
+    /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
+    private fun Iterable<Clause>.forEachStructurallyEqualsHead(
+            partialOrderingMap: MutableMap<Struct?, Iterable<Clause>>,
+            onPresentEntry: (Clause, MutableMap.MutableEntry<Struct?, Iterable<Clause>>) -> Unit,
+            onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit
     ) {
-        forEach { rule ->
-            partialOrderingMap.entries.find { (ruleHead, _) -> ruleHead structurallyEquals rule.head }?.also {
-                onPresentEntry(rule, it)
-            } ?: onMissingEntry(rule, partialOrderingMap)
+        forEach { clause ->
+            partialOrderingMap.entries.find { (clauseHead, _) ->
+                clauseHead?.let { clause is Rule && it structurallyEquals clause.head }
+                        ?: clause.isDirective
+            }?.also { onPresentEntry(clause, it) } ?: onMissingEntry(clause, partialOrderingMap)
         }
     }
 }
