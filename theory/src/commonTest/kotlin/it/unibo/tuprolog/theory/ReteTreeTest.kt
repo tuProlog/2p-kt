@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
+import it.unibo.tuprolog.theory.rete.ReteTree
+import it.unibo.tuprolog.theory.rete.RootNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [ReteTree.Companion]
+ * Test class for [ReteTree]
  *
  * @author Enrico
  */
@@ -13,14 +15,14 @@ internal class ReteTreeTest {
 
     private val reteTreeTestContents by lazy {
         listOf(
-                ReteTreeUtils.rules,
-                ReteTreeUtils.directives,
-                ReteTreeUtils.mixedClauses
+                ReteNodeUtils.rules,
+                ReteNodeUtils.directives,
+                ReteNodeUtils.mixedClauses
         )
     }
 
     private val correctInstances = reteTreeTestContents.map { clauses ->
-        ReteTree.RootNode().apply { clauses.forEach { put(it) } }
+        RootNode().apply { clauses.forEach { put(it) } }
     }
 
     @Test

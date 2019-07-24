@@ -1,39 +1,39 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertClauseHeadPartialOrderingRespected
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertCorrectAndPartialOrderRespected
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.theory.rete.ArityNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.*
 
 /**
- * Test class for [ReteTree.ArityNode]
+ * Test class for [ArityNode]
  *
  * @author Enrico
  */
 internal class ArityNodeTest {
 
-    private lateinit var emptyArityNodes: Iterable<ReteTree.ArityNode>
-    private lateinit var filledArityNodes: Iterable<ReteTree.ArityNode>
+    private lateinit var emptyArityNodes: Iterable<ArityNode>
+    private lateinit var filledArityNodes: Iterable<ArityNode>
 
     private val aRule: Rule = Rule.of(Atom.of("myTestRule"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyArityNodes = (0..3).map { ReteTree.ArityNode(it) }
+        emptyArityNodes = (0..3).map { ArityNode(it) }
         filledArityNodes = (0..3).map { arity ->
-            ReteTree.ArityNode(arity).apply { ReteTreeUtils.rules.forEach { put(it) } }
+            ArityNode(arity).apply { ReteNodeUtils.rules.forEach { put(it) } }
         }
     }
 
     @Test
     fun arityNodeCannotAcceptNegativeArityUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { ReteTree.ArityNode(-1) }
+        assertFailsWith<IllegalArgumentException> { ArityNode(-1) }
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class ArityNodeTest {
     @Test
     fun clausesCorrect() {
         emptyArityNodes.forEach { assertReteNodeEmpty(it) }
-        filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteTreeUtils.rules) }
+        filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules) }
     }
 
     @Test
@@ -57,21 +57,14 @@ internal class ArityNodeTest {
         // notice that no check is made, at this level, to ensure that inserted clause has correct "arity"
         emptyArityNodes.forEach { it.put(aRule) }
 
-        emptyArityNodes.forEach { assertEquals(aRule, it.clauses.single()) }
-    }
-
-    @Test
-    fun putClauseDoesntInsertDirective() {
-        emptyArityNodes.forEach { it.put(aDirective) }
-
-        emptyArityNodes.forEach { assertReteNodeEmpty(it) }
+        emptyArityNodes.forEach { assertEquals(aRule, it.indexedElements.single()) }
     }
 
     @Test
     fun putClauseInsertsRelativelyAfterByDefault() {
         filledArityNodes.forEach { it.put(aRule) }
 
-        filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteTreeUtils.rules + aRule) }
+        filledArityNodes.forEach { assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules + aRule) }
     }
 
     @Test
@@ -79,7 +72,7 @@ internal class ArityNodeTest {
         filledArityNodes.forEach { it.put(aRule, true) }
 
         filledArityNodes.forEach {
-            assertCorrectAndPartialOrderRespected(it, ReteTreeUtils.rules.toMutableList().apply { add(0, aRule) })
+            assertCorrectAndPartialOrderRespected(it, ReteNodeUtils.rules.toMutableList().apply { add(0, aRule) })
         }
     }
 
@@ -125,21 +118,14 @@ internal class ArityNodeTest {
 
     @Test
     fun getClause() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, result) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, result) ->
             filledArityNodes.forEach { assertClauseHeadPartialOrderingRespected(result, it.get(query).toList()) }
         }
     }
 
     @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
-            filledArityNodes.forEach { assertTrue { it.get(query).none() } }
-        }
-    }
-
-    @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, _) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, _) ->
             filledArityNodes.forEach { assertNoChangesInReteNode(it) { remove(query, 0) } }
         }
     }
@@ -152,7 +138,7 @@ internal class ArityNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 0..10) {
-            ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
                 filledArityNodes.forEach {
@@ -165,7 +151,7 @@ internal class ArityNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
         val negativeLimit = -1
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             filledArityNodes.forEach {
@@ -176,7 +162,7 @@ internal class ArityNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             filledArityNodes.forEach {
@@ -209,7 +195,7 @@ internal class ArityNodeTest {
 
             val independentCopy = it.deepCopy()
 
-            assertSame(it.clauses.single(), independentCopy.clauses.single())
+            assertSame(it.indexedElements.single(), independentCopy.indexedElements.single())
         }
     }
 

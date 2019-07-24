@@ -1,31 +1,32 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertCorrectAndPartialOrderRespected
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.theory.rete.RootNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.*
 
 /**
- * Test class for [ReteTree.RootNode]
+ * Test class for [RootNode]
  *
  * @author Enrico
  */
 internal class RootNodeTest {
 
-    private lateinit var emptyRootNode: ReteTree.RootNode
-    private lateinit var filledRootNode: ReteTree.RootNode
+    private lateinit var emptyRootNode: RootNode
+    private lateinit var filledRootNode: RootNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
     private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyRootNode = ReteTree.RootNode()
-        filledRootNode = ReteTree.RootNode().apply { ReteTreeUtils.mixedClauses.forEach { put(it) } }
+        emptyRootNode = RootNode()
+        filledRootNode = RootNode().apply { ReteNodeUtils.mixedClauses.forEach { put(it) } }
     }
 
     @Test
@@ -41,14 +42,14 @@ internal class RootNodeTest {
     @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyRootNode)
-        assertCorrectAndPartialOrderRespected(filledRootNode, ReteTreeUtils.mixedClauses)
+        assertCorrectAndPartialOrderRespected(filledRootNode, ReteNodeUtils.mixedClauses)
     }
 
     @Test
     fun putClauseInsertsRule() {
         emptyRootNode.put(aRule)
 
-        assertEquals(aRule, emptyRootNode.clauses.single())
+        assertEquals(aRule, emptyRootNode.indexedElements.single())
     }
 
     @Test
@@ -56,7 +57,7 @@ internal class RootNodeTest {
         filledRootNode.put(aRule)
         filledRootNode.put(aDirective)
 
-        assertCorrectAndPartialOrderRespected(filledRootNode, ReteTreeUtils.mixedClauses + listOf(aRule, aDirective))
+        assertCorrectAndPartialOrderRespected(filledRootNode, ReteNodeUtils.mixedClauses + listOf(aRule, aDirective))
     }
 
     @Test
@@ -65,21 +66,21 @@ internal class RootNodeTest {
         filledRootNode.put(aRule, true)
 
         assertCorrectAndPartialOrderRespected(filledRootNode,
-                ReteTreeUtils.mixedClauses.toMutableList().apply {
+                ReteNodeUtils.mixedClauses.toMutableList().apply {
                     addAll(0, listOf(aRule, aDirective))
                 })
     }
 
     @Test
     fun getClause() {
-        ReteTreeUtils.mixedClausesQueryResultsMap.forEach { (query, result) ->
+        ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, result) ->
             assertEquals(result, filledRootNode.get(query).toList())
         }
     }
 
     @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.mixedClausesQueryResultsMap.forEach { (query, _) ->
+        ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, _) ->
             assertNoChangesInReteNode(filledRootNode) { remove(query, 0) }
         }
     }
@@ -92,7 +93,7 @@ internal class RootNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 0..10) {
-            ReteTreeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
+            ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
                 assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching,limit) { remove(query, limit) }
@@ -103,7 +104,7 @@ internal class RootNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
         val negativeLimit = -1
-        ReteTreeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) { remove(query, negativeLimit) }
@@ -112,7 +113,7 @@ internal class RootNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) { removeAll(query) }
@@ -140,7 +141,7 @@ internal class RootNodeTest {
 
         val independentCopy = emptyRootNode.deepCopy()
 
-        assertSame(emptyRootNode.clauses.single(), independentCopy.clauses.single())
+        assertSame(emptyRootNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
 
 }

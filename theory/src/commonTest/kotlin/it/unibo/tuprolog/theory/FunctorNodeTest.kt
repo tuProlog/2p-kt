@@ -1,32 +1,34 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertClauseHeadPartialOrderingRespected
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertCorrectAndPartialOrderRespected
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.theory.rete.FunctorNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.*
 
 /**
- * Test class for [ReteTree.FunctorNode]
+ * Test class for [FunctorNode]
  *
  * @author Enrico
  */
 internal class FunctorNodeTest {
 
-    private lateinit var emptyAFunctorNode: ReteTree.FunctorNode
-    private lateinit var filledAFunctorNode: ReteTree.FunctorNode
+    private lateinit var emptyAFunctorNode: FunctorNode
+    private lateinit var filledAFunctorNode: FunctorNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyAFunctorNode = ReteTree.FunctorNode("a")
-        filledAFunctorNode = ReteTree.FunctorNode("a").apply { ReteTreeUtils.aFunctorRules.forEach { put(it) } }
+        emptyAFunctorNode = FunctorNode("a")
+        filledAFunctorNode = FunctorNode("a").apply { ReteNodeUtils.aFunctorRules.forEach { put(it) } }
     }
 
     @Test
@@ -42,26 +44,19 @@ internal class FunctorNodeTest {
     @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyAFunctorNode)
-        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteTreeUtils.aFunctorRules)
+        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteNodeUtils.aFunctorRules)
     }
 
     @Test
     fun putClauseInsertsRule() {
         emptyAFunctorNode.put(aRule)
 
-        assertEquals(aRule, emptyAFunctorNode.clauses.single())
+        assertEquals(aRule, emptyAFunctorNode.indexedElements.single())
     }
 
     @Test
     fun putClauseDoesntInsertWrongFunctorRule() {
-        ReteTreeUtils.fFunctorRules.forEach { emptyAFunctorNode.put(it) }
-
-        assertReteNodeEmpty(emptyAFunctorNode)
-    }
-
-    @Test
-    fun putClauseDoesntInsertDirective() {
-        emptyAFunctorNode.put(aDirective)
+        ReteNodeUtils.fFunctorRules.forEach { emptyAFunctorNode.put(it) }
 
         assertReteNodeEmpty(emptyAFunctorNode)
     }
@@ -70,33 +65,26 @@ internal class FunctorNodeTest {
     fun putClauseInsertsRelativelyAfterByDefault() {
         filledAFunctorNode.put(aRule)
 
-        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteTreeUtils.aFunctorRules + aRule)
+        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteNodeUtils.aFunctorRules + aRule)
     }
 
     @Test
     fun putClauseInsertsRelativelyBeforeAllIfSpecified() {
         filledAFunctorNode.put(aRule, true)
 
-        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteTreeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) })
+        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteNodeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) })
     }
 
     @Test
     fun getClause() {
-        ReteTreeUtils.aFunctorRulesQueryResultsMap.forEach { (query, result) ->
+        ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, result) ->
             assertClauseHeadPartialOrderingRespected(result, filledAFunctorNode.get(query).toList())
         }
     }
 
     @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
-            assertTrue { filledAFunctorNode.get(query).none() }
-        }
-    }
-
-    @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.aFunctorRulesQueryResultsMap.forEach { (query, _) ->
+        ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, _) ->
             assertNoChangesInReteNode(filledAFunctorNode) { remove(query, 0) }
         }
     }
@@ -109,7 +97,7 @@ internal class FunctorNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 0..10) {
-            ReteTreeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
+            ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
                 assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching, limit) { remove(query, limit) }
@@ -120,7 +108,7 @@ internal class FunctorNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
         val negativeLimit = -1
-        ReteTreeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) { remove(query, negativeLimit) }
@@ -129,7 +117,7 @@ internal class FunctorNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) { removeAll(query) }
@@ -157,6 +145,6 @@ internal class FunctorNodeTest {
 
         val independentCopy = emptyAFunctorNode.deepCopy()
 
-        assertSame(emptyAFunctorNode.clauses.single(), independentCopy.clauses.single())
+        assertSame(emptyAFunctorNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
 }
