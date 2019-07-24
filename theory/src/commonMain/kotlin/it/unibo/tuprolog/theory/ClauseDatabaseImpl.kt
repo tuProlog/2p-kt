@@ -56,4 +56,16 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun toString(): String = clauses.joinToString(".\n", "", ".\n")
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ClauseDatabaseImpl
+
+        if (clauses != other.clauses) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = clauses.hashCode()
 }
