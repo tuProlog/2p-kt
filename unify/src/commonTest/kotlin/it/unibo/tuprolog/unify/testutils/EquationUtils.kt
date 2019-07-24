@@ -38,7 +38,7 @@ internal object EquationUtils {
                     listFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
                             listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
                 },
-                Var.anonymous().let { anonymous -> setOf(numOf(1.5), anonymous) to setOf(numOf(1.5), anonymous) },
+                Var.anonymous().let { anonymous -> LogicSet.of(Numeric.of(1.5), anonymous) to LogicSet.of(Numeric.of(1.5), anonymous) },
                 with(Scope.empty()) { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
                 with(Scope.empty()) { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
                 with(Scope.empty()) {
