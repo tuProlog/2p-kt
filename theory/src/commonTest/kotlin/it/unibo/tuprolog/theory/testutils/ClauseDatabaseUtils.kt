@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 internal object ClauseDatabaseUtils {
 
     /** Contains well formed clauses that will need to be rewritten, because they contain variables in body top level */
-    internal val toBeRewrittenWellFormedClauses by lazy {
+    internal val toBeRewrittenWellFormedClauses by lazy { // TODO remove this.. no more rewriting needed
         listOf(
                 Clause.of(Atom.of("a"), Var.of("A"), Var.of("A")),
                 Clause.of(Atom.of("a"), Var.anonymous()),
@@ -55,7 +55,9 @@ internal object ClauseDatabaseUtils {
 
     /** Asserts that the two collections contain the same elements */
     internal fun <E> assertContentsEquals(expected: Collection<E>, actual: Collection<E>) {
-        assertTrue(expected.containsAll(actual))
+        assertTrue("\nExpected:\t$expected\nActual:\t\t$actual") {
+            expected.containsAll(actual)
+        }
         assertTrue(actual.containsAll(expected))
     }
 

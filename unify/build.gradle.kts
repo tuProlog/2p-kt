@@ -13,7 +13,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(project(":core"))
+//                    api(project(":core"))
                 }
             }
         }
@@ -21,7 +21,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(project(":core"))
+//                    api(project(":core"))
                 }
             }
         }

@@ -21,7 +21,12 @@ interface Directive : Clause {
     override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 
     companion object {
+        fun of(bodies: Iterable<Term>): Directive {
+            require(bodies.any()) { "Directive requires at least one body element" }
+            return DirectiveImpl(Tuple.wrapIfNeeded(*bodies.toList().toTypedArray()))
+        }
+
         fun of(body1: Term, vararg body: Term): Directive =
-                DirectiveImpl(Tuple.wrapIfNeeded(body1, *body))
+                of(listOf(body1, *body))
     }
 }
