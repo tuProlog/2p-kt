@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 import kotlin.math.min
 
-sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mutableMapOf()) {
+internal sealed class ReteTree<K>(open val children: MutableMap<K, out ReteTree<*>> = mutableMapOf()) {
 
     data class RootNode(override val children: MutableMap<String?, ReteTree<*>> = mutableMapOf())
         : ReteTree<String?>(children) {
