@@ -1,5 +1,6 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.dsl
 
+import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
