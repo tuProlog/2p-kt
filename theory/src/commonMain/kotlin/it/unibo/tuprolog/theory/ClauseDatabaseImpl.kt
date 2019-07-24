@@ -32,23 +32,23 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun retract(clause: Clause): RetractResult {
         val newTheory = reteTree.deepCopy()
-        val retracted = newTheory.remove(clause).toList()
+        val retracted = newTheory.remove(clause)
 
-        return if (retracted.isEmpty()) {
+        return if (retracted.none()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 
     override fun retractAll(clause: Clause): RetractResult {
         val newTheory = reteTree.deepCopy()
-        val retracted = newTheory.removeAll(clause).toList()
+        val retracted = newTheory.removeAll(clause)
 
-        return if (retracted.isEmpty()) {
+        return if (retracted.none()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 

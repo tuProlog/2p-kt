@@ -1,13 +1,9 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils
-import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils.assertContentsEquals
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertClauseHeadPartialOrderingRespected
+import kotlin.test.*
 
 /**
  * Test class for [ClauseDatabaseImpl] and [ClauseDatabase]
@@ -16,77 +12,291 @@ import kotlin.test.assertTrue
  */
 internal class ClauseDatabaseImplTest {
 
-    private lateinit var wellFormedClauseDatabase: ClauseDatabase
+    private lateinit var emptyClauseDatabase: ClauseDatabase
+    private lateinit var filledClauseDatabase: ClauseDatabase
+
+    private val anIndependentFact: Fact = Fact.of(Atom.of("myTestingFact"))
+    private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
+
+    private val successfulRetractQueryResultMap by lazy {
+        ClauseDatabaseUtils.clausesQueryResultsMap.filterValues { it.isNotEmpty() }
+    }
+    private val successfulRetractQueryWithBodyVarResultsMap by lazy {
+        ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.filterValues { it.isNotEmpty() }
+    }
 
     @BeforeTest
     fun init() {
-        wellFormedClauseDatabase = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
+        emptyClauseDatabase = ClauseDatabaseImpl(emptyList())
+        filledClauseDatabase = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
     }
 
     @Test
     fun clausesCorrect() {
-        assertEquals(ClauseDatabaseUtils.wellFormedClauses.count(), wellFormedClauseDatabase.clauses.count())
-        assertContentsEquals(ClauseDatabaseUtils.wellFormedClauses, wellFormedClauseDatabase.clauses.toList())
+        assertTrue(emptyClauseDatabase.clauses.none())
+        assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses, filledClauseDatabase.clauses)
     }
 
     @Test
     fun rulesCorrect() {
         val rules = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>()
 
-        assertEquals(rules.count(), wellFormedClauseDatabase.rules.count())
-        assertContentsEquals(rules, wellFormedClauseDatabase.rules.toList())
+        assertClauseHeadPartialOrderingRespected(rules, filledClauseDatabase.rules)
+        assertTrue(emptyClauseDatabase.rules.none())
     }
 
     @Test
     fun directivesCorrect() {
         val directives = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Directive>()
 
-        assertEquals(directives.count(), wellFormedClauseDatabase.directives.count())
-        assertContentsEquals(directives, wellFormedClauseDatabase.directives.toList())
+        assertClauseHeadPartialOrderingRespected(directives, filledClauseDatabase.directives)
+        assertTrue(emptyClauseDatabase.directives.none())
     }
 
     @Test
-    fun plusClauseDatabase() {
+    fun plusClauseDatabasePreservesOrder() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-
         val toBeTested = ClauseDatabaseImpl(firstHalfClauses) + ClauseDatabaseImpl(secondHalfClauses)
 
-        assertEquals(wellFormedClauseDatabase.clauses.count(), toBeTested.count())
-        assertContentsEquals(wellFormedClauseDatabase.clauses.toList(), toBeTested.clauses.toList())
+        assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
     }
 
     @Test
     fun plusClause() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-
         var toBeTested: ClauseDatabase = ClauseDatabaseImpl(firstHalfClauses)
         secondHalfClauses.forEach { toBeTested += it }
 
-        assertEquals(wellFormedClauseDatabase.clauses.count(), toBeTested.count())
-        assertContentsEquals(wellFormedClauseDatabase.clauses.toList(), toBeTested.clauses.toList())
+        assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
     }
 
     @Test
-    fun containsClause() {
+    fun plusClauseRespectsPartialOrdering() {
+        val toBeTested = filledClauseDatabase + aRule
+
+        assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + aRule, toBeTested.clauses)
+    }
+
+    @Test
+    fun plusClauseReturnsNewUnlinkedClauseDatabaseInstance() {
+        val toBeTested = filledClauseDatabase + anIndependentFact
+
+        assertFalse(anIndependentFact in filledClauseDatabase)
+        assertTrue(anIndependentFact in toBeTested)
+    }
+
+    @Test
+    fun containsClauseReturnsTrueWithPresentClauses() {
         ClauseDatabaseUtils.wellFormedClauses.forEach {
-            assertTrue { it in wellFormedClauseDatabase }
+            assertTrue { it in filledClauseDatabase }
         }
 
-        // TODO Issue #32 needs to be solved to get this working
-//        ClauseDatabaseUtils.notWellFormedClauses.forEach {
-//            assertFalse { it in wellFormedClauseDatabase }
-//        }
+        ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
+            if (result.isNotEmpty()) assertTrue { query in filledClauseDatabase }
+        }
     }
 
     @Test
-    fun containsStruct() {
-        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { it.head in wellFormedClauseDatabase }
-        }
+    fun containsClauseReturnsFalseWithNonPresentClauses() {
+        assertFalse(anIndependentFact in filledClauseDatabase)
 
-        // TODO Issue #32 needs to be solved to get this working
-//        ClauseDatabaseUtils.notWellFormedClauses.filterIsInstance<Rule>().forEach {
-//            assertFalse { it.head in wellFormedClauseDatabase }
-//        }
+        ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
+            if (result.isEmpty()) assertFalse { query in filledClauseDatabase }
+        }
     }
+
+    @Test
+    fun containsStructReturnsTrueIfMatchingHeadIsFound() {
+        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
+            assertTrue { it.head in filledClauseDatabase }
+        }
+    }
+
+    @Test
+    fun containsStructReturnsFalseIfNoMatchingHeadIsFound() {
+        assertFalse(anIndependentFact in filledClauseDatabase)
+    }
+
+    @Test
+    fun getClause() {
+        ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
+            assertEquals(result, filledClauseDatabase[query].toList())
+        }
+    }
+
+    @Test
+    fun getStruct() {
+        ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap
+                .forEach { (query, result) ->
+                    val a = filledClauseDatabase[query.head].toList()
+                    assertEquals(result, a)
+                }
+    }
+
+    @Test
+    fun assertAClause() {
+        val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
+                .apply { add(0, aRule) }
+        val toBeTested = filledClauseDatabase.assertA(aRule)
+
+        assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+    }
+
+    @Test
+    fun assertAStruct() {
+        val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
+                .apply { add(0, Fact.of(aRule.head)) }
+        val toBeTested = filledClauseDatabase.assertA(aRule.head)
+
+        assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+    }
+
+    @Test
+    fun assertACreatesNewUnlinkedInstance() {
+        val toBeTested = filledClauseDatabase.assertA(anIndependentFact)
+
+        assertFalse(anIndependentFact in filledClauseDatabase)
+        assertTrue(anIndependentFact in toBeTested)
+    }
+
+    @Test
+    fun assertZClause() {
+        val toBeTested = filledClauseDatabase.assertZ(aRule)
+
+        assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + aRule, toBeTested.clauses)
+    }
+
+    @Test
+    fun assertZStruct() {
+        val toBeTested = filledClauseDatabase.assertZ(aRule.head)
+
+        assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + Fact.of(aRule.head), toBeTested.clauses)
+    }
+
+    @Test
+    fun assertZCreatesNewUnlinkedInstance() {
+        val toBeTested = filledClauseDatabase.assertZ(anIndependentFact)
+
+        assertFalse(anIndependentFact in filledClauseDatabase)
+        assertTrue(anIndependentFact in toBeTested)
+    }
+
+    @Test
+    fun retractClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retract(query)
+
+            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+            else assertTrue { retractResult is RetractResult.Success }
+        }
+    }
+
+    @Test
+    fun retractClauseRemovesOnlyFirstMatchingClause() {
+        successfulRetractQueryResultMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retract(query) as RetractResult.Success
+
+            assertEquals(listOf(result.first()), retractResult.clauses.toList())
+        }
+    }
+
+    @Test
+    fun retractStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retract(query)
+
+            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+            else assertTrue { retractResult is RetractResult.Success }
+        }
+    }
+
+    @Test
+    fun retractStructRemovesOnlyFirstMatchingClause() {
+        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retract(query.head) as RetractResult.Success
+
+            assertEquals(listOf(result.first()), retractResult.clauses.toList())
+        }
+    }
+
+    @Test
+    fun retractCreatesNewUnlinkedInstanceIfSuccessful() {
+        val aDatabaseClause = filledClauseDatabase.clauses.first()
+        val toBeTested = filledClauseDatabase.retract(aDatabaseClause).clauseDatabase
+
+        assertNotSame(filledClauseDatabase, toBeTested)
+        assertTrue(aDatabaseClause in filledClauseDatabase)
+        assertFalse(aDatabaseClause in toBeTested)
+    }
+
+    @Test
+    fun retractReturnsSameClauseDatabaseOnFailure() {
+        val toBeTested = filledClauseDatabase.retract(anIndependentFact).clauseDatabase
+
+        assertSame(filledClauseDatabase, toBeTested)
+    }
+
+    @Test
+    fun retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retractAll(query)
+
+            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+            else assertTrue { retractResult is RetractResult.Success }
+        }
+    }
+
+    @Test
+    fun retractAllClauseRemovesOnlyFirstMatchingClause() {
+        successfulRetractQueryResultMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retractAll(query) as RetractResult.Success
+
+            assertEquals(result, retractResult.clauses.toList())
+        }
+    }
+
+    @Test
+    fun retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retractAll(query)
+
+            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+            else assertTrue { retractResult is RetractResult.Success }
+        }
+    }
+
+    @Test
+    fun retractAllStructRemovesOnlyFirstMatchingClause() {
+        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+            val retractResult = filledClauseDatabase.retractAll(query.head) as RetractResult.Success
+
+            assertEquals(result, retractResult.clauses.toList())
+        }
+    }
+
+    @Test
+    fun retractAllCreatesNewUnlinkedInstanceIfSuccessful() {
+        val aDatabaseClause = filledClauseDatabase.clauses.first()
+        val toBeTested = filledClauseDatabase.retractAll(aDatabaseClause).clauseDatabase
+
+        assertNotSame(filledClauseDatabase, toBeTested)
+        assertTrue(aDatabaseClause in filledClauseDatabase)
+        assertFalse(aDatabaseClause in toBeTested)
+    }
+
+    @Test
+    fun retractAllReturnsSameClauseDatabaseOnFailure() {
+        val toBeTested = filledClauseDatabase.retractAll(anIndependentFact).clauseDatabase
+
+        assertSame(filledClauseDatabase, toBeTested)
+    }
+
+    @Test
+    fun iteratorReturnsCorrectInstance() {
+        assertEquals(
+                filledClauseDatabase.clauses.iterator().asSequence().toList(),
+                filledClauseDatabase.iterator().asSequence().toList()
+        )
+    }
+
 }
