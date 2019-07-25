@@ -106,15 +106,15 @@ interface Struct : Term {
                     terminal === null -> {
                         require(terms.size >= 2) { "Struct requires at least two terms to fold" }
                         terms.slice(0 until terms.lastIndex - 1)
-                                .foldRight(structOf(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
-                                    structOf(operator, a, b)
+                                .foldRight(of(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
+                                    of(operator, a, b)
                                 }
                     }
                     else -> {
                         require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
                         terms.slice(0 until terms.lastIndex)
-                                .foldRight(structOf(operator, terms[terms.lastIndex], terminal)) { a, b ->
-                                    structOf(operator, a, b)
+                                .foldRight(of(operator, terms[terms.lastIndex], terminal)) { a, b ->
+                                    of(operator, a, b)
                                 }
                     }
                 }

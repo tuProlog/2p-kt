@@ -2,6 +2,11 @@ package it.unibo.tuprolog.core
 
 interface Term {
 
+    /** An helper method ([castTo] alias) to cast [Term]s and continue chaining calls */
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Term> `as`(): T = this as T
+
+    /** An helper method to cast [Term]s and continue chaining calls */
     @Suppress("UNCHECKED_CAST")
     fun <T : Term> castTo(): T = this as T
 

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.List as LogicList
 internal class ConsImpl(override val head: Term, override val tail: Term) : StructImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
 
     override val unfoldedSequence: Sequence<Term> by lazy {
-        sequenceOf(head) + if (tail.isList) tail.castTo<LogicList>().unfoldedSequence else sequenceOf(tail)
+        sequenceOf(head) + if (tail.isList) tail.`as`<LogicList>().unfoldedSequence else sequenceOf(tail)
     }
 
     override val unfoldedList: List<Term> by lazy {

@@ -11,8 +11,8 @@ fun main() {
     println(tuple)
     println(tuple.left)
     println(tuple.right)
-    println(tuple.right.castTo<Tuple>().left)
-    println(tuple.right.castTo<Tuple>().right)
+    println(tuple.right.`as`<Tuple>().left)
+    println(tuple.right.`as`<Tuple>().right)
 
     println(tuple.unfoldedList)
     println(tuple.unfoldedList == tuple.toList())
