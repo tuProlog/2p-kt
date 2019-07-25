@@ -96,7 +96,7 @@ internal class RootNodeTest {
             ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
-                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching,limit) { remove(query, limit) }
+                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching, limit) { remove(query, limit) }
             }
         }
     }

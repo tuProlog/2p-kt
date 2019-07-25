@@ -8,7 +8,7 @@ import it.unibo.tuprolog.unify.Unification.Companion.matches
 import kotlin.jvm.JvmStatic
 import kotlin.math.min
 
-/** Abstract base class for rete tree nodes */
+/** Abstract base class for Rete Tree nodes */
 internal abstract class AbstractReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) : ReteNode<K, E> {
 
     /** Description for current Rete Tree Node */
@@ -47,67 +47,46 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
 
     override fun put(element: Clause, beforeOthers: Boolean) {
         when (element) {
-            is Directive -> {
-                var child: DirectiveNode? = children[null] as DirectiveNode?
+            is Directive ->
+                // safe cast because accessing children[null] is only for inserting directives
+                @Suppress("UNCHECKED_CAST")
+                children.getOrPut(null) { DirectiveNode() as ReteNode<*, Clause> }
+                        .put(element, beforeOthers)
 
-                if (child === null) {
-                    child = DirectiveNode()
+            is Rule -> with(element.head.functor) {
 
-                    // safe cast because accessing children[null] is only for inserting directives
-                    @Suppress("UNCHECKED_CAST")
-                    children[null] = child as ReteNode<*, Clause>
-                }
+                // safe cast because accessing children[functor] is only for inserting rules
+                @Suppress("UNCHECKED_CAST")
+                children.getOrPut(this) { FunctorNode(this) as ReteNode<*, Clause> }
+                        .put(element, beforeOthers)
 
-                child.put(element, beforeOthers)
-            }
-            is Rule -> {
-                val functor: String = element.head.functor
-                var child: FunctorNode? = children[functor] as FunctorNode?
-
-                if (child === null) {
-                    child = FunctorNode(functor)
-
-                    // safe cast because accessing children[functor] is only for inserting rules
-                    @Suppress("UNCHECKED_CAST")
-                    children[functor] = child as ReteNode<*, Clause>
-                }
-                child.put(element, beforeOthers)
             }
         }
     }
 
     override fun get(element: Clause): Sequence<Clause> =
             when (element) {
-                is Directive -> {
-                    children[null]?.get(element) ?: emptySequence()
-                }
-                is Rule -> {
-                    children[element.head.functor]?.get(element) ?: emptySequence()
-                }
+                is Directive -> children[null]?.get(element) ?: emptySequence()
+                is Rule -> children[element.head.functor]?.get(element) ?: emptySequence()
                 else -> emptySequence()
             }
 
-    override fun remove(element: Clause, limit: Int): Sequence<Clause> {
-        if (limit == 0) {
-            return emptySequence()
-        }
+    override fun remove(element: Clause, limit: Int): Sequence<Clause> =
+            when (limit) {
+                0 -> emptySequence()
 
-        val child: ReteNode<*, Clause>? = when (element) {
-            is Directive -> {
-                children[null]
+                else ->
+                    when (element) {
+                        is Directive -> children[null]
+                        is Rule -> children[element.head.functor]
+                        else -> null
+                    }?.remove(element, limit) ?: emptySequence()
             }
-            is Rule -> {
-                children[element.head.functor]
-            }
-            else -> throw IllegalStateException()
-        }
-
-        return child?.remove(element, limit) ?: emptySequence()
-    }
 
     override fun deepCopy(): RootNode = RootNode(children.deepCopy({ it }, { it.deepCopy() }))
 }
 
+/** A leaf node containing [Directive]s */
 internal data class DirectiveNode(private val directives: MutableList<Directive> = mutableListOf())
     : AbstractReteNode<Nothing, Directive>() {
 
@@ -126,54 +105,39 @@ internal data class DirectiveNode(private val directives: MutableList<Directive>
     override fun get(element: Directive): Sequence<Directive> =
             indexedElements.filter { it matches element }
 
-    override fun remove(element: Directive, limit: Int): Sequence<Directive> {
-        if (limit == 0) {
-            return emptySequence()
-        }
+    override fun remove(element: Directive, limit: Int): Sequence<Directive> =
+            when (limit) {
+                0 -> emptySequence()
 
-        val toTake = if (limit > 0) min(limit, directives.size) else directives.size
-        val result = mutableListOf<Directive>()
-        val i = directives.iterator()
-        var j = 0
-        while (i.hasNext() && j < toTake) {
-            with(i.next()) {
-                if (this.matches(element)) {
-                    result.add(this)
-                    i.remove()
-                    j++
-                }
+                else -> directives
+                        .filter { it matches element }
+                        .take(if (limit > 0) min(limit, directives.size) else directives.size)
+                        .toList().asSequence()
+                        .also { directives.removeAll(it) }
+
             }
-        }
-        return result.asSequence()
-    }
 
     override fun deepCopy(): DirectiveNode = DirectiveNode(directives.toMutableList())
 
     override fun toString(treefy: Boolean): String =
             if (treefy)
-                "$header {" +
-                        directives.joinToString(".\n\t", "\n\t", ".\n") +
-                        "}"
+                "$header {${directives.joinToString(".\n\t", "\n\t", ".\n")}}"
             else
                 toString()
 
 }
 
+/** An intermediate node indexing by Rules head's functor */
 internal data class FunctorNode(private val functor: String, override val children: MutableMap<Int, ReteNode<*, Rule>> = mutableMapOf())
     : AbstractReteNode<Int, Rule>(children) {
 
     override val header = "Functor($functor)"
 
     override fun put(element: Rule, beforeOthers: Boolean) {
-        if (functor == element.head.functor) {
-            val arity: Int = element.head.arity
-            var child: ArityNode? = children[arity] as ArityNode?
+        if (functor == element.head.functor) with(element.head.arity) {
 
-            if (child === null) {
-                child = ArityNode(arity)
-                children[arity] = child
-            }
-            child.put(element, beforeOthers)
+            children.getOrPut(this) { ArityNode(this) }
+                    .put(element, beforeOthers)
         }
     }
 
@@ -190,6 +154,7 @@ internal data class FunctorNode(private val functor: String, override val childr
     override fun deepCopy(): FunctorNode = FunctorNode(functor, children.deepCopy({ it }, { it.deepCopy() }))
 }
 
+/** An intermediate node indexing by Rules head's arity */
 internal data class ArityNode(private val arity: Int, override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf())
     : AbstractReteNode<Term?, Rule>(children) {
 
