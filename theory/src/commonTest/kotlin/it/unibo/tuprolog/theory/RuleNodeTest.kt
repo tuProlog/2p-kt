@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.rete.RuleNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
@@ -20,7 +22,6 @@ internal class RuleNodeTest {
     private lateinit var filledRuleNode: RuleNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {

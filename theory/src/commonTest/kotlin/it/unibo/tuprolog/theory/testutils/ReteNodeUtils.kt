@@ -110,9 +110,8 @@ internal object ReteNodeUtils {
     internal val mixedClausesQueryResultsMap by lazy { rulesQueryResultsMap + directivesQueryResultsMap }
 
     /** Asserts that rete node has correct elements count */
-    internal fun assertReteNodeElementCount(reteNode: ReteNode<*, Clause>, expectedCount: Int) {
-        assertEquals(expectedCount, reteNode.indexedElements.count())
-    }
+    internal fun assertReteNodeElementCount(reteNode: ReteNode<*, Clause>, expectedCount: Int) =
+            assertEquals(expectedCount, reteNode.indexedElements.count())
 
     /** Asserts that rete node is empty */
     internal fun assertReteNodeEmpty(reteNode: ReteNode<*, out Clause>) {
@@ -121,15 +120,15 @@ internal object ReteNodeUtils {
     }
 
     /** Asserts that rete node clauses are the same as expected */
-    internal fun assertReteNodeClausesCorrect(reteNode: ReteNode<*, out Clause>, expectedClauses: Iterable<Clause>) {
-        assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
-    }
+    internal fun assertReteNodeClausesCorrect(reteNode: ReteNode<*, out Clause>, expectedClauses: Iterable<Clause>) =
+            assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
 
     /** Asserts that calling [idempotentAction] onto [reteNode] results in no actual change */
-    internal fun assertNoChangesInReteNode(reteNode: ReteNode<*, Clause>, idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>) {
+    internal fun assertNoChangesInReteNode(reteNode: ReteNode<*, out Clause>, idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>) {
         val beforeContents = reteNode.indexedElements.toList()
 
-        val idempotentActionResult = reteNode.idempotentAction()
+        @Suppress("UNCHECKED_CAST")  // nothing will be inserted, so it's safe
+        val idempotentActionResult = (reteNode as ReteNode<*, Clause>).idempotentAction()
 
         assertTrue(idempotentActionResult.none())
         assertReteNodeClausesCorrect(reteNode, beforeContents)
@@ -137,7 +136,7 @@ internal object ReteNodeUtils {
 
     /** Asserts that calling [removeAction] onto [reteNode] results in [removedExpected] elements removed */
     internal fun assertRemovedFromReteNode(
-            reteNode: ReteNode<*, Clause>,
+            reteNode: ReteNode<*, out Clause>,
             removedExpected: Iterable<Clause>,
             removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>
     ) {
@@ -145,7 +144,8 @@ internal object ReteNodeUtils {
         val allClauseCount = allClauses.count()
         val remainingClausesExpected = allClauses - removedExpected
 
-        val removedActual = reteNode.removeAction()
+        @Suppress("UNCHECKED_CAST")  // nothing will be inserted, so it's safe
+        val removedActual = (reteNode as ReteNode<*, Clause>).removeAction()
 
         assertEquals(removedExpected, removedActual.toList())
         assertReteNodeElementCount(reteNode, allClauseCount - removedExpected.count())
@@ -155,7 +155,7 @@ internal object ReteNodeUtils {
     /** Asserts that calling [removeAction] onto [reteNode] results in [toRemoveMatched] [removeLimit] elements to be removed,
      * respecting the partial ordering; this means that removed elements can be taken in every order BUT respecting the partial order */
     internal fun assertRemovedFromReteNodeRespectingPartialOrder(
-            reteNode: ReteNode<*, Clause>,
+            reteNode: ReteNode<*, out Clause>,
             toRemoveMatched: Iterable<Clause>,
             removeLimit: Int = Int.MAX_VALUE,
             removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>
@@ -164,7 +164,8 @@ internal object ReteNodeUtils {
         val allClauseCount = allClauses.count()
         val correctNumberOfRemoved = min(toRemoveMatched.count(), removeLimit)
 
-        val removedActualSequence = reteNode.removeAction()
+        @Suppress("UNCHECKED_CAST") // nothing will be inserted, so it's safe
+        val removedActualSequence = (reteNode as ReteNode<*, Clause>).removeAction()
         assertReteNodeElementCount(reteNode, allClauseCount - correctNumberOfRemoved)
 
         val removedActual = partialOrderingHeadClauseMap(removedActualSequence.asIterable())
@@ -201,7 +202,7 @@ internal object ReteNodeUtils {
     }
 
     /** Asserts that ReteTree node respects partial ordering (checking for Clauses head structural equality) imposed by [expectedClauses] iteration order */
-    internal fun assertCorrectAndPartialOrderRespected(reteNode: ReteNode<*,Clause>, expectedClauses: Iterable<Clause>) =
+    internal fun assertCorrectAndPartialOrderRespected(reteNode: ReteNode<*, out Clause>, expectedClauses: Iterable<Clause>) =
             assertClauseHeadPartialOrderingRespected(expectedClauses, reteNode.indexedElements.asIterable())
 
     /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),

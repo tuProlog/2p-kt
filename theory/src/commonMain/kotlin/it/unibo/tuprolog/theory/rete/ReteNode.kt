@@ -15,21 +15,21 @@ internal interface ReteNode<Key, Element> {
     fun put(element: Element, beforeOthers: Boolean = false)
 
     /** Gets a sequence of matching elements starting from give one */
-    fun get(element: Element): Sequence<Element>
+    fun get(element: @UnsafeVariance Element): Sequence<Element>
 
     /**
      * Removes elements matching given [element], respecting provided [limit], and returns them;
      *
      * A negative limit will be considered as if there's no limit, i.e. all matching elements will be removed
      */
-    fun remove(element: Element, limit: Int = 1): Sequence<Element>
+    fun remove(element: @UnsafeVariance Element, limit: Int = 1): Sequence<Element>
 
     /** Removes all elements matching given one */
-    fun removeAll(clause: Element): Sequence<Element>
+    fun removeAll(clause: @UnsafeVariance Element): Sequence<Element>
 
     /** Creates a deep copy of the tree index; it doesn't copy indexed elements */
     fun deepCopy(): ReteNode<Key, Element>
 
-    /** An enhanced toString that prints nodes in Tree fashion */
-    fun toString(treefy: Boolean): String
+    /** An enhanced toString that can print nodes in Tree fashion */
+    fun toString(treefy: Boolean = false): String
 }

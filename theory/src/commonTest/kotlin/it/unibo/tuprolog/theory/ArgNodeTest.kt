@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.rete.*
-import it.unibo.tuprolog.theory.rete.clause.ArgNode
+import it.unibo.tuprolog.theory.rete.ArgNode
+import it.unibo.tuprolog.theory.rete.RuleNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect

@@ -4,15 +4,15 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.theory.rete.clause.ArgNode
 import it.unibo.tuprolog.unify.Unification.Companion.matches
+import kotlin.jvm.JvmStatic
 import kotlin.math.min
 
 /** Abstract base class for rete tree nodes */
 internal abstract class AbstractReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) : ReteNode<K, E> {
 
     /** Description for current Rete Tree Node */
-    protected open val header: String = this::class.simpleName ?: ""
+    protected abstract val header: String
 
     override val indexedElements: Sequence<E>
         get() = children.asSequence().flatMap { it.value.indexedElements }
@@ -25,8 +25,7 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
                 "$header {" +
                         children.values.joinToString(",\n\t", "\n\t", "\n") {
                             it.toString(treefy).replace("\n", "\n\t")
-                        } +
-                        "}"
+                        } + "}"
             else
                 toString()
 
@@ -34,12 +33,13 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
     companion object {
 
         /** Utility function to deeply copy a MutableMap */
+        @JvmStatic
         protected fun <K, V> MutableMap<K, V>.deepCopy(deepCopyKey: (K) -> K, deepCopyValue: (V) -> V): MutableMap<K, V> =
                 entries.map { deepCopyKey(it.key) to deepCopyValue(it.value) }.toMap(mutableMapOf())
     }
 }
 
-/** The root node of the Rete Tree indexing [Clause]s */
+/** The root node, of the Rete Tree indexing [Clause]s */
 internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf())
     : AbstractReteNode<String?, Clause>(children) {
 
@@ -53,6 +53,7 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
                 if (child === null) {
                     child = DirectiveNode()
 
+                    // safe cast because accessing children[null] is only for inserting directives
                     @Suppress("UNCHECKED_CAST")
                     children[null] = child as ReteNode<*, Clause>
                 }
@@ -66,6 +67,7 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
                 if (child === null) {
                     child = FunctorNode(functor)
 
+                    // safe cast because accessing children[functor] is only for inserting rules
                     @Suppress("UNCHECKED_CAST")
                     children[functor] = child as ReteNode<*, Clause>
                 }
@@ -147,15 +149,13 @@ internal data class DirectiveNode(private val directives: MutableList<Directive>
 
     override fun deepCopy(): DirectiveNode = DirectiveNode(directives.toMutableList())
 
-    override fun toString(treefy: Boolean): String {
-        return if (treefy) {
-            "$header {" +
-                    directives.joinToString(".\n\t", "\n\t", ".\n") +
-                    "}"
-        } else {
-            toString()
-        }
-    }
+    override fun toString(treefy: Boolean): String =
+            if (treefy)
+                "$header {" +
+                        directives.joinToString(".\n\t", "\n\t", ".\n") +
+                        "}"
+            else
+                toString()
 
 }
 
@@ -245,9 +245,7 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
                             .map { it.value }
                             .flatMap { it.get(element) }
                 }
-                else -> {
-                    children[null]?.get(element) ?: emptySequence()
-                }
+                else -> children[null]?.get(element) ?: emptySequence()
             }
 
     override fun remove(element: Rule, limit: Int): Sequence<Rule> =
@@ -270,9 +268,7 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
 
                     removed.asSequence()
                 }
-                else -> {
-                    children[null]?.remove(element, limit) ?: emptySequence()
-                }
+                else -> children[null]?.remove(element, limit) ?: emptySequence()
             }
 
     override fun deepCopy(): ArityNode = ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
@@ -299,16 +295,99 @@ internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteN
 
     override fun remove(element: Rule, limit: Int): Sequence<Rule> =
             when {
-                limit == 0 || children.isEmpty() -> {
-                    emptySequence()
-                }
+                limit == 0 || children.isEmpty() -> emptySequence()
+
                 else -> children[null]?.remove(element, limit) ?: emptySequence()
             }
 
     override fun deepCopy(): NoArgsNode = NoArgsNode(children.deepCopy({ it }, { it.deepCopy() }))
 }
 
-// argnode
+/** The arg node indexes Clauses by argument, starting from first to all the others */
+internal data class ArgNode(private val index: Int, private val term: Term, override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf())
+    : AbstractReteNode<Term?, Rule>(children) {
+
+    init {
+        require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
+    }
+
+    override val header = "Argument($index, $term)"
+
+    override fun put(element: Rule, beforeOthers: Boolean) =
+            when {
+                index < element.head.arity - 1 -> { // if more arguments after "index" arg
+                    val nextArg: Term = element.head[index + 1]
+                    var child: ArgNode? = children[nextArg] as ArgNode?
+
+                    if (child === null) {
+                        child = children.entries.asSequence()
+                                .filter { it.key !== null }
+                                .filter { it.value is ArgNode }
+                                .find { it.key!! structurallyEquals nextArg }
+                                ?.value as ArgNode?
+                    }
+
+                    if (child === null) {
+                        child = ArgNode(index + 1, nextArg)
+                        children[nextArg] = child
+                    }
+
+                    (child as ReteNode<*, Rule>).put(element, beforeOthers)
+                }
+                else -> {
+                    var child: RuleNode? = children[null] as RuleNode?
+
+                    if (child === null) {
+                        child = RuleNode()
+                        children[null] = child
+                    }
+
+                    child.put(element, beforeOthers)
+                }
+            }
+
+
+    override fun get(element: Rule): Sequence<Rule> =
+            when {
+                index < element.head.arity - 1 -> {
+                    val nextArg: Term = element.head[index + 1]
+
+                    children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(nextArg) }
+                            .map { it.value }
+                            .flatMap { it.get(element) }
+                }
+                else -> children[null]?.get(element) ?: emptySequence()
+            }
+
+    override fun remove(element: Rule, limit: Int): Sequence<Rule> =
+            when {
+                limit == 0 -> emptySequence()
+
+                index < element.head.arity - 1 -> {
+                    val nextArg: Term = element.head[index + 1]
+
+                    val removed: MutableList<Rule> = mutableListOf()
+                    for (child in children.entries.asSequence()
+                            .filter { it.key !== null }
+                            .filter { it.value is ArgNode }
+                            .filter { it.key!!.matches(nextArg) }
+                            .map { it.value }) {
+
+                        removed += child.remove(element, limit - removed.size)
+                        if (removed.size == limit) break
+                    }
+
+                    removed.asSequence()
+                }
+                else -> children[null]?.remove(element, limit) ?: emptySequence()
+            }
+
+    override fun deepCopy(): ArgNode = ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
+}
+
 
 internal data class RuleNode(private val rules: MutableList<Rule> = mutableListOf()) : AbstractReteNode<Nothing, Rule>() {
 
