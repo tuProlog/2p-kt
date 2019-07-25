@@ -20,6 +20,14 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
     override fun removeAll(element: E): Sequence<E> = // TODO support direct removeAll in subclasses
             remove(element, Int.MAX_VALUE)
 
+    override fun remove(element: E, limit: Int): Sequence<E> = when (limit) {
+        0 -> emptySequence()
+        else -> removeWithNonZeroLimit(element, limit)
+    }
+
+    /** Called when a non-zero-limit removal is required inside a node */
+    protected abstract fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E>
+
     override fun toString(treefy: Boolean): String =
             if (treefy)
                 "$header {" +
@@ -28,14 +36,6 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
                         } + "}"
             else
                 toString()
-
-    override fun remove(element: E, limit: Int): Sequence<E> = when (limit) {
-        0 -> emptySequence()
-        else -> removeWithNonZeroLimit(element, limit)
-    }
-
-    /** Called when a non-zero-limit removal is required inside a node */
-    protected abstract fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E>
 
     companion object {
 
@@ -63,7 +63,23 @@ internal abstract class AbstractIntermediateNode<K, E>(override val children: Mu
 internal abstract class AbstractLeafNode<E>(override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf())
     : AbstractReteNode<Nothing, E>(children) {
 
-    // TODO: 25/07/2019 refactor here common behaviour of leaf Directive And Rule Node
+    protected abstract val leafElements: MutableList<E>
+
+    override val indexedElements: Sequence<E>
+        get() = leafElements.asSequence()
+
+    override fun put(element: E, beforeOthers: Boolean) {
+        if (beforeOthers)
+            leafElements.add(0, element)
+        else
+            leafElements.add(element)
+    }
+
+    override fun toString(treefy: Boolean): String =
+            if (treefy)
+                "$header {${leafElements.joinToString(".\n\t", "\n\t", ".\n")}}"
+            else
+                toString()
 }
 
 /** The root node, of the Rete Tree indexing [Clause]s */
@@ -266,69 +282,36 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
 
 
 /** A leaf node containing [Directive]s */
-internal data class DirectiveNode(private val directives: MutableList<Directive> = mutableListOf())
+internal data class DirectiveNode(override val leafElements: MutableList<Directive> = mutableListOf())
     : AbstractLeafNode<Directive>() {
 
     override val header = "Directives"
 
-    override val indexedElements: Sequence<Directive>
-        get() = directives.asSequence()
-
-    override fun put(element: Directive, beforeOthers: Boolean) {
-        if (beforeOthers)
-            directives.add(0, element)
-        else
-            directives.add(element)
-    }
-
-    override fun get(element: Directive): Sequence<Directive> =
-            indexedElements.filter { it matches element }
+    override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { it matches element }
 
     override fun removeWithNonZeroLimit(element: Directive, limit: Int): Sequence<Directive> =
-            directives
+            leafElements
                     .filter { it matches element }
-                    .take(if (limit > 0) min(limit, directives.size) else directives.size)
+                    .take(if (limit > 0) min(limit, leafElements.size) else leafElements.size)
                     .toList().asSequence()
-                    .also { directives.removeAll(it) }
+                    .also { leafElements.removeAll(it) }
 
-    override fun deepCopy(): DirectiveNode = DirectiveNode(directives.toMutableList())
-
-    override fun toString(treefy: Boolean): String =
-            if (treefy)
-                "$header {${directives.joinToString(".\n\t", "\n\t", ".\n")}}"
-            else
-                toString()
+    override fun deepCopy(): DirectiveNode = DirectiveNode(leafElements.toMutableList())
 }
 
 /** A leaf node containing [Rule]s */
-internal data class RuleNode(private val rules: MutableList<Rule> = mutableListOf()) : AbstractLeafNode<Rule>() {
+internal data class RuleNode(override val leafElements: MutableList<Rule> = mutableListOf()) : AbstractLeafNode<Rule>() {
 
     override val header = "Rules"
-
-    override val indexedElements: Sequence<Rule>
-        get() = rules.asSequence()
-
-    override fun put(element: Rule, beforeOthers: Boolean) {
-        if (beforeOthers)
-            rules.add(0, element)
-        else
-            rules.add(element)
-    }
 
     override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { it matches element }
 
     override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
-            rules.filter { it matches element }
-                    .take(if (limit > 0) min(limit, rules.size) else rules.size)
+            leafElements.filter { it matches element }
+                    .take(if (limit > 0) min(limit, leafElements.size) else leafElements.size)
                     .toList().asSequence()
-                    .also { rules.removeAll(it) }
+                    .also { leafElements.removeAll(it) }
 
 
-    override fun deepCopy(): RuleNode = RuleNode(rules.toMutableList())
-
-    override fun toString(treefy: Boolean): String =
-            if (treefy)
-                "$header {${rules.joinToString(".\n\t", "\n\t", ".\n")}}"
-            else
-                toString()
+    override fun deepCopy(): RuleNode = RuleNode(leafElements.toMutableList())
 }
