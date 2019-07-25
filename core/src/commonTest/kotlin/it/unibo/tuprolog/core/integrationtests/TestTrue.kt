@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.integrationtests
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
@@ -17,9 +19,7 @@ class TestTrue {
             Truth.`true`(),
             Truth.of(true),
             Atom.of(correctAtom),
-            atomOf(correctAtom),
-            Struct.of(correctAtom),
-            structOf(correctAtom))
+            Struct.of(correctAtom))
 
     @Test
     fun variousCreationMethodsCreateCorrectlyTrue() {

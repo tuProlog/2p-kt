@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.core.integrationtests
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertAllVsAll
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
@@ -17,12 +20,9 @@ class TestEmptyList {
             EmptyList(),
             Empty.list(),
             LogicList.empty(),
-            lstOf(),
             LogicList.of(),
             Atom.of(correctAtom),
-            atomOf(correctAtom),
-            Struct.of(correctAtom),
-            structOf(correctAtom))
+            Struct.of(correctAtom))
 
     @Test
     fun variousCreationMethodsCreateCorrectlyEmptyList() {
