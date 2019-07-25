@@ -25,7 +25,7 @@ internal interface ReteNode<Key, Element> {
     fun remove(element: @UnsafeVariance Element, limit: Int = 1): Sequence<Element>
 
     /** Removes all elements matching given one */
-    fun removeAll(clause: @UnsafeVariance Element): Sequence<Element>
+    fun removeAll(element: @UnsafeVariance Element): Sequence<Element>
 
     /** Creates a deep copy of the tree index; it doesn't copy indexed elements */
     fun deepCopy(): ReteNode<Key, Element>
