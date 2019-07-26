@@ -15,9 +15,9 @@ fun main() {
 
     println("\nFirst A compared to second A in x")
 
-    println(x.head[0] === x.head[1].castTo<Struct>()[0])
-    println(x.head[0] == x.head[1].castTo<Struct>()[0])
-    println(x.head[0] strictlyEquals x.head[1].castTo<Struct>()[0])
+    println(x.head[0] === x.head[1].`as`<Struct>()[0])
+    println(x.head[0] == x.head[1].`as`<Struct>()[0])
+    println(x.head[0] strictlyEquals x.head[1].`as`<Struct>()[0])
 
     println("\nFirst _ compared to second _ in x")
 
@@ -27,9 +27,9 @@ fun main() {
 
     println("\nFirst A compared to second A in y")
 
-    println(y.head[0] === y.head[1].castTo<Struct>()[0])
-    println(y.head[0] == y.head[1].castTo<Struct>()[0])
-    println(y.head[0] strictlyEquals y.head[1].castTo<Struct>()[0])
+    println(y.head[0] === y.head[1].`as`<Struct>()[0])
+    println(y.head[0] == y.head[1].`as`<Struct>()[0])
+    println(y.head[0] strictlyEquals y.head[1].`as`<Struct>()[0])
 
     println("\nFirst _ compared to second _ in y")
 
@@ -45,9 +45,9 @@ fun main() {
 
     println("\nSecond A in x compared to second A in y")
 
-    println(x.head[1].castTo<Struct>()[0] === y.head[1].castTo<Struct>()[0])
-    println(x.head[1].castTo<Struct>()[0] == y.head[1].castTo<Struct>()[0])
-    println(x.head[1].castTo<Struct>()[0] strictlyEquals y.head[1].castTo<Struct>()[0])
+    println(x.head[1].`as`<Struct>()[0] === y.head[1].`as`<Struct>()[0])
+    println(x.head[1].`as`<Struct>()[0] == y.head[1].`as`<Struct>()[0])
+    println(x.head[1].`as`<Struct>()[0] strictlyEquals y.head[1].`as`<Struct>()[0])
 
     println("\nFirst _ in x compared to first _ in y")
 

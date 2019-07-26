@@ -32,30 +32,30 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     override fun get(functor: String, arity: Int): Sequence<Clause> = reteTree.get(functor, arity)
 
     override fun assertA(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.clone().apply { put(clause, before = true) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = true) })
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.clone().apply { put(clause, before = false) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = false) })
 
     override fun retract(clause: Clause): RetractResult {
-        val newTheory = reteTree.clone()
-        val retracted = newTheory.remove(clause).toList()
+        val newTheory = reteTree.deepCopy()
+        val retracted = newTheory.remove(clause)
 
-        return if (retracted.isEmpty()) {
+        return if (retracted.none()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 
     override fun retractAll(clause: Clause): RetractResult {
-        val newTheory = reteTree.clone()
-        val retracted = newTheory.removeAll(clause).toList()
+        val newTheory = reteTree.deepCopy()
+        val retracted = newTheory.removeAll(clause)
 
-        return if (retracted.isEmpty()) {
+        return if (retracted.none()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted)
+            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 
@@ -63,4 +63,16 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun toString(): String = clauses.joinToString(".\n", "", ".\n")
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ClauseDatabaseImpl
+
+        if (clauses != other.clauses) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = clauses.hashCode()
 }
