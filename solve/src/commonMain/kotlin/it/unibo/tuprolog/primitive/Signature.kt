@@ -1,17 +1,16 @@
 package it.unibo.tuprolog.primitive
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.atomOf
-import it.unibo.tuprolog.core.numOf
-import it.unibo.tuprolog.core.structOf
 
 data class Signature(val name: String, val arity: Int, val vararg: Boolean) {
 
     fun toTerm(): Struct =
             if (vararg) {
-                structOf("/", atomOf(name), structOf("+", numOf(arity), atomOf("vararg")))
+                Struct.of("/", Atom.of(name), Struct.of("+", Numeric.of(arity), Atom.of("vararg")))
             } else {
-                structOf("/", atomOf(name), numOf(arity))
+                Struct.of("/", Atom.of(name), Numeric.of(arity))
             }
 
 }

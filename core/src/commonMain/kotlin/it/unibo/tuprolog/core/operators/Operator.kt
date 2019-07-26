@@ -42,7 +42,7 @@ class Operator(val functor: String, val associativity: Associativity, val priori
 
     companion object {
 
-        val TEMPLATE = structOf("op", varOf("P"), varOf("A"), varOf("F"))
+        val TEMPLATE = Struct.of("op", Var.of("P"), Var.of("A"), Var.of("F"))
 
         fun fromTerm(struct: Struct): Operator =
                 with(struct) {
