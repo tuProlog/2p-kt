@@ -1,7 +1,6 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.rete.RootNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode

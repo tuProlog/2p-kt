@@ -1,9 +1,8 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.theory.rete.DirectiveNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode

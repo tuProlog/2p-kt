@@ -124,7 +124,7 @@ internal object ReteNodeUtils {
             assertEquals(expectedClauses.toList(), reteNode.indexedElements.toList())
 
     /** Asserts that calling [idempotentAction] onto [reteNode] results in no actual change */
-    internal fun assertNoChangesInReteNode(reteNode: ReteNode<*, out Clause>, idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>) {
+    internal inline fun assertNoChangesInReteNode(reteNode: ReteNode<*, out Clause>, idempotentAction: ReteNode<*, Clause>.() -> Sequence<Clause>) {
         val beforeContents = reteNode.indexedElements.toList()
 
         @Suppress("UNCHECKED_CAST")  // nothing will be inserted, so it's safe
@@ -135,7 +135,7 @@ internal object ReteNodeUtils {
     }
 
     /** Asserts that calling [removeAction] onto [reteNode] results in [removedExpected] elements removed */
-    internal fun assertRemovedFromReteNode(
+    internal inline fun assertRemovedFromReteNode(
             reteNode: ReteNode<*, out Clause>,
             removedExpected: Iterable<Clause>,
             removeAction: ReteNode<*, Clause>.() -> Sequence<Clause>
@@ -154,7 +154,7 @@ internal object ReteNodeUtils {
 
     /** Asserts that calling [removeAction] onto [reteNode] results in [toRemoveMatched] [removeLimit] elements to be removed,
      * respecting the partial ordering; this means that removed elements can be taken in every order BUT respecting the partial order */
-    internal fun assertRemovedFromReteNodeRespectingPartialOrder(
+    internal inline fun assertRemovedFromReteNodeRespectingPartialOrder(
             reteNode: ReteNode<*, out Clause>,
             toRemoveMatched: Iterable<Clause>,
             removeLimit: Int = Int.MAX_VALUE,
@@ -217,7 +217,7 @@ internal object ReteNodeUtils {
 
 
     /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
-    private fun Iterable<Clause>.forEachStructurallyEqualsHead(
+    private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(
             partialOrderingMap: MutableMap<Struct?, Iterable<Clause>>,
             onPresentEntry: (Clause, MutableMap.MutableEntry<Struct?, Iterable<Clause>>) -> Unit,
             onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit

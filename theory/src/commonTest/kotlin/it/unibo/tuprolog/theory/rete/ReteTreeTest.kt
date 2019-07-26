@@ -1,7 +1,6 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete
 
-import it.unibo.tuprolog.theory.rete.ReteTree
-import it.unibo.tuprolog.theory.rete.RootNode
+import it.unibo.tuprolog.theory.rete.clause.RootNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
