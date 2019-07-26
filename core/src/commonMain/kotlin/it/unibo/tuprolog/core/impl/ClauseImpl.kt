@@ -21,16 +21,13 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
 
     companion object {
 
-        /** Contains notable functor in determining if a Clause is well-formed */
-        private val notableFunctorsForClause = listOf(",", ";", "->")
-
         /** A visitor that checks whether [isWellFormed] is respected */
         private val bodyWellFormedVisitor = object : TermVisitor<Boolean> {
 
             override fun defaultValue(term: Term): Boolean = term !is Numeric
 
             override fun visit(term: Struct): Boolean = when {
-                term.functor in notableFunctorsForClause && term.arity == 2 ->
+                term.functor in Clause.notableFunctors && term.arity == 2 ->
                     term.argsSequence
                             .map { arg -> arg.accept(this) }
                             .reduce(Boolean::and)
