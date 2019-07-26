@@ -53,10 +53,22 @@ internal abstract class AbstractIntermediateNode<K, E>(override val children: Mu
     /** Retrieves from receiver map those values of [ChildNodeType] that have a key respecting [keyFilter] */
     @Suppress("unused")
     protected inline fun <reified ChildNodeType> MutableMap<K, ReteNode<*, E>>.retrieve(keyFilter: (K) -> Boolean) =
-            children.filterValues { node -> node is ChildNodeType }
+            filterValues { node -> node is ChildNodeType }
                     .filterKeys(keyFilter)
                     .values.asSequence()
 
+    /**
+     *  A [Sequence.fold] function that stops when accumulated operation results' count becomes greater or equal to [limit];
+     *
+     * if negative [limit] this behaves actually like normal [Sequence.fold]
+     */
+    protected inline fun <T, R : Iterable<*>> Sequence<T>.foldWithLimit(initial: R, limit: Int, operation: (acc: R, T) -> R) =
+            fold(initial) { accumulator, element ->
+                if (limit < 0 || accumulator.count() < limit)
+                    operation(accumulator, element)
+                else
+                    return@foldWithLimit accumulator
+            }
 }
 
 /** A leaf Rete Node */
@@ -178,7 +190,7 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
 
     override fun get(element: Rule): Sequence<Rule> = when {
         element.head.arity > 0 -> {
-            val headFirstArg: Term = element.head[0]
+            val headFirstArg = element.head[0]
 
             children.retrieve<ArgNode> { head -> head != null && head matches headFirstArg }
                     .flatMap { node -> node.get(element) }
@@ -188,16 +200,12 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
 
     override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> = when {
         element.head.arity > 0 -> {
-            val headFirstArg: Term = element.head[0]
+            val headFirstArg = element.head[0]
 
-            val removed: MutableList<Rule> = mutableListOf()
             children.retrieve<ArgNode> { head -> head != null && head matches headFirstArg }
-                    .forEach { child ->
-                        removed += child.remove(element, limit - removed.size)
-                        if (removed.size == limit) return@forEach
-                    }
-
-            removed.asSequence()
+                    .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
+                        yetRemoved.also { it += currentChild.remove(element, limit - it.count()) }
+                    }.asSequence()
         }
         else -> children[null]?.remove(element, limit) ?: emptySequence()
     }
@@ -236,7 +244,7 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
 
     override fun put(element: Rule, beforeOthers: Boolean) = when {
         index < element.head.arity - 1 -> { // if more arguments after "index" arg
-            val nextArg: Term = element.head[index + 1]
+            val nextArg = element.head[index + 1]
 
             val child = children.getOrElse(nextArg) {
                 children.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
@@ -253,7 +261,7 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
 
     override fun get(element: Rule): Sequence<Rule> = when {
         index < element.head.arity - 1 -> {
-            val nextArg: Term = element.head[index + 1]
+            val nextArg = element.head[index + 1]
 
             children.retrieve<ArgNode> { head -> head != null && head matches nextArg }
                     .flatMap { it.get(element) }
@@ -263,14 +271,13 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
 
     override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> = when {
         index < element.head.arity - 1 -> {
-            val nextArg: Term = element.head[index + 1]
+            val nextArg = element.head[index + 1]
 
             val removed: MutableList<Rule> = mutableListOf()
             children.retrieve<ArgNode> { head -> head != null && head matches nextArg }
-                    .forEach { child ->
-                        removed += child.remove(element, limit - removed.size)
-                        if (removed.size == limit) return@forEach
-                    }
+                    .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
+                        yetRemoved.also { it += currentChild.remove(element, limit - it.count()) }
+                    }.asSequence()
 
             removed.asSequence()
         }
