@@ -56,6 +56,11 @@ internal abstract class AbstractIntermediateNode<K, E>(override val children: Mu
     override fun get(element: E): Sequence<E> =
             selectChildren(element).flatMap { it?.get(element) ?: emptySequence() }
 
+    override fun removeAll(element: E): Sequence<E> =
+            selectChildren(element).toList().flatMap {
+                it?.removeAll(element)?.toList() ?: emptyList()
+            }.asSequence()
+
     /** Retrieves from receiver map those values of [ChildNodeType] that have a key respecting [keyFilter] */
     @Suppress("unused")
     protected inline fun <reified ChildNodeType> MutableMap<K, ReteNode<*, E>>.retrieve(keyFilter: (K) -> Boolean) =
@@ -215,6 +220,15 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
                         }
                     }.asSequence()
 
+    // removeAll optimized implementation w.r.t. super class
+    override fun removeAll(element: Rule): Sequence<Rule> =
+            selectChildren(element)
+                    .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
+                        yetRemoved.also {
+                            it += currentChild?.removeAll(element) ?: emptySequence()
+                        }
+                    }.asSequence()
+
     override fun deepCopy(): ArityNode = ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
 }
 
@@ -277,6 +291,15 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
                         yetRemoved.also {
                             it += currentChild?.remove(element, limit - it.count())
                                     ?: emptySequence()
+                        }
+                    }.asSequence()
+
+    // removeAll optimized implementation w.r.t. super class
+    override fun removeAll(element: Rule): Sequence<Rule> =
+            selectChildren(element)
+                    .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
+                        yetRemoved.also {
+                            it += currentChild?.removeAll(element) ?: emptySequence()
                         }
                     }.asSequence()
 
