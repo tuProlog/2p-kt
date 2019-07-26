@@ -97,7 +97,11 @@ internal abstract class AbstractLeafNode<E>(override val children: MutableMap<No
     override fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E> =
             get(element)
                     .take(if (limit > 0) min(limit, leafElements.count()) else leafElements.count())
-                    .toList().asSequence()
+                    .toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
+                    .also { leafElements.removeAll(it) }
+
+    override fun removeAll(element: E): Sequence<E> =
+            get(element).toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
                     .also { leafElements.removeAll(it) }
 
     override fun toString(treefy: Boolean): String =
