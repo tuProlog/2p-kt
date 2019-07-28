@@ -22,7 +22,7 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
     companion object {
 
         /** A visitor that checks whether [isWellFormed] is respected */
-        private val bodyWellFormedVisitor = object : TermVisitor<Boolean> {
+        private val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
             override fun defaultValue(term: Term): Boolean = term !is Numeric
 
