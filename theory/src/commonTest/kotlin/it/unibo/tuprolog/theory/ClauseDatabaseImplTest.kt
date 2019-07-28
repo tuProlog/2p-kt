@@ -32,6 +32,11 @@ internal class ClauseDatabaseImplTest {
     }
 
     @Test
+    fun clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction() {
+        assertFailsWith<IllegalArgumentException> { ClauseDatabaseImpl(ClauseDatabaseUtils.notWellFormedClauses) }
+    }
+
+    @Test
     fun clausesCorrect() {
         assertTrue(emptyClauseDatabase.clauses.none())
         assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses, filledClauseDatabase.clauses)
@@ -62,6 +67,24 @@ internal class ClauseDatabaseImplTest {
     }
 
     @Test
+    fun plusClauseDatabaseFailsOnBadDatabase() {
+        val badClauseDatabase = object : ClauseDatabase {
+            override val clauses: Iterable<Clause> = ClauseDatabaseUtils.notWellFormedClauses
+            override fun plus(clauseDatabase: ClauseDatabase) = throw NotImplementedError()
+            override fun contains(clause: Clause) = throw NotImplementedError()
+            override fun contains(head: Struct) = throw NotImplementedError()
+            override fun get(clause: Clause) = throw NotImplementedError()
+            override fun get(head: Struct) = throw NotImplementedError()
+            override fun assertA(clause: Clause) = throw NotImplementedError()
+            override fun assertZ(clause: Clause) = throw NotImplementedError()
+            override fun retract(clause: Clause) = throw NotImplementedError()
+            override fun retractAll(clause: Clause) = throw NotImplementedError()
+            override fun iterator() = throw NotImplementedError()
+        }
+        assertFailsWith<IllegalArgumentException> { filledClauseDatabase + badClauseDatabase }
+    }
+
+    @Test
     fun plusClause() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
         var toBeTested: ClauseDatabase = ClauseDatabaseImpl(firstHalfClauses)
@@ -83,6 +106,13 @@ internal class ClauseDatabaseImplTest {
 
         assertFalse(anIndependentFact in filledClauseDatabase)
         assertTrue(anIndependentFact in toBeTested)
+    }
+
+    @Test
+    fun plusClauseComplainsOnBadClause() {
+        ClauseDatabaseUtils.notWellFormedClauses.forEach {
+            assertFailsWith<IllegalArgumentException> { filledClauseDatabase + it }
+        }
     }
 
     @Test
@@ -143,6 +173,13 @@ internal class ClauseDatabaseImplTest {
     }
 
     @Test
+    fun assertAClauseComplainsOnBadClause() {
+        ClauseDatabaseUtils.notWellFormedClauses.forEach {
+            assertFailsWith<IllegalArgumentException> { filledClauseDatabase.assertA(it) }
+        }
+    }
+
+    @Test
     fun assertAStruct() {
         val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
                 .apply { add(0, Fact.of(aRule.head)) }
@@ -164,6 +201,13 @@ internal class ClauseDatabaseImplTest {
         val toBeTested = filledClauseDatabase.assertZ(aRule)
 
         assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + aRule, toBeTested.clauses)
+    }
+
+    @Test
+    fun assertZClauseComplainsOnBadClause() {
+        ClauseDatabaseUtils.notWellFormedClauses.forEach {
+            assertFailsWith<IllegalArgumentException> { filledClauseDatabase.assertZ(it) }
+        }
     }
 
     @Test

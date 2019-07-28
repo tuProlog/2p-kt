@@ -1,16 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.*
 
 internal abstract class ClauseImpl(override val head: Struct?, override val body: Term)
     : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {
 
-    override val isWellFormed: Boolean by lazy {
-        body.deepVisitNotableStructArgs({ bodyTerm -> bodyTerm !is Numeric }, Boolean::and)
-    }
+    override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
     override val functor: String
         get() = super<Clause>.functor
@@ -26,24 +21,18 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
 
     companion object {
 
-        /** Contains notable functor in determining if a Clause is well-formed */
-        private val notableFunctorsForClause = listOf(",", ";", "->")
+        /** A visitor that checks whether [isWellFormed] is respected */
+        private val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
-        /** Utility method to visit deeply Terms that have notable functor,
-         * applying [visitorAction] and aggregating results with [resultAggregator] */
-        private fun <VisitResult> Term.deepVisitNotableStructArgs(
-                visitorAction: (Term) -> VisitResult,
-                resultAggregator: (VisitResult, VisitResult) -> VisitResult
-        ): VisitResult =
-                when (this) {
-                    is Struct -> when {
-                        functor in notableFunctorsForClause && arity == 2 ->
-                            this.argsSequence.map { arg ->
-                                arg.deepVisitNotableStructArgs(visitorAction, resultAggregator)
-                            }.reduce(resultAggregator)
-                        else -> visitorAction(this)
-                    }
-                    else -> visitorAction(this)
-                }
+            override fun defaultValue(term: Term): Boolean = term !is Numeric
+
+            override fun visit(term: Struct): Boolean = when {
+                term.functor in Clause.notableFunctors && term.arity == 2 ->
+                    term.argsSequence
+                            .map { arg -> arg.accept(this) }
+                            .reduce(Boolean::and)
+                else -> true
+            }
+        }
     }
 }
