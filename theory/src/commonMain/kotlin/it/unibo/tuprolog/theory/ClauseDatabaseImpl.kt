@@ -6,24 +6,29 @@ import kotlin.collections.List as KtList
 internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteTree<*>) : ClauseDatabase {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses))
-
+    constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses)) {
+checkClausesCorrect(clauses)
+    }
     override val clauses: KtList<Clause> by lazy { reteTree.clauses.toList() }
 
     override val rules: KtList<Rule> by lazy { super.rules.toList() }
 
-
     override val directives: KtList<Directive> by lazy { super.directives.toList() }
 
-    override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-            ClauseDatabaseImpl(clauses + clauseDatabase.clauses)
-    override fun contains(clause: Clause): Boolean = reteTree.get(clause).any()
 
+    override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
+            ClauseDatabaseImpl(clauses + checkClausesCorrect(clauseDatabase.clauses))
+
+    override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
+
+
+    override fun contains(clause: Clause): Boolean = reteTree.get(clause).any()
 
     override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
 
     override fun contains(functor: String, arity: Int): Boolean =
             reteTree.get(functor, arity).any()
+
 
     override fun get(clause: Clause): Sequence<Clause> = reteTree.get(clause)
 
@@ -31,20 +36,20 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun get(functor: String, arity: Int): Sequence<Clause> = reteTree.get(functor, arity)
 
+
     override fun assertA(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = true) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), before = true) })
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(clause, before = false) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), before = false) })
 
     override fun retract(clause: Clause): RetractResult {
         val newTheory = reteTree.deepCopy()
         val retracted = newTheory.remove(clause)
 
-        return if (retracted.none()) {
-            RetractResult.Failure(this)
-        } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
+        return when {
+            retracted.none() -> RetractResult.Failure(this)
+            else -> RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 
@@ -52,10 +57,9 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
         val newTheory = reteTree.deepCopy()
         val retracted = newTheory.removeAll(clause)
 
-        return if (retracted.none()) {
-            RetractResult.Failure(this)
-        } else {
-            RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
+        return when {
+            retracted.none() -> RetractResult.Failure(this)
+            else -> RetractResult.Success(ClauseDatabaseImpl(newTheory), retracted.asIterable())
         }
     }
 
@@ -75,4 +79,16 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     }
 
     override fun hashCode(): Int = clauses.hashCode()
+
+    /** Utility method to check clause well-formed property */
+    private fun checkClauseCorrect(clause: Clause) = clause.also {
+        require(clause.isWellFormed) { "ClauseDatabase can contain only well formed clauses: this isn't $clause" }
+    }
+
+    /** Utility method to check more than one clause well-formed property */
+    private fun checkClausesCorrect(clauses: Iterable<Clause>) = clauses.also {
+        require(clauses.all { it.isWellFormed }) {
+            "ClauseDatabase can contain only well formed clauses: these aren't ${clauses.filterNot { it.isWellFormed }.toList()}"
+        }
+    }
 }

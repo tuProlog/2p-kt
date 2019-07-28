@@ -73,5 +73,36 @@ interface ClauseDatabase : Iterable<Clause> {
 
         /** Creates a ClauseDatabase with given clauses */
         fun of(clauses: Sequence<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.asIterable())
+
+        /**
+         * A visitor to prepare Clauses for execution
+         *
+         * For example, the [Clause] `product(A) :- A, A` is stored in the database, after preparation for execution,
+         * as the Term: `product(A) :- call(A), call(A)`
+         */
+        internal val defaultPreparationForExecutionVisitor = object : TermVisitor<Term> {
+            override fun defaultValue(term: Term) = term
+
+            override fun visit(term: Struct): Term = when {
+                term is Clause -> visit(term)
+                term.functor in Clause.notableFunctors && term.arity == 2 ->
+                    Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
+
+                else -> term
+            }
+
+            override fun visit(term: Clause): Term = Clause.of(term.head, visit(term.body))
+
+            override fun visit(term: Var): Term = Struct.of("call", term)
+        }
     }
 }
+
+/**
+ * Prepares the receiver ClauseDatabase for execution, using the provided visitor
+ *
+ * For example, the [Clause] `product(A) :- A, A` is stored in the database, after preparation for execution,
+ * as the Term: `product(A) :- call(A), call(A)`
+ */
+fun ClauseDatabase.prepareForExecution(): ClauseDatabase =
+        ClauseDatabaseImpl(this.clauses.map { it.accept(ClauseDatabase.defaultPreparationForExecutionVisitor) as Clause })
