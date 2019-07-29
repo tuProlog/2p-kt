@@ -48,7 +48,10 @@ interface Clause : Struct {
 
         fun of(head: Struct? = null, vararg body: Term): Clause =
                 when (head) {
-                    null -> Directive.of(body.asIterable())
+                    null -> {
+                        require(body.any()) { "If Clause head is null, at least one body element, is required" }
+                        Directive.of(body.asIterable())
+                    }
                     else -> Rule.of(head, *body)
                 }
     }
