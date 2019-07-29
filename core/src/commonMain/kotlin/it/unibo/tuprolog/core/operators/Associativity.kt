@@ -33,19 +33,18 @@ enum class Associativity {
     YFX;
 
     /** Whether this associativity is a prefix one */
-    val isPrefix: Boolean
-        get() = PREFIX.contains(this)
+    val isPrefix: Boolean by lazy { PREFIX.contains(this) }
 
     /** Whether this associativity is an infix one */
-    val isInfix: Boolean
-        get() = INFIX.contains(this)
+    val isInfix: Boolean by lazy { INFIX.contains(this) }
 
     /** Whether this associativity is a postfix one */
-    val isPostfix: Boolean
-        get() = POSTFIX.contains(this)
+    val isPostfix: Boolean by lazy { POSTFIX.contains(this) }
 
     /** Creates an atom containing the associativity symbolic name */
-    fun toTerm(): Atom = Atom.of(name.toLowerCase())
+    fun toTerm(): Atom = atomRepresentation
+
+    private val atomRepresentation by lazy { Atom.of(name.toLowerCase()) }
 
     companion object {
         /** Set of prefix associativity */
