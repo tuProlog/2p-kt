@@ -21,8 +21,7 @@ internal class ConsImpl(override val head: Term, override val tail: Term) : Stru
 
     override val functor: String = Cons.FUNCTOR
 
-    override val args: Array<Term>
-        get() = super<StructImpl>.args
+    override val args: Array<Term> by lazy { super<StructImpl>.args }
 
     override fun toString(): String {
         val ending = if (unfoldedList.last() is EmptyList) {

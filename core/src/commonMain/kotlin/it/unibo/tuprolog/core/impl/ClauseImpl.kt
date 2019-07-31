@@ -7,11 +7,9 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
 
     override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
-    override val functor: String
-        get() = super<Clause>.functor
+    override val functor: String = super<Clause>.functor
 
-    override val args: Array<Term>
-        get() = super<StructImpl>.args
+    override val args: Array<Term> by lazy { super<StructImpl>.args }
 
     override fun toString(): String =
             when (head) {

@@ -7,6 +7,5 @@ import it.unibo.tuprolog.core.Term
 internal class DirectiveImpl(override val body: Term)
     : ClauseImpl(null, body), Directive {
 
-    override val head: Struct?
-        get() = super<Directive>.head
+    override val head: Struct? = super<Directive>.head
 }

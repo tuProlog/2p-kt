@@ -6,8 +6,7 @@ import it.unibo.tuprolog.core.Set as LogicSet
 
 internal open class SetImpl(private val item: Term?) : StructImpl(LogicSet.FUNCTOR, listOfNotNull(item).toTypedArray()), LogicSet {
 
-    override val functor: String
-        get() = super<LogicSet>.functor
+    override val functor: String = super<LogicSet>.functor
 
     override val unfoldedSequence: Sequence<Term> by lazy {
         when (item) {

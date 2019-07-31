@@ -9,6 +9,5 @@ internal class FactImpl(override val head: Struct)
 
     override val isWellFormed: Boolean = true
 
-    override val body: Term
-        get() = super<RuleImpl>.body
+    override val body: Term = super<RuleImpl>.body
 }

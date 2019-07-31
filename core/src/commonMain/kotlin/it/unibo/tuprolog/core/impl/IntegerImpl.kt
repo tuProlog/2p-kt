@@ -11,8 +11,7 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
         BigDecimal.of(intValue)
     }
 
-    override val intValue: BigInteger
-        get() = value
+    override val intValue: BigInteger = value
 
     override fun toString(): String = value.toString()
 
