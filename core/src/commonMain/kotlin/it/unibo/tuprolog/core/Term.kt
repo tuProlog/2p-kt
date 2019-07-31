@@ -61,7 +61,7 @@ interface Term {
     fun apply(substitution: Substitution): Term = when {
         this.isGround -> this
         this is Var -> substitution[this] ?: this
-        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
+        this is Struct && !this.isGround -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
         else -> this
     }
 
