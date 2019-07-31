@@ -1,4 +1,4 @@
 package it.unibo.tuprolog.primitive
 
-typealias Primitive = (Request)->Sequence<Response>
-
+/** A typealias for a primitive function that accepts a [Request] and returns a Sequence of [Response]s */
+typealias Primitive = (Request) -> Sequence<Response>
