@@ -38,15 +38,17 @@ class Operator(val functor: String, val associativity: Associativity, val priori
             }
 
     fun toTerm(): Struct =
-            Struct.of("op", priority.toTerm(), associativity.toTerm(), functor.toAtom())
+            Struct.of(FUNCTOR, priority.toTerm(), associativity.toTerm(), functor.toAtom())
 
     companion object {
 
-        val TEMPLATE = Struct.of("op", Var.of("P"), Var.of("A"), Var.of("F"))
+        val FUNCTOR = "op"
+
+        val TEMPLATE = Struct.of(FUNCTOR, Var.of("P"), Var.of("A"), Var.of("F"))
 
         fun fromTerm(struct: Struct): Operator =
                 with(struct) {
-                    if (functor == "op" && arity == 3 && args[0] is Integer && args[1] is Atom && args[2] is Atom) {
+                    if (functor == FUNCTOR && arity == 3 && args[0] is Integer && args[1] is Atom && args[2] is Atom) {
                         Operator(
                                 args[2].castTo<Atom>().value,
                                 Associativity.fromTerm(args[1]),
