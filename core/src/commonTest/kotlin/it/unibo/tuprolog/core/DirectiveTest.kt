@@ -46,7 +46,7 @@ internal class DirectiveTest {
     }
 
     @Test
-    fun directiveOfIterableComplaintsIfEmptyIterable() {
+    fun directiveOfIterableComplainsIfEmptyIterable() {
         assertFailsWith<IllegalArgumentException> { Directive.of(emptyList()) }
     }
 }

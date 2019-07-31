@@ -1,43 +1,45 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
-import kotlin.test.*
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 /**
- * Test class for [ReteTree.NoArgsNode]
+ * Test class for [NoArgsNode]
  *
  * @author Enrico
  */
 internal class NoArgsNodeTest {
 
-    private lateinit var emptyNoArgsNode: ReteTree.NoArgsNode
-    private lateinit var filledNoArgsNode: ReteTree.NoArgsNode
+    private lateinit var emptyNoArgsNode: NoArgsNode
+    private lateinit var filledNoArgsNode: NoArgsNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyNoArgsNode = ReteTree.NoArgsNode()
-        filledNoArgsNode = ReteTree.NoArgsNode().apply { ReteTreeUtils.noArgHeadedRules.forEach { put(it) } }
+        emptyNoArgsNode = NoArgsNode()
+        filledNoArgsNode = NoArgsNode().apply { ReteNodeUtils.noArgHeadedRules.forEach { put(it) } }
     }
 
     @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyNoArgsNode)
-        assertReteNodeClausesCorrect(filledNoArgsNode, ReteTreeUtils.noArgHeadedRules)
+        assertReteNodeClausesCorrect(filledNoArgsNode, ReteNodeUtils.noArgHeadedRules)
     }
 
     @Test
     fun putClauseInsertsRule() {
         emptyNoArgsNode.put(aRule)
 
-        assertEquals(aRule, emptyNoArgsNode.clauses.single())
+        assertEquals(aRule, emptyNoArgsNode.indexedElements.single())
     }
 
     @Test
@@ -46,47 +48,33 @@ internal class NoArgsNodeTest {
         val aStructHeadedRule = Fact.of(Struct.of("f", Atom.of("a")))
         emptyNoArgsNode.put(aStructHeadedRule)
 
-        assertEquals(aStructHeadedRule, emptyNoArgsNode.clauses.single())
-    }
-
-    @Test
-    fun putClauseDoesntInsertDirective() {
-        emptyNoArgsNode.put(aDirective)
-
-        assertReteNodeEmpty(emptyNoArgsNode)
+        assertEquals(aStructHeadedRule, emptyNoArgsNode.indexedElements.single())
     }
 
     @Test
     fun putClauseInsertsAfterByDefault() {
         filledNoArgsNode.put(aRule)
 
-        assertEquals(aRule, filledNoArgsNode.clauses.last())
+        assertEquals(aRule, filledNoArgsNode.indexedElements.last())
     }
 
     @Test
     fun putClauseInsertsBeforeAllIfSpecified() {
         filledNoArgsNode.put(aRule, true)
 
-        assertEquals(aRule, filledNoArgsNode.clauses.first())
+        assertEquals(aRule, filledNoArgsNode.indexedElements.first())
     }
 
     @Test
     fun getClause() {
-        ReteTreeUtils.noArgHeadedRules.forEach { queryAndResult ->
+        ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
             assertEquals(queryAndResult, filledNoArgsNode.get(queryAndResult).single())
         }
     }
 
     @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
-            assertTrue { filledNoArgsNode.get(query).none() }
-        }
-    }
-
-    @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.noArgHeadedRules.forEach { queryAndResult ->
+        ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
             assertNoChangesInReteNode(filledNoArgsNode) { remove(queryAndResult, 0) }
         }
     }
@@ -99,7 +87,7 @@ internal class NoArgsNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 1..3) {
-            ReteTreeUtils.noArgHeadedRules.forEach { queryAndResult ->
+            ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
                 init() // because removal of side-effects is needed
 
                 assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) { remove(queryAndResult, limit) }
@@ -110,7 +98,7 @@ internal class NoArgsNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
         val negativeLimit = -1
-        ReteTreeUtils.noArgHeadedRules.forEach { queryAndResult ->
+        ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) { remove(queryAndResult, negativeLimit) }
@@ -119,7 +107,7 @@ internal class NoArgsNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.noArgHeadedRules.forEach { queryAndResult ->
+        ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) { removeAll(queryAndResult) }
@@ -147,7 +135,7 @@ internal class NoArgsNodeTest {
 
         val independentCopy = emptyNoArgsNode.deepCopy()
 
-        assertSame(emptyNoArgsNode.clauses.single(), independentCopy.clauses.single())
+        assertSame(emptyNoArgsNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
 
 }

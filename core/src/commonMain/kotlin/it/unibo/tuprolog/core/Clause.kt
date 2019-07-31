@@ -47,10 +47,12 @@ interface Clause : Struct {
         val notableFunctors = listOf(",", ";", "->")
 
         fun of(head: Struct? = null, vararg body: Term): Clause =
-                if (head === null) {
-                    Directive.of(body[0], *body.sliceArray(1..body.lastIndex))
-                } else {
-                    Rule.of(head, *body)
+                when (head) {
+                    null -> {
+                        require(body.any()) { "If Clause head is null, at least one body element, is required" }
+                        Directive.of(body.asIterable())
+                    }
+                    else -> Rule.of(head, *body)
                 }
     }
 
