@@ -108,6 +108,7 @@ internal class OperatorTest {
 
         assertFailsWith<IllegalArgumentException> { Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())) }
         assertFailsWith<IllegalArgumentException> { testFromTerm(functor = "ciao") }
+        assertFailsWith<IllegalArgumentException> { testFromTerm(priority = plusFunctor.toTerm()) }
         assertFailsWith<IllegalArgumentException> { testFromTerm(priority = Var.anonymous()) }
         assertFailsWith<IllegalArgumentException> { testFromTerm(associativity = Var.anonymous()) }
         assertFailsWith<IllegalArgumentException> { testFromTerm(associativity = "a".toTerm()) }
