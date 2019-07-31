@@ -43,7 +43,7 @@ abstract class AbstractUnificationStrategy(override val context: Substitution = 
             val currentEq = equations[i]
             val (newLhs, newRhs) = currentEq.apply(substitution).toPair()
 
-            if (currentEq.lhs !== newLhs || currentEq.rhs !== newRhs) {
+            if (currentEq.lhs != newLhs || currentEq.rhs != newRhs) {
                 equations[i] = Equation.of(newLhs, newRhs, this::checkTermsEquality)
                 changed = true
             }

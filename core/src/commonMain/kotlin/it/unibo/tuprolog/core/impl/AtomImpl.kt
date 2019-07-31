@@ -13,6 +13,5 @@ internal open class AtomImpl(override val functor: String) : StructImpl(functor,
 
     override val argsList: List<Term> by lazy { emptyList<Term>() }
 
-    override val isGround: Boolean
-        get() = super<Atom>.isGround
+    override val isGround: Boolean = super<Atom>.isGround
 }

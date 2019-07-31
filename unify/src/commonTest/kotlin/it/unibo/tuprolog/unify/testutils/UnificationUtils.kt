@@ -67,7 +67,19 @@ internal object UnificationUtils {
                                 Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
                                 true,
                                 Struct.of("f", Struct.of("g", aAtom), aAtom)
-                        )
+                        ),
+                with(Scope.empty()) {
+                    Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) `=`
+                            Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
+                            Triple(
+                                    Substitution.of(varOf("A") to aAtom,
+                                            varOf("B") to Struct.of("b", varOf("X")),
+                                            varOf("C") to bAtom),
+                                    true,
+                                    Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom)
+                            )
+                }
+
         )
     }
 
