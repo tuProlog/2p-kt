@@ -146,7 +146,29 @@ internal class ClauseDatabaseImplTest {
 
     @Test
     fun containsStructReturnsFalseIfNoMatchingHeadIsFound() {
-        assertFalse(anIndependentFact in filledClauseDatabase)
+        assertFalse(anIndependentFact.head in filledClauseDatabase)
+    }
+
+    @Test
+    fun containsFunctorAndArityReturnsTrueIfMatchingClauseIsFound() {
+        ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
+            assertTrue { filledClauseDatabase.contains(it.head.functor, it.head.arity) }
+        }
+
+        ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+                .forEach { (query, result) ->
+                    if (result.isNotEmpty()) assertTrue { filledClauseDatabase.contains(query.head.functor, query.head.arity) }
+                }
+    }
+
+    @Test
+    fun containsFunctorAndArityReturnsFalseIfNoMatchingClauseIsFound() {
+        assertFalse(filledClauseDatabase.contains(anIndependentFact.head.functor, anIndependentFact.head.arity))
+
+        ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+                .forEach { (query, result) ->
+                    if (result.isEmpty()) assertFalse { filledClauseDatabase.contains(query.head.functor, query.head.arity) }
+                }
     }
 
     @Test
@@ -161,6 +183,15 @@ internal class ClauseDatabaseImplTest {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap
                 .forEach { (query, result) ->
                     val a = filledClauseDatabase[query.head].toList()
+                    assertEquals(result, a)
+                }
+    }
+
+    @Test
+    fun getFunctorAndArity() {
+        ClauseDatabaseUtils.rulesQueryResultByFunctorAndArity
+                .forEach { (query, result) ->
+                    val a = filledClauseDatabase[query.head.functor, query.head.arity].toList()
                     assertEquals(result, a)
                 }
     }

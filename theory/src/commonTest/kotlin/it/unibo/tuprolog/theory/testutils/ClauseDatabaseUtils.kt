@@ -22,11 +22,16 @@ internal object ClauseDatabaseUtils {
     /** Contains well formed clauses queries based on [wellFormedClauses] and expected responses from the ClauseDatabase */
     internal val clausesQueryResultsMap by lazy { ReteNodeUtils.mixedClausesQueryResultsMap }
 
-    /** Contains clauses queries that have Variable as body, to be used when testing the methods accepting only heads */
+    /** Contains rules queries that have Variable as body, to be used when testing the methods accepting only heads */
     internal val rulesQueryWithVarBodyResultsMap by lazy {
         clausesQueryResultsMap
                 .filterKeys { it is Rule && it.body.isVariable }
                 .mapKeys { it.key as Rule }
+    }
+
+    /** Contains rules queries that only specify the functor and arity of the head, leaving body and head functor arguments variables */
+    internal val rulesQueryResultByFunctorAndArity by lazy {
+        rulesQueryWithVarBodyResultsMap.filterKeys { rule -> rule.head.argsSequence.all { it is Var } }
     }
 
     /** Contains not well formed clauses (with [Numeric] values in body) */
