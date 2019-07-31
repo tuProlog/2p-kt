@@ -30,10 +30,12 @@ internal abstract class AbstractIntermediateReteNode<K, E>(override val children
      * if negative [limit] this behaves actually like normal [Sequence.fold]
      */
     protected inline fun <T, R : Iterable<*>> Sequence<T>.foldWithLimit(initial: R, limit: Int, operation: (acc: R, T) -> R) =
-            fold(initial) { accumulator, element ->
-                if (limit < 0 || accumulator.count() < limit)
-                    operation(accumulator, element)
-                else
-                    return@foldWithLimit accumulator
-            }
+            if (limit < 0) fold(initial, operation)
+            else
+                fold(initial) { accumulator, element ->
+                    if (accumulator.count() < limit)
+                        operation(accumulator, element)
+                    else
+                        return@foldWithLimit accumulator
+                }
 }
