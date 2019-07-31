@@ -45,4 +45,17 @@ internal class SetTest {
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
+
+    @Test
+    fun setOfEmptySequenceOfTerms() {
+        assertEqualities(Empty.set(), Set.of(emptySequence()))
+    }
+
+    @Test
+    fun setOfSequenceOfTerms() {
+        val toBeTested = SetUtils.mixedSets.map { Set.of(it.asSequence()) }
+
+        onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+    }
+
 }
