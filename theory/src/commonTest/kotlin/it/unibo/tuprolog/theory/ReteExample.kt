@@ -20,9 +20,13 @@ fun main() {
             Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous())))
     )
     println(theory.toString(true))
+    println(theory.get(Clause.of(Struct.of("f", Var.anonymous()), Var.anonymous())).joinToString("\n"))
 
-//    println(theory.get(Clause.of(Struct.of("f", Var.anonymous()), Var.anonymous())).joinToString("\n"))
+    val database = ClauseDatabase.of(theory.indexedElements)
 
-    println(theory.get("f", 1).joinToString("\n", "[", "]"))
-    println(theory.get("f", 2).joinToString("\n", "[", "]"))
+    println("Database: ${database.clauses}")
+    println(database.get("f", 1).joinToString("\n", "[", "]"))
+    println("----")
+    println(database.get("f", 2).joinToString("\n", "[", "]"))
+
 }
