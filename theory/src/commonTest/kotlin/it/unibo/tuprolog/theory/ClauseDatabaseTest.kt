@@ -49,6 +49,13 @@ internal class ClauseDatabaseTest {
     }
 
     @Test
+    fun ofSequenceClauseCreatesCorrectInstance() {
+        val toBeTested = ClauseDatabase.of(ClauseDatabaseUtils.wellFormedClauses.asSequence())
+
+        assertEquals(correctInstance, toBeTested)
+    }
+
+    @Test
     fun defaultPreparationForExecutionVisitorWorksAsExpected() {
         val aVar = Var.of("A")
         val aFactWithVarInHead = Fact.of(Tuple.of(aVar, aVar))
