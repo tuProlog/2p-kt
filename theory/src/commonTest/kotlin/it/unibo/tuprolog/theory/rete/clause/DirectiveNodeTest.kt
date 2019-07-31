@@ -1,30 +1,31 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.*
 
 /**
- * Test class for [ReteTree.DirectiveNode]
+ * Test class for [DirectiveNode]
  *
  * @author Enrico
  */
 internal class DirectiveNodeTest {
 
-    private lateinit var emptyDirectiveNode: ReteTree.DirectiveNode
-    private lateinit var filledDirectiveNode: ReteTree.DirectiveNode
+    private lateinit var emptyDirectiveNode: DirectiveNode
+    private lateinit var filledDirectiveNode: DirectiveNode
 
-    private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
     private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyDirectiveNode = ReteTree.DirectiveNode()
-        filledDirectiveNode = ReteTree.DirectiveNode().apply { ReteTreeUtils.directives.forEach { put(it) } }
+        emptyDirectiveNode = DirectiveNode()
+        filledDirectiveNode = DirectiveNode().apply { ReteNodeUtils.directives.forEach { put(it) } }
     }
 
     @Test
@@ -36,54 +37,40 @@ internal class DirectiveNodeTest {
     @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyDirectiveNode)
-        assertReteNodeClausesCorrect(filledDirectiveNode, ReteTreeUtils.directives)
+        assertReteNodeClausesCorrect(filledDirectiveNode, ReteNodeUtils.directives)
     }
 
     @Test
     fun putClauseInsertsDirective() {
         emptyDirectiveNode.put(aDirective)
 
-        assertEquals(aDirective, emptyDirectiveNode.clauses.single())
-    }
-
-    @Test
-    fun putClauseDoesntInsertRule() {
-        emptyDirectiveNode.put(aRule)
-
-        assertReteNodeEmpty(emptyDirectiveNode)
+        assertEquals(aDirective, emptyDirectiveNode.indexedElements.single())
     }
 
     @Test
     fun putClauseInsertsAfterByDefault() {
         filledDirectiveNode.put(aDirective)
 
-        assertEquals(aDirective, filledDirectiveNode.clauses.last())
+        assertEquals(aDirective, filledDirectiveNode.indexedElements.last())
     }
 
     @Test
     fun putClauseInsertsBeforeAllIfSpecified() {
         filledDirectiveNode.put(aDirective, true)
 
-        assertEquals(aDirective, filledDirectiveNode.clauses.first())
+        assertEquals(aDirective, filledDirectiveNode.indexedElements.first())
     }
 
     @Test
     fun getClause() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, result) ->
+        ReteNodeUtils.directivesQueryResultsMap.forEach { (query, result) ->
             assertEquals(result, filledDirectiveNode.get(query).toList())
         }
     }
 
     @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, _) ->
-            assertTrue { filledDirectiveNode.get(query).none() }
-        }
-    }
-
-    @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
+        ReteNodeUtils.directivesQueryResultsMap.forEach { (query, _) ->
             assertNoChangesInReteNode(filledDirectiveNode) { remove(query, 0) }
         }
     }
@@ -96,7 +83,7 @@ internal class DirectiveNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 0..10) {
-            ReteTreeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
+            ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
                 assertRemovedFromReteNode(filledDirectiveNode, allMatching.take(limit)) { remove(query, limit) }
@@ -107,7 +94,7 @@ internal class DirectiveNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingDirectives() {
         val negativeLimit = -1
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledDirectiveNode, allMatching) { remove(query, negativeLimit) }
@@ -116,7 +103,7 @@ internal class DirectiveNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.directivesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledDirectiveNode, allMatching) { removeAll(query) }
@@ -144,7 +131,7 @@ internal class DirectiveNodeTest {
 
         val independentCopy = emptyDirectiveNode.deepCopy()
 
-        assertSame(emptyDirectiveNode.clauses.single(), independentCopy.clauses.single())
+        assertSame(emptyDirectiveNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
 
 }

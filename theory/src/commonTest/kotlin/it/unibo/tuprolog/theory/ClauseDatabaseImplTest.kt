@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertClauseHeadPartialOrderingRespected
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import kotlin.test.*
 
 /**

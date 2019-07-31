@@ -11,7 +11,7 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal object ClauseDatabaseUtils {
 
     /** Contains well formed clauses (the head is a [Struct] and the body doesn't contain [Numeric] values) */
-    internal val wellFormedClauses by lazy { ReteTreeUtils.mixedClauses }
+    internal val wellFormedClauses by lazy { ReteNodeUtils.mixedClauses }
 
     /** Contains a pair which has in its first element half clauses from [wellFormedClauses] in the second element the other half */
     internal val wellFormedClausesHelves by lazy {
@@ -20,7 +20,7 @@ internal object ClauseDatabaseUtils {
     }
 
     /** Contains well formed clauses queries based on [wellFormedClauses] and expected responses from the ClauseDatabase */
-    internal val clausesQueryResultsMap by lazy { ReteTreeUtils.mixedClausesQueryResultsMap }
+    internal val clausesQueryResultsMap by lazy { ReteNodeUtils.mixedClausesQueryResultsMap }
 
     /** Contains clauses queries that have Variable as body, to be used when testing the methods accepting only heads */
     internal val rulesQueryWithVarBodyResultsMap by lazy {

@@ -1,16 +1,18 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.theory.rete.ReteTree
 import kotlin.collections.List as KtList
 
-internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteTree<*>) : ClauseDatabase {
+internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteNode<*, Clause>) : ClauseDatabase {
 
     /** Construct a Clause database from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses)) {
         checkClausesCorrect(clauses)
     }
 
-    override val clauses: KtList<Clause> by lazy { reteTree.clauses.toList() }
+    override val clauses: KtList<Clause> by lazy { reteTree.indexedElements.toList() }
 
     override val rules: KtList<Rule> by lazy { super.rules.toList() }
     override val directives: KtList<Directive> by lazy { super.directives.toList() }
@@ -28,10 +30,10 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
 
     override fun assertA(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), before = true) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = true) })
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), before = false) })
+            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = false) })
 
     override fun retract(clause: Clause): RetractResult {
         val newTheory = reteTree.deepCopy()

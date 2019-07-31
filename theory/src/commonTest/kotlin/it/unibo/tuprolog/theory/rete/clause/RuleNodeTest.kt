@@ -1,30 +1,31 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.*
 
 /**
- * Test class for [ReteTree.RuleNode]
+ * Test class for [RuleNode]
  *
  * @author Enrico
  */
 internal class RuleNodeTest {
 
-    private lateinit var emptyRuleNode: ReteTree.RuleNode
-    private lateinit var filledRuleNode: ReteTree.RuleNode
+    private lateinit var emptyRuleNode: RuleNode
+    private lateinit var filledRuleNode: RuleNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.`true`(), Var.of("B"))
 
     @BeforeTest
     fun init() {
-        emptyRuleNode = ReteTree.RuleNode()
-        filledRuleNode = ReteTree.RuleNode().apply { ReteTreeUtils.rules.forEach { put(it) } }
+        emptyRuleNode = RuleNode()
+        filledRuleNode = RuleNode().apply { ReteNodeUtils.rules.forEach { put(it) } }
     }
 
     @Test
@@ -36,54 +37,40 @@ internal class RuleNodeTest {
     @Test
     fun clausesCorrect() {
         assertReteNodeEmpty(emptyRuleNode)
-        assertReteNodeClausesCorrect(filledRuleNode, ReteTreeUtils.rules)
+        assertReteNodeClausesCorrect(filledRuleNode, ReteNodeUtils.rules)
     }
 
     @Test
     fun putClauseInsertsRule() {
         emptyRuleNode.put(aRule)
 
-        assertEquals(aRule, emptyRuleNode.clauses.single())
-    }
-
-    @Test
-    fun putClauseDoesntInsertDirective() {
-        emptyRuleNode.put(aDirective)
-
-        assertReteNodeEmpty(emptyRuleNode)
+        assertEquals(aRule, emptyRuleNode.indexedElements.single())
     }
 
     @Test
     fun putClauseInsertsAfterByDefault() {
         filledRuleNode.put(aRule)
 
-        assertEquals(aRule, filledRuleNode.clauses.last())
+        assertEquals(aRule, filledRuleNode.indexedElements.last())
     }
 
     @Test
     fun putClauseInsertsBeforeAllIfSpecified() {
         filledRuleNode.put(aRule, true)
 
-        assertEquals(aRule, filledRuleNode.clauses.first())
+        assertEquals(aRule, filledRuleNode.indexedElements.first())
     }
 
     @Test
     fun getClause() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, result) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, result) ->
             assertEquals(result, filledRuleNode.get(query).toList())
         }
     }
 
     @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        ReteTreeUtils.directivesQueryResultsMap.forEach { (query, _) ->
-            assertTrue { filledRuleNode.get(query).none() }
-        }
-    }
-
-    @Test
     fun removeClauseWithZeroLimitDoesNothing() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, _) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, _) ->
             assertNoChangesInReteNode(filledRuleNode) { remove(query, 0) }
         }
     }
@@ -96,7 +83,7 @@ internal class RuleNodeTest {
     @Test
     fun removeClauseWithLimitWorksAsExpected() {
         for (limit in 0..10) {
-            ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+            ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
                 assertRemovedFromReteNode(filledRuleNode, allMatching.take(limit)) { remove(query, limit) }
@@ -107,7 +94,7 @@ internal class RuleNodeTest {
     @Test
     fun removeClauseWithNegativeLimitRemovesAllMatchingRules() {
         val negativeLimit = -1
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledRuleNode, allMatching) { remove(query, negativeLimit) }
@@ -116,7 +103,7 @@ internal class RuleNodeTest {
 
     @Test
     fun removeAllClause() {
-        ReteTreeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
+        ReteNodeUtils.rulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
             assertRemovedFromReteNode(filledRuleNode, allMatching) { removeAll(query) }
@@ -144,6 +131,6 @@ internal class RuleNodeTest {
 
         val independentCopy = emptyRuleNode.deepCopy()
 
-        assertSame(emptyRuleNode.clauses.single(), independentCopy.clauses.single())
+        assertSame(emptyRuleNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
 }

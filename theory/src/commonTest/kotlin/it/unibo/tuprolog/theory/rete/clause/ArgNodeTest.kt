@@ -1,14 +1,17 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertRemovedFromReteNodeRespectingPartialOrder
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteTreeUtils.assertReteNodeEmpty
-import kotlin.test.*
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /**
- * Test class for [ReteTree.ArgNode]
+ * Test class for [ArgNode]
  *
  * @author Enrico
  */
@@ -22,48 +25,39 @@ internal class ArgNodeTest {
 
     private val aAtomRules = listOf(aAtomAsFirstHeadArgRule, aAtomAsThirdHeadArgRule)
 
-    private val aAtomAsFirstHeadArgRuleNode = ReteTree.RuleNode(mutableListOf(aAtomAsFirstHeadArgRule))
-    private val aAtomAsThirdHeadArgRuleNode = ReteTree.RuleNode(mutableListOf(aAtomAsThirdHeadArgRule))
+    private val aAtomAsFirstHeadArgRuleNode = RuleNode(mutableListOf(aAtomAsFirstHeadArgRule))
+    private val aAtomAsThirdHeadArgRuleNode = RuleNode(mutableListOf(aAtomAsThirdHeadArgRule))
 
-    private lateinit var argNodeZeroIndexAndAAtom: ReteTree.ArgNode
-    private lateinit var argNodeZeroIndexAndBAtom: ReteTree.ArgNode
-    private lateinit var argNodeTwoIndexAndAAtom: ReteTree.ArgNode
-    private lateinit var argNodeTwoIndexAndBAtom: ReteTree.ArgNode
+    private lateinit var argNodeZeroIndexAndAAtom: ArgNode
+    private lateinit var argNodeZeroIndexAndBAtom: ArgNode
+    private lateinit var argNodeTwoIndexAndAAtom: ArgNode
+    private lateinit var argNodeTwoIndexAndBAtom: ArgNode
 
-    private lateinit var zeroIndexEmptyArgNodes: Iterable<ReteTree.ArgNode>
-    private lateinit var twoIndexEmptyArgNodes: Iterable<ReteTree.ArgNode>
-    private lateinit var allEmptyArgNodes: Iterable<ReteTree.ArgNode>
-    private lateinit var allFilledArgNodes: Iterable<ReteTree.ArgNode>
+    private lateinit var zeroIndexEmptyArgNodes: Iterable<ArgNode>
+    private lateinit var twoIndexEmptyArgNodes: Iterable<ArgNode>
+    private lateinit var allEmptyArgNodes: Iterable<ArgNode>
+    private lateinit var allFilledArgNodes: Iterable<ArgNode>
 
     @BeforeTest
     fun init() {
-        argNodeZeroIndexAndAAtom = ReteTree.ArgNode(0, aAtom)
-        argNodeZeroIndexAndBAtom = ReteTree.ArgNode(0, bAtom)
-        argNodeTwoIndexAndAAtom = ReteTree.ArgNode(2, aAtom)
-        argNodeTwoIndexAndBAtom = ReteTree.ArgNode(2, bAtom)
+        argNodeZeroIndexAndAAtom = ArgNode(0, aAtom)
+        argNodeZeroIndexAndBAtom = ArgNode(0, bAtom)
+        argNodeTwoIndexAndAAtom = ArgNode(2, aAtom)
+        argNodeTwoIndexAndBAtom = ArgNode(2, bAtom)
 
         zeroIndexEmptyArgNodes = listOf(argNodeZeroIndexAndAAtom, argNodeZeroIndexAndBAtom)
         twoIndexEmptyArgNodes = listOf(argNodeTwoIndexAndAAtom, argNodeTwoIndexAndBAtom)
         allEmptyArgNodes = zeroIndexEmptyArgNodes + twoIndexEmptyArgNodes
 
         allFilledArgNodes = listOf(
-                ReteTree.ArgNode(0, aAtom), ReteTree.ArgNode(0, bAtom),
-                ReteTree.ArgNode(2, aAtom), ReteTree.ArgNode(2, bAtom)
+                ArgNode(0, aAtom), ArgNode(0, bAtom),
+                ArgNode(2, aAtom), ArgNode(2, bAtom)
         ).map { argNode -> argNode.apply { aAtomRules.forEach { put(it) } } }
     }
 
     @Test
     fun argNodeCannotAcceptNegativeIndexUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { ReteTree.ArgNode(-1, Atom.of("a")) }
-    }
-
-    @Test
-    fun putClauseDoesntInsertAnythingIfNotARule() {
-        allEmptyArgNodes.forEach {
-            it.put(Directive.of(aAtom))
-
-            assertReteNodeEmpty(it)
-        }
+        assertFailsWith<IllegalArgumentException> { ArgNode(-1, Atom.of("a")) }
     }
 
     @Test
@@ -91,7 +85,7 @@ internal class ArgNodeTest {
         allEmptyArgNodes.forEach {
             it.put(noArgsHeadedRule)
 
-            assertEquals(ReteTree.RuleNode(mutableListOf(noArgsHeadedRule)), it.children[null])
+            assertEquals(RuleNode(mutableListOf(noArgsHeadedRule)), it.children[null])
         }
     }
 
@@ -100,8 +94,8 @@ internal class ArgNodeTest {
         zeroIndexEmptyArgNodes.forEach {
             it.put(aAtomAsThirdHeadArgRule)
 
-            val childOfZeroIndexArgNode = it.children[aAtomAsThirdHeadArgRule.head[1]] as ReteTree.ArgNode
-            val childOfOneIndexArgNode = childOfZeroIndexArgNode.children[aAtomAsThirdHeadArgRule.head[2]] as ReteTree.ArgNode
+            val childOfZeroIndexArgNode = it.children[aAtomAsThirdHeadArgRule.head[1]] as ArgNode
+            val childOfOneIndexArgNode = childOfZeroIndexArgNode.children[aAtomAsThirdHeadArgRule.head[2]] as ArgNode
 
             assertEquals(aAtomAsThirdHeadArgRuleNode, childOfOneIndexArgNode.children[null])
         }
@@ -158,11 +152,6 @@ internal class ArgNodeTest {
         allFilledArgNodes.forEach {
             assertEquals(aAtomAsThirdHeadArgRule, it.get(aAtomAsThirdHeadArgRule).single())
         }
-    }
-
-    @Test
-    fun getClauseWithDifferentTypeQueryAlwaysEmpty() {
-        allFilledArgNodes.forEach { assertTrue { it.get(Directive.of(aAtom)).none() } }
     }
 
     @Test
