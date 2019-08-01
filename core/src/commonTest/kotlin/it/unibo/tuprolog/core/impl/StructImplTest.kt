@@ -221,6 +221,14 @@ internal class StructImplTest {
     }
 
     @Test
+    fun indicatorDetected() {
+        val isIndicator: (Struct) -> Boolean = { aStruct -> aStruct.functor == Indicator.FUNCTOR && aStruct.arity == 2 }
+
+        mixedStructInstances.filter(isIndicator).forEach { assertTrue { it.isIndicator } }
+        mixedStructInstances.filterNot(isIndicator).forEach { assertFalse { it.isIndicator } }
+    }
+
+    @Test
     fun freshCopyShouldReturnInstanceItselfIfGround() {
         groundStructInstances.forEach(ConstantUtils::assertFreshCopyIsItself)
     }
