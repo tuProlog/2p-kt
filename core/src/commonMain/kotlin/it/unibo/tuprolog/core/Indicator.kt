@@ -55,7 +55,7 @@ interface Indicator : Struct {
     companion object {
 
         /** The canonical indicator functor: `/` */
-        val FUNCTOR = "/"
+        const val FUNCTOR = "/"
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         fun of(name: Term, arity: Term): Indicator = IndicatorImpl(name, arity)
