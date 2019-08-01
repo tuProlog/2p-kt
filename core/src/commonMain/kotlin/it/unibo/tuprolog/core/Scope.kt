@@ -50,6 +50,8 @@ interface Scope {
 
     fun consOf(head: Term, tail: Term): Cons
 
+    fun indicatorOf(name: Term, arity: Term): Indicator
+
     fun anonymous(): Var
 
     fun whatever(): Var

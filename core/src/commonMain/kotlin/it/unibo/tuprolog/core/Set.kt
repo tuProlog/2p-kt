@@ -49,6 +49,8 @@ interface Set : Struct {
                 }
 
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
+
+        fun of(terms: Sequence<Term>): Set = of(terms.toList())
     }
 }
 

@@ -103,6 +103,18 @@ internal class StructTest {
     }
 
     @Test
+    fun structOfCreatesIndicatorIfNeeded() {
+        val indicatorStructs = StructUtils.mixedStructs.filter { (functor, args) ->
+            args.size == 2 && Indicator.FUNCTOR == functor
+        }
+
+        val correctInstances = indicatorStructs.map { (_, args) -> Indicator.of(args.first(), args.last()) }
+        val toBeTested = indicatorStructs.map { (functor, args) -> Struct.of(functor, *args) }
+
+        onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+    }
+
+    @Test
     fun structFoldCanCreateFoldedConsInstancesEmptyListTerminated() {
         val correctInstances = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { List.of(it) }
         val toBeTested = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it, EmptyList()) }

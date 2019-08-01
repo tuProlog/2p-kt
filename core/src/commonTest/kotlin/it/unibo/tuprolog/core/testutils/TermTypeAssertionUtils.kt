@@ -42,6 +42,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is Struct)
@@ -78,6 +79,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Var)
         assertFalse(any is Struct)
@@ -139,6 +141,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is Var)
@@ -146,6 +149,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Cons)
         assertFalse(any is Tuple)
         assertFalse(any is Constant)
+        assertFalse(any is Indicator)
     }
 
     /**
@@ -173,6 +177,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isVariable)
         assertFalse(any.isBound)
         assertFalse(any.isTuple)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is Clause)
@@ -253,6 +258,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isTrue)
         assertFalse(any.isFail)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
@@ -260,6 +266,48 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Cons)
         assertFalse(any is Var)
         assertFalse(any is Constant)
+        assertFalse(any is Indicator)
+    }
+
+
+    /**
+     * Checks passed term to be an Indicator or fails otherwise
+     */
+    fun assertIsIndicator(any: Any) {
+        assertTrue(any is Term)
+        assertTrue(any is Struct)
+        assertTrue(any is Indicator)
+
+        assertTrue(any.isStruct)
+        assertTrue(any.isIndicator)
+
+        assertFalse(any.isTuple)
+        assertFalse(any.isVariable)
+        assertFalse(any.isBound)
+        assertFalse(any.isNumber)
+        assertFalse(any.isReal)
+        assertFalse(any.isInt)
+        assertFalse(any.isClause)
+        assertFalse(any.isDirective)
+        assertFalse(any.isFact)
+        assertFalse(any.isRule)
+        assertFalse(any.isCons)
+        assertFalse(any.isAtom)
+        assertFalse(any.isList)
+        assertFalse(any.isSet)
+        assertFalse(any.isEmptyList)
+        assertFalse(any.isEmptySet)
+        assertFalse(any.isTrue)
+        assertFalse(any.isFail)
+        assertFalse(any.isConstant)
+
+        assertFalse(any is Numeric)
+        assertFalse(any is Atom)
+        assertFalse(any is Clause)
+        assertFalse(any is Cons)
+        assertFalse(any is Var)
+        assertFalse(any is Constant)
+        assertFalse(any is Tuple)
     }
 
     /**
@@ -292,6 +340,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is Atom)
@@ -329,6 +378,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Numeric)
         assertFalse(any is LogicList)
@@ -416,6 +466,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isFail)
         assertFalse(any.isTuple)
         assertFalse(any.isConstant)
+        assertFalse(any.isIndicator)
 
         assertFalse(any is Var)
         assertFalse(any is Numeric)
@@ -424,6 +475,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is LogicList)
         assertFalse(any is Atom)
         assertFalse(any is Constant)
+        assertFalse(any is Indicator)
     }
 
     /**
