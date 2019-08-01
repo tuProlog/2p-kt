@@ -8,8 +8,6 @@ interface Struct : Term {
     override val isStruct: Boolean
         get() = true
 
-    val isFunctorWellFormed: Boolean
-
     override val isClause: Boolean
         get() = Clause.FUNCTOR == functor
 
@@ -52,6 +50,9 @@ interface Struct : Term {
     override val isFail: Boolean
         get() = isAtom && Truth.FAIL_FUNCTOR == functor
 
+    override val isIndicator: Boolean
+        get() = Indicator.FUNCTOR == functor && arity == 2
+
     override fun freshCopy(): Struct = super.freshCopy() as Struct
 
     override fun freshCopy(scope: Scope): Struct = when {
@@ -60,6 +61,8 @@ interface Struct : Term {
     }
 
     val functor: String
+
+    val isFunctorWellFormed: Boolean
 
     val args: Array<Term>
 
@@ -88,6 +91,7 @@ interface Struct : Term {
                     args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
                     args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct -> Rule.of(args.first() as Struct, args.last())
                     args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
+                    args.size == 2 && Indicator.FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                     args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
                     args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
                     args.isEmpty() -> Atom.of(functor)

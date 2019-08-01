@@ -69,6 +69,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun consOf(head: Term, tail: Term): Cons = Cons.of(head, tail)
 
+    override fun indicatorOf(name: Term, arity: Term): Indicator = Indicator.of(name, arity)
+
     override fun anonymous(): Var = Var.anonymous()
 
     override fun whatever(): Var = anonymous()

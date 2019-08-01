@@ -34,6 +34,7 @@ interface Term {
     val isEmptyList: Boolean get() = false
     val isTrue: Boolean get() = false
     val isFail: Boolean get() = false
+    val isIndicator: Boolean get() = false
 
     /**
      * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the currenct one in any aspect,
