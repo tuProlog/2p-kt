@@ -33,18 +33,35 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return this
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ScopeImpl
+
+        if (_variables != other._variables) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = _variables.hashCode()
+
+    override fun toString(): String = variables.toString()
+
     ///////////////////////
     // General Factories //
     ///////////////////////
 
     override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
 
+    override fun setOf(vararg terms: Term): LogicSet = LogicSet.of(*terms)
+
     override fun listOf(terms: Iterable<Term>): LogicList = LogicList.of(terms)
+
+    override fun listOf(vararg terms: Term): LogicList = LogicList.of(*terms)
 
     override fun listFrom(terms: Iterable<Term>, last: Term?): LogicList =
             LogicList.from(terms, last)
-
-    override fun listOf(vararg terms: Term): LogicList = LogicList.of(*terms)
 
     override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms.toList())
 
@@ -55,8 +72,6 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun structOf(functor: String, vararg args: Term): Struct = Struct.of(functor, *args)
 
     override fun structOf(functor: String, args: Sequence<Term>): Struct = Struct.of(functor, args)
-
-    override fun setOf(vararg terms: Term): LogicSet = LogicSet.of(*terms)
 
     override fun factOf(head: Struct): Fact = Fact.of(head)
 
@@ -92,19 +107,4 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun numOf(value: Byte): Integer = Numeric.of(value)
 
     override fun numOf(value: String): Numeric = Numeric.of(value)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as ScopeImpl
-
-        if (_variables != other._variables) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int = _variables.hashCode()
-
-    override fun toString(): String = variables.toString()
 }
