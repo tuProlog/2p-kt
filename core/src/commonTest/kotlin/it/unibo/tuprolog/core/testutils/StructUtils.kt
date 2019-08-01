@@ -63,7 +63,8 @@ internal object StructUtils {
                 "{}" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
                 "[]" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
                 "." to arrayOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
-                "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.`true`())
+                "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.`true`()),
+                "/" to arrayOf<Term>(Truth.fail())
         )
     }
 
@@ -82,7 +83,8 @@ internal object StructUtils {
                 Empty.EMPTY_LIST_FUNCTOR to arrayOf(),
                 Empty.EMPTY_SET_FUNCTOR to arrayOf(),
                 Truth.TRUE_FUNCTOR to arrayOf(),
-                Truth.FAIL_FUNCTOR to arrayOf()
+                Truth.FAIL_FUNCTOR to arrayOf(),
+                Indicator.FUNCTOR to arrayOf<Term>(Atom.of("func"), Integer.of(4))
         )
     }
 
