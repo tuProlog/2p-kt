@@ -73,10 +73,10 @@ internal class ClauseDatabaseImplTest {
             override fun plus(clauseDatabase: ClauseDatabase) = throw NotImplementedError()
             override fun contains(clause: Clause) = throw NotImplementedError()
             override fun contains(head: Struct) = throw NotImplementedError()
-            override fun contains(functor: String, arity: Int) = throw NotImplementedError()
+            override fun contains(indicator: Indicator) = throw NotImplementedError()
             override fun get(clause: Clause) = throw NotImplementedError()
             override fun get(head: Struct) = throw NotImplementedError()
-            override fun get(functor: String, arity: Int) = throw NotImplementedError()
+            override fun get(indicator: Indicator) = throw NotImplementedError()
             override fun assertA(clause: Clause) = throw NotImplementedError()
             override fun assertZ(clause: Clause) = throw NotImplementedError()
             override fun retract(clause: Clause) = throw NotImplementedError()
@@ -152,22 +152,22 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun containsFunctorAndArityReturnsTrueIfMatchingClauseIsFound() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { filledClauseDatabase.contains(it.head.functor, it.head.arity) }
+            assertTrue { filledClauseDatabase.contains(Indicator.of(it.head.functor, it.head.arity)) }
         }
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isNotEmpty()) assertTrue { filledClauseDatabase.contains(query.head.functor, query.head.arity) }
+                    if (result.isNotEmpty()) assertTrue { filledClauseDatabase.contains(Indicator.of(query.head.functor, query.head.arity)) }
                 }
     }
 
     @Test
     fun containsFunctorAndArityReturnsFalseIfNoMatchingClauseIsFound() {
-        assertFalse(filledClauseDatabase.contains(anIndependentFact.head.functor, anIndependentFact.head.arity))
+        assertFalse(filledClauseDatabase.contains(Indicator.of(anIndependentFact.head.functor, anIndependentFact.head.arity)))
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isEmpty()) assertFalse { filledClauseDatabase.contains(query.head.functor, query.head.arity) }
+                    if (result.isEmpty()) assertFalse { filledClauseDatabase.contains(Indicator.of(query.head.functor, query.head.arity)) }
                 }
     }
 
@@ -191,7 +191,7 @@ internal class ClauseDatabaseImplTest {
     fun getFunctorAndArity() {
         ClauseDatabaseUtils.rulesQueryResultByFunctorAndArity
                 .forEach { (query, result) ->
-                    val a = filledClauseDatabase[query.head.functor, query.head.arity].toList()
+                    val a = filledClauseDatabase[Indicator.of(query.head.functor, query.head.arity)].toList()
                     assertEquals(result, a)
                 }
     }

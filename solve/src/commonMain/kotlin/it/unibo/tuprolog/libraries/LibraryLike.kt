@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.libraries
 
+import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.primitive.Primitive
@@ -15,7 +16,7 @@ interface LibraryLike {
     val primitives: Map<Signature, Primitive>
 
     operator fun contains(signature: Signature): Boolean =
-            primitives.containsKey(signature) || theory.contains(signature.name, signature.arity)
+            primitives.containsKey(signature) || theory.contains(Indicator.of(signature.name, signature.arity))
 
     operator fun contains(operator: Operator): Boolean = operator in operators
 

@@ -29,16 +29,34 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
 
-    override fun contains(functor: String, arity: Int): Boolean =
-            reteTree.get(Clause.of(Struct.of(functor, (1..arity).map { Var.anonymous() }), Var.anonymous())).any()
+    override fun contains(indicator: Indicator): Boolean {
+        require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
+
+        val functor = indicator.indicatedName.`as`<Atom>().value
+        val arity = indicator.indicatedArity.`as`<Integer>().intValue.toInt()
+
+        return reteTree.get(Clause.of(
+                Struct.of(functor, (1..arity).map { Var.anonymous() }),
+                Var.anonymous())
+        ).any()
+    }
 
 
     override fun get(clause: Clause): Sequence<Clause> = reteTree.get(clause)
 
     override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
 
-    override fun get(functor: String, arity: Int): Sequence<Clause> =
-            reteTree.get(Clause.of(Struct.of(functor, (1..arity).map { Var.anonymous() }), Var.anonymous()))
+    override fun get(indicator: Indicator): Sequence<Clause> {
+        require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
+
+        val functor = indicator.indicatedName.`as`<Atom>().value
+        val arity = indicator.indicatedArity.`as`<Integer>().intValue.toInt()
+
+        return reteTree.get(Clause.of(
+                Struct.of(functor, (1..arity).map { Var.anonymous() }),
+                Var.anonymous())
+        )
+    }
 
 
     override fun assertA(clause: Clause): ClauseDatabase =

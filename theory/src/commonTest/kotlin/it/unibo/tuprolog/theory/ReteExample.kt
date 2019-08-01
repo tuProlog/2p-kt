@@ -25,8 +25,8 @@ fun main() {
     val database = ClauseDatabase.of(theory.indexedElements)
 
     println("Database: ${database.clauses}")
-    println(database.get("f", 1).joinToString("\n", "[", "]"))
+    println(database.get(Indicator.of("f", 1)).joinToString("\n", "[", "]"))
     println("----")
-    println(database.get("f", 2).joinToString("\n", "[", "]"))
+    println(database.get(Indicator.of("f", 2)).joinToString("\n", "[", "]"))
 
 }

@@ -27,8 +27,8 @@ interface ClauseDatabase : Iterable<Clause> {
     /** Checks if given clause is present in this database */
     operator fun contains(head: Struct): Boolean
 
-    /** Checks if clauses exists in this database having the specified head [functor] and [arity] */
-    fun contains(functor: String, arity: Int): Boolean
+    /** Checks if clauses exists in this database having the specified [Indicator] */
+    fun contains(indicator: Indicator): Boolean
 
     /** Retrieves matching clauses from this database */
     operator fun get(clause: Clause): Sequence<Clause>
@@ -36,8 +36,8 @@ interface ClauseDatabase : Iterable<Clause> {
     /** Retrieves matching clauses from this database */
     operator fun get(head: Struct): Sequence<Clause>
 
-    /** Retrieves all clauses in this database having the specified head [functor] and [arity] */
-    operator fun get(functor: String, arity: Int): Sequence<Clause>
+    /** Retrieves all clauses in this database having the specified [Indicator] */
+    operator fun get(indicator: Indicator): Sequence<Clause>
 
     /** Adds given clause before all other clauses in this database */
     fun assertA(clause: Clause): ClauseDatabase
