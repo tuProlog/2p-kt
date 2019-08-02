@@ -21,35 +21,43 @@ interface Indicator : Struct {
         get() = FUNCTOR
 
     override val args: Array<Term>
-        get() = arrayOf(indicatedName, indicatedArity)
+        get() = arrayOf(nameTerm, arityTerm)
 
     override val arity: Int
         get() = 2
 
-    /** The indicated functor name */
-    val indicatedName: Term
+    /** The indicated functor name Term */
+    val nameTerm: Term
 
-    /** The indicated functor arity */
-    val indicatedArity: Term
+    /** The indicated functor arity Term */
+    val arityTerm: Term
 
     /**
      * Whether this Indicator is well-formed
      *
      * An indicator is well-formed when:
-     * - its [indicatedName] is an [Atom]
-     * - its [indicatedArity] is a non-negative [Integer]
+     * - its [nameTerm] is an [Atom]
+     * - its [arityTerm] is a non-negative [Integer]
      */
     val isWellFormed: Boolean
-        get() = indicatedName is Atom &&
-                indicatedArity is Integer &&
-                indicatedArity.`as`<Integer>().intValue.toInt() >= 0
+        get() = nameTerm is Atom &&
+                arityTerm is Integer &&
+                arityTerm.`as`<Integer>().intValue.toInt() >= 0
+
+    /** The indicated functor name, if well-formed */
+    val indicatedName: String?
+        get() = (nameTerm as? Atom)?.value
+
+    /** The indicated functor arity, if well-formed */
+    val indicatedArity: Int?
+        get() = (arityTerm as? Integer)?.intValue?.toInt()?.takeIf { it >= 0 }
 
     override fun freshCopy(): Indicator = super.freshCopy() as Indicator
 
     override fun freshCopy(scope: Scope): Indicator =
             when {
                 isGround -> this
-                else -> scope.indicatorOf(indicatedName.freshCopy(scope), indicatedArity.freshCopy(scope))
+                else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
             }
 
     companion object {
