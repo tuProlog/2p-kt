@@ -52,6 +52,8 @@ interface Scope {
 
     fun indicatorOf(name: Term, arity: Term): Indicator
 
+    fun indicatorOf(name: String, arity: Int): Indicator
+
     fun anonymous(): Var
 
     fun whatever(): Var
