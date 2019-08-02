@@ -44,16 +44,16 @@ class Operator(val functor: String, val associativity: Associativity, val priori
     companion object {
 
         /** The Operator functor */
-        val FUNCTOR = "op"
+        const val FUNCTOR = "op"
 
         /** An operator template */
         val TEMPLATE = Struct.of(FUNCTOR, Var.of("P"), Var.of("A"), Var.of("F"))
 
-        /** Creates an Operator instance from a well-formed Struct */
-        fun fromTerm(struct: Struct): Operator = with(struct) {
+        /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
+        fun fromTerm(struct: Struct): Operator? = with(struct) {
             when {
                 functor == FUNCTOR && arity == 3 &&
-                        args[0] is Integer && args[1] is Atom && args[2] is Atom ->
+                        args[0] is Integer && args[1] is Atom && args[2] is Atom -> try {
 
                     Operator(
                             args[2].`as`<Atom>().value,
@@ -61,7 +61,11 @@ class Operator(val functor: String, val associativity: Associativity, val priori
                             args[0].`as`<Numeric>().intValue.toInt()
                     )
 
-                else -> throw IllegalArgumentException("Term `$struct` cannot be interpreted as an operator")
+                } catch (ex: IllegalArgumentException) {
+                    null
+                }
+
+                else -> null
             }
         }
     }

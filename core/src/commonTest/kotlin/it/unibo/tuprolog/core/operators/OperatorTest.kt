@@ -94,11 +94,12 @@ internal class OperatorTest {
         val toBeTested = Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusAssociativity.toTerm(), plusFunctor.toTerm()))
 
         assertEquals(plusOperator, toBeTested)
-        assertTrue(plusOperator.compareTo(toBeTested) == 0)
+        toBeTested?.run { assertTrue(plusOperator.compareTo(toBeTested) == 0) }
+                ?: fail("Should not be null")
     }
 
     @Test
-    fun fromTermComplainsIfNotCorrectOperator() {
+    fun fromTermReturnsNullIfNotCorrectOperator() {
         /** Utility function to help testing fromTerm method */
         fun testFromTerm(functor: String = Operator.FUNCTOR, priority: Term = plusPriority.toTerm(),
                          associativity: Term = plusAssociativity.toTerm(), opFunctor: Term = plusFunctor.toTerm()) =
@@ -106,12 +107,12 @@ internal class OperatorTest {
 
         assertEquals(plusOperator, testFromTerm())
 
-        assertFailsWith<IllegalArgumentException> { Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())) }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(functor = "ciao") }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(priority = plusFunctor.toTerm()) }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(priority = Var.anonymous()) }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(associativity = Var.anonymous()) }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(associativity = "a".toTerm()) }
-        assertFailsWith<IllegalArgumentException> { testFromTerm(opFunctor = Var.anonymous()) }
+        assertEquals(null, Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())))
+        assertEquals(null, testFromTerm(functor = "ciao"))
+        assertEquals(null, testFromTerm(priority = plusFunctor.toTerm()))
+        assertEquals(null, testFromTerm(priority = Var.anonymous()))
+        assertEquals(null, testFromTerm(associativity = Var.anonymous()))
+        assertEquals(null, testFromTerm(associativity = "a".toTerm()))
+        assertEquals(null, testFromTerm(opFunctor = Var.anonymous()))
     }
 }

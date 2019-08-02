@@ -56,14 +56,22 @@ enum class Associativity {
         /** Set of non-prefix associativity */
         val NON_PREFIX: Set<Associativity> = POSTFIX + INFIX
 
-        /** Retrieves the associativity from an Atom value, throwing exception if not found */
+        /**
+         * Retrieves the associativity from an Atom value
+         *
+         * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
+         */
         fun fromTerm(atom: Atom): Associativity = valueOf(atom.value.toUpperCase())
 
-        /** Retrieves the associativity from an Atom value, throwing exception if not found */
+        /**
+         * Retrieves the associativity from an Atom value, throwing exception if not found
+         *
+         * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
+         */
         fun fromTerm(term: Term): Associativity =
                 when (term) {
                     is Atom -> fromTerm(term)
-                    else -> throw IllegalArgumentException("Argument `term` must be an atom")
+                    else -> throw IllegalArgumentException("Argument `$term` must be an atom")
                 }
     }
 }
