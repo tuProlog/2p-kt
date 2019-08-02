@@ -69,12 +69,9 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
     }
 }
 
-/**
- * Converts this Signature to [Indicator], if possible without loosing information
- *
- * @throws [IllegalStateException] when conversion would produce loss of information
- */
-fun Signature.toIndicator(): Indicator = when {
-    this.vararg -> throw IllegalStateException("Trying to convert a vararg Signature to Indicator, this will produce loss of information: $this")
-    else -> Indicator.of(this.name, this.arity)
-}
+/** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
+fun Signature.toIndicator(): Indicator? =
+        when {
+            this.vararg -> null
+            else -> Indicator.of(this.name, this.arity)
+        }

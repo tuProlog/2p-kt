@@ -106,6 +106,6 @@ internal class SignatureTest {
 
     @Test
     fun toIndicatorComplainsOnVarargSignatures() {
-        assertFailsWith<IllegalStateException> { varargSignature.toIndicator() }
+        assertEquals(null, varargSignature.toIndicator())
     }
 }
