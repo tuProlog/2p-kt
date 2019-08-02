@@ -231,9 +231,17 @@ internal class ScopeImplTest {
     }
 
     @Test
-    fun indicatorOf() {
+    fun indicatorOfTerms() {
         val correctInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
         val toBeTested = IndicatorUtils.mixedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
+
+        onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+    }
+
+    @Test
+    fun indicatorOfNameAndArity() {
+        val correctInstances = IndicatorUtils.rawWellFormedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
+        val toBeTested = IndicatorUtils.rawWellFormedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

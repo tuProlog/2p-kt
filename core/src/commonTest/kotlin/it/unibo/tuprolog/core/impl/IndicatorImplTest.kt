@@ -20,19 +20,20 @@ import kotlin.test.assertTrue
 internal class IndicatorImplTest {
 
     private val indicatorInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
+    private val wellFormedIndicatorInstances = IndicatorUtils.wellFormedIndicators.map { (name, arity) -> IndicatorImpl(name, arity) }
 
     @Test
-    fun indicatedNameCorrect() {
-        val correctIndicatedNames = IndicatorUtils.mixedIndicators.map { (name, _) -> name }
+    fun nameTermCorrect() {
+        val correctNameTerms = IndicatorUtils.mixedIndicators.map { (name, _) -> name }
 
-        onCorrespondingItems(correctIndicatedNames, indicatorInstances.map { it.indicatedName }, ::assertEqualities)
+        onCorrespondingItems(correctNameTerms, indicatorInstances.map { it.nameTerm }, ::assertEqualities)
     }
 
     @Test
-    fun indicatedArityCorrect() {
-        val correctIndicatedArity = IndicatorUtils.mixedIndicators.map { (_, arity) -> arity }
+    fun arityTermCorrect() {
+        val correctArityTerms = IndicatorUtils.mixedIndicators.map { (_, arity) -> arity }
 
-        onCorrespondingItems(correctIndicatedArity, indicatorInstances.map { it.indicatedArity }, ::assertEqualities)
+        onCorrespondingItems(correctArityTerms, indicatorInstances.map { it.arityTerm }, ::assertEqualities)
     }
 
     @Test
@@ -48,6 +49,44 @@ internal class IndicatorImplTest {
             assertEquals(expected.toList(), actual.toList())
             assertTrue { expected.contentDeepEquals(actual) }
         }
+    }
+
+    @Test
+    fun indicatedNameCorrect() {
+        val correctIndicatedName = IndicatorUtils.rawWellFormedIndicators.map { (name, _) -> name }
+
+        onCorrespondingItems(correctIndicatedName, wellFormedIndicatorInstances.map { it.indicatedName }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun indicatedNameNullIfIndicatorNameNotWellFormed() {
+        val correct = arrayOfNulls<String?>(IndicatorUtils.nonWellFormedNameIndicator.count()).toList()
+        val toBeTested = IndicatorUtils.nonWellFormedNameIndicator
+                .map { (name, arity) -> IndicatorImpl(name, arity) }
+                .map { it.indicatedName }
+
+        onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun indicatedArityCorrect() {
+        val correctIndicatedArity = IndicatorUtils.rawWellFormedIndicators.map { (_, arity) -> arity }
+
+        onCorrespondingItems(correctIndicatedArity, wellFormedIndicatorInstances.map { it.indicatedArity }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun indicatedArityNullIfIndicatorArityNotWellFormed(){
+        val correct = arrayOfNulls<Int?>(IndicatorUtils.nonWellFormedArityIndicator.count()).toList()
+        val toBeTested = IndicatorUtils.nonWellFormedArityIndicator
+                .map { (name, arity) -> IndicatorImpl(name, arity) }
+                .map { it.indicatedArity }
+
+        onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
 
     @Test

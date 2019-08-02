@@ -48,6 +48,9 @@ internal object EquationUtils {
                 with(Scope.empty()) {
                     ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail()) to
                             ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail())
+                },
+                with(Scope.empty()) {
+                    indicatorOf(atomOf("ciao"), varOf("A")) to indicatorOf(atomOf("ciao"), varOf("A"))
                 }
         )
     }

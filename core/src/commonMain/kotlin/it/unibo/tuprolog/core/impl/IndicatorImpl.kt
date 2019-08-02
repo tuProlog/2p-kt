@@ -8,12 +8,16 @@ import it.unibo.tuprolog.core.Term
  *
  * @author Enrico
  */
-internal class IndicatorImpl(override val indicatedName: Term, override val indicatedArity: Term)
-    : StructImpl(Indicator.FUNCTOR, arrayOf(indicatedName, indicatedArity)), Indicator {
+internal class IndicatorImpl(override val nameTerm: Term, override val arityTerm: Term)
+    : StructImpl(Indicator.FUNCTOR, arrayOf(nameTerm, arityTerm)), Indicator {
 
     override val functor: String = Indicator.FUNCTOR
 
     override val args: Array<Term> by lazy { super<StructImpl>.args }
 
-    override fun toString(): String = "$indicatedName${Indicator.FUNCTOR}$indicatedArity"
+    override val indicatedName: String? by lazy { super.indicatedName }
+
+    override val indicatedArity: Int? by lazy { super.indicatedArity }
+
+    override fun toString(): String = "$nameTerm${Indicator.FUNCTOR}$arityTerm"
 }
