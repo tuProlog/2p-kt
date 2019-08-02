@@ -78,6 +78,15 @@ internal object UnificationUtils {
                                     true,
                                     Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom)
                             )
+                },
+                with(Scope.empty()) {
+                    Indicator.of("ciao", 2) `=` Indicator.of(varOf("A"), varOf("B")) to
+                            Triple(
+                                    Substitution.of(varOf("A") to Atom.of("ciao"),
+                                            varOf("B") to Integer.of(2)),
+                                    true,
+                                    Indicator.of("ciao", 2)
+                            )
                 }
 
         )
