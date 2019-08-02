@@ -60,6 +60,12 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
             is Struct -> fromTerm(term)
             else -> null
         }
+
+        /** Creates a Signature instance from a well-formed Indicator, or returns `null` if it wasn't */
+        fun fromIndicator(indicator: Indicator): Signature? = when {
+            indicator.isWellFormed -> Signature(indicator.indicatedName!!, indicator.indicatedArity!!)
+            else -> null
+        }
     }
 }
 

@@ -88,6 +88,18 @@ internal class SignatureTest {
     }
 
     @Test
+    fun fromIndicatorReturnsCorrectInstance() {
+        val toBeTested = Signature.fromIndicator(Indicator.of(signatureName, signatureArity))
+
+        assertEquals(normalSignature, toBeTested)
+    }
+
+    @Test
+    fun fromIndicatorReturnsNullIfNotWellFormed() {
+        assertEquals(null, Signature.fromIndicator(Indicator.of(Var.anonymous(), Var.anonymous())))
+    }
+
+    @Test
     fun toIndicatorWorksOnNonVarargSignatures() {
         assertEquals(Indicator.of(signatureName, signatureArity), normalSignature.toIndicator())
     }
