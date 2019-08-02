@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.primitive
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.*
 import kotlin.test.*
 
 /**
@@ -48,8 +45,46 @@ internal class SignatureTest {
 
     @Test
     fun toTermWorksAsExpected() {
-        signatureTerms.zip(signatures.map { it.toTerm() })
-                .forEach { (expected, actual) -> assertEquals(expected, actual) }
+        signatureTerms.zip(signatures.map { it.toTerm() }).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun fromTermWithStructCreatesCorrectInstance() {
+        signatures.forEach { assertEquals(it, Signature.fromTerm(it.toTerm()) ?: fail()) }
+
+        signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
+            assertEquals(signature, Signature.fromTerm(signatureTerm) ?: fail())
+        }
+    }
+
+    @Test
+    fun fromTermWithStructReturnsNullIfSomethingNotMatchingCorrectPattern() {
+        assertEquals(null, Signature.fromTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
+        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
+    }
+
+    @Test
+    fun fromTermWithTermCreatesCorrectInstance() {
+        signatures.forEach { assertEquals(it, Signature.fromTerm(it.toTerm() as Term) ?: fail()) }
+
+        signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
+            assertEquals(signature, Signature.fromTerm(signatureTerm as Term) ?: fail())
+        }
+    }
+
+    @Test
+    fun fromTermWithTermReturnsNullIfNotAStruct() {
+        assertEquals(null, Signature.fromTerm(Var.anonymous()))
+        assertEquals(null, Signature.fromTerm(Numeric.of(2)))
     }
 
     @Test
