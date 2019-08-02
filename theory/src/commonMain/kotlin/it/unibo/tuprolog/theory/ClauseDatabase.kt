@@ -28,7 +28,7 @@ interface ClauseDatabase : Iterable<Clause> {
     operator fun contains(head: Struct): Boolean
 
     /** Checks if clauses exists in this database having the specified [Indicator]; this should be [well-formed][Indicator.isWellFormed] */
-    fun contains(indicator: Indicator): Boolean
+    operator fun contains(indicator: Indicator): Boolean
 
     /** Retrieves matching clauses from this database */
     operator fun get(clause: Clause): Sequence<Clause>

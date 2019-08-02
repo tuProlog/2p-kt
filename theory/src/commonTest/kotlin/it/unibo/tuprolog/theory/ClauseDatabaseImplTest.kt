@@ -152,12 +152,12 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun containsIndicatorReturnsTrueIfMatchingClauseIsFound() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { filledClauseDatabase.contains(Indicator.of(it.head.functor, it.head.arity)) }
+            assertTrue { Indicator.of(it.head.functor, it.head.arity) in filledClauseDatabase }
         }
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isNotEmpty()) assertTrue { filledClauseDatabase.contains(Indicator.of(query.head.functor, query.head.arity)) }
+                    if (result.isNotEmpty()) assertTrue { Indicator.of(query.head.functor, query.head.arity) in filledClauseDatabase }
                 }
     }
 
@@ -167,13 +167,13 @@ internal class ClauseDatabaseImplTest {
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isEmpty()) assertFalse { filledClauseDatabase.contains(Indicator.of(query.head.functor, query.head.arity)) }
+                    if (result.isEmpty()) assertFalse { Indicator.of(query.head.functor, query.head.arity) in filledClauseDatabase }
                 }
     }
 
     @Test
     fun containsIndicatorComplainsIfIndicatorNonWellFormed() {
-        assertFailsWith<IllegalArgumentException> { filledClauseDatabase.contains(Indicator.of(Var.anonymous(), Var.anonymous())) }
+        assertFailsWith<IllegalArgumentException> { Indicator.of(Var.anonymous(), Var.anonymous()) in filledClauseDatabase }
     }
 
     @Test
