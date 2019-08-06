@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.operators
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
@@ -58,5 +60,14 @@ internal class OperatorSetTest {
 
         assertTrue { toBeTested.none { it === plusOperator } }
         assertTrue { toBeTested.none { it === overridingPlusOperator } }
+    }
+
+    @Test
+    fun sameContentsOperatorSetsAreEquals() {
+        assertEquals(OperatorSet(), OperatorSet())
+        assertEquals(operatorSet, OperatorSet(plusOperator, minusOperator, timesOperator, divisionOperator))
+        assertEquals(operatorSet, OperatorSet(minusOperator, plusOperator, divisionOperator, timesOperator))
+
+        assertNotEquals(operatorSet, OperatorSet())
     }
 }
