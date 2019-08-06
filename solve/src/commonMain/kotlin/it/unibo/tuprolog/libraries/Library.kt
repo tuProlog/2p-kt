@@ -2,6 +2,7 @@ package it.unibo.tuprolog.libraries
 
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.libraries.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.libraries.impl.LibraryImpl
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
@@ -46,5 +47,13 @@ interface Library {
                 theory: ClauseDatabase = ClauseDatabase.of(),
                 primitives: Map<Signature, Primitive> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives)
+
+        /** Creates an instance of [LibraryAliased] with given parameters */
+        fun of(
+                operatorSet: OperatorSet = OperatorSet(),
+                theory: ClauseDatabase = ClauseDatabase.of(),
+                primitives: Map<Signature, Primitive> = emptyMap(),
+                alias: String
+        ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, alias)
     }
 }

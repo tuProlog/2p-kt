@@ -7,7 +7,7 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
- * Default implementation class of Library
+ * Default implementation class of [Library]
  *
  * @author Enrico
  */

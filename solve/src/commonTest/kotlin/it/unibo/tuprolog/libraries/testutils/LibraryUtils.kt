@@ -37,7 +37,7 @@ internal object LibraryUtils {
                 OperatorSet(plusOperator, minusOperator),
                 theory,
                 primitives
-        )
+        ) to "myLibrary"
     }
 
     /** Contains a library that w.r.t [library] overrides some operators and primitives, adding clauses to theory */
@@ -46,7 +46,7 @@ internal object LibraryUtils {
                 OperatorSet(minusOperatorOverridden),
                 theoryWithDuplicates,
                 primitivesOverridden
-        )
+        ) to "myOverridingLibrary"
     }
 
     /** Contains the final library, that should result from combination of [library] the [overriddenLibrary] */
@@ -55,7 +55,7 @@ internal object LibraryUtils {
                 OperatorSet(plusOperator, minusOperatorOverridden),
                 theory + theoryWithDuplicates,
                 primitives + primitivesOverridden
-        )
+        ) to "myOverriddenLibrary"
     }
 
     /** Contains various libraries */
