@@ -1,11 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
 internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
+
+    override val indicator: Indicator by lazy { super.indicator }
 
     override val argsList: List<Term> by lazy { super.argsList }
 

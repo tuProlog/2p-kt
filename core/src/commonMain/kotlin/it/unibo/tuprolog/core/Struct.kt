@@ -69,6 +69,9 @@ interface Struct : Term {
     val arity: Int
         get() = args.size
 
+    val indicator: Indicator
+        get() = Indicator.of(functor, arity)
+
     val argsList: KtList<Term>
         get() = listOf(*args)
 

@@ -108,6 +108,11 @@ internal class StructImplTest {
     }
 
     @Test
+    fun indicatorCorrect() {
+        mixedStructInstances.forEach { assertEquals(Indicator.of(it.functor, it.arity), it.indicator) }
+    }
+
+    @Test
     fun clauseDetected() {
         val isClause: (Struct) -> Boolean = { aStruct -> aStruct.functor == Clause.FUNCTOR }
 
