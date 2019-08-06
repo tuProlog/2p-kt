@@ -2,6 +2,7 @@ package it.unibo.tuprolog.libraries
 
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.libraries.impl.LibraryImpl
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.toIndicator
@@ -36,4 +37,14 @@ interface Library {
 
     /** Checks whether the provided signature, is protected in this library */
     fun hasProtected(signature: Signature): Boolean = signature in this
+
+    companion object {
+
+        /** Creates an instance of [Library] with given parameters */
+        fun of(
+                operatorSet: OperatorSet = OperatorSet(),
+                theory: ClauseDatabase = ClauseDatabase.of(),
+                primitives: Map<Signature, Primitive> = emptyMap()
+        ): Library = LibraryImpl(operatorSet, theory, primitives)
+    }
 }

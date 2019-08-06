@@ -21,6 +21,14 @@ internal class OperatorSetTest {
     private val overridingOperatorSet = OperatorSet(overridingPlusOperator)
 
     @Test
+    fun constructingOperatorSetWithEqualsOperatorsTakesOnlyFirst() {
+        val toBeTested = OperatorSet(plusOperator, overridingPlusOperator)
+
+        assertTrue { toBeTested.any { it === plusOperator } }
+        assertTrue { toBeTested.none { it === overridingPlusOperator } }
+    }
+
+    @Test
     fun plusOperator() {
         val toBeTested = operatorSet + overridingPlusOperator
 
