@@ -152,22 +152,22 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun containsIndicatorReturnsTrueIfMatchingClauseIsFound() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { Indicator.of(it.head.functor, it.head.arity) in filledClauseDatabase }
+            assertTrue { it.head.indicator in filledClauseDatabase }
         }
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isNotEmpty()) assertTrue { Indicator.of(query.head.functor, query.head.arity) in filledClauseDatabase }
+                    if (result.isNotEmpty()) assertTrue { query.head.indicator in filledClauseDatabase }
                 }
     }
 
     @Test
     fun containsIndicatorReturnsFalseIfNoMatchingClauseIsFound() {
-        assertFalse(filledClauseDatabase.contains(Indicator.of(anIndependentFact.head.functor, anIndependentFact.head.arity)))
+        assertFalse(filledClauseDatabase.contains(anIndependentFact.head.indicator))
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
                 .forEach { (query, result) ->
-                    if (result.isEmpty()) assertFalse { Indicator.of(query.head.functor, query.head.arity) in filledClauseDatabase }
+                    if (result.isEmpty()) assertFalse { query.head.indicator in filledClauseDatabase }
                 }
     }
 
@@ -196,7 +196,7 @@ internal class ClauseDatabaseImplTest {
     fun getIndicator() {
         ClauseDatabaseUtils.rulesQueryResultByFunctorAndArity
                 .forEach { (query, result) ->
-                    val a = filledClauseDatabase[Indicator.of(query.head.functor, query.head.arity)].toList()
+                    val a = filledClauseDatabase[query.head.indicator].toList()
                     assertEquals(result, a)
                 }
     }
