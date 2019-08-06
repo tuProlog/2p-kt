@@ -2,6 +2,7 @@ package it.unibo.tuprolog.libraries.impl
 
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,14 +13,11 @@ import kotlin.test.assertEquals
  */
 internal class LibraryAliasedImplTest {
 
-    private val libraryAliasedInstances = LibraryUtils.allLibraries.map { (lib, alias) ->
-        val (opSet, theory, primitives) = lib
-        LibraryAliasedImpl(opSet, theory, primitives, alias)
-    }
+    private val libraryAliasedInstances = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryAliasedImpl) }
 
     @Test
     fun aliasCorrect() {
-        val correct = LibraryUtils.allLibraries.map { (_, alias) -> alias }
+        val correct = LibraryUtils.allLibraries.map { (alias, _) -> alias }
         val toBeTested = libraryAliasedInstances.map { it.alias }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -27,7 +25,7 @@ internal class LibraryAliasedImplTest {
 
     @Test
     fun aliasNotConsideredInEqualityTesting() {
-        LibraryUtils.allLibraries.map { (lib, alias) ->
+        LibraryUtils.allLibraries.map { (alias, lib) ->
             val (opSet, theory, primitives) = lib
             assertEquals(
                     LibraryAliasedImpl(opSet, theory, primitives, alias),

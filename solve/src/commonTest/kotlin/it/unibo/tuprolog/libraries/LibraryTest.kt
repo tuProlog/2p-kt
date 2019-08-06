@@ -3,6 +3,7 @@ package it.unibo.tuprolog.libraries
 import it.unibo.tuprolog.libraries.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.libraries.impl.LibraryImpl
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,19 +15,12 @@ import kotlin.test.assertTrue
  */
 internal class LibraryTest {
 
-    private val correctInstances = LibraryUtils.allLibraries.map { (lib, _) ->
-        val (opSet, theory, primitives) = lib
-        LibraryImpl(opSet, theory, primitives)
-    }
-
-    private val correctInstancesWithAlias = LibraryUtils.allLibraries.map { (lib, alias) ->
-        val (opSet, theory, primitives) = lib;
-        LibraryAliasedImpl(opSet, theory, primitives, alias)
-    }
+    private val correctInstances = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryImpl) }
+    private val correctInstancesWithAlias = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryAliasedImpl) }
 
     @Test
     fun ofCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (lib, _) ->
+        val toBeTested = LibraryUtils.allLibraries.map { (_, lib) ->
             val (opSet, theory, primitives) = lib
             Library.of(opSet, theory, primitives)
         }
@@ -45,7 +39,7 @@ internal class LibraryTest {
 
     @Test
     fun ofCreatesCorrectInstanceWithAlias() {
-        val toBeTested = LibraryUtils.allLibraries.map { (lib, alias) ->
+        val toBeTested = LibraryUtils.allLibraries.map { (alias, lib) ->
             val (opSet, theory, primitives) = lib
             Library.of(opSet, theory, primitives, alias)
         }

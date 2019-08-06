@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -22,14 +23,11 @@ import kotlin.test.assertTrue
  */
 internal class LibraryImplTest {
 
-    private val libraryInstances = LibraryUtils.allLibraries.map { (lib, _) ->
-        val (opSet, theory, primitives) = lib
-        LibraryImpl(opSet, theory, primitives)
-    }
+    private val libraryInstances = LibraryUtils.allLibraries.map { makeLib(it, ::LibraryImpl) }
 
     @Test
     fun operatorsCorrect() {
-        val correct = LibraryUtils.allLibraries.map { (lib, _) -> val (opSet, _, _) = lib; opSet }
+        val correct = LibraryUtils.allLibraries.map { (_, lib) -> val (opSet, _, _) = lib; opSet }
         val toBeTested = libraryInstances.map { it.operators }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -37,7 +35,7 @@ internal class LibraryImplTest {
 
     @Test
     fun theoryCorrect() {
-        val correct = LibraryUtils.allLibraries.map { (lib, _) -> val (_, theory, _) = lib; theory }
+        val correct = LibraryUtils.allLibraries.map { (_, lib) -> val (_, theory, _) = lib; theory }
         val toBeTested = libraryInstances.map { it.theory }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -45,7 +43,7 @@ internal class LibraryImplTest {
 
     @Test
     fun primitivesCorrect() {
-        val correct = LibraryUtils.allLibraries.map { (lib, _) -> val (_, _, primitives) = lib; primitives }
+        val correct = LibraryUtils.allLibraries.map { (_, lib) -> val (_, _, primitives) = lib; primitives }
         val toBeTested = libraryInstances.map { it.primitives }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -54,7 +52,7 @@ internal class LibraryImplTest {
     @Test
     fun containsSignatureWorksAsExpected() {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-            val (_, theory, primitives) = libraryToAlias.first
+            val (_, theory, primitives) = libraryToAlias.second
 
             theory.rules.map { Signature.fromIndicator(it.head.indicator) } + primitives.keys
                     .forEach { signature -> assertTrue { signature in libraryInstance } }
@@ -74,7 +72,7 @@ internal class LibraryImplTest {
     @Test
     fun containsOperatorWorksAsExpected() {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-            val (opSet, _, _) = libraryToAlias.first
+            val (opSet, _, _) = libraryToAlias.second
 
             opSet.forEach { operator -> assertTrue { operator in libraryInstance } }
 
@@ -85,7 +83,7 @@ internal class LibraryImplTest {
     @Test
     fun hasPrimitiveWorksAsExpected() {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-            val (_, theory, primitives) = libraryToAlias.first
+            val (_, theory, primitives) = libraryToAlias.second
 
             primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
 
@@ -98,7 +96,7 @@ internal class LibraryImplTest {
     @Test
     fun hasProtectedWorksAsExpected() {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
-            val (_, theory, primitives) = libraryToAlias.first
+            val (_, theory, primitives) = libraryToAlias.second
 
             theory.rules.map { Signature.fromIndicator(it.head.indicator) } + primitives.keys
                     .forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
