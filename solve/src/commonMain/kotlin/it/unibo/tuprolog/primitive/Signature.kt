@@ -9,7 +9,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         require(arity >= 0) { "Signature arity should be greater than or equals to 0: $arity" }
     }
 
-    /** Converts this signature to a Struct */
+    /** Converts this signature to a Struct `'/'([name],[arity])` or `'/'([name],'+'([arity], vararg))` */
     fun toTerm(): Struct =
             when {
                 vararg -> Struct.of(FUNCTOR, Atom.of(name), Struct.of(varargStructFunctor, Integer.of(arity), varargAtom))
@@ -25,7 +25,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         /** The functor of a Signature struct */
         const val FUNCTOR = Indicator.FUNCTOR
 
-        /** Creates a Signature instance from a well-formed Term, or returns `null` if it cannot be interpreted as Signature */
+        /** Creates a Signature instance from a well-formed Signature Struct, or returns `null` if it cannot be interpreted as Signature */
         fun fromTerm(term: Struct): Signature? = try {
             with(term) {
                 when {
@@ -55,7 +55,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
             null
         }
 
-        /** Creates a Signature instance from a well-formed Term, or returns `null` if it cannot be interpreted as Signature */
+        /** Creates a Signature instance from a well-formed Signature Term, or returns `null` if it cannot be interpreted as Signature */
         fun fromTerm(term: Term): Signature? = when (term) {
             is Struct -> fromTerm(term)
             else -> null
