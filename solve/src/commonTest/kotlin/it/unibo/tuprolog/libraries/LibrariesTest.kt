@@ -1,13 +1,10 @@
 package it.unibo.tuprolog.libraries
 
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasDuplicatingPrimitives
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasPrimitive
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.libraryWithAliasConstructor
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
-import it.unibo.tuprolog.primitive.Primitive
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -20,15 +17,11 @@ import kotlin.test.assertNotEquals
  */
 internal class LibrariesTest {
 
-    /** A method to disambiguate use of Library.of reference */
-    private fun myLibConstructor(opSet: OperatorSet, theory: ClauseDatabase, primitives: Map<Signature, Primitive>, alias: String): LibraryAliased =
-            Library.of(opSet, theory, primitives, alias)
-
-    private val emptyLibrary = makeLib(LibraryUtils.emptyLibrary, ::myLibConstructor)
-    private val library = makeLib(LibraryUtils.library, ::myLibConstructor)
-    private val overridingLibrary = makeLib(LibraryUtils.overridingLibrary, ::myLibConstructor)
-    private val overriddenLibrary = makeLib(LibraryUtils.overriddenLibrary, ::myLibConstructor)
-    private val duplicatedAliasLibrary = makeLib(LibraryUtils.duplicatedAliasLibrary, ::myLibConstructor)
+    private val emptyLibrary = makeLib(LibraryUtils.emptyLibrary, ::libraryWithAliasConstructor)
+    private val library = makeLib(LibraryUtils.library, ::libraryWithAliasConstructor)
+    private val overridingLibrary = makeLib(LibraryUtils.overridingLibrary, ::libraryWithAliasConstructor)
+    private val overriddenLibrary = makeLib(LibraryUtils.overriddenLibrary, ::libraryWithAliasConstructor)
+    private val duplicatedAliasLibrary = makeLib(LibraryUtils.duplicatedAliasLibrary, ::libraryWithAliasConstructor)
 
     private val differentAliasInstances = listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary)
     private val allLibInstances = listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary)

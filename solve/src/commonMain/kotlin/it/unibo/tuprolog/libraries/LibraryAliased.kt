@@ -12,3 +12,7 @@ interface LibraryAliased : Library {
         const val ALIAS_SEPARATOR = "."
     }
 }
+
+/** Creates a library group from this library aliased and the "added" one */
+operator fun <L : LibraryAliased> L.plus(library: L): LibraryGroup<LibraryAliased> =
+        Libraries(this, library)

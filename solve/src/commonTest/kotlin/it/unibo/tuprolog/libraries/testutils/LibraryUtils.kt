@@ -81,6 +81,11 @@ internal object LibraryUtils {
     /** Contains various libraries */
     internal val allLibraries by lazy { listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary) }
 
+
+    /** A method to disambiguate use of Library.of reference */
+    internal fun libraryWithAliasConstructor(opSet: OperatorSet, theory: ClauseDatabase, primitives: Map<Signature, Primitive>, alias: String): LibraryAliased =
+            Library.of(opSet, theory, primitives, alias)
+
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
             rawLibrary: RawLibrary,
