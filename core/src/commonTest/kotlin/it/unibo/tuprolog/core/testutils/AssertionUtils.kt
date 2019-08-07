@@ -19,6 +19,14 @@ internal object AssertionUtils {
     /** Utility extension function to drop first element of a List */
     fun <T> List<T>.dropFirst(): List<T> = this.drop(1)
 
+    /** Asserts all boolean provided are `true` */
+    fun assertTrue(vararg boolean: Boolean) =
+            assertTrue { boolean.all { it } }
+
+    /** Asserts all boolean provided are `false` */
+    fun assertFalse(vararg boolean: Boolean) =
+            assertFalse { boolean.none { it } }
+
     /** Asserts mutual structural equality for two [Term]s */
     fun assertStructurallyEquals(expected: Term, actual: Term) {
         assertTrue { expected structurallyEquals actual }

@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertFalse
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertTrue
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
@@ -20,33 +22,34 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any.isVariable)
 
-        assertFalse(any.isBound)
-        assertFalse(any.isGround)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isStruct)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Struct)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
-        assertFalse(any is Constant)
+        assertFalse(
+                any.isBound,
+                any.isGround,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isStruct,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isConstant,
+                any.isIndicator,
+                any is Numeric,
+                any is Struct,
+                any is Clause,
+                any is Cons,
+                any is Constant
+        )
     }
 
     /** Checks passed term to be a Numeric or fails otherwise */
@@ -55,32 +58,35 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Constant)
         assertTrue(any is Numeric)
 
-        assertTrue(any.isConstant)
-        assertTrue(any.isNumber)
-        assertTrue(any.isGround)
+        assertTrue(
+                any.isConstant,
+                any.isNumber,
+                any.isGround
+        )
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isStruct)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Var)
-        assertFalse(any is Struct)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isStruct,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isIndicator,
+                any is Var,
+                any is Struct,
+                any is Clause,
+                any is Cons
+        )
     }
 
     /** Checks passed term to be a Real or fails otherwise */
@@ -112,34 +118,35 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any.isStruct)
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Var)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
-        assertFalse(any is Tuple)
-        assertFalse(any is Constant)
-        assertFalse(any is Indicator)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isConstant,
+                any.isIndicator,
+                any is Numeric,
+                any is Var,
+                any is Clause,
+                any is Cons,
+                any is Tuple,
+                any is Constant,
+                any is Indicator
+        )
     }
 
     /** Type testing common to Atom subclasses */
@@ -149,28 +156,31 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Constant)
         assertTrue(any is Atom)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isConstant)
-        assertTrue(any.isAtom)
-        assertTrue(any.isGround)
+        assertTrue(
+                any.isStruct,
+                any.isConstant,
+                any.isAtom,
+                any.isGround
+        )
 
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isTuple)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Clause)
-        assertFalse(any is Var)
-        assertFalse(any is Cons)
+        assertFalse(
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isVariable,
+                any.isBound,
+                any.isTuple,
+                any.isIndicator,
+                any is Numeric,
+                any is Clause,
+                any is Var,
+                any is Cons
+        )
     }
 
     /** Checks passed term to be *exactly* an Atom or fails otherwise */
@@ -179,17 +189,18 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any is Atom) // to enable smart casts in kotlin
 
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-
-        assertFalse(any is LogicList)
-        assertFalse(any is LogicSet)
-        assertFalse(any is Empty)
-        assertFalse(any is Truth)
+        assertFalse(
+                any.isTrue,
+                any.isFail,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any is LogicList,
+                any is LogicSet,
+                any is Empty,
+                any is Truth
+        )
     }
 
     /** Checks passed term to be a Truth or fails otherwise */
@@ -200,17 +211,18 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any.isTrue || any.isFail)
 
-        assertFalse(any.isTrue && any.isFail)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-
-        assertFalse(any is LogicSet)
-        assertFalse(any is LogicList)
-        assertFalse(any is Empty)
-        assertFalse(any is EmptySet)
-        assertFalse(any is EmptyList)
+        assertFalse(
+                any.isTrue && any.isFail,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any is LogicSet,
+                any is LogicList,
+                any is Empty,
+                any is EmptySet,
+                any is EmptyList
+        )
     }
 
     /** Checks passed term to be a Tuple or fails otherwise */
@@ -219,36 +231,39 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Struct)
         assertTrue(any is Tuple)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isTuple)
+        assertTrue(
+                any.isStruct,
+                any.isTuple
+        )
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Atom)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
-        assertFalse(any is Var)
-        assertFalse(any is Constant)
-        assertFalse(any is Indicator)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isConstant,
+                any.isIndicator,
+                any is Numeric,
+                any is Atom,
+                any is Clause,
+                any is Cons,
+                any is Var,
+                any is Constant,
+                any is Indicator
+        )
     }
 
 
@@ -258,36 +273,39 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Struct)
         assertTrue(any is Indicator)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isIndicator)
+        assertTrue(
+                any.isStruct,
+                any.isIndicator
+        )
 
-        assertFalse(any.isTuple)
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isConstant)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Atom)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
-        assertFalse(any is Var)
-        assertFalse(any is Constant)
-        assertFalse(any is Tuple)
+        assertFalse(
+                any.isTuple,
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isConstant,
+                any is Numeric,
+                any is Atom,
+                any is Clause,
+                any is Cons,
+                any is Var,
+                any is Constant,
+                any is Tuple
+        )
     }
 
     /** Checks passed term to be a Cons or fails otherwise */
@@ -297,34 +315,37 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is LogicList)
         assertTrue(any is Cons)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isList)
-        assertTrue(any.isCons)
+        assertTrue(
+                any.isStruct,
+                any.isList,
+                any.isCons
+        )
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isAtom)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is Atom)
-        assertFalse(any is Clause)
-        assertFalse(any is Var)
-        assertFalse(any is Constant)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isAtom,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isConstant,
+                any.isIndicator,
+                any is Numeric,
+                any is Atom,
+                any is Clause,
+                any is Var,
+                any is Constant
+        )
     }
 
     /** Checks passed term to be a Set or fails otherwise */
@@ -333,35 +354,38 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Struct)
         assertTrue(any is LogicSet)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isSet)
+        assertTrue(
+                any.isStruct,
+                any.isSet
+        )
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isClause)
-        assertFalse(any.isDirective)
-        assertFalse(any.isFact)
-        assertFalse(any.isRule)
-        assertFalse(any.isCons)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Numeric)
-        assertFalse(any is LogicList)
-        assertFalse(any is Clause)
-        assertFalse(any is Cons)
-        assertFalse(any is Var)
-        assertFalse(any is Constant)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isClause,
+                any.isDirective,
+                any.isFact,
+                any.isRule,
+                any.isCons,
+                any.isAtom,
+                any.isList,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isConstant,
+                any.isIndicator,
+                any is Numeric,
+                any is LogicList,
+                any is Clause,
+                any is Cons,
+                any is Var,
+                any is Constant
+        )
     }
 
     /** Type testing common to Empty subclasses */
@@ -370,10 +394,11 @@ internal object TermTypeAssertionUtils {
 
         assertTrue(any is Empty)
 
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-
-        assertFalse(any is Truth)
+        assertFalse(
+                any.isTrue,
+                any.isFail,
+                any is Truth
+        )
     }
 
     /** Checks passed term to be an EmptyList or fails otherwise */
@@ -383,14 +408,17 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is LogicList)
         assertTrue(any is EmptyList)
 
-        assertTrue(any.isList)
-        assertTrue(any.isEmptyList)
+        assertTrue(
+                any.isList,
+                any.isEmptyList
+        )
 
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isSet)
-
-        assertFalse(any is LogicSet)
-        assertFalse(any is EmptySet)
+        assertFalse(
+                any.isEmptySet,
+                any.isSet,
+                any is LogicSet,
+                any is EmptySet
+        )
     }
 
     /** Checks passed term to be an EmptySet or fails otherwise */
@@ -400,14 +428,17 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is LogicSet)
         assertTrue(any is EmptySet)
 
-        assertTrue(any.isEmptySet)
-        assertTrue(any.isSet)
+        assertTrue(
+                any.isEmptySet,
+                any.isSet
+        )
 
-        assertFalse(any.isList)
-        assertFalse(any.isEmptyList)
-
-        assertFalse(any is LogicList)
-        assertFalse(any is EmptyList)
+        assertFalse(
+                any.isList,
+                any.isEmptyList,
+                any is LogicList,
+                any is EmptyList
+        )
     }
 
     /** Type testing common to Clause subclasses */
@@ -416,34 +447,37 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Struct)
         assertTrue(any is Clause)
 
-        assertTrue(any.isStruct)
-        assertTrue(any.isClause)
+        assertTrue(
+                any.isStruct,
+                any.isClause
+        )
 
-        assertFalse(any.isVariable)
-        assertFalse(any.isBound)
-        assertFalse(any.isNumber)
-        assertFalse(any.isReal)
-        assertFalse(any.isInt)
-        assertFalse(any.isCons)
-        assertFalse(any.isAtom)
-        assertFalse(any.isList)
-        assertFalse(any.isSet)
-        assertFalse(any.isEmptyList)
-        assertFalse(any.isEmptySet)
-        assertFalse(any.isTrue)
-        assertFalse(any.isFail)
-        assertFalse(any.isTuple)
-        assertFalse(any.isConstant)
-        assertFalse(any.isIndicator)
-
-        assertFalse(any is Var)
-        assertFalse(any is Numeric)
-        assertFalse(any is Cons)
-        assertFalse(any is LogicSet)
-        assertFalse(any is LogicList)
-        assertFalse(any is Atom)
-        assertFalse(any is Constant)
-        assertFalse(any is Indicator)
+        assertFalse(
+                any.isVariable,
+                any.isBound,
+                any.isNumber,
+                any.isReal,
+                any.isInt,
+                any.isCons,
+                any.isAtom,
+                any.isList,
+                any.isSet,
+                any.isEmptyList,
+                any.isEmptySet,
+                any.isTrue,
+                any.isFail,
+                any.isTuple,
+                any.isConstant,
+                any.isIndicator,
+                any is Var,
+                any is Numeric,
+                any is Cons,
+                any is LogicSet,
+                any is LogicList,
+                any is Atom,
+                any is Constant,
+                any is Indicator
+        )
     }
 
     /** Checks passed term to be a Rule or fails otherwise */
@@ -453,8 +487,10 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Rule)
         assertTrue(any.isRule)
 
-        assertFalse(any.isDirective)
-        assertFalse(any is Directive)
+        assertFalse(
+                any.isDirective,
+                any is Directive
+        )
     }
 
     /** Checks passed term to be a Directive or fails otherwise */
@@ -464,11 +500,12 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Directive)
         assertTrue(any.isDirective)
 
-        assertFalse(any.isRule)
-        assertFalse(any.isFact)
-
-        assertFalse(any is Rule)
-        assertFalse(any is Fact)
+        assertFalse(
+                any.isRule,
+                any.isFact,
+                any is Rule,
+                any is Fact
+        )
     }
 
     /** Checks passed term to be a Fact or fails otherwise */
@@ -478,10 +515,14 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Rule)
         assertTrue(any is Fact)
 
-        assertTrue(any.isRule)
-        assertTrue(any.isFact)
+        assertTrue(
+                any.isRule,
+                any.isFact
+        )
 
-        assertFalse(any.isDirective)
-        assertFalse(any is Directive)
+        assertFalse(
+                any.isDirective,
+                any is Directive
+        )
     }
 }
