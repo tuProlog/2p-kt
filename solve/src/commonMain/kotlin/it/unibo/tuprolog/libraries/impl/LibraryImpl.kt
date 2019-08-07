@@ -36,4 +36,7 @@ internal open class LibraryImpl(
         result = 31 * result + primitives.hashCode()
         return result
     }
+
+    override fun toString(): String =
+            "Library(operators=$operators, theory=$theory, primitives=$primitives)"
 }

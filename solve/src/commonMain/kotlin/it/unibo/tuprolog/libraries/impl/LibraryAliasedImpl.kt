@@ -16,4 +16,8 @@ internal open class LibraryAliasedImpl(
         override val theory: ClauseDatabase,
         override val primitives: Map<Signature, Primitive>,
         override val alias: String
-) : LibraryImpl(operators, theory, primitives), LibraryAliased
+) : LibraryImpl(operators, theory, primitives), LibraryAliased{
+
+    override fun toString(): String =
+            "Library(alias='$alias', operators=$operators, theory=$theory, primitives=$primitives)"
+}
