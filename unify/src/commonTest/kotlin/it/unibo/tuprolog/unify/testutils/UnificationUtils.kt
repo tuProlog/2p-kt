@@ -216,7 +216,7 @@ internal object UnificationUtils {
     private fun <T1 : Term, T2 : Term> multipleEquationMgu(
             equations: KtList<Equation<T1, T2>>, unificationStrategyConstructor: (Substitution) -> Unification): Substitution {
 
-        var context = Substitution.empty()
+        var context: Substitution = Substitution.empty()
 
         // enrich the context with subsequent equations
         equations.forEach { equation ->

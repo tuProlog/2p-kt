@@ -45,44 +45,44 @@ sealed class Substitution : Map<Var, Term> {
         /**
          * Returns failed substitution instance
          */
-        fun failed(): Substitution = Fail
+        fun failed(): Fail = Fail
 
         /**
          * Returns empty successful substitution (aka Unifier) instance
          */
-        fun empty(): Substitution = emptyMap<Var, Term>().asUnifier()
+        fun empty(): Unifier = emptyMap<Var, Term>().asUnifier()
 
         /**
          * Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type
          */
-        fun Map<Var, Term>.asUnifier(): Substitution = Unifier(this)
+        fun Map<Var, Term>.asUnifier(): Unifier = Unifier(this)
 
         /**
          * Creates a Substitution of given Variable with given Term
          */
-        fun of(variable: Var, withTerm: Term): Substitution = of(variable to withTerm)
+        fun of(variable: Var, withTerm: Term): Unifier = of(variable to withTerm)
 
         /**
          * Creates a Substitution from the new Variable, with given name, to given Term
          */
-        fun of(variable: String, withTerm: Term): Substitution = of(Var.of(variable) to withTerm)
+        fun of(variable: String, withTerm: Term): Unifier = of(Var.of(variable) to withTerm)
 
         /**
          * Crates a Substitution from given substitution pairs
          */
-        fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution =
+        fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Unifier =
                 mapOf(substitutionPair, *substitutionPairs).asUnifier()
 
         /**
          * Crates a Substitution from given substitution pairs
          */
-        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution =
+        fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Unifier =
                 substitutionPairs.toMap().asUnifier()
 
         /**
          * Creates a new Substitution from given substitutions
          */
-        fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
+        fun of(substitution: Substitution, vararg substitutions: Substitution): Unifier =
                 substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asUnifier()
     }
 }
