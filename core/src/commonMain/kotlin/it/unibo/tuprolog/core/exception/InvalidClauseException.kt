@@ -1,4 +1,6 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.exception
+
+import it.unibo.tuprolog.core.Term
 
 open class InvalidClauseException(val term: Term, cause: Throwable? = null) : TuprologException(cause) {
     override val message: String?

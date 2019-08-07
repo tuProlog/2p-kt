@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.libraries.exception
 
-import it.unibo.tuprolog.core.TuprologException
+import it.unibo.tuprolog.core.exception.TuprologException
 
 open class LibraryException : TuprologException {
 

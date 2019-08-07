@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.unify
+package it.unibo.tuprolog.unify.exception
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
