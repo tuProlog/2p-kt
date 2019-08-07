@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertFalse
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
@@ -9,7 +10,6 @@ import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -112,10 +112,13 @@ internal class ConsImplTest {
 
     @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
-        assertFalse(ConsUtils.oneElementList(::ConsImpl).isGround)
-        assertFalse(ConsUtils.twoElementList(::ConsImpl).isGround)
-        assertFalse(ConsUtils.twoElementListWithPipe(::ConsImpl).isGround)
-        assertFalse(ConsUtils.threeElementListWithPipe(::ConsImpl).isGround)
+        assertFalse(
+                ConsUtils.oneElementList(::ConsImpl).isGround,
+                ConsUtils.twoElementList(::ConsImpl).isGround,
+                ConsUtils.twoElementListWithPipe(::ConsImpl).isGround,
+                ConsUtils.threeElementListWithPipe(::ConsImpl).isGround
+        )
+
         assertTrue(ConsUtils.threeElementList(::ConsImpl).isGround)
     }
 

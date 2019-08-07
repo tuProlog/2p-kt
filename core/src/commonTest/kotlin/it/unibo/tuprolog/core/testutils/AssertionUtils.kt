@@ -28,28 +28,36 @@ internal object AssertionUtils {
             assertFalse { boolean.none { it } }
 
     /** Asserts mutual structural equality for two [Term]s */
-    fun assertStructurallyEquals(expected: Term, actual: Term) {
-        assertTrue { expected structurallyEquals actual }
-        assertTrue { actual structurallyEquals expected }
-    }
+    fun assertStructurallyEquals(expected: Term, actual: Term) =
+            assertTrue(
+                    expected structurallyEquals actual,
+                    actual structurallyEquals expected
+            )
+
 
     /** Asserts mutual not structural equality for two [Term]s */
-    fun assertNotStructurallyEquals(expected: Term, actual: Term) {
-        assertFalse { expected structurallyEquals actual }
-        assertFalse { actual structurallyEquals expected }
-    }
+    fun assertNotStructurallyEquals(expected: Term, actual: Term) =
+            assertFalse(
+                    expected structurallyEquals actual,
+                    actual structurallyEquals expected
+            )
+
 
     /** Asserts mutual strict equality for two [Term]s */
-    fun assertStrictlyEquals(expected: Term, actual: Term) {
-        assertTrue { expected strictlyEquals actual }
-        assertTrue { actual strictlyEquals expected }
-    }
+    fun assertStrictlyEquals(expected: Term, actual: Term) =
+            assertTrue(
+                    expected strictlyEquals actual,
+                    actual strictlyEquals expected
+            )
+
 
     /** Asserts mutual not strict equality for two [Term]s */
-    fun assertNotStrictlyEquals(expected: Term, actual: Term) {
-        assertFalse { expected strictlyEquals actual }
-        assertFalse { actual strictlyEquals expected }
-    }
+    fun assertNotStrictlyEquals(expected: Term, actual: Term) =
+            assertFalse(
+                    expected strictlyEquals actual,
+                    actual strictlyEquals expected
+            )
+
 
     /** Asserts all types of equalities (normal, strict and structural) for two [Term]s */
     fun assertEqualities(expected: Term, actual: Term) {
