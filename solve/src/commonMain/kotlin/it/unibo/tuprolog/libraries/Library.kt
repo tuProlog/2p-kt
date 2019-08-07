@@ -55,5 +55,9 @@ interface Library {
                 primitives: Map<Signature, Primitive> = emptyMap(),
                 alias: String
         ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, alias)
+
+        /** Creates an instance of [LibraryAliased] starting from [Library] and an alias */
+        fun of(library: Library, alias: String): LibraryAliased =
+                LibraryAliasedImpl(library.operators, library.theory, library.primitives, alias)
     }
 }
