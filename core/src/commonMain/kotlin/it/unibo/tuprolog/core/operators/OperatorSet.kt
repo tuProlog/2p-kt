@@ -37,7 +37,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         return true
     }
 
-    override fun hashCode(): Int {
-        return operators.hashCode()
-    }
+    override fun hashCode(): Int = operators.hashCode()
+
+    override fun toString(): String = "OperatorSet($operators)"
 }
