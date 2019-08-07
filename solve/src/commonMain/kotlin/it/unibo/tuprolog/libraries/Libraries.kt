@@ -48,4 +48,19 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
 
         return Libraries(libraries.asSequence() + sequenceOf(library))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Libraries
+
+        if (libraries != other.libraries) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = libraries.hashCode()
+
+    override fun toString(): String = "Libraries($libraries)"
 }
