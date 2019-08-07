@@ -15,7 +15,7 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     /** All library aliases of libraries included in this library group */
     val libraryAliases: Set<String> by lazy { keys }
 
-    override val libraries: Collection<LibraryAliased> by lazy { values }
+    override val libraries: Collection<LibraryAliased> by lazy { values.toList() }
 
     override val operators: OperatorSet by lazy {
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
@@ -34,17 +34,15 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     }
 
     override fun plus(library: LibraryAliased): LibraryGroup<LibraryAliased> {
-        if (library.alias in libraryAliases) {
+        if (library.alias in libraryAliases)
             throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
-        }
 
         return Libraries(libraries.asSequence() + sequenceOf(library))
     }
 
     override fun update(library: LibraryAliased): LibraryGroup<LibraryAliased> {
-        if (library.alias !in libraryAliases) {
+        if (library.alias !in libraryAliases)
             throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
-        }
 
         return Libraries(libraries.asSequence() + sequenceOf(library))
     }

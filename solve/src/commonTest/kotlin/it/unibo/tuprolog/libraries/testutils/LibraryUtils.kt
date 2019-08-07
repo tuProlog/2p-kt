@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.libraries.testutils
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.Associativity
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -22,18 +24,18 @@ typealias RawLibrary = Pair<String, Triple<OperatorSet, ClauseDatabase, Map<Sign
  */
 internal object LibraryUtils {
 
-    internal val plusOperator = Operator("+", Associativity.YFX, 500)
-    internal val minusOperator = Operator("-", Associativity.YFX, 300)
+    private val plusOperator = Operator("+", Associativity.YFX, 500)
+    private val minusOperator = Operator("-", Associativity.YFX, 300)
 
-    internal val minusOperatorOverridden = Operator("-", Associativity.YFX, 1000)
+    private val minusOperatorOverridden = Operator("-", Associativity.YFX, 1000)
 
-    internal val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
-    internal val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
+    private val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
+    private val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
 
-    internal fun myPrimitive(r: Request): Sequence<Response> = throw NotImplementedError()
-    internal fun myOtherPrimitive(r: Request): Sequence<Response> = throw NotImplementedError()
-    internal val primitives = mapOf(Signature("myFunc1", 1) to ::myPrimitive)
-    internal val primitivesOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherPrimitive)
+    private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Request): Sequence<Response> = throw NotImplementedError()
+    private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Request): Sequence<Response> = throw NotImplementedError()
+    private val primitives = mapOf(Signature("myFunc1", 1) to ::myPrimitive)
+    private val primitivesOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherPrimitive)
 
     /** An empty library */
     internal val emptyLibrary by lazy {
@@ -67,8 +69,17 @@ internal object LibraryUtils {
         )
     }
 
+    /** A duplicated alias library w.r.t. [library] */
+    internal val duplicatedAliasLibrary by lazy {
+        "myLibrary" to Triple(
+                OperatorSet(),
+                ClauseDatabase.of(Fact.of(Truth.fail())),
+                emptyMap<Signature, Primitive>()
+        )
+    }
+
     /** Contains various libraries */
-    internal val allLibraries by lazy { listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary) }
+    internal val allLibraries by lazy { listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary) }
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
@@ -92,8 +103,13 @@ internal object LibraryUtils {
         return constructor(operatorSet, theory, primitives, alias)
     }
 
-    /** Utility function to duplicate a primitive aliasing it */
-    internal fun aliasPrimitive(libAlias: String, entry: Map.Entry<Signature, Primitive>): Iterable<Pair<Signature, Primitive>> =
-            listOf(entry.toPair(), entry.key.copy(name = libAlias + LibraryAliased.ALIAS_SEPARATOR + entry.key.name) to entry.value)
+    /** Utility function to alias a primitive */
+    internal fun aliasPrimitive(libAlias: String, entry: Map.Entry<Signature, Primitive>) =
+            entry.key.copy(name = libAlias + LibraryAliased.ALIAS_SEPARATOR + entry.key.name) to entry.value
 
+    /** Utility function to duplicate all primitive aliasing them in library */
+    internal fun aliasDuplicatingPrimitives(library: LibraryAliased, forcedAlias: String? = null) =
+            library.primitives.flatMap {
+                listOf(it.toPair(), aliasPrimitive(forcedAlias ?: library.alias, it))
+            }.toMap()
 }
