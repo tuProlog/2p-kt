@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.Term
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -21,11 +20,11 @@ internal object AssertionUtils {
 
     /** Asserts all boolean provided are `true` */
     fun assertTrue(vararg boolean: Boolean) =
-            assertTrue { boolean.all { it } }
+            assertTrue("Element at index ${boolean.indexOf(false)} expected to be `true`") { boolean.all { it } }
 
     /** Asserts all boolean provided are `false` */
     fun assertFalse(vararg boolean: Boolean) =
-            assertFalse { boolean.none { it } }
+            assertTrue("Element at index ${boolean.indexOf(true)} expected to be `false`") { boolean.none { it } }
 
     /** Asserts mutual structural equality for two [Term]s */
     fun assertStructurallyEquals(expected: Term, actual: Term) =
