@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.core
+package it.unibo.tuprolog.core.exception
 
 open class TuprologRuntimeException : RuntimeException {
     constructor() : super()
