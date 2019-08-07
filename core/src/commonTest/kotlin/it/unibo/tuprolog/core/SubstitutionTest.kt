@@ -38,11 +38,6 @@ internal class SubstitutionTest {
     }
 
     @Test
-    fun emptyReturnsSuccessfulSubstitutionInstance() {
-        assertTrue(Substitution.empty() is Substitution.Unifier)
-    }
-
-    @Test
     fun emptySubstitutionIsSuccess() {
         assertTrue(Substitution.empty().isSuccess)
     }

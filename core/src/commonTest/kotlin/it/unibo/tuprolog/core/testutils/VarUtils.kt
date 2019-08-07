@@ -16,24 +16,16 @@ import kotlin.test.assertSame
  */
 internal object VarUtils {
 
-    /**
-     * Contains variables that are correctly named
-     */
+    /** Contains variables that are correctly named */
     val correctlyNamedVars by lazy { listOf("A", "X", "_", "_X", "_1", "X1", "X_1") }
 
-    /**
-     * Contains variables that aren't correctly named
-     */
+    /** Contains variables that aren't correctly named */
     val incorrectlyNamedVars by lazy { listOf("a", "x") }
 
-    /**
-     * Contains mixed variables, correctly and incorrectly named
-     */
+    /** Contains mixed variables, correctly and incorrectly named */
     val mixedVars by lazy { correctlyNamedVars + incorrectlyNamedVars }
 
-    /**
-     * Asserts that the refreshed variable is not tied to the original variable, except for the name
-     */
+    /** Asserts that the refreshed variable is not tied to the original variable, except for the name */
     internal fun assertDifferentVariableExceptForName(expected: Var, actual: Var) {
         assertEquals(expected.name, actual.name)
         assertNotEquals(expected.completeName, actual.completeName)
@@ -44,9 +36,7 @@ internal object VarUtils {
         assertNotSame(expected, actual)
     }
 
-    /**
-     * Asserts that the variables are tied with each other, so are the same
-     */
+    /** Asserts that the variables are tied with each other, so are the same */
     internal fun assertSameVariable(expected: Var, actual: Var) {
         assertEquals(expected.name, actual.name)
         assertEquals(expected.completeName, actual.completeName)

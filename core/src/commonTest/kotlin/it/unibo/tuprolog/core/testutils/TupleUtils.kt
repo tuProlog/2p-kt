@@ -4,15 +4,15 @@ import it.unibo.tuprolog.core.*
 
 /**
  * Utils singleton for testing [Tuple]
+ *
+ * @author Enrico
  */
 internal object TupleUtils {
 
     private val firstOfFirstTuple = Var.of("A")
     private val secondOfFirstTuple = Var.of("B")
     private val elementsOfFirstTuple = listOf(firstOfFirstTuple, secondOfFirstTuple)
-    /**
-     * Constructs a Tuple with two Terms
-     */
+    /** Constructs a Tuple with two Terms */
     internal fun twoElementTuple(constructor: (Term, Term) -> Tuple) = constructor(firstOfFirstTuple, secondOfFirstTuple)
 
 
@@ -21,41 +21,31 @@ internal object TupleUtils {
     private val thirdOfSecondTuple = Real.of(1.5)
     private fun rightOfSecondTuple(constructor: (Term, Term) -> Tuple) = constructor(secondOfSecondTuple, thirdOfSecondTuple)
     private val elementsOfSecondTuple = listOf(firstOfSecondTuple, secondOfSecondTuple, thirdOfSecondTuple)
-    /**
-     * Constructs a Tuple with three Terms
-     */
+    /** Constructs a Tuple with three Terms */
     internal fun threeElementTuple(constructor: (Term, Term) -> Tuple) =
             constructor(firstOfSecondTuple, rightOfSecondTuple(constructor))
 
 
-    /**
-     * Returns all constructed Tuples (of 2, 3 elements respectively)
-     */
+    /** Returns all constructed Tuples (of 2, 3 elements respectively) */
     internal fun tupleInstances(constructor: (Term, Term) -> Tuple) =
             listOf(
                     twoElementTuple(constructor),
                     threeElementTuple(constructor)
             )
 
-    /**
-     * Tuple instances left element
-     */
+    /** Tuple instances left element */
     internal val tupleInstancesLefts by lazy {
         listOf(firstOfFirstTuple, firstOfSecondTuple)
     }
 
-    /**
-     * Tuple instances right element (needs constructor because some right elements are Tuples themselves)
-     */
+    /** Tuple instances right element (needs constructor because some right elements are Tuples themselves) */
     internal fun tupleInstancesRights(constructor: (Term, Term) -> Tuple) =
             listOf(
                     secondOfFirstTuple,
                     rightOfSecondTuple(constructor)
             )
 
-    /**
-     * Tuples elements lists
-     */
+    /** Tuples elements lists */
     internal val tupleInstancesElementLists by lazy {
         listOf(elementsOfFirstTuple, elementsOfSecondTuple)
     }

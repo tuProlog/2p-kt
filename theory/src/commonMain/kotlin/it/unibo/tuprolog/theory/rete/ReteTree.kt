@@ -3,9 +3,7 @@ package it.unibo.tuprolog.theory.rete
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.rete.clause.RootNode
 
-/**
- * A factory singleton for Rete Trees
- */
+/** A factory singleton for Rete Trees */
 internal object ReteTree {
 
     /** Creates a ReteTree from give clauses */

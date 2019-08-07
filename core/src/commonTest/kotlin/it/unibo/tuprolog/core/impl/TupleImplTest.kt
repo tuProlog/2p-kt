@@ -14,6 +14,8 @@ import kotlin.test.assertTrue
 
 /**
  * Test class for [TupleImpl] and [Tuple]
+ *
+ * @author Enrico
  */
 internal class TupleImplTest {
 

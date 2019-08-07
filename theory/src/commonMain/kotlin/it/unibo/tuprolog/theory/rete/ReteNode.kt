@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.theory.rete
 
-/**
- * A class modeling a Rete Tree Node
- */
+/** A class modeling a Rete Tree Node */
 internal interface ReteNode<Key, Element> {
 
     /** All direct children of this node */

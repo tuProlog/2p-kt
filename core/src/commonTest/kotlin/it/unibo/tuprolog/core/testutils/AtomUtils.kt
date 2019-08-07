@@ -10,9 +10,7 @@ import kotlin.test.assertTrue
  */
 internal object AtomUtils {
 
-    /**
-     * For non special atoms are intended all valid atoms excluding: `true, fail, [], {}`
-     */
+    /** For non special atoms are intended all valid atoms excluding: `true, fail, [], {}` */
     internal val nonSpecialAtoms by lazy {
         // these could be randomly generated from some library in future, maybe starting from Atom regex
         listOf("anAtom",
@@ -28,9 +26,7 @@ internal object AtomUtils {
                 "!")
     }
 
-    /**
-     * Special atoms are atoms for which there's a known subclass, like: `true, fail, [], {}`
-     */
+    /** Special atoms are atoms for which there's a known subclass, like: `true, fail, [], {}` */
     internal val specialAtoms by lazy {
         listOf(
                 "[]",
@@ -47,9 +43,7 @@ internal object AtomUtils {
      */
     internal val mixedAtoms by lazy { nonSpecialAtoms + specialAtoms }
 
-    /**
-     * Asserts that no arguments are present in an Atom
-     */
+    /** Asserts that no arguments are present in an Atom */
     internal fun assertNoArguments(atom: Atom) {
         assertTrue(atom.args.isEmpty())
         assertTrue(atom.argsList.isEmpty())

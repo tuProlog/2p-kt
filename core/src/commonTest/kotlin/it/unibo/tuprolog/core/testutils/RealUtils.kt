@@ -10,9 +10,7 @@ import org.gciatto.kt.math.BigDecimal
  */
 internal object RealUtils {
 
-    /**
-     * Map from a real number in string format to it's corresponding BigDecimal instance
-     */
+    /** Map from a real number in string format to it's corresponding BigDecimal instance */
     private val stringToRealCorrectnessMap by lazy {
         mapOf(
                 "0.0" to BigDecimal.ZERO,
@@ -41,23 +39,15 @@ internal object RealUtils {
         )
     }
 
-    /**
-     * Contains testing real values in string format
-     */
+    /** Contains testing real values in string format */
     internal val stringNumbers by lazy { stringToRealCorrectnessMap.keys }
 
-    /**
-     * Contains testing real values instances
-     */
+    /** Contains testing real values instances */
     internal val bigDecimals by lazy { stringToRealCorrectnessMap.values }
 
-    /**
-     * Contains testing numbers represented as Double
-     */
+    /** Contains testing numbers represented as Double */
     internal val decimalsAsDoubles by lazy { bigDecimals.map { it.toDouble() } }
 
-    /**
-     * Contains testing numbers that can be represented as Float (filtering out [Float.POSITIVE_INFINITY] and [Float.NEGATIVE_INFINITY])
-     */
+    /** Contains testing numbers that can be represented as Float (filtering out [Float.POSITIVE_INFINITY] and [Float.NEGATIVE_INFINITY]) */
     internal val decimalsAsFloats by lazy { bigDecimals.map { it.toFloat() }.filter { it.isFinite() } }
 }
