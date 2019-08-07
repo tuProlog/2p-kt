@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.libraries
 
+import it.unibo.tuprolog.libraries.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasDuplicatingPrimitives
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasPrimitive

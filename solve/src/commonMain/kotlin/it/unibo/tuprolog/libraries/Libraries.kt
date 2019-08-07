@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.libraries
 
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.libraries.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -33,27 +34,21 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
         }.toMap()
     }
 
-    override fun plus(library: LibraryAliased): LibraryGroup<LibraryAliased> {
-        if (library.alias in libraryAliases)
-            throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
+    override fun plus(library: LibraryAliased): LibraryGroup<LibraryAliased> =
+            libraryAliases.find { library.alias in libraryAliases }
+                    ?.let { alreadyLoadedError(library) }
+                    ?: Libraries(libraries.asSequence() + sequenceOf(library))
 
-        return Libraries(libraries.asSequence() + sequenceOf(library))
-    }
+    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): LibraryGroup<LibraryAliased> =
+            libraryGroup.libraries.find { it.alias in libraryAliases }
+                    ?.let { alreadyLoadedError(it) }
+                    ?: Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
 
-    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): LibraryGroup<LibraryAliased> {
-        libraryGroup.libraries.find { it.alias in libraryAliases }?.also {
-            throw AlreadyLoadedLibraryException("A library aliased as `${it.alias}` has already been loaded")
-        }
+    override fun update(library: LibraryAliased): LibraryGroup<LibraryAliased> =
+            libraryAliases.find { library.alias in libraryAliases }
+                    ?.let { Libraries(libraries.asSequence() + sequenceOf(library)) }
+                    ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
 
-        return Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
-    }
-
-    override fun update(library: LibraryAliased): LibraryGroup<LibraryAliased> {
-        if (library.alias !in libraryAliases)
-            throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
-
-        return Libraries(libraries.asSequence() + sequenceOf(library))
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -69,4 +64,8 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     override fun hashCode(): Int = libraries.hashCode()
 
     override fun toString(): String = "Libraries($libraries)"
+
+    /** Utility function to handle already loaded error */
+    private fun alreadyLoadedError(library: LibraryAliased): Nothing =
+            throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 }

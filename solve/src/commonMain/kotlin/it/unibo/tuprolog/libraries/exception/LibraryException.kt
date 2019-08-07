@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.libraries
+package it.unibo.tuprolog.libraries.exception
 
 import it.unibo.tuprolog.core.TuprologException
 

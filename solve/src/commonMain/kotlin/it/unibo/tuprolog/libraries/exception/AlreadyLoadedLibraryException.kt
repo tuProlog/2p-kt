@@ -1,6 +1,4 @@
-package it.unibo.tuprolog.libraries
-
-import it.unibo.tuprolog.core.TuprologException
+package it.unibo.tuprolog.libraries.exception
 
 class AlreadyLoadedLibraryException : LibraryException {
 
