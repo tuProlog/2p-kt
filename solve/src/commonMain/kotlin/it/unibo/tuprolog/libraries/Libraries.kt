@@ -40,6 +40,14 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
         return Libraries(libraries.asSequence() + sequenceOf(library))
     }
 
+    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): LibraryGroup<LibraryAliased> {
+        libraryGroup.libraries.find { it.alias in libraryAliases }?.also {
+            throw AlreadyLoadedLibraryException("A library aliased as `${it.alias}` has already been loaded")
+        }
+
+        return Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
+    }
+
     override fun update(library: LibraryAliased): LibraryGroup<LibraryAliased> {
         if (library.alias !in libraryAliases)
             throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")

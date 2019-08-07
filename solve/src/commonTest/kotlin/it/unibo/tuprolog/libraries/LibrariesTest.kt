@@ -116,15 +116,28 @@ internal class LibrariesTest {
     }
 
     @Test
-    fun plusShouldAddANonPresentLibrary() {
+    fun plusLibraryShouldAddANonPresentLibrary() {
         val toBeTested = Libraries(library) + overridingLibrary
 
         assertEquals(Libraries(library, overridingLibrary), toBeTested)
     }
 
     @Test
-    fun plusAlreadyPresentAliasLibraryComplains() {
+    fun plusLibraryWithAlreadyPresentAliasLibraryComplains() {
         assertFailsWith<AlreadyLoadedLibraryException> { Libraries(library) + duplicatedAliasLibrary }
+    }
+
+    @Test
+    fun plusLibraryGroupShouldAddNonPresentLibrary() {
+        val instances = differentAliasInstances
+        val instancesCount = instances.count()
+
+        assertEquals(Libraries(instances), Libraries(instances.take(instancesCount / 2)) + Libraries(instances.drop(instancesCount / 2)))
+    }
+
+    @Test
+    fun plusLibraryGroupWithAlreadyPresentAliasLibraryComplains() {
+        assertFailsWith<AlreadyLoadedLibraryException> { Libraries(library) + Libraries(duplicatedAliasLibrary) }
     }
 
     @Test
