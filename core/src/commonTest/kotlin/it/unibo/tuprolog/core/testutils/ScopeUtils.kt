@@ -13,15 +13,11 @@ import kotlin.test.assertEquals
  */
 internal object ScopeUtils {
 
-    /**
-     * Returns an empty Scope
-     */
+    /** Returns an empty Scope */
     internal val emptyScope
         get() = mutableMapOf<String, Var>()
 
-    /**
-     * Contains some non empty variable Scopes
-     */
+    /** Contains some non empty variable Scopes */
     internal val nonEmptyScopes
         get() = listOf(
                 mutableMapOf("X" to Var.of("X")),
@@ -31,21 +27,15 @@ internal object ScopeUtils {
         )
 
 
-    /**
-     * Contains the variables inside [nonEmptyScopes]
-     */
+    /** Contains the variables inside [nonEmptyScopes] */
     internal val nonEmptyScopeVars
         get() = nonEmptyScopes.map { it.values.toList() }
 
-    /**
-     * Contains the variable names inside [nonEmptyScopes]
-     */
+    /** Contains the variable names inside [nonEmptyScopes] */
     internal val nonEmptyScopeVarNames
         get() = nonEmptyScopeVars.map { vars -> vars.map { it.name } }
 
-    /**
-     * Contains mixed [nonEmptyScopes] and the [emptyScope]
-     */
+    /** Contains mixed [nonEmptyScopes] and the [emptyScope] */
     internal val mixedScopes
         get() = nonEmptyScopes + emptyScope
 

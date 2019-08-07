@@ -10,9 +10,7 @@ import org.gciatto.kt.math.BigInteger
  */
 internal object IntegerUtils {
 
-    /**
-     * Map from an integer in string format to it's corresponding BigInteger instance
-     */
+    /** Map from an integer in string format to it's corresponding BigInteger instance */
     private val stringToIntegerCorrectnessMap by lazy {
         mapOf("0" to BigInteger.ZERO,
                 "1" to BigInteger.ONE,
@@ -32,19 +30,13 @@ internal object IntegerUtils {
         )
     }
 
-    /**
-     * Contains testing integer values in string format
-     */
+    /** Contains testing integer values in string format */
     internal val stringNumbers by lazy { stringToIntegerCorrectnessMap.keys }
 
-    /**
-     * Contains testing integer values instances
-     */
+    /** Contains testing integer values instances */
     internal val bigIntegers by lazy { stringToIntegerCorrectnessMap.values }
 
-    /**
-     * Contains only numbers representable with Long
-     */
+    /** Contains only numbers representable with Long */
     internal val onlyLongs by lazy {
         bigIntegers.mapNotNull {
             try {
@@ -55,9 +47,7 @@ internal object IntegerUtils {
         }
     }
 
-    /**
-     * Contains only numbers representable with Int
-     */
+    /** Contains only numbers representable with Int */
     internal val onlyInts by lazy {
         bigIntegers.mapNotNull {
             try {
@@ -68,9 +58,7 @@ internal object IntegerUtils {
         }
     }
 
-    /**
-     * Contains only numbers representable with Short
-     */
+    /** Contains only numbers representable with Short */
     internal val onlyShorts by lazy {
         bigIntegers.mapNotNull {
             try {
@@ -81,9 +69,7 @@ internal object IntegerUtils {
         }
     }
 
-    /**
-     * Contains only numbers representable with Byte
-     */
+    /** Contains only numbers representable with Byte */
     internal val onlyBytes by lazy {
         bigIntegers.mapNotNull {
             try {

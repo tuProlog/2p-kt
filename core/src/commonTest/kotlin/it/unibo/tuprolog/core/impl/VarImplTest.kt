@@ -21,9 +21,7 @@ import kotlin.test.*
  */
 internal class VarImplTest {
 
-    /**
-     * Contains mixed variables instances, correctly and incorrectly named
-     */
+    /** Contains mixed variables instances, correctly and incorrectly named */
     private val mixedVarInstances = VarUtils.mixedVars.map { VarImpl(it) }
 
     /**

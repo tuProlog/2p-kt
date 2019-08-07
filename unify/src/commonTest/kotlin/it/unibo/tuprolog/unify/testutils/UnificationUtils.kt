@@ -37,9 +37,7 @@ internal object UnificationUtils {
     private val failedResultsTriple: Triple<Substitution, Boolean, Term?> =
             Triple(Substitution.failed(), false, null)
 
-    /**
-     * Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)`
-     */
+    /** Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)` */
     internal val successfulUnifications by lazy {
         mapOf(
                 *EquationUtils.allIdentityEquations.map { (lhs, rhs) ->
@@ -92,9 +90,7 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Contains a mapping between faulty equations and their failed result Triple(mgu, isMatching, unifiedTerm)
-     */
+    /** Contains a mapping between faulty equations and their failed result Triple(mgu, isMatching, unifiedTerm) */
     internal val failedUnifications by lazy {
         mapOf(
                 *EquationUtils.allContradictionEquations.map { (lhs, rhs) ->
@@ -108,9 +104,7 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Contains faulty equations that will be rejected by the occur-check
-     */
+    /** Contains faulty equations that will be rejected by the occur-check */
     internal val occurCheckFailedUnifications by lazy {
         mapOf(
                 (xVar `=` Struct.of("f", xVar)) to failedResultsTriple,
@@ -118,9 +112,7 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Contains successful sequence of equations that should result in specified Triple(mgu, isMatching, unifiedTerm)
-     */
+    /** Contains successful sequence of equations that should result in specified Triple(mgu, isMatching, unifiedTerm) */
     internal val successSequenceOfUnification by lazy {
         mapOf(
                 listOf(xVar `=` yVar, yVar `=` aAtom) to
@@ -132,9 +124,7 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Contains faulty sequence of equations that should result in a failure
-     */
+    /** Contains faulty sequence of equations that should result in a failure */
     internal val failSequenceOfUnification by lazy {
         mapOf(
                 listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple,
@@ -146,9 +136,7 @@ internal object UnificationUtils {
     }
 
 
-    /**
-     * Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu]
-     */
+    /** Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu] */
     internal fun <T1 : Term, T2 : Term> assertMguCorrect(
             equation: Equation<T1, T2>, expectedMgu: Substitution, mguStrategy: MguStrategy<T1, T2>) {
 
@@ -161,15 +149,11 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Asserts that mgu computed with [mguStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
-     */
+    /** Asserts that mgu computed with [mguStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
     internal fun <T1 : Term, T2 : Term> assertMguCorrect(correctnessMap: CorrectnessMap<T1, T2>, mguStrategy: MguStrategy<T1, T2>) =
             correctnessMap.forEach { (equation, correctTriple) -> assertMguCorrect(equation, correctTriple.first, mguStrategy) }
 
-    /**
-     * Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch]
-     */
+    /** Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch] */
     internal fun <T1 : Term, T2 : Term> assertMatchCorrect(
             equation: Equation<T1, T2>, expectedMatch: Boolean, matchStrategy: MatchStrategy<T1, T2>) {
 
@@ -182,15 +166,11 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Asserts that matching computed with [matchStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
-     */
+    /** Asserts that matching computed with [matchStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
     internal fun <T1 : Term, T2 : Term> assertMatchCorrect(correctnessMap: CorrectnessMap<T1, T2>, matchStrategy: MatchStrategy<T1, T2>) =
             correctnessMap.forEach { (equation, correctTriple) -> assertMatchCorrect(equation, correctTriple.second, matchStrategy) }
 
-    /**
-     * Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm]
-     */
+    /** Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm] */
     internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
             equation: Equation<T1, T2>, expectedUnifiedTerm: Term?, unifyStrategy: UnifyStrategy<T1, T2>) {
 
@@ -203,16 +183,12 @@ internal object UnificationUtils {
         )
     }
 
-    /**
-     * Asserts that unified term computed with [unifyStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values
-     */
+    /** Asserts that unified term computed with [unifyStrategy] over [correctnessMap] keys are equals to those present in [correctnessMap] values */
     internal fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(correctnessMap: CorrectnessMap<T1, T2>, unifyStrategy: UnifyStrategy<T1, T2>) =
             correctnessMap.forEach { (equation, correctTriple) -> assertUnifiedTermCorrect(equation, correctTriple.third, unifyStrategy) }
 
 
-    /**
-     * Utility function to calculate the unifier for more than one equation, passing created context through different unification
-     */
+    /** Utility function to calculate the unifier for more than one equation, passing created context through different unification */
     private fun <T1 : Term, T2 : Term> multipleEquationMgu(
             equations: KtList<Equation<T1, T2>>, unificationStrategyConstructor: (Substitution) -> Unification): Substitution {
 

@@ -84,9 +84,7 @@ interface Struct : Term {
 
     companion object {
 
-        /**
-         * The pattern of a well-formed functor for a Struct
-         */
+        /** The pattern of a well-formed functor for a Struct */
         val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         fun of(functor: String, args: KtList<Term>): Struct =

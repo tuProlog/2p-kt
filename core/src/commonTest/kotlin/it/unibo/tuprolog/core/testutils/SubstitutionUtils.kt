@@ -9,9 +9,7 @@ import it.unibo.tuprolog.core.*
  */
 internal object SubstitutionUtils {
 
-    /**
-     * Returns terms that internally can have multiple times the provided [internalTerm]
-     */
+    /** Returns terms that internally can have multiple times the provided [internalTerm] */
     internal fun termsWith(internalTerm: Term) =
             listOf(
                     internalTerm,
@@ -19,9 +17,7 @@ internal object SubstitutionUtils {
                     Struct.fold("f", internalTerm, Atom.of("ciao"), internalTerm)
             )
 
-    /**
-     * Contains mixed groundSubstitutions and nonGroundSubstitutions
-     */
+    /** Contains mixed groundSubstitutions and nonGroundSubstitutions */
     internal val mixedSubstitutions by lazy {
         listOf(
                 mapOf(Var.of("X") to Atom.of("x")),
@@ -33,8 +29,6 @@ internal object SubstitutionUtils {
         )
     }
 
-    /**
-     * Contains [mixedSubstitutions] represented as list of pairs
-     */
+    /** Contains [mixedSubstitutions] represented as list of pairs */
     internal val mixedSubstitutionsAsPairs by lazy { mixedSubstitutions.map { it.entries.map { entry -> entry.toPair() } } }
 }

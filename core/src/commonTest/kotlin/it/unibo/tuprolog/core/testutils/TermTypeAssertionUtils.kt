@@ -13,9 +13,7 @@ import it.unibo.tuprolog.core.Set as LogicSet
  */
 internal object TermTypeAssertionUtils {
 
-    /**
-     * Checks passed term to be a Variable or fails otherwise
-     */
+    /** Checks passed term to be a Variable or fails otherwise */
     fun assertIsVar(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Var)
@@ -51,9 +49,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Constant)
     }
 
-    /**
-     * Checks passed term to be a Numeric or fails otherwise
-     */
+    /** Checks passed term to be a Numeric or fails otherwise */
     private fun commonNumericAssertions(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Constant)
@@ -87,9 +83,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Cons)
     }
 
-    /**
-     * Checks passed term to be a Real or fails otherwise
-     */
+    /** Checks passed term to be a Real or fails otherwise */
     fun assertIsReal(any: Any) {
         commonNumericAssertions(any)
 
@@ -100,9 +94,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isInt)
     }
 
-    /**
-     * Checks passed term to be an Integer or fails otherwise
-     */
+    /** Checks passed term to be an Integer or fails otherwise */
     fun assertIsInteger(any: Any) {
         commonNumericAssertions(any)
 
@@ -113,9 +105,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any.isReal)
     }
 
-    /**
-     * Checks passed term to be *exactly* a Struct or fails otherwise
-     */
+    /** Checks passed term to be *exactly* a Struct or fails otherwise */
     fun assertIsStruct(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -152,9 +142,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Indicator)
     }
 
-    /**
-     * Type testing common to Atom subclasses
-     */
+    /** Type testing common to Atom subclasses */
     private fun commonAtomAssertions(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -185,9 +173,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Cons)
     }
 
-    /**
-     * Checks passed term to be *exactly* an Atom or fails otherwise
-     */
+    /** Checks passed term to be *exactly* an Atom or fails otherwise */
     fun assertIsAtom(any: Any) {
         commonAtomAssertions(any)
 
@@ -206,9 +192,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Truth)
     }
 
-    /**
-     * Checks passed term to be a Truth or fails otherwise
-     */
+    /** Checks passed term to be a Truth or fails otherwise */
     fun assertIsTruth(any: Any) {
         commonAtomAssertions(any)
 
@@ -229,9 +213,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is EmptyList)
     }
 
-    /**
-     * Checks passed term to be a Tuple or fails otherwise
-     */
+    /** Checks passed term to be a Tuple or fails otherwise */
     fun assertIsTuple(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -270,9 +252,7 @@ internal object TermTypeAssertionUtils {
     }
 
 
-    /**
-     * Checks passed term to be an Indicator or fails otherwise
-     */
+    /** Checks passed term to be an Indicator or fails otherwise */
     fun assertIsIndicator(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -310,9 +290,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Tuple)
     }
 
-    /**
-     * Checks passed term to be a Cons or fails otherwise
-     */
+    /** Checks passed term to be a Cons or fails otherwise */
     fun assertIsCons(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -349,9 +327,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Constant)
     }
 
-    /**
-     * Checks passed term to be a Set or fails otherwise
-     */
+    /** Checks passed term to be a Set or fails otherwise */
     fun assertIsSet(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -388,9 +364,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Constant)
     }
 
-    /**
-     * Type testing common to Empty subclasses
-     */
+    /** Type testing common to Empty subclasses */
     private fun commonEmptyAssertions(any: Any) {
         commonAtomAssertions(any)
 
@@ -402,9 +376,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Truth)
     }
 
-    /**
-     * Checks passed term to be an EmptyList or fails otherwise
-     */
+    /** Checks passed term to be an EmptyList or fails otherwise */
     fun assertIsEmptyList(any: Any) {
         commonEmptyAssertions(any)
 
@@ -421,9 +393,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is EmptySet)
     }
 
-    /**
-     * Checks passed term to be an EmptySet or fails otherwise
-     */
+    /** Checks passed term to be an EmptySet or fails otherwise */
     fun assertIsEmptySet(any: Any) {
         commonEmptyAssertions(any)
 
@@ -440,9 +410,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is EmptyList)
     }
 
-    /**
-     * Type testing common to Clause subclasses
-     */
+    /** Type testing common to Clause subclasses */
     private fun commonClauseAssertions(any: Any) {
         assertTrue(any is Term)
         assertTrue(any is Struct)
@@ -478,9 +446,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Indicator)
     }
 
-    /**
-     * Checks passed term to be a Rule or fails otherwise
-     */
+    /** Checks passed term to be a Rule or fails otherwise */
     fun assertIsRule(any: Any) {
         commonClauseAssertions(any)
 
@@ -491,9 +457,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Directive)
     }
 
-    /**
-     * Checks passed term to be a Directive or fails otherwise
-     */
+    /** Checks passed term to be a Directive or fails otherwise */
     fun assertIsDirective(any: Any) {
         commonClauseAssertions(any)
 
@@ -507,9 +471,7 @@ internal object TermTypeAssertionUtils {
         assertFalse(any is Fact)
     }
 
-    /**
-     * Checks passed term to be a Fact or fails otherwise
-     */
+    /** Checks passed term to be a Fact or fails otherwise */
     fun assertIsFact(any: Any) {
         commonClauseAssertions(any)
 

@@ -52,9 +52,7 @@ internal object StructUtils {
         assertSame(firstVarAfter, secondVarAfter)
     }
 
-    /**
-     * For non special Structs are intended all valid Structs that has not a corresponding representation in any Struct subclass
-     */
+    /** For non special Structs are intended all valid Structs that has not a corresponding representation in any Struct subclass */
     internal val nonSpecialStructs by lazy {
         listOf(
                 "ciao" to arrayOf<Term>(Truth.`true`()),
@@ -68,9 +66,7 @@ internal object StructUtils {
         )
     }
 
-    /**
-     * Special Structs are those Structs that can be mapped exactly in a subclass of Struct
-     */
+    /** Special Structs are those Structs that can be mapped exactly in a subclass of Struct */
     internal val specialStructs by lazy {
         listOf(
                 Cons.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
@@ -88,28 +84,18 @@ internal object StructUtils {
         )
     }
 
-    /**
-     * All Structs under testing, [specialStructs] and [nonSpecialStructs]
-     */
+    /** All Structs under testing, [specialStructs] and [nonSpecialStructs] */
     internal val mixedStructs by lazy { nonSpecialStructs + specialStructs }
 
-    /**
-     * All under testing ground Structs, those containing at least one variable
-     */
+    /** All under testing ground Structs, those containing at least one variable */
     internal val groundStructs by lazy { mixedStructs.filterNot { (_, args) -> args.any { it.isVariable } } }
 
-    /**
-     * All not ground Structs, those not containing variables
-     */
+    /** All not ground Structs, those not containing variables */
     internal val nonGroundStructs by lazy { mixedStructs - groundStructs }
 
-    /**
-     * All Struct functors
-     */
+    /** All Struct functors */
     internal val mixedStructFunctors by lazy { mixedStructs.map { (functor, _) -> functor } }
 
-    /**
-     * All Struct arguments
-     */
+    /** All Struct arguments */
     internal val mixedStructArguments by lazy { mixedStructs.map { (_, args) -> args } }
 }
