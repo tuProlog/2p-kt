@@ -30,7 +30,7 @@ internal class SolveTest {
 
     @Test
     fun responseInsertedDataCorrect() {
-        val toBeTested = Solve.Response(aSignature, anArgumentList, anExecutionContext)
+        val toBeTested = Solve.Response(aSignature, anArgumentList, Solution.No(Truth.fail()), anExecutionContext)
 
         assertEquals(aSignature, toBeTested.signature)
         assertEquals(anArgumentList, toBeTested.arguments)
@@ -39,7 +39,7 @@ internal class SolveTest {
 
     @Test
     fun responseExecutionContextCanBeOmittedAndItsNullThen() {
-        assertEquals(null, Solve.Response(aSignature, anArgumentList).context)
+        assertEquals(null, Solve.Response(aSignature, anArgumentList, Solution.No(Truth.fail())).context)
     }
 
 }

@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Truth
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,17 +13,24 @@ import kotlin.test.assertEquals
  */
 internal class SolutionTest {
 
-    private val aQuery = Truth.`true`()
-    private val aSolution = Truth.`true`()
-    private val aSubstitution = Substitution.empty()
+    private val myScope = Scope.empty()
+    private val aQuery = with(myScope) { Struct.of("f", varOf("A")) }
+    private val aSubstitution = with(myScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
+    private val theQuerySolved = with(myScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
 
     @Test
     fun yesSolutionContainsInsertedData() {
-        val toBeTested = Solution.Yes(aQuery, aSolution, aSubstitution)
+        val toBeTested = Solution.Yes(aQuery, aSubstitution)
 
         assertEquals(aQuery, toBeTested.query)
-        assertEquals(aSolution, toBeTested.solution)
         assertEquals(aSubstitution, toBeTested.substitution)
+    }
+
+    @Test
+    fun yesSolutionComputesSolvedQueryApplyingSubstitutionToQuery() {
+        val toBeTested = Solution.Yes(aQuery, aSubstitution)
+
+        assertEquals(theQuerySolved, toBeTested.solvedQuery)
     }
 
     @Test
@@ -32,7 +40,7 @@ internal class SolutionTest {
 
     @Test
     fun noSolutionSolutionAlwaysNull() {
-        assertEquals(null, Solution.No(aQuery).solution)
+        assertEquals(null, Solution.No(aQuery).solvedQuery)
     }
 
     @Test

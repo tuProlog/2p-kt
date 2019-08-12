@@ -25,12 +25,14 @@ sealed class Solve {
     ) : Solve()
 
 
-    /** Class representing a Response from the Solver to a Request */
+    /** Class representing a Response, from the Solver, to a [Solve.Request] */
     data class Response(
             /** Signature of the goal that has been solved */
             override val signature: Signature,
             /** Arguments with which the goal was invoked */
             override val arguments: List<Term>,
+            /** The solution attached */
+            val solution: Solution,
             /** The changed execution context after goal solving, or `null` if nothing changed in context */
             override val context: ExecutionContext? = null
     ) : Solve()
