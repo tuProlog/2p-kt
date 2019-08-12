@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.primitive.Signature
 
 /** A class representing a solution to a goal */
 sealed class Solution {
@@ -19,6 +21,13 @@ sealed class Solution {
             /** The successful substitution applied finding the solution */
             override val substitution: Substitution.Unifier
     ) : Solution() {
+
+        constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
+                : this(Struct.of(signature.name, arguments), substitution) {
+
+            if (signature.arity != arguments.count())
+                throw IllegalArgumentException("Trying to create Solution.Yes of signature `$signature` with wrong number of arguments $arguments")
+        }
 
         /** The Struct representing the solution */
         override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }

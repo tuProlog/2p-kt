@@ -17,6 +17,7 @@ internal class SolveTest {
 
     private val aSignature = Signature("ciao", 2)
     private val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
+    private val aSolution = Solution.No(Truth.fail())
     private val anExecutionContext = ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.of(), ClauseDatabase.of())
 
     @Test
@@ -30,16 +31,15 @@ internal class SolveTest {
 
     @Test
     fun responseInsertedDataCorrect() {
-        val toBeTested = Solve.Response(aSignature, anArgumentList, Solution.No(Truth.fail()), anExecutionContext)
+        val toBeTested = Solve.Response(aSolution, anExecutionContext)
 
-        assertEquals(aSignature, toBeTested.signature)
-        assertEquals(anArgumentList, toBeTested.arguments)
+        assertEquals(aSolution, toBeTested.solution)
         assertEquals(anExecutionContext, toBeTested.context)
     }
 
     @Test
     fun responseExecutionContextCanBeOmittedAndItsNullThen() {
-        assertEquals(null, Solve.Response(aSignature, anArgumentList, Solution.No(Truth.fail())).context)
+        assertEquals(null, Solve.Response(aSolution).context)
     }
 
 }
