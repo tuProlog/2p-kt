@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -14,5 +15,7 @@ data class ExecutionContext(
         /** Static Knowledge-base, that is a KB that *can't* change executing goals */
         val staticKB: ClauseDatabase,
         /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
-        val dynamicKB: ClauseDatabase
+        val dynamicKB: ClauseDatabase,
+        /** The set of actual substitution till this execution context */
+        val actualSubstitution: Substitution
 )
