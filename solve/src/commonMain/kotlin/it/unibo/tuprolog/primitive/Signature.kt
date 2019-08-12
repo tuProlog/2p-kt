@@ -26,7 +26,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         const val FUNCTOR = Indicator.FUNCTOR
 
         /** Creates a Signature instance from a well-formed Signature Struct, or returns `null` if it cannot be interpreted as Signature */
-        fun fromTerm(term: Struct): Signature? = try {
+        fun fromSignatureTerm(term: Struct): Signature? = try {
             with(term) {
                 when {
                     functor == FUNCTOR && arity == 2 && args.first().isAtom -> when {
@@ -56,8 +56,8 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         }
 
         /** Creates a Signature instance from a well-formed Signature Term, or returns `null` if it cannot be interpreted as Signature */
-        fun fromTerm(term: Term): Signature? = when (term) {
-            is Struct -> fromTerm(term)
+        fun fromSignatureTerm(term: Term): Signature? = when (term) {
+            is Struct -> fromSignatureTerm(term)
             else -> null
         }
 

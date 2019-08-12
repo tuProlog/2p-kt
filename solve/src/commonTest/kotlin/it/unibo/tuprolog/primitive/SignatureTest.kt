@@ -52,39 +52,39 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithStructCreatesCorrectInstance() {
-        signatures.forEach { assertEquals(it, Signature.fromTerm(it.toTerm()) ?: fail()) }
+        signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm()) ?: fail()) }
 
         signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
-            assertEquals(signature, Signature.fromTerm(signatureTerm) ?: fail())
+            assertEquals(signature, Signature.fromSignatureTerm(signatureTerm) ?: fail())
         }
     }
 
     @Test
     fun fromTermWithStructReturnsNullIfSomethingNotMatchingCorrectPattern() {
-        assertEquals(null, Signature.fromTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
-        assertEquals(null, Signature.fromTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
+        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
     }
 
     @Test
     fun fromTermWithTermCreatesCorrectInstance() {
-        signatures.forEach { assertEquals(it, Signature.fromTerm(it.toTerm() as Term) ?: fail()) }
+        signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm() as Term) ?: fail()) }
 
         signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
-            assertEquals(signature, Signature.fromTerm(signatureTerm as Term) ?: fail())
+            assertEquals(signature, Signature.fromSignatureTerm(signatureTerm as Term) ?: fail())
         }
     }
 
     @Test
     fun fromTermWithTermReturnsNullIfNotAStruct() {
-        assertEquals(null, Signature.fromTerm(Var.anonymous()))
-        assertEquals(null, Signature.fromTerm(Numeric.of(2)))
+        assertEquals(null, Signature.fromSignatureTerm(Var.anonymous()))
+        assertEquals(null, Signature.fromSignatureTerm(Numeric.of(2)))
     }
 
     @Test
