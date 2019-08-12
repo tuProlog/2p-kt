@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.mutable
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term

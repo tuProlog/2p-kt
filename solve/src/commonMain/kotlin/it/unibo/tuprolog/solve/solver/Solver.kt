@@ -1,6 +1,7 @@
-package it.unibo.tuprolog.solve.mutable
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.statemachine.SolverSLD
 
 /**
  * Represents a Prolog Goal solver
