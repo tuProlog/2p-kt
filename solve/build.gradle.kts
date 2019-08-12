@@ -20,7 +20,7 @@ kotlin {
 //                    api(project(":unify"))
 //                    api(project(":theory"))
 
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.3.0-RC2")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
                 }
             }
         }
