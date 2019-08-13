@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 
 /** A base class for Solve requests and responses */
 sealed class Solve {
@@ -19,7 +20,7 @@ sealed class Solve {
             /** The context that's actual at Request making */
             override val context: ExecutionContext,
             /** The executionTimeout after which the computation can end, because no more useful */
-            val executionTimeout: Long = Long.MAX_VALUE
+            val executionTimeout: TimeDuration = Long.MAX_VALUE
     ) : Solve() {
         init {
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
