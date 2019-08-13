@@ -32,4 +32,10 @@ internal sealed class StateEnd(override val context: ExecutionContext) : FinalSt
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
+
+    internal data class Timeout(override val context: ExecutionContext) : StateEnd(context) {
+        override fun behave(): State {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    }
 }

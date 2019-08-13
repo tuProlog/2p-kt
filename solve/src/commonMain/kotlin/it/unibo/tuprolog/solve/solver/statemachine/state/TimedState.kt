@@ -1,0 +1,14 @@
+package it.unibo.tuprolog.solve.solver.statemachine.state
+
+import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
+
+/**
+ * Interface representing a state with a notion of "time"
+ *
+ * @author Enrico
+ */
+interface TimedState : State {
+
+    /** Returns current time instant in some notion of "time" */
+    fun getCurrentTime(): TimeInstant
+}
