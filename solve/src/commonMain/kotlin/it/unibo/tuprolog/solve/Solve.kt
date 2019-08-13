@@ -17,8 +17,14 @@ sealed class Solve {
             /** Arguments with which the goal is invoked */
             val arguments: List<Term>,
             /** The context that's actual at Request making */
-            override val context: ExecutionContext
-    ) : Solve()
+            override val context: ExecutionContext,
+            /** The executionTimeout after which the computation can end, because no more useful */
+            val executionTimeout: Long = Long.MAX_VALUE
+    ) : Solve() {
+        init {
+            require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
+        }
+    }
 
 
     /** Class representing a Response, from the Solver, to a [Solve.Request] */

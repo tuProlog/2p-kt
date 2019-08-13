@@ -9,9 +9,10 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @author Enrico
  */
-internal class SolverSLD(private val executionTimeout: Long, private val executionScope: CoroutineScope) : AbstractSolver() {
+internal class SolverSLD(private val executionScope: CoroutineScope) : AbstractSolver() {
 
-    override fun solve(goal: Solve.Request): Sequence<Solve.Response> {
+    override suspend fun solve(goal: Solve.Request): Sequence<Solve.Response> {
+        generateSequence { }
         TODO("not implemented")
     }
 }
