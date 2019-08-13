@@ -17,5 +17,7 @@ data class ExecutionContext(
         /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
         val dynamicKB: ClauseDatabase,
         /** The set of actual substitution till this execution context */
-        val actualSubstitution: Substitution
+        val actualSubstitution: Substitution = Substitution.empty(),
+        /** The sequence of parent execution contexts before this, till the resolution root */
+        val parents: Sequence<ExecutionContext> = emptySequence()
 )

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.SolverSLD
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Represents a Prolog Goal solver
@@ -18,7 +18,7 @@ interface Solver {
     companion object {
 
         /** Creates an SLD (*Selective Linear Definite*) solver */
-        fun sld(timeout: Long, executionScope: CoroutineScope = MainScope()): Solver =
+        fun sld(timeout: Long, executionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)): Solver =
                 SolverSLD(timeout, executionScope)
     }
 }
