@@ -20,7 +20,7 @@ data class ExecutionContext(
         /** When the overall computation started */
         val computationStartTime: TimeInstant,
         /** The set of actual substitution till this execution context */
-        val actualSubstitution: Substitution = Substitution.empty(),
+        val actualSubstitution: Substitution.Unifier = Substitution.empty(),
         /** The sequence of parent execution contexts before this, till the resolution root */
         val parents: Sequence<ExecutionContext> = emptySequence()
 )
