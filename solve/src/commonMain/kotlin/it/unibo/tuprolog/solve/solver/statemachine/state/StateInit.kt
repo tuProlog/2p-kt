@@ -15,10 +15,10 @@ internal class StateInit(
         override val executionTimeout: TimeDuration
 ) : AbstractTimedState(context, executionScope, executionTimeout) {
 
-    override fun behaveTimed(): State {
+    override fun behaveTimed(): Sequence<State> = sequence {
         val initializedContext = initializationWork(context)
 
-        return StateGoalSelection(initializedContext)
+        yield(StateGoalSelection(initializedContext, executionScope, executionTimeout))
     }
 
     /** Any state machine initialization should be done here */

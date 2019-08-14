@@ -17,14 +17,14 @@ internal abstract class AbstractTimedState(
         protected open val executionTimeout: TimeDuration
 ) : AbstractState(context, executionScope), TimedState {
 
-    override fun behave(): State = when {
+    override fun behave(): Sequence<State> = when {
         timeIsOver(context.computationStartTime - getCurrentTime(), executionTimeout) ->
-            StateEnd.Timeout(context)
+            sequenceOf(StateEnd.Timeout(context, executionScope))
         else -> behaveTimed()
     }
 
     /** Called only if executionTimeout has not been reached yet, and computation should go on */
-    protected abstract fun behaveTimed(): State
+    protected abstract fun behaveTimed(): Sequence<State>
 
     override fun getCurrentTime(): TimeInstant = currentTime()
 
