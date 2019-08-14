@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solve
 
 /**
  * Represents a State of Prolog solver state-machine
@@ -9,8 +9,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
  */
 interface State {
 
-    /** The execution context in which the State should behave */
-    val context: ExecutionContext
+    /** The context in which the State should behave */
+    val solveRequest: Solve.Request
 
     /** Makes the state behave and lazily returns next states */
     fun behave(): Sequence<State>

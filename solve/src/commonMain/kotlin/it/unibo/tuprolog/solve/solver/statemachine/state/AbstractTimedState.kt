@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
@@ -13,15 +13,14 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal abstract class AbstractTimedState(
-        override val context: ExecutionContext,
+        override val solveRequest: Solve.Request,
         override val executionScope: CoroutineScope,
-        override val solverStrategies: SolverStrategies,
-        protected open val executionTimeout: TimeDuration
-) : AbstractState(context, executionScope, solverStrategies), TimedState {
+        override val solverStrategies: SolverStrategies
+) : AbstractState(solveRequest, executionScope, solverStrategies), TimedState {
 
     override fun behave(): Sequence<State> = when {
-        timeIsOver(context.computationStartTime - getCurrentTime(), executionTimeout) ->
-            sequenceOf(StateEnd.Timeout(context, executionScope, solverStrategies))
+        timeIsOver(solveRequest.context.computationStartTime - getCurrentTime(), solveRequest.executionTimeout) ->
+            sequenceOf(StateEnd.Timeout(solveRequest, executionScope, solverStrategies))
         else -> behaveTimed()
     }
 
