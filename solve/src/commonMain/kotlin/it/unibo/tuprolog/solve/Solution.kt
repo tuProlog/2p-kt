@@ -25,8 +25,7 @@ sealed class Solution {
         constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
                 : this(Struct.of(signature.name, arguments), substitution) {
 
-            if (signature.arity != arguments.count())
-                throw IllegalArgumentException("Trying to create Solution.Yes of signature `$signature` with wrong number of arguments $arguments")
+            arityAndArgumentsCountCheck(signature, arguments)
         }
 
         /** The Struct representing the solution */
@@ -35,9 +34,20 @@ sealed class Solution {
 
     /** A class representing a failed solution */
     data class No(override val query: Struct) : Solution() {
+
+        constructor(signature: Signature, arguments: List<Term>) : this(Struct.of(signature.name, arguments)) {
+            arityAndArgumentsCountCheck(signature, arguments)
+        }
+
         /** Always [Substitution.Fail] because no solution was found */
         override val substitution: Substitution.Fail = Substitution.failed()
         /** Always `null` because no solution was found */
         override val solvedQuery: Struct? = null
     }
+
+    /** Utility function to check correctness on Solution construction */
+    protected fun arityAndArgumentsCountCheck(signature: Signature, arguments: List<Term>) =
+            require(signature.arity == arguments.count()) {
+                "Trying to create Solution.Yes of signature `$signature` with wrong number of arguments $arguments"
+            }
 }

@@ -67,4 +67,16 @@ internal class SolutionTest {
         assertEquals(Substitution.failed(), Solution.No(aQuery).substitution)
     }
 
+    @Test
+    fun noSolutionSecondaryConstructorWorksAsExpected() {
+        val toBeTested = Solution.No(querySignature, listOf(with(myScope) { varOf("A") }))
+
+        assertEquals(aQuery, toBeTested.query)
+    }
+
+    @Test
+    fun noSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
+        assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, emptyList()) }
+        assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, listOf(Truth.`true`(), Truth.`true`())) }
+    }
 }
