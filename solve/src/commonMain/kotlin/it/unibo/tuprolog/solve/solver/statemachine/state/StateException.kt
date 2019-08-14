@@ -15,7 +15,7 @@ internal class StateException(
         override val solverStrategies: SolverStrategies
 ) : AbstractTimedState(solveRequest, executionScope, solverStrategies) {
 
-    override fun behaveTimed(): Sequence<State> {
+    override suspend fun behaveTimed(): Sequence<State> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

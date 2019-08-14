@@ -16,7 +16,7 @@ internal class StateInit(
         override val solverStrategies: SolverStrategies
 ) : AbstractTimedState(solveRequest, executionScope, solverStrategies) {
 
-    override fun behaveTimed(): Sequence<State> = sequence {
+    override suspend fun behaveTimed(): Sequence<State> = sequence {
         val initializedContext = initializationWork(solveRequest.context)
 
         yield(

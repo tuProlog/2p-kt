@@ -17,7 +17,7 @@ internal sealed class StateEnd(
         override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
 ) : AbstractState(solveRequest, executionScope, solverStrategies), FinalState {
 
-    override fun behave(): Sequence<State> = emptySequence()
+    override suspend fun behave(): Sequence<State> = emptySequence()
 
     internal data class True(
             override val solveRequest: Solve.Request,

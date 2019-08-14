@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
 
 /**
  * Base class for all States that should have a timed behaviour
@@ -18,14 +19,16 @@ internal abstract class AbstractTimedState(
         override val solverStrategies: SolverStrategies
 ) : AbstractState(solveRequest, executionScope, solverStrategies), TimedState {
 
-    override fun behave(): Sequence<State> = when {
-        timeIsOver(solveRequest.context.computationStartTime - getCurrentTime(), solveRequest.executionTimeout) ->
-            sequenceOf(StateEnd.Timeout(solveRequest, executionScope, solverStrategies))
-        else -> behaveTimed()
+    override suspend fun behave(): Sequence<State> = withContext(executionScope.coroutineContext) {
+        when {
+            timeIsOver(solveRequest.context.computationStartTime - getCurrentTime(), solveRequest.executionTimeout) ->
+                sequenceOf(StateEnd.Timeout(solveRequest, executionScope, solverStrategies))
+            else -> behaveTimed()
+        }
     }
 
     /** Called only if executionTimeout has not been reached yet, and computation should go on */
-    protected abstract fun behaveTimed(): Sequence<State>
+    protected abstract suspend fun behaveTimed(): Sequence<State>
 
     override fun getCurrentTime(): TimeInstant = currentTime()
 
