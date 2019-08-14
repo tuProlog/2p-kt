@@ -17,60 +17,37 @@ internal sealed class StateEnd(
         override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
 ) : AbstractState(solveRequest, executionScope, solverStrategies), FinalState {
 
+    override fun behave(): Sequence<State> = emptySequence()
+
     internal data class True(
             override val solveRequest: Solve.Request,
             override val executionScope: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies) {
-
-        override fun behave(): Sequence<State> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-    }
+    ) : StateEnd(solveRequest, executionScope, solverStrategies)
 
     internal data class TrueWithChoicePoint(
             override val solveRequest: Solve.Request,
             override val executionScope: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies) {
-
-        override fun behave(): Sequence<State> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-    }
+    ) : StateEnd(solveRequest, executionScope, solverStrategies)
 
     internal data class False(
             override val solveRequest: Solve.Request,
             override val executionScope: CoroutineScope,
             override val solverStrategies: SolverStrategies
     ) : StateEnd(solveRequest, executionScope, solverStrategies) {
-
         // TODO should answerSubstitution be overridden with some "nulled" substitution?? here and in below states
-
-        override fun behave(): Sequence<State> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
     }
 
     internal data class Halt(
             override val solveRequest: Solve.Request,
             override val executionScope: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies) {
-
-        override fun behave(): Sequence<State> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-    }
+    ) : StateEnd(solveRequest, executionScope, solverStrategies)
 
     internal data class Timeout(
             override val solveRequest: Solve.Request,
             override val executionScope: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies) {
-
-        override fun behave(): Sequence<State> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-    }
+    ) : StateEnd(solveRequest, executionScope, solverStrategies)
 }
