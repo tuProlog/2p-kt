@@ -11,22 +11,20 @@ import it.unibo.tuprolog.core.Term
 abstract class AbstractSolver : Solver {
 
     /**
-     * Selects the predication to be solved first, from provided sequence
+     * Returns a strategy object containing the key solution strategies used by this solver
      *
-     * The default implementation, following the Prolog Standard, selects the first predication found
+     * Default implementation returns a strategy object that follows the Prolog Standard
      */
-    protected open fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>): P =
-            predicationSequence.first()
+    protected open val solverStrategies = object : SolverStrategies {
 
-    /**
-     * Selects the clause to be expanded in place of unifying predication, from provided sequence
-     *
-     * The default implementation, following the Prolog Standard, selects the first clause found
-     */
-    protected open fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>): C =
-            unifiableClauses.first()
+        /** The default implementation, following the Prolog Standard, selects the first predication found */
+        override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>): P =
+                predicationSequence.first()
 
-    /** Determines "when and what" is considered successfully demonstrated, during solution process */
-    protected open fun successCheckStrategy(term: Term): Boolean = term.isTrue
+        /** The default implementation, following the Prolog Standard, selects the first clause found */
+        override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>): C =
+                unifiableClauses.first()
 
+        override fun successCheckStrategy(term: Term): Boolean = term.isTrue
+    }
 }
