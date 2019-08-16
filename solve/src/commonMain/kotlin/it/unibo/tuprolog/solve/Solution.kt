@@ -24,7 +24,9 @@ sealed class Solution {
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
-                : this(signature.withArgs(arguments) ?: Truth.fail(), substitution)
+                : this(signature.withArgs(arguments) ?: Truth.fail(), substitution) {
+            noVarargSignatureCheck(signature)
+        }
 
         /** The Struct representing the solution */
         override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
@@ -34,11 +36,19 @@ sealed class Solution {
     data class No(override val query: Struct) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>)
-                : this(signature.withArgs(arguments) ?: Truth.fail())
+                : this(signature.withArgs(arguments) ?: Truth.fail()) {
+            noVarargSignatureCheck(signature)
+        }
 
         /** Always [Substitution.Fail] because no solution was found */
         override val substitution: Substitution.Fail = Substitution.failed()
         /** Always `null` because no solution was found */
         override val solvedQuery: Struct? = null
     }
+
+    /** Internal function to check signature validity in constructing Solution instances */
+    protected fun noVarargSignatureCheck(signature: Signature) =
+            require(!signature.vararg) {
+                "The signature should be a well-formed indicator, not vararg `$signature`"
+            }
 }

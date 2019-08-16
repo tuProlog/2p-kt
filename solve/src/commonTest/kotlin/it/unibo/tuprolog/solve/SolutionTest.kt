@@ -53,6 +53,13 @@ internal class SolutionTest {
     }
 
     @Test
+    fun yesSolutionSecondaryConstructorComplainsIfSignatureVararg() {
+        assertFailsWith<IllegalArgumentException> {
+            Solution.Yes(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }), Substitution.empty())
+        }
+    }
+
+    @Test
     fun noSolutionContainsInsertedData() {
         assertEquals(aQuery, Solution.No(aQuery).query)
     }
@@ -78,5 +85,12 @@ internal class SolutionTest {
     fun noSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
         assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, emptyList()) }
         assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, listOf(Truth.`true`(), Truth.`true`())) }
+    }
+
+    @Test
+    fun noSolutionSecondaryConstructorComplainsIfSignatureVararg() {
+        assertFailsWith<IllegalArgumentException> {
+            Solution.No(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }))
+        }
     }
 }
