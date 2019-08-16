@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 
 /** A class representing a solution to a goal */
@@ -23,10 +24,7 @@ sealed class Solution {
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
-                : this(Struct.of(signature.name, arguments), substitution) {
-
-            arityAndArgumentsCountCheck(signature, arguments)
-        }
+                : this(signature.withArgs(arguments) ?: Truth.fail(), substitution)
 
         /** The Struct representing the solution */
         override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
@@ -35,19 +33,12 @@ sealed class Solution {
     /** A class representing a failed solution */
     data class No(override val query: Struct) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>) : this(Struct.of(signature.name, arguments)) {
-            arityAndArgumentsCountCheck(signature, arguments)
-        }
+        constructor(signature: Signature, arguments: List<Term>)
+                : this(signature.withArgs(arguments) ?: Truth.fail())
 
         /** Always [Substitution.Fail] because no solution was found */
         override val substitution: Substitution.Fail = Substitution.failed()
         /** Always `null` because no solution was found */
         override val solvedQuery: Struct? = null
     }
-
-    /** Utility function to check correctness on Solution construction */
-    protected fun arityAndArgumentsCountCheck(signature: Signature, arguments: List<Term>) =
-            require(signature.arity == arguments.count()) {
-                "Trying to create Solution.Yes of signature `$signature` with wrong number of arguments $arguments"
-            }
 }
