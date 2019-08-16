@@ -23,6 +23,7 @@ sealed class Solve {
             val executionTimeout: TimeDuration = Long.MAX_VALUE
     ) : Solve() {
         init {
+            // TODO: 16/08/2019 add check on signature arity and arguments count match
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
         }
     }
