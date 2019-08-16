@@ -12,42 +12,42 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal sealed class StateEnd(
         override val solveRequest: Solve.Request,
-        override val executionScope: CoroutineScope,
+        override val executionStrategy: CoroutineScope,
         override val solverStrategies: SolverStrategies,
         override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
-) : AbstractState(solveRequest, executionScope, solverStrategies), FinalState {
+) : AbstractState(solveRequest, executionStrategy, solverStrategies), FinalState {
 
-    override suspend fun behave(): Sequence<State> = emptySequence()
+    override fun behave(): Sequence<State> = emptySequence()
 
     internal data class True(
             override val solveRequest: Solve.Request,
-            override val executionScope: CoroutineScope,
+            override val executionStrategy: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies)
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies)
 
     internal data class TrueWithChoicePoint(
             override val solveRequest: Solve.Request,
-            override val executionScope: CoroutineScope,
+            override val executionStrategy: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies)
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies)
 
     internal data class False(
             override val solveRequest: Solve.Request,
-            override val executionScope: CoroutineScope,
+            override val executionStrategy: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies) {
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies) {
         // TODO should answerSubstitution be overridden with some "nulled" substitution?? here and in below states
     }
 
     internal data class Halt(
             override val solveRequest: Solve.Request,
-            override val executionScope: CoroutineScope,
+            override val executionStrategy: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies)
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies)
 
     internal data class Timeout(
             override val solveRequest: Solve.Request,
-            override val executionScope: CoroutineScope,
+            override val executionStrategy: CoroutineScope,
             override val solverStrategies: SolverStrategies
-    ) : StateEnd(solveRequest, executionScope, solverStrategies)
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies)
 }

@@ -12,17 +12,17 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateInit(
         override val solveRequest: Solve.Request,
-        override val executionScope: CoroutineScope,
+        override val executionStrategy: CoroutineScope,
         override val solverStrategies: SolverStrategies
-) : AbstractTimedState(solveRequest, executionScope, solverStrategies) {
+) : AbstractTimedState(solveRequest, executionStrategy, solverStrategies) {
 
-    override suspend fun behaveTimed(): Sequence<State> = sequence {
+    override fun behaveTimed(): Sequence<State> = sequence {
         val initializedContext = initializationWork(solveRequest.context)
 
         yield(
                 StateGoalSelection(
                         solveRequest.copy(context = initializedContext),
-                        executionScope,
+                        executionStrategy,
                         solverStrategies
                 )
         )

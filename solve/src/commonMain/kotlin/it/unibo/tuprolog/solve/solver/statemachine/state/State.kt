@@ -13,6 +13,6 @@ interface State {
     val solveRequest: Solve.Request
 
     /** Makes the state behave and lazily returns next states */
-    suspend fun behave(): Sequence<State>
+    fun behave(): Sequence<State>
 
 }

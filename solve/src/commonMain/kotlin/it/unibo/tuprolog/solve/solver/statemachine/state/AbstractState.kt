@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 abstract class AbstractState(
         override val solveRequest: Solve.Request,
         /** The execution scope where state behavior should execute */
-        protected open val executionScope: CoroutineScope,
+        protected open val executionStrategy: CoroutineScope,
         /** The [SolverStrategies] to be applied during solution process */
         protected open val solverStrategies: SolverStrategies
 ) : State

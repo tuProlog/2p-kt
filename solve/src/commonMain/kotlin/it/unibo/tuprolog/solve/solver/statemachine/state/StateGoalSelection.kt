@@ -11,11 +11,11 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateGoalSelection(
         override val solveRequest: Solve.Request,
-        override val executionScope: CoroutineScope,
+        override val executionStrategy: CoroutineScope,
         override val solverStrategies: SolverStrategies
-) : AbstractTimedState(solveRequest, executionScope, solverStrategies) {
+) : AbstractTimedState(solveRequest, executionStrategy, solverStrategies) {
 
-    override suspend fun behaveTimed(): Sequence<State> {
+    override fun behaveTimed(): Sequence<State> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

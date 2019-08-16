@@ -13,12 +13,12 @@ import kotlinx.coroutines.Dispatchers
 interface Solver {
 
     /** Solves the provided goal, returning lazily initialized sequence of responses */
-    suspend fun solve(goal: Solve.Request): Sequence<Solve.Response>
+    fun solve(goal: Solve.Request): Sequence<Solve.Response>
 
     companion object {
 
         /** Creates an SLD (*Selective Linear Definite*) solver */
-        fun sld(executionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)): Solver =
-                SolverSLD(executionScope)
+        fun sld(executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)): Solver =
+                SolverSLD(executionStrategy)
     }
 }

@@ -14,10 +14,10 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @author Enrico
  */
-internal class SolverSLD(private val executionScope: CoroutineScope) : AbstractSolver() {
+internal class SolverSLD(private val executionStrategy: CoroutineScope) : AbstractSolver() {
 
-    override suspend fun solve(goal: Solve.Request): Sequence<Solve.Response> =
-            stateMachineExecution(StateInit(goal, executionScope, solverStrategies))
+    override fun solve(goal: Solve.Request): Sequence<Solve.Response> =
+            stateMachineExecution(StateInit(goal, executionStrategy, solverStrategies))
                     .filterIsInstance<FinalState>()
                     .map {
                         Solve.Response(
@@ -27,9 +27,10 @@ internal class SolverSLD(private val executionScope: CoroutineScope) : AbstractS
                     }
 
     /** Internal method that executes the state-machine */
-    private suspend fun stateMachineExecution(initialState: State): Sequence<State> =
-            generateSequence(initialState.behave()) { nextStates ->
-                nextStates.flatMap { it.behave() }
+    private fun stateMachineExecution(state: State): Sequence<State> =
+            generateSequence(state.behave()) { nextStates ->
+                // TODO cut execution should be catch here and make subsequent evaluation to be cancelled
+                sequence { nextStates.forEach { yield(stateMachineExecution(it)) } }.flatten()
             }.flatten()
 
     /** Utility method to map a final state to its corresponding Solution */
