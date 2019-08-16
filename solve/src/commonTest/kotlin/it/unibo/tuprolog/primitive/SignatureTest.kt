@@ -13,6 +13,9 @@ internal class SignatureTest {
     private val signatureName = "myFunc"
     private val signatureArity = 3
 
+    private val aAtom = Atom.of("a")
+    private val argList = listOf(aAtom, aAtom, aAtom)
+
     private val normalSignature = Signature(signatureName, signatureArity)
     private val varargSignature = Signature(signatureName, signatureArity, true)
 
@@ -51,6 +54,22 @@ internal class SignatureTest {
     }
 
     @Test
+    fun withArgsWorksOnNonVarargSignatures() {
+        assertEquals(normalSignature.withArgs(argList), Struct.of(signatureName, argList))
+    }
+
+    @Test
+    fun withArgsComplainsOnVarargSignatures() {
+        assertEquals(null, varargSignature.withArgs(argList))
+    }
+
+    @Test
+    fun withArgsComplainsIfNotCorrectNumberOfArgumentsProvided() {
+        assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(emptyList()) }
+        assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(argList + aAtom) }
+    }
+
+    @Test
     fun fromTermWithStructCreatesCorrectInstance() {
         signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm()) ?: fail()) }
 
@@ -74,7 +93,9 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithTermCreatesCorrectInstance() {
-        signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm() as Term) ?: fail()) }
+        signatures.forEach {
+            assertEquals(it, Signature.fromSignatureTerm(it.toTerm() as Term) ?: fail())
+        }
 
         signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
             assertEquals(signature, Signature.fromSignatureTerm(signatureTerm as Term) ?: fail())
