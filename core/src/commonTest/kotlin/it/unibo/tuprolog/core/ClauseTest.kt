@@ -5,9 +5,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 /**
  * Test class for [Clause] companion object
@@ -21,6 +19,14 @@ internal class ClauseTest {
     private val correctInstances =
             RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) } +
                     DirectiveUtils.mixedDirectives.map { Directive.of(it) }
+
+    private val wellFormedClauseInstances =
+            RuleUtils.wellFormedRules.map { (head, body) -> Rule.of(head, body) } +
+                    DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
+
+    private val nonWellFormedClauseInstances =
+            RuleUtils.nonWellFormedRules.map { (head, body) -> Rule.of(head, body) } +
+                    DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
 
     /**
      * A function replacing correctly variables with call structure where needed
@@ -80,6 +86,17 @@ internal class ClauseTest {
     @Test
     fun clauseOfNullHeadAndNoVarargsComplains() {
         assertFailsWith<IllegalArgumentException> { Clause.of() }
+    }
+
+    @Test
+    fun notableFunctorCorrect() {
+        assertEquals(listOf(",", ";", "->"), Clause.notableFunctors.toList())
+    }
+
+    @Test
+    fun bodyWellFormedVisitorWorksAsExpected() {
+        wellFormedClauseInstances.forEach { assertTrue("${it.body} bodyWellFormedVisitor should return true") { it.body.accept(Clause.bodyWellFormedVisitor) } }
+        nonWellFormedClauseInstances.forEach { assertFalse("${it.body} bodyWellFormedVisitor should return false") { it.body.accept(Clause.bodyWellFormedVisitor) } }
     }
 
     @Test

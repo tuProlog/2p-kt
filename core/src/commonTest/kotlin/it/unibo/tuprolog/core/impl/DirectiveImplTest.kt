@@ -53,8 +53,8 @@ internal class DirectiveImplTest {
 
     @Test
     fun isGroundTrueIfNoVariablesArePresent() {
-        groundDirectivesInstances.forEach { assertTrue { it.isGround } }
-        nonGroundDirectivesInstances.forEach { assertFalse { it.isGround } }
+        groundDirectivesInstances.forEach { assertTrue("$it isGround should be true") { it.isGround } }
+        nonGroundDirectivesInstances.forEach { assertFalse("$it isGround should be false") { it.isGround } }
     }
 
     @Test
