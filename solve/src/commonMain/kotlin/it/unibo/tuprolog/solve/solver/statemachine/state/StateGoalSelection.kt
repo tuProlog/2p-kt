@@ -29,7 +29,7 @@ internal class StateGoalSelection(
                 when {
                     // current goal is split in conjunction, disjunction or implication
                     signature.name in Clause.notableFunctors -> {
-                        val subGoalsToBeSolved = goalsToSolveOrdered(arguments, solverStrategies::predicationChoiceStrategy)
+                        val subGoalsToBeSolved = goalsToSolveOrdered(arguments.asSequence(), solverStrategies::predicationChoiceStrategy)
 
                         // TODO: 17/08/2019 check for sub goals correctness, with Clause.bodyWellFormedVisitor
                         // TODO: 17/08/2019 prepareForExecution should be called on arguments
