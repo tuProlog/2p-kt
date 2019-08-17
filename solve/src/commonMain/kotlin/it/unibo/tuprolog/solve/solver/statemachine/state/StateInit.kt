@@ -17,21 +17,13 @@ internal class StateInit(
 ) : AbstractTimedState(solveRequest, executionStrategy, solverStrategies) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val currentGoalStruct = with(solveRequest) { signature.withArgs(arguments) }
-
-        when {
-            with(currentGoalStruct) { this != null && solverStrategies.successCheckStrategy(this) } ->
-                yield(StateEnd.True(solveRequest, executionStrategy, solverStrategies))
-
-            else ->
-                yield(
-                        StateGoalSelection(
-                                solveRequest.copy(context = initializationWork(solveRequest.context)),
-                                executionStrategy,
-                                solverStrategies
-                        )
+        yield(
+                StateGoalSelection(
+                        solveRequest.copy(context = initializationWork(solveRequest.context)),
+                        executionStrategy,
+                        solverStrategies
                 )
-        }
+        )
     }
 
     /** Any state machine initialization should be done here */
