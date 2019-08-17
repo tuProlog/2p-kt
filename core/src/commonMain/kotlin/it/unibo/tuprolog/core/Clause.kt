@@ -97,7 +97,7 @@ interface Clause : Struct {
 }
 
 /**
- * Prepares the receiver ClauseDatabase for execution, using the provided visitor
+ * Prepares the receiver Clause for execution, using the provided visitor
  *
  * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
  * as the Term: `product(A) :- call(A), call(A)`
