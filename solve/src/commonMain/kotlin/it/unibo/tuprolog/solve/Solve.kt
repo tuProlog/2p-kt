@@ -23,8 +23,23 @@ sealed class Solve {
             val executionTimeout: TimeDuration = Long.MAX_VALUE
     ) : Solve() {
         init {
-            // TODO: 16/08/2019 add check on signature arity and arguments count match
+            require(signature.arity == arguments.count()) {
+                "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+            }
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
+        }
+
+        /** Checks for equality only by means of [signature] and [arguments] fields */
+        fun equalSignatureAndArgs(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Request
+
+            if (signature != other.signature) return false
+            if (arguments != other.arguments) return false
+
+            return true
         }
     }
 

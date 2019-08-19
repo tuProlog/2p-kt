@@ -5,9 +5,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 /**
  * Test class for [Solve], [Solve.Request] and [Solve.Response]
@@ -23,14 +21,14 @@ internal class SolveTest {
             ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.of(), ClauseDatabase.of(), 0L)
     private val anExecutionTimeout = 300L
 
+    private val request = Solve.Request(aSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
+
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
-
-        assertEquals(aSignature, toBeTested.signature)
-        assertEquals(anArgumentList, toBeTested.arguments)
-        assertEquals(anExecutionContext, toBeTested.context)
-        assertEquals(anExecutionTimeout, toBeTested.executionTimeout)
+        assertEquals(aSignature, request.signature)
+        assertEquals(anArgumentList, request.arguments)
+        assertEquals(anExecutionContext, request.context)
+        assertEquals(anExecutionTimeout, request.executionTimeout)
     }
 
     @Test
@@ -41,9 +39,34 @@ internal class SolveTest {
     }
 
     @Test
+    fun requestConstructorComplainsWithWrongArityAndArgumentsCount() {
+        assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature, emptyList(), anExecutionContext) }
+        assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature, anArgumentList + Truth.fail(), anExecutionContext) }
+    }
+
+    @Test
     fun requestConstructorComplainsWithNegativeTimeout() {
         Solve.Request(aSignature, anArgumentList, anExecutionContext, 0)
         assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature, anArgumentList, anExecutionContext, -1) }
+    }
+
+    @Test
+    fun equalSignatureAndArgsWorksAsExpected() {
+        val differentSignature = aSignature.copy(name = "myName")
+        val differentArgumentList = anArgumentList.dropLast(1) + Truth.fail()
+        val differentExecutionContext = anExecutionContext.copy(computationStartTime = 100)
+        val differentExecutionTimeout = 20L
+
+        // these assertion should be true before really testing this behaviour
+        assertNotEquals(differentSignature, aSignature)
+        assertNotEquals(differentArgumentList, anArgumentList)
+        assertNotEquals(differentExecutionContext, anExecutionContext)
+        assertNotEquals(differentExecutionTimeout, anExecutionTimeout)
+
+        assertTrue { request.equalSignatureAndArgs(request.copy(context = differentExecutionContext)) }
+        assertTrue { request.equalSignatureAndArgs(request.copy(executionTimeout = differentExecutionTimeout)) }
+        assertFalse { request.equalSignatureAndArgs(request.copy(signature = differentSignature)) }
+        assertFalse { request.equalSignatureAndArgs(request.copy(arguments = differentArgumentList)) }
     }
 
     @Test
