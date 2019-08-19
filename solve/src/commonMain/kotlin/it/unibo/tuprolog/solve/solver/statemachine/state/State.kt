@@ -15,4 +15,6 @@ interface State {
     /** Makes the state behave and lazily returns next states */
     fun behave(): Sequence<State>
 
+    /** A flag signaling if this [State.behave] has been called */
+    val hasBehaved: Boolean
 }
