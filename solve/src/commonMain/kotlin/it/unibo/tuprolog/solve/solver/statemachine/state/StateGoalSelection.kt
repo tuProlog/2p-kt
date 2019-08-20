@@ -18,20 +18,20 @@ internal class StateGoalSelection(
 ) : AbstractTimedState(solveRequest, executionStrategy, solverStrategies) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val currentGoalStruct = with(solveRequest) { signature.withArgs(arguments) }
+        val currentGoal = with(solveRequest) { signature.withArgs(arguments) }
 
         when {
             // current goal is already demonstrated
-            with(currentGoalStruct) { this != null && solverStrategies.successCheckStrategy(this, solveRequest.context) } ->
+            with(currentGoal) { this != null && solverStrategies.successCheckStrategy(this, solveRequest.context) } ->
                 yield(StateEnd.True(solveRequest, executionStrategy, solverStrategies))
 
             else -> when {
                 // vararg primitive
-                currentGoalStruct == null ->
+                currentGoal == null ->
                     yield(StateGoalEvaluation(solveRequest, executionStrategy, solverStrategies))
 
-                goalWellFormed(currentGoalStruct) -> {
-                    val preparedGoal = prepareGoalForExecution(currentGoalStruct)
+                goalWellFormed(currentGoal) -> {
+                    val preparedGoal = prepareGoalForExecution(currentGoal)
 
                     yield(StateGoalEvaluation(
                             solveRequest.copy(

@@ -21,16 +21,18 @@ internal sealed class StateEnd(
     internal data class True(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope,
-            override val solverStrategies: SolverStrategies,
-            override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
-    ) : StateEnd(solveRequest, executionStrategy, solverStrategies), SuccessFinalState
+            override val solverStrategies: SolverStrategies
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies), SuccessFinalState{
+        override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
+    }
 
     internal data class TrueWithChoicePoint(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope,
-            override val solverStrategies: SolverStrategies,
-            override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
-    ) : StateEnd(solveRequest, executionStrategy, solverStrategies), SuccessFinalState
+            override val solverStrategies: SolverStrategies
+    ) : StateEnd(solveRequest, executionStrategy, solverStrategies), SuccessFinalState{
+        override val answerSubstitution: Substitution.Unifier = solveRequest.context.actualSubstitution
+    }
 
     internal data class False(
             override val solveRequest: Solve.Request,
