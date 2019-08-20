@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
@@ -28,7 +29,7 @@ internal class StateGoalEvaluation(
                         yield(StateEnd.True(
                                 with(solveRequest) {
                                     copy(context = with(context) {
-                                        copy(actualSubstitution = actualSubstitution + it.solution.substitution)
+                                        copy(actualSubstitution = Substitution.of(actualSubstitution, it.solution.substitution))
                                     })
                                 },
                                 executionStrategy,
