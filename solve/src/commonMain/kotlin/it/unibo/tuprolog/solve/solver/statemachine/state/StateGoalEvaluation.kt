@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
+import it.unibo.tuprolog.solve.solver.exception.HaltException
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -21,9 +22,14 @@ internal class StateGoalEvaluation(
         val primitive = with(solveRequest) { context.libraries.primitives[signature] }
 
         primitive?.also {
-            val responses = primitive(solveRequest)
+            var responses: Sequence<Solve.Response>? = null
+            try {
+                responses = primitive(solveRequest)
+            } catch (e: HaltException) {
+                yield(StateEnd.Halt(solveRequest, executionStrategy, solverStrategies))
+            }
 
-            responses.forEach {
+            responses?.forEach {
                 when (it.solution) {
                     is Solution.Yes ->
                         yield(StateEnd.True(
