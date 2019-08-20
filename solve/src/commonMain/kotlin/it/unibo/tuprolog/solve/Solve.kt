@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 sealed class Solve {
 
     /** The context that was actual at Request making or that changed after solving the goal */
-    abstract val context: ExecutionContext?
+    abstract val context: ExecutionContext
 
 
     /** Class representing a Request to be full-filled by the Solver */
@@ -48,7 +48,7 @@ sealed class Solve {
     data class Response(
             /** The solution attached to the response */
             val solution: Solution,
-            /** The changed execution context after goal solving, or `null` if nothing changed in context */
-            override val context: ExecutionContext? = null
+            /** The changed execution context after goal solving */
+            override val context: ExecutionContext
     ) : Solve()
 }

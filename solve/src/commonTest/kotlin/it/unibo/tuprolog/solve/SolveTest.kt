@@ -77,9 +77,4 @@ internal class SolveTest {
         assertEquals(anExecutionContext, toBeTested.context)
     }
 
-    @Test
-    fun responseExecutionContextCanBeOmittedAndItsNullThen() {
-        assertEquals(null, Solve.Response(aSolution).context)
-    }
-
 }
