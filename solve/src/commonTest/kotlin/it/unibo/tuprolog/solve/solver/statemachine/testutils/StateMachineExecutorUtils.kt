@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.solve.solver.statemachine
+package it.unibo.tuprolog.solve.solver.statemachine.testutils
 
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import kotlin.reflect.KClass
 
@@ -13,7 +13,7 @@ internal object StateMachineExecutorUtils {
 
     /** A dummy state whose behaviour returns an emptySequence, making execution stop */
     private val defaultDummyEndState = object : State {
-        override val solveRequest: Solve.Request by lazy { throw NotImplementedError() }
+        override val solveRequest: Nothing by lazy { throw NotImplementedError() }
         override fun behave(): Sequence<State> = emptySequence()
         override fun toString(): String = this::class.className()
     }

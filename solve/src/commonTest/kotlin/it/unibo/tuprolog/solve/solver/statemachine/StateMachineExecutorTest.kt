@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.solver.statemachine
 
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutorUtils.eightLeafSearchTreeState
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutorUtils.endState
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutorUtils.oneShotState
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutorUtils.threeShotState
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutorUtils.twoAlternativeState
+import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.eightLeafSearchTreeState
+import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.endState
+import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.oneShotState
+import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.threeShotState
+import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.twoAlternativeState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
