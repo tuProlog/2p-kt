@@ -1,9 +1,13 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
+import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -19,18 +23,30 @@ internal class StateRuleSelection(
 
     override fun behaveTimed(): Sequence<State> = sequence {
         val currentGoal = with(solveRequest) { signature.withArgs(arguments)!! }
-        val matchingClauses = solveRequest.context.libraries.theory[currentGoal]
+        val matchingRules = solveRequest.context.libraries.theory[currentGoal.freshCopy()]
+                .map { it.freshCopy() }
 
         when {
-            matchingClauses.none() -> yield(StateEnd.False(solveRequest, executionStrategy, solverStrategies))
+            matchingRules.none() -> yield(StateEnd.False(solveRequest, executionStrategy, solverStrategies))
 
-            else -> clausesOrdered(matchingClauses, solveRequest.context, solverStrategies::clauseChoiceStrategy).forEach {
-                yield(StateGoalSelection(
-                        solveRequest.copy(),
-                        executionStrategy,
-                        solverStrategies
-                ))
-                TODO("copy information to new solveRequest")
+            else -> clausesOrdered(matchingRules, solveRequest.context, solverStrategies::clauseChoiceStrategy).forEach {
+                val unifyingSubstitution = it.head mguWith currentGoal
+
+                // rules reaching this state are considered to be implicitly wellFormed
+                val wellFormedRuleBody = it.body.apply(unifyingSubstitution) as Struct
+
+                val newSolveRequest = solveRequest.copy(
+                        signature = Signature.fromIndicator(wellFormedRuleBody.indicator)!!,
+                        arguments = wellFormedRuleBody.argsList,
+                        context = with(solveRequest.context) {
+                            copy(
+                                    actualSubstitution = Substitution.of(actualSubstitution, unifyingSubstitution),
+                                    parents = parents + this
+                            )
+                        }
+                )
+
+                yield(StateGoalSelection(newSolveRequest, executionStrategy, solverStrategies))
             }
         }
     }
