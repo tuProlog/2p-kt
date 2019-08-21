@@ -4,9 +4,11 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [ExecutionContext]
@@ -38,8 +40,9 @@ internal class ExecutionContextTest {
 
     @Test
     fun executionContextDefaultsCorrect() {
-        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime)
+        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB)
 
+        assertTrue { currentTime() >= toBeTested.computationStartTime }
         assertEquals(Substitution.empty(), toBeTested.actualSubstitution)
         assertEquals(emptySequence(), toBeTested.parents)
     }

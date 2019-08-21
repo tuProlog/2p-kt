@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
+import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /** A class representing the Solver execution context, containing important information that determines its behaviour */
@@ -18,7 +19,7 @@ data class ExecutionContext(
         /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
         val dynamicKB: ClauseDatabase,
         /** When the overall computation started */
-        val computationStartTime: TimeInstant,
+        val computationStartTime: TimeInstant = currentTime(),
         /** The set of actual substitution till this execution context */
         val actualSubstitution: Substitution.Unifier = Substitution.empty(),
         /** The sequence of parent execution contexts before this, till the resolution root */
