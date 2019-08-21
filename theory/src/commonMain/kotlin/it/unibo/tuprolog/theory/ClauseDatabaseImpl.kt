@@ -34,15 +34,15 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun get(clause: Clause): Sequence<Clause> = reteTree.get(clause)
 
-    override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
+    override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it as Rule }
 
-    override fun get(indicator: Indicator): Sequence<Clause> {
+    override fun get(indicator: Indicator): Sequence<Rule> {
         require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
 
-        return get(Clause.of(
+        return get(Rule.of(
                 Struct.of(indicator.indicatedName!!, (1..indicator.indicatedArity!!).map { Var.anonymous() }),
                 Var.anonymous())
-        )
+        ).map { it as Rule }
     }
 
 
