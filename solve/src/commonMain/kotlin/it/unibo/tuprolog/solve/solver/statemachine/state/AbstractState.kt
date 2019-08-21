@@ -15,6 +15,4 @@ abstract class AbstractState(
         protected open val executionStrategy: CoroutineScope,
         /** The [SolverStrategies] to be applied during solution process */
         protected open val solverStrategies: SolverStrategies
-) : State {
-    override val hasBehaved = false
-}
+) : State
