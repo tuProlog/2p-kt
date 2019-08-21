@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.solve.solver.statemachine
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.AbstractSolver
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import it.unibo.tuprolog.solve.solver.statemachine.state.SuccessFinalState

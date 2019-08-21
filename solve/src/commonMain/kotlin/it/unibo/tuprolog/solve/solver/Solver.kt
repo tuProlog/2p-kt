@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.SolverSLD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
