@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
+import it.unibo.tuprolog.solve.solver.statemachine.Utils.isWellFormed
+import it.unibo.tuprolog.solve.solver.statemachine.Utils.prepareForExecution
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -30,18 +31,17 @@ internal class StateGoalSelection(
                 currentGoal == null ->
                     yield(StateGoalEvaluation(solveRequest, executionStrategy, solverStrategies))
 
-                goalWellFormed(currentGoal) -> {
-                    val preparedGoal = prepareGoalForExecution(currentGoal)
-
-                    yield(StateGoalEvaluation(
-                            solveRequest.copy(
-                                    signature = Signature.fromIndicator(preparedGoal.indicator)!!,
-                                    arguments = preparedGoal.argsList
-                            ),
-                            executionStrategy,
-                            solverStrategies
-                    ))
-                }
+                isWellFormed(currentGoal) ->
+                    prepareForExecution(currentGoal).also { preparedGoal ->
+                        yield(StateGoalEvaluation(
+                                solveRequest.copy(
+                                        signature = Signature.fromIndicator(preparedGoal.indicator)!!,
+                                        arguments = preparedGoal.argsList
+                                ),
+                                executionStrategy,
+                                solverStrategies
+                        ))
+                    }
 
                 // goal non well-formed
                 else ->
@@ -49,16 +49,4 @@ internal class StateGoalSelection(
             }
         }
     }
-
-    /** Check whether the provided term is a well-formed predication */
-    private fun <P : Term> goalWellFormed(subGoal: P): Boolean = subGoal.accept(Clause.bodyWellFormedVisitor)
-
-    /**
-     * Prepares the provided Goal for execution
-     *
-     * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
-     */
-    private fun <P : Term> prepareGoalForExecution(subGoal: P): Struct =
-            // exploits "Clause" implementation of prepareForExecution() to do that
-            Directive.of(subGoal).prepareForExecution().args.single().castTo()
 }

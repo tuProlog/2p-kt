@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
+import it.unibo.tuprolog.solve.solver.statemachine.Utils
+import it.unibo.tuprolog.solve.solver.statemachine.Utils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 
@@ -29,38 +30,40 @@ internal class StateRuleSelection(
         when {
             matchingRules.none() -> yield(StateEnd.False(solveRequest, executionStrategy, solverStrategies))
 
-            else -> clausesOrdered(matchingRules, solveRequest.context, solverStrategies::clauseChoiceStrategy).forEach {
-                val unifyingSubstitution = it.head mguWith currentGoal
+            else -> orderedWithStrategy(matchingRules, solveRequest.context, solverStrategies::clauseChoiceStrategy).forEach { clause ->
+                val unifyingSubstitution = clause.head mguWith currentGoal
 
                 // rules reaching this state are considered to be implicitly wellFormed
-                val wellFormedRuleBody = it.body.apply(unifyingSubstitution) as Struct
+                val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
 
-                val newSolveRequest = solveRequest.copy(
-                        signature = Signature.fromIndicator(wellFormedRuleBody.indicator)!!,
-                        arguments = wellFormedRuleBody.argsList,
-                        context = with(solveRequest.context) {
-                            copy(
-                                    actualSubstitution = Substitution.of(actualSubstitution, unifyingSubstitution),
-                                    parents = parents + this
-                            )
+                val newSolveRequest = Utils.createNewGoalSolveRequest(
+                        solveRequest, wellFormedRuleBody, currentTime(), unifyingSubstitution)
+
+                StateMachineExecutor
+                        .executeWrapping(StateInit(newSolveRequest, executionStrategy, solverStrategies))
+                        .forEach {
+                            yield(it)
+
+                            // find in sub-goal state sequence, the state responding to actual solveRequest
+                            if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(newSolveRequest) }) {
+                                yield(when (it.wrappedState) {
+                                    is SuccessFinalState ->
+                                        StateEnd.True(
+                                                solveRequest.copy(context = with(solveRequest.context) {
+                                                    copy(actualSubstitution = Substitution.of(
+                                                            actualSubstitution,
+                                                            it.wrappedState.solveRequest.context.actualSubstitution
+                                                    ))
+                                                }),
+                                                executionStrategy,
+                                                solverStrategies
+                                        )
+                                    else ->
+                                        StateEnd.False(solveRequest, executionStrategy, solverStrategies)
+                                })
+                            }
                         }
-                )
-
-                yield(StateGoalSelection(newSolveRequest, executionStrategy, solverStrategies))
             }
         }
     }
-
-    /** Computes the ordered selection of clauses, according to provided selection strategy */
-    private fun <C : Clause> clausesOrdered(
-            clauses: Sequence<C>,
-            context: ExecutionContext,
-            selectionStrategy: (Sequence<C>, ExecutionContext) -> C
-    ): Sequence<C> = sequence {
-        mutableListOf<C>()
-                .also { selected ->
-                    repeat(clauses.count()) { yield(selectionStrategy(clauses - selected, context)) }
-                }
-    }
-
 }
