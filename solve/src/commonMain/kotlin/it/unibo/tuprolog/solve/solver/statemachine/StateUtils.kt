@@ -14,15 +14,17 @@ internal object StateUtils {
 
     /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
     fun <E> orderedWithStrategy(
-            clauses: Sequence<E>,
+            elements: Sequence<E>,
             context: ExecutionContext,
             selectionStrategy: (Sequence<E>, ExecutionContext) -> E
     ): Sequence<E> = sequence {
         val alreadySelected = mutableListOf<E>()
 
-        clauses.forEach { _ ->
-            alreadySelected += selectionStrategy(clauses - alreadySelected, context)
-                    .also { yield(it) }
+        elements.forEach { _ ->
+            (elements - alreadySelected).takeIf { it.any() }?.also { remaining ->
+                alreadySelected += selectionStrategy(remaining, context)
+                        .also { yield(it) }
+            }
         }
     }
 
