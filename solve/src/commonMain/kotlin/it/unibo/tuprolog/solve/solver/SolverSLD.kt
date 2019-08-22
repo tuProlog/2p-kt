@@ -18,6 +18,7 @@ internal class SolverSLD(private val executionStrategy: CoroutineScope) : Abstra
     override fun solve(goal: Solve.Request): Sequence<Solve.Response> =
             StateMachineExecutor.execute(StateInit(goal, executionStrategy, solverStrategies))
                     .filterIsInstance<FinalState>()
+                    .filter { it.solveRequest.equalSignatureAndArgs(goal) }
                     .map {
                         Solve.Response(
                                 finalStateToSolutionMapping(it),
