@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
-import it.unibo.tuprolog.solve.solver.statemachine.Utils.isWellFormed
-import it.unibo.tuprolog.solve.solver.statemachine.Utils.prepareForExecution
+import it.unibo.tuprolog.solve.solver.statemachine.StateUtils.isWellFormed
+import it.unibo.tuprolog.solve.solver.statemachine.StateUtils.prepareForExecution
 import kotlinx.coroutines.CoroutineScope
 
 /**

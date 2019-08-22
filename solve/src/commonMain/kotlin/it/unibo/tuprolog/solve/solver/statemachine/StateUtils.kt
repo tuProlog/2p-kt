@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.Solve
  *
  * @author Enrico
  */
-internal object Utils {
+internal object StateUtils {
 
     /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
     fun <E> orderedWithStrategy(
@@ -27,7 +27,7 @@ internal object Utils {
     }
 
     /** Check whether the provided term is a well-formed predication */
-    fun <T : Term> isWellFormed(goal: T): Boolean = goal.accept(Clause.bodyWellFormedVisitor)
+    fun isWellFormed(goal: Term): Boolean = goal.accept(Clause.bodyWellFormedVisitor)
 
     /**
      * Prepares the provided Goal for execution
@@ -69,16 +69,4 @@ internal object Utils {
                         .takeIf { it >= 0 }
                         ?: 0
             }
-
-    //    /** A method to prepare sub-goals to be executed creating the relative initial states */
-//    fun <G : Term> prepareSubGoalInitStates(subGoalsToBeSolved: Sequence<G>): Sequence<State> =
-//            subGoalsToBeSolved
-//                    .map { prepareForExecution(it) }
-//                    .map {
-//                        it.unibo.tuprolog.solve.solver.statemachine.state.StateInit(
-//                                createNewGoalSolveRequest(it, solveRequest.context, solveRequest.executionTimeout, currentTime()),
-//                                executionStrategy,
-//                                solverStrategies
-//                        )
-//                    }
 }
