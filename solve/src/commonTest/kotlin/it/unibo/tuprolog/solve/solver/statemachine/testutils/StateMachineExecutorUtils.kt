@@ -15,6 +15,7 @@ internal object StateMachineExecutorUtils {
     private val defaultDummyEndState = object : State {
         override val solveRequest: Nothing by lazy { throw NotImplementedError() }
         override fun behave(): Sequence<State> = emptySequence()
+        override val hasBehaved: Boolean = false
         override fun toString(): String = this::class.className()
     }
 
