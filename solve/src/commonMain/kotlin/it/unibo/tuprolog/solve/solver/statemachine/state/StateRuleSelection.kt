@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.statemachine.StateUtils
-import it.unibo.tuprolog.solve.solver.statemachine.StateUtils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.SolverUtils
+import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +36,7 @@ internal class StateRuleSelection(
                 // rules reaching this state are considered to be implicitly wellFormed
                 val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
 
-                val newSolveRequest = StateUtils.createNewGoalSolveRequest(
+                val newSolveRequest = SolverUtils.createNewGoalSolveRequest(
                         solveRequest, wellFormedRuleBody, currentTime(), unifyingSubstitution)
 
                 StateMachineExecutor

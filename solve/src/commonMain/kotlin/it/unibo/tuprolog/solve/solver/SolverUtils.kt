@@ -1,16 +1,18 @@
-package it.unibo.tuprolog.solve.solver.statemachine
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
+import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 
 /**
  * Utilities object for implementing resolution behaviour
  *
  * @author Enrico
  */
-internal object StateUtils {
+internal object SolverUtils {
 
     /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
     fun <E> orderedWithStrategy(

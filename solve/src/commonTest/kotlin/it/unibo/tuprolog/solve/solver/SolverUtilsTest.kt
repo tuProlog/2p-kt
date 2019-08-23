@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.statemachine
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
@@ -7,23 +7,23 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [StateUtils]
+ * Test class for [SolverUtils]
  *
  * @author Enrico
  */
-internal class StateUtilsTest {
+internal class SolverUtilsTest {
 
     @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
         assertEquals(
                 emptySequence<Nothing>().toList(),
-                StateUtils.orderedWithStrategy(emptySequence<Nothing>(), DummyInstances.executionContext) { seq, _ -> seq.first() }.toList()
+                SolverUtils.orderedWithStrategy(emptySequence<Nothing>(), DummyInstances.executionContext) { seq, _ -> seq.first() }.toList()
         )
     }
 
     @Test
     fun orderWithStrategyPassesCorrectlyParametersToSelectionFunction() {
-        StateUtils.orderedWithStrategy(emptySequence<Unit>(), DummyInstances.executionContext) { sequence, context ->
+        SolverUtils.orderedWithStrategy(emptySequence<Unit>(), DummyInstances.executionContext) { sequence, context ->
             assertEquals(emptySequence(), sequence)
             assertEquals(DummyInstances.executionContext, context)
         }
@@ -32,7 +32,7 @@ internal class StateUtilsTest {
     @Test
     fun orderWithStrategyAppliesCorrectlySelectionStrategy() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 55)
-        val toBeTested = StateUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.min()!! }
+        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.min()!! }
 
         assertEquals(testSequence.sorted().toList(), toBeTested.toList())
     }
@@ -40,7 +40,7 @@ internal class StateUtilsTest {
     @Test
     fun orderWithStrategyRemovesDuplicatedItems() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 5)
-        val toBeTested = StateUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.max()!! }
+        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.max()!! }
 
         assertEquals(testSequence.sortedDescending().distinct().toList(), toBeTested.toList())
     }
@@ -50,8 +50,8 @@ internal class StateUtilsTest {
         val wellFormedGoal = Struct.of("a", Integer.of(2))
         val nonWellFormedGoal = Tuple.of(Atom.of("a"), Integer.of(3))
 
-        assertEquals(StateUtils.isWellFormed(wellFormedGoal), wellFormedGoal.accept(Clause.bodyWellFormedVisitor))
-        assertEquals(StateUtils.isWellFormed(nonWellFormedGoal), nonWellFormedGoal.accept(Clause.bodyWellFormedVisitor))
+        assertEquals(SolverUtils.isWellFormed(wellFormedGoal), wellFormedGoal.accept(Clause.bodyWellFormedVisitor))
+        assertEquals(SolverUtils.isWellFormed(nonWellFormedGoal), nonWellFormedGoal.accept(Clause.bodyWellFormedVisitor))
     }
 
     @Test
@@ -60,8 +60,8 @@ internal class StateUtilsTest {
         val bVar = Var.of("B")
         val correct = Tuple.of(Struct.of("call", aVar), Struct.of("call", bVar))
 
-        val toBeTested1 = StateUtils.prepareForExecution(Tuple.of(aVar, bVar))
-        val toBeTested2 = StateUtils.prepareForExecution(StateUtils.prepareForExecution(Tuple.of(aVar, bVar)))
+        val toBeTested1 = SolverUtils.prepareForExecution(Tuple.of(aVar, bVar))
+        val toBeTested2 = SolverUtils.prepareForExecution(SolverUtils.prepareForExecution(Tuple.of(aVar, bVar)))
 
         assertEquals(correct, toBeTested1)
         assertEquals(correct, toBeTested2)
@@ -73,8 +73,8 @@ internal class StateUtilsTest {
         val currentTime = 100L
         val newSubstitution = Substitution.of("A", Atom.of("a"))
 
-        val toBeTested = StateUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime)
-        val toBeTestedSubstitution = StateUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime, newSubstitution)
+        val toBeTested = SolverUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime)
+        val toBeTestedSubstitution = SolverUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime, newSubstitution)
 
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
@@ -93,19 +93,19 @@ internal class StateUtilsTest {
         }
 
         val currentTimeLow = 80L
-        val toBeTested = StateUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeLow)
+        val toBeTested = SolverUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeLow)
 
         assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionTimeout)
 
         val currentTimeHigh = 350L
-        val toBeTestedZeroTimeout = StateUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeHigh)
+        val toBeTestedZeroTimeout = SolverUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeHigh)
 
         assertEquals(0L, toBeTestedZeroTimeout.executionTimeout)
     }
 
     @Test
     fun createNewGoalSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = StateUtils.createNewGoalSolveRequest(
+        val toBeTested = SolverUtils.createNewGoalSolveRequest(
                 DummyInstances.solveRequest.copy(executionTimeout = Long.MAX_VALUE),
                 Atom.of("a"),
                 100L
