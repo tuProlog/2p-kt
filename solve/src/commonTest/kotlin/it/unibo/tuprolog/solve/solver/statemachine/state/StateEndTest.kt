@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlinx.coroutines.MainScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [StateEnd] and subclasses
@@ -64,6 +65,18 @@ internal class StateEndTest {
     fun timeoutStateHoldInsertedData() {
         val toBeTested = StateEnd.Timeout(solveRequest, executionStrategy)
         assertEquals(solveRequest, toBeTested.solveRequest)
+    }
+
+    @Test
+    fun allStateEndInstancesReturnEmptyNextStatesSequence() {
+        val toBeTested = listOf(
+                StateEnd.True(solveRequest, executionStrategy),
+                StateEnd.False(solveRequest, executionStrategy),
+                StateEnd.Halt(solveRequest, executionStrategy),
+                StateEnd.Timeout(solveRequest, executionStrategy)
+        )
+
+        toBeTested.forEach { assertTrue { it.behave().none() } }
     }
 
 }
