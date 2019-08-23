@@ -4,9 +4,9 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverStrategies
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ internal class StateRuleSelection(
             matchingRules.none() -> yield(StateEnd.False(solveRequest, executionStrategy, solverStrategies))
 
             else -> orderedWithStrategy(matchingRules, solveRequest.context, solverStrategies::clauseChoiceStrategy).forEach { clause ->
-                val unifyingSubstitution = clause.head mguWith currentGoal
+                val unifyingSubstitution = currentGoal mguWith clause.head
 
                 // rules reaching this state are considered to be implicitly wellFormed
                 val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
