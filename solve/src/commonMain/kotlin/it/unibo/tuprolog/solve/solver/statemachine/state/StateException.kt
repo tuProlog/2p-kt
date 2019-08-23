@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.SolverStrategies
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -11,9 +10,8 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateException(
         override val solveRequest: Solve.Request,
-        override val executionStrategy: CoroutineScope,
-        override val solverStrategies: SolverStrategies
-) : AbstractTimedState(solveRequest, executionStrategy, solverStrategies) {
+        override val executionStrategy: CoroutineScope
+) : AbstractTimedState(solveRequest, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

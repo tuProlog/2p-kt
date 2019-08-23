@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 internal class SolverSLD(private val executionStrategy: CoroutineScope) : AbstractSolver() {
 
     override fun solve(goal: Solve.Request): Sequence<Solve.Response> =
-            StateMachineExecutor.execute(StateInit(goal, executionStrategy, solverStrategies))
+            StateMachineExecutor.execute(StateInit(goal, executionStrategy))
                     .filterIsInstance<FinalState>()
                     .filter { it.solveRequest.equalSignatureAndArgs(goal) }
                     .map {
