@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -24,10 +26,16 @@ internal class ExecutionContextTest {
     private val aComputationStartTime = 0L
     private val aSubstitution = Substitution.empty()
     private val aParentSequence = emptySequence<ExecutionContext>()
+    private val someSolverStrategies = object : SolverStrategies {
+        override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>, context: ExecutionContext): P = throw NotImplementedError()
+        override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>, context: ExecutionContext): C = throw NotImplementedError()
+        override fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean = throw NotImplementedError()
+    }
 
     @Test
     fun executionContextHoldsInsertedData() {
-        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime, aSubstitution, aParentSequence)
+        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime,
+                aSubstitution, aParentSequence, someSolverStrategies)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
@@ -36,6 +44,7 @@ internal class ExecutionContextTest {
         assertEquals(aComputationStartTime, toBeTested.computationStartTime)
         assertEquals(aSubstitution, toBeTested.actualSubstitution)
         assertEquals(aParentSequence, toBeTested.parents)
+        assertEquals(someSolverStrategies, toBeTested.solverStrategies)
     }
 
     @Test
@@ -45,6 +54,7 @@ internal class ExecutionContextTest {
         assertTrue { currentTime() >= toBeTested.computationStartTime }
         assertEquals(Substitution.empty(), toBeTested.actualSubstitution)
         assertEquals(emptySequence(), toBeTested.parents)
+        assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
     }
 
 }

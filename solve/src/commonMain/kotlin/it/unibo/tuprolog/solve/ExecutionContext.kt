@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -23,5 +24,7 @@ data class ExecutionContext(
         /** The set of actual substitution till this execution context */
         val actualSubstitution: Substitution.Unifier = Substitution.empty(),
         /** The sequence of parent execution contexts before this, till the resolution root */
-        val parents: Sequence<ExecutionContext> = emptySequence()
+        val parents: Sequence<ExecutionContext> = emptySequence(),
+        /** The key strategies that a solver should use during resolution process */
+        val solverStrategies: SolverStrategies = SolverStrategies.prologStandard
 )

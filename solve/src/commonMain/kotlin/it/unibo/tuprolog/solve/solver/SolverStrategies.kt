@@ -19,4 +19,21 @@ interface SolverStrategies {
 
     /** Determines "when and what" is considered successfully demonstrated, during solution process */
     fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean
+
+    companion object {
+
+        /** Returns a strategy object containing the key solution strategies used by a Standard Prolog solver */
+        val prologStandard = object : SolverStrategies {
+
+            /** The default implementation, following the Prolog Standard, selects the first predication found */
+            override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>, context: ExecutionContext): P =
+                    predicationSequence.first()
+
+            /** The default implementation, following the Prolog Standard, selects the first clause found */
+            override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>, context: ExecutionContext): C =
+                    unifiableClauses.first()
+
+            override fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean = term.isTrue
+        }
+    }
 }
