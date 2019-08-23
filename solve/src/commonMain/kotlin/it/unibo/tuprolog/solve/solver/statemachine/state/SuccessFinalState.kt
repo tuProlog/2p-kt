@@ -9,6 +9,6 @@ import it.unibo.tuprolog.core.Substitution
  */
 interface SuccessFinalState : FinalState {
 
-    /** The answer substitution computed when reaching a success final state */
+    /** The answer substitution computed when reaching a success final state; it contains only variable bindings for current [solveRequest] */
     val answerSubstitution: Substitution.Unifier
 }
