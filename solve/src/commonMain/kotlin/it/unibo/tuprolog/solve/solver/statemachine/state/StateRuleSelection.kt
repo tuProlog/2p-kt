@@ -25,7 +25,6 @@ internal class StateRuleSelection(
     override fun behaveTimed(): Sequence<State> = sequence {
         val currentGoal = with(solveRequest) { signature.withArgs(arguments)!! }
         val matchingRules = solveRequest.context.libraries.theory[currentGoal.freshCopy()]
-                .map { it.freshCopy() }
 
         when {
             matchingRules.none() -> yield(StateEnd.False(solveRequest, executionStrategy, solverStrategies))
