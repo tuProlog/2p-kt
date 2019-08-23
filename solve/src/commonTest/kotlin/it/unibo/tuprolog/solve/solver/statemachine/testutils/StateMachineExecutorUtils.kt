@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.testutils
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import kotlin.reflect.KClass
+import kotlin.test.fail
 
 /**
  * Utils singleton for testing [StateMachineExecutor]
@@ -11,7 +12,7 @@ import kotlin.reflect.KClass
  */
 internal object StateMachineExecutorUtils {
 
-    /** A dummy state whose behaviour returns an emptySequence, making execution stop */
+    /** A dummy state that has not already behaved and whose behaviour returns an emptySequence, making execution stop */
     private val defaultDummyEndState = object : State {
         override val solveRequest: Nothing by lazy { throw NotImplementedError() }
         override fun behave(): Sequence<State> = emptySequence()
@@ -54,6 +55,16 @@ internal object StateMachineExecutorUtils {
         override fun toString(): String = "${this::class.className()} nextCount:$nextCount"
     }
 
+    /** Returns the same state but with [State.hasBehaved] set true, and before behave execution it launches [onBehaveAction] hook */
+    internal fun toBehavedState(
+            state: State,
+            onBehaveAction: () -> Unit = { fail("Behave method should not be called for `hasBehaved = true` states") }
+    ) = object : State by state {
+        override val hasBehaved: Boolean = true
+        override fun behave(): Sequence<State> = onBehaveAction().run { state.behave() }
+        override fun toString(): String = "${this::class.className()}  originalState: $state"
+    }
+
     /** A state that goes directly to [endState] */
     internal val oneShotState = oneStateAtATimeState(0, endState)
     /** A state that goes into [endState] after three calls of [State.behave] */
@@ -65,13 +76,20 @@ internal object StateMachineExecutorUtils {
             allNextStatesFromThis(2,
                     allNextStatesFromThis(2,
                             allNextStatesFromThis(2, endState)))
+    /** A [threeShotState] that won't produce any state because already executed */
+    internal val threeShotStateAlreadyExecuted = toBehavedState(threeShotState)
+    /** A `fiveShotState` that has the third state that has already executed */
+    internal val thirdStateHasAlreadyBehaved = oneStateAtATimeState(2,
+            toBehavedState(oneStateAtATimeState(2, endState)))
 
     /** All state machines that are finite */
     internal val allFiniteStateMachines = listOf(
             oneShotState,
             threeShotState,
             twoAlternativeState,
-            eightLeafSearchTreeState
+            eightLeafSearchTreeState,
+            threeShotStateAlreadyExecuted,
+            thirdStateHasAlreadyBehaved
     )
 
     /** Utility function to print meaningful names in object toString */

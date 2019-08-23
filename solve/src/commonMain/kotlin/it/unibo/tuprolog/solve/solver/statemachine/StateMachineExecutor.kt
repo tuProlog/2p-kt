@@ -25,8 +25,7 @@ internal object StateMachineExecutor {
     }
 
     /**
-     * Executes the state-machine starting from [state], wrapping lazily executed states into [AlreadyExecutedState],
-     * to signal that they should not execute again
+     * As [execute] and wraps lazily executed states into [AlreadyExecutedState], to signal that they should not execute again
      *
      * This method is useful when implementing internal computation and
      * external execution should just skip those states execution, because already internally evaluated.

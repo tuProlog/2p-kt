@@ -7,6 +7,8 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
  */
 class AlreadyExecutedState(internal val wrappedState: State) : State by wrappedState {
     override val hasBehaved: Boolean = true
+
+    override fun toString(): String = "AlreadyExecutedState of: $wrappedState"
 }
 
 /** Extension method to wrap a [State], marking it as already executed */
