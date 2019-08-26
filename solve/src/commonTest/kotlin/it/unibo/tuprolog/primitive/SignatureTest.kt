@@ -65,8 +65,14 @@ internal class SignatureTest {
 
     @Test
     fun withArgsComplainsIfNotCorrectNumberOfArgumentsProvided() {
-        assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(emptyList()) }
-        assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(argList + aAtom) }
+        assertFailsWith<IllegalArgumentException> { normalSignature.withArgs(emptyList()) }
+        assertFailsWith<IllegalArgumentException> { normalSignature.withArgs(argList + aAtom) }
+    }
+
+    @Test
+    fun withArgsDoesntCheckNumberOfArgumentsOnVarargSignatureYieldingNull() {
+        assertEquals(null, varargSignature.withArgs(emptyList()))
+        assertEquals(null, varargSignature.withArgs(argList + aAtom))
     }
 
     @Test

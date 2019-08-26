@@ -17,15 +17,13 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
             }
 
     /** Creates corresponding Struct of this Signature with provided arguments, if conversion is possible */
-    fun withArgs(arguments: Iterable<Term>): Struct? =
+    fun withArgs(arguments: Iterable<Term>): Struct? = when {
+        vararg -> null
+        else ->
             require(this.arity == arguments.count()) {
                 "Trying to create Term of signature `$this` with wrong number of arguments ${arguments.toList()}"
-            }.let {
-                when {
-                    vararg -> null
-                    else -> Struct.of(name, arguments.asSequence())
-                }
-            }
+            }.let { Struct.of(name, arguments.asSequence()) }
+    }
 
     companion object {
 
