@@ -23,8 +23,13 @@ sealed class Solve {
             val executionTimeout: TimeDuration = Long.MAX_VALUE
     ) : Solve() {
         init {
-            require(signature.arity == arguments.count()) {
-                "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+            when {
+                signature.vararg -> require(arguments.count() >= signature.arity) {
+                    "Trying to create Solve.Request of signature `$signature` with not enough arguments ${arguments.toList()}"
+                }
+                else -> require(arguments.count() == signature.arity) {
+                    "Trying to create Solve.Request of signature `$signature` with wrong number of arguments ${arguments.toList()}"
+                }
             }
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
         }

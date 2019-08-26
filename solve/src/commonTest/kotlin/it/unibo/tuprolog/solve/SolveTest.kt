@@ -45,6 +45,16 @@ internal class SolveTest {
     }
 
     @Test
+    fun requestConstructorComplainsWithLessThanArityArgumentsIfVarargSignature() {
+        assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature.copy(vararg = true), emptyList(), anExecutionContext) }
+    }
+
+    @Test
+    fun requestConstructorPermitsMoreThanArityArgumentsIfSignatureVararg() {
+        Solve.Request(aSignature.copy(vararg = true), anArgumentList + Truth.fail(), anExecutionContext)
+    }
+
+    @Test
     fun requestConstructorComplainsWithNegativeTimeout() {
         Solve.Request(aSignature, anArgumentList, anExecutionContext, 0)
         assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature, anArgumentList, anExecutionContext, -1) }
