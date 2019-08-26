@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
@@ -67,8 +68,10 @@ internal class StateRuleSelection(
     private fun Solve.Request.importingSubstitutionFrom(subSolveRequest: Solve.Request) = this
             .copy(context = with(solveRequest.context) {
                 copy(actualSubstitution = Substitution.of(
-                        actualSubstitution,
-                        subSolveRequest.context.actualSubstitution
+                        subSolveRequest.context.actualSubstitution,
+                        actualSubstitution.mapValues { (_, replacement) ->
+                            replacement.apply(subSolveRequest.context.actualSubstitution)
+                        }.asUnifier()
                 ))
             })
 }
