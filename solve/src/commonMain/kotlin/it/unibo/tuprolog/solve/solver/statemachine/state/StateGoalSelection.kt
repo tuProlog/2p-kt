@@ -30,6 +30,7 @@ internal class StateGoalSelection(
                 currentGoal == null ->
                     yield(StateGoalEvaluation(solveRequest, executionStrategy))
 
+                // a primitive or well-formed goal
                 isWellFormed(currentGoal) ->
                     prepareForExecution(currentGoal).also { preparedGoal ->
                         yield(StateGoalEvaluation(
