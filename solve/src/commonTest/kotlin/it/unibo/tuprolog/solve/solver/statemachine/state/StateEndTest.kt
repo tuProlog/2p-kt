@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.testutils.DummyInstances
-import kotlinx.coroutines.MainScope
+import it.unibo.tuprolog.solve.testutils.DummyInstances.executionStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -24,7 +24,6 @@ internal class StateEndTest {
             listOf(myScope.varOf("A"), myScope.varOf("B")),
             DummyInstances.executionContext
     )
-    private val executionStrategy = MainScope()
 
     @Test
     fun trueStateHoldInsertedData() {

@@ -16,8 +16,11 @@ internal abstract class AbstractTimedState(
         override val executionStrategy: CoroutineScope
 ) : AbstractState(solveRequest, executionStrategy), TimedState {
 
+    /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
+    private val stateCurrentTime by lazy { getCurrentTime() }
+
     override fun behave(): Sequence<State> = when {
-        timeIsOver(solveRequest.context.computationStartTime - getCurrentTime(), solveRequest.executionTimeout) ->
+        timeIsOver(stateCurrentTime - solveRequest.context.computationStartTime, solveRequest.executionTimeout) ->
             sequenceOf(StateEnd.Timeout(solveRequest, executionStrategy))
         else -> behaveTimed()
     }

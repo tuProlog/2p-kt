@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
+import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 
 /**
  * Utilities object for implementing resolution behaviour
@@ -47,7 +48,7 @@ internal object SolverUtils {
     fun createNewGoalSolveRequest(
             oldSolveRequest: Solve.Request,
             newGoal: Struct,
-            currentTime: TimeInstant,
+            actualTime: TimeInstant = currentTime(),
             toAddSubstitutions: Substitution = Substitution.empty()
     ): Solve.Request =
             Solve.Request(
@@ -59,7 +60,7 @@ internal object SolverUtils {
                                 parents = parents + this
                         )
                     },
-                    adjustExecutionTimeout(oldSolveRequest, currentTime)
+                    adjustExecutionTimeout(oldSolveRequest, actualTime)
             )
 
     /** Re-computes the execution timeout, leaving it Long.MAX_VALUE if it was it, or decreasing it with elapsed time */
