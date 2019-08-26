@@ -10,6 +10,8 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
+import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -71,17 +73,19 @@ internal class SolverSLDTest {
         val primitive: Primitive = { mainRequest ->
             when {
                 mainRequest.signature.name == Tuple.FUNCTOR -> sequence {
-                    // TODO: 23/08/2019 solverStrategies should be used to not hardcode selection order
+                    val toEvalSubGoals = with(mainRequest) {
+                        orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
+                    }
 
                     val leftSubSolveRequest = mainRequest.newSolveRequest(
-                            SolverUtils.prepareForExecution(mainRequest.arguments.first())
+                            prepareForExecution(toEvalSubGoals.first())
                     )
 
                     Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
                         when (leftResponse.solution) {
                             is Solution.Yes -> {
                                 val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                        SolverUtils.prepareForExecution(mainRequest.arguments.last()
+                                        prepareForExecution(toEvalSubGoals.last()
                                                 .apply(leftResponse.solution.substitution))
                                 )
 
