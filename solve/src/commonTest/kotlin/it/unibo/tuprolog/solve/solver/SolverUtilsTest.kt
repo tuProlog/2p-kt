@@ -2,9 +2,15 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
+import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
+import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /**
  * Test class for [SolverUtils]
@@ -68,13 +74,13 @@ internal class SolverUtilsTest {
     }
 
     @Test
-    fun createNewGoalSolveRequestInjectsPassedParametersInOldRequest() {
+    fun newSolveRequestInjectsPassedParametersInOldRequest() {
         val newGoal = Struct.of("a", Atom.of("ciao"))
         val currentTime = 100L
         val newSubstitution = Substitution.of("A", Atom.of("a"))
 
-        val toBeTested = SolverUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime)
-        val toBeTestedSubstitution = SolverUtils.createNewGoalSolveRequest(DummyInstances.solveRequest, newGoal, currentTime, newSubstitution)
+        val toBeTested = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime)
+        val toBeTestedSubstitution = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime, newSubstitution)
 
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
@@ -85,7 +91,7 @@ internal class SolverUtilsTest {
     }
 
     @Test
-    fun createNewGoalSolveRequestAdjustsCurrentTimeoutIfNotMaxValue() {
+    fun newSolveRequestAdjustsCurrentTimeoutIfNotMaxValue() {
         val initialStartTime = 40L
         val initialTimeout = 200L
         val startSolveRequest = with(DummyInstances.solveRequest) {
@@ -93,24 +99,70 @@ internal class SolverUtilsTest {
         }
 
         val currentTimeLow = 80L
-        val toBeTested = SolverUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeLow)
+        val toBeTested = startSolveRequest.newSolveRequest(Atom.of("a"), currentTimeLow)
 
         assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionTimeout)
 
         val currentTimeHigh = 350L
-        val toBeTestedZeroTimeout = SolverUtils.createNewGoalSolveRequest(startSolveRequest, Atom.of("a"), currentTimeHigh)
+        val toBeTestedZeroTimeout = startSolveRequest.newSolveRequest(Atom.of("a"), currentTimeHigh)
 
         assertEquals(0L, toBeTestedZeroTimeout.executionTimeout)
     }
 
     @Test
-    fun createNewGoalSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = SolverUtils.createNewGoalSolveRequest(
-                DummyInstances.solveRequest.copy(executionTimeout = Long.MAX_VALUE),
-                Atom.of("a"),
-                100L
-        )
+    fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
+        val toBeTested = DummyInstances.solveRequest.copy(executionTimeout = Long.MAX_VALUE)
+                .newSolveRequest(Atom.of("a"), 100L)
 
         assertEquals(Long.MAX_VALUE, toBeTested.executionTimeout)
+    }
+
+    @Test
+    fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
+        val finalSubstitution = Substitution.of("A", Atom.of("a"))
+        val finalContext = DummyInstances.executionContext.copy(actualSubstitution = finalSubstitution)
+
+        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
+                Signature("ciao", 0),
+                emptyList(),
+                finalSubstitution
+        ), finalContext)
+
+        val correct = with(DummyInstances.solveRequest) {
+            Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), finalContext)
+        }
+        val toBeTested = DummyInstances.solveRequest.yesResponseBy(responseToReuseContextAndSubstitution)
+
+        assertEquals(correct.solution, toBeTested.solution)
+        assertEquals(correct.context, toBeTested.context)
+    }
+
+    @Test
+    fun yesResponseComplainsIFPassedResponseSubstitutionIsFailed() {
+        val badResponse = with(DummyInstances.solveRequest) {
+            Solve.Response(Solution.No(signature, arguments), DummyInstances.executionContext)
+        }
+
+        assertFailsWith<IllegalArgumentException> { DummyInstances.solveRequest.yesResponseBy(badResponse) }
+    }
+
+    @Test
+    fun noResponseByWorksAsExpected() {
+        val finalSubstitution = Substitution.of("A", Atom.of("a"))
+        val finalContext = DummyInstances.executionContext.copy(actualSubstitution = finalSubstitution)
+
+        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
+                Signature("ciao", 0),
+                emptyList(),
+                finalSubstitution
+        ), finalContext)
+
+        val correct = with(DummyInstances.solveRequest) {
+            Solve.Response(Solution.No(signature, arguments), finalContext)
+        }
+        val toBeTested = DummyInstances.solveRequest.noResponseBy(responseToReuseContextAndSubstitution)
+
+        assertEquals(correct.solution, toBeTested.solution)
+        assertEquals(correct.context, toBeTested.context)
     }
 }

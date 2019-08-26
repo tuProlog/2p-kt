@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.SolverUtils
+import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -35,8 +35,7 @@ internal class StateRuleSelection(
                 // rules reaching this state are considered to be implicitly wellFormed
                 val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
 
-                val newSolveRequest = SolverUtils.createNewGoalSolveRequest(
-                        solveRequest, wellFormedRuleBody, currentTime(), unifyingSubstitution)
+                val newSolveRequest = solveRequest.newSolveRequest(wellFormedRuleBody, currentTime(), unifyingSubstitution)
 
                 StateMachineExecutor
                         .executeWrapping(StateInit(newSolveRequest, executionStrategy))

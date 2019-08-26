@@ -8,7 +8,9 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
+import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
+import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
+import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -66,42 +68,31 @@ internal class SolverSLDTest {
         )
 
         // rude implementation of "," functor primitive
-        val primitive: Primitive = { request ->
+        val primitive: Primitive = { mainRequest ->
             when {
-                request.signature.name == Tuple.FUNCTOR -> sequence {
+                mainRequest.signature.name == Tuple.FUNCTOR -> sequence {
                     // TODO: 23/08/2019 solverStrategies should be used to not hardcode selection order
 
-                    val leftSubSolveRequest = SolverUtils.createNewGoalSolveRequest(
-                            request,
-                            SolverUtils.prepareForExecution(request.arguments.first()),
-                            currentTime()
+                    val leftSubSolveRequest = mainRequest.newSolveRequest(
+                            SolverUtils.prepareForExecution(mainRequest.arguments.first())
                     )
 
                     Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
                         when (leftResponse.solution) {
                             is Solution.Yes -> {
-                                val rightSubSolveRequest = SolverUtils.createNewGoalSolveRequest(
-                                        leftSubSolveRequest,
-                                        SolverUtils.prepareForExecution(request.arguments.last()
-                                                .apply(leftResponse.solution.substitution)),
-                                        currentTime()
+                                val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
+                                        SolverUtils.prepareForExecution(mainRequest.arguments.last()
+                                                .apply(leftResponse.solution.substitution))
                                 )
 
                                 Solver.sld().solve(rightSubSolveRequest).forEach { rightResponse ->
                                     when (rightResponse.solution) {
-                                        is Solution.Yes -> yield(Solve.Response(
-                                                Solution.Yes(
-                                                        request.signature,
-                                                        request.arguments,
-                                                        rightResponse.solution.substitution as Substitution.Unifier
-                                                ), rightResponse.context))
-                                        is Solution.No -> yield(Solve.Response(
-                                                Solution.No(request.signature, request.arguments), rightResponse.context))
+                                        is Solution.Yes -> yield(mainRequest.yesResponseBy(rightResponse))
+                                        is Solution.No -> yield(mainRequest.noResponseBy(rightResponse))
                                     }
                                 }
                             }
-                            is Solution.No -> yield(Solve.Response(
-                                    Solution.No(request.signature, request.arguments), leftResponse.context))
+                            is Solution.No -> yield(mainRequest.noResponseBy(leftResponse))
                         }
                     }
 

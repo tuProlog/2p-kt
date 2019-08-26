@@ -27,10 +27,11 @@ internal sealed class StateEnd(
             override val executionStrategy: CoroutineScope
     ) : StateEnd(solveRequest, executionStrategy), SuccessFinalState {
 
-        override val answerSubstitution: Substitution.Unifier =
-                solveRequest.context.actualSubstitution.filterKeys { `var` ->
-                    solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
-                }.asUnifier()
+        override val answerSubstitution: Substitution.Unifier by lazy {
+            solveRequest.context.actualSubstitution.filterKeys { `var` ->
+                solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
+            }.asUnifier()
+        }
 
         /** A visitor to check if a [containedTerm] is present inside some other Term */
         private fun containsVisitor(containedTerm: Term): TermVisitor<Boolean> =
