@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,7 +34,10 @@ internal class StateRuleSelection(
                 // rules reaching this state are considered to be implicitly wellFormed
                 val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
 
-                val newSolveRequest = solveRequest.newSolveRequest(wellFormedRuleBody, currentTime(), unifyingSubstitution)
+                val newSolveRequest = solveRequest.newSolveRequest(
+                        newGoal = wellFormedRuleBody,
+                        toAddSubstitutions = unifyingSubstitution
+                )
 
                 StateMachineExecutor
                         .executeWrapping(StateInit(newSolveRequest, executionStrategy))
@@ -44,23 +46,29 @@ internal class StateRuleSelection(
 
                             // find in sub-goal state sequence, the state responding to actual solveRequest
                             if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(newSolveRequest) }) {
-                                yield(when (it.wrappedState) {
-                                    is SuccessFinalState ->
-                                        StateEnd.True(
-                                                solveRequest.copy(context = with(solveRequest.context) {
-                                                    copy(actualSubstitution = Substitution.of(
-                                                            actualSubstitution,
-                                                            it.wrappedState.solveRequest.context.actualSubstitution
-                                                    ))
-                                                }),
-                                                executionStrategy
-                                        )
-                                    else ->
-                                        StateEnd.False(solveRequest, executionStrategy)
-                                })
+                                yield(
+                                        when (it.wrappedState) {
+                                            is SuccessFinalState ->
+                                                StateEnd.True(
+                                                        solveRequest.importingSubstitutionFrom(it.wrappedState.solveRequest),
+                                                        executionStrategy
+                                                )
+                                            else ->
+                                                StateEnd.False(solveRequest, executionStrategy)
+                                        }
+                                )
                             }
                         }
             }
         }
     }
+
+    /** Utility method to copy receiver [Solve.Request] importing [subSolveRequest] substitution */
+    private fun Solve.Request.importingSubstitutionFrom(subSolveRequest: Solve.Request) = this
+            .copy(context = with(solveRequest.context) {
+                copy(actualSubstitution = Substitution.of(
+                        actualSubstitution,
+                        subSolveRequest.context.actualSubstitution
+                ))
+            })
 }
