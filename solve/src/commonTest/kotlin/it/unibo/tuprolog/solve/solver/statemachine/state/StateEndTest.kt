@@ -36,7 +36,7 @@ internal class StateEndTest {
         myScope.where {
             val toBeTested = StateEnd.True(
                     solveRequest.copy(context = with(solveRequest.context) {
-                        copy(actualSubstitution = Substitution.of(
+                        copy(currentSubstitution = Substitution.of(
                                 varOf("A") to Atom.of("a"),
                                 varOf("C") to Atom.of("c")
                         ))

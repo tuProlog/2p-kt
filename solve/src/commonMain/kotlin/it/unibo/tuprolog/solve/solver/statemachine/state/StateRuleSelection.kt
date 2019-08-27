@@ -67,10 +67,10 @@ internal class StateRuleSelection(
     /** Utility method to copy receiver [Solve.Request] importing [subSolveRequest] substitution */
     private fun Solve.Request.importingSubstitutionFrom(subSolveRequest: Solve.Request) = this
             .copy(context = with(solveRequest.context) {
-                copy(actualSubstitution = Substitution.of(
-                        subSolveRequest.context.actualSubstitution,
-                        actualSubstitution.mapValues { (_, replacement) ->
-                            replacement.apply(subSolveRequest.context.actualSubstitution)
+                copy(currentSubstitution = Substitution.of(
+                        subSolveRequest.context.currentSubstitution,
+                        currentSubstitution.mapValues { (_, replacement) ->
+                            replacement.apply(subSolveRequest.context.currentSubstitution)
                         }.asUnifier()
                 ))
             })

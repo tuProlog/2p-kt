@@ -85,9 +85,9 @@ internal class SolverUtilsTest {
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
         assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.parents.toList())
-        assertEquals(Substitution.empty(), toBeTested.context.actualSubstitution)
+        assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
 
-        assertEquals(newSubstitution, toBeTestedSubstitution.context.actualSubstitution)
+        assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
     }
 
     @Test
@@ -120,7 +120,7 @@ internal class SolverUtilsTest {
     @Test
     fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(actualSubstitution = finalSubstitution)
+        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
 
         val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
@@ -149,7 +149,7 @@ internal class SolverUtilsTest {
     @Test
     fun noResponseByWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(actualSubstitution = finalSubstitution)
+        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
 
         val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),

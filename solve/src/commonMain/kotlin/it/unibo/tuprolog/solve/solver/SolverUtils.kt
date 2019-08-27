@@ -56,7 +56,7 @@ internal object SolverUtils {
                     newGoal.argsList,
                     with(this.context) {
                         copy(
-                                actualSubstitution = Substitution.of(actualSubstitution, toAddSubstitutions),
+                                currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
                                 parents = parents + this
                         )
                     },

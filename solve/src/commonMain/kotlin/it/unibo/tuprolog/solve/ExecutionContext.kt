@@ -22,7 +22,7 @@ data class ExecutionContext(
         /** When the overall computation started */
         val computationStartTime: TimeInstant = currentTime(),
         /** The set of actual substitution till this execution context */
-        val actualSubstitution: Substitution.Unifier = Substitution.empty(),
+        val currentSubstitution: Substitution.Unifier = Substitution.empty(),
         /** The sequence of parent execution contexts before this, till the resolution root */
         val parents: Sequence<ExecutionContext> = emptySequence(),
         /** The key strategies that a solver should use during resolution process */

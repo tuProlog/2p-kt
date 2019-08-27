@@ -28,7 +28,7 @@ internal sealed class StateEnd(
     ) : StateEnd(solveRequest, executionStrategy), SuccessFinalState {
 
         override val answerSubstitution: Substitution.Unifier by lazy {
-            solveRequest.context.actualSubstitution.filterKeys { `var` ->
+            solveRequest.context.currentSubstitution.filterKeys { `var` ->
                 solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
             }.asUnifier()
         }

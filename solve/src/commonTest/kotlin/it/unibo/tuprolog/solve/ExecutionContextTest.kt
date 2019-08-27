@@ -42,7 +42,7 @@ internal class ExecutionContextTest {
         assertEquals(aStaticKB, toBeTested.staticKB)
         assertEquals(aDynamicKB, toBeTested.dynamicKB)
         assertEquals(aComputationStartTime, toBeTested.computationStartTime)
-        assertEquals(aSubstitution, toBeTested.actualSubstitution)
+        assertEquals(aSubstitution, toBeTested.currentSubstitution)
         assertEquals(aParentSequence, toBeTested.parents)
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
     }
@@ -52,7 +52,7 @@ internal class ExecutionContextTest {
         val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB)
 
         assertTrue { currentTime() >= toBeTested.computationStartTime }
-        assertEquals(Substitution.empty(), toBeTested.actualSubstitution)
+        assertEquals(Substitution.empty(), toBeTested.currentSubstitution)
         assertEquals(emptySequence(), toBeTested.parents)
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
     }
