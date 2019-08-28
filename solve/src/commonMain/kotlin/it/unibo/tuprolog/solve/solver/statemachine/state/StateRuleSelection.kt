@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 
@@ -40,8 +39,7 @@ internal class StateRuleSelection(
                         toAddSubstitutions = unifyingSubstitution
                 )
 
-                StateMachineExecutor
-                        .executeWrapping(StateInit(newSolveRequest, executionStrategy))
+                subStateExecute(StateInit(newSolveRequest, executionStrategy))
                         .forEach {
                             yield(it)
 
