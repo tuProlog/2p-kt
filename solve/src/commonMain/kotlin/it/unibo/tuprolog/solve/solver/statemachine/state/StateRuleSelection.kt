@@ -28,23 +28,21 @@ internal class StateRuleSelection(
 
             else -> with(solveRequest.context) {
                 orderedWithStrategy(matchingRules, this, this.solverStrategies::clauseChoiceStrategy)
-            }.forEach { clause ->
-                val unifyingSubstitution = currentGoal mguWith clause.head
+            }
+                    .map { it.freshCopy() }
+                    .map { refreshedRule ->
+                        val unifyingSubstitution = currentGoal mguWith refreshedRule.head
 
-                // rules reaching this state are considered to be implicitly wellFormed
-                val wellFormedRuleBody = clause.body.apply(unifyingSubstitution) as Struct
+                        // rules reaching this state are considered to be implicitly wellFormed
+                        val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 
-                val newSolveRequest = solveRequest.newSolveRequest(
-                        newGoal = wellFormedRuleBody,
-                        toAddSubstitutions = unifyingSubstitution
-                )
-
-                subStateExecute(StateInit(newSolveRequest, executionStrategy))
-                        .forEach {
+                        solveRequest.newSolveRequest(wellFormedRuleBody, unifyingSubstitution)
+                    }.forEach { subSolveRequest ->
+                        subStateExecute(StateInit(subSolveRequest, executionStrategy)).forEach {
                             yield(it)
 
-                            // find in sub-goal state sequence, the state responding to actual solveRequest
-                            if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(newSolveRequest) }) {
+                            // find in sub-goal state sequence, the state responding to current solveRequest
+                            if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(subSolveRequest) }) {
                                 yield(
                                         when (it.wrappedState) {
                                             is SuccessFinalState ->
@@ -58,7 +56,7 @@ internal class StateRuleSelection(
                                 )
                             }
                         }
-            }
+                    }
         }
     }
 
