@@ -24,14 +24,14 @@ internal class PrimitiveTest {
 
     @Test
     fun checkedPrimitiveForReturnsPrimitiveBehavingExactlyAsProvidedOne() {
-        val toBeTested: Primitive = checkedPrimitiveFor(signature, testPrimitive)
+        val toBeTested: Primitive = primitiveOf(signature, testPrimitive)
 
         assertEquals(testPrimitive(aRequest).toList(), toBeTested(aRequest).toList())
     }
 
     @Test
     fun checkedPrimitiveComplainsIfDifferentRequestSignatureIsDetected() {
-        assertFailsWith<IllegalArgumentException> { checkedPrimitiveFor(signature.copy(name = "other"), testPrimitive)(aRequest) }
-        assertFailsWith<IllegalArgumentException> { checkedPrimitiveFor(signature.copy(arity = 0), testPrimitive)(aRequest) }
+        assertFailsWith<IllegalArgumentException> { primitiveOf(signature.copy(name = "other"), testPrimitive)(aRequest) }
+        assertFailsWith<IllegalArgumentException> { primitiveOf(signature.copy(arity = 0), testPrimitive)(aRequest) }
     }
 }
