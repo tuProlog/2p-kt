@@ -21,7 +21,7 @@ data class ExecutionContext(
         val dynamicKB: ClauseDatabase,
         /** When the overall computation started */
         val computationStartTime: TimeInstant = currentTime(),
-        /** The set of actual substitution till this execution context */
+        /** The set of current substitution till this execution context */
         val currentSubstitution: Substitution.Unifier = Substitution.empty(),
         /** The sequence of parent execution contexts before this, till the resolution root */
         val parents: Sequence<ExecutionContext> = emptySequence(),

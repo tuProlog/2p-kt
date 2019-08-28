@@ -33,6 +33,6 @@ internal abstract class AbstractTimedState(
     override fun getCurrentTime(): TimeInstant = currentTime()
 
     /** A function to check if time for execution has ended */
-    private fun timeIsOver(actualDuration: TimeDuration, maxDuration: TimeDuration) =
-            actualDuration >= maxDuration
+    private fun timeIsOver(currentDuration: TimeDuration, maxDuration: TimeDuration) =
+            currentDuration >= maxDuration
 }

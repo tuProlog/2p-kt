@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 /** A base class for Solve requests and responses */
 sealed class Solve {
 
-    /** The context that was actual at Request making or that changed after solving the goal */
+    /** The context that was current at Request making or that changed after solving the goal */
     abstract val context: ExecutionContext
 
 
@@ -17,7 +17,7 @@ sealed class Solve {
             val signature: Signature,
             /** Arguments with which the goal is invoked */
             val arguments: List<Term>,
-            /** The context that's actual at Request making */
+            /** The context that's current at Request making */
             override val context: ExecutionContext,
             /** The executionTimeout after which the computation can end, because no more useful */
             val executionTimeout: TimeDuration = Long.MAX_VALUE

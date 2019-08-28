@@ -79,8 +79,8 @@ internal class SolverUtilsTest {
         val currentTime = 100L
         val newSubstitution = Substitution.of("A", Atom.of("a"))
 
-        val toBeTested = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime)
-        val toBeTestedSubstitution = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime, newSubstitution)
+        val toBeTested = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime = currentTime)
+        val toBeTestedSubstitution = DummyInstances.solveRequest.newSolveRequest(newGoal, newSubstitution, currentTime)
 
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
@@ -99,12 +99,12 @@ internal class SolverUtilsTest {
         }
 
         val currentTimeLow = 80L
-        val toBeTested = startSolveRequest.newSolveRequest(Atom.of("a"), currentTimeLow)
+        val toBeTested = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeLow)
 
         assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionTimeout)
 
         val currentTimeHigh = 350L
-        val toBeTestedZeroTimeout = startSolveRequest.newSolveRequest(Atom.of("a"), currentTimeHigh)
+        val toBeTestedZeroTimeout = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeHigh)
 
         assertEquals(0L, toBeTestedZeroTimeout.executionTimeout)
     }
@@ -112,7 +112,7 @@ internal class SolverUtilsTest {
     @Test
     fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
         val toBeTested = DummyInstances.solveRequest.copy(executionTimeout = Long.MAX_VALUE)
-                .newSolveRequest(Atom.of("a"), 100L)
+                .newSolveRequest(Atom.of("a"), currentTime = 100L)
 
         assertEquals(Long.MAX_VALUE, toBeTested.executionTimeout)
     }

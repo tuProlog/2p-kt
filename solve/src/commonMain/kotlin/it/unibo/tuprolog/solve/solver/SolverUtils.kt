@@ -48,8 +48,8 @@ internal object SolverUtils {
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
     fun Solve.Request.newSolveRequest(
             newGoal: Struct,
-            actualTime: TimeInstant = currentTime(),
-            toAddSubstitutions: Substitution = Substitution.empty()
+            toAddSubstitutions: Substitution = Substitution.empty(),
+            currentTime: TimeInstant = currentTime()
     ): Solve.Request =
             Solve.Request(
                     Signature.fromIndicator(newGoal.indicator)!!,
@@ -60,7 +60,7 @@ internal object SolverUtils {
                                 parents = parents + this
                         )
                     },
-                    adjustExecutionTimeout(this, actualTime)
+                    adjustExecutionTimeout(this, currentTime)
             )
 
     /** Re-computes the execution timeout, leaving it [Long.MAX_VALUE] if it was it, or decreasing it with elapsed time */

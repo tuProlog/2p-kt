@@ -57,7 +57,7 @@ internal object StateUtils {
         )
     }
 
-    /** Utility function to compose TErm corresponding to Solve.Request Signature and Arguments */
+    /** Utility function to compose Term corresponding to Solve.Request Signature and Arguments */
     internal fun composeSignatureAndArgs(solveRequest: Solve.Request) =
             with(solveRequest) { signature.withArgs(arguments)!! }
 }
