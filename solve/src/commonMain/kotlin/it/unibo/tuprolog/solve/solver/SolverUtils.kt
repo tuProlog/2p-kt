@@ -57,7 +57,7 @@ internal object SolverUtils {
                     with(this.context) {
                         copy(
                                 currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
-                                parents = parents + this
+                                parents = sequence { yield(this@with); yieldAll(parents) }
                         )
                     },
                     adjustExecutionTimeout(this, currentTime)

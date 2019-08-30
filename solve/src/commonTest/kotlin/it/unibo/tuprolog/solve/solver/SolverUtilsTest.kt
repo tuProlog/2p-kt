@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 
 /**
  * Test class for [SolverUtils]
@@ -88,6 +89,17 @@ internal class SolverUtilsTest {
         assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
 
         assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
+    }
+
+    @Test
+    fun newSolveRequestContextParentsAreOrderedAsLastInFirstOut() {
+        val toBeTested = DummyInstances.solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.`true`())
+
+        // precondition
+        assertEquals(2, toBeTested.context.parents.count())
+
+        assertNotEquals(DummyInstances.solveRequest.context, toBeTested.context.parents.first())
+        assertEquals(DummyInstances.solveRequest.context, toBeTested.context.parents.last())
     }
 
     @Test
