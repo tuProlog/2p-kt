@@ -39,7 +39,8 @@ internal class StateRuleSelection(
                         val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 
                         solveRequest.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
-                        // TODO every time a rule is applied the parents sequence should be cleared??? adding this context as choicePoint??? this would make cut coherent within rule context...
+                                // clear parents for this new "cut scope"
+                                .let { it.copy(context = it.context.copy(parents = sequenceOf(solveRequest.context))) }
                     }.forEach { subSolveRequest ->
                         val subInitialState = StateInit(subSolveRequest, executionStrategy)
                                 .also { yield(it.alreadyExecuted()) }
@@ -58,11 +59,14 @@ internal class StateRuleSelection(
                                         when (it.wrappedState) {
                                             is SuccessFinalState ->
                                                 StateEnd.True(
-                                                        solveRequest.importingSubstitutionFrom(it.wrappedState.solveRequest),
+                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
                                                         executionStrategy
                                                 )
                                             else ->
-                                                StateEnd.False(solveRequest, executionStrategy)
+                                                StateEnd.False(
+                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
+                                                        executionStrategy
+                                                )
                                         }
                                 )
                             }
@@ -72,15 +76,19 @@ internal class StateRuleSelection(
         }
     }
 
-    // TODO this should be moved to SolverUtils, and tested
-    /** Utility method to copy receiver [Solve.Request] importing [subSolveRequest] substitution */
-    private fun Solve.Request.importingSubstitutionFrom(subSolveRequest: Solve.Request) = this
-            .copy(context = with(solveRequest.context) {
-                copy(currentSubstitution = Substitution.of(
-                        subSolveRequest.context.currentSubstitution,
-                        currentSubstitution.mapValues { (_, replacement) ->
-                            replacement.apply(subSolveRequest.context.currentSubstitution)
-                        }.asUnifier()
-                ))
+    // TODO this should be moved to [SolverUtils], and tested
+    /** Utility method to copy receiver [Solve.Request] importing [subSolveRequest] context */
+    private fun Solve.Request.importingContextFrom(subSolveRequest: Solve.Request) = this
+            .copy(context = with(this.context) {
+                copy(
+                        currentSubstitution = Substitution.of(
+                                subSolveRequest.context.currentSubstitution,
+                                currentSubstitution.mapValues { (_, replacement) ->
+                                    replacement.apply(subSolveRequest.context.currentSubstitution)
+                                }.asUnifier()
+                        ),
+                        parents = sequence { yield(this@with); yieldAll(parents) }, // refactor this into utility method insertAtBeginning for Seqeunces
+                        toCutContextsParent = subSolveRequest.context.toCutContextsParent
+                )
             })
 }

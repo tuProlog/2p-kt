@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine
 
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor.unwrapIfNeeded
 import it.unibo.tuprolog.solve.solver.statemachine.state.AlreadyExecutedState
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import it.unibo.tuprolog.solve.solver.statemachine.testutils.StateMachineExecutorUtils.allFiniteStateMachines
@@ -114,4 +115,11 @@ internal class StateMachineExecutorTest {
         stateSequence.forEach { assertFalse { it.hasBehaved } }
     }
 
+    @Test
+    fun unwrapIfNeededWorksAsExpected() {
+        allFiniteStateMachines.forEach {
+            assertSame(it, AlreadyExecutedState(it).unwrapIfNeeded())
+            assertSame(it, it.unwrapIfNeeded())
+        }
+    }
 }

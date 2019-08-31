@@ -49,7 +49,7 @@ internal object StateMachineExecutor {
     }
 
     /** Utility function refactoring logic to unwrap already executed state */
-    private fun State.unwrapIfNeeded(): State = when (this) {
+    internal fun State.unwrapIfNeeded(): State = when (this) {
         is AlreadyExecutedState -> this.wrappedState
         else -> this
     }
