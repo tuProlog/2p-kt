@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 
 /**
- * Implementation of primitive handling `!` behaviour
+ * Implementation of primitive handling `'!'/0` behaviour
  *
  * @author Enrico
  */

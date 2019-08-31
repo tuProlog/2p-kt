@@ -116,9 +116,6 @@ internal class StateIntegrationTesting {
 
         assertEquals(8, nextStates.count())
 
-        println(nextStates[6])
-        println(nextStates[7])
-
         val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
         assertEquals(2, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
@@ -126,5 +123,21 @@ internal class StateIntegrationTesting {
         val interestingStates = trueEndStates.filter { with(it.solveRequest) { signature == fSignature && arguments == oneArityVarArgumentList } }
         assertEquals(1, interestingStates.count())
         assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution.values.single())
+    }
+
+    @Test
+    fun twoAlternativesBeforeCutExecutionShouldBeReturned() {
+        val nextStates = execute(SolverTestUtils.twoResponseBecauseOfCut).toList()
+
+        val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
+        assertEquals(4, trueEndStates.count())
+        assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
+
+        val interestingStates = trueEndStates.filter { with(it.solveRequest) { signature == hSignature && arguments == oneArityVarArgumentList } }
+        assertEquals(2, interestingStates.count())
+        assertEquals(
+                listOf(Atom.of("a"), Atom.of("only")),
+                interestingStates.map { it.answerSubstitution.values.single() }
+        )
     }
 }

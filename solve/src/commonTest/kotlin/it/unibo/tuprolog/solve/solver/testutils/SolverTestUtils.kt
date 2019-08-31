@@ -49,20 +49,21 @@ internal object SolverTestUtils {
      * ```prolog
      * f(only) :- !.
      * g(only) :- !.
-     * h(only) :- !.
      * f(a).
      * g(a).
      * g(b).
      * h(a).
+     * h(only) :- !.
      * h(b).
      * h(c).
      * ```
      */
-    internal val databaseWithCutAlternatives = ClauseDatabase.of(
+    internal val databaseWithCutAlternatives = ClauseDatabase.of(listOf(
             Rule.of(Struct.of("f", Atom.of("only")), Atom.of("!")),
-            Rule.of(Struct.of("g", Atom.of("only")), Atom.of("!")),
-            Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!"))
-    ) + factDatabase
+            Rule.of(Struct.of("g", Atom.of("only")), Atom.of("!"))
+    ) + factDatabase.clauses.toList().dropLast(2) +
+            Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")) +
+            factDatabase.clauses.drop(4))
 
     /** Request for solving `?- f(A)` against [factDatabase]; should result in substitution `A\a` */
     internal val oneResponseRequest = Solve.Request(
@@ -81,6 +82,13 @@ internal object SolverTestUtils {
     /** Request for solving `?- f(A)` against [databaseWithCutAlternatives]; should result in substitution `A\only` */
     internal val oneResponseBecauseOfCut = Solve.Request(
             fSignature,
+            oneArityVarArgumentList,
+            executionContextWithLibraryDatabase(databaseWithCutAlternatives)
+    )
+
+    /** Request for solving `?- h(A)` against [databaseWithCutAlternatives]; should result in substitution `A/a, A\only` */
+    internal val twoResponseBecauseOfCut = Solve.Request(
+            hSignature,
             oneArityVarArgumentList,
             executionContextWithLibraryDatabase(databaseWithCutAlternatives)
     )
