@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 internal object SolverUtils {
 
     /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
-    fun <E> orderedWithStrategy(
+    fun <E> orderedWithStrategy( // TODO: 01/09/2019 implement handling of duplicates
             elements: Sequence<E>,
             context: ExecutionContext,
             selectionStrategy: (Sequence<E>, ExecutionContext) -> E
@@ -45,17 +45,18 @@ internal object SolverUtils {
             Directive.of(goal).prepareForExecution().args.single().castTo()
 
 
-    /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
+    /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] or optionally on [baseContext] */
     fun Solve.Request.newSolveRequest(
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
+            baseContext: ExecutionContext = this.context,
             currentTime: TimeInstant = currentTime(),
             isChoicePointChild: Boolean = false
     ): Solve.Request =
             Solve.Request(
                     Signature.fromIndicator(newGoal.indicator)!!,
                     newGoal.argsList,
-                    with(this.context) {
+                    with(baseContext) {
                         copy(
                                 currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
                                 parents = sequence { yield(this@with); yieldAll(parents) },

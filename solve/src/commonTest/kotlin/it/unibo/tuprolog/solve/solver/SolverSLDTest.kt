@@ -3,16 +3,11 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
-import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
-import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
+import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
+import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -76,7 +71,7 @@ internal class SolverSLDTest {
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
                                 theory = database,
-                                primitives = mapOf(Signature(",", 2) to primitive)
+                                primitives = mapOf(with(Conjunction) { signature to primitive })
                         ))
                 )
         )
@@ -113,49 +108,15 @@ internal class SolverSLDTest {
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
                                 theory = database,
-                                primitives = mapOf(Signature(",", 2) to primitive)
+                                primitives = mapOf(
+                                        with(Conjunction) { signature to primitive },
+                                        with(Cut) { signature to primitive }
+                                )
                         ))
                 )
         )
 
         Solver.sld().solve(goal).toList().forEach { println("$it\n") }
-    }
-
-    // rude implementation of "," functor primitive
-    val primitive: Primitive = { mainRequest ->
-        when {
-            mainRequest.signature.name == Tuple.FUNCTOR -> sequence {
-                val toEvalSubGoals = with(mainRequest) {
-                    orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
-                }
-
-                val leftSubSolveRequest = mainRequest.newSolveRequest(
-                        prepareForExecution(toEvalSubGoals.first())
-                )
-
-                Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
-                    when (leftResponse.solution) {
-                        is Solution.Yes -> {
-                            val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                    prepareForExecution(toEvalSubGoals.last()
-                                            .apply(leftResponse.solution.substitution)),
-                                    leftResponse.solution.substitution
-                            )
-
-                            Solver.sld().solve(rightSubSolveRequest).forEach { rightResponse ->
-                                when (rightResponse.solution) {
-                                    is Solution.Yes -> yield(mainRequest.yesResponseBy(rightResponse))
-                                    is Solution.No -> yield(mainRequest.noResponseBy(rightResponse))
-                                }
-                            }
-                        }
-                        is Solution.No -> yield(mainRequest.noResponseBy(leftResponse))
-                    }
-                }
-
-            }
-            else -> throw IllegalStateException("This primitive handles only ',' functor")
-        }
     }
 
 }

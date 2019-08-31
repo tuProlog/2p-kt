@@ -23,7 +23,7 @@ data class ExecutionContext(
         val computationStartTime: TimeInstant = currentTime(),
         /** The set of current substitution till this execution context */
         val currentSubstitution: Substitution.Unifier = Substitution.empty(),
-        /** The sequence of parent execution contexts before this, till the resolution root */
+        /** The sequence of parent execution contexts before this, for "rule scope" */
         val parents: Sequence<ExecutionContext> = emptySequence(),
         /** The key strategies that a solver should use during resolution process */
         val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
