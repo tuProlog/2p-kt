@@ -5,17 +5,16 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalSelection
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
- * Utils singleton to help testing [State] hierarchy
+ * Utils singleton to help testing [StateGoalSelection]
  *
  * @author Enrico
  */
-internal object StateUtils {
+internal object StateGoalSelectionUtils {
 
     /** Solve request for `true` Atom */
     internal val trueSolveRequest = DummyInstances.solveRequest.copy(

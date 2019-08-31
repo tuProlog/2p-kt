@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.fSignature
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.hSignature
@@ -28,7 +28,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun trueSolveRequestWorks() {
-        val nextStates = execute(StateUtils.trueSolveRequest).toList()
+        val nextStates = execute(StateGoalSelectionUtils.trueSolveRequest).toList()
 
         assertEquals(2, nextStates.count())
         assertTrue { nextStates.component1() is StateGoalSelection }
@@ -37,7 +37,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun nonPresentClause() {
-        val nextStates = execute(StateUtils.failSolveRequest).toList()
+        val nextStates = execute(StateGoalSelectionUtils.failSolveRequest).toList()
 
         assertEquals(4, nextStates.count())
         assertTrue { nextStates.component1() is StateGoalSelection }

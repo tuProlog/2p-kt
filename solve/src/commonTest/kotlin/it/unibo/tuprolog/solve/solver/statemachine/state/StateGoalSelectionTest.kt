@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils.composeSignatureAndArgs
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils.composeSignatureAndArgs
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +25,7 @@ internal class StateGoalSelectionTest {
             }
         }
 
-        val nextStates = StateGoalSelection(StateUtils.trueSolveRequest, DummyInstances.executionStrategy).behave()
+        val nextStates = StateGoalSelection(StateGoalSelectionUtils.trueSolveRequest, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateEnd.True }
@@ -33,7 +33,7 @@ internal class StateGoalSelectionTest {
 
     @Test
     fun ifCurrentGoalIsAVarargPrimitive() {
-        val nextStates = StateGoalSelection(StateUtils.varargPrimitive, DummyInstances.executionStrategy).behave()
+        val nextStates = StateGoalSelection(StateGoalSelectionUtils.varargPrimitive, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateGoalEvaluation }
@@ -41,8 +41,8 @@ internal class StateGoalSelectionTest {
 
     @Test
     fun ifCurrentGoalIsAPrimitiveOrAWellFormedGoal() {
-        StateUtils.notVarargPrimitiveAndWellFormedGoalRequests
-                .filterNot { it == StateUtils.preparationNeededGoal }
+        StateGoalSelectionUtils.notVarargPrimitiveAndWellFormedGoalRequests
+                .filterNot { it == StateGoalSelectionUtils.preparationNeededGoal }
                 .forEach {
                     val nextStates = StateGoalSelection(it, DummyInstances.executionStrategy).behave()
 
@@ -58,17 +58,17 @@ internal class StateGoalSelectionTest {
 
     @Test
     fun ifCurrentGoalNeedPreparationForExecution() {
-        val nextStates = StateGoalSelection(StateUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
+        val nextStates = StateGoalSelection(StateGoalSelectionUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(
-                prepareForExecution(composeSignatureAndArgs(StateUtils.preparationNeededGoal)),
+                prepareForExecution(composeSignatureAndArgs(StateGoalSelectionUtils.preparationNeededGoal)),
                 composeSignatureAndArgs(nextStates.first().solveRequest)
         )
     }
 
     @Test
     fun ifGoalNotWellFormed() {
-        val nextStates = StateGoalSelection(StateUtils.nonWellFormedGoal, DummyInstances.executionStrategy).behave()
+        val nextStates = StateGoalSelection(StateGoalSelectionUtils.nonWellFormedGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateEnd.False }
@@ -76,7 +76,7 @@ internal class StateGoalSelectionTest {
 
     @Test
     fun shiftingToNextStateDoesntModifyContext() {
-        StateUtils.notVarargPrimitiveAndWellFormedGoalRequests.forEach {
+        StateGoalSelectionUtils.notVarargPrimitiveAndWellFormedGoalRequests.forEach {
             val nextStates = StateGoalSelection(it, DummyInstances.executionStrategy).behave()
 
             assertEquals(DummyInstances.executionContext, nextStates.single().solveRequest.context)
