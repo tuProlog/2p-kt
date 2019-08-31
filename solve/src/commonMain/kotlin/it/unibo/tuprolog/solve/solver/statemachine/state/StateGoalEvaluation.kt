@@ -35,7 +35,10 @@ internal class StateGoalEvaluation(
                         ))
 
                     is Solution.No ->
-                        yield(StateEnd.False(solveRequest, executionStrategy))
+                        yield(StateEnd.False(
+                                solveRequest.copy(context = it.context),
+                                executionStrategy
+                        ))
                 }
             }
 

@@ -4,14 +4,12 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 /**
  * Test class for [SolverUtils]
@@ -130,6 +128,18 @@ internal class SolverUtilsTest {
     }
 
     @Test
+    fun newSolveRequestSetsNewContextIsChoicePointFieldToPassedValueOrFalseByDefault() {
+        assertTrue {
+            DummyInstances.solveRequest.newSolveRequest(Atom.of("a"), isChoicePointChild = true)
+                    .context.isChoicePointChild
+        }
+        assertFalse { DummyInstances.solveRequest.newSolveRequest(Atom.of("a")).context.isChoicePointChild }
+
+        val startsTrueChoicePointChildField = with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) }
+        assertFalse { startsTrueChoicePointChildField.newSolveRequest(Atom.of("a")).context.isChoicePointChild }
+    }
+
+    @Test
     fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
         val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
@@ -176,5 +186,24 @@ internal class SolverUtilsTest {
 
         assertEquals(correct.solution, toBeTested.solution)
         assertEquals(correct.context, toBeTested.context)
+    }
+
+    @Test
+    fun moreThanOneWorksAsExpected() {
+        assertFalse { moreThanOne(emptySequence<Nothing>()) }
+        assertFalse { moreThanOne(sequenceOf(1)) }
+        assertTrue { moreThanOne(sequenceOf(1, 2)) }
+        assertTrue { moreThanOne(sequenceOf(1, 2, 3)) }
+    }
+
+    @Test
+    fun moreThanOneWorksLazily() {
+        assertTrue {
+            moreThanOne(sequence {
+                yield(1)
+                yield(1)
+                fail("Should not evaluate entire sequence")
+            })
+        }
     }
 }

@@ -49,7 +49,8 @@ internal object SolverUtils {
     fun Solve.Request.newSolveRequest(
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
-            currentTime: TimeInstant = currentTime()
+            currentTime: TimeInstant = currentTime(),
+            isChoicePointChild: Boolean = false
     ): Solve.Request =
             Solve.Request(
                     Signature.fromIndicator(newGoal.indicator)!!,
@@ -57,7 +58,8 @@ internal object SolverUtils {
                     with(this.context) {
                         copy(
                                 currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
-                                parents = sequence { yield(this@with); yieldAll(parents) }
+                                parents = sequence { yield(this@with); yieldAll(parents) },
+                                isChoicePointChild = isChoicePointChild
                         )
                     },
                     adjustExecutionTimeout(this, currentTime)
@@ -90,4 +92,15 @@ internal object SolverUtils {
      * and using given [otherResponse] context */
     fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
             Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
+
+    /** Checks if this sequence of elements holds more than one element */
+    fun moreThanOne(elements: Sequence<*>): Boolean = elements.iterator().run {
+        return when {
+            !hasNext() -> false // no element
+            else -> {
+                next()
+                hasNext() // it has more elements if first element, has a next element
+            }
+        }
+    }
 }

@@ -25,7 +25,9 @@ internal class StateInit(
 
     /** Any state machine initialization should be done here */
     private fun initializationWork(context: ExecutionContext): ExecutionContext {
-        // TODO initialization?
-        return context
+        return context.copy(
+                parents = sequence { yield(context); yieldAll(context.parents) },
+                isChoicePointChild = false
+        )
     }
 }

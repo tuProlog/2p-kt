@@ -1,0 +1,85 @@
+package it.unibo.tuprolog.solve.primitiveimpl
+
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.testutils.DummyInstances
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
+
+/**
+ * Test class for [Cut]
+ *
+ * @author Enrico
+ */
+internal class CutTest {
+
+    private val cutPrimitiveSignature = Signature("!", 0)
+
+    @Test
+    fun cutPrimitiveReturnsAlwaysYesResponseWithNoModificationFromRequest() {
+        val substitution = Substitution.of("A", Truth.`true`())
+        val context = DummyInstances.executionContext.copy(currentSubstitution = substitution)
+        val toBeTested = Cut.primitive(DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = context))
+
+        assertEquals(1, toBeTested.count())
+        with(toBeTested.single().solution) {
+            assertTrue { this is Solution.Yes }
+            assertEquals(cutPrimitiveSignature.withArgs(emptyList()), this.query)
+            assertEquals(substitution, this.substitution)
+        }
+    }
+
+    @Test
+    fun cutPrimitiveFillsExecutionContextFieldWithAllChoicePointContextParent() {
+        fun makeRequest(executionContext: ExecutionContext) =
+                DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = executionContext)
+
+        fun Solve.Response.underTestField(): List<ExecutionContext> = this.context.toCutContextsParent.toList()
+
+        with(DummyInstances.executionContext) {
+            val contextWithNoParents = this
+            val contextWithNoParentsButChoicePointChild = this.copy(isChoicePointChild = true)
+            val contextWithOneParentNotChoicePointChild = this.copy(parents = sequenceOf(this.copy()))
+            val contextWithOneParentChoicePointChild = this.copy(parents = sequenceOf(this.copy(isChoicePointChild = true)))
+            val contextWithTwoParentsNotChoicePointChild = this.copy(parents = sequenceOf(this.copy(), this.copy()))
+
+            val contextWithTwoParentsFirstChoicePointChild = this.copy(
+                    parents = sequenceOf(this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy())), this.copy()))
+            val contextWithTwoParentsSecondChoicePointChild = this.copy(
+                    parents = sequenceOf(this.copy(), this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy()))))
+            val contextWithTwoParentsBothChoicePointChild = this.copy(
+                    parents = sequenceOf(
+                            this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy())),
+                            this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy()))
+                    ))
+
+            assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithNoParents)).single().underTestField())
+            assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithNoParentsButChoicePointChild)).single().underTestField())
+            assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithOneParentNotChoicePointChild)).single().underTestField())
+            assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithOneParentChoicePointChild)).single().underTestField())
+            assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithTwoParentsNotChoicePointChild)).single().underTestField())
+            assertSame(
+                    contextWithTwoParentsFirstChoicePointChild.parents.first().parents.first(),
+                    Cut.primitive(makeRequest(contextWithTwoParentsFirstChoicePointChild)).single().underTestField().single()
+            )
+            assertSame(
+                    contextWithTwoParentsSecondChoicePointChild.parents.last().parents.first(),
+                    Cut.primitive(makeRequest(contextWithTwoParentsSecondChoicePointChild)).single().underTestField().single()
+            )
+            assertEquals(
+                    listOf(
+                            contextWithTwoParentsBothChoicePointChild.parents.first().parents.first(),
+                            contextWithTwoParentsSecondChoicePointChild.parents.last().parents.first()
+                    ),
+                    Cut.primitive(makeRequest(contextWithTwoParentsBothChoicePointChild)).single().underTestField()
+            )
+        }
+    }
+
+}

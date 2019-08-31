@@ -73,4 +73,14 @@ internal class StateGoalSelectionTest {
         assertTrue { nextStates.single() is StateEnd.False }
     }
 
+    @Test
+    fun shiftingToNextStateDoesntModifyContext() {
+        StateUtils.notVarargPrimitiveAndWellFormedGoalRequests.forEach {
+            val nextStates = StateGoalSelection(it, DummyInstances.executionStrategy).behave()
+
+            assertEquals(DummyInstances.executionContext, nextStates.single().solveRequest.context)
+            assertEquals(it.context.parents.toList(), nextStates.single().solveRequest.context.parents.toList())
+        }
+    }
+
 }
