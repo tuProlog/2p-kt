@@ -2,7 +2,8 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.statemachine.state.StateUtils.composeSignatureAndArgs
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils.composeSignatureAndArgs
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals

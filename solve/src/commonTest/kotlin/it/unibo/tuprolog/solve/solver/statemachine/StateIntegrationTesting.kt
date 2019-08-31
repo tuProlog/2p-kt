@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.fSignature
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.hSignature

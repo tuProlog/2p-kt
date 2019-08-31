@@ -1,14 +1,19 @@
-package it.unibo.tuprolog.solve.solver.statemachine.state
+package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.statemachine.state.State
+import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalSelection
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
  * Utils singleton to help testing [State] hierarchy
+ *
+ * @author Enrico
  */
 internal object StateUtils {
 
@@ -57,7 +62,7 @@ internal object StateUtils {
         )
     }
 
-    /** Utility function to compose Term corresponding to Solve.Request Signature and Arguments */
+    /** Utility function to compose Struct corresponding to Solve.Request Signature and Arguments */
     internal fun composeSignatureAndArgs(solveRequest: Solve.Request) =
             with(solveRequest) { signature.withArgs(arguments)!! }
 }
