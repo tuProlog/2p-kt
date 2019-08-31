@@ -42,10 +42,10 @@ internal object StateMachineExecutor {
         state.hasBehaved -> sequenceOf(state)
 
         else -> sequence {
-            yield(sequenceOf(state))
-            // TODO cut execution should be catch here and make subsequent evaluation to be cancelled?
-            state.behave().forEach { yield(internalExecute(it)) }
-        }.flatten()
+            yield(state)
+
+            state.behave().forEach { yieldAll(internalExecute(it)) }
+        }
     }
 
     /** Utility function refactoring logic to unwrap already executed state */
