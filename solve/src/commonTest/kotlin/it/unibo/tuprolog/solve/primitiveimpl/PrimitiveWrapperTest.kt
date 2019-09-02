@@ -17,10 +17,7 @@ internal class PrimitiveWrapperTest {
 
     private val signature = Signature("ciao", 0)
     private val underTestWrapper = object : PrimitiveWrapper(signature) {
-
-        override val uncheckedImplementation: Primitive = {
-            emptySequence()
-        }
+        override val uncheckedImplementation: Primitive = { emptySequence() }
     }
 
     @Test
@@ -39,4 +36,8 @@ internal class PrimitiveWrapperTest {
         assertFailsWith<IllegalArgumentException> { underTestWrapper.primitive(DummyInstances.solveRequest.copy(signature.copy(arity = 1), listOf(Truth.fail()))) }
     }
 
+    @Test
+    fun descriptionPairCorrect() {
+        assertEquals(with(underTestWrapper) { signature to primitive }, underTestWrapper.descriptionPair)
+    }
 }

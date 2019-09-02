@@ -4,13 +4,10 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils
-import it.unibo.tuprolog.solve.testutils.DummyInstances
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -22,26 +19,15 @@ import kotlin.test.assertTrue
  */
 internal class ConjunctionTest {
 
-    /** Utility function to create solveRequest of provided query with Conjunction library primitive */
-    private fun createConjunctionSolveRequest(query: Struct) = Solve.Request(
-            Signature.fromIndicator(query.indicator)!!,
-            query.argsList,
-            DummyInstances.executionContext.copy(libraries = Libraries(Library.of(
-                    alias = "Test",
-                    theory = StateRuleSelectionUtils.multipleMatchesDatabase,
-                    primitives = mapOf(with(Conjunction) { signature to primitive })
-            )))
-    )
-
-    private val threeResponseQuery = Struct.of("f", Var.anonymous())
-    private val trueAndTrueSolveRequest = createConjunctionSolveRequest(Tuple.of(Truth.`true`(), Truth.`true`()))
-    private val multipleSolutionRequest = createConjunctionSolveRequest(Tuple.of(threeResponseQuery, Truth.`true`()))
+    private val fAnonymousQuery = Struct.of("f", Var.anonymous())
+    private val trueAndTrueSolveRequest = createSolveRequest(Tuple.of(Truth.`true`(), Truth.`true`()), multipleMatchesDatabase)
+    private val multipleSolutionRequest = createSolveRequest(Tuple.of(fAnonymousQuery, Truth.`true`()), multipleMatchesDatabase)
 
     private val failedRequests by lazy {
         listOf(
-                createConjunctionSolveRequest(Tuple.of(Truth.fail(), threeResponseQuery)),
-                createConjunctionSolveRequest(Tuple.of(threeResponseQuery, Truth.fail())),
-                createConjunctionSolveRequest(Tuple.of(threeResponseQuery, threeResponseQuery, Truth.fail()))
+                createSolveRequest(Tuple.of(Truth.fail(), fAnonymousQuery), multipleMatchesDatabase),
+                createSolveRequest(Tuple.of(fAnonymousQuery, Truth.fail()), multipleMatchesDatabase),
+                createSolveRequest(Tuple.of(fAnonymousQuery, fAnonymousQuery, Truth.fail()), multipleMatchesDatabase)
         )
     }
 

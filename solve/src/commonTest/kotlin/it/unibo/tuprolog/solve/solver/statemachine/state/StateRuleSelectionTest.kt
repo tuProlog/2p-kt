@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor.unwrapIfNeeded
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils.composeSignatureAndArgs
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.createRequestWith
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 
@@ -18,17 +18,12 @@ import kotlin.test.*
  */
 internal class StateRuleSelectionTest {
 
-    private val myQuery = Struct.of("f", Var.anonymous())
-
-    /** `f(_)` request over [StateRuleSelectionUtils.singleMatchDatabase] */
-    private val nonMatchingRequest = createRequestWith(myQuery, StateRuleSelectionUtils.singleMatchDatabase)
-    /** `b` request over [StateRuleSelectionUtils.singleMatchDatabase] */
-    private val oneMatchRequest = createRequestWith(Atom.of("b"), StateRuleSelectionUtils.singleMatchDatabase)
-    /** `f(_)` request over [multipleMatchesDatabase] */
-    private val multipleMatchRequest = createRequestWith(myQuery, multipleMatchesDatabase)
+    /** A struct query in the form `f(_)` */
+    private val myQueryStruct = Struct.of("f", Var.anonymous())
 
     @Test
     fun noMatchingRulesFoundGoesIntoFalseState() {
+        val nonMatchingRequest = createSolveRequest(myQueryStruct, StateRuleSelectionUtils.singleMatchDatabase)
         val nextStates = StateRuleSelection(nonMatchingRequest, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
@@ -38,6 +33,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun makingRuleSelectionBehaveComputesSubStatesOfOneMatchingRuleRequest() {
+        val oneMatchRequest = createSolveRequest(Atom.of("b"), StateRuleSelectionUtils.singleMatchDatabase)
         val nextStates = StateRuleSelection(oneMatchRequest, DummyInstances.executionStrategy).behave().toList()
 
         assertEquals(4, nextStates.count())
@@ -65,6 +61,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun ruleSelectionBehaveWithMultipleChoices() {
+        val multipleMatchRequest = createSolveRequest(myQueryStruct, multipleMatchesDatabase)
         val nextStates = StateRuleSelection(multipleMatchRequest, DummyInstances.executionStrategy).behave().toList()
         val databaseClauses = multipleMatchesDatabase.clauses.toList()
 
@@ -98,6 +95,26 @@ internal class StateRuleSelectionTest {
 
         assertEquals(1, interestingStates.filterIsInstance<StateEnd.False>().count())
         assertEquals(2, interestingStates.filterIsInstance<StateEnd.True>().count())
+    }
+
+    @Test
+    fun multipleNestedMatchingRulesTest() {
+        val request = createSolveRequest(myQueryStruct, StateRuleSelectionUtils.multipleNestedMatchesDatabase)
+        val nextStates = StateRuleSelection(request, DummyInstances.executionStrategy).behave().map { it.unwrapIfNeeded() }.toList()
+
+        val subsequentRuleSelectionStates = nextStates.filterIsInstance<StateRuleSelection>()
+        assertEquals(2, subsequentRuleSelectionStates.count())
+        nextStates.filterIsInstance<StateInit>().forEach {
+            assertEquals(1, it.solveRequest.context.clauseScopedParents.count())
+        }
+        val interestingEndStates = nextStates.filter { it.solveRequest.equalSignatureAndArgs(request) }.filterIsInstance<StateEnd.True>()
+        assertEquals(4, interestingEndStates.count())
+
+        val expectedSubstitutions = listOf("c1", "c2", "d1", "d2").map(Atom.Companion::of)
+        val actualSubstitutions = interestingEndStates.map { it.answerSubstitution.values.single() }
+        expectedSubstitutions.zip(actualSubstitutions).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     // TODO: 31/08/2019 think a test that could fail if matchingRule is not freshCopied

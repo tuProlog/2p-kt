@@ -71,7 +71,7 @@ internal class SolverSLDTest {
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
                                 theory = database,
-                                primitives = mapOf(with(Conjunction) { signature to primitive })
+                                primitives = mapOf(Conjunction.descriptionPair)
                         ))
                 )
         )
@@ -108,10 +108,7 @@ internal class SolverSLDTest {
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
                                 theory = database,
-                                primitives = mapOf(
-                                        with(Conjunction) { signature to primitive },
-                                        with(Cut) { signature to primitive }
-                                )
+                                primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                         ))
                 )
         )

@@ -40,7 +40,7 @@ internal class CutTest {
         fun makeRequest(executionContext: ExecutionContext) =
                 DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = executionContext)
 
-        fun Solve.Response.underTestField(): List<ExecutionContext> = this.context.toCutContextsParent.toList()
+        fun Solve.Response.underTestField(): Iterable<ExecutionContext> = this.context.toCutContextsParent.toList()
 
         with(DummyInstances.executionContext) {
             val contextWithNoParents = this

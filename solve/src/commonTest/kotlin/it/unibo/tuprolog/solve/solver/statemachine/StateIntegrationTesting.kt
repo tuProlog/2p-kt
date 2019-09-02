@@ -6,9 +6,6 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.fSignature
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.hSignature
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.oneArityVarArgumentList
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -76,7 +73,7 @@ internal class StateIntegrationTesting {
         assertEquals(6, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { with(it.solveRequest) { signature == hSignature && arguments == oneArityVarArgumentList } }
+        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseRequest) }
         assertEquals(3, interestingStates.count())
 
         val answerSubstitution = interestingStates.map { it.answerSubstitution }
@@ -120,7 +117,7 @@ internal class StateIntegrationTesting {
         assertEquals(2, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { with(it.solveRequest) { signature == fSignature && arguments == oneArityVarArgumentList } }
+        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.oneResponseBecauseOfCut) }
         assertEquals(1, interestingStates.count())
         assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution.values.single())
     }
@@ -133,7 +130,7 @@ internal class StateIntegrationTesting {
         assertEquals(4, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { with(it.solveRequest) { signature == hSignature && arguments == oneArityVarArgumentList } }
+        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.twoResponseBecauseOfCut) }
         assertEquals(2, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("only")),

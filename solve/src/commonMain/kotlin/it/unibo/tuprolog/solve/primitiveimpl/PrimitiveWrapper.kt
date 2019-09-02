@@ -19,4 +19,7 @@ abstract class PrimitiveWrapper(
 
     /** The field containing the implementation of the primitive, without any check for application to correct signature */
     protected abstract val uncheckedImplementation: Primitive
+
+    /** Gets this primitive description Pair formed by [signature] and [primitive] */
+    val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
 }

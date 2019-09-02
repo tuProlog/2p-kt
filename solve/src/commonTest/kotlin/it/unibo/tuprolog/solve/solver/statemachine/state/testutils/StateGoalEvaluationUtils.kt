@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
@@ -11,6 +9,7 @@ import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
 import it.unibo.tuprolog.solve.solver.exception.HaltException
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
@@ -53,19 +52,6 @@ internal object StateGoalEvaluationUtils {
         }
     }
 
-    /** Creates a request launching exactly given primitive */
-    internal fun createRequest(primitiveWrapper: PrimitiveWrapper, arguments: List<Term> = emptyList()) =
-            Solve.Request(
-                    primitiveWrapper.signature,
-                    arguments,
-                    DummyInstances.executionContext.copy(
-                            Libraries(Library.of(
-                                    alias = "test",
-                                    primitives = mapOf(with(primitiveWrapper) { signature to primitive })
-                            ))
-                    )
-            )
-
     /** A request launching [primitiveThatAlwaysSucceeds] */
     internal val requestWithSuccessPrimitive = createRequest(primitiveThatAlwaysSucceeds)
 
@@ -75,4 +61,8 @@ internal object StateGoalEvaluationUtils {
     /** A request launching [requestWithHaltingPrimitive] */
     internal val requestWithHaltingPrimitive = createRequest(primitiveThrowingHaltException)
 
+    /** Creates a request launching exactly given primitive */
+    private fun createRequest(primitiveWrapper: PrimitiveWrapper, arguments: List<Term> = emptyList()) =
+            SolverTestUtils.createSolveRequest(primitiveWrapper.signature.withArgs(arguments)!!,
+                    primitives = mapOf(primitiveWrapper.descriptionPair))
 }

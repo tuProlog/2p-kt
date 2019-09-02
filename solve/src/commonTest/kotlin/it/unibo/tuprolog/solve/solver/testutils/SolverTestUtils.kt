@@ -3,8 +3,10 @@ package it.unibo.tuprolog.solve.solver.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.solve.solver.Solver
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -16,13 +18,6 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  * @author Enrico
  */
 internal object SolverTestUtils {
-
-    /** A signature specifying a term like `f(_)` */
-    internal val fSignature = Signature("f", 1)
-    /** A signature specifying a term like `h(_)` */
-    internal val hSignature = Signature("h", 1)
-    /** List of single variable named `A` to use as arguments */
-    internal val oneArityVarArgumentList = listOf(Var.of("A"))
 
     /**
      * A database containing the following facts:
@@ -44,8 +39,13 @@ internal object SolverTestUtils {
             Fact.of(Struct.of("h", Atom.of("c")))
     )
 
+    /** Request for solving `?- f(A)` against [factDatabase]; should result in substitution `A\a` */
+    internal val oneResponseRequest = createSolveRequest(Struct.of("f", Var.of("A")), factDatabase)
+    /** Request for solving `?- h(A)` against [factDatabase]; should result in substitution `A\a, A\b, A\c` */
+    internal val threeResponseRequest = createSolveRequest(Struct.of("h", Var.of("A")), factDatabase)
+
     /**
-     * A database containing the following facts:
+     * A database containing the following rules:
      * ```prolog
      * f(only) :- !.
      * g(only) :- !.
@@ -65,42 +65,58 @@ internal object SolverTestUtils {
             Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")) +
             factDatabase.clauses.drop(4))
 
-    /** Request for solving `?- f(A)` against [factDatabase]; should result in substitution `A\a` */
-    internal val oneResponseRequest = Solve.Request(
-            fSignature,
-            oneArityVarArgumentList,
-            executionContextWithLibraryDatabase(factDatabase)
-    )
-
-    /** Request for solving `?- h(A)` against [factDatabase]; should result in substitution `A\a, A\b, A\c` */
-    internal val threeResponseRequest = Solve.Request(
-            hSignature,
-            oneArityVarArgumentList,
-            executionContextWithLibraryDatabase(factDatabase)
-    )
-
     /** Request for solving `?- f(A)` against [databaseWithCutAlternatives]; should result in substitution `A\only` */
-    internal val oneResponseBecauseOfCut = Solve.Request(
-            fSignature,
-            oneArityVarArgumentList,
-            executionContextWithLibraryDatabase(databaseWithCutAlternatives)
+    internal val oneResponseBecauseOfCut = createSolveRequest(
+            Struct.of("f", Var.of("A")),
+            databaseWithCutAlternatives,
+            mapOf(Cut.descriptionPair)
     )
-
     /** Request for solving `?- h(A)` against [databaseWithCutAlternatives]; should result in substitution `A/a, A\only` */
-    internal val twoResponseBecauseOfCut = Solve.Request(
-            hSignature,
-            oneArityVarArgumentList,
-            executionContextWithLibraryDatabase(databaseWithCutAlternatives)
+    internal val twoResponseBecauseOfCut = createSolveRequest(
+            Struct.of("h", Var.of("A")),
+            databaseWithCutAlternatives,
+            mapOf(Cut.descriptionPair)
     )
 
-    /** Utility function to create an ExecutionContext with provided [clauseDatabase] as a library theory */
-    private fun executionContextWithLibraryDatabase(clauseDatabase: ClauseDatabase) =
-            DummyInstances.executionContext.copy(
-                    libraries = Libraries(Library.of(
-                            alias = "aTest",
-                            theory = clauseDatabase,
-                            primitives = mapOf(Cut.signature to Cut.primitive)
-                    ))
-            )
+    /**
+     * A database containing the following rules:
+     * ```prolog
+     * f(X, Y) :- q(X), !, r(Y).
+     * q(a).
+     * q(b).
+     * r(a1).
+     * r(b1).
+     * ```
+     */
+    internal val databaseWithCutAndConjunction = ClauseDatabase.of(
+            Scope.empty().run {
+                ruleOf(structOf("f", varOf("X"), varOf("Y")),
+                        structOf("q", varOf("X")),
+                        atomOf("!"),
+                        structOf("r", varOf("Y"))
+                )
+            },
+            Fact.of(Struct.of("q", Atom.of("a"))),
+            Fact.of(Struct.of("q", Atom.of("b"))),
+            Fact.of(Struct.of("r", Atom.of("a1"))),
+            Fact.of(Struct.of("r", Atom.of("b1")))
+    )
 
+    /** Request for solving `?- f(A, B)` against [databaseWithCutAndConjunction]; should result in substitution `(A/a, B/a1) and  (A\a, B/b1)` */
+    internal val twoResponseOnConjunctionAndCutDatabase = createSolveRequest(
+            Struct.of("f", Var.of("A"), Var.of("B")),
+            databaseWithCutAndConjunction,
+            mapOf(Cut.descriptionPair, Conjunction.descriptionPair)
+    )
+
+    /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
+    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.of(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
+            Signature.fromIndicator(query.indicator)!!,
+            query.argsList,
+            DummyInstances.executionContext.copy(libraries = Libraries(Library.of(
+                    alias = "Test",
+                    theory = database,
+                    primitives = primitives
+            )))
+    )
 }

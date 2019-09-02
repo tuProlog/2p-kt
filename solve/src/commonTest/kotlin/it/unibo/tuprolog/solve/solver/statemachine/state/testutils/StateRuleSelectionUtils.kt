@@ -1,15 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -21,7 +13,7 @@ internal object StateRuleSelectionUtils {
 
     /**
      * Database containing two different facts:
-     * ```
+     * ```prolog
      * a.
      * b.
      * ```
@@ -33,7 +25,7 @@ internal object StateRuleSelectionUtils {
 
     /** Database containing three rules like `f(_)` and one rule `a(b)`:
      *
-     * ```
+     * ```prolog
      * f(x) :- failed.
      * f(y) :- a(b).
      * f(z).
@@ -47,13 +39,23 @@ internal object StateRuleSelectionUtils {
             Fact.of(Struct.of("a", Atom.of("b")))
     )
 
-    /** Function to create request over a specific database */
-    internal fun createRequestWith(query: Struct, database: ClauseDatabase) = Solve.Request(
-            Signature.fromIndicator(query.indicator)!!,
-            query.argsList,
-            DummyInstances.executionContext.copy(libraries = Libraries(Library.of(
-                    alias = "test",
-                    theory = database
-            )))
+    /**
+     * Database containing multiple nested matching rules:
+     * ```prolog
+     * f(B) :- g(B).
+     * f(B) :- h(B).
+     * g(c1).
+     * g(c2).
+     * h(d1).
+     * h(d2).
+     * ```
+     */
+    internal val multipleNestedMatchesDatabase = ClauseDatabase.of(
+            Scope.empty().run { ruleOf(structOf("f", varOf("B")), structOf("g", varOf("B"))) },
+            Scope.empty().run { ruleOf(structOf("f", varOf("B")), structOf("h", varOf("B"))) },
+            Scope.empty().run { factOf(structOf("g", atomOf("c1"))) },
+            Scope.empty().run { factOf(structOf("g", atomOf("c2"))) },
+            Scope.empty().run { factOf(structOf("h", atomOf("d1"))) },
+            Scope.empty().run { factOf(structOf("h", atomOf("d2"))) }
     )
 }
