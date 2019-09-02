@@ -84,7 +84,7 @@ internal class SolverUtilsTest {
 
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
-        assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.parents.toList())
+        assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
         assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
 
         assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
@@ -95,10 +95,10 @@ internal class SolverUtilsTest {
         val toBeTested = DummyInstances.solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.`true`())
 
         // precondition
-        assertEquals(2, toBeTested.context.parents.count())
+        assertEquals(2, toBeTested.context.clauseScopedParents.count())
 
-        assertNotEquals(DummyInstances.solveRequest.context, toBeTested.context.parents.first())
-        assertEquals(DummyInstances.solveRequest.context, toBeTested.context.parents.last())
+        assertNotEquals(DummyInstances.solveRequest.context, toBeTested.context.clauseScopedParents.first())
+        assertEquals(DummyInstances.solveRequest.context, toBeTested.context.clauseScopedParents.last())
     }
 
     @Test
@@ -145,7 +145,7 @@ internal class SolverUtilsTest {
         val myContext = DummyInstances.executionContext.copy(currentSubstitution = Substitution.of("HHH", Truth.fail()))
         val toBeTested = DummyInstances.solveRequest.newSolveRequest(Atom.of("a"), baseContext = myContext)
 
-        assertSame(myContext, toBeTested.context.parents.first())
+        assertSame(myContext, toBeTested.context.clauseScopedParents.first())
         assertEquals(myContext.currentSubstitution, toBeTested.context.currentSubstitution)
     }
 

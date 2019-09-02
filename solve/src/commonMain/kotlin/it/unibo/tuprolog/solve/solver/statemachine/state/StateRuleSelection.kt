@@ -40,7 +40,7 @@ internal class StateRuleSelection(
 
                         solveRequest.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
                                 // clear parents for this new "cut scope"
-                                .let { it.copy(context = it.context.copy(parents = sequenceOf(solveRequest.context))) }
+                                .let { it.copy(context = it.context.copy(clauseScopedParents = sequenceOf(solveRequest.context))) }
                     }.forEach { subSolveRequest ->
                         val subInitialState = StateInit(subSolveRequest, executionStrategy)
                                 .also { yield(it.alreadyExecuted()) }
@@ -87,7 +87,7 @@ internal class StateRuleSelection(
                                     replacement.apply(subSolveRequest.context.currentSubstitution)
                                 }.asUnifier()
                         ),
-                        parents = sequence { yield(this@with); yieldAll(parents) }, // refactor this into utility method insertAtBeginning for Seqeunces
+                        clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) }, // refactor this into utility method insertAtBeginning for Seqeunces
                         toCutContextsParent = subSolveRequest.context.toCutContextsParent
                 )
             })

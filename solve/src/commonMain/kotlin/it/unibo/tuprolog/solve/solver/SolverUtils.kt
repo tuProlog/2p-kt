@@ -59,7 +59,7 @@ internal object SolverUtils {
                     with(baseContext) {
                         copy(
                                 currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
-                                parents = sequence { yield(this@with); yieldAll(parents) },
+                                clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild
                         )
                     },

@@ -27,7 +27,7 @@ internal class StateInitTest {
     fun stateInitInitializationCreatesNewContextAddingAsParentTheCurrentOne() {
         val toBeTested = state.behave().single()
 
-        assertSame(toBeTested.solveRequest.context.parents.single(), DummyInstances.executionContext)
+        assertSame(toBeTested.solveRequest.context.clauseScopedParents.single(), DummyInstances.executionContext)
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class StateInitTest {
         )
         val toBeTested = myState.behave().single()
         assertEquals(false, toBeTested.solveRequest.context.isChoicePointChild)
-        assertEquals(true, toBeTested.solveRequest.context.parents.single().isChoicePointChild)
+        assertEquals(true, toBeTested.solveRequest.context.clauseScopedParents.single().isChoicePointChild)
     }
 
 }

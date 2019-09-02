@@ -25,19 +25,19 @@ internal class ExecutionContextTest {
     private val aDynamicKB = ClauseDatabase.of()
     private val aComputationStartTime = 0L
     private val aSubstitution = Substitution.empty()
-    private val aParentSequence = emptySequence<ExecutionContext>()
     private val someSolverStrategies = object : SolverStrategies {
         override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>, context: ExecutionContext): P = throw NotImplementedError()
         override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>, context: ExecutionContext): C = throw NotImplementedError()
         override fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean = throw NotImplementedError()
     }
+    private val aScopedParentSequence = emptySequence<ExecutionContext>()
     private val isChoicePointChild = true
     private val toCutContextParent = emptySequence<ExecutionContext>()
 
     @Test
     fun executionContextHoldsInsertedData() {
         val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime,
-                aSubstitution, aParentSequence, someSolverStrategies, isChoicePointChild, toCutContextParent)
+                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
@@ -45,7 +45,7 @@ internal class ExecutionContextTest {
         assertEquals(aDynamicKB, toBeTested.dynamicKB)
         assertEquals(aComputationStartTime, toBeTested.computationStartTime)
         assertEquals(aSubstitution, toBeTested.currentSubstitution)
-        assertEquals(aParentSequence, toBeTested.parents)
+        assertEquals(aScopedParentSequence, toBeTested.clauseScopedParents)
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
         assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
         assertEquals(toCutContextParent, toBeTested.toCutContextsParent)
@@ -57,7 +57,7 @@ internal class ExecutionContextTest {
 
         assertTrue { currentTime() >= toBeTested.computationStartTime }
         assertEquals(Substitution.empty(), toBeTested.currentSubstitution)
-        assertEquals(emptySequence(), toBeTested.parents)
+        assertEquals(emptySequence(), toBeTested.clauseScopedParents)
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
         assertEquals(false, toBeTested.isChoicePointChild)
         assertEquals(emptySequence(), toBeTested.toCutContextsParent)

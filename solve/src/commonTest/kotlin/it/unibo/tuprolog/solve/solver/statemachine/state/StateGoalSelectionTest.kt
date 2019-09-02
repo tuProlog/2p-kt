@@ -80,7 +80,7 @@ internal class StateGoalSelectionTest {
             val nextStates = StateGoalSelection(it, DummyInstances.executionStrategy).behave()
 
             assertEquals(DummyInstances.executionContext, nextStates.single().solveRequest.context)
-            assertEquals(it.context.parents.toList(), nextStates.single().solveRequest.context.parents.toList())
+            assertEquals(it.context.clauseScopedParents.toList(), nextStates.single().solveRequest.context.clauseScopedParents.toList())
         }
     }
 

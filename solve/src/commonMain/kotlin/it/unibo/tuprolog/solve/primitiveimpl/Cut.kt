@@ -18,9 +18,9 @@ object Cut : PrimitiveWrapper(Signature("!", 0)) {
                 Solve.Response(
                         Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution),
                         it.context.copy(
-                                toCutContextsParent = it.context.parents
+                                toCutContextsParent = it.context.clauseScopedParents
                                         .filter(ExecutionContext::isChoicePointChild)
-                                        .mapNotNull { ctx -> ctx.parents.firstOrNull() })
+                                        .mapNotNull { ctx -> ctx.clauseScopedParents.firstOrNull() })
                 )
         )
     }

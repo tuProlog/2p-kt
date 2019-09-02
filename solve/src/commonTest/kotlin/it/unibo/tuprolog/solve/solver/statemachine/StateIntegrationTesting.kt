@@ -102,11 +102,11 @@ internal class StateIntegrationTesting {
 
         val subRuleSelectionStateContexts = nextStates.filterIsInstance<StateRuleSelection>().map { it.solveRequest.context }
         subRuleSelectionStateContexts.zip(subInitStates.map { it.solveRequest.context }).forEach { (expected, actual) ->
-            assertSame(expected, actual.parents.first())
+            assertSame(expected, actual.clauseScopedParents.first())
         }
 
         subRuleSelectionStateContexts.zip(subInitStates.map { it.solveRequest.context }).forEach { (ruleSelectionContext, initContext) ->
-            assertSame(ruleSelectionContext, initContext.parents.first())
+            assertSame(ruleSelectionContext, initContext.clauseScopedParents.first())
         }
     }
 

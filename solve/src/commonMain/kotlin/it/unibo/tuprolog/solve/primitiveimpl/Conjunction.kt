@@ -29,7 +29,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
             var leftCutExecuted = false
             Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
-                if (leftResponse.context.parents.any { it in leftResponse.context.toCutContextsParent })
+                if (leftResponse.context.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent })
                     leftCutExecuted = true
 
                 when (leftResponse.solution) {
@@ -42,7 +42,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
                         var rightCutExecuted = false
                         Solver.sld().solve(rightSubSolveRequest).forEach { rightResponse ->
-                            if (rightResponse.context.parents.any { it in rightResponse.context.toCutContextsParent })
+                            if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent })
                                 rightCutExecuted = true
 
                             when (rightResponse.solution) {

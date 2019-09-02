@@ -45,18 +45,18 @@ internal class CutTest {
         with(DummyInstances.executionContext) {
             val contextWithNoParents = this
             val contextWithNoParentsButChoicePointChild = this.copy(isChoicePointChild = true)
-            val contextWithOneParentNotChoicePointChild = this.copy(parents = sequenceOf(this.copy()))
-            val contextWithOneParentChoicePointChild = this.copy(parents = sequenceOf(this.copy(isChoicePointChild = true)))
-            val contextWithTwoParentsNotChoicePointChild = this.copy(parents = sequenceOf(this.copy(), this.copy()))
+            val contextWithOneParentNotChoicePointChild = this.copy(clauseScopedParents = sequenceOf(this.copy()))
+            val contextWithOneParentChoicePointChild = this.copy(clauseScopedParents = sequenceOf(this.copy(isChoicePointChild = true)))
+            val contextWithTwoParentsNotChoicePointChild = this.copy(clauseScopedParents = sequenceOf(this.copy(), this.copy()))
 
             val contextWithTwoParentsFirstChoicePointChild = this.copy(
-                    parents = sequenceOf(this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy())), this.copy()))
+                    clauseScopedParents = sequenceOf(this.copy(isChoicePointChild = true, clauseScopedParents = sequenceOf(this.copy())), this.copy()))
             val contextWithTwoParentsSecondChoicePointChild = this.copy(
-                    parents = sequenceOf(this.copy(), this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy()))))
+                    clauseScopedParents = sequenceOf(this.copy(), this.copy(isChoicePointChild = true, clauseScopedParents = sequenceOf(this.copy()))))
             val contextWithTwoParentsBothChoicePointChild = this.copy(
-                    parents = sequenceOf(
-                            this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy())),
-                            this.copy(isChoicePointChild = true, parents = sequenceOf(this.copy()))
+                    clauseScopedParents = sequenceOf(
+                            this.copy(isChoicePointChild = true, clauseScopedParents = sequenceOf(this.copy())),
+                            this.copy(isChoicePointChild = true, clauseScopedParents = sequenceOf(this.copy()))
                     ))
 
             assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithNoParents)).single().underTestField())
@@ -65,17 +65,17 @@ internal class CutTest {
             assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithOneParentChoicePointChild)).single().underTestField())
             assertEquals(emptyList(), Cut.primitive(makeRequest(contextWithTwoParentsNotChoicePointChild)).single().underTestField())
             assertSame(
-                    contextWithTwoParentsFirstChoicePointChild.parents.first().parents.first(),
+                    contextWithTwoParentsFirstChoicePointChild.clauseScopedParents.first().clauseScopedParents.first(),
                     Cut.primitive(makeRequest(contextWithTwoParentsFirstChoicePointChild)).single().underTestField().single()
             )
             assertSame(
-                    contextWithTwoParentsSecondChoicePointChild.parents.last().parents.first(),
+                    contextWithTwoParentsSecondChoicePointChild.clauseScopedParents.last().clauseScopedParents.first(),
                     Cut.primitive(makeRequest(contextWithTwoParentsSecondChoicePointChild)).single().underTestField().single()
             )
             assertEquals(
                     listOf(
-                            contextWithTwoParentsBothChoicePointChild.parents.first().parents.first(),
-                            contextWithTwoParentsSecondChoicePointChild.parents.last().parents.first()
+                            contextWithTwoParentsBothChoicePointChild.clauseScopedParents.first().clauseScopedParents.first(),
+                            contextWithTwoParentsSecondChoicePointChild.clauseScopedParents.last().clauseScopedParents.first()
                     ),
                     Cut.primitive(makeRequest(contextWithTwoParentsBothChoicePointChild)).single().underTestField()
             )
