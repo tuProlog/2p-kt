@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
@@ -75,20 +74,4 @@ internal class StateRuleSelection(
                     }
         }
     }
-
-    // TODO this should be moved to [SolverUtils], and tested
-    /** Utility method to copy receiver [Solve.Request] importing [subSolveRequest] context */
-    private fun Solve.Request.importingContextFrom(subSolveRequest: Solve.Request) = this
-            .copy(context = with(this.context) {
-                copy(
-                        currentSubstitution = Substitution.of(
-                                subSolveRequest.context.currentSubstitution,
-                                currentSubstitution.mapValues { (_, replacement) ->
-                                    replacement.apply(subSolveRequest.context.currentSubstitution)
-                                }.asUnifier()
-                        ),
-                        clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) }, // refactor this into utility method insertAtBeginning for Seqeunces
-                        toCutContextsParent = subSolveRequest.context.toCutContextsParent
-                )
-            })
 }

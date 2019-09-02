@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -78,6 +79,21 @@ internal object SolverUtils {
                         ?: 0
             }
 
+    /** Utility method to copy receiver [Solve.Request] importing [subSolve] context */
+    fun Solve.Request.importingContextFrom(subSolve: Solve) = this
+            .copy(context = with(this.context) {
+                copy(
+                        currentSubstitution = Substitution.of(
+                                subSolve.context.currentSubstitution,
+                                currentSubstitution.mapValues { (_, replacement) ->
+                                    replacement.apply(subSolve.context.currentSubstitution)
+                                }.asUnifier()
+                        ),
+                        clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) }, // refactor this into utility method insertAtBeginning for Seqeunces
+                        toCutContextsParent = subSolve.context.toCutContextsParent
+                )
+            })
+
     /** Creates a [Solve.Response] with [Solution.Yes], taking signature and arguments from receiver request
      * and using given [otherResponse] substitution and context */
     fun Solve.Request.yesResponseBy(otherResponse: Solve.Response): Solve.Response =
@@ -85,14 +101,14 @@ internal object SolverUtils {
                 require(it is Substitution.Unifier) {
                     "An affirmative response requires a non-failed Substitution! Actually passed `$it`"
                 }.let { _ ->
-                    Solve.Response(Solution.Yes(this.signature, this.arguments, it), otherResponse.context)
+                    Solve.Response(Solution.Yes(this.signature, this.arguments, it), importingContextFrom(otherResponse).context)
                 }
             }
 
     /** Creates a [Solve.Response] with [Solution.No], taking signature and arguments from receiver request
      * and using given [otherResponse] context */
     fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
-            Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
+            Solve.Response(Solution.No(this.signature, this.arguments), importingContextFrom(otherResponse).context)
 
     /** Checks if this sequence of elements holds more than one element */
     fun moreThanOne(elements: Sequence<*>): Boolean = elements.iterator().run {

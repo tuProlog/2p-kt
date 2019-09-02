@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.testutils
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -23,4 +24,7 @@ internal object DummyInstances {
 
     /** An execution strategy for states */
     internal val executionStrategy = MainScope()
+
+    /** A solveResponse to [solveRequest] */
+    internal val solveResponse = with(solveRequest) { Solve.Response(Solution.Yes(signature, arguments, context.currentSubstitution), context) }
 }

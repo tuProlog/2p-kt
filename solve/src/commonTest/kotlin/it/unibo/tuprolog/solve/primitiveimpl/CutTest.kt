@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -82,4 +84,23 @@ internal class CutTest {
         }
     }
 
+    @Test
+    fun cutAddsContextsToCutInProvidedField() {
+        val alreadyPresentToCut = DummyInstances.executionContext.copy()
+        val currentlyAddedToCut = DummyInstances.executionContext.copy()
+        val startRequest = with(DummyInstances.executionContext) {
+            createSolveRequest(Atom.of("!"))
+                    .copy(context = this.copy(
+                            toCutContextsParent = sequenceOf(alreadyPresentToCut),
+                            clauseScopedParents = sequenceOf(this.copy(isChoicePointChild = true, clauseScopedParents = sequenceOf(currentlyAddedToCut)))
+                    ))
+        }
+
+        val response = Cut.primitive(startRequest).toList()
+
+        assertEquals(1, response.count())
+        assertSame(2, response.single().context.toCutContextsParent.count())
+        assertSame(alreadyPresentToCut, response.single().context.toCutContextsParent.first())
+        assertSame(currentlyAddedToCut, response.single().context.toCutContextsParent.last())
+    }
 }

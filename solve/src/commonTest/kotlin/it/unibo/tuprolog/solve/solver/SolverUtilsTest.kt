@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
@@ -147,6 +148,63 @@ internal class SolverUtilsTest {
 
         assertSame(myContext, toBeTested.context.clauseScopedParents.first())
         assertEquals(myContext.currentSubstitution, toBeTested.context.currentSubstitution)
+    }
+
+    @Test
+    fun importingContextFromShouldImportSubstitutionCorrectly() {
+        Scope.empty().where {
+            val firstSolveRequest = with(DummyInstances.solveRequest) {
+                copy(context = context.copy(currentSubstitution = Substitution.of(
+                        varOf("A") to atomOf("a"),
+                        varOf("C") to varOf("D")
+                )))
+            }
+            val secondSolveRequest = with(DummyInstances.solveRequest) {
+                copy(context = context.copy(currentSubstitution = Substitution.of(
+                        varOf("A") to atomOf("b"),
+                        varOf("D") to varOf("C")
+                )))
+            }
+
+            with(firstSolveRequest.importingContextFrom(secondSolveRequest)) {
+                assertEquals(Substitution.of(
+                        varOf("A") to atomOf("a"),
+                        varOf("C") to varOf("C"),
+                        varOf("D") to varOf("C")
+                ), this.context.currentSubstitution)
+            }
+
+            with(secondSolveRequest.importingContextFrom(firstSolveRequest)) {
+                assertEquals(Substitution.of(
+                        varOf("A") to atomOf("b"),
+                        varOf("D") to varOf("D"),
+                        varOf("C") to varOf("D")
+                ), this.context.currentSubstitution)
+            }
+        }
+    }
+
+    @Test
+    fun importingContextFromShouldImportParentsCorrectly() {
+        val request = DummyInstances.solveRequest.copy()
+
+        val toBeTested = DummyInstances.solveRequest.importingContextFrom(request)
+        assertSame(request.context, toBeTested.context.clauseScopedParents.first())
+        assertEquals(request.context.clauseScopedParents.toList(), toBeTested.context.clauseScopedParents.drop(1).toList())
+    }
+
+    @Test
+    fun importingContextFromShouldImportToCutContextsCorrectly() {
+        val previouslyPresentContext = DummyInstances.solveRequest.context.copy()
+        val request = with(DummyInstances.solveRequest) { copy(context = context.copy(toCutContextsParent = sequenceOf(previouslyPresentContext))) }
+        val toImportContext = DummyInstances.solveRequest.context.copy()
+        val toImport = with(DummyInstances.solveRequest) { copy(context = context.copy(toCutContextsParent = sequenceOf(toImportContext))) }
+
+        val toBeTested = request.importingContextFrom(toImport)
+        with(toBeTested.context) {
+            assertEquals(1, toCutContextsParent.count())
+            assertSame(toImportContext, toCutContextsParent.single())
+        }
     }
 
     @Test

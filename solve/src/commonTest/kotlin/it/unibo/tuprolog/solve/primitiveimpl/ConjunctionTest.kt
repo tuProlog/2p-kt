@@ -1,15 +1,17 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.primitive.Primitive
+import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -57,5 +59,69 @@ internal class ConjunctionTest {
         }
     }
 
-    // TODO: 01/09/2019 more deeper testing
+    @Test
+    fun conjunctionReturnsResponseContextEnriched() {
+        val aScope = Scope.of("L", "R")
+        val firstSubstitution = Substitution.of(aScope.varOf("L"), Atom.of("first"))
+        val secondSubstitution = Substitution.of(aScope.varOf("R"), Atom.of("second"))
+        val aToBeCutContext = DummyInstances.executionContext.copy()
+        val leftPrimitive = object : PrimitiveWrapper(Signature("left", 0)) {
+            override val uncheckedImplementation: Primitive = {
+                sequenceOf(
+                        Solve.Response(
+                                Solution.Yes(it.signature, it.arguments, (it.context.currentSubstitution + firstSubstitution).asUnifier()),
+                                it.context.copy(
+                                        currentSubstitution = (it.context.currentSubstitution + firstSubstitution).asUnifier(),
+                                        toCutContextsParent = sequenceOf(aToBeCutContext)
+                                )
+                        )
+                )
+            }
+        }
+        val rightPrimitive = object : PrimitiveWrapper(Signature("right", 0)) {
+            override val uncheckedImplementation: Primitive = {
+                sequenceOf(
+                        Solve.Response(
+                                Solution.Yes(it.signature, it.arguments, (it.context.currentSubstitution + secondSubstitution).asUnifier()),
+                                it.context.copy(currentSubstitution = (it.context.currentSubstitution + secondSubstitution).asUnifier())
+                        )
+                )
+            }
+        }
+        val request = createSolveRequest(
+                Tuple.of(Atom.of("left"), Atom.of("right")),
+                primitives = mapOf(*listOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
+        )
+
+        val responses = Conjunction.primitive(request).toList()
+        assertEquals(1, responses.count())
+        assertEquals(Substitution.of(firstSubstitution, secondSubstitution), responses.single().context.currentSubstitution)
+        assertSame(aToBeCutContext, responses.single().context.toCutContextsParent.single())
+    }
+
+    @Test
+    fun conjunctionCutsCorrectBranchesAccordingToDataStructure() {
+//        val leftPrimitive = object : PrimitiveWrapper(Signature("left", 0)) {
+//            override val uncheckedImplementation: Primitive = {
+//                sequenceOf(Solve.Response(
+//                        Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution),
+//                        it.context.copy()
+//                ))
+//            }
+//        }
+//        val rightPrimitive = object : PrimitiveWrapper(Signature("right", 0)) {
+//            override val uncheckedImplementation: Primitive = {
+//                sequenceOf(Solve.Response(
+//                        Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution),
+//                        it.context.copy()
+//                ))
+//            }
+//        }
+//        val request = createSolveRequest(
+//                Tuple.of(Atom.of("left"), Atom.of("right")),
+//                primitives = mapOf(*listOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
+//        )
+//
+//        val responses = Conjunction.primitive(request).toList()
+    }
 }
