@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import it.unibo.tuprolog.solve.solver.statemachine.state.SuccessFinalState
 import kotlinx.coroutines.CoroutineScope
-
 /**
  * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree
  *

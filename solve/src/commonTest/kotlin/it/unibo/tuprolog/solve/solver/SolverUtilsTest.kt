@@ -5,6 +5,7 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
+import it.unibo.tuprolog.solve.solver.SolverUtils.mergeSubstituting
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
@@ -186,11 +187,18 @@ internal class SolverUtilsTest {
 
     @Test
     fun importingContextFromShouldImportParentsCorrectly() {
-        val request = DummyInstances.solveRequest.copy()
+        val anAlreadyPresentContext = DummyInstances.executionContext.copy()
+        val anotherAlreadyPresentContext = DummyInstances.executionContext.copy()
+        val startRequest = with(DummyInstances.solveRequest) {
+            copy(context = context.copy(clauseScopedParents = sequenceOf(anAlreadyPresentContext)))
+        }
+        val toImportSubRequest = with(DummyInstances.solveRequest) {
+            copy(context = context.copy(clauseScopedParents = sequenceOf(anotherAlreadyPresentContext, anAlreadyPresentContext)))
+        }
 
-        val toBeTested = DummyInstances.solveRequest.importingContextFrom(request)
-        assertSame(request.context, toBeTested.context.clauseScopedParents.first())
-        assertEquals(request.context.clauseScopedParents.toList(), toBeTested.context.clauseScopedParents.drop(1).toList())
+        val toBeTested = startRequest.importingContextFrom(toImportSubRequest).context.clauseScopedParents.toList()
+        assertEquals(toImportSubRequest.context.clauseScopedParents.toList(), toBeTested.take(2))
+        assertEquals(startRequest.context.clauseScopedParents.toList(), toBeTested.drop(2).toList())
     }
 
     @Test
@@ -204,6 +212,35 @@ internal class SolverUtilsTest {
         with(toBeTested.context) {
             assertEquals(1, toCutContextsParent.count())
             assertSame(toImportContext, toCutContextsParent.single())
+        }
+    }
+
+    @Test
+    fun mergeSubstitutingShouldMergeCorrectlySubstitutions() {
+        Scope.empty().where {
+            val firstSubstitution = Substitution.of(
+                    varOf("A") to atomOf("a"),
+                    varOf("C") to varOf("D")
+            )
+            val secondSubstitution = Substitution.of(
+                    varOf("A") to atomOf("b"),
+                    varOf("D") to varOf("C")
+            )
+
+            assertEquals(
+                    Substitution.of(
+                            varOf("A") to atomOf("a"),
+                            varOf("C") to varOf("C"),
+                            varOf("D") to varOf("C")),
+                    mergeSubstituting(firstSubstitution, secondSubstitution)
+            )
+            assertEquals(
+                    Substitution.of(
+                            varOf("A") to atomOf("b"),
+                            varOf("D") to varOf("D"),
+                            varOf("C") to varOf("D")),
+                    mergeSubstituting(secondSubstitution, firstSubstitution)
+            )
         }
     }
 
@@ -225,15 +262,6 @@ internal class SolverUtilsTest {
 
         assertEquals(correct.solution, toBeTested.solution)
         assertEquals(correct.context, toBeTested.context)
-    }
-
-    @Test
-    fun yesResponseComplainsIFPassedResponseSubstitutionIsFailed() {
-        val badResponse = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.No(signature, arguments), DummyInstances.executionContext)
-        }
-
-        assertFailsWith<IllegalArgumentException> { DummyInstances.solveRequest.yesResponseBy(badResponse) }
     }
 
     @Test

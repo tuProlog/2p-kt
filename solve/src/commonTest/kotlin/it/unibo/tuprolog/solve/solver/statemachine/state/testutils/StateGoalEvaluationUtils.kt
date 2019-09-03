@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
- * Utils singleto to help testing [StateGoalEvaluation]
+ * Utils singleton to help testing [StateGoalEvaluation]
  *
  * @author Enrico
  */

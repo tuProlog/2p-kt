@@ -83,32 +83,39 @@ internal object SolverUtils {
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this
             .copy(context = with(this.context) {
                 copy(
-                        currentSubstitution = Substitution.of(
-                                subSolve.context.currentSubstitution,
-                                currentSubstitution.mapValues { (_, replacement) ->
-                                    replacement.apply(subSolve.context.currentSubstitution)
-                                }.asUnifier()
-                        ),
-                        clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) }, // refactor this into utility method insertAtBeginning for Seqeunces
+                        currentSubstitution = mergeSubstituting(currentSubstitution, subSolve.context.currentSubstitution),
+                        clauseScopedParents = sequence {
+                            yieldAll(subSolve.context.clauseScopedParents)
+                            yieldAll(this@with.clauseScopedParents)
+                        }, // refactor this into utility method insertAtBeginning for Seqeunces
                         toCutContextsParent = subSolve.context.toCutContextsParent
                 )
             })
 
+    /** Utility method to merge substitutions substituting instantiated variables in already present substitutions */
+    fun mergeSubstituting(old: Substitution, new: Substitution): Substitution.Unifier = Substitution.of(
+            new,
+            old.mapValues { (_, replacement) -> replacement.apply(new) }.asUnifier()
+    )
+
     /** Creates a [Solve.Response] with [Solution.Yes], taking signature and arguments from receiver request
      * and using given [otherResponse] substitution and context */
-    fun Solve.Request.yesResponseBy(otherResponse: Solve.Response): Solve.Response =
-            otherResponse.solution.substitution.let {
-                require(it is Substitution.Unifier) {
-                    "An affirmative response requires a non-failed Substitution! Actually passed `$it`"
-                }.let { _ ->
-                    Solve.Response(Solution.Yes(this.signature, this.arguments, it), importingContextFrom(otherResponse).context)
-                }
-            }
+    fun Solve.Request.yesResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
+            Solution.Yes(
+                    this.signature,
+                    this.arguments,
+                    mergeSubstituting(
+                            this.context.currentSubstitution,
+                            otherResponse.context.currentSubstitution
+                    )
+            ),
+            otherResponse.context
+    )
 
     /** Creates a [Solve.Response] with [Solution.No], taking signature and arguments from receiver request
      * and using given [otherResponse] context */
     fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
-            Solve.Response(Solution.No(this.signature, this.arguments), importingContextFrom(otherResponse).context)
+            Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
 
     /** Checks if this sequence of elements holds more than one element */
     fun moreThanOne(elements: Sequence<*>): Boolean = elements.iterator().run {

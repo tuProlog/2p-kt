@@ -54,7 +54,7 @@ internal class StateRuleSelectionTest {
         }
         with(nextStates.component4()) {
             assertTrue { this is StateEnd.True }
-            assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.first())
+            assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.toList()[1])
             assertFalse { this.solveRequest.context.isChoicePointChild }
         }
     }
@@ -106,9 +106,15 @@ internal class StateRuleSelectionTest {
         assertEquals(2, subsequentRuleSelectionStates.count())
         nextStates.filterIsInstance<StateInit>().forEach {
             assertEquals(1, it.solveRequest.context.clauseScopedParents.count())
+            assertTrue { it.solveRequest.context.isChoicePointChild }
         }
+
         val interestingEndStates = nextStates.filter { it.solveRequest.equalSignatureAndArgs(request) }.filterIsInstance<StateEnd.True>()
         assertEquals(4, interestingEndStates.count())
+
+        interestingEndStates.forEach {
+            assertTrue { request.context in it.solveRequest.context.clauseScopedParents }
+        }
 
         val expectedSubstitutions = listOf("c1", "c2", "d1", "d2").map(Atom.Companion::of)
         val actualSubstitutions = interestingEndStates.map { it.answerSubstitution.values.single() }
