@@ -48,22 +48,31 @@ internal object SolverTestUtils {
      * A database containing the following rules:
      * ```prolog
      * f(only) :- !.
-     * g(only) :- !.
      * f(a).
-     * g(a).
-     * g(b).
      * h(a).
      * h(only) :- !.
      * h(b).
-     * h(c).
+     * g(A) :- e(A).
+     * g(A) :- d(A).
+     * e(a) :- !.
+     * e(b).
+     * d(c).
+     * d(d).
      * ```
      */
     internal val databaseWithCutAlternatives = ClauseDatabase.of(listOf(
             Rule.of(Struct.of("f", Atom.of("only")), Atom.of("!")),
-            Rule.of(Struct.of("g", Atom.of("only")), Atom.of("!"))
-    ) + factDatabase.clauses.toList().dropLast(2) +
-            Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")) +
-            factDatabase.clauses.drop(4))
+            Fact.of(Struct.of("f", Atom.of("a"))),
+            Fact.of(Struct.of("h", Atom.of("a"))),
+            Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")),
+            Fact.of(Struct.of("h", Atom.of("b"))),
+            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("e",varOf("A"))) },
+            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("d",varOf("A"))) },
+            Rule.of(Struct.of("e", Atom.of("a")), Atom.of("!")),
+            Fact.of(Struct.of("e", Atom.of("b"))),
+            Fact.of(Struct.of("d", Atom.of("c"))),
+            Fact.of(Struct.of("d", Atom.of("d")))
+    ))
 
     /** Request for solving `?- f(A)` against [databaseWithCutAlternatives]; should result in substitution `A\only` */
     internal val oneResponseBecauseOfCut = createSolveRequest(
@@ -74,6 +83,13 @@ internal object SolverTestUtils {
     /** Request for solving `?- h(A)` against [databaseWithCutAlternatives]; should result in substitution `A/a, A\only` */
     internal val twoResponseBecauseOfCut = createSolveRequest(
             Struct.of("h", Var.of("A")),
+            databaseWithCutAlternatives,
+            mapOf(Cut.descriptionPair)
+    )
+
+    /** Request for solving `?- g(V)` against [databaseWithCutAlternatives]; should result in substitution `V/a, V\c, V/d` */
+    internal val threeResponseBecauseOfCut = createSolveRequest(
+            Struct.of("g",Var.of("V")),
             databaseWithCutAlternatives,
             mapOf(Cut.descriptionPair)
     )
@@ -103,7 +119,7 @@ internal object SolverTestUtils {
     )
 
     /** Request for solving `?- f(A, B)` against [databaseWithCutAndConjunction]; should result in substitution `(A/a, B/a1) and  (A\a, B/b1)` */
-    internal val twoResponseOnConjunctionAndCutDatabase = createSolveRequest(
+    internal val twoResponseOnConjunctionAndCutDatabase = createSolveRequest(// TODO: 04/09/2019 use in tests
             Struct.of("f", Var.of("A"), Var.of("B")),
             databaseWithCutAndConjunction,
             mapOf(Cut.descriptionPair, Conjunction.descriptionPair)

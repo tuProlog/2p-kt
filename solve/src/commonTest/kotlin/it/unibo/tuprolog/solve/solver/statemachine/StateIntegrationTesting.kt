@@ -137,4 +137,20 @@ internal class StateIntegrationTesting {
                 interestingStates.map { it.answerSubstitution.values.single() }
         )
     }
+
+    @Test
+    fun threeAlternativesBecauseOfInternalCutExecution() {
+        val nextStates = execute(SolverTestUtils.threeResponseBecauseOfCut).toList()
+
+        val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
+        assertEquals(9, trueEndStates.count())
+        assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
+
+        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseBecauseOfCut) }
+        assertEquals(3, interestingStates.count())
+        assertEquals(
+                listOf(Atom.of("a"), Atom.of("c"), Atom.of("d")),
+                interestingStates.map { it.answerSubstitution.values.single() }
+        )
+    }
 }
