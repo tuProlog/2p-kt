@@ -66,8 +66,8 @@ internal object SolverTestUtils {
             Fact.of(Struct.of("h", Atom.of("a"))),
             Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")),
             Fact.of(Struct.of("h", Atom.of("b"))),
-            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("e",varOf("A"))) },
-            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("d",varOf("A"))) },
+            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("e", varOf("A"))) },
+            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("d", varOf("A"))) },
             Rule.of(Struct.of("e", Atom.of("a")), Atom.of("!")),
             Fact.of(Struct.of("e", Atom.of("b"))),
             Fact.of(Struct.of("d", Atom.of("c"))),
@@ -89,7 +89,7 @@ internal object SolverTestUtils {
 
     /** Request for solving `?- g(V)` against [databaseWithCutAlternatives]; should result in substitution `V/a, V\c, V/d` */
     internal val threeResponseBecauseOfCut = createSolveRequest(
-            Struct.of("g",Var.of("V")),
+            Struct.of("g", Var.of("V")),
             databaseWithCutAlternatives,
             mapOf(Cut.descriptionPair)
     )
@@ -104,23 +104,60 @@ internal object SolverTestUtils {
      * r(b1).
      * ```
      */
-    internal val databaseWithCutAndConjunction = ClauseDatabase.of(
-            Scope.empty().run {
+    internal val databaseWithMiddleCutAndConjunction = Scope.empty().run {
+        ClauseDatabase.of(
                 ruleOf(structOf("f", varOf("X"), varOf("Y")),
                         structOf("q", varOf("X")),
                         atomOf("!"),
                         structOf("r", varOf("Y"))
-                )
-            },
-            Fact.of(Struct.of("q", Atom.of("a"))),
-            Fact.of(Struct.of("q", Atom.of("b"))),
-            Fact.of(Struct.of("r", Atom.of("a1"))),
-            Fact.of(Struct.of("r", Atom.of("b1")))
+                ),
+                factOf(structOf("q", atomOf("a"))),
+                factOf(structOf("q", atomOf("b"))),
+                factOf(structOf("r", atomOf("a1"))),
+                factOf(structOf("r", atomOf("b1")))
+        )
+    }
+
+    /** Request for solving `?- f(A, B)` against [databaseWithMiddleCutAndConjunction]; should result in substitution `(A/a, B/a1) and (A\a, B/b1)` */
+    internal val twoResponseOnConjunctionAndMiddleCutDatabase = createSolveRequest(
+            Struct.of("f", Var.of("A"), Var.of("B")),
+            databaseWithMiddleCutAndConjunction,
+            mapOf(Cut.descriptionPair, Conjunction.descriptionPair)
     )
 
-    /** Request for solving `?- f(A, B)` against [databaseWithCutAndConjunction]; should result in substitution `(A/a, B/a1) and  (A\a, B/b1)` */
-    internal val twoResponseOnConjunctionAndCutDatabase = createSolveRequest(// TODO: 04/09/2019 use in tests
-            Struct.of("f", Var.of("A"), Var.of("B")),
+    /**
+     * A database containing the following rules:
+     * ```prolog
+     * a(X) :- b(X).
+     * a(6).
+     * b(X) :- c(X), d(X).
+     * b(4) :- !.
+     * b(5).
+     * c(1).
+     * c(2) :- !.
+     * c(3).
+     * d(2).
+     * d(3).
+     * ```
+     */
+    internal val databaseWithCutAndConjunction = Scope.empty().run {
+        ClauseDatabase.of(
+                ruleOf(structOf("a", varOf("X")), structOf("b", varOf("X"))),
+                factOf(structOf("a", numOf(6))),
+                ruleOf(structOf("b", varOf("X")), tupleOf(structOf("c", varOf("X")), structOf("d", varOf("X")))),
+                ruleOf(structOf("b", numOf(4)), atomOf("!")),
+                factOf(structOf("b", numOf(5))),
+                factOf(structOf("c", numOf(1))),
+                ruleOf(structOf("c", numOf(2)), atomOf("!")),
+                factOf(structOf("c", numOf(3))),
+                factOf(structOf("d", numOf(2))),
+                factOf(structOf("d", numOf(3)))
+        )
+    }
+
+    /** Request for solving `?- a(X)` against [databaseWithCutAndConjunction]; should result in substitution `X/2, X/4, X/6` */
+    internal val threeResponseOnCutAndConjunctionDatabase = createSolveRequest(
+            Struct.of("a", Var.of("X")),
             databaseWithCutAndConjunction,
             mapOf(Cut.descriptionPair, Conjunction.descriptionPair)
     )

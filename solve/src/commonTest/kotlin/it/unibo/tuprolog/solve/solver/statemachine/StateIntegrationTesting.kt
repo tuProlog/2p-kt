@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.solver.statemachine
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
@@ -152,5 +154,42 @@ internal class StateIntegrationTesting {
                 listOf(Atom.of("a"), Atom.of("c"), Atom.of("d")),
                 interestingStates.map { it.answerSubstitution.values.single() }
         )
+    }
+
+    @Test
+    fun twoResponseOnConjunctionAndCutDatabaseWorks() {
+        val nextStates = execute(SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase).toList()
+
+        val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
+                .filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase) }
+        assertEquals(2, interestingStates.count())
+        Scope.of(*SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase.arguments.map { it as Var }.toTypedArray()).where {
+            assertEquals(
+                    listOf(
+                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a1")),
+                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("b1"))
+                    ),
+                    interestingStates.map { it.answerSubstitution }
+            )
+        }
+    }
+
+    @Test
+    fun threeResponseOnCutAndConjunctionDatabase() {
+        val nextStates = execute(SolverTestUtils.threeResponseOnCutAndConjunctionDatabase).toList()
+
+        val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
+                .filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseOnCutAndConjunctionDatabase) }
+        assertEquals(3, interestingStates.count())
+        Scope.of(*SolverTestUtils.threeResponseOnCutAndConjunctionDatabase.arguments.map { it as Var }.toTypedArray()).where {
+            assertEquals(
+                    listOf(
+                            Substitution.of(varOf("X") to numOf(2)),
+                            Substitution.of(varOf("X") to numOf(4)),
+                            Substitution.of(varOf("X") to numOf(6))
+                    ),
+                    interestingStates.map { it.answerSubstitution }
+            )
+        }
     }
 }

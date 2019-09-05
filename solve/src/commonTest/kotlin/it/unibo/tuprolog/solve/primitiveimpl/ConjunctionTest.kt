@@ -60,7 +60,7 @@ internal class ConjunctionTest {
     }
 
     @Test
-    fun conjunctionReturnsResponseContextEnriched() {
+    fun conjunctionReturnsResponseContextWithOnlySubstitutionEnriched() {
         val aScope = Scope.of("L", "R")
         val firstSubstitution = Substitution.of(aScope.varOf("L"), Atom.of("first"))
         val secondSubstitution = Substitution.of(aScope.varOf("R"), Atom.of("second"))
@@ -97,31 +97,5 @@ internal class ConjunctionTest {
         assertEquals(1, responses.count())
         assertEquals(Substitution.of(firstSubstitution, secondSubstitution), responses.single().context.currentSubstitution)
         assertSame(aToBeCutContext, responses.single().context.toCutContextsParent.single())
-    }
-
-    @Test
-    fun conjunctionCutsCorrectBranchesAccordingToDataStructure() {
-//        val leftPrimitive = object : PrimitiveWrapper(Signature("left", 0)) {
-//            override val uncheckedImplementation: Primitive = {
-//                sequenceOf(Solve.Response(
-//                        Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution),
-//                        it.context.copy()
-//                ))
-//            }
-//        }
-//        val rightPrimitive = object : PrimitiveWrapper(Signature("right", 0)) {
-//            override val uncheckedImplementation: Primitive = {
-//                sequenceOf(Solve.Response(
-//                        Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution),
-//                        it.context.copy()
-//                ))
-//            }
-//        }
-//        val request = createSolveRequest(
-//                Tuple.of(Atom.of("left"), Atom.of("right")),
-//                primitives = mapOf(*listOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
-//        )
-//
-//        val responses = Conjunction.primitive(request).toList()
     }
 }
