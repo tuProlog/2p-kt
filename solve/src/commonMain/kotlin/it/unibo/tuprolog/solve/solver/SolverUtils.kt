@@ -59,7 +59,7 @@ internal object SolverUtils {
                     newGoal.argsList,
                     with(baseContext) {
                         copy(
-                                currentSubstitution = Substitution.of(currentSubstitution, toAddSubstitutions),
+                                currentSubstitution = mergeSubstituting(currentSubstitution, toAddSubstitutions),
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild
                         )

@@ -27,34 +27,32 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
             val leftSubSolveRequest = mainRequest.newSolveRequest(prepareForExecution(leftSubGoal))
 
-            var leftCutExecuted = false
+            var cutExecuted = false
             Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
                 if (leftResponse.context.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent })
-                    leftCutExecuted = true
+                    cutExecuted = true
 
                 when (leftResponse.solution) {
                     is Solution.Yes -> {
                         val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                prepareForExecution(rightSubGoal.apply(leftResponse.solution.substitution)),
-                                leftResponse.solution.substitution,
+                                prepareForExecution(rightSubGoal.apply(leftResponse.context.currentSubstitution)),
+                                leftResponse.context.currentSubstitution,
                                 baseContext = leftResponse.context
                         )
 
-                        var rightCutExecuted = false
                         Solver.sld().solve(rightSubSolveRequest).forEach { rightResponse ->
                             if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent })
-                                rightCutExecuted = true
+                                cutExecuted = true
 
                             when (rightResponse.solution) {
                                 is Solution.Yes -> yield(mainRequest.yesResponseBy(rightResponse))
                                 is Solution.No -> yield(mainRequest.noResponseBy(rightResponse))
                             }
-                            if (rightCutExecuted) return@sequence
                         }
                     }
                     is Solution.No -> yield(mainRequest.noResponseBy(leftResponse))
                 }
-                if (leftCutExecuted) return@sequence
+                if (cutExecuted) return@sequence
             }
         }
     }
