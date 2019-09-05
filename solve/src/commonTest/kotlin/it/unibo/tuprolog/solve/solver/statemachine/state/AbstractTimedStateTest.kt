@@ -47,7 +47,12 @@ internal class AbstractTimedStateTest {
     @Test
     fun behaveChecksIfTimeoutElapsedAndIfNotGoesIntoBehaveTimedBehaviour() {
         val toBeTested = createAbstractTimeState(
-                DummyInstances.solveRequest.copy(executionTimeout = 1000),
+                with(DummyInstances.solveRequest) {
+                    copy(
+                            context = context.copy(computationStartTime = currentTime()),
+                            executionTimeout = 1000
+                    )
+                },
                 DummyInstances.executionStrategy
         )
 
@@ -59,7 +64,7 @@ internal class AbstractTimedStateTest {
         val toBeTested = createAbstractTimeState(
                 DummyInstances.solveRequest.copy(
                         context = DummyInstances.executionContext.copy(computationStartTime = currentTime()),
-                        executionTimeout = 10
+                        executionTimeout = 20
                 ),
                 DummyInstances.executionStrategy
         )
