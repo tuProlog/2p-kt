@@ -18,18 +18,23 @@ import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 internal object SolverUtils {
 
     /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
-    fun <E> orderedWithStrategy( // TODO: 01/09/2019 implement handling of duplicates
+    fun <E> orderedWithStrategy(
             elements: Sequence<E>,
             context: ExecutionContext,
             selectionStrategy: (Sequence<E>, ExecutionContext) -> E
     ): Sequence<E> = sequence {
-        val alreadySelected = mutableListOf<E>()
-
-        elements.forEach { _ ->
-            (elements - alreadySelected).takeIf { it.any() }?.also { remaining ->
-                alreadySelected += selectionStrategy(remaining, context)
-                        .also { yield(it) }
+        when (elements.any()) {
+            true -> selectionStrategy(elements, context).let { selected ->
+                yield(selected)
+                yieldAll(
+                        orderedWithStrategy(
+                                elements.filterIndexed { index, _ -> index != elements.indexOf(selected) },
+                                context,
+                                selectionStrategy
+                        )
+                )
             }
+            else -> yieldAll(emptySequence())
         }
     }
 

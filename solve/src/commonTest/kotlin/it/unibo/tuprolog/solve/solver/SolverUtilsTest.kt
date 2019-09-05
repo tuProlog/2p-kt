@@ -45,12 +45,27 @@ internal class SolverUtilsTest {
     }
 
     @Test
-    @Ignore //TODO not working
     fun orderWithStrategyDoesntRemoveDuplicatedItems() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 5)
         val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.max()!! }
 
         assertEquals(testSequence.sortedDescending().toList(), toBeTested.toList())
+    }
+
+    @Test
+    fun orderWithStrategyWorksLazily() {
+        val testSequence = sequenceOf({ 1 }, { 5 }, { 2 }, { 9 }, { 3 }, { 0 }, { 5 }, { throw IllegalStateException() })
+        val testSeqElemCount = testSequence.count()
+
+        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ ->
+            seq.first().also { it() }
+        }
+        val testSeqIterator = testSequence.iterator()
+        val toBeTestedIterator = toBeTested.iterator()
+
+        repeat(testSeqElemCount - 1) { assertSame(testSeqIterator.next(), toBeTestedIterator.next()) }
+
+        assertFailsWith<IllegalStateException> { toBeTestedIterator.next() }
     }
 
     @Test

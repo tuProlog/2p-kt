@@ -5,6 +5,7 @@ import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.solver.Solver
+import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
@@ -19,11 +20,9 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
     override val uncheckedImplementation: Primitive = { mainRequest ->
         sequence {
-            val (leftSubGoal, rightSubGoal) = mainRequest.arguments
-            // enable after solving TODO in orderedWithStrategy
-//                    with(mainRequest) {
-//                SolverUtils.orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
-//            }.toList()
+            val (leftSubGoal, rightSubGoal) = with(mainRequest) {
+                SolverUtils.orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
+            }.toList()
 
             val leftSubSolveRequest = mainRequest.newSolveRequest(prepareForExecution(leftSubGoal))
 
