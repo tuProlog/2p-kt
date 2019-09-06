@@ -123,6 +123,13 @@ internal object SolverUtils {
     fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
             Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
 
+    /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
+     * and arguments from receiver request and using given [otherResponse] substitution and context */
+    fun Solve.Request.responseBy(otherResponse: Solve.Response): Solve.Response = when (otherResponse.solution) {
+        is Solution.Yes -> this.yesResponseBy(otherResponse)
+        is Solution.No -> this.noResponseBy(otherResponse)
+    }
+
     /** Checks if this sequence of elements holds more than one element */
     fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
         when {

@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.mergeSubstituting
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
+import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
@@ -311,6 +312,36 @@ internal class SolverUtilsTest {
 
         assertEquals(correct.solution, toBeTested.solution)
         assertEquals(correct.context, toBeTested.context)
+    }
+
+    @Test
+    fun responseBySelectCorrectlyTheTypeOfResponseToApply() {
+        val finalSubstitution = Substitution.of("A", Atom.of("a"))
+        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
+
+        val aYesResponse = Solve.Response(Solution.Yes(
+                Signature("ciao", 0),
+                emptyList(),
+                finalSubstitution
+        ), finalContext)
+        val aNoResponse = Solve.Response(Solution.No(Signature("ciao", 0), emptyList()), finalContext)
+
+        val underTestResponses = listOf(aYesResponse, aNoResponse)
+
+        val correct = listOf(
+                with(DummyInstances.solveRequest) {
+                    Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), finalContext)
+                },
+                with(DummyInstances.solveRequest) {
+                    Solve.Response(Solution.No(signature, arguments), finalContext)
+                }
+        )
+        val toBeTested = underTestResponses.map { DummyInstances.solveRequest.responseBy(it) }
+
+        correct.zip(toBeTested).forEach { (expected, actual) ->
+            assertEquals(expected.solution, actual.solution)
+            assertEquals(expected.context, actual.context)
+        }
     }
 
     @Test
