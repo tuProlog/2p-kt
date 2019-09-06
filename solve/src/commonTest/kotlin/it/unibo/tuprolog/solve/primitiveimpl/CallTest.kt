@@ -45,6 +45,7 @@ internal class CallTest {
         val toBeTested = Call.primitive(request).toList()
 
         assertEquals(solutionList.count(), toBeTested.count())
+
         solutionList.zip(toBeTested.map { it.solution }).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 }
