@@ -107,12 +107,12 @@ internal class OperatorTest {
 
         assertEquals(plusOperator, testFromTerm())
 
-        assertEquals(null, Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())))
-        assertEquals(null, testFromTerm(functor = "ciao"))
-        assertEquals(null, testFromTerm(priority = plusFunctor.toTerm()))
-        assertEquals(null, testFromTerm(priority = Var.anonymous()))
-        assertEquals(null, testFromTerm(associativity = Var.anonymous()))
-        assertEquals(null, testFromTerm(associativity = "a".toTerm()))
-        assertEquals(null, testFromTerm(opFunctor = Var.anonymous()))
+        assertNull(Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())))
+        assertNull(testFromTerm(functor = "ciao"))
+        assertNull(testFromTerm(priority = plusFunctor.toTerm()))
+        assertNull(testFromTerm(priority = Var.anonymous()))
+        assertNull(testFromTerm(associativity = Var.anonymous()))
+        assertNull(testFromTerm(associativity = "a".toTerm()))
+        assertNull(testFromTerm(opFunctor = Var.anonymous()))
     }
 }
