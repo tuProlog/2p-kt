@@ -23,7 +23,14 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
             SolverUtils.isWellFormed(toBeCalledGoal) ->
                 Solver.sld().solve(
                         mainRequest.newSolveRequest(toBeCalledGoal as Struct)
-                ).map { mainRequest.responseBy(it) }
+                ).map {
+                    mainRequest.responseBy(
+                            it.copy(context = it.context
+                                    // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
+                                    .copy(toCutContextsParent = mainRequest.context.toCutContextsParent)
+                            )
+                    )
+                }
             else -> TODO("throw type_error(callable, G)")
         }
     }
