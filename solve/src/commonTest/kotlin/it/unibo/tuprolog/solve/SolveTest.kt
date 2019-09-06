@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.Signature
@@ -15,6 +16,7 @@ import kotlin.test.*
 internal class SolveTest {
 
     private val aSignature = Signature("ciao", 2)
+    private val aVarargSignature = Signature("ciao", 2, true)
     private val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
     private val aSolution = Solution.No(Truth.fail())
     private val anExecutionContext =
@@ -22,6 +24,7 @@ internal class SolveTest {
     private val anExecutionTimeout = 300L
 
     private val request = Solve.Request(aSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
+    private val requestVararg = Solve.Request(aVarargSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
 
     @Test
     fun requestInsertedDataCorrect() {
@@ -46,18 +49,28 @@ internal class SolveTest {
 
     @Test
     fun requestConstructorComplainsWithLessThanArityArgumentsIfVarargSignature() {
-        assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature.copy(vararg = true), emptyList(), anExecutionContext) }
+        assertFailsWith<IllegalArgumentException> { Solve.Request(aVarargSignature, emptyList(), anExecutionContext) }
     }
 
     @Test
     fun requestConstructorPermitsMoreThanArityArgumentsIfSignatureVararg() {
-        Solve.Request(aSignature.copy(vararg = true), anArgumentList + Truth.fail(), anExecutionContext)
+        Solve.Request(aVarargSignature, anArgumentList + Truth.fail(), anExecutionContext)
     }
 
     @Test
     fun requestConstructorComplainsWithNegativeTimeout() {
         Solve.Request(aSignature, anArgumentList, anExecutionContext, 0)
         assertFailsWith<IllegalArgumentException> { Solve.Request(aSignature, anArgumentList, anExecutionContext, -1) }
+    }
+
+    @Test
+    fun requestComputesCorrectlyQueryStructIfPossible() {
+        assertEquals(Struct.of(aSignature.name, anArgumentList), request.query)
+    }
+
+    @Test
+    fun requestReturnsNullQueryIfConversionNotPossible() {
+        assertNull(requestVararg.query)
     }
 
     @Test

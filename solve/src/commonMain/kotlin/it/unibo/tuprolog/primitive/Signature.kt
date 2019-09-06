@@ -2,7 +2,7 @@ package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.core.*
 
-/** The signature of a Primitive */
+/** The signature of a query Struct or a Primitive */
 data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) {
 
     init {

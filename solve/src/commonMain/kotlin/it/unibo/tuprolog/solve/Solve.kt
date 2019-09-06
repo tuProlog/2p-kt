@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
@@ -33,6 +34,9 @@ sealed class Solve {
             }
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
         }
+
+        /** The query Struct of this Signature with its arguments, if conversion possible (that is, signature is not vararg) */
+        val query: Struct? by lazy { signature.withArgs(arguments) }
 
         /** Checks for equality only by means of [signature] and [arguments] fields */
         fun equalSignatureAndArgs(other: Any?): Boolean {
