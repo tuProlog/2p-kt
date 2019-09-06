@@ -20,7 +20,7 @@ internal class StateRuleSelection(
 ) : AbstractTimedState(solveRequest, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val currentGoal = with(solveRequest) { signature.withArgs(arguments)!! }
+        val currentGoal = solveRequest.query!!
         val matchingRules = solveRequest.context.libraries.theory[currentGoal.freshCopy()]
         val isChoicePoint = moreThanOne(matchingRules)
 

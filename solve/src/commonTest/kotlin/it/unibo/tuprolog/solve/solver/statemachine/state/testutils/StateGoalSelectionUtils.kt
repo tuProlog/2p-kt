@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalSelection
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -60,8 +59,4 @@ internal object StateGoalSelectionUtils {
                 preparationNeededGoal
         )
     }
-
-    /** Utility function to compose Struct corresponding to Solve.Request Signature and Arguments */
-    internal fun composeSignatureAndArgs(solveRequest: Solve.Request) =
-            with(solveRequest) { signature.withArgs(arguments)!! }
 }

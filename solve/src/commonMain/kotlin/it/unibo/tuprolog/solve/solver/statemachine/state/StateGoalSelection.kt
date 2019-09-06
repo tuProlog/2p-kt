@@ -17,7 +17,7 @@ internal class StateGoalSelection(
 ) : AbstractTimedState(solveRequest, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val currentGoal = with(solveRequest) { signature.withArgs(arguments) }
+        val currentGoal = solveRequest.query
 
         when {
             // current goal is already demonstrated

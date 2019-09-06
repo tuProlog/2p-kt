@@ -8,6 +8,7 @@ import it.unibo.tuprolog.primitive.Signature
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 /**
  * Test class for [Solution], [Solution.Yes] and [Solution.No]
@@ -66,7 +67,7 @@ internal class SolutionTest {
 
     @Test
     fun noSolutionSolutionAlwaysNull() {
-        assertEquals(null, Solution.No(aQuery).solvedQuery)
+        assertNull(Solution.No(aQuery).solvedQuery)
     }
 
     @Test

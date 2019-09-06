@@ -60,7 +60,7 @@ internal class SignatureTest {
 
     @Test
     fun withArgsComplainsOnVarargSignatures() {
-        assertEquals(null, varargSignature.withArgs(argList))
+        assertNull(varargSignature.withArgs(argList))
     }
 
     @Test
@@ -71,8 +71,8 @@ internal class SignatureTest {
 
     @Test
     fun withArgsDoesntCheckNumberOfArgumentsOnVarargSignatureYieldingNull() {
-        assertEquals(null, varargSignature.withArgs(emptyList()))
-        assertEquals(null, varargSignature.withArgs(argList + aAtom))
+        assertNull(varargSignature.withArgs(emptyList()))
+        assertNull(varargSignature.withArgs(argList + aAtom))
     }
 
     @Test
@@ -86,15 +86,15 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithStructReturnsNullIfSomethingNotMatchingCorrectPattern() {
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
-        assertEquals(null, Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
+        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
     }
 
     @Test
@@ -110,8 +110,8 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithTermReturnsNullIfNotAStruct() {
-        assertEquals(null, Signature.fromSignatureTerm(Var.anonymous()))
-        assertEquals(null, Signature.fromSignatureTerm(Numeric.of(2)))
+        assertNull(Signature.fromSignatureTerm(Var.anonymous()))
+        assertNull(Signature.fromSignatureTerm(Numeric.of(2)))
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class SignatureTest {
 
     @Test
     fun fromIndicatorReturnsNullIfNotWellFormed() {
-        assertEquals(null, Signature.fromIndicator(Indicator.of(Var.anonymous(), Var.anonymous())))
+        assertNull(Signature.fromIndicator(Indicator.of(Var.anonymous(), Var.anonymous())))
     }
 
     @Test
@@ -133,6 +133,6 @@ internal class SignatureTest {
 
     @Test
     fun toIndicatorComplainsOnVarargSignatures() {
-        assertEquals(null, varargSignature.toIndicator())
+        assertNull(varargSignature.toIndicator())
     }
 }

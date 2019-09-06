@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor.unwrapIfNeeded
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils.composeSignatureAndArgs
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
@@ -70,25 +69,25 @@ internal class StateRuleSelectionTest {
         val initStates = nextStates.map { it.unwrapIfNeeded() }.filterIsInstance<StateInit>()
         assertEquals(4, initStates.count())
         with(initStates.component1().solveRequest) {
-            assertEquals(databaseClauses.component1().body, composeSignatureAndArgs(this))
+            assertEquals(databaseClauses.component1().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
             assertEquals(multipleMatchRequest, this.context.parentRequests.first())
             assertTrue { this.context.isChoicePointChild }
         }
         with(initStates.component2().solveRequest) {
-            assertEquals(databaseClauses.component2().body, composeSignatureAndArgs(this))
+            assertEquals(databaseClauses.component2().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
             assertEquals(multipleMatchRequest, this.context.parentRequests.first())
             assertTrue { this.context.isChoicePointChild }
         }
         with(initStates.component3().solveRequest) {
-            assertEquals(databaseClauses.component4().body, composeSignatureAndArgs(this))
+            assertEquals(databaseClauses.component4().body, this.query!!)
             assertTrue { multipleMatchRequest.context !in this.context.clauseScopedParents }
             assertEquals(multipleMatchRequest, this.context.parentRequests.toList().component2())
             assertFalse { this.context.isChoicePointChild }
         }
         with(initStates.component4().solveRequest) {
-            assertEquals(databaseClauses.component3().body, composeSignatureAndArgs(this))
+            assertEquals(databaseClauses.component3().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
             assertEquals(multipleMatchRequest, this.context.parentRequests.first())
             assertTrue { this.context.isChoicePointChild }

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils.composeSignatureAndArgs
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,10 +48,7 @@ internal class StateGoalSelectionTest {
                     assertEquals(1, nextStates.count())
                     assertTrue { nextStates.single() is StateGoalEvaluation }
 
-                    assertEquals(
-                            composeSignatureAndArgs(it),
-                            composeSignatureAndArgs(nextStates.first().solveRequest)
-                    )
+                    assertEquals(it.query, nextStates.first().solveRequest.query)
                 }
     }
 
@@ -61,8 +57,8 @@ internal class StateGoalSelectionTest {
         val nextStates = StateGoalSelection(StateGoalSelectionUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(
-                prepareForExecution(composeSignatureAndArgs(StateGoalSelectionUtils.preparationNeededGoal)),
-                composeSignatureAndArgs(nextStates.first().solveRequest)
+                prepareForExecution(StateGoalSelectionUtils.preparationNeededGoal.query!!),
+                nextStates.first().solveRequest.query
         )
     }
 
