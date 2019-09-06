@@ -33,5 +33,9 @@ data class ExecutionContext(
         /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
         val isChoicePointChild: Boolean = false,
         /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
-        val toCutContextsParent: Sequence<ExecutionContext> = emptySequence()
+        val toCutContextsParent: Sequence<ExecutionContext> = emptySequence(),
+
+        // added for catch... should be added as catch specific "ExecutionFlowModification" field?
+        /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
+        val parentRequests: Sequence<Solve.Request> = emptySequence()
 )

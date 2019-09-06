@@ -66,7 +66,8 @@ internal object SolverUtils {
                         copy(
                                 currentSubstitution = mergeSubstituting(currentSubstitution, toAddSubstitutions),
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
-                                isChoicePointChild = isChoicePointChild
+                                isChoicePointChild = isChoicePointChild,
+                                parentRequests = sequence { yield(this@newSolveRequest); yieldAll(parentRequests) }
                         )
                     },
                     adjustExecutionTimeout(this, currentTime)
@@ -123,12 +124,12 @@ internal object SolverUtils {
             Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
 
     /** Checks if this sequence of elements holds more than one element */
-    fun moreThanOne(elements: Sequence<*>): Boolean = elements.iterator().run {
-        return when {
+    fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
+        when {
             !hasNext() -> false // no element
             else -> {
                 next()
-                hasNext() // it has more elements if first element, has a next element
+                hasNext() // more elements, if first element has a next element
             }
         }
     }

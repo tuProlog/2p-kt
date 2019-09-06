@@ -102,6 +102,7 @@ internal class SolverUtilsTest {
         assertEquals(Signature.fromIndicator(newGoal.indicator), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
         assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
+        assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.parentRequests.toList())
         assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
 
         assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
@@ -109,13 +110,26 @@ internal class SolverUtilsTest {
 
     @Test
     fun newSolveRequestContextParentsAreOrderedAsLastInFirstOut() {
-        val toBeTested = DummyInstances.solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.`true`())
+        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
+        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`())
 
         // precondition
         assertEquals(2, toBeTested.context.clauseScopedParents.count())
 
-        assertNotEquals(DummyInstances.solveRequest.context, toBeTested.context.clauseScopedParents.first())
+        assertEquals(intermediateRequest.context, toBeTested.context.clauseScopedParents.first())
         assertEquals(DummyInstances.solveRequest.context, toBeTested.context.clauseScopedParents.last())
+    }
+
+    @Test
+    fun newSolveRequestSolveRequestParentsAreOrderedAsLastInFirstOut() {
+        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
+        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`())
+
+        // precondition
+        assertEquals(2, toBeTested.context.parentRequests.count())
+
+        assertEquals(intermediateRequest, toBeTested.context.parentRequests.first())
+        assertEquals(DummyInstances.solveRequest, toBeTested.context.parentRequests.last())
     }
 
     @Test

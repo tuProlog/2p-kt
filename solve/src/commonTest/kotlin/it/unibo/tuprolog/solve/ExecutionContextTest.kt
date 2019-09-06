@@ -33,11 +33,12 @@ internal class ExecutionContextTest {
     private val aScopedParentSequence = emptySequence<ExecutionContext>()
     private val isChoicePointChild = true
     private val toCutContextParent = emptySequence<ExecutionContext>()
+    private val aParentRequestsSequence = emptySequence<Solve.Request>()
 
     @Test
     fun executionContextHoldsInsertedData() {
         val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime,
-                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent)
+                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent, aParentRequestsSequence)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
@@ -49,6 +50,7 @@ internal class ExecutionContextTest {
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
         assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
         assertEquals(toCutContextParent, toBeTested.toCutContextsParent)
+        assertEquals(aParentRequestsSequence, toBeTested.parentRequests)
     }
 
     @Test
@@ -61,6 +63,7 @@ internal class ExecutionContextTest {
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
         assertEquals(false, toBeTested.isChoicePointChild)
         assertEquals(emptySequence(), toBeTested.toCutContextsParent)
+        assertEquals(emptySequence(), toBeTested.parentRequests)
     }
 
 }
