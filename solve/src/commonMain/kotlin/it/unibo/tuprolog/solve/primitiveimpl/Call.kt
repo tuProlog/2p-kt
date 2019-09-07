@@ -20,14 +20,14 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
     override val uncheckedImplementation: Primitive = { mainRequest ->
         val toBeCalledGoal = mainRequest.arguments.single()
         when {
-            toBeCalledGoal is Var -> TODO("throw instantiation_error")
+            toBeCalledGoal is Var -> TODO("throw error(instantiation_error)")
             SolverUtils.isWellFormed(toBeCalledGoal) ->
                 Solver.sld().solve(
                         mainRequest.newSolveRequest(toBeCalledGoal as Struct)
                 ).map {
                     mainRequest.responseBy(it.copy(context = resetCutWorkChanges(it.context, mainRequest.context)))
                 }
-            else -> TODO("throw type_error(callable, G)")
+            else -> TODO("throw error(type_error(callable, G))")
         }
     }
 
