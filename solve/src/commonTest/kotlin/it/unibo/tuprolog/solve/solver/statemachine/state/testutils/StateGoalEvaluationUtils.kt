@@ -5,8 +5,8 @@ import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
-import it.unibo.tuprolog.solve.solver.exception.HaltException
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
@@ -48,7 +48,7 @@ internal object StateGoalEvaluationUtils {
     /** A primitive that always throws halt exception */
     internal val primitiveThrowingHaltException = object : PrimitiveWrapper(Signature("haltException", 0)) {
         override val uncheckedImplementation: Primitive = {
-            throw HaltException()
+            throw HaltException(it.context)
         }
     }
 

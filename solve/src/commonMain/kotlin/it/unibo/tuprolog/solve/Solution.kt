@@ -29,7 +29,9 @@ sealed class Solution {
         }
 
         /** The Struct representing the solution */
-        override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
+        override val solvedQuery: Struct by lazy {
+            substitution.applyTo(query) as Struct
+        }
     }
 
     /** A class representing a failed solution */

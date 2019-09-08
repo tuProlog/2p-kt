@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.exception.HaltException
+import it.unibo.tuprolog.solve.exception.HaltException
 import kotlinx.coroutines.CoroutineScope
 
 /**

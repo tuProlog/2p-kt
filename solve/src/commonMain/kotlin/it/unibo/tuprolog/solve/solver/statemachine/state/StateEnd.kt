@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.exception.HaltException
 import kotlinx.coroutines.CoroutineScope
 
 /**
