@@ -4,13 +4,16 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.mergeSubstituting
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
+import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
+import it.unibo.tuprolog.solve.solver.error.SystemError
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 
@@ -179,6 +182,23 @@ internal class SolverUtilsTest {
 
         assertSame(myContext, toBeTested.context.clauseScopedParents.first())
         assertEquals(myContext.currentSubstitution, toBeTested.context.currentSubstitution)
+    }
+
+    @Test
+    fun newThrowSolveRequestBehavesLikeNewSolveRequestAddingThrowGoal() {
+        val error = SystemError
+
+        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct()))
+        val toBeTested = DummyInstances.solveRequest.newThrowSolveRequest(error)
+
+        assertEquals(correct.signature, toBeTested.signature)
+        assertEquals(correct.arguments, toBeTested.arguments)
+
+        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct(Empty.set())))
+        val toBeTestedWithExtra = DummyInstances.solveRequest.newThrowSolveRequest(error, Empty.set())
+
+        assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
+        assertEquals(correctWithExtra.arguments, toBeTestedWithExtra.arguments)
     }
 
     @Test

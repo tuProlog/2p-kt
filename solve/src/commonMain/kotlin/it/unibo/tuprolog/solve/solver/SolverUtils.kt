@@ -6,6 +6,8 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitiveimpl.Throw
+import it.unibo.tuprolog.solve.solver.error.PredefinedError
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -85,6 +87,10 @@ internal object SolverUtils {
                         ?: 0
             }
 
+    /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
+    fun Solve.Request.newThrowSolveRequest(error: PredefinedError, extraData: Struct = Truth.`true`()): Solve.Request =
+            this.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct(extraData)))
+
     /** Utility method to copy receiver [Solve.Request] importing [subSolve] context */
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this
             .copy(context = with(this.context) {
@@ -130,7 +136,7 @@ internal object SolverUtils {
         is Solution.No -> this.noResponseBy(otherResponse)
     }
 
-    /** Checks if this sequence of elements holds more than one element */
+    /** Checks if this sequence of elements holds more than one element, lazily */
     fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
         when {
             !hasNext() -> false // no element
