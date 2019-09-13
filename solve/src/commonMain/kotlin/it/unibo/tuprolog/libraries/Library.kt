@@ -44,14 +44,14 @@ interface Library {
         /** Creates an instance of [Library] with given parameters */
         fun of(
                 operatorSet: OperatorSet = OperatorSet(),
-                theory: ClauseDatabase = ClauseDatabase.of(),
+                theory: ClauseDatabase = ClauseDatabase.empty(),
                 primitives: Map<Signature, Primitive> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives)
 
         /** Creates an instance of [LibraryAliased] with given parameters */
         fun of(
                 operatorSet: OperatorSet = OperatorSet(),
-                theory: ClauseDatabase = ClauseDatabase.of(),
+                theory: ClauseDatabase = ClauseDatabase.empty(),
                 primitives: Map<Signature, Primitive> = emptyMap(),
                 alias: String
         ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, alias)

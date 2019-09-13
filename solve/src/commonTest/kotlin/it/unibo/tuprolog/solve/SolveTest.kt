@@ -20,7 +20,7 @@ internal class SolveTest {
     private val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
     private val aSolution = Solution.No(Truth.fail())
     private val anExecutionContext =
-            ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.of(), ClauseDatabase.of(), 0L)
+            ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.empty(), ClauseDatabase.empty(), 0L)
     private val anExecutionTimeout = 300L
 
     private val request = Solve.Request(aSignature, anArgumentList, anExecutionContext, anExecutionTimeout)

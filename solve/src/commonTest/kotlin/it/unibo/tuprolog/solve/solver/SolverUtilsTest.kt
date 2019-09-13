@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
-import it.unibo.tuprolog.solve.solver.SolverUtils.mergeSubstituting
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
@@ -212,7 +211,6 @@ internal class SolverUtilsTest {
             }
             val secondSolveRequest = with(DummyInstances.solveRequest) {
                 copy(context = context.copy(currentSubstitution = Substitution.of(
-                        varOf("A") to atomOf("b"),
                         varOf("D") to varOf("C")
                 )))
             }
@@ -227,7 +225,7 @@ internal class SolverUtilsTest {
 
             with(secondSolveRequest.importingContextFrom(firstSolveRequest)) {
                 assertEquals(Substitution.of(
-                        varOf("A") to atomOf("b"),
+                        varOf("A") to atomOf("a"),
                         varOf("D") to varOf("D"),
                         varOf("C") to varOf("D")
                 ), this.context.currentSubstitution)

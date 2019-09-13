@@ -38,7 +38,7 @@ internal object LibraryUtils {
 
     /** An empty library */
     internal val emptyLibrary by lazy {
-        "emptyLibrary" to Triple(OperatorSet(), ClauseDatabase.of(), emptyMap<Signature, Primitive>())
+        "emptyLibrary" to Triple(OperatorSet(), ClauseDatabase.empty(), emptyMap<Signature, Primitive>())
     }
 
     /** Contains a starting library, with some operators theory and primitives */

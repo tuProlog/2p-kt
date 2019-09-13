@@ -43,7 +43,7 @@ internal object CallUtils {
                         )
                     }
                 },
-                Scope.empty().run {
+                Scope.empty {
                     structOf("call", tupleOf(structOf("g", varOf("A")), atomOf("!"))).let { query ->
                         createSolveRequest(query,
                                 database = SolverTestUtils.factDatabase,
@@ -73,7 +73,7 @@ internal object CallUtils {
      * `call/1` is said to be *opaque* (or not transparent) to cut.
      */
     internal val requestToSolutionOfCallWithCut by lazy {
-        Scope.empty().run {
+        Scope.empty {
             structOf("call", tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
                 createSolveRequest(query,
                         database = SolverTestUtils.factDatabase,

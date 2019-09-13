@@ -66,7 +66,7 @@ internal object SolverUtils {
                     newGoal.argsList,
                     with(baseContext) {
                         copy(
-                                currentSubstitution = mergeSubstituting(currentSubstitution, toAddSubstitutions),
+                                currentSubstitution = mergeSubstituting(currentSubstitution, toAddSubstitutions) as Substitution.Unifier,
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild,
                                 parentRequests = sequence { yield(this@newSolveRequest); yieldAll(parentRequests) }
@@ -95,7 +95,7 @@ internal object SolverUtils {
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this
             .copy(context = with(this.context) {
                 copy(
-                        currentSubstitution = mergeSubstituting(currentSubstitution, subSolve.context.currentSubstitution),
+                        currentSubstitution = mergeSubstituting(currentSubstitution, subSolve.context.currentSubstitution) as Substitution.Unifier,
                         clauseScopedParents = sequence {
                             yieldAll(subSolve.context.clauseScopedParents)
                             yieldAll(this@with.clauseScopedParents)
@@ -105,8 +105,8 @@ internal object SolverUtils {
             })
 
     /** Utility method to merge substitutions substituting instantiated variables in already present substitutions */
-    fun mergeSubstituting(old: Substitution, new: Substitution): Substitution.Unifier = Substitution.of(
-            new,
+    fun mergeSubstituting(old: Substitution, new: Substitution): Substitution = Substitution.of(
+            new, // TODO: 13/09/2019 remove this method and review tests!!
             old.mapValues { (_, replacement) -> replacement.apply(new) }.asUnifier()
     )
 
@@ -119,7 +119,7 @@ internal object SolverUtils {
                     mergeSubstituting(
                             this.context.currentSubstitution,
                             otherResponse.context.currentSubstitution
-                    )
+                    ) as Substitution.Unifier
             ),
             otherResponse.context
     )

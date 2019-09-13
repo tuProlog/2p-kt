@@ -66,8 +66,8 @@ internal object SolverTestUtils {
             Fact.of(Struct.of("h", Atom.of("a"))),
             Rule.of(Struct.of("h", Atom.of("only")), Atom.of("!")),
             Fact.of(Struct.of("h", Atom.of("b"))),
-            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("e", varOf("A"))) },
-            Scope.empty().run { ruleOf(structOf("g", varOf("A")), structOf("d", varOf("A"))) },
+            Scope.empty { ruleOf(structOf("g", varOf("A")), structOf("e", varOf("A"))) },
+            Scope.empty { ruleOf(structOf("g", varOf("A")), structOf("d", varOf("A"))) },
             Rule.of(Struct.of("e", Atom.of("a")), Atom.of("!")),
             Fact.of(Struct.of("e", Atom.of("b"))),
             Fact.of(Struct.of("d", Atom.of("c"))),
@@ -104,7 +104,7 @@ internal object SolverTestUtils {
      * r(b1).
      * ```
      */
-    internal val databaseWithMiddleCutAndConjunction = Scope.empty().run {
+    internal val databaseWithMiddleCutAndConjunction = Scope.empty {
         ClauseDatabase.of(
                 ruleOf(structOf("f", varOf("X"), varOf("Y")),
                         structOf("q", varOf("X")),
@@ -140,7 +140,7 @@ internal object SolverTestUtils {
      * d(3).
      * ```
      */
-    internal val databaseWithCutAndConjunction = Scope.empty().run {
+    internal val databaseWithCutAndConjunction = Scope.empty {
         ClauseDatabase.of(
                 ruleOf(structOf("a", varOf("X")), structOf("b", varOf("X"))),
                 factOf(structOf("a", numOf(6))),
@@ -163,7 +163,7 @@ internal object SolverTestUtils {
     )
 
     /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
-    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.of(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
+    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
             Signature.fromIndicator(query.indicator)!!,
             query.argsList,
             DummyInstances.executionContext.copy(libraries = Libraries(Library.of(

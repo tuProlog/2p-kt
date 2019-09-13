@@ -51,11 +51,11 @@ internal object StateRuleSelectionUtils {
      * ```
      */
     internal val multipleNestedMatchesDatabase = ClauseDatabase.of(
-            Scope.empty().run { ruleOf(structOf("f", varOf("B")), structOf("g", varOf("B"))) },
-            Scope.empty().run { ruleOf(structOf("f", varOf("B")), structOf("h", varOf("B"))) },
-            Scope.empty().run { factOf(structOf("g", atomOf("c1"))) },
-            Scope.empty().run { factOf(structOf("g", atomOf("c2"))) },
-            Scope.empty().run { factOf(structOf("h", atomOf("d1"))) },
-            Scope.empty().run { factOf(structOf("h", atomOf("d2"))) }
+            Scope.empty { ruleOf(structOf("f", varOf("B")), structOf("g", varOf("B"))) },
+            Scope.empty { ruleOf(structOf("f", varOf("B")), structOf("h", varOf("B"))) },
+            Scope.empty { factOf(structOf("g", atomOf("c1"))) },
+            Scope.empty { factOf(structOf("g", atomOf("c2"))) },
+            Scope.empty { factOf(structOf("h", atomOf("d1"))) },
+            Scope.empty { factOf(structOf("h", atomOf("d2"))) }
     )
 }

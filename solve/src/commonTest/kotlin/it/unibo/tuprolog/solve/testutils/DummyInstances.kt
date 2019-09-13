@@ -17,7 +17,7 @@ import kotlinx.coroutines.MainScope
 internal object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
-    internal val executionContext = ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.of(), ClauseDatabase.of(), currentTime())
+    internal val executionContext = ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.empty(), ClauseDatabase.empty(), currentTime())
 
     /** A "true" solveRequest */
     internal val solveRequest = Solve.Request(Signature("true", 0), emptyList(), executionContext)

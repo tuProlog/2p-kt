@@ -21,8 +21,8 @@ internal class ExecutionContextTest {
 
     private val someLibraries = Libraries()
     private val someFlags = emptyMap<Atom, Term>()
-    private val aStaticKB = ClauseDatabase.of()
-    private val aDynamicKB = ClauseDatabase.of()
+    private val aStaticKB = ClauseDatabase.empty()
+    private val aDynamicKB = ClauseDatabase.empty()
     private val aComputationStartTime = 0L
     private val aSubstitution = Substitution.empty()
     private val someSolverStrategies = object : SolverStrategies {

@@ -37,8 +37,8 @@ internal class SolverSLDTest {
                                 Rule.of(Atom.of("p"), Truth.fail())
                         ))),
                         emptyMap(),
-                        ClauseDatabase.of(),
-                        ClauseDatabase.of()
+                        ClauseDatabase.empty(),
+                        ClauseDatabase.empty()
                 )
         )
 
@@ -48,22 +48,22 @@ internal class SolverSLDTest {
     @Test
     fun prologStandardExample() {
         val database = ClauseDatabase.of(
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("q", varOf("X")),
                             structOf("r", varOf("X"), varOf("Y"))
                     )
                 },
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("s", varOf("X")))
                 },
-                Scope.empty().run { factOf(structOf("s", atomOf("d"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("a"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("b"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("c"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
+                Scope.empty { factOf(structOf("s", atomOf("d"))) },
+                Scope.empty { factOf(structOf("q", atomOf("a"))) },
+                Scope.empty { factOf(structOf("q", atomOf("b"))) },
+                Scope.empty { factOf(structOf("q", atomOf("c"))) },
+                Scope.empty { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
+                Scope.empty { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
         )
 
         val goal = Solve.Request(
@@ -84,23 +84,23 @@ internal class SolverSLDTest {
     @Test
     fun prologStandardExampleWithCut() {
         val database = ClauseDatabase.of(
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("q", varOf("X")),
                             atomOf("!"),
                             structOf("r", varOf("X"), varOf("Y"))
                     )
                 },
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("s", varOf("X")))
                 },
-                Scope.empty().run { factOf(structOf("s", atomOf("d"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("a"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("b"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("c"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
+                Scope.empty { factOf(structOf("s", atomOf("d"))) },
+                Scope.empty { factOf(structOf("q", atomOf("a"))) },
+                Scope.empty { factOf(structOf("q", atomOf("b"))) },
+                Scope.empty { factOf(structOf("q", atomOf("c"))) },
+                Scope.empty { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
+                Scope.empty { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
         )
 
         val goal = Solve.Request(
@@ -121,23 +121,23 @@ internal class SolverSLDTest {
     @Test
     fun anotherCutExample() {
         val database = ClauseDatabase.of(
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("q", varOf("X")),
                             atomOf("!"),
                             structOf("r", varOf("Y"))
                     )
                 },
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("s", varOf("X")))
                 },
-                Scope.empty().run { factOf(structOf("s", atomOf("d"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("a"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("b"))) },
-                Scope.empty().run { factOf(structOf("q", atomOf("c"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("b1"))) },
-                Scope.empty().run { factOf(structOf("r", atomOf("c1"))) }
+                Scope.empty { factOf(structOf("s", atomOf("d"))) },
+                Scope.empty { factOf(structOf("q", atomOf("a"))) },
+                Scope.empty { factOf(structOf("q", atomOf("b"))) },
+                Scope.empty { factOf(structOf("q", atomOf("c"))) },
+                Scope.empty { factOf(structOf("r", atomOf("b1"))) },
+                Scope.empty { factOf(structOf("r", atomOf("c1"))) }
         )
 
         val goal = Solve.Request(
@@ -165,19 +165,19 @@ internal class SolverSLDTest {
          */
 
         val database = ClauseDatabase.of(
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(
                             structOf("my_reverse", varOf("L1"), varOf("L2")),
                             structOf("my_rev", varOf("L1"), varOf("L2"), listOf())
                     )
                 },
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(
                             structOf("my_rev", listOf(), varOf("L2"), varOf("L2")),
                             atomOf("!")
                     )
                 },
-                Scope.empty().run {
+                Scope.empty {
                     ruleOf(
                             structOf("my_rev", listFrom(ktListOf(varOf("X")), varOf("Xs")), varOf("L2"), varOf("Acc")),
                             structOf("my_rev", varOf("Xs"), varOf("L2"), listFrom(ktListOf(varOf("X")), varOf("Acc")))
