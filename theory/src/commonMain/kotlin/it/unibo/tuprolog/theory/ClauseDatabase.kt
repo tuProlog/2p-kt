@@ -59,6 +59,9 @@ interface ClauseDatabase : Iterable<Clause> {
 
     companion object {
 
+        /** Creates an empty ClauseDatabase */
+        fun empty(): ClauseDatabase = ClauseDatabaseImpl(emptyList())
+
         /** Creates a ClauseDatabase with given clauses */
         fun of(vararg clause: Clause): ClauseDatabase = ClauseDatabaseImpl(clause.toList())
 

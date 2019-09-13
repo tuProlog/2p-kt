@@ -14,6 +14,13 @@ internal class ClauseDatabaseTest {
     private val correctInstance = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
 
     @Test
+    fun emptyCreatesEmptyClauseDatabase() {
+        val toBeTested = ClauseDatabase.empty()
+
+        assertEquals(ClauseDatabaseImpl(emptyList()), toBeTested)
+    }
+
+    @Test
     fun ofVarargClauseCreatesCorrectInstance() {
         val toBeTested = ClauseDatabase.of(*ClauseDatabaseUtils.wellFormedClauses.toTypedArray())
 
