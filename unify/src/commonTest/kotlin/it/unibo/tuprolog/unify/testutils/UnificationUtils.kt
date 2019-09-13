@@ -48,7 +48,7 @@ internal object UnificationUtils {
                 (xVar `=` xVar) to Triple(Substitution.empty(), true, xVar),
                 (aAtom `=` xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
                 (xVar `=` yVar) to Triple(Substitution.of(xVar, yVar), true, yVar),
-                with(Scope.empty()) { (xVar `=` varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
+                Scope.empty { (xVar `=` varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
                 Var.anonymous().let { (xVar `=` it) to Triple(Substitution.of(xVar, it), true, it) },
                 (Struct.of("f", aAtom, xVar) `=` Struct.of("f", aAtom, bAtom)) to
                         Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
@@ -66,7 +66,7 @@ internal object UnificationUtils {
                                 true,
                                 Struct.of("f", Struct.of("g", aAtom), aAtom)
                         ),
-                with(Scope.empty()) {
+                Scope.empty {
                     Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) `=`
                             Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
                             Triple(
@@ -77,7 +77,7 @@ internal object UnificationUtils {
                                     Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom)
                             )
                 },
-                with(Scope.empty()) {
+                Scope.empty {
                     Indicator.of("ciao", 2) `=` Indicator.of(varOf("A"), varOf("B")) to
                             Triple(
                                     Substitution.of(varOf("A") to Atom.of("ciao"),

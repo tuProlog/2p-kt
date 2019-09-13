@@ -14,7 +14,7 @@ fun main() {
             Rule.of(Struct.of("f", Atom.of("a")), Atom.of("do_something")),
             Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X"))), Atom.of("do_something_else")),
             Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            with(Scope.empty()) {
+            Scope.empty {
                 ruleOf(structOf("g", structOf("c", varOf("A"), varOf("B"))), varOf("A"))
             },
             Fact.of(Struct.of("g", Struct.of("c", Var.anonymous(), Var.anonymous())))

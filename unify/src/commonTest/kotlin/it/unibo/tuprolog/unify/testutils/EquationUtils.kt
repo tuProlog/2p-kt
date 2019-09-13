@@ -26,30 +26,30 @@ internal object EquationUtils {
                 Real.of("1.5") to Real.of("1.5"),
                 Integer.of(0) to Integer.of(0),
                 Var.anonymous().let { it to it },
-                with(Scope.empty()) { varOf("X") to varOf("X") }
+                Scope.empty { varOf("X") to varOf("X") }
         )
     }
 
     /** A list of equations, that at last should be interpreted as Identities, exploring them in deep */
     internal val deepIdentityEquations by lazy {
         listOf(
-                with(Scope.empty()) { listOf(atomOf("a"), varOf("V")) to listOf(atomOf("a"), varOf("V")) },
-                with(Scope.empty()) {
+                Scope.empty { listOf(atomOf("a"), varOf("V")) to listOf(atomOf("a"), varOf("V")) },
+                Scope.empty {
                     listFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
                             listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
                 },
                 Var.anonymous().let { anonymous -> LogicSet.of(Numeric.of(1.5), anonymous) to LogicSet.of(Numeric.of(1.5), anonymous) },
-                with(Scope.empty()) { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
-                with(Scope.empty()) { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
-                with(Scope.empty()) {
+                Scope.empty { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
+                Scope.empty { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
+                Scope.empty {
                     directiveOf(atomOf("here"), structOf("f", Truth.`true`())) to
                             directiveOf(atomOf("here"), structOf("f", Truth.`true`()))
                 },
-                with(Scope.empty()) {
+                Scope.empty {
                     ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail()) to
                             ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail())
                 },
-                with(Scope.empty()) {
+                Scope.empty {
                     indicatorOf(atomOf("ciao"), varOf("A")) to indicatorOf(atomOf("ciao"), varOf("A"))
                 }
         )
