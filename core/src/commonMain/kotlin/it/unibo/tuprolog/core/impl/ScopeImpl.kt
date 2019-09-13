@@ -28,10 +28,11 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return _variables[name]!!
     }
 
-    override fun where(lambda: Scope.() -> Unit): Scope {
-        this.lambda()
-        return this
-    }
+    override fun where(lambda: Scope.() -> Unit): Scope =
+            this.also(lambda)
+
+    override fun <R> with(lambda: Scope.() -> R): R =
+            with(this, lambda)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

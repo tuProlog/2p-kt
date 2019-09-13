@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.StructUtils
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -35,5 +36,11 @@ internal class SubstitutionFailTest {
         val someTerms = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, *args) }
 
         someTerms.forEach { term -> assertEqualities(term, failedSubstitution.applyTo(term)) }
+    }
+
+    @Test
+    fun failedSubstitutionPlusOtherSubstitutionReturnsAlwaysFailedSubstitution() {
+        assertEquals(failedSubstitution, failedSubstitution + Substitution.of("A", Truth.`true`()))
+        assertEquals(failedSubstitution, Substitution.of("A", Truth.`true`()) + failedSubstitution)
     }
 }

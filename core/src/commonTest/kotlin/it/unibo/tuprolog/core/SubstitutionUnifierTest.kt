@@ -70,4 +70,34 @@ internal class SubstitutionUnifierTest {
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
+    @Test
+    fun plusOtherSubstitutionPutsSubstitutionsTogether() {
+        val correct = Substitution.of((aVarToXAtomSubstitution.entries + bVarToXAtomSubstitution.entries).map { it.toPair() })
+        val toBeTested = aVarToXAtomSubstitution + bVarToXAtomSubstitution
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun plusOtherSubstitutionIsIdempotentIfSameSubstitution() {
+        assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution + aVarToXAtomSubstitution)
+    }
+
+    @Test
+    fun plusOtherSubstitutionContradictingBaseOneReturnsFailedSubstitution() {
+        val toBeTested = listOf(
+                Substitution.of(bVar to Truth.`true`()) + bVarToXAtomSubstitution,
+                bVarToXAtomSubstitution + Substitution.of(bVar to Truth.`true`())
+        )
+
+        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
+    }
+
+    @Test
+    fun plusFailedSubstitutionReturnFailedSubstitution() {
+        substitutions.forEach {
+            assertEquals(Substitution.Fail, it + Substitution.Fail)
+            assertEquals(Substitution.Fail, Substitution.Fail + it)
+        }
+    }
 }

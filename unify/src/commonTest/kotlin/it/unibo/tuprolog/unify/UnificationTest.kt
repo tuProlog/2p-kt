@@ -26,7 +26,7 @@ internal class UnificationTest {
 
     @Test
     fun naiveCreatesAUnificationStrategyThatUsesEqualsToCheckTermIdentity() {
-        with(Scope.empty()) {
+        Scope.empty {
             assertEquals(Substitution.of(varOf("A"), aVar), Unification.naive().mgu(varOf("A"), aVar))
         }
         assertEquals(Substitution.empty(), Unification.naive().mgu(aVar, aVar))
@@ -65,7 +65,7 @@ internal class UnificationTest {
 
     @Test
     fun defaultUnificationStrategyUsesEqualsToCheckTermsIdentity() {
-        with(Scope.empty()) {
+        Scope.empty {
             assertEquals(Substitution.of(varOf("A"), aVar), Unification.default.mgu(varOf("A"), aVar))
         }
         assertEquals(Substitution.empty(), Unification.default.mgu(aVar, aVar))

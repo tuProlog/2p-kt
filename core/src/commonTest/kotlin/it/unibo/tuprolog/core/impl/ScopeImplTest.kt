@@ -93,6 +93,28 @@ internal class ScopeImplTest {
     }
 
     @Test
+    fun whereReturnsStartingScopeAfterExecution() {
+        onCorrespondingItems(mixedScopeInstances, mixedScopeInstances.map { it.where { 1 + 2 } }) { expected, actual ->
+            assertSame(expected, actual)
+        }
+    }
+
+    @Test
+    fun withExecutesGivenLambda() {
+        mixedScopeInstances.forEach { aScope ->
+            assertFailsWith<IllegalStateException> { aScope.with { throw IllegalStateException() } }
+        }
+    }
+
+    @Test
+    fun withReturnsComputationResultsAfterExecution() {
+        val myResult = 3
+        onCorrespondingItems(mixedScopeInstances.map { myResult }, mixedScopeInstances.map { it.with { myResult } }) { expected, actual ->
+            assertEquals(expected, actual)
+        }
+    }
+
+    @Test
     fun scopeEqualsWorksAsExpected() {
         val toTestEmptyScope = ScopeImpl(ScopeUtils.emptyScope)
         val toTestNonEmptyScopes = ScopeUtils.nonEmptyScopes.map(::ScopeImpl)

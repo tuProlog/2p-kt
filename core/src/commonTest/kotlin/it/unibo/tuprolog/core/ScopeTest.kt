@@ -32,6 +32,8 @@ internal class ScopeTest {
         assertEquals(Scope.empty(), Scope.of(*emptyArray<String>(), lambda = {}))
         assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>()))
         assertEquals(Scope.empty(), Scope.of(*emptyArray<Var>(), lambda = {}))
+        assertEquals(Scope.empty(), Scope.of<Scope>(*emptyArray<String>(), lambda = { this }))
+        assertEquals(Scope.empty(), Scope.of<Scope>(*emptyArray<Var>(), lambda = { this }))
     }
 
     @Test
@@ -52,5 +54,29 @@ internal class ScopeTest {
     fun scopeOfVarargsExecutesLambda() {
         assertFailsWith<IllegalStateException> { Scope.of(Var.of("A")) { throw IllegalStateException() } }
         assertFailsWith<IllegalStateException> { Scope.of("A") { throw IllegalStateException() } }
+        assertFailsWith<IllegalStateException> { Scope.of<Nothing>(Var.of("A")) { throw IllegalStateException() } }
+        assertFailsWith<IllegalStateException> { Scope.of<Nothing>("A") { throw IllegalStateException() } }
+    }
+
+    @Test
+    fun emptyWithLambdaCreatesCorrectInstanceAndReturnsLambdaResult() {
+        val correctResult = 3
+        val toBeTestedResult = Scope.empty { assertEquals(correctEmptyInstance, this); correctResult }
+
+        assertEquals(correctResult, toBeTestedResult)
+    }
+
+    @Test
+    fun scopeOfWithLambdaCreatesCorrectInstanceAndReturnsLambdaResult() {
+        val myResult = 3
+        Var.of("A").let { aVar ->
+            val correct = Scope.of(aVar)
+            val toBeTestedResult = Scope.of<Int>(aVar) { assertEquals(correct, this); myResult }
+
+            assertEquals(myResult, toBeTestedResult)
+
+            val toBeTestedResult2 = Scope.of<Int>(aVar.name) { assertEquals(aVar.name, this[aVar.name]?.name); myResult }
+            assertEquals(myResult, toBeTestedResult2)
+        }
     }
 }

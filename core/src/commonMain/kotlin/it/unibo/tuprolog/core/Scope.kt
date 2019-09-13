@@ -18,6 +18,8 @@ interface Scope {
 
     fun where(lambda: Scope.() -> Unit): Scope
 
+    fun <R> with(lambda: Scope.() -> R): R
+
     fun varOf(name: String): Var
 
     fun atomOf(value: String): Atom
@@ -90,5 +92,12 @@ interface Scope {
         fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
                 ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
                         .where(lambda)
+
+
+        fun <R> empty(lambda: Scope.() -> R): R = empty().with(lambda)
+
+        fun <R> of(vararg vars: String, lambda: Scope.() -> R): R = of(*vars).with(lambda)
+
+        fun <R> of(vararg vars: Var, lambda: Scope.() -> R): R = of(*vars).with(lambda)
     }
 }

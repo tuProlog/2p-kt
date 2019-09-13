@@ -26,6 +26,18 @@ sealed class Substitution : Map<Var, Term> {
     /** Applies the Substitution to the given Term */
     fun applyTo(term: Term): Term = term[this]
 
+    /**
+     * Creates a new substitution that's the union of this and [other]
+     *
+     * However additional checks are performed:
+     * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
+     * - If the set of substitutions resulting from this union is contradicting, the result is [Substitution.Fail]
+     */
+    operator fun plus(other: Substitution): Substitution = when {
+        anyFailed(this, other) || anyContradiction(this, other) -> Fail
+        else -> (this as Map<Var, Term> + other).asUnifier()
+    }
+
     /** Substitution companion with factory functionality */
     companion object {
 
@@ -52,8 +64,23 @@ sealed class Substitution : Map<Var, Term> {
         fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Unifier =
                 substitutionPairs.toMap().asUnifier()
 
-        /** Creates a new Substitution from given substitutions */
-        fun of(substitution: Substitution, vararg substitutions: Substitution): Unifier =
-                substitutions.fold(substitution as Map<Var, Term>) { s1, s2 -> (s1 + s2) }.asUnifier()
+        /** Creates a new Substitution from given substitutions; if any failure or contradiction is found, the result will be [Substitution.Fail] */
+        fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
+                substitutions.fold(substitution, Substitution::plus)
+
+        /** Utility function to check if any of provided Substitution is failed */
+        private fun anyFailed(vararg substitution: Substitution): Boolean = substitution.any { it.isFailed }
+
+        /** Utility function to check if there's any contradiction in provided substitutions */
+        private fun anyContradiction(substitution: Substitution, other: Substitution): Boolean =
+                when {
+                    substitution.count() < other.count() -> substitution to other
+                    else -> other to substitution
+                }.let { (smaller, bigger) ->
+                    smaller.any { (`var`, substitution) ->
+                        // if var is present and different, contradiction is present
+                        bigger[`var`]?.let { it != substitution } ?: false
+                    }
+                }
     }
 }

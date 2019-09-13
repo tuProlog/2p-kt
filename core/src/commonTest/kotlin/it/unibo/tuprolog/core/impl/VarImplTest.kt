@@ -176,4 +176,17 @@ internal class VarImplTest {
         assertEqualities(myVar, toBeTested2)
         assertEqualities(myVar, toBeTested3)
     }
+
+    @Test
+    fun applyReplacesFollowingVariableChains() {
+        val myAtom = Atom.of("hello")
+        val xVar = Var.of("X")
+        val yVar = Var.of("Y")
+
+        val toBeTested1 = xVar.apply(Substitution.of(xVar to yVar, yVar to myAtom))
+        val toBeTested2 = xVar.apply(Substitution.of(xVar to yVar), Substitution.of(yVar to myAtom))
+
+        assertEqualities(myAtom, toBeTested1)
+        assertEqualities(myAtom, toBeTested2)
+    }
 }
