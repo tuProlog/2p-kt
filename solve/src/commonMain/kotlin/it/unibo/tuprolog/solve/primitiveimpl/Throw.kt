@@ -10,5 +10,5 @@ import it.unibo.tuprolog.primitive.Signature
  */
 object Throw : PrimitiveWrapper(Signature("throw", 1)) {
 
-    override val uncheckedImplementation: Primitive = TODO()
+    override val uncheckedImplementation: Primitive = { TODO() }
 }
