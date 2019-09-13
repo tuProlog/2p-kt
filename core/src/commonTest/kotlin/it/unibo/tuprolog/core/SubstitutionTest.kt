@@ -127,11 +127,6 @@ internal class SubstitutionTest {
     @Test
     fun ofSubstitutionsWithContradictingOnesReturnsFailed() {
         Scope.of("A", "B") {
-            val correct = Substitution.Unifier(mapOf(
-                    varOf("A") to atomOf("a"),
-                    varOf("B") to atomOf("b")
-            ))
-
             val toBeTested = Substitution.of(
                     Substitution.Unifier(mapOf(varOf("B") to atomOf("f"))),
                     Substitution.Unifier(mapOf(varOf("B") to varOf("A"))),
