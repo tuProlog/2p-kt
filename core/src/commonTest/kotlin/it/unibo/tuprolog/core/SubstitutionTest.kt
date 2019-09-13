@@ -105,7 +105,27 @@ internal class SubstitutionTest {
     }
 
     @Test
-    fun ofSubstitutionsWithOverlappingOnesTakesLast() {
+    fun ofSubstitutionsWithAlwaysSameSubstitutionsReturnsThemNotDuplicated() {
+        Scope.of("A", "B") {
+            val correct = Substitution.Unifier(mapOf(
+                    varOf("A") to atomOf("a"),
+                    varOf("B") to atomOf("b")
+            ))
+
+            val toBeTested = Substitution.of(
+                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
+                    Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
+                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
+                    Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
+                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
+            )
+
+            assertEquals(correct, toBeTested)
+        }
+    }
+
+    @Test
+    fun ofSubstitutionsWithContradictingOnesReturnsFailed() {
         Scope.of("A", "B") {
             val correct = Substitution.Unifier(mapOf(
                     varOf("A") to atomOf("a"),
@@ -120,7 +140,7 @@ internal class SubstitutionTest {
                     Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
             )
 
-            assertEquals(correct, toBeTested)
+            assertEquals(Substitution.Fail, toBeTested)
         }
     }
 }
