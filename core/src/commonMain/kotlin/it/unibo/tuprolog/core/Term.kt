@@ -60,8 +60,14 @@ interface Term {
     fun freshCopy(scope: Scope): Term = this
 
     fun apply(substitution: Substitution): Term = when {
-        this.isGround -> this
-        this is Var -> substitution[this] ?: this
+        substitution.isEmpty() || this.isGround -> this
+        this is Var -> {
+            var current = this
+            while (current in substitution) {
+                current = substitution[current]!!
+            }
+            current
+        }
         this is Struct && !this.isGround -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
         else -> this
     }
