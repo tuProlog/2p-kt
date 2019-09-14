@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
+import it.unibo.tuprolog.solve.solver.SolverUtils.haltResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
@@ -304,9 +306,30 @@ internal class SolverUtilsTest {
     }
 
     @Test
+    fun haltResponseByWorksAsExpected() {
+        val finalContext = DummyInstances.executionContext.copy()
+        val finalException = HaltException(finalContext)
+
+        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Halt(
+                Signature("ciao", 0),
+                emptyList(),
+                finalException
+        ), finalContext)
+
+        val correct = with(DummyInstances.solveRequest) {
+            Solve.Response(Solution.Halt(signature, arguments, finalException), finalContext)
+        }
+        val toBeTested = DummyInstances.solveRequest.haltResponseBy(responseToReuseContextAndSubstitution)
+
+        assertEquals(correct.solution, toBeTested.solution)
+        assertEquals(correct.context, toBeTested.context)
+    }
+
+    @Test
     fun responseBySelectCorrectlyTheTypeOfResponseToApply() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
         val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
+        val finalException = HaltException(finalContext)
 
         val aYesResponse = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
@@ -314,8 +337,9 @@ internal class SolverUtilsTest {
                 finalSubstitution
         ), finalContext)
         val aNoResponse = Solve.Response(Solution.No(Signature("ciao", 0), emptyList()), finalContext)
+        val anHaltResponse = Solve.Response(Solution.Halt(Signature("ciao", 0), emptyList(), finalException), finalContext)
 
-        val underTestResponses = listOf(aYesResponse, aNoResponse)
+        val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
         val correct = listOf(
                 with(DummyInstances.solveRequest) {
@@ -323,6 +347,9 @@ internal class SolverUtilsTest {
                 },
                 with(DummyInstances.solveRequest) {
                     Solve.Response(Solution.No(signature, arguments), finalContext)
+                },
+                with(DummyInstances.solveRequest) {
+                    Solve.Response(Solution.Halt(signature, arguments, finalException), finalContext)
                 }
         )
         val toBeTested = underTestResponses.map { DummyInstances.solveRequest.responseBy(it) }

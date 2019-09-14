@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.exception.TuprologRuntimeException
 
 /** A class representing a solution to a goal */
 sealed class Solution {
@@ -39,6 +40,20 @@ sealed class Solution {
 
         constructor(signature: Signature, arguments: List<Term>)
                 : this(signature.withArgs(arguments) ?: Truth.fail()) {
+            noVarargSignatureCheck(signature)
+        }
+
+        /** Always [Substitution.Fail] because no solution was found */
+        override val substitution: Substitution.Fail = Substitution.failed()
+        /** Always `null` because no solution was found */
+        override val solvedQuery: Struct? = null
+    }
+
+    /** A class representing a failed (halted) solution because of an exception */
+    data class Halt(override val query: Struct, val exception: TuprologRuntimeException) : Solution() {
+
+        constructor(signature: Signature, arguments: List<Term>, exception: TuprologRuntimeException)
+                : this(signature.withArgs(arguments) ?: Truth.fail(), exception) {
             noVarargSignatureCheck(signature)
         }
 

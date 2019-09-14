@@ -119,11 +119,23 @@ internal object SolverUtils {
     fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
             Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
 
+    /** Creates a [Solve.Response] with [Solution.Halt], taking signature and arguments from receiver request
+     * and using given [otherResponse] context and exception */
+    fun Solve.Request.haltResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
+            Solution.Halt(
+                    this.signature,
+                    this.arguments,
+                    (otherResponse.solution as Solution.Halt).exception
+            ),
+            otherResponse.context
+    )
+
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
     fun Solve.Request.responseBy(otherResponse: Solve.Response): Solve.Response = when (otherResponse.solution) {
         is Solution.Yes -> this.yesResponseBy(otherResponse)
         is Solution.No -> this.noResponseBy(otherResponse)
+        is Solution.Halt -> this.haltResponseBy(otherResponse)
     }
 
     /** Checks if this sequence of elements holds more than one element, lazily */

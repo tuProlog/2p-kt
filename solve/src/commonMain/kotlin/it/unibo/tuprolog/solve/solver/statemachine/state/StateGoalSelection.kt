@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @author Enrico
  */
-internal class StateGoalSelection(
+internal class StateGoalSelection( // TODO: 14/09/2019 collapse stateInit and StateGoalSelection
         override val solveRequest: Solve.Request,
         override val executionStrategy: CoroutineScope
 ) : AbstractTimedState(solveRequest, executionStrategy) {

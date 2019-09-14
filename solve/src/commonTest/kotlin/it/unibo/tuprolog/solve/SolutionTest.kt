@@ -5,13 +5,15 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 /**
- * Test class for [Solution], [Solution.Yes] and [Solution.No]
+ * Test class for [Solution], [Solution.Yes], [Solution.No] and [Solution.Halt]
  *
  * @author Enrico
  */
@@ -22,6 +24,7 @@ internal class SolutionTest {
     private val querySignature = Signature.fromIndicator(aQuery.indicator)!!
     private val aSubstitution = with(myScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
     private val theQuerySolved = with(myScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
+    private val anException = HaltException(DummyInstances.executionContext)
 
     @Test
     fun yesSolutionContainsInsertedData() {
@@ -92,6 +95,44 @@ internal class SolutionTest {
     fun noSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
             Solution.No(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }))
+        }
+    }
+
+    @Test
+    fun haltSolutionContainsInsertedData() {
+        val toBeTested = Solution.Halt(aQuery, anException)
+
+        assertEquals(aQuery, toBeTested.query)
+        assertEquals(anException, toBeTested.exception)
+    }
+
+    @Test
+    fun haltSolutionSolutionAlwaysNull() {
+        assertNull(Solution.Halt(aQuery, anException).solvedQuery)
+    }
+
+    @Test
+    fun haltSolutionSubstitutionAlwaysFailed() {
+        assertEquals(Substitution.failed(), Solution.Halt(aQuery, anException).substitution)
+    }
+
+    @Test
+    fun haltSolutionSecondaryConstructorWorksAsExpected() {
+        val toBeTested = Solution.Halt(querySignature, listOf(with(myScope) { varOf("A") }), anException)
+
+        assertEquals(aQuery, toBeTested.query)
+    }
+
+    @Test
+    fun haltSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
+        assertFailsWith<IllegalArgumentException> { Solution.Halt(querySignature, emptyList(), anException) }
+        assertFailsWith<IllegalArgumentException> { Solution.Halt(querySignature, listOf(Truth.`true`(), Truth.`true`()), anException) }
+    }
+
+    @Test
+    fun haltSolutionSecondaryConstructorComplainsIfSignatureVararg() {
+        assertFailsWith<IllegalArgumentException> {
+            Solution.Halt(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }), anException)
         }
     }
 }
