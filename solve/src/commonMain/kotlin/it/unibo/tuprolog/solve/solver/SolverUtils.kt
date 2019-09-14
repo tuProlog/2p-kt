@@ -5,8 +5,8 @@ import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.prologerror.PredefinedError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
-import it.unibo.tuprolog.solve.solver.error.PredefinedError
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime

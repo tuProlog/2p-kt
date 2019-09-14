@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.error
+package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term

@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
-import it.unibo.tuprolog.solve.solver.error.SystemError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 

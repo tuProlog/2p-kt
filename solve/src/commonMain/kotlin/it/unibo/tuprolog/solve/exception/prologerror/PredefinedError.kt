@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve.solver.error
+package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.solver.error.ErrorUtils.errorStructOf
-import it.unibo.tuprolog.solve.solver.error.TypeError.Expected
+import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
 
 /**
  * Base class for all predefined error situations in Prolog Standard
