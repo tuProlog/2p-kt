@@ -218,15 +218,15 @@ internal class SolverUtilsTest {
             with(firstSolveRequest.importingContextFrom(secondSolveRequest)) {
                 assertEquals(Substitution.of(
                         varOf("A") to atomOf("a"),
-                        varOf("C") to varOf("C"),
+                        varOf("C") to varOf("D"),
                         varOf("D") to varOf("C")
                 ), this.context.currentSubstitution)
             }
 
             with(secondSolveRequest.importingContextFrom(firstSolveRequest)) {
                 assertEquals(Substitution.of(
+                        varOf("D") to varOf("C"),
                         varOf("A") to atomOf("a"),
-                        varOf("D") to varOf("D"),
                         varOf("C") to varOf("D")
                 ), this.context.currentSubstitution)
             }
@@ -260,35 +260,6 @@ internal class SolverUtilsTest {
         with(toBeTested.context) {
             assertEquals(1, toCutContextsParent.count())
             assertSame(toImportContext, toCutContextsParent.single())
-        }
-    }
-
-    @Test
-    fun mergeSubstitutingShouldMergeCorrectlySubstitutions() {
-        Scope.empty().where {
-            val firstSubstitution = Substitution.of(
-                    varOf("A") to atomOf("a"),
-                    varOf("C") to varOf("D")
-            )
-            val secondSubstitution = Substitution.of(
-                    varOf("A") to atomOf("b"),
-                    varOf("D") to varOf("C")
-            )
-
-            assertEquals(
-                    Substitution.of(
-                            varOf("A") to atomOf("a"),
-                            varOf("C") to varOf("C"),
-                            varOf("D") to varOf("C")),
-                    mergeSubstituting(firstSubstitution, secondSubstitution)
-            )
-            assertEquals(
-                    Substitution.of(
-                            varOf("A") to atomOf("b"),
-                            varOf("D") to varOf("D"),
-                            varOf("C") to varOf("D")),
-                    mergeSubstituting(secondSubstitution, firstSubstitution)
-            )
         }
     }
 

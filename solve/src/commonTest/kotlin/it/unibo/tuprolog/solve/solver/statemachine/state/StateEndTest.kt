@@ -37,14 +37,15 @@ internal class StateEndTest {
             val toBeTested = StateEnd.True(
                     solveRequest.copy(context = with(solveRequest.context) {
                         copy(currentSubstitution = Substitution.of(
-                                varOf("A") to Atom.of("a"),
-                                varOf("C") to Atom.of("c")
+                                varOf("A") to varOf("C"),
+                                varOf("C") to Atom.of("c"),
+                                varOf("D") to Atom.of("d")
                         ))
                     }),
                     executionStrategy
             )
 
-            assertEquals(Substitution.of(varOf("A"), Atom.of("a")), toBeTested.answerSubstitution)
+            assertEquals(Substitution.of(varOf("A"), Atom.of("c")), toBeTested.answerSubstitution)
         }
     }
 

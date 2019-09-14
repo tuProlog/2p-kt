@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.HaltException
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -27,9 +28,12 @@ internal sealed class StateEnd(
     ) : StateEnd(solveRequest, executionStrategy), SuccessFinalState {
 
         override val answerSubstitution: Substitution.Unifier by lazy {
-            solveRequest.context.currentSubstitution.filterKeys { `var` ->
-                solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
-            }.asUnifier()
+            // reduce substitution variable chains
+            with(solveRequest.context.currentSubstitution) { this.mapValues { (_, term) -> term.apply(this) } }
+                    .filterKeys { `var` ->
+                        // take only requested substitution as answer
+                        solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
+                    }.asUnifier()
         }
 
         /** A visitor to check if a [containedTerm] is present inside some other Term */

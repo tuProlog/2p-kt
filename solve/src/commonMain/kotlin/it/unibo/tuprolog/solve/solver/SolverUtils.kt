@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -66,7 +65,7 @@ internal object SolverUtils {
                     newGoal.argsList,
                     with(baseContext) {
                         copy(
-                                currentSubstitution = mergeSubstituting(currentSubstitution, toAddSubstitutions) as Substitution.Unifier,
+                                currentSubstitution = (currentSubstitution + toAddSubstitutions) as Substitution.Unifier,
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild,
                                 parentRequests = sequence { yield(this@newSolveRequest); yieldAll(parentRequests) }
@@ -95,7 +94,7 @@ internal object SolverUtils {
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this
             .copy(context = with(this.context) {
                 copy(
-                        currentSubstitution = mergeSubstituting(currentSubstitution, subSolve.context.currentSubstitution) as Substitution.Unifier,
+                        currentSubstitution = (currentSubstitution + subSolve.context.currentSubstitution) as Substitution.Unifier,
                         clauseScopedParents = sequence {
                             yieldAll(subSolve.context.clauseScopedParents)
                             yieldAll(this@with.clauseScopedParents)
@@ -104,22 +103,13 @@ internal object SolverUtils {
                 )
             })
 
-    /** Utility method to merge substitutions substituting instantiated variables in already present substitutions */
-    fun mergeSubstituting(old: Substitution, new: Substitution): Substitution = Substitution.of(
-            new, // TODO: 13/09/2019 remove this method and review tests!!
-            old.mapValues { (_, replacement) -> replacement.apply(new) }.asUnifier()
-    )
-
     /** Creates a [Solve.Response] with [Solution.Yes], taking signature and arguments from receiver request
      * and using given [otherResponse] substitution and context */
     fun Solve.Request.yesResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
             Solution.Yes(
                     this.signature,
                     this.arguments,
-                    mergeSubstituting(
-                            this.context.currentSubstitution,
-                            otherResponse.context.currentSubstitution
-                    ) as Substitution.Unifier
+                    (this.context.currentSubstitution + otherResponse.context.currentSubstitution) as Substitution.Unifier
             ),
             otherResponse.context
     )
