@@ -31,4 +31,28 @@ internal object SubstitutionUtils {
 
     /** Contains [mixedSubstitutions] represented as list of pairs */
     internal val mixedSubstitutionsAsPairs by lazy { mixedSubstitutions.map { it.entries.map { entry -> entry.toPair() } } }
+
+    /** Contains a duplicated pair substitution, that should result in unique final substitution */
+    internal val duplicatedPairSubstitution by lazy {
+        Scope.empty {
+            kotlin.collections.listOf(
+                    kotlin.collections.listOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a")),
+                    kotlin.collections.listOf(
+                            varOf("A") to atomOf("a"), varOf("A") to atomOf("a"),
+                            varOf("B") to atomOf("b"), varOf("B") to atomOf("b")
+                    )
+            )
+        }
+    }
+
+    /** Contains contradicting substitutions whose creation should result in [Substitution.Fail] */
+    internal val contradictingSubstitutions by lazy {
+        Scope.empty {
+            kotlin.collections.listOf(
+                    listOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b")),
+                    listOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C")),
+                    listOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a"))
+            )
+        }
+    }
 }

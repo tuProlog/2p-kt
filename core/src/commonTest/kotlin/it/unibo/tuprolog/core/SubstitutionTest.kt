@@ -85,10 +85,46 @@ internal class SubstitutionTest {
     }
 
     @Test
+    fun ofVariableTermPairsDoesntComplainIfExactDuplicates() {
+        val toBeTested = SubstitutionUtils.duplicatedPairSubstitution.map {
+            Substitution.of(it.first(), *it.dropFirst().toTypedArray())
+        }
+
+        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.Unifier(it.toMap()) }
+
+        onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun ofVariableTermPairsResultInFailedSubstitutionIfContradicting() {
+        val toBeTested = SubstitutionUtils.contradictingSubstitutions.map {
+            Substitution.of(it.first(), *it.dropFirst().toTypedArray())
+        }
+
+        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
+    }
+
+    @Test
     fun ofIterableVariableTermPairs() {
         val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.map { Substitution.of(it) }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun ofIterableVariableTermPairsDoesntComplainIfExactDuplicates() {
+        val toBeTested = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it) }
+
+        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.Unifier(it.toMap()) }
+
+        onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun ofIterableVariableTermPairsResultInFailedSubstitutionIfContradicting() {
+        val toBeTested = SubstitutionUtils.contradictingSubstitutions.map { Substitution.of(it) }
+
+        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
     }
 
     @Test
