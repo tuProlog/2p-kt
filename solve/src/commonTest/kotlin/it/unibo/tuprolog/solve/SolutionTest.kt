@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
@@ -21,7 +21,7 @@ internal class SolutionTest {
 
     private val myScope = Scope.empty()
     private val aQuery = with(myScope) { Struct.of("f", varOf("A")) }
-    private val querySignature = Signature.fromIndicator(aQuery.indicator)!!
+    private val querySignature = aQuery.extractSignature()
     private val aSubstitution = with(myScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
     private val theQuerySolved = with(myScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
     private val anException = HaltException(DummyInstances.executionContext)

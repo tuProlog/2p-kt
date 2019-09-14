@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
@@ -35,7 +35,7 @@ internal class StateGoalSelection( // TODO: 14/09/2019 collapse stateInit and St
                     prepareForExecution(currentGoal).also { preparedGoal ->
                         yield(StateGoalEvaluation(
                                 solveRequest.copy(
-                                        signature = Signature.fromIndicator(preparedGoal.indicator)!!,
+                                        signature = preparedGoal.extractSignature(),
                                         arguments = preparedGoal.argsList
                                 ),
                                 executionStrategy

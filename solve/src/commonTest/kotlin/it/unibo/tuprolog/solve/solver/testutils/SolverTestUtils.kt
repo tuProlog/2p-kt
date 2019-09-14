@@ -5,6 +5,7 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
@@ -164,7 +165,7 @@ internal object SolverTestUtils {
 
     /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
     internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
-            Signature.fromIndicator(query.indicator)!!,
+            query.extractSignature(),
             query.argsList,
             DummyInstances.executionContext.copy(libraries = Libraries(Library.of(
                     alias = "Test",
