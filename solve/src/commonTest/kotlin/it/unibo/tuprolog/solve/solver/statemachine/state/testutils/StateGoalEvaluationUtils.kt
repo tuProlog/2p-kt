@@ -48,7 +48,7 @@ internal object StateGoalEvaluationUtils {
     /** A primitive that always throws halt exception */
     internal val primitiveThrowingHaltException = object : PrimitiveWrapper(Signature("haltException", 0)) {
         override val uncheckedImplementation: Primitive = {
-            throw HaltException(it.context)
+            throw HaltException(context = it.context)
         }
     }
 

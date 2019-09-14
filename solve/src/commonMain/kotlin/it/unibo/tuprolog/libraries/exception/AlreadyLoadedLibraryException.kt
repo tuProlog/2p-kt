@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.libraries.exception
 
-class AlreadyLoadedLibraryException : LibraryException {
-
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+class AlreadyLoadedLibraryException(
+        message: String? = null,
+        cause: Throwable? = null
+) : LibraryException(message, cause) {
+    constructor(cause: Throwable?) : this(cause?.toString(), cause)
 }

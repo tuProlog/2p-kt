@@ -24,7 +24,7 @@ internal class SolutionTest {
     private val querySignature = aQuery.extractSignature()
     private val aSubstitution = with(myScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
     private val theQuerySolved = with(myScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
-    private val anException = HaltException(DummyInstances.executionContext)
+    private val anException = HaltException(context = DummyInstances.executionContext)
 
     @Test
     fun yesSolutionContainsInsertedData() {

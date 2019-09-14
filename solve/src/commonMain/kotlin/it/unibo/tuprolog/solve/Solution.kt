@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.exception.TuprologRuntimeException
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 
 /** A class representing a solution to a goal */
 sealed class Solution {
@@ -50,9 +50,9 @@ sealed class Solution {
     }
 
     /** A class representing a failed (halted) solution because of an exception */
-    data class Halt(override val query: Struct, val exception: TuprologRuntimeException) : Solution() {
+    data class Halt(override val query: Struct, val exception: TuPrologRuntimeException) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>, exception: TuprologRuntimeException)
+        constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
                 : this(signature.withArgs(arguments) ?: Truth.fail(), exception) {
             noVarargSignatureCheck(signature)
         }

@@ -309,7 +309,7 @@ internal class SolverUtilsTest {
     @Test
     fun haltResponseByWorksAsExpected() {
         val finalContext = DummyInstances.executionContext.copy()
-        val finalException = HaltException(finalContext)
+        val finalException = HaltException(context = finalContext)
 
         val responseToReuseContextAndSubstitution = Solve.Response(Solution.Halt(
                 Signature("ciao", 0),
@@ -330,7 +330,7 @@ internal class SolverUtilsTest {
     fun responseBySelectCorrectlyTheTypeOfResponseToApply() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
         val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
-        val finalException = HaltException(finalContext)
+        val finalException = HaltException(context = finalContext)
 
         val aYesResponse = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
