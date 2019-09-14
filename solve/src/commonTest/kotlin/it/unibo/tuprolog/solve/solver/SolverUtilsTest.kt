@@ -6,6 +6,7 @@ import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.SolverUtils.haltResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
@@ -15,7 +16,6 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 
@@ -188,16 +188,16 @@ internal class SolverUtilsTest {
 
     @Test
     fun newThrowSolveRequestBehavesLikeNewSolveRequestAddingThrowGoal() {
-        val error = SystemError
+        val testError = SystemError(context = DummyInstances.executionContext)
 
-        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct()))
-        val toBeTested = DummyInstances.solveRequest.newThrowSolveRequest(error)
+        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, testError.errorStruct))
+        val toBeTested = DummyInstances.solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correct.signature, toBeTested.signature)
         assertEquals(correct.arguments, toBeTested.arguments)
 
-        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct(Empty.set())))
-        val toBeTestedWithExtra = DummyInstances.solveRequest.newThrowSolveRequest(error, Empty.set())
+        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, testError.errorStruct))
+        val toBeTestedWithExtra = DummyInstances.solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
         assertEquals(correctWithExtra.arguments, toBeTestedWithExtra.arguments)

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.exception.prologerror.PredefinedError
+import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
@@ -87,8 +87,8 @@ internal object SolverUtils {
             }
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
-    fun Solve.Request.newThrowSolveRequest(error: PredefinedError, extraData: Struct = Truth.`true`()): Solve.Request =
-            this.newSolveRequest(Struct.of(Throw.signature.name, error.toThrowStruct(extraData)))
+    fun Solve.Request.newThrowSolveRequest(error: PrologError): Solve.Request =
+            this.newSolveRequest(Struct.of(Throw.signature.name, error.errorStruct))
 
     /** Utility method to copy receiver [Solve.Request] importing [subSolve] context */
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this

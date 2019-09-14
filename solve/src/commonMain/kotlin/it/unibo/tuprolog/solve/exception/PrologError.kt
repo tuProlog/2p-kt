@@ -26,7 +26,7 @@ abstract class PrologError(
 ) : TuPrologRuntimeException(message, cause, context) {
 
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
-    val error: Struct by lazy {
+    val errorStruct: Struct by lazy {
         extraData?.let { errorStructOf(type, it) }
                 ?: errorStructOf(type)
     }
