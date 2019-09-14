@@ -335,4 +335,23 @@ internal class StructImplTest {
         assertEqualities(correct, toBeTested1)
         assertEqualities(correct, toBeTested2)
     }
+
+    @Test
+    fun applyShouldNotGoIntoInfiniteLoopSubstitutingAVarWithSameVar() {
+        val xVar = Var.of("X")
+        val myStruct = Struct.of("f", xVar)
+        val toBeTested = myStruct.apply(Substitution.of(xVar to xVar))
+
+        assertEqualities(myStruct, toBeTested)
+    }
+
+    @Test
+    fun applyShouldNotGoIntoInfiniteLoopSubstitutingCircularChainOfVariables() {
+        val xVar = Var.of("X")
+        val yVar = Var.of("Y")
+        val myStruct = Struct.of("f", xVar, yVar)
+        val toBeTested = myStruct.apply(Substitution.of(xVar to yVar, yVar to xVar))
+
+        assertEqualities(myStruct, toBeTested)
+    }
 }

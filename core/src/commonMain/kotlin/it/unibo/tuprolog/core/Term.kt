@@ -63,8 +63,10 @@ interface Term {
         substitution.isEmpty() || this.isGround -> this
         this is Var -> {
             var current = this
-            while (current in substitution) {
+            val alreadyUsedSubstitution = mutableMapOf<Var, Term>() // to prevent infinite loop
+            while (current in substitution && current !in alreadyUsedSubstitution) {
                 current = substitution[current]!!
+                        .also { alreadyUsedSubstitution[current as Var] = it }
             }
             current
         }
