@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.core.exception.TuprologException
+import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 
 // TODO add doc
-open class TuprologRuntimeException : TuprologException {
+open class TuprologRuntimeException : TuPrologException {
     constructor(context: ExecutionContext) : super() {
         this.context = context
     }

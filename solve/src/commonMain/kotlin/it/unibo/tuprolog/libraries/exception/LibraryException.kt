@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.libraries.exception
 
-import it.unibo.tuprolog.core.exception.TuprologException
+import it.unibo.tuprolog.core.exception.TuPrologException
 
-open class LibraryException : TuprologException {
+open class LibraryException : TuPrologException {
 
     constructor() : super()
     constructor(message: String?) : super(message)
