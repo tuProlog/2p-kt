@@ -189,4 +189,22 @@ internal class VarImplTest {
         assertEqualities(myAtom, toBeTested1)
         assertEqualities(myAtom, toBeTested2)
     }
+
+    @Test
+    fun applyShouldNotGoIntoInfiniteLoopSubstitutingAVarWithSameVar() {
+        val xVar = Var.of("X")
+        val toBeTested = xVar.apply(Substitution.of(xVar to xVar))
+
+        assertSame(xVar, toBeTested)
+    }
+
+    @Test
+    fun applyShouldNotGoIntoInfiniteLoopSubstitutingCircularChainOfVariables() {
+        val xVar = Var.of("X")
+        val yVar = Var.of("Y")
+
+        val toBeTested = xVar.apply(Substitution.of(xVar to yVar, yVar to xVar))
+
+        assertSame(xVar, toBeTested)
+    }
 }
