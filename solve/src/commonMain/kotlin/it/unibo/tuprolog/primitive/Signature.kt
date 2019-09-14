@@ -85,6 +85,5 @@ fun Signature.toIndicator(): Indicator? =
             else -> Indicator.of(this.name, this.arity)
         }
 
-fun Struct.toSignature(): Signature { // TODO: 08/09/2019  add test and change to extractSignature() maybe commit in gc-branch
-    return Signature.fromIndicator(indicator) !!
-}
+/** Extracts this [Struct] indicator and converts it to [Signature] */
+fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!

@@ -135,4 +135,12 @@ internal class SignatureTest {
     fun toIndicatorComplainsOnVarargSignatures() {
         assertNull(varargSignature.toIndicator())
     }
+
+    @Test
+    fun structExtractSignatureWorksAsExpected() {
+        assertEquals(Signature(aAtom.value, aAtom.arity), aAtom.extractSignature())
+        signatureTerms.forEach {
+            assertEquals(Signature(it.functor, it.arity), it.extractSignature())
+        }
+    }
 }
