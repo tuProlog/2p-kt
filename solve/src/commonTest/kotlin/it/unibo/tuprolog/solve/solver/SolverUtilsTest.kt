@@ -207,11 +207,11 @@ internal class SolverUtilsTest {
                 copy(context = context.copy(currentSubstitution = Substitution.of(
                         varOf("A") to atomOf("a"),
                         varOf("C") to varOf("D")
-                )))
+                ) as Substitution.Unifier))
             }
             val secondSolveRequest = with(DummyInstances.solveRequest) {
                 copy(context = context.copy(currentSubstitution = Substitution.of(
-                        varOf("D") to varOf("C")
+                        varOf("D"), varOf("C")
                 )))
             }
 

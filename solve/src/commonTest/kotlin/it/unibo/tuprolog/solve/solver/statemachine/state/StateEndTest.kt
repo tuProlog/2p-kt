@@ -40,7 +40,7 @@ internal class StateEndTest {
                                 varOf("A") to varOf("C"),
                                 varOf("C") to Atom.of("c"),
                                 varOf("D") to Atom.of("d")
-                        ))
+                        ) as Substitution.Unifier)
                     }),
                     executionStrategy
             )

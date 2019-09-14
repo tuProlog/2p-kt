@@ -37,9 +37,9 @@ internal object CallUtils {
                 Struct.of("call", SolverTestUtils.threeResponseRequest.query!!).let { query ->
                     Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
                         createSolveRequest(query, database = SolverTestUtils.factDatabase) to ktListOf(
-                                Solution.Yes(query, Substitution.of(varOf("A") to Atom.of("a"))),
-                                Solution.Yes(query, Substitution.of(varOf("A") to Atom.of("b"))),
-                                Solution.Yes(query, Substitution.of(varOf("A") to Atom.of("c")))
+                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
+                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("b"))),
+                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("c")))
                         )
                     }
                 },
@@ -49,7 +49,7 @@ internal object CallUtils {
                                 database = SolverTestUtils.factDatabase,
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
                         ) to ktListOf(
-                                Solution.Yes(query, Substitution.of(varOf("A") to atomOf("a")))
+                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a")))
                         )
                     }
                 }
@@ -79,8 +79,8 @@ internal object CallUtils {
                         database = SolverTestUtils.factDatabase,
                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
                 ) to ktListOf(
-                        Solution.Yes(query, Substitution.of(varOf("A") to atomOf("a"))),
-                        Solution.Yes(query, Substitution.of(varOf("A") to atomOf("b")))
+                        Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
+                        Solution.Yes(query, Substitution.of(varOf("A"), atomOf("b")))
                 )
             }
         }
