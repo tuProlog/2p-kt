@@ -7,9 +7,9 @@ import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
-import it.unibo.tuprolog.solve.solver.Solver
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 

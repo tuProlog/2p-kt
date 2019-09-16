@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.solver.Solver
+import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
@@ -27,7 +27,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
             val leftSubSolveRequest = mainRequest.newSolveRequest(prepareForExecution(leftSubGoal))
 
             var cutExecuted = false
-            Solver.sld().solve(leftSubSolveRequest).forEach { leftResponse ->
+            SolverSLD().solve(leftSubSolveRequest).forEach { leftResponse ->
                 if (leftResponse.context.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent })
                     cutExecuted = true
 
@@ -39,7 +39,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
                                 baseContext = leftResponse.context
                         )
 
-                        Solver.sld().solve(rightSubSolveRequest).forEach { rightResponse ->
+                        SolverSLD().solve(rightSubSolveRequest).forEach { rightResponse ->
                             if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent })
                                 cutExecuted = true
 

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.solver.Solver
+import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
@@ -22,7 +22,7 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
         when {
             toBeCalledGoal is Var -> TODO("throw error(instantiation_error)")
             SolverUtils.isWellFormed(toBeCalledGoal) ->
-                Solver.sld().solve(
+                SolverSLD().solve(
                         mainRequest.newSolveRequest(toBeCalledGoal as Struct)
                 ).map {
                     mainRequest.responseBy(it.copy(context = resetCutWorkChanges(it.context, mainRequest.context)))

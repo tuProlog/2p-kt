@@ -3,9 +3,7 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -23,9 +21,7 @@ internal class SolverSLDTest {
 
     @Test
     fun firstInformalTest() {
-        val goal = Solve.Request(
-                Signature("p", 1),
-                ktListOf(Var.of("X")),
+        SolverSLD(
                 ExecutionContext(
                         Libraries(Library.of(alias = "test", theory = ClauseDatabase.of(
                                 Fact.of(Struct.of("p", Atom.of("a"))),
@@ -40,9 +36,8 @@ internal class SolverSLDTest {
                         ClauseDatabase.empty(),
                         ClauseDatabase.empty()
                 )
-        )
-
-        Solver.sld().solve(goal).toList().forEach { println("$it\n") }
+        ).solve(Struct.of("p", Var.of("X")))
+                .toList().forEach { println("$it\n") }
     }
 
     @Test
@@ -66,9 +61,7 @@ internal class SolverSLDTest {
                 Scope.empty { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
         )
 
-        val goal = Solve.Request(
-                Signature("p", 2),
-                ktListOf(Var.of("U"), Var.of("V")),
+        SolverSLD(
                 DummyInstances.executionContext.copy(
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
@@ -76,9 +69,8 @@ internal class SolverSLDTest {
                                 primitives = mapOf(Conjunction.descriptionPair)
                         ))
                 )
-        )
-
-        Solver.sld().solve(goal).toList().forEach { println("$it\n") }
+        ).solve(Struct.of("p", Var.of("U"), Var.of("V")))
+                .toList().forEach { println("$it\n") }
     }
 
     @Test
@@ -103,9 +95,7 @@ internal class SolverSLDTest {
                 Scope.empty { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
         )
 
-        val goal = Solve.Request(
-                Signature("p", 2),
-                ktListOf(Var.of("U"), Var.of("V")),
+        SolverSLD(
                 DummyInstances.executionContext.copy(
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
@@ -113,9 +103,8 @@ internal class SolverSLDTest {
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                         ))
                 )
-        )
-
-        Solver.sld().solve(goal).toList().forEach { println("$it\n") }
+        ).solve(Struct.of("p", Var.of("U"), Var.of("V")))
+                .toList().forEach { println("$it\n") }
     }
 
     @Test
@@ -140,9 +129,7 @@ internal class SolverSLDTest {
                 Scope.empty { factOf(structOf("r", atomOf("c1"))) }
         )
 
-        val goal = Solve.Request(
-                Signature("p", 2),
-                ktListOf(Var.of("U"), Var.of("V")),
+        SolverSLD(
                 DummyInstances.executionContext.copy(
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
@@ -150,9 +137,8 @@ internal class SolverSLDTest {
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                         ))
                 )
-        )
-
-        Solver.sld().solve(goal).toList().forEach { println("$it\n") }
+        ).solve(Struct.of("p", Var.of("U"), Var.of("V")))
+                .toList().forEach { println("$it\n") }
     }
 
     @Test
@@ -185,9 +171,7 @@ internal class SolverSLDTest {
                 }
         )
 
-        val goal = Solve.Request(
-                Signature("my_reverse", 2),
-                ktListOf(LogicList.of((1..4).map(Numeric.Companion::of)), Var.of("L")),
+        SolverSLD(
                 DummyInstances.executionContext.copy(
                         libraries = Libraries(Library.of(
                                 alias = "testLib",
@@ -195,8 +179,7 @@ internal class SolverSLDTest {
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                         ))
                 )
-        )
-
-        Solver.sld().solve(goal).toList().forEach { println("$it\n") }
+        ).solve(Struct.of("my_reverse", LogicList.of((1..4).map(Numeric.Companion::of)), Var.of("L")))
+                .toList().forEach { println("$it\n") }
     }
 }
