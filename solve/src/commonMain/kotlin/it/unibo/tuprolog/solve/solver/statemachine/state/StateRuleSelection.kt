@@ -54,26 +54,27 @@ internal class StateRuleSelection(
 
                             // find in sub-goal state sequence, the state responding to current solveRequest
                             if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(subSolveRequest) }) {
-                                yield(
-                                        when (it.wrappedState) {
-                                            is SuccessFinalState ->
-                                                StateEnd.True(
-                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                        executionStrategy
-                                                )
-                                            is StateEnd.Halt ->
-                                                StateEnd.Halt(
-                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                        executionStrategy,
-                                                        it.wrappedState.exception
-                                                )
-                                            else ->
-                                                StateEnd.False(
-                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                        executionStrategy
-                                                )
-                                        }
-                                )
+                                when (it.wrappedState) {
+                                    is SuccessFinalState -> yield(
+                                            StateEnd.True(
+                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
+                                                    executionStrategy
+                                            )
+                                    )
+                                    is StateEnd.Halt -> yield(
+                                            StateEnd.Halt(
+                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
+                                                    executionStrategy,
+                                                    it.wrappedState.exception
+                                            )
+                                    ).also { return@sequence } // if halt reached, overall computation should stop (duplicated in StateGoalEvaluation.. refactor the logic)
+                                    else -> yield(
+                                            StateEnd.False(
+                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
+                                                    executionStrategy
+                                            )
+                                    )
+                                }
                             }
                         }
                         if (cutNextSiblings) return@sequence // cut here matching rules trial
