@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 
@@ -46,7 +45,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
                             yield(mainRequest.responseBy(rightResponse))
                         }
                     }
-                    is Solution.No -> yield(mainRequest.noResponseBy(leftResponse))
+                    else -> yield(mainRequest.responseBy(leftResponse))
                 }
                 if (cutExecuted) return@sequence
             }

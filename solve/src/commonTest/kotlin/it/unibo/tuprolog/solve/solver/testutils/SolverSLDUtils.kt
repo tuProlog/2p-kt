@@ -5,8 +5,10 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -219,14 +221,19 @@ internal object SolverSLDUtils {
                                         varOf("L") to listOf((1..4).reversed().map(::numOf))
                                 ) as Substitution.Unifier)
                         )
-                    }
+                    },
+                    *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray()
             )
         }
     }
 
+    /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
+    private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request, Iterable<Solution>>) =
+            requestSolutionMap.mapKeys { it.key.query!! to it.key.context }.entries.map { it.toPair() }
+
     /** Utility method to check if given solutions match */
     internal fun assertSolutionsCorrect(expected: Iterable<Solution>, actual: Iterable<Solution>) {
-        assertEquals(expected.count(), actual.count())
+        assertEquals(expected.count(), actual.count(), "expected solutions: ${expected.toList()}, actual: ${actual.toList()}")
 
         expected.zip(actual).forEach { (expected, actual) ->
             assertEquals(expected::class, actual::class)
