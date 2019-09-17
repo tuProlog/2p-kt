@@ -22,9 +22,13 @@ internal class StateGoalEvaluation(
             var responses: Sequence<Solve.Response>? = null
             try {
                 responses = primitive(solveRequest)
-            } catch (e: HaltException) {
-                yield(StateEnd.Halt(solveRequest, executionStrategy))
+            } catch (exception: HaltException) {
+                yield(StateEnd.Halt(solveRequest.copy(context = exception.context), executionStrategy, exception))
             }
+
+//            catch (prologError: PrologError) {
+//                // TODO: 17/09/2019
+//            }
 
             responses?.forEach {
                 when (it.solution) {
@@ -33,6 +37,15 @@ internal class StateGoalEvaluation(
                                 solveRequest.copy(context = it.context),
                                 executionStrategy
                         ))
+
+                    is Solution.Halt -> {
+                        yield(StateEnd.Halt(
+                                solveRequest.copy(context = it.context),
+                                executionStrategy,
+                                it.solution.exception
+                        ))
+                        return@sequence // if halt reached, overall computation should stop
+                    }
 
                     is Solution.No ->
                         yield(StateEnd.False(

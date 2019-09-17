@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -54,7 +55,8 @@ internal sealed class StateEnd(
     /** The *Halt* state is reached when an [HaltException] is catch, terminating the computation */
     internal data class Halt(
             override val solveRequest: Solve.Request,
-            override val executionStrategy: CoroutineScope
+            override val executionStrategy: CoroutineScope,
+            val exception: TuPrologRuntimeException
     ) : StateEnd(solveRequest, executionStrategy), FailFinalState
 
     /** The *Timeout* state is reached when the given request timeout is reached before shifting to other [StateEnd], terminating computation */

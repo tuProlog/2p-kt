@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
+import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 
 /**
  * Implementation of primitive handling `','/2` behaviour
@@ -43,10 +43,7 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
                             if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent })
                                 cutExecuted = true
 
-                            when (rightResponse.solution) {
-                                is Solution.Yes -> yield(mainRequest.yesResponseBy(rightResponse))
-                                is Solution.No -> yield(mainRequest.noResponseBy(rightResponse))
-                            }
+                            yield(mainRequest.responseBy(rightResponse))
                         }
                     }
                     is Solution.No -> yield(mainRequest.noResponseBy(leftResponse))

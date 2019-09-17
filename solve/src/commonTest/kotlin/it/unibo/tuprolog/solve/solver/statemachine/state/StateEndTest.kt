@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.solve.testutils.DummyInstances.executionStrategy
 import kotlin.test.Test
@@ -24,6 +25,7 @@ internal class StateEndTest {
             listOf(myScope.varOf("A"), myScope.varOf("B")),
             DummyInstances.executionContext
     )
+    private val anException = HaltException(context = DummyInstances.executionContext)
 
     @Test
     fun trueStateHoldInsertedData() {
@@ -57,8 +59,9 @@ internal class StateEndTest {
 
     @Test
     fun haltStateHoldInsertedData() {
-        val toBeTested = StateEnd.Halt(solveRequest, executionStrategy)
+        val toBeTested = StateEnd.Halt(solveRequest, executionStrategy, anException)
         assertEquals(solveRequest, toBeTested.solveRequest)
+        assertEquals(anException, toBeTested.exception)
     }
 
     @Test
@@ -72,7 +75,7 @@ internal class StateEndTest {
         val toBeTested = listOf(
                 StateEnd.True(solveRequest, executionStrategy),
                 StateEnd.False(solveRequest, executionStrategy),
-                StateEnd.Halt(solveRequest, executionStrategy),
+                StateEnd.Halt(solveRequest, executionStrategy, anException),
                 StateEnd.Timeout(solveRequest, executionStrategy)
         )
 

@@ -61,6 +61,12 @@ internal class StateRuleSelection(
                                                         solveRequest.importingContextFrom(it.wrappedState.solveRequest),
                                                         executionStrategy
                                                 )
+                                            is StateEnd.Halt ->
+                                                StateEnd.Halt(
+                                                        solveRequest.importingContextFrom(it.wrappedState.solveRequest),
+                                                        executionStrategy,
+                                                        it.wrappedState.exception
+                                                )
                                             else ->
                                                 StateEnd.False(
                                                         solveRequest.importingContextFrom(it.wrappedState.solveRequest),

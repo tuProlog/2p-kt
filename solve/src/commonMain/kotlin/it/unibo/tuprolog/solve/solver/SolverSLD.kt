@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
+import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import it.unibo.tuprolog.solve.solver.statemachine.state.SuccessFinalState
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -49,7 +50,11 @@ internal class SolverSLD(
         is SuccessFinalState -> with(finalState.solveRequest) {
             Solution.Yes(signature, arguments, finalState.answerSubstitution)
         }
-// TODO: 16/09/2019 add Halt solution catching and test
+
+        is StateEnd.Halt -> with(finalState.solveRequest) {
+            Solution.Halt(signature, arguments, finalState.exception)
+        }
+
         else -> with(finalState.solveRequest) {
             Solution.No(signature, arguments)
         }
