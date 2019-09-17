@@ -59,12 +59,18 @@ internal object CallUtils {
 
     /** Call primitive request with argument a non instantiated Var, should result in an "instantiation_error" */
     internal val requestOfCallWithNotInstantiatedVar by lazy {
-        createSolveRequest(Struct.of("call", Var.of("X")))
+        createSolveRequest(
+                Struct.of("call", Var.of("X")),
+                primitives = mapOf(Call.descriptionPair)
+        )
     }
 
     /** Call primitive request with argument a non well-formed goal; should result in an "type_error(callable, Goal)" */
     internal val requestOfCallWithMalformedGoal by lazy {
-        createSolveRequest(Struct.of("call", Tuple.of(Truth.`true`(), Integer.of(1))))
+        createSolveRequest(
+                Struct.of("call", Tuple.of(Truth.`true`(), Integer.of(1))),
+                primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)
+        )
     }
 
     /**

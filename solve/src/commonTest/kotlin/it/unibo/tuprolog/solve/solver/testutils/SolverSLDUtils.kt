@@ -57,7 +57,20 @@ internal object SolverSLDUtils {
         )
     }
 
-    /** Same as [prologStandardExampleDatabase] but first clause contains cut */
+    /**
+     * Same as [prologStandardExampleDatabase] but first clause contains cut
+     *
+     * ```prolog
+     * p(X, Y) :- q(X), !, r(X, Y).
+     * p(X, Y) :- s(X).
+     * s(d).
+     * q(a).
+     * q(b).
+     * q(c).
+     * r(b, b1).
+     * r(c, c1).
+     * ```
+     */
     private val prologStandardExampleDatabaseWithCut by lazy {
         ClauseDatabase.of(
                 Scope.empty {
@@ -71,7 +84,20 @@ internal object SolverSLDUtils {
         )
     }
 
-    /** A database that exercises cut functionality */
+    /**
+     * A database that exercises cut functionality
+     *
+     * ```prolog
+     * p(X, Y) :- q(X), !, r(Y).
+     * p(X, Y) :- s(X).
+     * s(d).
+     * q(a).
+     * q(b).
+     * q(c).
+     * r(b1).
+     * r(c1).
+     * ```
+     */
     private val cutTestingDatabase by lazy {
         ClauseDatabase.of(
                 Scope.empty {

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 /**
  * Test class for [Call]
@@ -30,12 +30,10 @@ internal class CallTest {
 
     @Test
     fun ifArgumentWellFormedGoalNotVariableItForwardsResponsesFromArgumentExecution() {
-        CallUtils.requestSolutionMap.forEach { (request, solution) ->
-            val response = Call.primitive(request).toList()
+        CallUtils.requestSolutionMap.forEach { (request, solutionList) ->
+            val toBeTested = Call.primitive(request).toList()
 
-            assertEquals(solution.count(), response.count())
-
-            response.map { it.solution }.zip(solution).forEach { (expected, actual) -> assertEquals(expected, actual) }
+            assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
         }
     }
 
@@ -44,8 +42,6 @@ internal class CallTest {
         val (request, solutionList) = CallUtils.requestToSolutionOfCallWithCut
         val toBeTested = Call.primitive(request).toList()
 
-        assertEquals(solutionList.count(), toBeTested.count())
-
-        solutionList.zip(toBeTested.map { it.solution }).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
     }
 }

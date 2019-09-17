@@ -33,10 +33,10 @@ internal class SolverSLD(
             solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext)).map { it.solution }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
-    internal fun solve(goal: Solve.Request): Sequence<Solve.Response> =
-            StateMachineExecutor.execute(StateInit(goal, executionStrategy))
+    internal fun solve(goalRequest: Solve.Request): Sequence<Solve.Response> =
+            StateMachineExecutor.execute(StateInit(goalRequest, executionStrategy))
                     .filterIsInstance<FinalState>()
-                    .filter { it.solveRequest.equalSignatureAndArgs(goal) }
+                    .filter { it.solveRequest.equalSignatureAndArgs(goalRequest) }
                     .map {
                         Solve.Response(
                                 finalStateToSolutionMapping(it),

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.solver
 
+import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
@@ -22,6 +24,16 @@ internal class SolverSLDTest {
         }
     }
 
-    // TODO: 16/09/2019 other methods testing
+    @Test
+    fun solveSolveRequestIgnoresStartContextAndExecutesDirectlyGivenSolveRequest() {
+        SolverSLDUtils.contextAndRequestToSolutionMap.forEach { (input, expectedOutput) ->
+            val (query, startContext) = input
+
+            val toBeTested = SolverSLD().solve(Solve.Request(query.extractSignature(), query.argsList, startContext))
+                    .map { it.solution }.toList()
+
+            assertSolutionsCorrect(expectedOutput, toBeTested)
+        }
+    }
 
 }
