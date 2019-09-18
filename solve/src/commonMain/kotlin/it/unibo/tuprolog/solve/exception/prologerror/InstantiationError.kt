@@ -20,4 +20,11 @@ class InstantiationError(
         cause: Throwable? = null,
         context: ExecutionContext,
         extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of("instantiation_error"), extraData)
+) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+
+    companion object {
+
+        /** The instantiation error Struct functor */
+        const val typeFunctor = "instantiation_error"
+    }
+}

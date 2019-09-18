@@ -20,4 +20,11 @@ class SystemError(
         cause: Throwable? = null,
         context: ExecutionContext,
         extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of("system_error"), extraData)
+) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+
+    companion object {
+
+        /** The system error Struct functor */
+        const val typeFunctor = "system_error"
+    }
+}

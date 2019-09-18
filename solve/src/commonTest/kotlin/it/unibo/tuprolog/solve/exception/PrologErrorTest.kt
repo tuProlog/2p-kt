@@ -45,4 +45,11 @@ internal class PrologErrorTest {
         PrologErrorUtils.assertErrorStructCorrect(object : PrologError(context = DummyInstances.executionContext, type = testType) {})
     }
 
+    @Test
+    fun ofCreatesCorrectSubInstanceIfDetected() {
+        PrologErrorUtils.recognizedSubTypes.forEach { (typeParam, expectedType) ->
+            val actualError = PrologError.of(context = DummyInstances.executionContext, type = typeParam)
+            assertEquals(expectedType, actualError::class)
+        }
+    }
 }

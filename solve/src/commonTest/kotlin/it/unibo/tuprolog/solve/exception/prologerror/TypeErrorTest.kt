@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.exception.prologerror
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils
@@ -22,16 +21,22 @@ internal class TypeErrorTest {
             expectedType = testErrorType,
             actualValue = callableTypeErrorActualValue
     )
+    private val correctTypeFunctor = "type_error"
+
+    @Test
+    fun typeErrorTypeStructFunctorCorrect() {
+        assertEquals(correctTypeFunctor, TypeError.typeFunctor)
+    }
 
     @Test
     fun typeErrorNameCorrect() {
-        assertEquals("type_error", aCallableTypeError.type.functor)
+        assertEquals(correctTypeFunctor, aCallableTypeError.type.functor)
     }
 
     @Test
     fun typeErrorTypeCorrect() {
         assertEquals(
-                Struct.of("type_error", testErrorType.toAtom(), callableTypeErrorActualValue),
+                Struct.of(correctTypeFunctor, testErrorType.toAtom(), callableTypeErrorActualValue),
                 aCallableTypeError.type
         )
     }
@@ -49,12 +54,5 @@ internal class TypeErrorTest {
     @Test
     fun typeErrorActualValueCorrect() {
         assertEquals(callableTypeErrorActualValue, aCallableTypeError.actualValue)
-    }
-
-    @Test
-    fun typeErrorExpectedEnumToAtomWorksAsExpected() {
-        TypeError.Expected.values().forEach {
-            assertEquals(Atom.of(it.toString().toLowerCase()), it.toAtom())
-        }
     }
 }

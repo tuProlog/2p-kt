@@ -1,7 +1,12 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import kotlin.test.assertEquals
 
 /**
@@ -10,6 +15,15 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal object PrologErrorUtils {
+
+    /** Contains PrologErrors subclasses that will be recognized by type parameter */
+    internal val recognizedSubTypes by lazy {
+        mapOf(
+                Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
+                Atom.of(SystemError.typeFunctor) to SystemError::class,
+                Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class
+        )
+    }
 
     /** Asserts that [PrologError.errorStruct] returns correctly constructed structure */
     internal fun assertErrorStructCorrect(prologError: PrologError) {

@@ -4,6 +4,9 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 /**
  * Base class for Standard Prolog Errors and possibly other custom Primitive errors
@@ -33,4 +36,28 @@ abstract class PrologError(
 
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
             : this(cause?.toString(), cause, context, type, extraData)
+
+    companion object {
+
+        /**
+         * Factory method for [PrologError]s
+         *
+         * It creates correct subclass instance if [type] detected, otherwise defaulting to a [PrologError] instance
+         */
+        fun of(
+                message: String? = null,
+                cause: Throwable? = null,
+                context: ExecutionContext,
+                type: Struct,
+                extraData: Term? = null
+        ) = with(type) {
+            when {
+                functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)
+                functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)
+                functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->
+                    TypeError(message, cause, context, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
+                else -> object : PrologError(message, cause, context, type, extraData) {}
+            }
+        }
+    }
 }

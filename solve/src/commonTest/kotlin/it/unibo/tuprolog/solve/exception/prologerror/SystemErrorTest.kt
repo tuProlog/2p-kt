@@ -7,21 +7,27 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * test class for [SystemError]
+ * Test class for [SystemError]
  *
  * @author Enrico
  */
 internal class SystemErrorTest {
 
     private val underTestError = SystemError(context = DummyInstances.executionContext)
+    private val correctTypeFunctor = "system_error"
 
     @Test
-    fun instantiationErrorTypeCorrect() {
-        assertEquals(Atom.of("system_error"), underTestError.type)
+    fun systemErrorTypeCorrect() {
+        assertEquals(Atom.of(correctTypeFunctor), underTestError.type)
     }
 
     @Test
-    fun instantiationErrorToThrowStructCorrect() {
+    fun systemErrorToThrowStructCorrect() {
         PrologErrorUtils.assertErrorStructCorrect(underTestError)
+    }
+
+    @Test
+    fun systemErrorTypeStructFunctor() {
+        assertEquals(correctTypeFunctor, SystemError.typeFunctor)
     }
 }

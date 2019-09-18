@@ -14,14 +14,20 @@ import kotlin.test.assertEquals
 internal class InstantiationErrorTest {
 
     private val underTestError = InstantiationError(context = DummyInstances.executionContext)
+    private val correctTypeFunctor = "instantiation_error"
 
     @Test
     fun instantiationErrorTypeCorrect() {
-        assertEquals(Atom.of("instantiation_error"), underTestError.type)
+        assertEquals(Atom.of(correctTypeFunctor), underTestError.type)
     }
 
     @Test
     fun instantiationErrorToThrowStructCorrect() {
         PrologErrorUtils.assertErrorStructCorrect(underTestError)
+    }
+
+    @Test
+    fun instantiationErrorTypeStructFunctor() {
+        assertEquals(correctTypeFunctor, InstantiationError.typeFunctor)
     }
 }

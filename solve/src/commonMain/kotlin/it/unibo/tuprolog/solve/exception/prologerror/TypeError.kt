@@ -26,9 +26,21 @@ class TypeError(
         val expectedType: Expected,
         val actualValue: Term,
         extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of("type_error"), extraData) {
+) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
-    /** The possible expected types */
+    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }
+
+    companion object {
+
+        /** The type error Struct functor */
+        const val typeFunctor = "type_error"
+    }
+
+    /**
+     * The possible expected types
+     *
+     * @author Enrico
+     */
     enum class Expected {
         CALLABLE, ATOM, INTEGER, PREDICATE_INDICATOR, COMPOUND, LIST, CHARACTER;
 
@@ -37,7 +49,18 @@ class TypeError(
 
         /** A function to transform the type to corresponding [Atom] representation */
         fun toAtom(): Atom = Atom.of(toString().toLowerCase())
-    }
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }
+        companion object {
+
+            /** Gets [Expected] instance from [term] representation, if possible */
+            fun fromTerm(term: Term): Expected? = when (term) {
+                is Atom -> try {
+                    valueOf(term.value.toUpperCase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+                else -> null
+            }
+        }
+    }
 }
