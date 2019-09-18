@@ -60,7 +60,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
                     else -> null
                 }
             }
-        } catch (ex: IllegalArgumentException) { // catch when parsed arity is negative
+        } catch (ex: IllegalArgumentException) { // caught when parsed arity is negative
             null
         }
 

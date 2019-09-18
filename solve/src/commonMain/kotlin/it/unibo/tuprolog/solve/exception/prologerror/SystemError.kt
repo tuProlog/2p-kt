@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 
 /**
- * The system error occurs when an internal problem occurred and if not catch, it will halt inferential machine
+ * The system error occurs when an internal problem occurred and if not caught, it will halt inferential machine
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.

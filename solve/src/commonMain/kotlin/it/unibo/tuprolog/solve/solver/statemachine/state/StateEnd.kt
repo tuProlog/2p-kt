@@ -52,7 +52,7 @@ internal sealed class StateEnd(
             override val executionStrategy: CoroutineScope
     ) : StateEnd(solveRequest, executionStrategy), FailFinalState
 
-    /** The *Halt* state is reached when an [HaltException] is catch, terminating the computation */
+    /** The *Halt* state is reached when an [HaltException] is caught, terminating the computation */
     internal data class Halt(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope,
