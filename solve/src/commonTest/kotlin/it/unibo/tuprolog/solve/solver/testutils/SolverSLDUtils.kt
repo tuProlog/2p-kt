@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -222,7 +223,8 @@ internal object SolverSLDUtils {
                                 ) as Substitution.Unifier)
                         )
                     },
-                    *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray()
+                    *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray()
             )
         }
     }

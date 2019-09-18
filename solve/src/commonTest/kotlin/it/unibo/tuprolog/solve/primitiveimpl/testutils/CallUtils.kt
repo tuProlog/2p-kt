@@ -20,23 +20,23 @@ internal object CallUtils {
     internal val requestSolutionMap by lazy {
         mapOf(
                 Struct.of("call", Truth.`true`()).let {
-                    createSolveRequest(it) to ktListOf(
+                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
                 Struct.of("call", Tuple.of(Truth.`true`(), Truth.`true`())).let {
-                    createSolveRequest(it, primitives = mapOf(Conjunction.descriptionPair)) to ktListOf(
+                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
                 Struct.of("call", Atom.of("!")).let {
-                    createSolveRequest(it, primitives = mapOf(Cut.descriptionPair)) to ktListOf(
+                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Cut.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
                 Struct.of("call", SolverTestUtils.threeResponseRequest.query!!).let { query ->
                     Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
-                        createSolveRequest(query, database = SolverTestUtils.factDatabase) to ktListOf(
+                        createSolveRequest(query, database = SolverTestUtils.factDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("b"))),
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("c")))
