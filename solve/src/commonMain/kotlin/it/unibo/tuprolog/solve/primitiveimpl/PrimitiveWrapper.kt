@@ -14,6 +14,9 @@ abstract class PrimitiveWrapper(
         val signature: Signature
 ) {
 
+    /** A shorthand to get the primitive functor name */
+    val functor: String = signature.name
+
     /** Checked primitive implementation */
     val primitive: Primitive by lazy { primitiveOf(signature, uncheckedImplementation) }
 

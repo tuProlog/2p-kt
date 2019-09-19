@@ -26,6 +26,11 @@ internal class PrimitiveWrapperTest {
     }
 
     @Test
+    fun functorCorrect() {
+        assertEquals("ciao", underTestWrapper.functor)
+    }
+
+    @Test
     fun primitiveWorksIfCorrectRequestProvided() {
         assertEquals(emptySequence(), underTestWrapper.primitive(DummyInstances.solveRequest.copy(signature)))
     }
