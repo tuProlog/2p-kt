@@ -2,13 +2,12 @@ package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
-import kotlin.test.fail
 
 /**
- * Test class
+ * Test class for [Halt]
  *
  * @author Enrico
  */
@@ -21,11 +20,6 @@ internal class HaltTest {
 
     @Test
     fun haltPrimitiveExceptionContainsCorrectContext() {
-        try {
-            Halt.primitive(HaltUtils.exposedHaltBehaviourRequest)
-            fail("Exception should be thrown")
-        } catch (e: HaltException) {
-            assertSame(HaltUtils.exposedHaltBehaviourRequest.context, e.context)
-        }
+        assertRequestContextEqualToThrownErrorOne(HaltUtils.exposedHaltBehaviourRequest, Halt)
     }
 }

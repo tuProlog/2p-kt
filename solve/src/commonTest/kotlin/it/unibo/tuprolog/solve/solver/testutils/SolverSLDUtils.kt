@@ -226,6 +226,7 @@ internal object SolverSLDUtils {
                     },
                     *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CallUtils.requestToErrorSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray()
             )
         }

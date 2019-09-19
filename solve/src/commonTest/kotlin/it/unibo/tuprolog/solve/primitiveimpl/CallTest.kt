@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
-import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 /**
  * Test class for [Call]
@@ -13,27 +15,25 @@ import kotlin.test.Test
 internal class CallTest {
 
     @Test
-    @Ignore
-    fun ifCallArgumentIsVariableThrowsInstantiationError() {
-        val toBeTested = Call.primitive(CallUtils.requestOfCallWithNotInstantiatedVar)
-
-        // TODO: 06/09/2019
-    }
-
-    @Test
-    @Ignore
-    fun ifCallArgumentIsNotWellFormedThrowsTypeErrorCallableWithGoal() {
-        val toBeTested = Call.primitive(CallUtils.requestOfCallWithMalformedGoal)
-
-        // TODO: 06/09/2019
-    }
-
-    @Test
-    fun ifArgumentWellFormedGoalNotVariableItForwardsResponsesFromArgumentExecution() {
+    fun callForwardsResponsesFromArgumentExecutionIfWellFormedGoalAndNotVariable() {
         CallUtils.requestSolutionMap.forEach { (request, solutionList) ->
             val toBeTested = Call.primitive(request).toList()
 
             assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+        }
+    }
+
+    @Test
+    fun callThrowExceptionIfCallArgIsVariableOrNotWellFormed() {
+        CallUtils.exposedErrorThrowingRequests.forEach { (request, errorType) ->
+            assertFailsWith(errorType) { Call.primitive(request) }
+        }
+    }
+
+    @Test
+    fun callPrimitiveErrorContainsCorrectContext() {
+        CallUtils.exposedErrorThrowingRequests.forEach { (request, _) ->
+            assertRequestContextEqualToThrownErrorOne(request, Call)
         }
     }
 
@@ -43,5 +43,12 @@ internal class CallTest {
         val toBeTested = Call.primitive(request).toList()
 
         assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+    }
+
+    @Test
+    fun callErrorChainComputedCorrectly() {
+        CallUtils.requestToErrorSolutionMap.forEach { (request, solutionList) ->
+            assertErrorCauseChainComputedCorrectly(request, solutionList.single())
+        }
     }
 }

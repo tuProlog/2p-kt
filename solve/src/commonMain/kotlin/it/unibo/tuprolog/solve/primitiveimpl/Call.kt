@@ -5,6 +5,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
@@ -20,14 +22,25 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
     override val uncheckedImplementation: Primitive = { mainRequest ->
         val toBeCalledGoal = mainRequest.arguments.single()
         when {
-            toBeCalledGoal is Var -> TODO("throw error(instantiation_error)")
+            toBeCalledGoal is Var -> throw InstantiationError(
+                    "call/1 argument should not be a Variable",
+                    context = mainRequest.context,
+                    extraData = toBeCalledGoal
+            )
+
             SolverUtils.isWellFormed(toBeCalledGoal) ->
                 SolverSLD().solve(
                         mainRequest.newSolveRequest(toBeCalledGoal as Struct)
                 ).map {
                     mainRequest.responseBy(it.copy(context = resetCutWorkChanges(it.context, mainRequest.context)))
                 }
-            else -> TODO("throw error(type_error(callable, G))")
+
+            else -> throw TypeError(
+                    message = "call/1 argument is neither a Variable nor a well-formed goal",
+                    context = mainRequest.context,
+                    expectedType = TypeError.Expected.CALLABLE,
+                    actualValue = toBeCalledGoal
+            )
         }
     }
 

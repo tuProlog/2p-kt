@@ -21,7 +21,7 @@ internal object HaltUtils {
     internal val exposedHaltBehaviourRequest = createSolveRequest(Atom.of("halt"), primitives = mapOf(Halt.descriptionPair))
 
     /** A database to test `halt/0` functionality */
-    internal val haltTestingDatabase by lazy {
+    private val haltTestingDatabase by lazy {
         ClauseDatabase.of(
                 Fact.of(Struct.of("p", Atom.of("a"))),
                 Rule.of(Struct.of("p", Atom.of("b")), Atom.of("halt")),
