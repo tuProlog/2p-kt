@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -224,7 +225,8 @@ internal object SolverSLDUtils {
                         )
                     },
                     *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray(),
-                    *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray()
+                    *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray(),
+                    *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray()
             )
         }
     }

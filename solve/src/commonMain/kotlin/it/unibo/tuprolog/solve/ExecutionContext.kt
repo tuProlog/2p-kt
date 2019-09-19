@@ -37,5 +37,9 @@ data class ExecutionContext(
 
         // added for catch... should be added as catch specific "ExecutionFlowModification" field?
         /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
-        val parentRequests: Sequence<Solve.Request> = emptySequence()
+        val parentRequests: Sequence<Solve.Request> = emptySequence(),
+
+        // added to implement the "throw cut", should go in "ExecutionFlowModification"
+        /** The execution context where a `catch` was found and till which other unexplored sub-trees should be cut */
+        val throwRelatedToCutContextsParent: ExecutionContext? = null // TODO: 07/09/2019 untested, still not used in code
 )

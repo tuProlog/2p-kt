@@ -88,7 +88,7 @@ internal object SolverUtils {
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
     fun Solve.Request.newThrowSolveRequest(error: PrologError): Solve.Request =
-            this.newSolveRequest(Struct.of(Throw.signature.name, error.errorStruct))
+            this.newSolveRequest(Struct.of(Throw.signature.name, error.errorStruct), baseContext = error.context)
 
     /** Utility method to copy receiver [Solve.Request] importing [subSolve] context */
     fun Solve.Request.importingContextFrom(subSolve: Solve) = this

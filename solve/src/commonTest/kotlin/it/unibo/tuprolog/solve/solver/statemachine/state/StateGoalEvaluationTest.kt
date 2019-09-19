@@ -27,4 +27,16 @@ internal class StateGoalEvaluationTest {
         }
     }
 
+    @Test
+    fun stateGoalEvaluationNextStateOnPrologErrorIsSameStateWithThrowRequest() {
+        StateGoalEvaluationUtils.exceptionThrowingPrimitiveRequests.forEach { (request, nextState) ->
+            val nextStates = StateGoalEvaluation(request, DummyInstances.executionStrategy).behave().toList()
+
+            val (expectedNumber, expectedType) = nextState
+            assertEquals(expectedNumber, nextStates.count())
+
+            nextStates.forEach { assertEquals(expectedType, it::class) }
+        }
+    }
+
 }

@@ -3,8 +3,10 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.solver.SolverSLD
+import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import kotlinx.coroutines.CoroutineScope
-
 /**
  * State responsible of solving a selected Goal
  *
@@ -24,11 +26,9 @@ internal class StateGoalEvaluation(
                 responses = primitive(solveRequest)
             } catch (exception: HaltException) {
                 yield(StateEnd.Halt(solveRequest.copy(context = exception.context), executionStrategy, exception))
+            } catch (prologError: PrologError) {
+                responses = SolverSLD().solve(solveRequest.newThrowSolveRequest(prologError))
             }
-
-//            catch (prologError: PrologError) {
-//                // TODO: 17/09/2019
-//            }
 
             responses?.forEach {
                 when (it.solution) {
