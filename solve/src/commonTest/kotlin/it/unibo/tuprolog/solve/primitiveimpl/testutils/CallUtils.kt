@@ -21,7 +21,16 @@ import kotlin.collections.listOf as ktListOf
  */
 internal object CallUtils {
 
-    /** Call primitive working examples, with expected responses */
+    /**
+     * Call primitive working examples, with expected responses
+     *
+     * Contained requests:
+     * - `call(true)` **will result in** `Yes()`
+     * - `call((true,true))` **will result in** `Yes()`
+     * - `call('!')` **will result in** `Yes()`
+     * - `call(h(A))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a), Yes(A -> b), Yes(A -> c)`
+     * - `call((g(A), '!'))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a)`
+     */
     internal val requestSolutionMap by lazy {
         mapOf(
                 Struct.of(Call.signature.name, Truth.`true`()).let {
@@ -62,7 +71,14 @@ internal object CallUtils {
         )
     }
 
-    /** Requests that should throw errors */
+    /**
+     * Requests that should throw errors
+     *
+     * Contained requests:
+     *
+     * - `call(X)` **will result in** `Halt()`
+     * - `call((true, 1))`  **will result in** `Halt()`
+     */
     internal val requestToErrorSolutionMap by lazy {
         mapOf(
                 Struct.of(Call.signature.name, Var.of("X")).let {
@@ -106,7 +122,7 @@ internal object CallUtils {
         )
     }
 
-    /** Requests that will throw exceptions directly, if primitive invoked */
+    /** Requests that will throw exceptions directly, if primitive invoked (same as [requestToErrorSolutionMap])*/
     internal val exposedErrorThrowingRequests by lazy {
         mapOf(
                 Struct.of(Call.signature.name, Var.of("A")).let {
@@ -119,13 +135,13 @@ internal object CallUtils {
     }
 
     /**
-     * A request to test that [Call] limits [Cut] to have effect only inside its goal;
+     * A request to test that [Call] limits [Cut] to have effect only inside its goal; `call/1` is said to be *opaque* (or not transparent) to cut.
      *
-     * `call/1` is said to be *opaque* (or not transparent) to cut.
+     * - `call(g(A), call('!'))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a), Yes(A -> b)`
      */
     internal val requestToSolutionOfCallWithCut by lazy {
         Scope.empty {
-            structOf("call", tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
+            structOf(Call.signature.name, tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
                 createSolveRequest(query,
                         database = SolverTestUtils.factDatabase,
                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)

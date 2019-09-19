@@ -249,7 +249,7 @@ internal object SolverSLDUtils {
             expected.substitution.forEach { (varExpected, termExpected) ->
                 actual.substitution[actualVarScope.varOf(varExpected.name)].let {
                     assertNotNull(it)
-                    assertTrue { it.structurallyEquals(termExpected) }
+                    assertTrue("Expected: `$termExpected` Actual: `$it`") { it.structurallyEquals(termExpected) }
                 }
             }
         }

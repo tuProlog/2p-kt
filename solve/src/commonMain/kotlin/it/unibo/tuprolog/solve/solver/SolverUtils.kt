@@ -99,7 +99,8 @@ internal object SolverUtils {
                             yieldAll(subSolve.context.clauseScopedParents)
                             yieldAll(this@with.clauseScopedParents)
                         }, // refactor this into utility method insertAtBeginning for Seqeunces
-                        toCutContextsParent = subSolve.context.toCutContextsParent
+                        toCutContextsParent = subSolve.context.toCutContextsParent,
+                        throwRelatedToCutContextsParent = subSolve.context.throwRelatedToCutContextsParent
                 )
             })
 

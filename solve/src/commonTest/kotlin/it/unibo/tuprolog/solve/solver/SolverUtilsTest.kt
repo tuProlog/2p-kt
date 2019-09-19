@@ -267,6 +267,19 @@ internal class SolverUtilsTest {
     }
 
     @Test
+    fun importingContextFromShouldImportThrowRelatedCut() {
+        val previouslyPresentContext = DummyInstances.solveRequest.context.copy()
+        val request = with(DummyInstances.solveRequest) { copy(context = context.copy(throwRelatedToCutContextsParent = previouslyPresentContext)) }
+        val toImportContext = DummyInstances.solveRequest.context.copy()
+        val toImport = with(DummyInstances.solveRequest) { copy(context = context.copy(throwRelatedToCutContextsParent = toImportContext)) }
+
+        val toBeTested = request.importingContextFrom(toImport)
+        with(toBeTested.context) {
+            assertSame(toImportContext, throwRelatedToCutContextsParent)
+        }
+    }
+
+    @Test
     fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
         val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
