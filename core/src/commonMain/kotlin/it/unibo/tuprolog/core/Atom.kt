@@ -19,9 +19,6 @@ interface Atom : Struct, Constant {
     override val isEmptyList: Boolean
         get() = Empty.EMPTY_LIST_FUNCTOR == value
 
-    override val isGround: Boolean
-        get() = true
-
     override val isTrue: Boolean
         get() = Truth.TRUE_FUNCTOR == value
 
@@ -33,6 +30,9 @@ interface Atom : Struct, Constant {
 
     override val argsList: kotlin.collections.List<Term>
         get() = emptyList()
+
+    override val variables: Sequence<Var>
+        get() = emptySequence()
 
     override fun freshCopy(): Atom = this
 

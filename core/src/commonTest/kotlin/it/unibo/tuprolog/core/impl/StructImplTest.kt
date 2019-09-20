@@ -60,6 +60,13 @@ internal class StructImplTest {
     }
 
     @Test
+    fun variablesCorrect() {
+        onCorrespondingItems(StructUtils.mixedStructVariables, mixedStructInstances.map { it.variables }) { expected, actual ->
+            assertEquals(expected.toList(), actual.toList())
+        }
+    }
+
+    @Test
     fun strictlyEqualsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
         val trueAtom = AtomImpl("true")

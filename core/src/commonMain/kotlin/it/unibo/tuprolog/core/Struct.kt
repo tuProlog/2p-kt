@@ -41,9 +41,6 @@ interface Struct : Term {
     override val isEmptyList: Boolean
         get() = Empty.EMPTY_LIST_FUNCTOR == functor && arity == 0
 
-    override val isGround: Boolean
-        get() = args.all { it.isGround }
-
     override val isTrue: Boolean
         get() = isAtom && Truth.TRUE_FUNCTOR == functor
 
@@ -52,6 +49,9 @@ interface Struct : Term {
 
     override val isIndicator: Boolean
         get() = Indicator.FUNCTOR == functor && arity == 2
+
+    override val variables: Sequence<Var>
+        get() = argsSequence.flatMap { it.variables }
 
     override fun freshCopy(): Struct = super.freshCopy() as Struct
 
