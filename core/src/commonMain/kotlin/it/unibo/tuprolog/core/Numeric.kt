@@ -8,8 +8,8 @@ interface Numeric : Constant, Comparable<Numeric> {
     override val isNumber: Boolean
         get() = true
 
-    override val isGround: Boolean
-        get() = true
+    override val variables: Sequence<Var>
+        get() = emptySequence()
 
     val decimalValue: BigDecimal
 

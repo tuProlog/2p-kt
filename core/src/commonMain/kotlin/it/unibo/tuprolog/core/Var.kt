@@ -7,8 +7,8 @@ interface Var : Term {
     override val isVariable: Boolean
         get() = true
 
-    override val isGround: Boolean
-        get() = false
+    override val variables: Sequence<Var>
+        get() = sequenceOf(this)
 
     val isAnonymous: Boolean
         get() = ANONYMOUS_VAR_NAME == name

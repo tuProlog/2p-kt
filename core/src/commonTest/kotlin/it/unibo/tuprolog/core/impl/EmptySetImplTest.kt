@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Test class for [EmptySetImpl] and [EmptySet]
@@ -30,6 +31,11 @@ internal class EmptySetImplTest {
     @Test
     fun testIsPropertiesAndTypes() {
         TermTypeAssertionUtils.assertIsEmptySet(testedObj)
+    }
+
+    @Test
+    fun variablesEmpty() {
+        assertTrue { testedObj.variables.none() }
     }
 
     @Test
