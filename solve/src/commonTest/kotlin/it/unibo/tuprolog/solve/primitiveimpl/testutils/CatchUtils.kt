@@ -2,7 +2,10 @@ package it.unibo.tuprolog.solve.primitiveimpl.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.primitiveimpl.Call
 import it.unibo.tuprolog.solve.primitiveimpl.Catch
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
@@ -28,13 +31,13 @@ internal object CatchUtils {
      */
     internal val requestSolutionMap by lazy {
         mapOf(
-                Struct.of(Catch.signature.name, Truth.`true`(), Var.anonymous(), Truth.fail()).let {
+                Struct.of(Catch.functor, Truth.`true`(), Var.anonymous(), Truth.fail()).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Catch.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
                 *CallUtils.requestSolutionMap.map { (callRequest, solutions) ->
-                    Struct.of(Catch.signature.name, callRequest.query!!, Var.anonymous(), Truth.fail()).let {
+                    Struct.of(Catch.functor, callRequest.query!!, Var.anonymous(), Truth.fail()).let {
                         createSolveRequest(it,
                                 callRequest.context.libraries.theory,
                                 callRequest.context.libraries.primitives + Catch.descriptionPair
@@ -42,7 +45,7 @@ internal object CatchUtils {
                     }
                 }.toTypedArray(),
                 *CallUtils.requestSolutionMap.map { (callRequest, solutions) ->
-                    Struct.of(Catch.signature.name, callRequest.arguments[0], Var.anonymous(), Truth.fail()).let {
+                    Struct.of(Catch.functor, callRequest.arguments[0], Var.anonymous(), Truth.fail()).let {
                         createSolveRequest(it,
                                 callRequest.context.libraries.theory,
                                 callRequest.context.libraries.primitives + Catch.descriptionPair
@@ -51,7 +54,7 @@ internal object CatchUtils {
                 }.toTypedArray(),
                 *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
                     Scope.empty {
-                        structOf(Catch.signature.name, callRequest.arguments[0], varOf("X"), Truth.`true`()).let {
+                        structOf(Catch.functor, callRequest.arguments[0], varOf("X"), Truth.`true`()).let {
                             createSolveRequest(it,
                                     callRequest.context.libraries.theory,
                                     callRequest.context.libraries.primitives + Catch.descriptionPair
@@ -62,9 +65,9 @@ internal object CatchUtils {
                     }
                 }.toTypedArray(),
                 Scope.empty {
-                    structOf(Catch.signature.name,
-                            structOf(Catch.signature.name,
-                                    structOf(Throw.signature.name, structOf("external", atomOf("deepBall"))),
+                    structOf(Catch.functor,
+                            structOf(Catch.functor,
+                                    structOf(Throw.functor, structOf("external", atomOf("deepBall"))),
                                     structOf("internal", varOf("I")),
                                     Truth.fail()
                             ),
@@ -89,9 +92,8 @@ internal object CatchUtils {
     internal val prologStandardCatchExamples by lazy {
         mapOf(
                 Scope.empty {
-                    structOf(Catch.signature.name, atomOf("p"), varOf("X"), Truth.`true`()).let {
-                        createSolveRequest(
-                                it,
+                    structOf(Catch.functor, atomOf("p"), varOf("X"), Truth.`true`()).let {
+                        createSolveRequest(it,
                                 primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
                                 database = prologStandardCatchExamplesDatabase
                         ) to ktListOf(
@@ -101,14 +103,11 @@ internal object CatchUtils {
                     }
                 },
                 Scope.empty {
-                    structOf(Catch.signature.name, atomOf("q"), varOf("C"), Truth.`true`()).let {
-                        createSolveRequest(
-                                it,
+                    structOf(Catch.functor, atomOf("q"), varOf("C"), Truth.`true`()).let {
+                        createSolveRequest(it,
                                 primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
                                 database = prologStandardCatchExamplesDatabase
-                        ) to ktListOf(
-                                Solution.Yes(it, Substitution.of(varOf("C"), atomOf("c")))
-                        )
+                        ) to ktListOf(Solution.Yes(it, Substitution.of(varOf("C"), atomOf("c"))))
                     }
                 }
 
@@ -120,10 +119,133 @@ internal object CatchUtils {
      *
      * Contains those requests against [prologStandardCatchExamplesDatabase]:
      *
-     * - TODO from prolog standard
+     * - `catch(throw(exit(1)), exit(X), true).` **will result in** `Yes(X -> 1)`
+     * - `catch(q, C, true).` **will result in** `Yes(C -> c)`
+     * - `catch(throw(true), X, X).` **will result in** `Yes(X -> true)`
+     * - `catch(throw(fail), X, X).` **will result in** `No()`
      */
     internal val prologStandardThrowExamples by lazy {
-        // TODO: 19/09/2019
+        mapOf(
+                Scope.empty {
+                    structOf(Catch.functor,
+                            structOf(Throw.functor,
+                                    structOf("exit", numOf(1))
+                            ),
+                            structOf("exit", varOf("X")),
+                            Truth.`true`()
+                    ).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase
+                        ) to ktListOf(Solution.Yes(it, Substitution.of(varOf("X"), numOf(1))))
+                    }
+                },
+                Scope.empty {
+                    structOf(Catch.functor, atomOf("q"), varOf("C"), Truth.`true`()).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase
+                        ) to ktListOf(Solution.Yes(it, Substitution.of(varOf("C"), atomOf("c"))))
+                    }
+                },
+                Scope.empty {
+                    structOf(Catch.functor, structOf(Throw.functor, Truth.`true`()), varOf("X"), varOf("X")).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase
+                        ) to ktListOf(Solution.Yes(it, Substitution.of(varOf("X"), Truth.`true`())))
+                    }
+                },
+                Scope.empty {
+                    structOf(Catch.functor, structOf(Throw.functor, Truth.fail()), varOf("X"), varOf("X")).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase
+                        ) to ktListOf(Solution.No(it))
+                    }
+                }
+        )
+    }
+
+    /**
+     * Prolog standard examples for `throw/1` primitive (that will throw errors)
+     *
+     * Contains those requests against [prologStandardCatchExamplesDatabase]:
+     *
+     * - `catch(throw(f(X, X)), f(X, g(X)), true).` **will result in** `Yes(X -> g(X))` if occur check disabled, `Halt(system_error)` otherwise
+     * - `catch(throw(1), X, (fail; X)).` **will result in** `Halt(type_error(callable, (fail; 1)))`
+     * - `catch(throw(fail), true, G).` **will result in** `Halt(system_error)`
+     */
+    internal val prologStandardThrowExamplesWithError by lazy {
+        mapOf(
+                Scope.empty {
+                    structOf(Catch.functor,
+                            structOf(Throw.functor,
+                                    structOf("f", varOf("X"), varOf("X"))
+                            ),
+                            structOf("f", varOf("X"), structOf("g", varOf("X"))),
+                            Truth.`true`()
+                    ).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase).run {
+                            this to ktListOf(
+                                    Solution.Halt(it, HaltException(
+                                            context = this.context,
+                                            cause = SystemError(
+                                                    context = this.context,
+                                                    extraData = structOf("f", varOf("X"), varOf("X"))
+                                            )
+
+                                    )))
+                        }
+                    }
+                },
+                Scope.empty {
+                    structOf(Catch.functor,
+                            structOf(Throw.functor, numOf(1)),
+                            varOf("X"),
+                            structOf(";", Truth.fail(), varOf("X"))
+                    ).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase).run {
+                            this to ktListOf(
+                                    Solution.Halt(it, HaltException(
+                                            context = this.context,
+                                            cause = with(TypeError(
+                                                    expectedType = TypeError.Expected.CALLABLE,
+                                                    actualValue = structOf(";", Truth.fail(), Integer.of(1)),
+                                                    context = this.context
+                                            )) {
+                                                SystemError(
+                                                        context = this.context,
+                                                        cause = this,
+                                                        extraData = this.errorStruct
+                                                )
+                                            }
+                                    )))
+                        }
+                    }
+                },
+                Scope.empty {
+                    structOf(Catch.functor, structOf(Throw.functor, Truth.fail()), Truth.`true`(), varOf("G")).let {
+                        createSolveRequest(it,
+                                primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair),
+                                database = prologStandardCatchExamplesDatabase).run {
+                            this to ktListOf(
+                                    Solution.Halt(it, HaltException(
+                                            context = this.context,
+                                            cause = SystemError(
+                                                    context = this.context,
+                                                    extraData = Truth.fail()
+                                            )
+
+                                    )))
+                        }
+                    }
+                }
+        )
     }
 
     /**
@@ -140,16 +262,16 @@ internal object CatchUtils {
         ClauseDatabase.of(
                 Fact.of(Atom.of("p")),
                 Rule.of(Atom.of("p"),
-                        Struct.of(Throw.signature.name, Atom.of("b"))
+                        Struct.of(Throw.functor, Atom.of("b"))
                 ),
                 Scope.empty {
                     Rule.of(structOf("r", varOf("X")),
-                            structOf(Throw.signature.name, varOf("X"))
+                            structOf(Throw.functor, varOf("X"))
                     )
                 },
                 Rule.of(Atom.of("q"),
                         Struct.of(
-                                Catch.signature.name,
+                                Catch.functor,
                                 Atom.of("p"),
                                 Var.of("B"),
                                 Truth.`true`()

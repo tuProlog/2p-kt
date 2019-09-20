@@ -18,7 +18,7 @@ object Catch : PrimitiveWrapper(Signature("catch", 3)) {
         sequence {
             val goalArgument = mainRequest.arguments.first()
 
-            SolverSLD().solve(mainRequest.newSolveRequest(Struct.of(Call.signature.name, goalArgument))).forEach { goalResponse ->
+            SolverSLD().solve(mainRequest.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
                 when (mainRequest.context) {
                     // i'm the catch selected by throw/1 primitive
                     goalResponse.context.throwRelatedToCutContextsParent -> {
@@ -26,7 +26,7 @@ object Catch : PrimitiveWrapper(Signature("catch", 3)) {
 
                         // attaching recover goal's solve request to catch parent, to not re-execute the catch if error thrown
                         val recoverGoalSolveRequest = mainRequest.newSolveRequest(
-                                Struct.of(Call.signature.name, recoverGoalArgument),
+                                Struct.of(Call.functor, recoverGoalArgument),
                                 goalResponse.context.currentSubstitution
                         ).run {
                             // ensure that this catch cannot be selected again, to catch some error

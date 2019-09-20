@@ -230,7 +230,9 @@ internal object SolverSLDUtils {
                     *extractQueryContextSolutionPairs(CallUtils.requestToErrorSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CatchUtils.requestSolutionMap).toTypedArray(),
-                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardCatchExamples).toTypedArray()
+                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardCatchExamples).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardThrowExamples).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardThrowExamplesWithError).toTypedArray()
             )
         }
     }
@@ -241,12 +243,12 @@ internal object SolverSLDUtils {
 
     /** Utility method to check if given solutions match */
     internal fun assertSolutionsCorrect(expected: Iterable<Solution>, actual: Iterable<Solution>) {
-        assertEquals(expected.count(), actual.count(), "expected solutions: ${expected.toList()}, actual: ${actual.toList()}")
+        assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}` Actual: `${actual.toList()}`")
 
         expected.zip(actual).forEach { (expected, actual) ->
-            assertEquals(expected::class, actual::class)
-            assertEquals(expected.query, actual.query)
-            assertEquals(expected.substitution.count(), actual.substitution.count())
+            assertEquals(expected::class, actual::class, "Expected: `$expected` Actual: `$actual`")
+            assertEquals(expected.query, actual.query, "Expected: `$expected` Actual: `$actual`")
+            assertEquals(expected.substitution.count(), actual.substitution.count(), "Expected: `$expected` Actual: `$actual`")
 
             val actualVarScope = Scope.of(*actual.substitution.keys.toTypedArray())
             expected.substitution.forEach { (varExpected, termExpected) ->

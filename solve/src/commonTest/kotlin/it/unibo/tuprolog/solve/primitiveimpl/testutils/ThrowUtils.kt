@@ -22,16 +22,16 @@ internal object ThrowUtils {
     /** Requests that will throw exceptions directly, if primitive invoked */
     internal val exposedErrorThrowingBehaviourRequest by lazy {
         mapOf(
-                Struct.of(Throw.signature.name, Var.of("A")).let {
+                Struct.of(Throw.functor, Var.of("A")).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)) to InstantiationError::class
                 },
-                Struct.of(Throw.signature.name, Integer.of(1)).let {
+                Struct.of(Throw.functor, Integer.of(1)).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)) to SystemError::class
                 },
-                Struct.of(Throw.signature.name, Atom.of("ciao")).let {
+                Struct.of(Throw.functor, Atom.of("ciao")).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)) to SystemError::class
                 },
-                Struct.of(Throw.signature.name, ErrorUtils.errorStructOf(Atom.of(SystemError.typeFunctor))).let {
+                Struct.of(Throw.functor, ErrorUtils.errorStructOf(Atom.of(SystemError.typeFunctor))).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)) to HaltException::class
                 }
         )
@@ -40,7 +40,7 @@ internal object ThrowUtils {
     /** Throw primitive working examples (when solved in normal resolution process) */
     internal val requestSolutionMap by lazy {
         mapOf(
-                Struct.of(Throw.signature.name, Integer.of(1)).let {
+                Struct.of(Throw.functor, Integer.of(1)).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)).run {
                         this to listOf(
                                 Solution.Halt(it, HaltException(
@@ -53,7 +53,7 @@ internal object ThrowUtils {
                         )
                     }
                 },
-                Struct.of(Throw.signature.name, Var.of("X")).let {
+                Struct.of(Throw.functor, Var.of("X")).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)).run {
                         this to listOf(
                                 Solution.Halt(it, HaltException(
@@ -72,7 +72,7 @@ internal object ThrowUtils {
                                 )))
                     }
                 },
-                Struct.of(Throw.signature.name, Atom.of("ciao")).let {
+                Struct.of(Throw.functor, Atom.of("ciao")).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)).run {
                         this to listOf(
                                 Solution.Halt(it, HaltException(
@@ -84,7 +84,7 @@ internal object ThrowUtils {
                                 )))
                     }
                 },
-                Struct.of(Throw.signature.name, ErrorUtils.errorStructOf(Atom.of(SystemError.typeFunctor))).let {
+                Struct.of(Throw.functor, ErrorUtils.errorStructOf(Atom.of(SystemError.typeFunctor))).let {
                     createSolveRequest(it, primitives = mapOf(Throw.descriptionPair)).run {
                         this to listOf(
                                 Solution.Halt(it, HaltException(

@@ -33,22 +33,22 @@ internal object CallUtils {
      */
     internal val requestSolutionMap by lazy {
         mapOf(
-                Struct.of(Call.signature.name, Truth.`true`()).let {
+                Struct.of(Call.functor, Truth.`true`()).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
-                Struct.of(Call.signature.name, Tuple.of(Truth.`true`(), Truth.`true`())).let {
+                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Truth.`true`())).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
-                Struct.of(Call.signature.name, Atom.of("!")).let {
+                Struct.of(Call.functor, Atom.of("!")).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Cut.descriptionPair)) to ktListOf(
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
-                Struct.of(Call.signature.name, SolverTestUtils.threeResponseRequest.query!!).let { query ->
+                Struct.of(Call.functor, SolverTestUtils.threeResponseRequest.query!!).let { query ->
                     Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
                         createSolveRequest(query, database = SolverTestUtils.factDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
@@ -58,7 +58,7 @@ internal object CallUtils {
                     }
                 },
                 Scope.empty {
-                    structOf(Call.signature.name, tupleOf(structOf("g", varOf("A")), atomOf("!"))).let { query ->
+                    structOf(Call.functor, tupleOf(structOf("g", varOf("A")), atomOf("!"))).let { query ->
                         createSolveRequest(query,
                                 database = SolverTestUtils.factDatabase,
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
@@ -81,7 +81,7 @@ internal object CallUtils {
      */
     internal val requestToErrorSolutionMap by lazy {
         mapOf(
-                Struct.of(Call.signature.name, Var.of("X")).let {
+                Struct.of(Call.functor, Var.of("X")).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)).run {
                         this to ktListOf(
                                 Solution.Halt(it, HaltException(
@@ -100,7 +100,7 @@ internal object CallUtils {
                                 )))
                     }
                 },
-                Struct.of(Call.signature.name, Tuple.of(Truth.`true`(), Integer.of(1))).let {
+                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Integer.of(1))).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)).run {
                         this to ktListOf(
                                 Solution.Halt(it, HaltException(
@@ -125,10 +125,10 @@ internal object CallUtils {
     /** Requests that will throw exceptions directly, if primitive invoked (same as [requestToErrorSolutionMap])*/
     internal val exposedErrorThrowingRequests by lazy {
         mapOf(
-                Struct.of(Call.signature.name, Var.of("A")).let {
+                Struct.of(Call.functor, Var.of("A")).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)) to InstantiationError::class
                 },
-                Struct.of(Call.signature.name, Tuple.of(Truth.`true`(), Integer.of(1))).let {
+                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Integer.of(1))).let {
                     createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)) to TypeError::class
                 }
         )
@@ -141,7 +141,7 @@ internal object CallUtils {
      */
     internal val requestToSolutionOfCallWithCut by lazy {
         Scope.empty {
-            structOf(Call.signature.name, tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
+            structOf(Call.functor, tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
                 createSolveRequest(query,
                         database = SolverTestUtils.factDatabase,
                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)

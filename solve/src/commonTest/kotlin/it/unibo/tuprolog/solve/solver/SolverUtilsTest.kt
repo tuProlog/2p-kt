@@ -208,13 +208,13 @@ internal class SolverUtilsTest {
     fun newThrowSolveRequestBehavesLikeNewSolveRequestAddingThrowGoal() {
         val testError = SystemError(context = DummyInstances.executionContext)
 
-        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, testError.errorStruct))
+        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
         val toBeTested = DummyInstances.solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correct.signature, toBeTested.signature)
         assertEquals(correct.arguments, toBeTested.arguments)
 
-        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.signature.name, testError.errorStruct))
+        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
         val toBeTestedWithExtra = DummyInstances.solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
