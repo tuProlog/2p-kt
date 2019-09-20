@@ -13,9 +13,12 @@ interface Term {
     infix fun structurallyEquals(other: Term): Boolean
     infix fun strictlyEquals(other: Term): Boolean
 
+    /** A Sequence of all Term's contained variables */
+    val variables: Sequence<Var>
+
     val isVariable: Boolean get() = false
     val isBound: Boolean get() = false
-    val isGround: Boolean get() = true
+    val isGround: Boolean get() = variables.none()
     val isStruct: Boolean get() = false
     val isAtom: Boolean get() = false
     val isConstant: Boolean get() = false

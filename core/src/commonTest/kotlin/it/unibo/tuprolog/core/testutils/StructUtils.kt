@@ -62,7 +62,8 @@ internal object StructUtils {
                 "[]" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
                 "." to arrayOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
                 "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.`true`()),
-                "/" to arrayOf<Term>(Truth.fail())
+                "/" to arrayOf<Term>(Truth.fail()),
+                "sameVar" to Scope.empty { arrayOf<Term>(varOf("X"), varOf("X")) }
         )
     }
 
@@ -98,4 +99,7 @@ internal object StructUtils {
 
     /** All Struct arguments */
     internal val mixedStructArguments by lazy { mixedStructs.map { (_, args) -> args } }
+
+    /** All Struct variables */
+    internal val mixedStructVariables by lazy { mixedStructArguments.map { it.filter(Term::isVariable) } }
 }

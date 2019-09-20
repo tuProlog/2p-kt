@@ -45,6 +45,11 @@ internal class AtomImplTest {
     }
 
     @Test
+    fun variablesEmpty() {
+        mixedAtomInstances.forEach { assertTrue { it.variables.none() } }
+    }
+
+    @Test
     fun testIsPropertiesAndTypesForNonSpecialAtom() {
         AtomUtils.nonSpecialAtoms.map(::AtomImpl)
                 .forEach(TermTypeAssertionUtils::assertIsAtom)

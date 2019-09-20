@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 
 internal object EmptySetImpl : SetImpl(null), EmptySet {
 
@@ -11,5 +12,7 @@ internal object EmptySetImpl : SetImpl(null), EmptySet {
 
     override val functor: String = super<EmptySet>.functor
 
-    override val isGround: Boolean = super<EmptySet>.isGround
+    override val isGround: Boolean by lazy { super<EmptySet>.isGround }
+
+    override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
 }
