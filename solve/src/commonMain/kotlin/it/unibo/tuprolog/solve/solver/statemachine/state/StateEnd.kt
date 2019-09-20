@@ -1,10 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -29,21 +26,12 @@ internal sealed class StateEnd(
     ) : StateEnd(solveRequest, executionStrategy), SuccessFinalState {
 
         override val answerSubstitution: Substitution.Unifier by lazy {
+            val requestedVariables = solveRequest.query?.variables ?: emptySequence()
+
             // reduce substitution variable chains
             with(solveRequest.context.currentSubstitution) { this.mapValues { (_, term) -> term.apply(this) } }
-                    .filterKeys { `var` ->
-                        // take only requested substitution as answer
-                        solveRequest.arguments.any { it.accept(containsVisitor(`var`)) }
-                    }.asUnifier()
+                    .filterKeys { it in requestedVariables }.asUnifier()
         }
-
-        /** A visitor to check if a [containedTerm] is present inside some other Term */
-        private fun containsVisitor(containedTerm: Term): TermVisitor<Boolean> =
-                object : TermVisitor<Boolean> {
-                    override fun defaultValue(term: Term) = false
-                    override fun visit(term: Term) = containedTerm == term ||
-                            (term is Struct && term.argsSequence.any { it.accept(this) })
-                }
     }
 
     /** The *False* state is reached when a failed computational path has ended */
