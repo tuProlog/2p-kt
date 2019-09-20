@@ -1,0 +1,33 @@
+package it.unibo.tuprolog.solve.primitiveimpl
+
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.CatchUtils
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.filterInterestingVariables
+import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
+import kotlin.test.Test
+
+/**
+ * Test class for [Catch]
+ *
+ * @author Enrico
+ */
+internal class CatchTest {
+
+    @Test
+    fun catchWorksLikeCallIfNoErrorIsThrownByFirstArgument() {
+        CatchUtils.requestSolutionMap.forEach { (request, solutionList) ->
+            val toBeTested = Catch.primitive(request).toList()
+
+            assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+        }
+    }
+
+    @Test
+    fun catchPrologStandardExamplesWorkAsExpected() {
+        CatchUtils.prologStandardCatchExamples.forEach { (request, solutionList) ->
+            val toBeTested = Catch.primitive(request).toList()
+
+            assertSolutionsCorrect(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
+        }
+    }
+
+}

@@ -58,7 +58,8 @@ internal object SolverUtils {
             toAddSubstitutions: Substitution = Substitution.empty(),
             baseContext: ExecutionContext = this.context,
             currentTime: TimeInstant = currentTime(),
-            isChoicePointChild: Boolean = false
+            isChoicePointChild: Boolean = false,
+            logicalParentRequest: Solve.Request = this
     ): Solve.Request =
             Solve.Request(
                     newGoal.extractSignature(),
@@ -68,7 +69,15 @@ internal object SolverUtils {
                                 currentSubstitution = (currentSubstitution + toAddSubstitutions) as Substitution.Unifier,
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild,
-                                parentRequests = sequence { yield(this@newSolveRequest); yieldAll(parentRequests) }
+                                logicalParentRequests = sequence {
+                                    when (logicalParentRequest) {
+                                        in logicalParentRequests -> yieldAll(logicalParentRequests.dropWhile { it != logicalParentRequest })
+                                        else -> {
+                                            yield(logicalParentRequest)
+                                            yieldAll(logicalParentRequests)
+                                        }
+                                    }
+                                }
                         )
                     },
                     adjustExecutionTimeout(this, currentTime)

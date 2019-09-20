@@ -71,25 +71,25 @@ internal class StateRuleSelectionTest {
         with(initStates.component1().solveRequest) {
             assertEquals(databaseClauses.component1().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
-            assertEquals(multipleMatchRequest, this.context.parentRequests.first())
+            assertEquals(multipleMatchRequest, this.context.logicalParentRequests.first())
             assertTrue { this.context.isChoicePointChild }
         }
         with(initStates.component2().solveRequest) {
             assertEquals(databaseClauses.component2().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
-            assertEquals(multipleMatchRequest, this.context.parentRequests.first())
+            assertEquals(multipleMatchRequest, this.context.logicalParentRequests.first())
             assertTrue { this.context.isChoicePointChild }
         }
         with(initStates.component3().solveRequest) {
             assertEquals(databaseClauses.component4().body, this.query!!)
             assertTrue { multipleMatchRequest.context !in this.context.clauseScopedParents }
-            assertEquals(multipleMatchRequest, this.context.parentRequests.toList().component2())
+            assertEquals(multipleMatchRequest, this.context.logicalParentRequests.toList().component2())
             assertFalse { this.context.isChoicePointChild }
         }
         with(initStates.component4().solveRequest) {
             assertEquals(databaseClauses.component3().body, this.query!!)
             assertEquals(multipleMatchRequest.context, this.context.clauseScopedParents.first())
-            assertEquals(multipleMatchRequest, this.context.parentRequests.first())
+            assertEquals(multipleMatchRequest, this.context.logicalParentRequests.first())
             assertTrue { this.context.isChoicePointChild }
         }
 

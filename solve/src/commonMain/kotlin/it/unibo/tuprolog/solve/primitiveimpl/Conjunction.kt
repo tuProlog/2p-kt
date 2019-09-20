@@ -27,7 +27,8 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
             var cutExecuted = false
             SolverSLD().solve(leftSubSolveRequest).forEach { leftResponse ->
-                if (leftResponse.context.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent })
+                if (leftResponse.context.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent }
+                        || leftResponse.context.logicalParentRequests.any { it.context == leftResponse.context.throwRelatedToCutContextsParent })
                     cutExecuted = true
 
                 when (leftResponse.solution) {
@@ -35,11 +36,13 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
                         val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
                                 prepareForExecution(rightSubGoal.apply(leftResponse.context.currentSubstitution)),
                                 leftResponse.context.currentSubstitution,
-                                baseContext = leftResponse.context
+                                baseContext = leftResponse.context,
+                                logicalParentRequest = mainRequest
                         )
 
                         SolverSLD().solve(rightSubSolveRequest).forEach { rightResponse ->
-                            if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent })
+                            if (rightResponse.context.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent }
+                                    || rightResponse.context.logicalParentRequests.any { it.context == rightResponse.context.throwRelatedToCutContextsParent })
                                 cutExecuted = true
 
                             yield(mainRequest.responseBy(rightResponse))

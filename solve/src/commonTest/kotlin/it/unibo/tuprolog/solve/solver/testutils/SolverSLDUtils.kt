@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.CatchUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.solver.SolverSLD
@@ -227,7 +228,9 @@ internal object SolverSLDUtils {
                     *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CallUtils.requestToErrorSolutionMap).toTypedArray(),
-                    *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray()
+                    *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CatchUtils.requestSolutionMap).toTypedArray(),
+                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardCatchExamples).toTypedArray()
             )
         }
     }

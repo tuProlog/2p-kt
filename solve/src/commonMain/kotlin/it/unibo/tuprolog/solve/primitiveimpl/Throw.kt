@@ -31,7 +31,7 @@ object Throw : PrimitiveWrapper(Signature("throw", 1)) {
             )
 
             else -> {
-                val ancestorCatchesRequests = mainRequest.context.parentRequests.filter { it.signature == Catch.signature }
+                val ancestorCatchesRequests = mainRequest.context.logicalParentRequests.filter { it.signature == Catch.signature }
                 val ancestorCatch = ancestorCatchesRequests.find { it.arguments[1].matches(throwArgument) }
                 // performance: inefficient because it recomputes mgu two times, when match found
 

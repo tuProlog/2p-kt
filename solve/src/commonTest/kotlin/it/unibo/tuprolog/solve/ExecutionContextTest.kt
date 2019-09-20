@@ -7,9 +7,11 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
+import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -34,11 +36,13 @@ internal class ExecutionContextTest {
     private val isChoicePointChild = true
     private val toCutContextParent = emptySequence<ExecutionContext>()
     private val aParentRequestsSequence = emptySequence<Solve.Request>()
+    private val aThrowRelatedContextParent = DummyInstances.executionContext
 
     @Test
     fun executionContextHoldsInsertedData() {
         val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime,
-                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent, aParentRequestsSequence)
+                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent,
+                aParentRequestsSequence, aThrowRelatedContextParent)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
@@ -50,7 +54,8 @@ internal class ExecutionContextTest {
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
         assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
         assertEquals(toCutContextParent, toBeTested.toCutContextsParent)
-        assertEquals(aParentRequestsSequence, toBeTested.parentRequests)
+        assertEquals(aParentRequestsSequence, toBeTested.logicalParentRequests)
+        assertEquals(aThrowRelatedContextParent, toBeTested.throwRelatedToCutContextsParent)
     }
 
     @Test
@@ -63,7 +68,8 @@ internal class ExecutionContextTest {
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
         assertEquals(false, toBeTested.isChoicePointChild)
         assertEquals(emptySequence(), toBeTested.toCutContextsParent)
-        assertEquals(emptySequence(), toBeTested.parentRequests)
+        assertEquals(emptySequence(), toBeTested.logicalParentRequests)
+        assertNull(toBeTested.throwRelatedToCutContextsParent)
     }
 
 }

@@ -108,7 +108,7 @@ internal class SolverUtilsTest {
         assertEquals(newGoal.extractSignature(), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
         assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
-        assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.parentRequests.toList())
+        assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.logicalParentRequests.toList())
         assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
 
         assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
@@ -132,10 +132,28 @@ internal class SolverUtilsTest {
         val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`())
 
         // precondition
-        assertEquals(2, toBeTested.context.parentRequests.count())
+        assertEquals(2, toBeTested.context.logicalParentRequests.count())
 
-        assertEquals(intermediateRequest, toBeTested.context.parentRequests.first())
-        assertEquals(DummyInstances.solveRequest, toBeTested.context.parentRequests.last())
+        assertEquals(intermediateRequest, toBeTested.context.logicalParentRequests.first())
+        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.last())
+    }
+
+    @Test
+    fun newSolveRequestSolveRequestLogicalParentsCannotBeDuplicated() {
+        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
+        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = DummyInstances.solveRequest)
+
+        assertEquals(1, toBeTested.context.logicalParentRequests.count())
+        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.single())
+    }
+
+    @Test
+    fun newSolveRequestSolveRequestLogicalParentsAreTruncatedIfNeeded() {
+        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.fail())
+        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = DummyInstances.solveRequest)
+
+        assertEquals(1, toBeTested.context.logicalParentRequests.count())
+        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.single())
     }
 
     @Test
