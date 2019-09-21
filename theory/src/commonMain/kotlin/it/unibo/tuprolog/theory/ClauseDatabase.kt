@@ -66,15 +66,18 @@ interface ClauseDatabase : Iterable<Clause> {
     companion object {
 
         /** Creates an empty ClauseDatabase */
-        fun empty(): ClauseDatabase = ClauseDatabaseImpl(emptyList())
+        fun empty(): ClauseDatabase = of(emptySequence())
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(vararg clause: Clause): ClauseDatabase = ClauseDatabaseImpl(clause.asIterable())
+        fun of(vararg clause: Clause): ClauseDatabase = of(clause.asIterable())
+
+        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): ClauseDatabase = of(clause.map { Scope.empty(it) })
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.asIterable())
+        fun of(clauses: Sequence<Clause>): ClauseDatabase = of(clauses.asIterable())
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(clauses: Sequence<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.asIterable())
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
     }
 }

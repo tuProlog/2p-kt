@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.theory
 
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,6 +25,15 @@ internal class ClauseDatabaseTest {
     @Test
     fun ofVarargClauseCreatesCorrectInstance() {
         val toBeTested = ClauseDatabase.of(*ClauseDatabaseUtils.wellFormedClauses.toTypedArray())
+
+        assertEquals(correctInstance, toBeTested)
+    }
+
+    @Test
+    fun ofVarargScopeToClauseCreatesCorrectInstance() {
+        val toBeTested = ClauseDatabase.of(*ClauseDatabaseUtils.wellFormedClauses
+                .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }.toTypedArray()
+        )
 
         assertEquals(correctInstance, toBeTested)
     }
