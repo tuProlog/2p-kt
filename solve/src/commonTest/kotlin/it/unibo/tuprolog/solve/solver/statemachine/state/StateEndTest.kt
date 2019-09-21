@@ -65,18 +65,11 @@ internal class StateEndTest {
     }
 
     @Test
-    fun timeoutStateHoldInsertedData() {
-        val toBeTested = StateEnd.Timeout(solveRequest, executionStrategy)
-        assertEquals(solveRequest, toBeTested.solveRequest)
-    }
-
-    @Test
     fun allStateEndInstancesReturnEmptyNextStatesSequence() {
         val toBeTested = listOf(
                 StateEnd.True(solveRequest, executionStrategy),
                 StateEnd.False(solveRequest, executionStrategy),
-                StateEnd.Halt(solveRequest, executionStrategy, anException),
-                StateEnd.Timeout(solveRequest, executionStrategy)
+                StateEnd.Halt(solveRequest, executionStrategy, anException)
         )
 
         toBeTested.forEach { assertTrue { it.behave().none() } }

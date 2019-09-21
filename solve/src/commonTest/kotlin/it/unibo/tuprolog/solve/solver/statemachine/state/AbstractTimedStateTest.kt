@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlinx.coroutines.CoroutineScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [AbstractTimedState]
@@ -34,14 +34,15 @@ internal class AbstractTimedStateTest {
     }
 
     @Test
-    fun behaveChecksIfTimeoutElapsedAndIfItIsYieldsStateEndTimeout() {
+    fun behaveChecksIfTimeoutElapsedAndIfItIsYieldsStateEndHalt() {
         val toBeTested = createAbstractTimeState(
                 DummyInstances.solveRequest.copy(executionTimeout = 0),
                 DummyInstances.executionStrategy
         )
 
         val state = toBeTested.behave().single()
-        assertTrue { state is StateEnd.Timeout }
+        assertEquals(state::class, StateEnd.Halt::class)
+        assertEquals((state as StateEnd.Halt).exception::class, TimeOutException::class)
     }
 
     @Test

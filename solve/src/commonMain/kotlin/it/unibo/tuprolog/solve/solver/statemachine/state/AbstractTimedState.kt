@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -23,7 +24,13 @@ internal abstract class AbstractTimedState(
         // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is Long.MAX_VALUE
         // avoiding timeIsOver check
         timeIsOver(stateCurrentTime - solveRequest.context.computationStartTime, solveRequest.executionTimeout) ->
-            sequenceOf(StateEnd.Timeout(solveRequest, executionStrategy))
+            sequenceOf(
+                    StateEnd.Halt(solveRequest, executionStrategy, TimeOutException(
+                            "Given time for `${solveRequest.query}` computation (${solveRequest.executionTimeout}) wasn't enough for completion",
+                            context = solveRequest.context,
+                            deltaTime = stateCurrentTime - solveRequest.context.computationStartTime
+                    ))
+            )
         else -> behaveTimed()
     }
 

@@ -46,10 +46,4 @@ internal sealed class StateEnd(
             override val executionStrategy: CoroutineScope,
             val exception: TuPrologRuntimeException
     ) : StateEnd(solveRequest, executionStrategy), FailFinalState
-
-    /** The *Timeout* state is reached when the given request timeout is reached before shifting to other [StateEnd], terminating computation */
-    internal data class Timeout(
-            override val solveRequest: Solve.Request,
-            override val executionStrategy: CoroutineScope
-    ) : StateEnd(solveRequest, executionStrategy), FailFinalState
 }
