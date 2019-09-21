@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
@@ -27,7 +27,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun trueSolveRequestWorks() {
-        val nextStates = execute(StateGoalSelectionUtils.trueSolveRequest).toList()
+        val nextStates = execute(StateInitUtils.trueSolveRequest).toList()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.component1() is StateEnd.True }
@@ -35,7 +35,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun nonPresentClause() {
-        val nextStates = execute(StateGoalSelectionUtils.failSolveRequest).toList()
+        val nextStates = execute(StateInitUtils.failSolveRequest).toList()
 
         assertEquals(3, nextStates.count())
         assertTrue { nextStates.component1() is StateGoalEvaluation }

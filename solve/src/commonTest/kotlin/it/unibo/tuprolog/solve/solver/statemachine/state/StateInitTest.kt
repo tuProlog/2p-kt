@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateGoalSelectionUtils
+import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +25,7 @@ internal class StateInitTest {
             }
         }
 
-        val nextStates = StateInit(StateGoalSelectionUtils.trueSolveRequest, DummyInstances.executionStrategy).behave()
+        val nextStates = StateInit(StateInitUtils.trueSolveRequest, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateEnd.True }
@@ -33,7 +33,7 @@ internal class StateInitTest {
 
     @Test
     fun ifCurrentGoalIsAVarargPrimitive() {
-        val nextStates = StateInit(StateGoalSelectionUtils.varargPrimitive, DummyInstances.executionStrategy).behave()
+        val nextStates = StateInit(StateInitUtils.varargPrimitive, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateGoalEvaluation }
@@ -41,8 +41,8 @@ internal class StateInitTest {
 
     @Test
     fun ifCurrentGoalIsAPrimitiveOrAWellFormedGoal() {
-        StateGoalSelectionUtils.notVarargPrimitiveAndWellFormedGoalRequests
-                .filterNot { it == StateGoalSelectionUtils.preparationNeededGoal }
+        StateInitUtils.notVarargPrimitiveAndWellFormedGoalRequests
+                .filterNot { it == StateInitUtils.preparationNeededGoal }
                 .forEach {
                     val nextStates = StateInit(it, DummyInstances.executionStrategy).behave()
 
@@ -55,17 +55,17 @@ internal class StateInitTest {
 
     @Test
     fun ifCurrentGoalNeedPreparationForExecution() {
-        val nextStates = StateInit(StateGoalSelectionUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
+        val nextStates = StateInit(StateInitUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(
-                prepareForExecution(StateGoalSelectionUtils.preparationNeededGoal.query!!),
+                prepareForExecution(StateInitUtils.preparationNeededGoal.query!!),
                 nextStates.first().solveRequest.query
         )
     }
 
     @Test
     fun ifGoalNotWellFormed() {
-        val nextStates = StateInit(StateGoalSelectionUtils.nonWellFormedGoal, DummyInstances.executionStrategy).behave()
+        val nextStates = StateInit(StateInitUtils.nonWellFormedGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateEnd.False }

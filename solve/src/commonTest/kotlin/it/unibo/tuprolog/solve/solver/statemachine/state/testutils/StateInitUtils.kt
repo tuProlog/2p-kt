@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
  *
  * @author Enrico
  */
-internal object StateGoalSelectionUtils {
+internal object StateInitUtils {
 
     /** Solve request for `true` Atom */
     internal val trueSolveRequest = DummyInstances.solveRequest.copy(
