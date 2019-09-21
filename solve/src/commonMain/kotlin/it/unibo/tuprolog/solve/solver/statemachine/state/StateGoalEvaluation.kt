@@ -6,9 +6,11 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineUtils.toStateEnd
 import kotlinx.coroutines.CoroutineScope
+
 /**
- * State responsible of solving a selected Goal
+ * State responsible of solving a selected Goal, if it is a primitive
  *
  * @author Enrico
  */
@@ -21,38 +23,24 @@ internal class StateGoalEvaluation(
         val primitive = with(solveRequest) { context.libraries.primitives[signature] }
 
         primitive?.also {
+            // primitive with correct signature present
             var responses: Sequence<Solve.Response>? = null
             try {
+                // execute primitive
                 responses = primitive(solveRequest)
             } catch (exception: HaltException) {
+                // if primitive throws HaltException halt state-machine
                 yield(StateEnd.Halt(solveRequest.copy(context = exception.context), executionStrategy, exception))
             } catch (prologError: PrologError) {
+                // if primitive throws PrologError try to solve corresponding throw/1 request
                 responses = SolverSLD().solve(solveRequest.newThrowSolveRequest(prologError))
             }
 
             responses?.forEach {
-                when (it.solution) {
-                    is Solution.Yes ->
-                        yield(StateEnd.True(
-                                solveRequest.copy(context = it.context),
-                                executionStrategy
-                        ))
+                // transform primitive responses to corresponding state-machine end states carrying modified context
+                yield(it.solution.toStateEnd(solveRequest.copy(context = it.context), executionStrategy))
 
-                    is Solution.Halt -> {
-                        yield(StateEnd.Halt(
-                                solveRequest.copy(context = it.context),
-                                executionStrategy,
-                                it.solution.exception
-                        ))
-                        return@sequence // if halt reached, overall computation should stop
-                    }
-
-                    is Solution.No ->
-                        yield(StateEnd.False(
-                                solveRequest.copy(context = it.context),
-                                executionStrategy
-                        ))
-                }
+                if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }
 
         } ?: yield(StateRuleSelection(solveRequest, executionStrategy))
