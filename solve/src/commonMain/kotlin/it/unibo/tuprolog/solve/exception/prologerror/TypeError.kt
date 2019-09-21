@@ -42,7 +42,7 @@ class TypeError(
      * @author Enrico
      */
     enum class Expected {
-        CALLABLE, ATOM, INTEGER, PREDICATE_INDICATOR, COMPOUND, LIST, CHARACTER;
+        CALLABLE, ATOM, INTEGER, NUMBER, PREDICATE_INDICATOR, COMPOUND, LIST, CHARACTER;
 
         // these are only some of the commonly used types... when implementing more built-ins types can be added
         // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here

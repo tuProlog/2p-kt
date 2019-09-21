@@ -21,9 +21,9 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
  * @author Enrico
  */
 abstract class PrologError(
-        override val message: String? = null,
-        override val cause: Throwable? = null,
-        override val context: ExecutionContext,
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
         open val type: Struct,
         open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {

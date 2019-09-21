@@ -14,9 +14,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @author Enrico
  */
 internal class HaltException(
-        override val message: String? = null,
-        override val cause: Throwable? = null,
-        override val context: ExecutionContext
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)

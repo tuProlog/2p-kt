@@ -2,6 +2,13 @@ package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.core.*
 
+/** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
+fun Signature.toIndicator(): Indicator? =
+        when {
+            this.vararg -> null
+            else -> Indicator.of(this.name, this.arity)
+        }
+
 /** The signature of a query Struct or a Primitive */
 data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) {
 
@@ -77,13 +84,6 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         }
     }
 }
-
-/** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
-fun Signature.toIndicator(): Indicator? =
-        when {
-            this.vararg -> null
-            else -> Indicator.of(this.name, this.arity)
-        }
 
 /** Extracts this [Struct] indicator and converts it to [Signature] */
 fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!

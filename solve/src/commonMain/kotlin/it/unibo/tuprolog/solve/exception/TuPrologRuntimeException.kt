@@ -11,8 +11,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @param context The current context at exception creation
  */
 open class TuPrologRuntimeException(
-        override val message: String? = null,
-        override val cause: Throwable? = null,
+        message: String? = null,
+        cause: Throwable? = null,
         open val context: ExecutionContext
 ) : TuPrologException(message, cause) {
 

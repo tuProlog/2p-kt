@@ -13,9 +13,9 @@ import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
  * @author Enrico
  */
 internal class TimeOutException(
-        override val message: String? = null,
-        override val cause: Throwable? = null,
-        override val context: ExecutionContext,
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
         val deltaTime: TimeDuration // TODO: 14/09/2019 what's the semantic of this field? how should be filled?
 ) : TuPrologRuntimeException(message, cause, context) {
 
