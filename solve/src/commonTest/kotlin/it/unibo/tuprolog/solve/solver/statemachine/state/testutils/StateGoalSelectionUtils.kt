@@ -5,11 +5,11 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
-import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalSelection
+import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
- * Utils singleton to help testing [StateGoalSelection]
+ * Utils singleton to help testing [StateInit]
  *
  * @author Enrico
  */
@@ -51,7 +51,7 @@ internal object StateGoalSelectionUtils {
             listOf(Var.of("A"), Var.of("B"))
     )
 
-    /** Collection of Solve.Request that should pass [StateGoalSelection] going into [StateGoalEvaluation] */
+    /** Collection of Solve.Request that should pass [StateInit] going into [StateGoalEvaluation] */
     internal val notVarargPrimitiveAndWellFormedGoalRequests by lazy {
         listOf(
                 failSolveRequest,

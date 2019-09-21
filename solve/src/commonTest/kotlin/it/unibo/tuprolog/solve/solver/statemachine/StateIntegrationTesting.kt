@@ -29,36 +29,32 @@ internal class StateIntegrationTesting {
     fun trueSolveRequestWorks() {
         val nextStates = execute(StateGoalSelectionUtils.trueSolveRequest).toList()
 
-        assertEquals(2, nextStates.count())
-        assertTrue { nextStates.component1() is StateGoalSelection }
-        assertTrue { nextStates.component2() is StateEnd.True }
+        assertEquals(1, nextStates.count())
+        assertTrue { nextStates.component1() is StateEnd.True }
     }
 
     @Test
     fun nonPresentClause() {
         val nextStates = execute(StateGoalSelectionUtils.failSolveRequest).toList()
 
-        assertEquals(4, nextStates.count())
-        assertTrue { nextStates.component1() is StateGoalSelection }
-        assertTrue { nextStates.component2() is StateGoalEvaluation }
-        assertTrue { nextStates.component3() is StateRuleSelection }
-        assertTrue { nextStates.component4() is StateEnd.False }
+        assertEquals(3, nextStates.count())
+        assertTrue { nextStates.component1() is StateGoalEvaluation }
+        assertTrue { nextStates.component2() is StateRuleSelection }
+        assertTrue { nextStates.component3() is StateEnd.False }
     }
 
     @Test
     fun requiringSimpleQueryWithVariableInstantiationWorks() {
         val nextStates = execute(SolverTestUtils.oneResponseRequest).toList()
 
-        assertEquals(7, nextStates.count())
-        assertTrue { nextStates[0] is StateGoalSelection }
-        assertTrue { nextStates[1] is StateGoalEvaluation }
-        assertTrue { nextStates[2] is StateRuleSelection }
-        assertTrue { nextStates[3] is StateInit }
-        assertTrue { nextStates[4] is StateGoalSelection }
-        assertTrue { nextStates[5] is StateEnd.True }
-        assertTrue { nextStates[6] is StateEnd.True }
+        assertEquals(5, nextStates.count())
+        assertTrue { nextStates[0] is StateGoalEvaluation }
+        assertTrue { nextStates[1] is StateRuleSelection }
+        assertTrue { nextStates[2] is StateInit }
+        assertTrue { nextStates[3] is StateEnd.True }
+        assertTrue { nextStates[4] is StateEnd.True }
 
-        val answerSubstitution = (nextStates[6] as StateEnd.True).answerSubstitution
+        val answerSubstitution = (nextStates[4] as StateEnd.True).answerSubstitution
         val scope = Scope.of(*answerSubstitution.keys.toTypedArray())
 
         assertEquals(Atom.of("a"), answerSubstitution[scope.varOf("A")])
@@ -69,7 +65,7 @@ internal class StateIntegrationTesting {
     fun requiringQueryWithMultipleInstantiationsWorks() {
         val nextStates = execute(SolverTestUtils.threeResponseRequest).toList()
 
-        assertEquals(15, nextStates.count())
+        assertEquals(11, nextStates.count())
 
         val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
         assertEquals(6, trueEndStates.count())
@@ -92,7 +88,7 @@ internal class StateIntegrationTesting {
     @Test
     fun requiringQueryWithMultipleInstantiationsHasStateInternalsCorrect() {
         val nextStates = execute(SolverTestUtils.threeResponseRequest).toList()
-        assertEquals(15, nextStates.count())
+        assertEquals(11, nextStates.count())
 
         val subInitStates = nextStates.filterIsInstance<StateInit>()
         assertEquals(3, subInitStates.count())
@@ -113,7 +109,7 @@ internal class StateIntegrationTesting {
     fun requiringQueryWithCutDoesntReturnOtherAlternatives() {
         val nextStates = execute(SolverTestUtils.oneResponseBecauseOfCut).toList()
 
-        assertEquals(8, nextStates.count())
+        assertEquals(6, nextStates.count())
 
         val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
         assertEquals(2, trueEndStates.count())

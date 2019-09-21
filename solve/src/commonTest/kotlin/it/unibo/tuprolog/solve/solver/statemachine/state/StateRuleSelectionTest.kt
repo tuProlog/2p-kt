@@ -35,23 +35,18 @@ internal class StateRuleSelectionTest {
         val oneMatchRequest = createSolveRequest(Atom.of("b"), StateRuleSelectionUtils.singleMatchDatabase)
         val nextStates = StateRuleSelection(oneMatchRequest, DummyInstances.executionStrategy).behave().toList()
 
-        assertEquals(4, nextStates.count())
+        assertEquals(3, nextStates.count())
         with(nextStates.component1()) {
             assertTrue { this.unwrapIfNeeded() is StateInit }
             assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.first())
             assertFalse { this.solveRequest.context.isChoicePointChild }
         }
         with(nextStates.component2()) {
-            assertTrue { this.unwrapIfNeeded() is StateGoalSelection }
-            assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.toList()[1])
-            assertFalse { this.solveRequest.context.isChoicePointChild }
-        }
-        with(nextStates.component3()) {
             assertTrue { this.unwrapIfNeeded() is StateEnd.True }
             assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.toList()[1])
             assertFalse { this.solveRequest.context.isChoicePointChild }
         }
-        with(nextStates.component4()) {
+        with(nextStates.component3()) {
             assertTrue { this is StateEnd.True }
             assertSame(oneMatchRequest.context, this.solveRequest.context.clauseScopedParents.toList()[1])
             assertFalse { this.solveRequest.context.isChoicePointChild }
@@ -64,7 +59,7 @@ internal class StateRuleSelectionTest {
         val nextStates = StateRuleSelection(multipleMatchRequest, DummyInstances.executionStrategy).behave().toList()
         val databaseClauses = multipleMatchesDatabase.clauses.toList()
 
-        assertEquals(19, nextStates.count())
+        assertEquals(15, nextStates.count())
 
         val initStates = nextStates.map { it.unwrapIfNeeded() }.filterIsInstance<StateInit>()
         assertEquals(4, initStates.count())
