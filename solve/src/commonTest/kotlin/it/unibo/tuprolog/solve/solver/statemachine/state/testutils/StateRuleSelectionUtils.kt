@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
 import it.unibo.tuprolog.theory.ClauseDatabase
 
@@ -51,11 +54,11 @@ internal object StateRuleSelectionUtils {
      * ```
      */
     internal val multipleNestedMatchesDatabase = ClauseDatabase.of(
-            Scope.empty { ruleOf(structOf("f", varOf("B")), structOf("g", varOf("B"))) },
-            Scope.empty { ruleOf(structOf("f", varOf("B")), structOf("h", varOf("B"))) },
-            Scope.empty { factOf(structOf("g", atomOf("c1"))) },
-            Scope.empty { factOf(structOf("g", atomOf("c2"))) },
-            Scope.empty { factOf(structOf("h", atomOf("d1"))) },
-            Scope.empty { factOf(structOf("h", atomOf("d2"))) }
+            { ruleOf(structOf("f", varOf("B")), structOf("g", varOf("B"))) },
+            { ruleOf(structOf("f", varOf("B")), structOf("h", varOf("B"))) },
+            { factOf(structOf("g", atomOf("c1"))) },
+            { factOf(structOf("g", atomOf("c2"))) },
+            { factOf(structOf("h", atomOf("d1"))) },
+            { factOf(structOf("h", atomOf("d2"))) }
     )
 }

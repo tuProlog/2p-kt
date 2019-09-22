@@ -260,24 +260,28 @@ internal object CatchUtils {
      */
     private val prologStandardCatchExamplesDatabase by lazy {
         ClauseDatabase.of(
-                Fact.of(Atom.of("p")),
-                Rule.of(Atom.of("p"),
-                        Struct.of(Throw.functor, Atom.of("b"))
-                ),
-                Scope.empty {
-                    Rule.of(structOf("r", varOf("X")),
+                { factOf(atomOf("p")) },
+                {
+                    ruleOf(atomOf("p"),
+                            structOf(Throw.functor, atomOf("b"))
+                    )
+                },
+                {
+                    ruleOf(structOf("r", varOf("X")),
                             structOf(Throw.functor, varOf("X"))
                     )
                 },
-                Rule.of(Atom.of("q"),
-                        Struct.of(
-                                Catch.functor,
-                                Atom.of("p"),
-                                Var.of("B"),
-                                Truth.`true`()
-                        ),
-                        Struct.of("r", Atom.of("c"))
-                )
+                {
+                    ruleOf(atomOf("q"),
+                            structOf(
+                                    Catch.functor,
+                                    atomOf("p"),
+                                    varOf("B"),
+                                    Truth.`true`()
+                            ),
+                            structOf("r", atomOf("c"))
+                    )
+                }
         )
     }
 

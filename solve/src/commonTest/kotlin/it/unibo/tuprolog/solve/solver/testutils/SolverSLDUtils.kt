@@ -43,22 +43,22 @@ internal object SolverSLDUtils {
      */
     private val prologStandardExampleDatabase by lazy {
         ClauseDatabase.of(
-                Scope.empty {
+                {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("q", varOf("X")),
                             structOf("r", varOf("X"), varOf("Y"))
                     )
                 },
-                Scope.empty {
+                {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("s", varOf("X")))
                 },
-                Scope.empty { factOf(structOf("s", atomOf("d"))) },
-                Scope.empty { factOf(structOf("q", atomOf("a"))) },
-                Scope.empty { factOf(structOf("q", atomOf("b"))) },
-                Scope.empty { factOf(structOf("q", atomOf("c"))) },
-                Scope.empty { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
-                Scope.empty { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
+                { factOf(structOf("s", atomOf("d"))) },
+                { factOf(structOf("q", atomOf("a"))) },
+                { factOf(structOf("q", atomOf("b"))) },
+                { factOf(structOf("q", atomOf("c"))) },
+                { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
+                { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
         )
     }
 
@@ -105,23 +105,23 @@ internal object SolverSLDUtils {
      */
     private val cutTestingDatabase by lazy {
         ClauseDatabase.of(
-                Scope.empty {
+                {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("q", varOf("X")),
                             atomOf("!"),
                             structOf("r", varOf("Y"))
                     )
                 },
-                Scope.empty {
+                {
                     ruleOf(structOf("p", varOf("X"), varOf("Y")),
                             structOf("s", varOf("X")))
                 },
-                Scope.empty { factOf(structOf("s", atomOf("d"))) },
-                Scope.empty { factOf(structOf("q", atomOf("a"))) },
-                Scope.empty { factOf(structOf("q", atomOf("b"))) },
-                Scope.empty { factOf(structOf("q", atomOf("c"))) },
-                Scope.empty { factOf(structOf("r", atomOf("b1"))) },
-                Scope.empty { factOf(structOf("r", atomOf("c1"))) }
+                { factOf(structOf("s", atomOf("d"))) },
+                { factOf(structOf("q", atomOf("a"))) },
+                { factOf(structOf("q", atomOf("b"))) },
+                { factOf(structOf("q", atomOf("c"))) },
+                { factOf(structOf("r", atomOf("b1"))) },
+                { factOf(structOf("r", atomOf("c1"))) }
         )
     }
 
@@ -137,19 +137,19 @@ internal object SolverSLDUtils {
      */
     private val backtrackingTestDatabase by lazy {
         ClauseDatabase.of(
-                Scope.empty {
+                {
                     ruleOf(
                             structOf("my_reverse", varOf("L1"), varOf("L2")),
                             structOf("my_rev", varOf("L1"), varOf("L2"), listOf())
                     )
                 },
-                Scope.empty {
+                {
                     ruleOf(
                             structOf("my_rev", listOf(), varOf("L2"), varOf("L2")),
                             atomOf("!")
                     )
                 },
-                Scope.empty {
+                {
                     ruleOf(
                             structOf("my_rev", listFrom(ktListOf(varOf("X")), varOf("Xs")), varOf("L2"), varOf("Acc")),
                             structOf("my_rev", varOf("Xs"), varOf("L2"), listFrom(ktListOf(varOf("X")), varOf("Acc")))
