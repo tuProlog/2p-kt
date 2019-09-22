@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine
 
 import it.unibo.tuprolog.solve.solver.statemachine.state.AlreadyExecutedState
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
-import it.unibo.tuprolog.solve.solver.statemachine.state.alreadyExecuted
+import it.unibo.tuprolog.solve.solver.statemachine.state.asAlreadyExecuted
 
 /**
  * A class that makes the state machine execute its behaviour
@@ -31,7 +31,7 @@ internal object StateMachineExecutor {
      * external execution should just skip those states execution, because already internally evaluated.
      */
     internal fun executeWrapping(state: State): Sequence<AlreadyExecutedState> =
-            execute(state).map { it.alreadyExecuted() }
+            execute(state).map { it.asAlreadyExecuted() }
 
     /**
      * Internal function to execute the state behaviour lazily

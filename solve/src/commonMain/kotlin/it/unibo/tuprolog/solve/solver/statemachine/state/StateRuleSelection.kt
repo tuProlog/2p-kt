@@ -21,31 +21,31 @@ internal class StateRuleSelection(
 
     override fun behaveTimed(): Sequence<State> = sequence {
         val currentGoal = solveRequest.query!!
-        val matchingRules = solveRequest.context.libraries.theory[currentGoal.freshCopy()]
+        val matchingRules = solveRequest.context.libraries.theory[currentGoal.freshCopy()] // TODO: 22/09/2019 check for matching rules even in staticKB and dynamicKB
         val isChoicePoint = moreThanOne(matchingRules)
 
         when {
             matchingRules.none() -> yield(StateEnd.False(solveRequest, executionStrategy))
 
-            else -> with(solveRequest.context) {
-                orderedWithStrategy(matchingRules, this, this.solverStrategies::clauseChoiceStrategy)
-            }
+            else -> with(solveRequest.context) { orderedWithStrategy(matchingRules, this, solverStrategies::clauseChoiceStrategy) }
                     .map { it.freshCopy() }
                     .map { refreshedRule ->
                         val unifyingSubstitution = currentGoal mguWith refreshedRule.head
 
-                        // rules reaching this state are considered to be implicitly wellFormed
                         val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 
                         solveRequest.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
-                                // clear parents for this new "cut scope"
-                                .let { it.copy(context = it.context.copy(clauseScopedParents = sequenceOf(solveRequest.context))) }
+
                     }.forEach { subSolveRequest ->
-                        val subInitialState = StateInit(subSolveRequest, executionStrategy)
-                                .also { yield(it.alreadyExecuted()) }
+                        val subInitialState = StateInit(
+                                // clear older parents entering this new "sub-rule scope"
+                                subSolveRequest.copy(context = subSolveRequest.context.copy(clauseScopedParents = sequenceOf(solveRequest.context))),
+                                executionStrategy
+                        ).also { yield(it.asAlreadyExecuted()) }
 
                         var cutNextSiblings = false
 
+                        // execute internally the sub-request in a sub-state-machine, to see what it will respond
                         subStateExecute(subInitialState).forEach {
                             yield(it)
 
@@ -53,32 +53,17 @@ internal class StateRuleSelection(
                                     || it.solveRequest.context.logicalParentRequests.any { parentRequest -> parentRequest.context == it.solveRequest.context.throwRelatedToCutContextsParent })
                                 cutNextSiblings = true
 
-                            // find in sub-goal state sequence, the state responding to current solveRequest
+                            // find in sub-goal state sequence, the final state responding to current solveRequest
                             if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(subSolveRequest) }) {
-                                when (it.wrappedState) {
-                                    is SuccessFinalState -> yield(
-                                            StateEnd.True(
-                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                    executionStrategy
-                                            )
-                                    )
-                                    is StateEnd.Halt -> yield(
-                                            StateEnd.Halt(
-                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                    executionStrategy,
-                                                    it.wrappedState.exception
-                                            )
-                                    ).also { return@sequence } // if halt reached, overall computation should stop (duplicated in StateGoalEvaluation.. refactor the logic)
-                                    else -> yield(
-                                            StateEnd.False(
-                                                    solveRequest.importingContextFrom(it.wrappedState.solveRequest),
-                                                    executionStrategy
-                                            )
-                                    )
-                                }
+                                val endState = it.wrappedState as StateEnd
+
+                                yield(endState.makeCopy(solveRequest.importingContextFrom(it.wrappedState.solveRequest)))
+
+                                // if halt reached, overall computation should stop (duplicated in StateGoalEvaluation.. refactor the logic)
+                                if (it.wrappedState is StateEnd.Halt) return@sequence
                             }
                         }
-                        if (cutNextSiblings) return@sequence // cut here matching rules trial
+                        if (cutNextSiblings) return@sequence // cut here other matching rules trial
                     }
         }
     }

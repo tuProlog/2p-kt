@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.solver.statemachine.StateMachineUtils.toStateEnd
+import it.unibo.tuprolog.solve.solver.statemachine.StateMachineUtils.toFinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
@@ -32,7 +32,7 @@ internal class StateMachineUtilsTest {
                 Solution.Halt(Truth.`true`(), myException)
         )
 
-        val toBeTested = startingSolutions.map { it.toStateEnd(DummyInstances.solveRequest, DummyInstances.executionStrategy) }
+        val toBeTested = startingSolutions.map { it.toFinalState(DummyInstances.solveRequest, DummyInstances.executionStrategy) }
 
         correctInstances.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }

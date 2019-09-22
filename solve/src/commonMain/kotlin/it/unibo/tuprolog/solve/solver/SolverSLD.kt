@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
-import it.unibo.tuprolog.solve.solver.statemachine.state.SuccessFinalState
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +46,7 @@ internal class SolverSLD(
 
     /** Utility method to map a final state to its corresponding Solution */
     private fun finalStateToSolutionMapping(finalState: FinalState) = when (finalState) {
-        is SuccessFinalState -> with(finalState.solveRequest) {
+        is StateEnd.True -> with(finalState.solveRequest) {
             Solution.Yes(signature, arguments, finalState.answerSubstitution)
         }
 

@@ -33,7 +33,7 @@ internal class AlreadyExecutedStateTest {
     @Test
     fun alreadyExecutedStateExtensionFunctionCreatesAnInstanceWrappingReceiverState() {
         val correct = AlreadyExecutedState(endState)
-        val toBeTested = endState.alreadyExecuted()
+        val toBeTested = endState.asAlreadyExecuted()
 
         assertEquals(correct.wrappedState, toBeTested.wrappedState)
         assertEquals(correct.behave(), toBeTested.behave())
@@ -42,8 +42,8 @@ internal class AlreadyExecutedStateTest {
 
     @Test
     fun alreadyExecutedStateIsIdempotentOnAlreadyWrappedStates() {
-        val correct = endState.alreadyExecuted()
-        val toBeTested = endState.alreadyExecuted().alreadyExecuted()
+        val correct = endState.asAlreadyExecuted()
+        val toBeTested = endState.asAlreadyExecuted().asAlreadyExecuted()
 
         assertSame(correct.wrappedState, toBeTested.wrappedState)
     }

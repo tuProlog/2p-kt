@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.solve.testutils.DummyInstances.executionStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -26,6 +27,13 @@ internal class StateEndTest {
             DummyInstances.executionContext
     )
     private val anException = HaltException(context = DummyInstances.executionContext)
+
+    /** A list with all state types instances */
+    private val allStateList = listOf(
+            StateEnd.True(solveRequest, executionStrategy),
+            StateEnd.False(solveRequest, executionStrategy),
+            StateEnd.Halt(solveRequest, executionStrategy, anException)
+    )
 
     @Test
     fun trueStateHoldInsertedData() {
@@ -66,13 +74,17 @@ internal class StateEndTest {
 
     @Test
     fun allStateEndInstancesReturnEmptyNextStatesSequence() {
-        val toBeTested = listOf(
-                StateEnd.True(solveRequest, executionStrategy),
-                StateEnd.False(solveRequest, executionStrategy),
-                StateEnd.Halt(solveRequest, executionStrategy, anException)
-        )
-
-        toBeTested.forEach { assertTrue { it.behave().none() } }
+        allStateList.forEach { assertTrue { it.behave().none() } }
     }
 
+    @Test
+    fun makeCopyRedirectsCallToCorrectCopyMethod() {
+        // precondition
+        allStateList.forEach { it.solveRequest != DummyInstances.solveRequest }
+
+        val toBeTested = allStateList.map { it.makeCopy(DummyInstances.solveRequest) }
+
+        allStateList.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected::class, actual::class) }
+        toBeTested.forEach { assertSame(DummyInstances.solveRequest, it.solveRequest) }
+    }
 }

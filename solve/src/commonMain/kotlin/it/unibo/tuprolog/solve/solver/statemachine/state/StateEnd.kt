@@ -23,9 +23,11 @@ internal sealed class StateEnd(
     internal data class True(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope
-    ) : StateEnd(solveRequest, executionStrategy), SuccessFinalState {
+    ) : StateEnd(solveRequest, executionStrategy), FinalState {
 
-        override val answerSubstitution: Substitution.Unifier by lazy {
+        /** The answer substitution computed when reaching a success final state;
+         * it contains only variable bindings for current [solveRequest] */
+        val answerSubstitution: Substitution.Unifier by lazy {
             val requestedVariables = solveRequest.query?.variables ?: emptySequence()
 
             // reduce substitution variable chains
@@ -38,12 +40,20 @@ internal sealed class StateEnd(
     internal data class False(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope
-    ) : StateEnd(solveRequest, executionStrategy), FailFinalState
+    ) : StateEnd(solveRequest, executionStrategy), FinalState
 
     /** The *Halt* state is reached when an [HaltException] is caught, terminating the computation */
     internal data class Halt(
             override val solveRequest: Solve.Request,
             override val executionStrategy: CoroutineScope,
             val exception: TuPrologRuntimeException
-    ) : StateEnd(solveRequest, executionStrategy), FailFinalState
+    ) : StateEnd(solveRequest, executionStrategy), FinalState
+
+
+    /** Bridge method to subclasses `copy(...)` */
+    fun makeCopy(solveRequest: Solve.Request = this.solveRequest, executionStrategy: CoroutineScope = this.executionStrategy): StateEnd = when (this) {
+        is True -> copy(solveRequest, executionStrategy)
+        is False -> copy(solveRequest, executionStrategy)
+        is Halt -> copy(solveRequest, executionStrategy, this.exception)
+    }
 }
