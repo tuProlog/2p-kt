@@ -33,30 +33,16 @@ internal class SolverSLD(
             solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext)).map { it.solution }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
-    internal fun solve(goalRequest: Solve.Request): Sequence<Solve.Response> =
-            StateMachineExecutor.execute(StateInit(goalRequest, executionStrategy))
-                    .filterIsInstance<FinalState>()
-                    .filter { it.solveRequest.equalSignatureAndArgs(goalRequest) }
-                    .map {
-                        Solve.Response(
-                                finalStateToSolutionMapping(it),
-                                it.solveRequest.context // should this be omitted?? or replaced by a dedicated property in FinalState?
-                        )
-                    }
+    internal fun solve(goalRequest: Solve.Request): Sequence<Solve.Response> = StateMachineExecutor
+            .execute(StateInit(goalRequest, executionStrategy))
+            .filterIsInstance<FinalState>()
+            .filter { it.solveRequest.equalSignatureAndArgs(goalRequest) }
+            .map { Solve.Response(it.toSolution(), it.solveRequest.context) }
 
-    /** Utility method to map a final state to its corresponding Solution */
-    private fun finalStateToSolutionMapping(finalState: FinalState) = when (finalState) {
-        is StateEnd.True -> with(finalState.solveRequest) {
-            Solution.Yes(signature, arguments, finalState.answerSubstitution)
-        }
-
-        is StateEnd.Halt -> with(finalState.solveRequest) {
-            Solution.Halt(signature, arguments, finalState.exception)
-        }
-
-        else -> with(finalState.solveRequest) {
-            Solution.No(signature, arguments)
-        }
+    /** Utility method to map a [FinalState] to its corresponding [Solution] */
+    private fun FinalState.toSolution() = when (this) {
+        is StateEnd.True -> with(solveRequest) { Solution.Yes(signature, arguments, answerSubstitution) }
+        is StateEnd.Halt -> with(solveRequest) { Solution.Halt(signature, arguments, exception) }
+        else -> with(solveRequest) { Solution.No(signature, arguments) }
     }
-
 }

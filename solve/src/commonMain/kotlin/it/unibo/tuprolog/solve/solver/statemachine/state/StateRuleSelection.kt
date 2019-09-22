@@ -55,12 +55,11 @@ internal class StateRuleSelection(
 
                             // find in sub-goal state sequence, the final state responding to current solveRequest
                             if (with(it.wrappedState) { this is FinalState && solveRequest.equalSignatureAndArgs(subSolveRequest) }) {
-                                val endState = it.wrappedState as StateEnd
+                                val subEndState = it.wrappedState as StateEnd
 
-                                yield(endState.makeCopy(solveRequest.importingContextFrom(it.wrappedState.solveRequest)))
+                                yield(subEndState.makeCopy(solveRequest.importingContextFrom(subEndState.solveRequest)))
 
-                                // if halt reached, overall computation should stop (duplicated in StateGoalEvaluation.. refactor the logic)
-                                if (it.wrappedState is StateEnd.Halt) return@sequence
+                                if (it.wrappedState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
                             }
                         }
                         if (cutNextSiblings) return@sequence // cut here other matching rules trial
