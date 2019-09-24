@@ -13,26 +13,26 @@ sealed class Solution {
     /** The query to which the solution refers */
     abstract val query: Struct
     /** The substitution that has been applied to find the solution, or a `failed` substitution */
-    abstract val substitution: Substitution
+    open val substitution: Substitution = Substitution.failed()
     /** The Struct representing the solution, or `null` if no solution is available */
-    abstract val solvedQuery: Struct?
+    open val solvedQuery: Struct? = null
 
     /** A class representing the successful solution */
     data class Yes(
             override val query: Struct,
             /** The successful substitution applied finding the solution */
-            override val substitution: Substitution.Unifier
+            override val substitution: Substitution.Unifier = Substitution.empty()
     ) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
+        constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier = Substitution.empty())
                 : this(signature withArgs arguments ?: Truth.fail(), substitution) {
+
+            // a solution always refers to a fully instantiated Struct, that cannot have a vararg Signature
             noVarargSignatureCheck(signature)
         }
 
         /** The Struct representing the solution */
-        override val solvedQuery: Struct by lazy {
-            substitution.applyTo(query) as Struct
-        }
+        override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
     }
 
     /** A class representing a failed solution */
@@ -42,25 +42,19 @@ sealed class Solution {
                 : this(signature withArgs arguments ?: Truth.fail()) {
             noVarargSignatureCheck(signature)
         }
-
-        /** Always [Substitution.Fail] because no solution was found */
-        override val substitution: Substitution.Fail = Substitution.failed()
-        /** Always `null` because no solution was found */
-        override val solvedQuery: Struct? = null
     }
 
     /** A class representing a failed (halted) solution because of an exception */
-    data class Halt(override val query: Struct, val exception: TuPrologRuntimeException) : Solution() {
+    data class Halt(
+            override val query: Struct,
+            /** The exception that made the resolution to halt */
+            val exception: TuPrologRuntimeException
+    ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
                 : this(signature withArgs arguments ?: Truth.fail(), exception) {
             noVarargSignatureCheck(signature)
         }
-
-        /** Always [Substitution.Fail] because no solution was found */
-        override val substitution: Substitution.Fail = Substitution.failed()
-        /** Always `null` because no solution was found */
-        override val solvedQuery: Struct? = null
     }
 
     /** Internal function to check signature validity in constructing Solution instances */
