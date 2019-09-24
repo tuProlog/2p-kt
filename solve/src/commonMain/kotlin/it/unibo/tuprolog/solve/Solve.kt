@@ -35,8 +35,13 @@ sealed class Solve {
             require(executionTimeout >= 0) { "The execution timeout can't be negative: $executionTimeout" }
         }
 
-        /** The query Struct of this Signature with its arguments, if conversion possible (that is, signature is not vararg) */
-        val query: Struct? by lazy { signature.withArgs(arguments) }
+        /**
+         * The current query [Struct] of this request, if "signature with arguments" conversion possible (that is, signature is not vararg)
+         *
+         * If current Signature "is vararg" manual conversion to [Struct] is needed by programmer.
+         * This is to make him aware that vararg information will be lost, for the created Struct
+         */
+        val query: Struct? by lazy { signature withArgs arguments }
 
         /** Checks for equality only by means of [signature] and [arguments] fields */
         fun equalSignatureAndArgs(other: Any?): Boolean {

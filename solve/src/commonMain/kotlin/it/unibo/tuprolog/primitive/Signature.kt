@@ -23,9 +23,9 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
                 else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
             }
 
-    /** Creates corresponding Struct of this Signature with provided arguments, if conversion is possible */
-    fun withArgs(arguments: Iterable<Term>): Struct? = when {
-        vararg -> null
+    /** Creates corresponding Struct of this Signature with provided arguments, if conversion is possible with no information loss */
+    infix fun withArgs(arguments: Iterable<Term>): Struct? = when {
+        vararg -> null // because if you create a Struct, here, and then use extractSignature() the Signatures will not match
         else ->
             require(this.arity == arguments.count()) {
                 "Trying to create Term of signature `$this` with wrong number of arguments ${arguments.toList()}"

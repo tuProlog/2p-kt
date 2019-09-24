@@ -25,7 +25,7 @@ sealed class Solution {
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier)
-                : this(signature.withArgs(arguments) ?: Truth.fail(), substitution) {
+                : this(signature withArgs arguments ?: Truth.fail(), substitution) {
             noVarargSignatureCheck(signature)
         }
 
@@ -39,7 +39,7 @@ sealed class Solution {
     data class No(override val query: Struct) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>)
-                : this(signature.withArgs(arguments) ?: Truth.fail()) {
+                : this(signature withArgs arguments ?: Truth.fail()) {
             noVarargSignatureCheck(signature)
         }
 
@@ -53,7 +53,7 @@ sealed class Solution {
     data class Halt(override val query: Struct, val exception: TuPrologRuntimeException) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
-                : this(signature.withArgs(arguments) ?: Truth.fail(), exception) {
+                : this(signature withArgs arguments ?: Truth.fail(), exception) {
             noVarargSignatureCheck(signature)
         }
 
