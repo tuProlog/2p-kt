@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.testutils.DummyInstances
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.aQuery
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.aSubstitution
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.anException
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.queryArgList
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.querySignature
+import it.unibo.tuprolog.solve.testutils.SolutionUtils.theQuerySolved
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -19,19 +20,19 @@ import kotlin.test.assertNull
  */
 internal class SolutionTest {
 
-    private val myScope = Scope.empty()
-    private val aQuery = with(myScope) { Struct.of("f", varOf("A")) }
-    private val querySignature = aQuery.extractSignature()
-    private val aSubstitution = with(myScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
-    private val theQuerySolved = with(myScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
-    private val anException = HaltException(context = DummyInstances.executionContext)
-
     @Test
     fun yesSolutionContainsInsertedData() {
         val toBeTested = Solution.Yes(aQuery, aSubstitution)
 
         assertEquals(aQuery, toBeTested.query)
         assertEquals(aSubstitution, toBeTested.substitution)
+    }
+
+    @Test
+    fun yesSolutionSubstitutionDefaultsToEmptyIfNotSpecified() {
+        val toBeTested = Solution.Yes(aQuery)
+
+        assertEquals(Substitution.empty(), toBeTested.substitution)
     }
 
     @Test
@@ -43,7 +44,7 @@ internal class SolutionTest {
 
     @Test
     fun yesSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.Yes(querySignature, listOf(with(myScope) { varOf("A") }), aSubstitution)
+        val toBeTested = Solution.Yes(querySignature, queryArgList, aSubstitution)
 
         assertEquals(aQuery, toBeTested.query)
         assertEquals(aSubstitution, toBeTested.substitution)
@@ -59,7 +60,7 @@ internal class SolutionTest {
     @Test
     fun yesSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.Yes(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }), Substitution.empty())
+            Solution.Yes(querySignature.copy(vararg = true), queryArgList, Substitution.empty())
         }
     }
 
@@ -80,7 +81,7 @@ internal class SolutionTest {
 
     @Test
     fun noSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.No(querySignature, listOf(with(myScope) { varOf("A") }))
+        val toBeTested = Solution.No(querySignature, queryArgList)
 
         assertEquals(aQuery, toBeTested.query)
     }
@@ -94,7 +95,7 @@ internal class SolutionTest {
     @Test
     fun noSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.No(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }))
+            Solution.No(querySignature.copy(vararg = true), queryArgList)
         }
     }
 
@@ -118,7 +119,7 @@ internal class SolutionTest {
 
     @Test
     fun haltSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.Halt(querySignature, listOf(with(myScope) { varOf("A") }), anException)
+        val toBeTested = Solution.Halt(querySignature, queryArgList, anException)
 
         assertEquals(aQuery, toBeTested.query)
     }
@@ -132,7 +133,7 @@ internal class SolutionTest {
     @Test
     fun haltSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.Halt(querySignature.copy(vararg = true), listOf(with(myScope) { varOf("A") }), anException)
+            Solution.Halt(querySignature.copy(vararg = true), queryArgList, anException)
         }
     }
 }
