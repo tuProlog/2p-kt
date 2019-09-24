@@ -48,7 +48,7 @@ internal object CallUtils {
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
-                Struct.of(Call.functor, SolverTestUtils.threeResponseRequest.query!!).let { query ->
+                Struct.of(Call.functor, SolverTestUtils.threeResponseRequest.query).let { query ->
                     Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
                         createSolveRequest(query, database = SolverTestUtils.factDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),

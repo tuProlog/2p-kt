@@ -28,7 +28,7 @@ internal sealed class StateEnd(
         /** The answer substitution computed when reaching a success final state;
          * it contains only variable bindings for current [solveRequest] */
         val answerSubstitution: Substitution.Unifier by lazy {
-            val requestedVariables = solveRequest.query?.variables ?: emptySequence()
+            val requestedVariables = solveRequest.query.variables
 
             // reduce substitution variable chains
             with(solveRequest.context.currentSubstitution) { this.mapValues { (_, term) -> term.apply(this) } }

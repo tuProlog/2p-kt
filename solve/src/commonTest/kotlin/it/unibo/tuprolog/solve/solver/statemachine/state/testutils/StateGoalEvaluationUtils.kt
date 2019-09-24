@@ -83,7 +83,7 @@ internal object StateGoalEvaluationUtils {
                 override val uncheckedImplementation: Primitive = primitiveBehaviour
             }.run {
                 SolverTestUtils.createSolveRequest(
-                        signature.withArgs(emptyList())!!,
+                        signature withArgs emptyList(),
                         primitives = mapOf(descriptionPair, Throw.descriptionPair)
                 )
             }

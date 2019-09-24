@@ -21,7 +21,7 @@ internal class StateInitTest {
         // precondition
         assertTrue {
             with(DummyInstances.solveRequest.context) {
-                solverStrategies.successCheckStrategy(Signature("true", 0).withArgs(emptyList())!!, this)
+                solverStrategies.successCheckStrategy(Signature("true", 0) withArgs emptyList(), this)
             }
         }
 
@@ -58,7 +58,7 @@ internal class StateInitTest {
         val nextStates = StateInit(StateInitUtils.preparationNeededGoal, DummyInstances.executionStrategy).behave()
 
         assertEquals(
-                prepareForExecution(StateInitUtils.preparationNeededGoal.query!!),
+                prepareForExecution(StateInitUtils.preparationNeededGoal.query),
                 nextStates.first().solveRequest.query
         )
     }

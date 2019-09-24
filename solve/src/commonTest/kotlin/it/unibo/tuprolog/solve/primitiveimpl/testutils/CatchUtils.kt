@@ -37,7 +37,7 @@ internal object CatchUtils {
                     )
                 },
                 *CallUtils.requestSolutionMap.map { (callRequest, solutions) ->
-                    Struct.of(Catch.functor, callRequest.query!!, Var.anonymous(), Truth.fail()).let {
+                    Struct.of(Catch.functor, callRequest.query, Var.anonymous(), Truth.fail()).let {
                         createSolveRequest(it,
                                 callRequest.context.libraries.theory,
                                 callRequest.context.libraries.primitives + Catch.descriptionPair

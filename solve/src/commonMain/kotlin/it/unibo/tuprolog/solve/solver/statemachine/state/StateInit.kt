@@ -23,14 +23,10 @@ internal class StateInit(
 
         when {
             // current goal is already demonstrated
-            currentGoal != null && with(initializedSolveRequest.context) {
-                solverStrategies.successCheckStrategy(currentGoal, this)
-            } -> yield(StateEnd.True(initializedSolveRequest, executionStrategy))
+            with(initializedSolveRequest.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
+                yield(StateEnd.True(initializedSolveRequest, executionStrategy))
 
             else -> when {
-                // vararg primitive
-                currentGoal == null ->
-                    yield(StateGoalEvaluation(initializedSolveRequest, executionStrategy))
 
                 // a primitive or well-formed goal
                 isWellFormed(currentGoal) ->

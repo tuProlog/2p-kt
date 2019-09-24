@@ -23,19 +23,26 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
                 else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
             }
 
-    /** Creates corresponding Struct of this Signature with provided arguments, if conversion is possible with no information loss */
-    infix fun withArgs(arguments: Iterable<Term>): Struct? = when {
-        vararg -> null // because if you create a Struct, here, and then use extractSignature() the Signatures will not match
-        else ->
-            require(this.arity == arguments.count()) {
-                "Trying to create Term of signature `$this` with wrong number of arguments ${arguments.toList()}"
-            }.let { Struct.of(name, arguments.asSequence()) }
-    }
+    /** Creates corresponding Struct of this Signature with provided arguments */
+    infix fun withArgs(arguments: Iterable<Term>): Struct = when {
+        vararg -> require(arguments.count() >= this.arity) {
+            "Trying to create Struct of signature `$this` with not enough arguments ${arguments.toList()}"
+        }
+        else -> require(arguments.count() == this.arity) {
+            "Trying to create Struct of signature `$this` with wrong number of arguments ${arguments.toList()}"
+        }
+    }.let { Struct.of(name, arguments.asSequence()) }
 
-    // TODO: 24/09/2019 to fully support vararg signatures, a method to check if a non vararg signature can be treated as another vararg one, should be added
-    // for example: ciao(1, 2) with Signature("ciao",2,false) should be matched with all signatures having same functor, vararg flag true and less or equals arity
-    // a concept of precedence should be enforced, maybe "more specific and greater arity" should win in this matching system
-    // the method doing this could be called "match(Signature)"
+    // TODO: 24/09/2019 maybe, to fully support vararg signatures, a method to check if a non vararg signature can be treated as another vararg one, should be added
+    // for example: if user query is `ciao(1, 2)` with Signature("ciao", 2, false), it should be matched with
+    // all signatures having same functor, vararg flag set to true and *less or equals* arity
+
+    // a concept of precedence/inclusion should be enforced; maybe "non vararg exact match and vararg greater arity match" should win,
+    // in this matching system
+    // the method doing this could be called "includedBy(Signature)"
+
+    // a method to retrieve matching vararg Signatures should also be added to [Library] interface, and return only one result;
+    // this method should use "includedBy(Signature)" to retrieve matches and the sort them with the rule above
 
     companion object {
 

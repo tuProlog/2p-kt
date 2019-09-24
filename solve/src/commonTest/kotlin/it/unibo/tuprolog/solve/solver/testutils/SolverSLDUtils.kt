@@ -239,7 +239,7 @@ internal object SolverSLDUtils {
 
     /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
     private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request, Iterable<Solution>>) =
-            requestSolutionMap.mapKeys { it.key.query!! to it.key.context }.entries.map { it.toPair() }
+            requestSolutionMap.mapKeys { it.key.query to it.key.context }.entries.map { it.toPair() }
 
     /** Utility method to check if given solutions match */
     internal fun assertSolutionsCorrect(expected: Iterable<Solution>, actual: Iterable<Solution>) {

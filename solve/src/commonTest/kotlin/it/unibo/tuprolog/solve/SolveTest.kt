@@ -18,13 +18,14 @@ internal class SolveTest {
     private val aSignature = Signature("ciao", 2)
     private val aVarargSignature = Signature("ciao", 2, true)
     private val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
+    private val varargArgumentList = anArgumentList + Truth.`true`()
     private val aSolution = Solution.No(Truth.fail())
     private val anExecutionContext =
             ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.empty(), ClauseDatabase.empty(), 0L)
     private val anExecutionTimeout = 300L
 
     private val request = Solve.Request(aSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
-    private val requestVararg = Solve.Request(aVarargSignature, anArgumentList, anExecutionContext, anExecutionTimeout)
+    private val requestVararg = Solve.Request(aVarargSignature, varargArgumentList, anExecutionContext, anExecutionTimeout)
 
     @Test
     fun requestInsertedDataCorrect() {
@@ -70,7 +71,7 @@ internal class SolveTest {
 
     @Test
     fun requestReturnsNullQueryIfConversionNotPossible() {
-        assertNull(requestVararg.query)
+        assertEquals(Struct.of(aVarargSignature.name, varargArgumentList), requestVararg.query)
     }
 
     @Test

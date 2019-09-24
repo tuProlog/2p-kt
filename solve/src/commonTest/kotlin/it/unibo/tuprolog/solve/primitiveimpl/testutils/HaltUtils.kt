@@ -53,7 +53,7 @@ internal object HaltUtils {
                         )
                     }
                 },
-                Tuple.of(Atom.of("halt"), SolverTestUtils.threeResponseRequest.query!!).let { query ->
+                Tuple.of(Atom.of("halt"), SolverTestUtils.threeResponseRequest.query).let { query ->
                     Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
                         createSolveRequest(
                                 query,

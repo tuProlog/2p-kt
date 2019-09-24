@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 
@@ -25,7 +24,7 @@ sealed class Solution {
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier = Substitution.empty())
-                : this(signature withArgs arguments ?: Truth.fail(), substitution) {
+                : this(signature withArgs arguments, substitution) {
 
             // a solution always refers to a fully instantiated Struct, that cannot have a vararg Signature
             noVarargSignatureCheck(signature)
@@ -38,8 +37,7 @@ sealed class Solution {
     /** A class representing a failed solution */
     data class No(override val query: Struct) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>)
-                : this(signature withArgs arguments ?: Truth.fail()) {
+        constructor(signature: Signature, arguments: List<Term>) : this(signature withArgs arguments) {
             noVarargSignatureCheck(signature)
         }
     }
@@ -52,7 +50,7 @@ sealed class Solution {
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
-                : this(signature withArgs arguments ?: Truth.fail(), exception) {
+                : this(signature withArgs arguments, exception) {
             noVarargSignatureCheck(signature)
         }
     }

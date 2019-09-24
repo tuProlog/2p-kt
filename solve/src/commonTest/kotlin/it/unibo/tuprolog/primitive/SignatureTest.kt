@@ -59,8 +59,8 @@ internal class SignatureTest {
     }
 
     @Test
-    fun withArgsComplainsOnVarargSignatures() {
-        assertNull(varargSignature.withArgs(argList))
+    fun withArgsWorksEvenOnVarargSignatures() {
+        assertEquals(varargSignature.withArgs(argList), Struct.of(signatureName, argList))
     }
 
     @Test
@@ -70,9 +70,10 @@ internal class SignatureTest {
     }
 
     @Test
-    fun withArgsDoesntCheckNumberOfArgumentsOnVarargSignatureYieldingNull() {
-        assertNull(varargSignature.withArgs(emptyList()))
-        assertNull(varargSignature.withArgs(argList + aAtom))
+    fun withArgsComplainsIfNotEnoughArgumentsForVarargSignatureProvided() {
+        assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(emptyList()) }
+
+        assertEquals(varargSignature.withArgs(argList + aAtom), Struct.of(signatureName, argList + aAtom))
     }
 
     @Test
