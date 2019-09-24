@@ -32,6 +32,11 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
             }.let { Struct.of(name, arguments.asSequence()) }
     }
 
+    // TODO: 24/09/2019 to fully support vararg signatures, a method to check if a non vararg signature can be treated as another vararg one, should be added
+    // for example: ciao(1, 2) with Signature("ciao",2,false) should be matched with all signatures having same functor, vararg flag true and less or equals arity
+    // a concept of precedence should be enforced, maybe "more specific and greater arity" should win in this matching system
+    // the method doing this could be called "match(Signature)"
+
     companion object {
 
         /** An atom to denote vararg presence */
