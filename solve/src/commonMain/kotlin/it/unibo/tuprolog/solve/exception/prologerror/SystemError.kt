@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 
 /**

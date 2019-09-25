@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.primitiveimpl.testutils
 
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
-import it.unibo.tuprolog.solve.solver.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.testutils.DummyInstances

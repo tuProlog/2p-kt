@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError

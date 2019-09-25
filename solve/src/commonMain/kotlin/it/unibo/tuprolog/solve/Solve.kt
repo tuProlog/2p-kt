@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.solver.ExecutionContext
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -103,6 +103,6 @@ sealed class Solve {
             val dynamicKB: ClauseDatabase? = null,
 
             // TODO replace with ExecutionFlowModification only, and update above methods and tests!!
-            val context:ExecutionContextImpl? = null
+            val context: ExecutionContextImpl? = null
     ) : Solve()
 }

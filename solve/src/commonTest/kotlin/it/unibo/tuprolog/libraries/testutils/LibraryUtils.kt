@@ -12,7 +12,7 @@ import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 typealias RawLibrary = Pair<String, Triple<OperatorSet, ClauseDatabase, Map<Signature, Primitive>>>

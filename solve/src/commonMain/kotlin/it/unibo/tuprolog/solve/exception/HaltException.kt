@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 
 /**
  * An exception thrown if there are problems during state machine execution, and solution process should be halted

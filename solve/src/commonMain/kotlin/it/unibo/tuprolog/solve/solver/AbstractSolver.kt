@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solver
 
 /**

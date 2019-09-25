@@ -3,7 +3,7 @@ package it.unibo.tuprolog.primitive
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals

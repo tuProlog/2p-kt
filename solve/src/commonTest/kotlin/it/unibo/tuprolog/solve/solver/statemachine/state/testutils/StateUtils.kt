@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals

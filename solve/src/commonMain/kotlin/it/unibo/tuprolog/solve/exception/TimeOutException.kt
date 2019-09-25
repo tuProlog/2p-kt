@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 
 /**

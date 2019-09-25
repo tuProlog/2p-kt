@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction

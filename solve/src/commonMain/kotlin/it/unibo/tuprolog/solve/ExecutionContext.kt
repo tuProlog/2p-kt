@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver
+package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution

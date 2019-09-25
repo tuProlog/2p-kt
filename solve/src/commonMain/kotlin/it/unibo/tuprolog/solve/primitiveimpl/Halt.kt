@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 

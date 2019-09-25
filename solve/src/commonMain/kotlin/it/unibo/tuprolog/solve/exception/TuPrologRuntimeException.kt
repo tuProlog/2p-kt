@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.core.exception.TuPrologException
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 
 /**
  * An exception that could occur during Solver execution

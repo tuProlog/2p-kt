@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.solve.solver.ExecutionContext
-import it.unibo.tuprolog.solve.solver.SolverStrategies
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 // TODO doc

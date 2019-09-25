@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState

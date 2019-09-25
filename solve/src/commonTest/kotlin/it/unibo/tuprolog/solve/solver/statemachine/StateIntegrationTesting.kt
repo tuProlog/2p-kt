@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException

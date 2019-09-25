@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
