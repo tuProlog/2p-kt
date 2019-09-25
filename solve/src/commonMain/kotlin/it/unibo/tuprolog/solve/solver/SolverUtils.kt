@@ -121,8 +121,8 @@ internal object SolverUtils {
             Solution.Yes(
                     this.signature,
                     this.arguments,
-                    (this.context.substitution + otherResponse.context!!.substitution) as Substitution.Unifier
-            ), // TODO: 25/09/2019 using otherResponse.solution.substitution is not the same thing because it's filtered as answer substitution
+                    (this.context.substitution + otherResponse.solution.substitution) as Substitution.Unifier
+            ),
             context = otherResponse.context
     )
 

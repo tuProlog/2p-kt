@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
-
 /**
  * Test class for [SolverSLD]
  *
@@ -30,7 +30,7 @@ internal class SolverSLDTest {
             val (query, startContext) = input
 
             val toBeTested = SolverSLD().solve(Solve.Request(query.extractSignature(), query.argsList, query, startContext))
-                    .map { it.solution }.toList()
+                    .map { PrimitivesUtils.filterInterestingVariables(it.solution) }.toList()
 
             assertSolutionsCorrect(expectedOutput, toBeTested)
         }

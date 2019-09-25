@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -28,7 +28,7 @@ internal sealed class StateEnd(
 
         /** The answer substitution computed when reaching a success final state;
          * it contains only variable bindings for current [solveRequest] */
-        val answerSubstitution: Substitution.Unifier by lazy {
+        val answerSubstitution: Substitution.Unifier by lazy { // TODO: 25/09/2019 remove this field, but recycle tests for SolverUtils method (see SolverSLD comment)
             val requestedVariables = solveRequest.query.variables
 
             // reduce substitution variable chains
