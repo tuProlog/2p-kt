@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
@@ -26,7 +26,7 @@ internal class CutTest {
     @Test
     fun cutPrimitiveReturnsAlwaysYesResponseWithNoModificationFromRequest() {
         val substitution = Substitution.of("A", Truth.`true`())
-        val context = DummyInstances.executionContext.copy(currentSubstitution = substitution)
+        val context = DummyInstances.executionContext.copy(substitution = substitution)
         val toBeTested = Cut.primitive(DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = context))
 
         assertEquals(1, toBeTested.count())
@@ -39,10 +39,10 @@ internal class CutTest {
 
     @Test
     fun cutPrimitiveFillsExecutionContextFieldWithAllChoicePointContextParent() {
-        fun makeRequest(executionContext: ExecutionContext) =
+        fun makeRequest(executionContext: ExecutionContextImpl) =
                 DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = executionContext)
 
-        fun Solve.Response.underTestField(): Iterable<ExecutionContext> = this.context.toCutContextsParent.toList()
+        fun Solve.Response.underTestField(): Iterable<ExecutionContextImpl> = this.context!!.toCutContextsParent.toList()
 
         with(DummyInstances.executionContext) {
             val contextWithNoParents = this
@@ -99,8 +99,8 @@ internal class CutTest {
         val response = Cut.primitive(startRequest).toList()
 
         assertEquals(1, response.count())
-        assertSame(2, response.single().context.toCutContextsParent.count())
-        assertSame(alreadyPresentToCut, response.single().context.toCutContextsParent.first())
-        assertSame(currentlyAddedToCut, response.single().context.toCutContextsParent.last())
+        assertSame(2, response.single().context!!.toCutContextsParent.count())
+        assertSame(alreadyPresentToCut, response.single().context!!.toCutContextsParent.first())
+        assertSame(currentlyAddedToCut, response.single().context!!.toCutContextsParent.last())
     }
 }

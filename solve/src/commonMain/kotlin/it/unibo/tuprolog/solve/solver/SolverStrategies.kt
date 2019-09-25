@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solver
 
 /**
  * Interface representing internal strategies used by the [Solver]

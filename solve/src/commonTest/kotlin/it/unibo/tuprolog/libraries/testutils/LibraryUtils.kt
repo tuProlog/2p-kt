@@ -12,6 +12,7 @@ import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.ExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 typealias RawLibrary = Pair<String, Triple<OperatorSet, ClauseDatabase, Map<Signature, Primitive>>>
@@ -31,8 +32,8 @@ internal object LibraryUtils {
     private val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
     private val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
 
-    private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request): Sequence<Solve.Response> = throw NotImplementedError()
-    private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request): Sequence<Solve.Response> = throw NotImplementedError()
+    private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> = throw NotImplementedError()
+    private fun myOtherPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> = throw NotImplementedError()
     private val primitives = mapOf(Signature("myFunc1", 1) to ::myPrimitive)
     private val primitivesOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherPrimitive)
 

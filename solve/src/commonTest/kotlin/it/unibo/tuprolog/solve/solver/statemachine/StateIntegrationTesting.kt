@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
@@ -22,7 +23,7 @@ import kotlin.test.assertTrue
 internal class StateIntegrationTesting {
 
     /** Shorthand function to execute a solveRequest */
-    private fun execute(solveRequest: Solve.Request): Sequence<State> =
+    private fun execute(solveRequest: Solve.Request<ExecutionContextImpl>): Sequence<State> =
             StateMachineExecutor.execute(StateInit(solveRequest, DummyInstances.executionStrategy))
 
     @Test
@@ -77,11 +78,11 @@ internal class StateIntegrationTesting {
         val answerSubstitution = interestingStates.map { it.answerSubstitution }
 
         val correctSubstitution = listOf("a", "b", "c").map(Atom.Companion::of)
-        correctSubstitution.zip(answerSubstitution).forEach { (expectedSubstituent, currentSubstitution) ->
-            val currentScope = Scope.of(*currentSubstitution.keys.toTypedArray())
+        correctSubstitution.zip(answerSubstitution).forEach { (expectedSubstituent, substitution) ->
+            val currentScope = Scope.of(*substitution.keys.toTypedArray())
 
-            assertEquals(expectedSubstituent, currentSubstitution[currentScope.varOf("A")])
-            assertEquals(1, currentSubstitution.count())
+            assertEquals(expectedSubstituent, substitution[currentScope.varOf("A")])
+            assertEquals(1, substitution.count())
         }
     }
 
@@ -93,7 +94,7 @@ internal class StateIntegrationTesting {
         val subInitStates = nextStates.filterIsInstance<StateInit>()
         assertEquals(3, subInitStates.count())
         assertTrue { subInitStates.all { it.solveRequest.context.isChoicePointChild } }
-        assertTrue { (nextStates - subInitStates).none { it.solveRequest.context.isChoicePointChild } }
+        assertTrue { (nextStates - subInitStates).none { (it.solveRequest.context as ExecutionContextImpl).isChoicePointChild } }
 
         val subRuleSelectionStateContexts = nextStates.filterIsInstance<StateRuleSelection>().map { it.solveRequest.context }
         subRuleSelectionStateContexts.zip(subInitStates.map { it.solveRequest.context }).forEach { (expected, actual) ->

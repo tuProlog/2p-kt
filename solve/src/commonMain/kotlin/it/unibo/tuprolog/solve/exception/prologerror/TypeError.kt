@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.exception.prologerror
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
 
@@ -22,7 +22,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
 class TypeError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContext,
+        context: ExecutionContextImpl,
         val expectedType: Expected,
         val actualValue: Term,
         extraData: Term? = null

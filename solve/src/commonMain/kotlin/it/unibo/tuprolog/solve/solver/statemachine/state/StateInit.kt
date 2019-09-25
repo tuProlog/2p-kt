@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal class StateInit(
-        override val solveRequest: Solve.Request,
+        override val solveRequest: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope
 ) : AbstractTimedState(solveRequest, executionStrategy) {
 
@@ -52,7 +52,7 @@ internal class StateInit(
      *
      * It creates a new context adding given one as it's parent and resetting isChoicePointChild flag for the new context
      */
-    private fun initializationWork(context: ExecutionContext): ExecutionContext =
+    private fun initializationWork(context: ExecutionContextImpl): ExecutionContextImpl =
             context.copy(
                     clauseScopedParents = sequence { yield(context); yieldAll(context.clauseScopedParents) },
                     isChoicePointChild = false

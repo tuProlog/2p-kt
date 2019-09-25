@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 
 /**
@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class InstantiationError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContext,
+        context: ExecutionContextImpl,
         extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 

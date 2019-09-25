@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
@@ -13,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal abstract class AbstractTimedState(
-        override val solveRequest: Solve.Request,
+        override val solveRequest: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope
 ) : AbstractState(solveRequest, executionStrategy), TimedState {
 
@@ -23,12 +24,12 @@ internal abstract class AbstractTimedState(
     override fun behave(): Sequence<State> = when {
         // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is Long.MAX_VALUE
         // avoiding timeIsOver check
-        timeIsOver(stateCurrentTime - solveRequest.context.computationStartTime, solveRequest.executionTimeout) ->
+        timeIsOver(stateCurrentTime - solveRequest.requestIssuingInstant, solveRequest.executionMaxDuration) ->
             sequenceOf(
                     StateEnd.Halt(solveRequest, executionStrategy, TimeOutException(
-                            "Given time for `${solveRequest.query}` computation (${solveRequest.executionTimeout}) wasn't enough for completion",
+                            "Given time for `${solveRequest.query}` computation (${solveRequest.executionMaxDuration}) wasn't enough for completion",
                             context = solveRequest.context,
-                            deltaTime = stateCurrentTime - solveRequest.context.computationStartTime
+                            deltaTime = stateCurrentTime - solveRequest.requestIssuingInstant
                     ))
             )
         else -> behaveTimed()

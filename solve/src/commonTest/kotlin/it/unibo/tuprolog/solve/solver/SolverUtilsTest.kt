@@ -109,9 +109,9 @@ internal class SolverUtilsTest {
         assertEquals(newGoal.argsList, toBeTested.arguments)
         assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
         assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.logicalParentRequests.toList())
-        assertEquals(Substitution.empty(), toBeTested.context.currentSubstitution)
+        assertEquals(Substitution.empty(), toBeTested.context.substitution)
 
-        assertEquals(newSubstitution, toBeTestedSubstitution.context.currentSubstitution)
+        assertEquals(newSubstitution, toBeTestedSubstitution.context.substitution)
     }
 
     @Test
@@ -161,26 +161,26 @@ internal class SolverUtilsTest {
         val initialStartTime = 40L
         val initialTimeout = 200L
         val startSolveRequest = with(DummyInstances.solveRequest) {
-            copy(executionTimeout = initialTimeout, context = context.copy(computationStartTime = initialStartTime))
+            copy(executionMaxDuration = initialTimeout, requestIssuingInstant = initialStartTime)
         }
 
         val currentTimeLow = 80L
         val toBeTested = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeLow)
 
-        assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionTimeout)
+        assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionMaxDuration)
 
         val currentTimeHigh = 350L
         val toBeTestedZeroTimeout = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeHigh)
 
-        assertEquals(0L, toBeTestedZeroTimeout.executionTimeout)
+        assertEquals(0L, toBeTestedZeroTimeout.executionMaxDuration)
     }
 
     @Test
     fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = DummyInstances.solveRequest.copy(executionTimeout = Long.MAX_VALUE)
+        val toBeTested = DummyInstances.solveRequest.copy(executionMaxDuration = Long.MAX_VALUE)
                 .newSolveRequest(Atom.of("a"), currentTime = 100L)
 
-        assertEquals(Long.MAX_VALUE, toBeTested.executionTimeout)
+        assertEquals(Long.MAX_VALUE, toBeTested.executionMaxDuration)
     }
 
     @Test
@@ -197,11 +197,11 @@ internal class SolverUtilsTest {
 
     @Test
     fun newSolveRequestIsBasedOnProvidedContextIfPassed() {
-        val myContext = DummyInstances.executionContext.copy(currentSubstitution = Substitution.of("HHH", Truth.fail()))
+        val myContext = DummyInstances.executionContext.copy(substitution = Substitution.of("HHH", Truth.fail()))
         val toBeTested = DummyInstances.solveRequest.newSolveRequest(Atom.of("a"), baseContext = myContext)
 
         assertSame(myContext, toBeTested.context.clauseScopedParents.first())
-        assertEquals(myContext.currentSubstitution, toBeTested.context.currentSubstitution)
+        assertEquals(myContext.substitution, toBeTested.context.substitution)
     }
 
     @Test
@@ -225,13 +225,13 @@ internal class SolverUtilsTest {
     fun importingContextFromShouldImportSubstitutionCorrectly() {
         Scope.empty().where {
             val firstSolveRequest = with(DummyInstances.solveRequest) {
-                copy(context = context.copy(currentSubstitution = Substitution.of(
+                copy(context = context.copy(substitution = Substitution.of(
                         varOf("A") to atomOf("a"),
                         varOf("C") to varOf("D")
                 ) as Substitution.Unifier))
             }
             val secondSolveRequest = with(DummyInstances.solveRequest) {
-                copy(context = context.copy(currentSubstitution = Substitution.of(
+                copy(context = context.copy(substitution = Substitution.of(
                         varOf("D"), varOf("C")
                 )))
             }
@@ -241,7 +241,7 @@ internal class SolverUtilsTest {
                         varOf("A") to atomOf("a"),
                         varOf("C") to varOf("D"),
                         varOf("D") to varOf("C")
-                ), this.context.currentSubstitution)
+                ), this.context.substitution)
             }
 
             with(secondSolveRequest.importingContextFrom(firstSolveRequest)) {
@@ -249,7 +249,7 @@ internal class SolverUtilsTest {
                         varOf("D") to varOf("C"),
                         varOf("A") to atomOf("a"),
                         varOf("C") to varOf("D")
-                ), this.context.currentSubstitution)
+                ), this.context.substitution)
             }
         }
     }
@@ -300,16 +300,16 @@ internal class SolverUtilsTest {
     @Test
     fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
+        val finalContext = DummyInstances.executionContext.copy(substitution = finalSubstitution)
 
         val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
                 emptyList(),
                 finalSubstitution
-        ), finalContext)
+        ), context = finalContext)
 
         val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), finalContext)
+            Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), context = finalContext)
         }
         val toBeTested = DummyInstances.solveRequest.yesResponseBy(responseToReuseContextAndSubstitution)
 
@@ -320,16 +320,16 @@ internal class SolverUtilsTest {
     @Test
     fun noResponseByWorksAsExpected() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
+        val finalContext = DummyInstances.executionContext.copy(substitution = finalSubstitution)
 
         val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
                 emptyList(),
                 finalSubstitution
-        ), finalContext)
+        ), context = finalContext)
 
         val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.No(signature, arguments), finalContext)
+            Solve.Response(Solution.No(signature, arguments), context = finalContext)
         }
         val toBeTested = DummyInstances.solveRequest.noResponseBy(responseToReuseContextAndSubstitution)
 
@@ -346,10 +346,10 @@ internal class SolverUtilsTest {
                 Signature("ciao", 0),
                 emptyList(),
                 finalException
-        ), finalContext)
+        ), context = finalContext)
 
         val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.Halt(signature, arguments, finalException), finalContext)
+            Solve.Response(Solution.Halt(signature, arguments, finalException), context = finalContext)
         }
         val toBeTested = DummyInstances.solveRequest.haltResponseBy(responseToReuseContextAndSubstitution)
 
@@ -360,28 +360,28 @@ internal class SolverUtilsTest {
     @Test
     fun responseBySelectCorrectlyTheTypeOfResponseToApply() {
         val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(currentSubstitution = finalSubstitution)
+        val finalContext = DummyInstances.executionContext.copy(substitution = finalSubstitution)
         val finalException = HaltException(context = finalContext)
 
         val aYesResponse = Solve.Response(Solution.Yes(
                 Signature("ciao", 0),
                 emptyList(),
                 finalSubstitution
-        ), finalContext)
-        val aNoResponse = Solve.Response(Solution.No(Signature("ciao", 0), emptyList()), finalContext)
-        val anHaltResponse = Solve.Response(Solution.Halt(Signature("ciao", 0), emptyList(), finalException), finalContext)
+        ), context = finalContext)
+        val aNoResponse = Solve.Response(Solution.No(Signature("ciao", 0), emptyList()), context = finalContext)
+        val anHaltResponse = Solve.Response(Solution.Halt(Signature("ciao", 0), emptyList(), finalException), context = finalContext)
 
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
         val correct = listOf(
                 with(DummyInstances.solveRequest) {
-                    Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), finalContext)
+                    Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), context = finalContext)
                 },
                 with(DummyInstances.solveRequest) {
-                    Solve.Response(Solution.No(signature, arguments), finalContext)
+                    Solve.Response(Solution.No(signature, arguments), context = finalContext)
                 },
                 with(DummyInstances.solveRequest) {
-                    Solve.Response(Solution.Halt(signature, arguments, finalException), finalContext)
+                    Solve.Response(Solution.Halt(signature, arguments, finalException), context = finalContext)
                 }
         )
         val toBeTested = underTestResponses.map { DummyInstances.solveRequest.responseBy(it) }

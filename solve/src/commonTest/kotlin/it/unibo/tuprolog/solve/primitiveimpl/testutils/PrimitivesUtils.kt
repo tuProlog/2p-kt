@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve.primitiveimpl.testutils
 
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
+import it.unibo.tuprolog.solve.solver.ExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -22,7 +24,7 @@ import kotlin.test.fail
 internal object PrimitivesUtils {
 
     /** Utility function to test whether a primitive throwing an error carries with it the request context */
-    internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request, primitiveWrapper: PrimitiveWrapper) {
+    internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request<ExecutionContext>, primitiveWrapper: PrimitiveWrapper) {
         try {
             primitiveWrapper.primitive(request)
             fail("Exception should be thrown")
@@ -37,7 +39,7 @@ internal object PrimitivesUtils {
      * It passes request to StateGoalEvaluation, then it executes the primitive exercising the error situation;
      * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
      */
-    internal fun assertErrorCauseChainComputedCorrectly(request: Solve.Request, expectedErrorSolution: Solution.Halt) {
+    internal fun assertErrorCauseChainComputedCorrectly(request: Solve.Request<ExecutionContextImpl>, expectedErrorSolution: Solution.Halt) {
         val nextState = StateGoalEvaluation(request, DummyInstances.executionStrategy).behave().toList().single()
 
         assertEquals(StateEnd.Halt::class, nextState::class)

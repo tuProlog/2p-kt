@@ -10,6 +10,6 @@ import it.unibo.tuprolog.core.Struct
 interface Solver {
 
     /** Solves the provided goal, returning lazily initialized sequence of solutions */
-    fun solve(goal: Struct): Sequence<Solution>
+    fun solve(goal: Struct): Sequence<Solution> // TODO: 25/09/2019 add parameter to specify maxDuration of computation
 
 }

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -15,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal class StateGoalEvaluation(
-        override val solveRequest: Solve.Request,
+        override val solveRequest: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope
 ) : AbstractTimedState(solveRequest, executionStrategy) {
 
@@ -39,7 +40,7 @@ internal class StateGoalEvaluation(
 
             responses?.forEach {
 
-                yield(it.solution.toFinalState(solveRequest.copy(context = it.context), executionStrategy))
+                yield(it.solution.toFinalState(solveRequest.copy(context = it.context!!), executionStrategy))
 
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }

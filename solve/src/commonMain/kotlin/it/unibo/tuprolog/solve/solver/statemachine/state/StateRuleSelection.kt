@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
@@ -15,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal class StateRuleSelection(
-        override val solveRequest: Solve.Request,
+        override val solveRequest: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope
 ) : AbstractTimedState(solveRequest, executionStrategy) {
 
@@ -49,7 +50,7 @@ internal class StateRuleSelection(
                         subStateExecute(subInitialState).forEach {
                             yield(it)
 
-                            if (solveRequest.context in it.solveRequest.context.toCutContextsParent
+                            if (solveRequest.context in (it.solveRequest.context as ExecutionContextImpl).toCutContextsParent
                                     || it.solveRequest.context.logicalParentRequests.any { parentRequest -> parentRequest.context == it.solveRequest.context.throwRelatedToCutContextsParent })
                                 cutNextSiblings = true
 

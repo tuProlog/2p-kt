@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -53,20 +53,21 @@ internal object SolverUtils {
 
 
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] or optionally on [baseContext] */
-    fun Solve.Request.newSolveRequest(
+    fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
-            baseContext: ExecutionContext = this.context,
+            baseContext: ExecutionContextImpl = this.context,
             currentTime: TimeInstant = currentTime(),
             isChoicePointChild: Boolean = false,
-            logicalParentRequest: Solve.Request = this
-    ): Solve.Request =
-            Solve.Request(
+            logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
+    ): Solve.Request<ExecutionContextImpl> =
+            Solve.Request<ExecutionContextImpl>(
                     newGoal.extractSignature(),
                     newGoal.argsList,
+                    this.initialSolverQuery,
                     with(baseContext) {
                         copy(
-                                currentSubstitution = (currentSubstitution + toAddSubstitutions) as Substitution.Unifier,
+                                substitution = (substitution + toAddSubstitutions) as Substitution.Unifier,
                                 clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
                                 isChoicePointChild = isChoicePointChild,
                                 logicalParentRequests = sequence {
@@ -80,30 +81,31 @@ internal object SolverUtils {
                                 }
                         )
                     },
-                    adjustExecutionTimeout(this, currentTime)
+                    this.requestIssuingInstant,
+                    adjustExecutionMaxDuration(this, currentTime)
             )
 
     /** Re-computes the execution timeout, leaving it [Long.MAX_VALUE] if it was it, or decreasing it with elapsed time */
-    private fun adjustExecutionTimeout(
-            oldSolveRequest: Solve.Request,
+    private fun adjustExecutionMaxDuration(
+            oldSolveRequest: Solve.Request<ExecutionContextImpl>,
             currentTime: TimeInstant
     ): TimeDuration =
-            when (oldSolveRequest.executionTimeout) {
+            when (oldSolveRequest.executionMaxDuration) {
                 Long.MAX_VALUE -> Long.MAX_VALUE
-                else -> with(oldSolveRequest) { executionTimeout - (currentTime - context.computationStartTime) }
+                else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
                         .takeIf { it >= 0 }
                         ?: 0
             }
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
-    fun Solve.Request.newThrowSolveRequest(error: PrologError): Solve.Request =
+    fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
             this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseContext = error.context)
 
     /** Utility method to copy receiver [Solve.Request] importing [subSolve] context */
-    fun Solve.Request.importingContextFrom(subSolve: Solve) = this
+    fun Solve.Request<ExecutionContextImpl>.importingContextFrom(subSolve: Solve.Request<ExecutionContextImpl>) = this
             .copy(context = with(this.context) {
                 copy(
-                        currentSubstitution = (currentSubstitution + subSolve.context.currentSubstitution) as Substitution.Unifier,
+                        substitution = (substitution + subSolve.context.substitution) as Substitution.Unifier,
                         clauseScopedParents = sequence {
                             yieldAll(subSolve.context.clauseScopedParents)
                             yieldAll(this@with.clauseScopedParents)
@@ -115,34 +117,34 @@ internal object SolverUtils {
 
     /** Creates a [Solve.Response] with [Solution.Yes], taking signature and arguments from receiver request
      * and using given [otherResponse] substitution and context */
-    fun Solve.Request.yesResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
+    fun Solve.Request<ExecutionContextImpl>.yesResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
             Solution.Yes(
                     this.signature,
                     this.arguments,
-                    (this.context.currentSubstitution + otherResponse.context.currentSubstitution) as Substitution.Unifier
-            ),
-            otherResponse.context
+                    (this.context.substitution + otherResponse.context!!.substitution) as Substitution.Unifier
+            ), // TODO: 25/09/2019 using otherResponse.solution.substitution is not the same thing because it's filtered as answer substitution
+            context = otherResponse.context
     )
 
     /** Creates a [Solve.Response] with [Solution.No], taking signature and arguments from receiver request
      * and using given [otherResponse] context */
-    fun Solve.Request.noResponseBy(otherResponse: Solve.Response): Solve.Response =
-            Solve.Response(Solution.No(this.signature, this.arguments), otherResponse.context)
+    fun Solve.Request<ExecutionContextImpl>.noResponseBy(otherResponse: Solve.Response): Solve.Response =
+            Solve.Response(Solution.No(this.signature, this.arguments), context = otherResponse.context!!)
 
     /** Creates a [Solve.Response] with [Solution.Halt], taking signature and arguments from receiver request
      * and using given [otherResponse] context and exception */
-    fun Solve.Request.haltResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
+    fun Solve.Request<ExecutionContextImpl>.haltResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
             Solution.Halt(
                     this.signature,
                     this.arguments,
                     (otherResponse.solution as Solution.Halt).exception
             ),
-            otherResponse.context
+            context = otherResponse.context!!
     )
 
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
-    fun Solve.Request.responseBy(otherResponse: Solve.Response): Solve.Response = when (otherResponse.solution) {
+    fun Solve.Request<ExecutionContextImpl>.responseBy(otherResponse: Solve.Response): Solve.Response = when (otherResponse.solution) {
         is Solution.Yes -> this.yesResponseBy(otherResponse)
         is Solution.No -> this.noResponseBy(otherResponse)
         is Solution.Halt -> this.haltResponseBy(otherResponse)

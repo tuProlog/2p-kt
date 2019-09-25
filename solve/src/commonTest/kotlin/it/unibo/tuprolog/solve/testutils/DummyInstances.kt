@@ -1,12 +1,9 @@
 package it.unibo.tuprolog.solve.testutils
 
-import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
-import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlinx.coroutines.MainScope
 
 /**
@@ -17,14 +14,11 @@ import kotlinx.coroutines.MainScope
 internal object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
-    internal val executionContext = ExecutionContext(Libraries(), emptyMap(), ClauseDatabase.empty(), ClauseDatabase.empty(), currentTime())
+    internal val executionContext = ExecutionContextImpl() // TODO: 25/09/2019 review tests to see if those fields are still necessary
 
     /** A "true" solveRequest */
-    internal val solveRequest = Solve.Request(Signature("true", 0), emptyList(), executionContext)
+    internal val solveRequest = Solve.Request(Signature("true", 0), emptyList(), Struct.of("ciao"), executionContext)
 
     /** An execution strategy for states */
     internal val executionStrategy = MainScope()
-
-    /** A solveResponse to [solveRequest] */
-    internal val solveResponse = with(solveRequest) { Solve.Response(Solution.Yes(signature, arguments, context.currentSubstitution), context) }
 }

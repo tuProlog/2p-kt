@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -24,6 +25,7 @@ internal class StateEndTest {
     private val solveRequest = Solve.Request(
             Signature("p", 2),
             listOf(myScope.varOf("A"), myScope.varOf("B")),
+            Truth.`true`(),
             DummyInstances.executionContext
     )
     private val anException = HaltException(context = DummyInstances.executionContext)
@@ -46,7 +48,7 @@ internal class StateEndTest {
         myScope.where {
             val toBeTested = StateEnd.True(
                     solveRequest.copy(context = with(solveRequest.context) {
-                        copy(currentSubstitution = Substitution.of(
+                        copy(substitution = Substitution.of(
                                 varOf("A") to varOf("C"),
                                 varOf("C") to Atom.of("c"),
                                 varOf("D") to Atom.of("d")

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
@@ -23,7 +23,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 abstract class PrologError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContext,
+        context: ExecutionContextImpl,
         open val type: Struct,
         open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {
@@ -34,7 +34,7 @@ abstract class PrologError(
                 ?: errorStructOf(type)
     }
 
-    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
+    constructor(cause: Throwable?, context: ExecutionContextImpl, type: Struct, extraData: Term? = null)
             : this(cause?.toString(), cause, context, type, extraData)
 
     companion object {
@@ -47,7 +47,7 @@ abstract class PrologError(
         fun of(
                 message: String? = null,
                 cause: Throwable? = null,
-                context: ExecutionContext,
+                context: ExecutionContextImpl,
                 type: Struct,
                 extraData: Term? = null
         ) = with(type) {

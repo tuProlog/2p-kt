@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
@@ -67,11 +68,13 @@ internal class ConjunctionTest {
         val aToBeCutContext = DummyInstances.executionContext.copy()
         val leftPrimitive = object : PrimitiveWrapper(Signature("left", 0)) {
             override val uncheckedImplementation: Primitive = {
+                it as Solve.Request<ExecutionContextImpl>
+
                 sequenceOf(
                         Solve.Response(
-                                Solution.Yes(it.signature, it.arguments, (it.context.currentSubstitution + firstSubstitution).asUnifier()),
-                                it.context.copy(
-                                        currentSubstitution = (it.context.currentSubstitution + firstSubstitution).asUnifier(),
+                                Solution.Yes(it.signature, it.arguments, (it.context.substitution + firstSubstitution).asUnifier()),
+                                context = it.context.copy(
+                                        substitution = (it.context.substitution + firstSubstitution).asUnifier(),
                                         toCutContextsParent = sequenceOf(aToBeCutContext)
                                 )
                         )
@@ -80,10 +83,11 @@ internal class ConjunctionTest {
         }
         val rightPrimitive = object : PrimitiveWrapper(Signature("right", 0)) {
             override val uncheckedImplementation: Primitive = {
+                it as Solve.Request<ExecutionContextImpl>
                 sequenceOf(
                         Solve.Response(
-                                Solution.Yes(it.signature, it.arguments, (it.context.currentSubstitution + secondSubstitution).asUnifier()),
-                                it.context.copy(currentSubstitution = (it.context.currentSubstitution + secondSubstitution).asUnifier())
+                                Solution.Yes(it.signature, it.arguments, (it.context.substitution + secondSubstitution).asUnifier()),
+                                context = it.context.copy(substitution = (it.context.substitution + secondSubstitution).asUnifier())
                         )
                 )
             }
@@ -95,7 +99,7 @@ internal class ConjunctionTest {
 
         val responses = Conjunction.primitive(request).toList()
         assertEquals(1, responses.count())
-        assertEquals(Substitution.of(firstSubstitution, secondSubstitution), responses.single().context.currentSubstitution)
-        assertSame(aToBeCutContext, responses.single().context.toCutContextsParent.single())
+        assertEquals(Substitution.of(firstSubstitution, secondSubstitution), responses.single().context!!.substitution)
+        assertSame(aToBeCutContext, responses.single().context!!.toCutContextsParent.single())
     }
 }

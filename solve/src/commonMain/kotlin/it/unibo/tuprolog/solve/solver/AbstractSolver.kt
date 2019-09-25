@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solver
 
 /**
@@ -10,4 +10,4 @@ import it.unibo.tuprolog.solve.Solver
  *
  * @author Enrico
  */
-abstract class AbstractSolver(protected open val startContext: ExecutionContext) : Solver
+abstract class AbstractSolver(protected open val startContext: ExecutionContextImpl) : Solver

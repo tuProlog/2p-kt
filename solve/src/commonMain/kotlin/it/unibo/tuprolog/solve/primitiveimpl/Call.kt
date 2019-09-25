@@ -4,7 +4,8 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.SolverSLD
@@ -20,6 +21,9 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 object Call : PrimitiveWrapper(Signature("call", 1)) {
 
     override val uncheckedImplementation: Primitive = { mainRequest ->
+        // TODO: 25/09/2019 remove that
+        mainRequest as Solve.Request<ExecutionContextImpl>
+
         val toBeCalledGoal = mainRequest.arguments.single()
         when {
             toBeCalledGoal is Var -> throw InstantiationError(
@@ -32,7 +36,7 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
                 SolverSLD().solve(
                         mainRequest.newSolveRequest(toBeCalledGoal as Struct)
                 ).map {
-                    mainRequest.responseBy(it.copy(context = resetCutWorkChanges(it.context, mainRequest.context)))
+                    mainRequest.responseBy(it.copy(context = resetCutWorkChanges(it.context!!, mainRequest.context)))
                 }
 
             else -> throw TypeError(
@@ -49,7 +53,7 @@ object Call : PrimitiveWrapper(Signature("call", 1)) {
      *
      * That implements expected ISO behaviour, for which *call/1 is said to be opaque (or not transparent) to cut.*
      */
-    private fun resetCutWorkChanges(subResponseContext: ExecutionContext, toRecover: ExecutionContext) =
+    private fun resetCutWorkChanges(subResponseContext: ExecutionContextImpl, toRecover: ExecutionContextImpl) =
             // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
             subResponseContext.copy(toCutContextsParent = toRecover.toCutContextsParent)
 }

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -32,20 +33,20 @@ internal object StateGoalEvaluationUtils {
     /** Map containing requests that should make StateGoalEvaluation go into predicted state */
     internal val requestToNextStatesMap by lazy {
         mapOf(
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution), contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context = contextDifferentFromDummy)) }
                         to Pair(1, StateEnd.True::class),
 
                 createPrimitiveRequest {
                     sequenceOf(
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution), contextDifferentFromDummy),
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.currentSubstitution), contextDifferentFromDummy)
+                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context = contextDifferentFromDummy),
+                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context =  contextDifferentFromDummy)
                     )
                 } to Pair(2, StateEnd.True::class),
 
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.No(it.signature, it.arguments), contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.No(it.signature, it.arguments), context = contextDifferentFromDummy)) }
                         to Pair(1, StateEnd.False::class),
 
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), context = contextDifferentFromDummy)) }
                         to Pair(1, StateEnd.Halt::class),
 
                 createPrimitiveRequest { throw HaltException(context = contextDifferentFromDummy) }
@@ -60,7 +61,7 @@ internal object StateGoalEvaluationUtils {
                 createPrimitiveRequest {
                     sequence {
                         yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextDifferentFromDummy) }))
-                        yield(Solve.Response(Solution.No(it.signature, it.arguments), contextDifferentFromDummy))
+                        yield(Solve.Response(Solution.No(it.signature, it.arguments), context = contextDifferentFromDummy))
                     }
                 } to Pair(1, StateEnd.Halt::class),
 
@@ -78,9 +79,9 @@ internal object StateGoalEvaluationUtils {
     }
 
     /** Creates a request launching exactly given primitive behaviour */
-    private fun createPrimitiveRequest(primitiveBehaviour: (Solve.Request) -> Sequence<Solve.Response>) =
+    private fun createPrimitiveRequest(primitiveBehaviour: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response>) =
             object : PrimitiveWrapper(Signature("testPrimitive", 0)) {
-                override val uncheckedImplementation: Primitive = primitiveBehaviour
+                override val uncheckedImplementation: Primitive = primitiveBehaviour as Primitive
             }.run {
                 SolverTestUtils.createSolveRequest(
                         signature withArgs emptyList(),

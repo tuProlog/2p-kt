@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
@@ -238,7 +239,7 @@ internal object SolverSLDUtils {
     }
 
     /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
-    private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request, Iterable<Solution>>) =
+    private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request<ExecutionContextImpl>, Iterable<Solution>>) =
             requestSolutionMap.mapKeys { it.key.query to it.key.context }.entries.map { it.toPair() }
 
     /** Utility method to check if given solutions match */

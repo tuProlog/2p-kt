@@ -5,17 +5,16 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.solver.ExecutionContext
 import it.unibo.tuprolog.solve.solver.SolverStrategies
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 /**
- * Test class for [ExecutionContext]
+ * Test class for [ExecutionContextImpl]
  *
  * @author Enrico
  */
@@ -25,31 +24,29 @@ internal class ExecutionContextTest {
     private val someFlags = emptyMap<Atom, Term>()
     private val aStaticKB = ClauseDatabase.empty()
     private val aDynamicKB = ClauseDatabase.empty()
-    private val aComputationStartTime = 0L
     private val aSubstitution = Substitution.empty()
     private val someSolverStrategies = object : SolverStrategies {
         override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>, context: ExecutionContext): P = throw NotImplementedError()
         override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>, context: ExecutionContext): C = throw NotImplementedError()
         override fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean = throw NotImplementedError()
     }
-    private val aScopedParentSequence = emptySequence<ExecutionContext>()
+    private val aScopedParentSequence = emptySequence<ExecutionContextImpl>()
     private val isChoicePointChild = true
-    private val toCutContextParent = emptySequence<ExecutionContext>()
-    private val aParentRequestsSequence = emptySequence<Solve.Request>()
+    private val toCutContextParent = emptySequence<ExecutionContextImpl>()
+    private val aParentRequestsSequence = emptySequence<Solve.Request<ExecutionContextImpl>>()
     private val aThrowRelatedContextParent = DummyInstances.executionContext
 
     @Test
     fun executionContextHoldsInsertedData() {
-        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB, aComputationStartTime,
-                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild, toCutContextParent,
-                aParentRequestsSequence, aThrowRelatedContextParent)
+        val toBeTested = ExecutionContextImpl(someLibraries, someFlags, aStaticKB, aDynamicKB,
+                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild,
+                toCutContextParent, aParentRequestsSequence, aThrowRelatedContextParent)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
         assertEquals(aStaticKB, toBeTested.staticKB)
         assertEquals(aDynamicKB, toBeTested.dynamicKB)
-        assertEquals(aComputationStartTime, toBeTested.computationStartTime)
-        assertEquals(aSubstitution, toBeTested.currentSubstitution)
+        assertEquals(aSubstitution, toBeTested.substitution)
         assertEquals(aScopedParentSequence, toBeTested.clauseScopedParents)
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
         assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
@@ -60,10 +57,9 @@ internal class ExecutionContextTest {
 
     @Test
     fun executionContextDefaultsCorrect() {
-        val toBeTested = ExecutionContext(someLibraries, someFlags, aStaticKB, aDynamicKB)
+        val toBeTested = ExecutionContextImpl(someLibraries, someFlags, aStaticKB, aDynamicKB)
 
-        assertTrue { currentTime() >= toBeTested.computationStartTime }
-        assertEquals(Substitution.empty(), toBeTested.currentSubstitution)
+        assertEquals(Substitution.empty(), toBeTested.substitution)
         assertEquals(emptySequence(), toBeTested.clauseScopedParents)
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
         assertEquals(false, toBeTested.isChoicePointChild)
