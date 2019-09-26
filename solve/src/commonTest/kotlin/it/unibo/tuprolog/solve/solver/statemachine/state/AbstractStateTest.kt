@@ -19,7 +19,7 @@ internal class AbstractStateTest {
 
     @Test
     fun holdsInsertedData() {
-        assertEquals(solveRequest, abstractStateUnderTest.solveRequest)
+        assertEquals(solveRequest, abstractStateUnderTest.solve)
     }
 
     @Test

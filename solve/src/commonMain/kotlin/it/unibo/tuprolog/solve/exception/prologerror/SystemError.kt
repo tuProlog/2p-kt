@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 
 /**
  * The system error occurs when an internal problem occurred and if not caught, it will halt inferential machine
@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class SystemError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContextImpl,
+        context: DeclarativeImplExecutionContext,
         extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 

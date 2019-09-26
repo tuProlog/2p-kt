@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
+import it.unibo.tuprolog.solve.solver.statemachine.stateEndFalse
+import it.unibo.tuprolog.solve.solver.statemachine.stateEndTrue
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -13,18 +15,18 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal class StateInit(
-        override val solveRequest: Solve.Request<ExecutionContextImpl>,
+        override val solve: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope
-) : AbstractTimedState(solveRequest, executionStrategy) {
+) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val initializedSolveRequest = solveRequest.copy(context = initializationWork(solveRequest.context))
+        val initializedSolveRequest = solve.copy(context = initializationWork(solve.context))
         val currentGoal = initializedSolveRequest.query
 
         when {
             // current goal is already demonstrated
             with(initializedSolveRequest.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
-                yield(StateEnd.True(initializedSolveRequest, executionStrategy))
+                yield(stateEndTrue(initializedSolveRequest.context.substitution, contextImpl = initializedSolveRequest.context))
 
             else -> when {
 
@@ -41,8 +43,7 @@ internal class StateInit(
                     }
 
                 // goal non well-formed
-                else ->
-                    yield(StateEnd.False(initializedSolveRequest, executionStrategy))
+                else -> yield(stateEndFalse(contextImpl = initializedSolveRequest.context))
             }
         }
     }
@@ -52,7 +53,7 @@ internal class StateInit(
      *
      * It creates a new context adding given one as it's parent and resetting isChoicePointChild flag for the new context
      */
-    private fun initializationWork(context: ExecutionContextImpl): ExecutionContextImpl =
+    private fun initializationWork(context: ExecutionContextImpl) =
             context.copy(
                     clauseScopedParents = sequence { yield(context); yieldAll(context.clauseScopedParents) },
                     isChoicePointChild = false

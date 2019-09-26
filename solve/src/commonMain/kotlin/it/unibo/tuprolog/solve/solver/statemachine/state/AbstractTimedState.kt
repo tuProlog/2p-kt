@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.Solve.Response
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
+import it.unibo.tuprolog.solve.solver.statemachine.stateEndHalt
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -14,9 +16,10 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 internal abstract class AbstractTimedState(
-        override val solveRequest: Solve.Request<ExecutionContextImpl>,
+        /** The [Solve.Request] that guides the State behaviour towards [Response]s */
+        override val solve: Solve.Request<DeclarativeImplExecutionContext>,
         override val executionStrategy: CoroutineScope
-) : AbstractState(solveRequest, executionStrategy), TimedState {
+) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
 
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
     private val stateCurrentTime by lazy { getCurrentTime() }
@@ -24,14 +27,14 @@ internal abstract class AbstractTimedState(
     override fun behave(): Sequence<State> = when {
         // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is Long.MAX_VALUE
         // avoiding timeIsOver check
-        timeIsOver(stateCurrentTime - solveRequest.requestIssuingInstant, solveRequest.executionMaxDuration) ->
-            sequenceOf(
-                    StateEnd.Halt(solveRequest, executionStrategy, TimeOutException(
-                            "Given time for `${solveRequest.query}` computation (${solveRequest.executionMaxDuration}) wasn't enough for completion",
-                            context = solveRequest.context,
-                            deltaTime = stateCurrentTime - solveRequest.requestIssuingInstant
-                    ))
-            )
+        timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
+            sequenceOf(stateEndHalt(
+                    TimeOutException(
+                            "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
+                            context = solve.context,
+                            deltaTime = stateCurrentTime - solve.requestIssuingInstant
+                    )
+            ))
         else -> behaveTimed()
     }
 

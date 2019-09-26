@@ -30,7 +30,7 @@ internal class StateIntegrationTesting {
     /** Utility function to compute answer substitution */
     // TODO soluzione provvisioria in attesa di rifattorizzare i test
     private fun StateEnd.True.answerSubstitution() =
-            with(this.solveRequest) { SolverUtils.reduceAndFilterSubstitution(context.substitution, query.variables) }
+            with(solve) { SolverUtils.reduceAndFilterSubstitution(context!!.substitution, solution.query.variables) }
 
     @Test
     fun trueSolveRequestWorks() {
@@ -78,7 +78,7 @@ internal class StateIntegrationTesting {
         assertEquals(6, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseRequest) }
+        val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.threeResponseRequest.query }
         assertEquals(3, interestingStates.count())
 
         val answerSubstitution = interestingStates.map { it.answerSubstitution() }
@@ -99,15 +99,15 @@ internal class StateIntegrationTesting {
 
         val subInitStates = nextStates.filterIsInstance<StateInit>()
         assertEquals(3, subInitStates.count())
-        assertTrue { subInitStates.all { it.solveRequest.context.isChoicePointChild } }
-        assertTrue { (nextStates - subInitStates).none { (it.solveRequest.context as ExecutionContextImpl).isChoicePointChild } }
+        assertTrue { subInitStates.all { it.solve.context.isChoicePointChild } }
+//        assertTrue { (nextStates - subInitStates).none { (it.solve.context as DeclarativeImplExecutionContext).isChoicePointChild } }
 
-        val subRuleSelectionStateContexts = nextStates.filterIsInstance<StateRuleSelection>().map { it.solveRequest.context }
-        subRuleSelectionStateContexts.zip(subInitStates.map { it.solveRequest.context }).forEach { (expected, actual) ->
+        val subRuleSelectionStateContexts = nextStates.filterIsInstance<StateRuleSelection>().map { it.solve.context }
+        subRuleSelectionStateContexts.zip(subInitStates.map { it.solve.context }).forEach { (expected, actual) ->
             assertSame(expected, actual.clauseScopedParents.first())
         }
 
-        subRuleSelectionStateContexts.zip(subInitStates.map { it.solveRequest.context }).forEach { (ruleSelectionContext, initContext) ->
+        subRuleSelectionStateContexts.zip(subInitStates.map { it.solve.context }).forEach { (ruleSelectionContext, initContext) ->
             assertSame(ruleSelectionContext, initContext.clauseScopedParents.first())
         }
     }
@@ -122,7 +122,7 @@ internal class StateIntegrationTesting {
         assertEquals(2, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.oneResponseBecauseOfCut) }
+        val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.oneResponseBecauseOfCut.query }
         assertEquals(1, interestingStates.count())
         assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution().values.single())
     }
@@ -135,7 +135,7 @@ internal class StateIntegrationTesting {
         assertEquals(4, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.twoResponseBecauseOfCut) }
+        val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.twoResponseBecauseOfCut.query }
         assertEquals(2, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("only")),
@@ -151,7 +151,7 @@ internal class StateIntegrationTesting {
         assertEquals(9, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseBecauseOfCut) }
+        val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.threeResponseBecauseOfCut.query }
         assertEquals(3, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("c"), Atom.of("d")),
@@ -164,7 +164,7 @@ internal class StateIntegrationTesting {
         val nextStates = execute(SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase).toList()
 
         val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
-                .filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase) }
+                .filter { it.solve.solution.query == SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase.query }
         assertEquals(2, interestingStates.count())
         Scope.of(*SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase.arguments.map { it as Var }.toTypedArray()).where {
             assertEquals(
@@ -182,7 +182,7 @@ internal class StateIntegrationTesting {
         val nextStates = execute(SolverTestUtils.threeResponseOnCutAndConjunctionDatabase).toList()
 
         val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
-                .filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseOnCutAndConjunctionDatabase) }
+                .filter { it.solve.solution.query == SolverTestUtils.threeResponseOnCutAndConjunctionDatabase.query }
         assertEquals(3, interestingStates.count())
         Scope.of(*SolverTestUtils.threeResponseOnCutAndConjunctionDatabase.arguments.map { it as Var }.toTypedArray()).where {
             assertEquals(

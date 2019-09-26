@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -49,7 +50,7 @@ internal class StateInitTest {
                     assertEquals(1, nextStates.count())
                     assertTrue { nextStates.single() is StateGoalEvaluation }
 
-                    assertEquals(it.query, nextStates.first().solveRequest.query)
+                    assertEquals(it.query, (nextStates.first().solve as Solve.Request<*>).query)
                 }
     }
 
@@ -59,7 +60,7 @@ internal class StateInitTest {
 
         assertEquals(
                 prepareForExecution(StateInitUtils.preparationNeededGoal.query),
-                nextStates.first().solveRequest.query
+                (nextStates.first().solve as Solve.Request<*>).query
         )
     }
 
@@ -75,7 +76,7 @@ internal class StateInitTest {
     fun stateInitializationCreatesNewContextAddingAsParentTheCurrentOne() {
         val toBeTested = StateInit(DummyInstances.solveRequest, DummyInstances.executionStrategy).behave().single()
 
-        assertSame(toBeTested.solveRequest.context.clauseScopedParents.single(), DummyInstances.executionContext)
+        assertSame((toBeTested.solve as Solve.Response).context!!.clauseScopedParents.single(), DummyInstances.executionContext)
     }
 
     @Test
@@ -84,8 +85,8 @@ internal class StateInitTest {
                 with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) },
                 DummyInstances.executionStrategy
         )
-        val toBeTested = myState.behave().single()
-        assertEquals(false, toBeTested.solveRequest.context.isChoicePointChild)
-        assertEquals(true, toBeTested.solveRequest.context.clauseScopedParents.single().isChoicePointChild)
+        val toBeTested = myState.behave().single().solve as Solve.Response
+        assertEquals(false, toBeTested.context!!.isChoicePointChild)
+        assertEquals(true, toBeTested.context!!.clauseScopedParents.single().isChoicePointChild)
     }
 }

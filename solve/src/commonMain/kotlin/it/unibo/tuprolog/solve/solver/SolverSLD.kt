@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
-import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,15 +28,8 @@ internal class SolverSLD(
     internal fun solve(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> = StateMachineExecutor
             .execute(StateInit(goalRequest, executionStrategy))
             .filterIsInstance<FinalState>()
-            .filter { it.solveRequest.equalSignatureAndArgs(goalRequest) }
-            .map { Solve.Response(it.toSolution(), context = it.solveRequest.context) }
-
-    /** Utility method to map a [FinalState] to its corresponding [Solution] */
-    private fun FinalState.toSolution() = when (this) {
-        is StateEnd.True -> with(solveRequest) { Solution.Yes(signature, arguments, context.substitution) }
-        is StateEnd.Halt -> with(solveRequest) { Solution.Halt(signature, arguments, exception) }
-        else -> with(solveRequest) { Solution.No(signature, arguments) }
-    }
+            .filter { it.solve.solution.query == goalRequest.query }
+            .map { it.solve }
 
     // this should become useless when substitutions will be cleaned, while performing resolution
     /** Utility function to calculate answerSubstitution on Solution.Yes */

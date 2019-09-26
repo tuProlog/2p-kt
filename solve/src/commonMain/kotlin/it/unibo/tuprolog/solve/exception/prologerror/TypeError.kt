@@ -3,9 +3,9 @@ package it.unibo.tuprolog.solve.exception.prologerror
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 
 /**
  * The type error occurs when something is not of [Expected] type
@@ -22,7 +22,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
 class TypeError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContextImpl,
+        context: DeclarativeImplExecutionContext,
         val expectedType: Expected,
         val actualValue: Term,
         extraData: Term? = null

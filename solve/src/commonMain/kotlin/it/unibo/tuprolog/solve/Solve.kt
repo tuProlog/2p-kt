@@ -47,44 +47,32 @@ sealed class Solve {
         /** The current query [Struct] of this request */
         val query: Struct by lazy { signature withArgs arguments }
 
-        /** Checks for equality only by means of [signature] and [arguments] fields */
-        fun equalSignatureAndArgs(other: Any?): Boolean {
-            if (this === other) return true
-            if (other == null || this::class != other::class) return false
-
-            other as Request<*>
-
-            if (signature != other.signature) return false
-            if (arguments != other.arguments) return false
-
-            return true
-        }
-
         /** Creates a new [Response] to this Request */
         fun replyWith(
                 solution: Solution,
                 libraries: Libraries? = null,
                 flags: Map<Atom, Term>? = null,
                 staticKB: ClauseDatabase? = null,
-                dynamicKB: ClauseDatabase? = null
-        ) = Response(solution, libraries, flags, staticKB, dynamicKB)
+                dynamicKB: ClauseDatabase? = null,
+                context: ExecutionContextImpl? = null
+        ) = Response(solution, libraries, flags, staticKB, dynamicKB, context)
 
         /** Creates a new successful [Response] to this Request, with substitution */
-        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null) =
-                replyWith(Solution.Yes(query, substitution), libraries, flags, staticKB, dynamicKB)
+        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
+                replyWith(Solution.Yes(query, substitution), libraries, flags, staticKB, dynamicKB, executionContextImpl)
 
         /** Creates a new failed [Response] to this Request */
-        fun replyFail(libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null) =
-                replyWith(Solution.No(query), libraries, flags, staticKB, dynamicKB)
+        fun replyFail(libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
+                replyWith(Solution.No(query), libraries, flags, staticKB, dynamicKB, executionContextImpl)
 
         /** Creates a new halt [Response] to this Request, with cause exception */
-        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null) =
-                replyWith(Solution.Halt(query, exception), libraries, flags, staticKB, dynamicKB)
+        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
+                replyWith(Solution.Halt(query, exception), libraries, flags, staticKB, dynamicKB, executionContextImpl)
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
-        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null) = when (condition) {
-            true -> replySuccess(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB)
-            false -> replyFail(libraries, flags, staticKB, dynamicKB)
+        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) = when (condition) {
+            true -> replySuccess(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, executionContextImpl = executionContextImpl)
+            false -> replyFail(libraries, flags, staticKB, dynamicKB, executionContextImpl)
         }
     }
 
@@ -102,7 +90,7 @@ sealed class Solve {
             /** The Dynamic KB after request execution (use `null` in case nothing changed) */
             val dynamicKB: ClauseDatabase? = null,
 
-            // TODO replace with ExecutionFlowModification only, and update above methods and tests!!
+            // TODO replace with ExecutionFlowModification only, and update above methods (parameter names and types) and tests!!
             val context: ExecutionContextImpl? = null
     ) : Solve()
 }

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.primitiveimpl
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -11,6 +10,8 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 
@@ -94,7 +95,7 @@ object Throw : PrimitiveWrapper(Signature("throw", 1)) {
     }
 
     /** Utility function to extract error, with filled cause field, till the error root */
-    private fun extractErrorCauseChain(aTerm: Term, context: ExecutionContextImpl): PrologError? =
+    private fun extractErrorCauseChain(aTerm: Term, context: DeclarativeImplExecutionContext): PrologError? =
             extractErrorTypeAndExtra(aTerm)?.let { (type, extra) ->
                 PrologError.of(
                         context = context,

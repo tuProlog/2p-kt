@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverStrategies
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -14,7 +15,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * Test class for [ExecutionContextImpl]
+ * Test class for [DeclarativeImplExecutionContext]
  *
  * @author Enrico
  */

@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
@@ -13,6 +12,7 @@ import it.unibo.tuprolog.solve.primitiveimpl.testutils.CallUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.CatchUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
 import it.unibo.tuprolog.solve.primitiveimpl.testutils.ThrowUtils
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase

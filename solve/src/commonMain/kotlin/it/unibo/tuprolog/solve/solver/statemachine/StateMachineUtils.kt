@@ -1,12 +1,17 @@
 package it.unibo.tuprolog.solve.solver.statemachine
 
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.statemachine.state.IntermediateState
 import it.unibo.tuprolog.solve.solver.statemachine.state.State
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
-import kotlinx.coroutines.CoroutineScope
+import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
  * Utils object to help implementing [State]s' behaviour
@@ -15,11 +20,55 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal object StateMachineUtils {
 
-    /** Converts receiver solution to corresponding [FinalState] */
-    fun Solution.toFinalState(solveRequest: Solve.Request<ExecutionContextImpl>, executionStrategy: CoroutineScope): FinalState = when (this) {
-        is Solution.Yes -> StateEnd.True(solveRequest, executionStrategy)
-        is Solution.No -> StateEnd.False(solveRequest, executionStrategy)
-        is Solution.Halt -> StateEnd.Halt(solveRequest, executionStrategy, this.exception)
-    }
+//    /** Converts receiver solution to corresponding [FinalState] */
+//    fun Solution.toFinalState(solveResponse: Solve.Response): FinalState = when (this) {
+//        is Solution.Yes -> StateEnd.True(solveResponse)
+//        is Solution.No -> StateEnd.False(solveResponse)
+//        is Solution.Halt -> StateEnd.Halt(solveResponse)
+//    }
 
 }
+
+// TODO: 26/09/2019 documentation and testing for those methods
+
+internal fun IntermediateState.stateEnd(response: Solve.Response) =
+        stateEnd(response.solution, response.libraries, response.flags, response.staticKB, response.dynamicKB, response.context)
+
+internal fun IntermediateState.stateEnd(
+        solution: Solution,
+        libraries: Libraries? = null,
+        flags: Map<Atom, Term>? = null,
+        staticKB: ClauseDatabase? = null,
+        dynamicKB: ClauseDatabase? = null,
+        contextImpl: ExecutionContextImpl? = null
+): StateEnd = when (solution) {
+    is Solution.Yes -> stateEndTrue(solution.substitution, libraries, flags, staticKB, dynamicKB, contextImpl)
+    is Solution.No -> stateEndFalse(libraries, flags, staticKB, dynamicKB, contextImpl)
+    is Solution.Halt -> stateEndHalt(solution.exception, libraries, flags, staticKB, dynamicKB, contextImpl)
+}
+
+internal fun IntermediateState.stateEndTrue(
+        substitution: Substitution.Unifier = Substitution.empty(),
+        libraries: Libraries? = null,
+        flags: Map<Atom, Term>? = null,
+        staticKB: ClauseDatabase? = null,
+        dynamicKB: ClauseDatabase? = null,
+        contextImpl: ExecutionContextImpl? = null
+) = StateEnd.True(solve.replySuccess(substitution, libraries, flags, staticKB, dynamicKB, contextImpl))
+
+internal fun IntermediateState.stateEndFalse(
+        libraries: Libraries? = null,
+        flags: Map<Atom, Term>? = null,
+        staticKB: ClauseDatabase? = null,
+        dynamicKB: ClauseDatabase? = null,
+        contextImpl: ExecutionContextImpl? = null
+) = StateEnd.False(solve.replyFail(libraries, flags, staticKB, dynamicKB, contextImpl))
+
+internal fun IntermediateState.stateEndHalt(
+        exception: TuPrologRuntimeException,
+        libraries: Libraries? = null,
+        flags: Map<Atom, Term>? = null,
+        staticKB: ClauseDatabase? = null,
+        dynamicKB: ClauseDatabase? = null,
+        contextImpl: ExecutionContextImpl? = null
+) = StateEnd.Halt(solve.replyException(exception, libraries, flags, staticKB, dynamicKB, contextImpl))

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import kotlinx.coroutines.CoroutineScope
@@ -11,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
  * @author Enrico
  */
 abstract class AbstractState(
-        override val solveRequest: Solve.Request<ExecutionContextImpl>,
+        override val solve: Solve,
         /** The execution scope where state behavior should execute computationally */
         protected open val executionStrategy: CoroutineScope
 ) : State {

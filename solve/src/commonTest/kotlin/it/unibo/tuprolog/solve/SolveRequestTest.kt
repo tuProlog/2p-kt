@@ -16,20 +16,16 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestFailedResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestHaltedResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestResponses
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestSuccessResponse
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentArgumentList
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentDynamicKB
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentExecutionContext
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentFlags
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentInitialUserQuery
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentLibraries
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentMaxDuration
-import it.unibo.tuprolog.solve.testutils.SolveUtils.differentSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.differentStaticKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionException
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionSubstitution
 import it.unibo.tuprolog.solve.testutils.SolveUtils.varargArgumentList
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /**
  * Test class for [Solve], [Solve.Request] and [Solve.Response]
@@ -96,19 +92,6 @@ internal class SolveRequestTest {
     fun equalsWorksAsExpected() {
         val aRequest = createRequest()
         assertEquals(aRequest.copy(), aRequest)
-    }
-
-    @Test
-    fun equalSignatureAndArgsWorksAsExpected() {
-        val aRequest = createRequest()
-
-        assertFalse { aRequest.equalSignatureAndArgs(aRequest.copy(signature = differentSignature)) }
-        assertFalse { aRequest.equalSignatureAndArgs(aRequest.copy(arguments = differentArgumentList)) }
-
-        assertTrue { aRequest.equalSignatureAndArgs(aRequest.copy(initialSolverQuery = differentInitialUserQuery)) }
-        assertTrue { aRequest.equalSignatureAndArgs(aRequest.copy(context = differentExecutionContext)) }
-        assertTrue { aRequest.equalSignatureAndArgs(aRequest.copy(requestIssuingInstant = differentIssuingInstant)) }
-        assertTrue { aRequest.equalSignatureAndArgs(aRequest.copy(executionMaxDuration = differentMaxDuration)) }
     }
 
     @Test

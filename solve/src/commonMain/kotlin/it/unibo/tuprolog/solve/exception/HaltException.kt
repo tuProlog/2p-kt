@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 
 /**
  * An exception thrown if there are problems during state machine execution, and solution process should be halted
@@ -16,8 +16,8 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 internal class HaltException(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContextImpl
+        context: DeclarativeImplExecutionContext
 ) : TuPrologRuntimeException(message, cause, context) {
 
-    constructor(cause: Throwable?, context: ExecutionContextImpl) : this(cause?.toString(), cause, context)
+    constructor(cause: Throwable?, context: DeclarativeImplExecutionContext) : this(cause?.toString(), cause, context)
 }

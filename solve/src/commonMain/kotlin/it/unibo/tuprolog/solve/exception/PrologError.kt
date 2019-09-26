@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 
 /**
  * Base class for Standard Prolog Errors and possibly other custom Primitive errors
@@ -23,7 +23,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 abstract class PrologError(
         message: String? = null,
         cause: Throwable? = null,
-        context: ExecutionContextImpl,
+        context: DeclarativeImplExecutionContext,
         open val type: Struct,
         open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {
@@ -34,7 +34,7 @@ abstract class PrologError(
                 ?: errorStructOf(type)
     }
 
-    constructor(cause: Throwable?, context: ExecutionContextImpl, type: Struct, extraData: Term? = null)
+    constructor(cause: Throwable?, context: DeclarativeImplExecutionContext, type: Struct, extraData: Term? = null)
             : this(cause?.toString(), cause, context, type, extraData)
 
     companion object {
@@ -47,7 +47,7 @@ abstract class PrologError(
         fun of(
                 message: String? = null,
                 cause: Throwable? = null,
-                context: ExecutionContextImpl,
+                context: DeclarativeImplExecutionContext,
                 type: Struct,
                 extraData: Term? = null
         ) = with(type) {
