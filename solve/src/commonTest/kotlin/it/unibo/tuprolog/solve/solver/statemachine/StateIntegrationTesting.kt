@@ -4,8 +4,9 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
@@ -25,6 +26,11 @@ internal class StateIntegrationTesting {
     /** Shorthand function to execute a solveRequest */
     private fun execute(solveRequest: Solve.Request<ExecutionContextImpl>): Sequence<State> =
             StateMachineExecutor.execute(StateInit(solveRequest, DummyInstances.executionStrategy))
+
+    /** Utility function to compute answer substitution */
+    // TODO soluzione provvisioria in attesa di rifattorizzare i test
+    private fun StateEnd.True.answerSubstitution() =
+            with(this.solveRequest) { SolverUtils.reduceAndFilterSubstitution(context.substitution, query.variables) }
 
     @Test
     fun trueSolveRequestWorks() {
@@ -55,7 +61,7 @@ internal class StateIntegrationTesting {
         assertTrue { nextStates[3] is StateEnd.True }
         assertTrue { nextStates[4] is StateEnd.True }
 
-        val answerSubstitution = (nextStates[4] as StateEnd.True).answerSubstitution
+        val answerSubstitution = (nextStates[4] as StateEnd.True).answerSubstitution()
         val scope = Scope.of(*answerSubstitution.keys.toTypedArray())
 
         assertEquals(Atom.of("a"), answerSubstitution[scope.varOf("A")])
@@ -75,7 +81,7 @@ internal class StateIntegrationTesting {
         val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.threeResponseRequest) }
         assertEquals(3, interestingStates.count())
 
-        val answerSubstitution = interestingStates.map { it.answerSubstitution }
+        val answerSubstitution = interestingStates.map { it.answerSubstitution() }
 
         val correctSubstitution = listOf("a", "b", "c").map(Atom.Companion::of)
         correctSubstitution.zip(answerSubstitution).forEach { (expectedSubstituent, substitution) ->
@@ -118,7 +124,7 @@ internal class StateIntegrationTesting {
 
         val interestingStates = trueEndStates.filter { it.solveRequest.equalSignatureAndArgs(SolverTestUtils.oneResponseBecauseOfCut) }
         assertEquals(1, interestingStates.count())
-        assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution.values.single())
+        assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution().values.single())
     }
 
     @Test
@@ -133,7 +139,7 @@ internal class StateIntegrationTesting {
         assertEquals(2, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("only")),
-                interestingStates.map { it.answerSubstitution.values.single() }
+                interestingStates.map { it.answerSubstitution().values.single() }
         )
     }
 
@@ -149,7 +155,7 @@ internal class StateIntegrationTesting {
         assertEquals(3, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("c"), Atom.of("d")),
-                interestingStates.map { it.answerSubstitution.values.single() }
+                interestingStates.map { it.answerSubstitution().values.single() }
         )
     }
 
@@ -166,7 +172,7 @@ internal class StateIntegrationTesting {
                             Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a1")),
                             Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("b1"))
                     ),
-                    interestingStates.map { it.answerSubstitution }
+                    interestingStates.map { it.answerSubstitution() }
             )
         }
     }
@@ -185,7 +191,7 @@ internal class StateIntegrationTesting {
                             Substitution.of(varOf("X") to numOf(4)),
                             Substitution.of(varOf("X") to numOf(6))
                     ),
-                    interestingStates.map { it.answerSubstitution }
+                    interestingStates.map { it.answerSubstitution() }
             )
         }
     }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -23,21 +24,22 @@ internal object SolverUtils {
             elements: Sequence<E>,
             context: ExecutionContext,
             selectionStrategy: (Sequence<E>, ExecutionContext) -> E
-    ): Sequence<E> = sequence {
-        when (elements.any()) {
-            true -> selectionStrategy(elements, context).let { selected ->
-                yield(selected)
-                yieldAll(
-                        orderedWithStrategy(
-                                elements.filterIndexed { index, _ -> index != elements.indexOf(selected) },
-                                context,
-                                selectionStrategy
+    ): Sequence<E> =
+            when (elements.any()) {
+                true -> sequence {
+                    selectionStrategy(elements, context).let { selected ->
+                        yield(selected)
+                        yieldAll(
+                                orderedWithStrategy(
+                                        elements.filterIndexed { index, _ -> index != elements.indexOf(selected) },
+                                        context,
+                                        selectionStrategy
+                                )
                         )
-                )
+                    }
+                }
+                else -> emptySequence()
             }
-            else -> yieldAll(emptySequence())
-        }
-    }
 
     /** Check whether the provided term is a well-formed predication */
     fun isWellFormed(goal: Term): Boolean = goal.accept(Clause.bodyWellFormedVisitor)
@@ -51,6 +53,18 @@ internal object SolverUtils {
             // exploits "Clause" implementation of prepareForExecution() to do that
             Directive.of(goal).prepareForExecution().args.single().castTo()
 
+    /**
+     * Reduces substitution variable chains and retains only [toRetainVariables]
+     *
+     * If [toRetainVariables] is null, all reduced substitution will be returned
+     */
+    fun reduceAndFilterSubstitution(substitution: Substitution, toRetainVariables: Sequence<Var>? = null) =
+            with(substitution) { this.mapValues { (_, term) -> term.apply(this) } }
+                    .let { reducedSubstitution ->
+                        toRetainVariables
+                                ?.run { reducedSubstitution.filterKeys { it in toRetainVariables } }
+                                ?: reducedSubstitution
+                    }.asUnifier()
 
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] or optionally on [baseContext] */
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(

@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -43,11 +42,9 @@ internal class SolverSLD(
     // this should become useless when substitutions will be cleaned, while performing resolution
     /** Utility function to calculate answerSubstitution on Solution.Yes */
     private fun Solution.withOnlyAnswerSubstitution() = when (this) {
-        // TODO: 25/09/2019 extract this out from there and insert in SolverUtils to be tested and used in tests
         is Solution.Yes ->
             // reduce substitution variable chains
-            copy(substitution = with(substitution) { this.mapValues { (_, term) -> term.apply(this) } }
-                    .filterKeys { it in query.variables }.asUnifier())
+            copy(substitution = SolverUtils.reduceAndFilterSubstitution(substitution, query.variables))
         else -> this
     }
 }

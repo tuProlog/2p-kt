@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.primitiveimpl.testutils
 
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.testutils.DummyInstances
@@ -68,8 +68,7 @@ internal object PrimitivesUtils {
     internal fun filterInterestingVariables(solution: Solution) = when (solution) {
         is Solution.Yes ->
             // reduce substitution variable chains
-            solution.copy(substitution = with(solution.substitution) { this.mapValues { (_, term) -> term.apply(this) } }
-                    .filterKeys { it in solution.query.variables }.asUnifier())
+            solution.copy(substitution = SolverUtils.reduceAndFilterSubstitution(solution.substitution, solution.query.variables))
         else -> solution
     }
 }

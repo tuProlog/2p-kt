@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.importingContextFrom
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
@@ -50,6 +50,7 @@ internal class StateRuleSelection(
                         subStateExecute(subInitialState).forEach {
                             yield(it)
 
+                            // this can be moved inside the "if" because only final states carry modifications to execution flow
                             if (solveRequest.context in (it.solveRequest.context as ExecutionContextImpl).toCutContextsParent
                                     || it.solveRequest.context.logicalParentRequests.any { parentRequest -> parentRequest.context == it.solveRequest.context.throwRelatedToCutContextsParent })
                                 cutNextSiblings = true

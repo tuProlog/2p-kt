@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
@@ -41,24 +39,6 @@ internal class StateEndTest {
     fun trueStateHoldInsertedData() {
         val toBeTested = StateEnd.True(solveRequest, executionStrategy)
         assertEquals(solveRequest, toBeTested.solveRequest)
-    }
-
-    @Test
-    fun trueStateComputesCorrectlyAnswerSubstitution() {
-        myScope.where {
-            val toBeTested = StateEnd.True(
-                    solveRequest.copy(context = with(solveRequest.context) {
-                        copy(substitution = Substitution.of(
-                                varOf("A") to varOf("C"),
-                                varOf("C") to Atom.of("c"),
-                                varOf("D") to Atom.of("d")
-                        ) as Substitution.Unifier)
-                    }),
-                    executionStrategy
-            )
-
-            assertEquals(Substitution.of(varOf("A"), Atom.of("c")), toBeTested.answerSubstitution)
-        }
     }
 
     @Test
