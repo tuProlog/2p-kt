@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.primitiveimpl
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -65,9 +64,9 @@ object Throw : PrimitiveWrapper(Signature("throw", 1)) {
                         val newSubstitution = (context.substitution + catcherUnifyingSubstitution)
                                 as Substitution.Unifier
 
-                        Solve.Response(
-                                Solution.Yes(signature, arguments, newSubstitution),
-                                context = context.copy(
+                        replySuccess(
+                                newSubstitution,
+                                executionContextImpl = context.copy(
                                         substitution = newSubstitution,
                                         throwRelatedToCutContextsParent = ancestorCatch.context
                                 )
