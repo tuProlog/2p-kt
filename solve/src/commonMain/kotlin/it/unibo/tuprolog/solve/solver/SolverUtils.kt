@@ -115,40 +115,10 @@ internal object SolverUtils {
     fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
             this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseContext = error.context as ExecutionContextImpl)
 
-    /** Creates a [Solve.Response] with [Solution.Yes], taking signature and arguments from receiver request
-     * and using given [otherResponse] substitution and context */
-    fun Solve.Request<DeclarativeImplExecutionContext>.yesResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
-            Solution.Yes(
-                    this.signature,
-                    this.arguments,
-                    (this.context.substitution + otherResponse.solution.substitution) as Substitution.Unifier
-            ),
-            context = otherResponse.context
-    )
-
-    /** Creates a [Solve.Response] with [Solution.No], taking signature and arguments from receiver request
-     * and using given [otherResponse] context */
-    fun Solve.Request<DeclarativeImplExecutionContext>.noResponseBy(otherResponse: Solve.Response): Solve.Response =
-            Solve.Response(Solution.No(this.signature, this.arguments), context = otherResponse.context!!)
-
-    /** Creates a [Solve.Response] with [Solution.Halt], taking signature and arguments from receiver request
-     * and using given [otherResponse] context and exception */
-    fun Solve.Request<DeclarativeImplExecutionContext>.haltResponseBy(otherResponse: Solve.Response): Solve.Response = Solve.Response(
-            Solution.Halt(
-                    this.signature,
-                    this.arguments,
-                    (otherResponse.solution as Solution.Halt).exception
-            ),
-            context = otherResponse.context!!
-    )
-
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
-    fun Solve.Request<DeclarativeImplExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response = when (otherResponse.solution) {
-        is Solution.Yes -> this.yesResponseBy(otherResponse)
-        is Solution.No -> this.noResponseBy(otherResponse)
-        is Solution.Halt -> this.haltResponseBy(otherResponse)
-    }
+    fun Solve.Request<DeclarativeImplExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
+            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, context) }
 
     /** Checks if this sequence of elements holds more than one element, lazily */
     fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {

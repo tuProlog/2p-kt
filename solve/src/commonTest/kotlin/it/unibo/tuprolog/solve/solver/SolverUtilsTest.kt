@@ -8,13 +8,10 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
-import it.unibo.tuprolog.solve.solver.SolverUtils.haltResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.noResponseBy
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
-import it.unibo.tuprolog.solve.solver.SolverUtils.yesResponseBy
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 
@@ -251,66 +248,6 @@ internal class SolverUtilsTest {
 
         assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
         assertEquals(correctWithExtra.arguments, toBeTestedWithExtra.arguments)
-    }
-
-    @Test
-    fun yesResponseByCorrectSubstitutionResponseArgWorksAsExpected() {
-        val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(substitution = finalSubstitution)
-
-        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
-                Signature("ciao", 0),
-                emptyList(),
-                finalSubstitution
-        ), context = finalContext)
-
-        val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), context = finalContext)
-        }
-        val toBeTested = DummyInstances.solveRequest.yesResponseBy(responseToReuseContextAndSubstitution)
-
-        assertEquals(correct.solution, toBeTested.solution)
-        assertEquals(correct.context, toBeTested.context)
-    }
-
-    @Test
-    fun noResponseByWorksAsExpected() {
-        val finalSubstitution = Substitution.of("A", Atom.of("a"))
-        val finalContext = DummyInstances.executionContext.copy(substitution = finalSubstitution)
-
-        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Yes(
-                Signature("ciao", 0),
-                emptyList(),
-                finalSubstitution
-        ), context = finalContext)
-
-        val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.No(signature, arguments), context = finalContext)
-        }
-        val toBeTested = DummyInstances.solveRequest.noResponseBy(responseToReuseContextAndSubstitution)
-
-        assertEquals(correct.solution, toBeTested.solution)
-        assertEquals(correct.context, toBeTested.context)
-    }
-
-    @Test
-    fun haltResponseByWorksAsExpected() {
-        val finalContext = DummyInstances.executionContext.copy()
-        val finalException = HaltException(context = finalContext)
-
-        val responseToReuseContextAndSubstitution = Solve.Response(Solution.Halt(
-                Signature("ciao", 0),
-                emptyList(),
-                finalException
-        ), context = finalContext)
-
-        val correct = with(DummyInstances.solveRequest) {
-            Solve.Response(Solution.Halt(signature, arguments, finalException), context = finalContext)
-        }
-        val toBeTested = DummyInstances.solveRequest.haltResponseBy(responseToReuseContextAndSubstitution)
-
-        assertEquals(correct.solution, toBeTested.solution)
-        assertEquals(correct.context, toBeTested.context)
     }
 
     @Test
