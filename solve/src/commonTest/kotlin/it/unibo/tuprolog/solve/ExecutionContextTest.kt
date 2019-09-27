@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 /**
  * Test class for [DeclarativeImplExecutionContext]
@@ -40,20 +39,19 @@ internal class ExecutionContextTest {
     @Test
     fun executionContextHoldsInsertedData() {
         val toBeTested = ExecutionContextImpl(someLibraries, someFlags, aStaticKB, aDynamicKB,
-                aSubstitution, someSolverStrategies, aScopedParentSequence, isChoicePointChild,
-                toCutContextParent, aParentRequestsSequence, aThrowRelatedContextParent)
+                aSubstitution, someSolverStrategies)
 
         assertEquals(someLibraries, toBeTested.libraries)
         assertEquals(someFlags, toBeTested.flags)
         assertEquals(aStaticKB, toBeTested.staticKB)
         assertEquals(aDynamicKB, toBeTested.dynamicKB)
         assertEquals(aSubstitution, toBeTested.substitution)
-        assertEquals(aScopedParentSequence, toBeTested.clauseScopedParents)
         assertEquals(someSolverStrategies, toBeTested.solverStrategies)
-        assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
-        assertEquals(toCutContextParent, toBeTested.toCutContextsParent)
-        assertEquals(aParentRequestsSequence, toBeTested.logicalParentRequests)
-        assertEquals(aThrowRelatedContextParent, toBeTested.throwRelatedToCutContextsParent)
+//        assertEquals(aScopedParentSequence, toBeTested.clauseScopedParents)
+//        assertEquals(isChoicePointChild, toBeTested.isChoicePointChild)
+//        assertEquals(toCutContextParent, toBeTested.toCutContextsParent)
+//        assertEquals(aParentRequestsSequence, toBeTested.logicalParentRequests)
+//        assertEquals(aThrowRelatedContextParent, toBeTested.throwRelatedToCutContextsParent)
     }
 
     @Test
@@ -61,12 +59,12 @@ internal class ExecutionContextTest {
         val toBeTested = ExecutionContextImpl(someLibraries, someFlags, aStaticKB, aDynamicKB)
 
         assertEquals(Substitution.empty(), toBeTested.substitution)
-        assertEquals(emptySequence(), toBeTested.clauseScopedParents)
         assertEquals(SolverStrategies.prologStandard, toBeTested.solverStrategies)
-        assertEquals(false, toBeTested.isChoicePointChild)
-        assertEquals(emptySequence(), toBeTested.toCutContextsParent)
-        assertEquals(emptySequence(), toBeTested.logicalParentRequests)
-        assertNull(toBeTested.throwRelatedToCutContextsParent)
+//        assertEquals(emptySequence(), toBeTested.clauseScopedParents)
+//        assertEquals(false, toBeTested.isChoicePointChild)
+//        assertEquals(emptySequence(), toBeTested.toCutContextsParent)
+//        assertEquals(emptySequence(), toBeTested.logicalParentRequests)
+//        assertNull(toBeTested.throwRelatedToCutContextsParent)
     }
 
 }

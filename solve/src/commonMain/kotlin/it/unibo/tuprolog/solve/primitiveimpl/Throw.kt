@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 
 /**
@@ -34,9 +34,8 @@ object Throw : PrimitiveWrapper(Signature("throw", 1)) {
             )
 
             else -> {
-                val ancestorCatchesRequests = mainRequest.context.logicalParentRequests.filter { it.signature == Catch.signature }
-                val ancestorCatch = ancestorCatchesRequests.find { it.arguments[1].matches(throwArgument) }
-                // performance: inefficient because it recomputes mgu two times, when match found
+                val ancestorCatch = (mainRequest.context.sideEffectManager as? SideEffectManagerImpl)
+                        ?.run { retrieveAncestorCatchRequest(throwArgument) }
 
                 when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
 
@@ -66,10 +65,9 @@ object Throw : PrimitiveWrapper(Signature("throw", 1)) {
 
                         replySuccess(
                                 newSubstitution,
-                                executionContextImpl = context.copy(
-                                        substitution = newSubstitution,
-                                        throwRelatedToCutContextsParent = ancestorCatch.context
-                                )
+                                sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
+                                        ?.run { throwCut(ancestorCatch.context) }
+                                        ?: context.sideEffectManager
                         )
                     })
                 }

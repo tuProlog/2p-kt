@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -70,29 +71,21 @@ internal object SolverUtils {
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
-            baseContext: ExecutionContextImpl = this.context,
+            baseSideEffectManager: SideEffectManager? = this.context.sideEffectManager,
             currentTime: TimeInstant = currentTime(),
             isChoicePointChild: Boolean = false,
             logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
     ): Solve.Request<ExecutionContextImpl> =
-            Solve.Request<ExecutionContextImpl>(
+            Solve.Request(
                     newGoal.extractSignature(),
                     newGoal.argsList,
                     this.initialSolverQuery,
-                    with(baseContext) {
+                    with(this.context) {
                         copy(
                                 substitution = (substitution + toAddSubstitutions) as Substitution.Unifier,
-                                clauseScopedParents = sequence { yield(this@with); yieldAll(clauseScopedParents) },
-                                isChoicePointChild = isChoicePointChild,
-                                logicalParentRequests = sequence {
-                                    when (logicalParentRequest) {
-                                        in logicalParentRequests -> yieldAll(logicalParentRequests.dropWhile { it != logicalParentRequest })
-                                        else -> {
-                                            yield(logicalParentRequest)
-                                            yieldAll(logicalParentRequests)
-                                        }
-                                    }
-                                }
+                                sideEffectManager = (baseSideEffectManager as? SideEffectManagerImpl)
+                                        ?.creatingNewRequest(this, isChoicePointChild, logicalParentRequest)
+                                        ?: sideEffectManager
                         )
                     },
                     this.requestIssuingInstant,
@@ -113,12 +106,12 @@ internal object SolverUtils {
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
     fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
-            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseContext = error.context as ExecutionContextImpl)
+            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = error.context.sideEffectManager)
 
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
     fun Solve.Request<DeclarativeImplExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
-            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, context) }
+            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, otherResponse.sideEffectManager) }
 
     /** Checks if this sequence of elements holds more than one element, lazily */
     fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {

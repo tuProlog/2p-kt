@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
@@ -28,40 +29,40 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 internal object StateGoalEvaluationUtils {
 
     /** A different context from [DummyInstances.executionContext] instance */
-    internal val contextDifferentFromDummy = DummyInstances.executionContext.copy()
+    internal val expectedSideEffect = SideEffectManagerImpl()
 
     /** Map containing requests that should make StateGoalEvaluation go into predicted state */
     internal val requestToNextStatesMap by lazy {
         mapOf(
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context = contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffect)) }
                         to Pair(1, StateEnd.True::class),
 
                 createPrimitiveRequest {
                     sequenceOf(
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context = contextDifferentFromDummy),
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), context =  contextDifferentFromDummy)
+                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffect),
+                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager =  expectedSideEffect)
                     )
                 } to Pair(2, StateEnd.True::class),
 
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.No(it.signature, it.arguments), context = contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.No(it.signature, it.arguments), sideEffectManager = expectedSideEffect)) }
                         to Pair(1, StateEnd.False::class),
 
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), context = contextDifferentFromDummy)) }
+                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), sideEffectManager = expectedSideEffect)) }
                         to Pair(1, StateEnd.Halt::class),
 
-                createPrimitiveRequest { throw HaltException(context = contextDifferentFromDummy) }
+                createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }
                         to Pair(1, StateEnd.Halt::class),
 
                 createPrimitiveRequest {
                     sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextDifferentFromDummy) }))
+                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }))
                     }
                 } to Pair(1, StateEnd.Halt::class),
 
                 createPrimitiveRequest {
                     sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextDifferentFromDummy) }))
-                        yield(Solve.Response(Solution.No(it.signature, it.arguments), context = contextDifferentFromDummy))
+                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }))
+                        yield(Solve.Response(Solution.No(it.signature, it.arguments), sideEffectManager = expectedSideEffect))
                     }
                 } to Pair(1, StateEnd.Halt::class),
 

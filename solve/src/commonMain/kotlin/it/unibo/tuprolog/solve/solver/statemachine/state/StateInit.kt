@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.statemachine.stateEndFalse
@@ -20,13 +21,13 @@ internal class StateInit(
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val initializedSolveRequest = solve.copy(context = initializationWork(solve.context))
-        val currentGoal = initializedSolveRequest.query
+        val initializedRequest = initializeForSideEffects(solve)
+        val currentGoal = initializedRequest.query
 
         when {
             // current goal is already demonstrated
-            with(initializedSolveRequest.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
-                yield(stateEndTrue(initializedSolveRequest.context.substitution, contextImpl = initializedSolveRequest.context))
+            with(initializedRequest.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
+                yield(with(initializedRequest.context) { stateEndTrue(substitution, sideEffectManager = sideEffectManager) })
 
             else -> when {
 
@@ -34,7 +35,7 @@ internal class StateInit(
                 isWellFormed(currentGoal) ->
                     prepareForExecution(currentGoal).also { preparedGoal ->
                         yield(StateGoalEvaluation(
-                                initializedSolveRequest.copy(
+                                initializedRequest.copy(
                                         signature = preparedGoal.extractSignature(),
                                         arguments = preparedGoal.argsList
                                 ),
@@ -43,19 +44,18 @@ internal class StateInit(
                     }
 
                 // goal non well-formed
-                else -> yield(stateEndFalse(contextImpl = initializedSolveRequest.context))
+                else -> yield(stateEndFalse(sideEffectManager = initializedRequest.context.sideEffectManager))
             }
         }
     }
 
-    /**
-     * Any state machine initialization should be done here
-     *
-     * It creates a new context adding given one as it's parent and resetting isChoicePointChild flag for the new context
-     */
-    private fun initializationWork(context: ExecutionContextImpl) =
-            context.copy(
-                    clauseScopedParents = sequence { yield(context); yieldAll(context.clauseScopedParents) },
-                    isChoicePointChild = false
-            )
+    /** Initializes the SideEffectsManager if is correct instance, does nothing otherwise */
+    private fun initializeForSideEffects(solve: Solve.Request<ExecutionContextImpl>) =
+            solve.copy(context = with(solve.context) {
+                copy(
+                        sideEffectManager = (sideEffectManager as? SideEffectManagerImpl)
+                                ?.run { sideEffectManager.stateInitInitialize(this@with) }
+                                ?: sideEffectManager
+                )
+            })
 }

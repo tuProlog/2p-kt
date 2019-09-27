@@ -32,22 +32,21 @@ object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
 
             var cutExecuted = false
             SolverSLD().solve(leftSubSolveRequest).forEach { leftResponse ->
-                if (leftResponse.context!!.clauseScopedParents.any { it in leftResponse.context.toCutContextsParent }
-                        || leftResponse.context.logicalParentRequests.any { it.context == leftResponse.context.throwRelatedToCutContextsParent })
+
+                if (leftResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
                     cutExecuted = true
 
                 when (leftResponse.solution) {
                     is Solution.Yes -> {
                         val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                prepareForExecution(rightSubGoal.apply(leftResponse.context.substitution)),
-                                leftResponse.context.substitution,
-                                baseContext = leftResponse.context,
+                                prepareForExecution(rightSubGoal.apply(leftResponse.solution.substitution)),
+                                leftResponse.solution.substitution,
+                                baseSideEffectManager = leftResponse.sideEffectManager,
                                 logicalParentRequest = mainRequest
                         )
 
                         SolverSLD().solve(rightSubSolveRequest).forEach { rightResponse ->
-                            if (rightResponse.context!!.clauseScopedParents.any { it in rightResponse.context.toCutContextsParent }
-                                    || rightResponse.context.logicalParentRequests.any { it.context == rightResponse.context.throwRelatedToCutContextsParent })
+                            if (rightResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
                                 cutExecuted = true
 
                             yield(mainRequest.responseBy(rightResponse))

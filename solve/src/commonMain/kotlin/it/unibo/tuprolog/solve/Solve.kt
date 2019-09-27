@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -54,30 +53,30 @@ sealed class Solve {
                 flags: Map<Atom, Term>? = null,
                 staticKB: ClauseDatabase? = null,
                 dynamicKB: ClauseDatabase? = null,
-                context: ExecutionContextImpl? = null
+                sideEffectManager: SideEffectManager? = null
         ) = when (solution) {
-            is Solution.Yes -> replySuccess(solution.substitution, libraries, flags, staticKB, dynamicKB, context)
-            is Solution.No -> replyFail(libraries, flags, staticKB, dynamicKB, context)
-            is Solution.Halt -> replyException(solution.exception, libraries, flags, staticKB, dynamicKB, context)
+            is Solution.Yes -> replySuccess(solution.substitution, libraries, flags, staticKB, dynamicKB, sideEffectManager)
+            is Solution.No -> replyFail(libraries, flags, staticKB, dynamicKB, sideEffectManager)
+            is Solution.Halt -> replyException(solution.exception, libraries, flags, staticKB, dynamicKB, sideEffectManager)
         }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
-        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) = when (condition) {
-            true -> replySuccess(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, executionContextImpl = executionContextImpl)
-            false -> replyFail(libraries, flags, staticKB, dynamicKB, executionContextImpl)
+        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) = when (condition) {
+            true -> replySuccess(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, sideEffectManager = sideEffectManager)
+            false -> replyFail(libraries, flags, staticKB, dynamicKB, sideEffectManager)
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
-        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
-                Response(Solution.Yes(query, substitution), libraries, flags, staticKB, dynamicKB, executionContextImpl)
+        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+                Response(Solution.Yes(query, substitution), libraries, flags, staticKB, dynamicKB, sideEffectManager)
 
         /** Creates a new failed [Response] to this Request */
-        fun replyFail(libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
-                Response(Solution.No(query), libraries, flags, staticKB, dynamicKB, executionContextImpl)
+        fun replyFail(libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+                Response(Solution.No(query), libraries, flags, staticKB, dynamicKB, sideEffectManager)
 
         /** Creates a new halt [Response] to this Request, with cause exception */
-        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, executionContextImpl: ExecutionContextImpl? = null) =
-                Response(Solution.Halt(query, exception), libraries, flags, staticKB, dynamicKB, executionContextImpl)
+        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+                Response(Solution.Halt(query, exception), libraries, flags, staticKB, dynamicKB, sideEffectManager)
     }
 
 
@@ -93,8 +92,7 @@ sealed class Solve {
             val staticKB: ClauseDatabase? = null,
             /** The Dynamic KB after request execution (use `null` in case nothing changed) */
             val dynamicKB: ClauseDatabase? = null,
-
-            // TODO replace with ExecutionFlowModification only, and update above methods (parameter names and types) and tests!!
-            val context: ExecutionContextImpl? = null
-    ) : Solve()
+            /** The Prolog flow modification after request execution (use `null` in case nothing changed) */
+            val sideEffectManager: SideEffectManager? = null
+    ) : Solve() // TODO: 27/09/2019 add tests for these new fields and methods
 }

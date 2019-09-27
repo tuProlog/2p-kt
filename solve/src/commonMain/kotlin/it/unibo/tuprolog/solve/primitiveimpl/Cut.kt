@@ -19,14 +19,7 @@ object Cut : PrimitiveWrapper(Signature("!", 0)) {
         sequenceOf(
                 it.replySuccess(
                         it.context.substitution,
-                        executionContextImpl = it.context.copy(
-                                toCutContextsParent = sequence {
-                                    yieldAll(it.context.toCutContextsParent)
-                                    yieldAll(it.context.clauseScopedParents
-                                            .filter(ExecutionContextImpl::isChoicePointChild)
-                                            .mapNotNull { ctx -> ctx.clauseScopedParents.firstOrNull() })
-                                }
-                        )
+                        sideEffectManager = it.context.sideEffectManager.cut()
                 )
         )
     }

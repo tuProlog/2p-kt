@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
@@ -27,7 +29,7 @@ internal class StateRuleSelection(
         val isChoicePoint = moreThanOne(matchingRules)
 
         when {
-            matchingRules.none() -> yield(stateEndFalse(contextImpl = solve.context))
+            matchingRules.none() -> yield(stateEndFalse(sideEffectManager = solve.context.sideEffectManager))
 
             else -> with(solve.context) { orderedWithStrategy(matchingRules, this, solverStrategies::clauseChoiceStrategy) }
                     .map { it.freshCopy() }
@@ -39,11 +41,8 @@ internal class StateRuleSelection(
                         solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
 
                     }.forEach { subSolveRequest ->
-                        val subInitialState = StateInit(
-                                // clear older parents entering this new "sub-rule scope"
-                                subSolveRequest.copy(context = subSolveRequest.context.copy(clauseScopedParents = sequenceOf(solve.context))),
-                                executionStrategy
-                        ).also { yield(it.asAlreadyExecuted()) }
+                        val subInitialState = StateInit(prepareSubSolveRequest(subSolveRequest), executionStrategy)
+                                .also { yield(it.asAlreadyExecuted()) }
 
                         var cutNextSiblings = false
 
@@ -55,15 +54,11 @@ internal class StateRuleSelection(
                             if (with(it.wrappedState) { this is FinalState && solve.solution.query == subSolveRequest.query }) {
                                 val subEndState = it.wrappedState as StateEnd
 
-                                if (solve.context in (subEndState.solve.context as ExecutionContextImpl).toCutContextsParent
-                                        || (subEndState.solve.context as ExecutionContextImpl).logicalParentRequests.any { parentRequest -> parentRequest.context == (subEndState.solve.context as ExecutionContextImpl).throwRelatedToCutContextsParent })
+                                if ((subEndState.solve.sideEffectManager as? SideEffectManagerImpl)?.run { shouldCutExecuteInRuleSelection() } == true)
                                     cutNextSiblings = true
 
                                 yield(stateEnd(with(subEndState.solve) {
-                                    copy(context = context!!.copy(clauseScopedParents = sequence {
-                                        yieldAll(context.clauseScopedParents)
-                                        yieldAll(solve.context.clauseScopedParents)
-                                    }))
+                                    copy(sideEffectManager = extendParentScopeIfPossible(sideEffectManager, solve.context.sideEffectManager))
                                 }))
 
                                 if (it.wrappedState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
@@ -73,4 +68,19 @@ internal class StateRuleSelection(
                     }
         }
     }
+
+    /** Prepares provided solveRequest "side effects manager" to enter this "rule sub-scope" */
+    private fun prepareSubSolveRequest(solveRequest: Solve.Request<ExecutionContextImpl>) =
+            solveRequest.copy(context = with(solveRequest.context) {
+                copy(sideEffectManager = (sideEffectManager as? SideEffectManagerImpl)
+                        ?.run { sideEffectManager.enterRuleSubScope() }
+                        ?: sideEffectManager)
+            })
+
+    /** Extends parent clauses scope to include upper-scope ones, using side effect manager method, if correct instances are provided  */
+    private fun extendParentScopeIfPossible(responseManager: SideEffectManager?, requestManager: SideEffectManager): SideEffectManager? =
+            (responseManager as? SideEffectManagerImpl)
+                    ?.run { (requestManager as? SideEffectManagerImpl)?.let { extendParentScopeWith(requestManager) } }
+                    ?: responseManager
+
 }

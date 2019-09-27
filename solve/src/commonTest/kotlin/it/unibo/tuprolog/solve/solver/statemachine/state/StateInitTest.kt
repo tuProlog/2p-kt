@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtil
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -72,21 +71,21 @@ internal class StateInitTest {
         assertTrue { nextStates.single() is StateEnd.False }
     }
 
-    @Test
-    fun stateInitializationCreatesNewContextAddingAsParentTheCurrentOne() {
-        val toBeTested = StateInit(DummyInstances.solveRequest, DummyInstances.executionStrategy).behave().single()
-
-        assertSame((toBeTested.solve as Solve.Response).context!!.clauseScopedParents.single(), DummyInstances.executionContext)
-    }
-
-    @Test
-    fun stateInitializationResetsToFalseIsChoicePointChild() {
-        val myState = StateInit(
-                with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) },
-                DummyInstances.executionStrategy
-        )
-        val toBeTested = myState.behave().single().solve as Solve.Response
-        assertEquals(false, toBeTested.context!!.isChoicePointChild)
-        assertEquals(true, toBeTested.context!!.clauseScopedParents.single().isChoicePointChild)
-    }
+//    @Test
+//    fun stateInitializationCreatesNewContextAddingAsParentTheCurrentOne() {
+//        val toBeTested = StateInit(DummyInstances.solveRequest, DummyInstances.executionStrategy).behave().single()
+//
+//        assertSame((toBeTested.solve as Solve.Response).context!!.clauseScopedParents.single(), DummyInstances.executionContext)
+//    }
+//
+//    @Test
+//    fun stateInitializationResetsToFalseIsChoicePointChild() {
+//        val myState = StateInit(
+//                with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) },
+//                DummyInstances.executionStrategy
+//        )
+//        val toBeTested = myState.behave().single().solve as Solve.Response
+//        assertEquals(false, toBeTested.context!!.isChoicePointChild)
+//        assertEquals(true, toBeTested.context!!.clauseScopedParents.single().isChoicePointChild)
+//    }
 }
