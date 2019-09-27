@@ -77,6 +77,17 @@ internal object CatchUtils {
                         createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Throw.descriptionPair)) to
                                 ktListOf(Solution.Yes(it, Substitution.of(varOf("E"), atomOf("deepBall"))))
                     }
+                },
+                Scope.empty {
+                    structOf(Catch.functor,
+                            structOf(Throw.functor, atomOf("first")),
+                            varOf("X"),
+                            structOf(Throw.functor, atomOf("second"))
+                    ).let {
+                        createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Catch.descriptionPair, Throw.descriptionPair)).run {
+                            this to ktListOf(Solution.Halt(it, HaltException(context = context)))
+                        }
+                    }
                 }
         )
     }
