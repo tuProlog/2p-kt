@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 
 /**
@@ -15,10 +15,10 @@ import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 internal class TimeOutException(
         message: String? = null,
         cause: Throwable? = null,
-        context: DeclarativeImplExecutionContext,
+        context: ExecutionContext,
         val deltaTime: TimeDuration // TODO: 14/09/2019 what's the semantic of this field? how should be filled?
 ) : TuPrologRuntimeException(message, cause, context) {
 
-    constructor(cause: Throwable?, context: DeclarativeImplExecutionContext, deltaTime: TimeDuration)
+    constructor(cause: Throwable?, context: ExecutionContext, deltaTime: TimeDuration)
             : this(cause?.toString(), cause, context, deltaTime)
 }

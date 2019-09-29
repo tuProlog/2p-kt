@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solve.Response
-import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 
 /**
  * Represents an Intermediate [State] of the Prolog solver state-machine
@@ -12,6 +12,6 @@ import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 interface IntermediateState : State {
 
     /** The [Solve.Request] that guides the State behaviour towards [Response]s */
-    override val solve: Solve.Request<DeclarativeImplExecutionContext>
+    override val solve: Solve.Request<ExecutionContext>
 
 }

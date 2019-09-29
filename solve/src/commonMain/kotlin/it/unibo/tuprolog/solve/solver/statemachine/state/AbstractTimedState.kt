@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solve.Response
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal abstract class AbstractTimedState(
         /** The [Solve.Request] that guides the State behaviour towards [Response]s */
-        override val solve: Solve.Request<DeclarativeImplExecutionContext>,
+        override val solve: Solve.Request<ExecutionContext>,
         override val executionStrategy: CoroutineScope
 ) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
 

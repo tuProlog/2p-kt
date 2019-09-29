@@ -8,24 +8,30 @@ import it.unibo.tuprolog.solve.primitiveimpl.Catch
 import it.unibo.tuprolog.solve.primitiveimpl.Cut
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
-//TODO doc
+/**
+ * Specific implementation of [SideEffectManager] for [SolverSLD]
+ *
+ * @author Enrico
+ */
 internal data class SideEffectManagerImpl(
 
         // CUT side effect fields
 
         /** The sequence of parent execution contexts before this, limited to a "clause scope" */
-        val clauseScopedParents: Sequence<ExecutionContextImpl> = emptySequence(),
+        private val clauseScopedParents: Sequence<ExecutionContextImpl> = emptySequence(),
         /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
-        val isChoicePointChild: Boolean = false,
+        private val isChoicePointChild: Boolean = false,
         /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
-        val toCutContextsParent: Sequence<ExecutionContextImpl> = emptySequence(),
+        private val toCutContextsParent: Sequence<ExecutionContextImpl> = emptySequence(),
 
         // Catch / Throw side effects fields
 
         /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
-        val logicalParentRequests: Sequence<Solve.Request<ExecutionContextImpl>> = emptySequence(),
+        internal val logicalParentRequests: Sequence<Solve.Request<ExecutionContextImpl>> = emptySequence(),
+        /** The sequence of no more selectable parent requests, because already used */
+        private val throwNonSelectableParentContexts: Sequence<ExecutionContextImpl> = emptySequence(),
         /** The execution context where a `catch` was found and till which other unexplored sub-trees should be cut */
-        val throwRelatedToCutContextsParent: ExecutionContextImpl? = null
+        private val throwRelatedToCutContextsParent: ExecutionContextImpl? = null
 
 ) : SideEffectManager {
 
@@ -101,6 +107,8 @@ internal data class SideEffectManagerImpl(
     /** A method to retrieve the first ancerstor catch request that has its second argument that unifies with [toUnifyArgument] */
     internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<ExecutionContextImpl>? {
         val ancestorCatchesRequests = logicalParentRequests.filter { it.signature == Catch.signature }
+                .filterNot { it.context in throwNonSelectableParentContexts } // exclude already used catch requests
+
         return ancestorCatchesRequests.find { it.arguments[1].matches(toUnifyArgument) }
     }
 
@@ -114,7 +122,7 @@ internal data class SideEffectManagerImpl(
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
     internal fun ensureNoMoreSelectableCatch(contextImpl: ExecutionContextImpl) = this.copy(
-            logicalParentRequests = logicalParentRequests.filterNot { it.context == contextImpl }
+            throwNonSelectableParentContexts = throwNonSelectableParentContexts + contextImpl
     )
 
     /**

@@ -71,11 +71,7 @@ internal class StateRuleSelection(
 
     /** Prepares provided solveRequest "side effects manager" to enter this "rule sub-scope" */
     private fun prepareSubSolveRequest(solveRequest: Solve.Request<ExecutionContextImpl>) =
-            solveRequest.copy(context = with(solveRequest.context) {
-                copy(sideEffectManager = (sideEffectManager as? SideEffectManagerImpl)
-                        ?.run { sideEffectManager.enterRuleSubScope() }
-                        ?: sideEffectManager)
-            })
+            solveRequest.copy(context = with(solveRequest.context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
 
     /** Extends parent clauses scope to include upper-scope ones, using side effect manager method, if correct instances are provided  */
     private fun extendParentScopeIfPossible(responseManager: SideEffectManager?, requestManager: SideEffectManager): SideEffectManager? =

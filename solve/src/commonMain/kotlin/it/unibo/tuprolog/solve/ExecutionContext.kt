@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
@@ -23,6 +24,9 @@ interface ExecutionContext {
 
     /** The set of current substitution till this context */
     val substitution: Substitution.Unifier
+
+    /** The Prolog call stacktrace till this ExecutionContext */
+    val prologStackTrace: Sequence<Struct>
 
     // TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
 

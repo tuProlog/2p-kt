@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
+import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aVarargSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anArgumentList
@@ -103,7 +104,8 @@ internal class SolveRequestTest {
                             differentLibraries,
                             differentFlags,
                             differentStaticKB,
-                            differentDynamicKB
+                            differentDynamicKB,
+                            aSideEffectManager
                     ),
                     it
             )
@@ -118,7 +120,8 @@ internal class SolveRequestTest {
                         differentLibraries,
                         differentFlags,
                         differentStaticKB,
-                        differentDynamicKB
+                        differentDynamicKB,
+                        aSideEffectManager
                 ),
                 defaultRequestSuccessResponse
         )
@@ -131,7 +134,8 @@ internal class SolveRequestTest {
                         differentLibraries,
                         differentFlags,
                         differentStaticKB,
-                        differentDynamicKB
+                        differentDynamicKB,
+                        aSideEffectManager
                 ),
                 defaultRequestFailedResponse
         )
@@ -145,7 +149,8 @@ internal class SolveRequestTest {
                         differentLibraries,
                         differentFlags,
                         differentStaticKB,
-                        differentDynamicKB
+                        differentDynamicKB,
+                        aSideEffectManager
                 ),
                 defaultRequestHaltedResponse
         )
@@ -159,7 +164,8 @@ internal class SolveRequestTest {
                         differentLibraries,
                         differentFlags,
                         differentStaticKB,
-                        differentDynamicKB
+                        differentDynamicKB,
+                        aSideEffectManager
                 ),
                 defaultRequestSuccessResponse.copy(
                         solution = (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
@@ -174,7 +180,8 @@ internal class SolveRequestTest {
                         differentLibraries,
                         differentFlags,
                         differentStaticKB,
-                        differentDynamicKB
+                        differentDynamicKB,
+                        aSideEffectManager
                 ),
                 defaultRequestFailedResponse
         )

@@ -67,7 +67,7 @@ internal object SolverUtils {
                                 ?: reducedSubstitution
                     }.asUnifier()
 
-    /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] or optionally on [baseContext] */
+    /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
@@ -106,11 +106,11 @@ internal object SolverUtils {
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
     fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
-            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = error.context.sideEffectManager)
+            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = (error.context as? ExecutionContextImpl)?.sideEffectManager)
 
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
-    fun Solve.Request<DeclarativeImplExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
+    fun Solve.Request<ExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
             with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, otherResponse.sideEffectManager) }
 
     /** Checks if this sequence of elements holds more than one element, lazily */

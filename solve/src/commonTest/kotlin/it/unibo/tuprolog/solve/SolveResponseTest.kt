@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aDynamicKB
+import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSolution
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aStaticKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.someFlags
@@ -16,7 +17,7 @@ import kotlin.test.assertNull
  */
 internal class SolveResponseTest {
 
-    private val aResponse = Solve.Response(aSolution, someLibraries, someFlags, aStaticKB, aDynamicKB)
+    private val aResponse = Solve.Response(aSolution, someLibraries, someFlags, aStaticKB, aDynamicKB, aSideEffectManager)
 
     @Test
     fun responseInsertedDataCorrect() {
@@ -25,6 +26,7 @@ internal class SolveResponseTest {
         assertEquals(someFlags, aResponse.flags)
         assertEquals(aStaticKB, aResponse.staticKB)
         assertEquals(aDynamicKB, aResponse.dynamicKB)
+        assertEquals(aSideEffectManager, aResponse.sideEffectManager)
     }
 
     @Test
@@ -35,6 +37,7 @@ internal class SolveResponseTest {
         assertNull(toBeTested.flags)
         assertNull(toBeTested.staticKB)
         assertNull(toBeTested.dynamicKB)
+        assertNull(toBeTested.sideEffectManager)
     }
 
     @Test

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.solver.DeclarativeImplExecutionContext
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +19,7 @@ internal class AbstractTimedStateTest {
     private val behaviourResponse = emptySequence<Nothing>()
 
     /** Creates an [AbstractTimedState] instance with provided parameters, and emptySequence returning behaviour */
-    private fun createAbstractTimeState(solveRequest: Solve.Request<DeclarativeImplExecutionContext>, executionStrategy: CoroutineScope) =
+    private fun createAbstractTimeState(solveRequest: Solve.Request<ExecutionContext>, executionStrategy: CoroutineScope) =
             object : AbstractTimedState(solveRequest, executionStrategy) {
                 override fun behaveTimed(): Sequence<State> = behaviourResponse
             }

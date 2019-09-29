@@ -32,7 +32,7 @@ internal class StateGoalEvaluation(
 
             } catch (exception: HaltException) {
 
-                yield(stateEndHalt(exception, sideEffectManager = exception.context.sideEffectManager ))
+                yield(stateEndHalt(exception, sideEffectManager = (exception.context as? ExecutionContextImpl)?.sideEffectManager))
 
             } catch (prologError: PrologError) {
 

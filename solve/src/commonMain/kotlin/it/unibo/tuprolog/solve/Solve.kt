@@ -92,7 +92,7 @@ sealed class Solve {
             val staticKB: ClauseDatabase? = null,
             /** The Dynamic KB after request execution (use `null` in case nothing changed) */
             val dynamicKB: ClauseDatabase? = null,
-            /** The Prolog flow modification after request execution (use `null` in case nothing changed) */
+            /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
             val sideEffectManager: SideEffectManager? = null
-    ) : Solve() // TODO: 27/09/2019 add tests for these new fields and methods
+    ) : Solve()
 }
