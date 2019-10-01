@@ -83,8 +83,8 @@ internal object StateGoalEvaluationUtils {
     }
 
     /** Creates a request launching exactly given primitive behaviour */
-    private fun createPrimitiveRequest(primitiveBehaviour: (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>) =
-            object : PrimitiveWrapper(Signature("testPrimitive", 0)) {
+    private fun createPrimitiveRequest(primitiveBehaviour: Primitive) =
+            object : PrimitiveWrapper<ExecutionContext>(Signature("testPrimitive", 0)) {
                 override val uncheckedImplementation: Primitive = primitiveBehaviour
             }.run {
                 SolverTestUtils.createSolveRequest(

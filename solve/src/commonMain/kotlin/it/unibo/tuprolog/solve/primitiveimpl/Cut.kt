@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -10,12 +9,9 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
  *
  * @author Enrico
  */
-object Cut : PrimitiveWrapper(Signature("!", 0)) {
+internal object Cut : PrimitiveWrapper<ExecutionContextImpl>(Signature("!", 0)) {
 
-    override val uncheckedImplementation: Primitive = {
-        // TODO: 25/09/2019 remove that
-        it as Solve.Request<ExecutionContextImpl>
-
+    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = {
         sequenceOf(
                 it.replySuccess(
                         it.context.substitution,

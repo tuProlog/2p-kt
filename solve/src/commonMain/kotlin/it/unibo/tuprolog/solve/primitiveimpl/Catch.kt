@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -15,12 +14,9 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-object Catch : PrimitiveWrapper(Signature("catch", 3)) {
+internal object Catch : PrimitiveWrapper<ExecutionContextImpl>(Signature("catch", 3)) {
 
-    override val uncheckedImplementation: Primitive = { mainRequest ->
-        // TODO: 25/09/2019 remove that
-        mainRequest as Solve.Request<ExecutionContextImpl>
-
+    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
         sequence {
             val goalArgument = mainRequest.arguments.first()
 

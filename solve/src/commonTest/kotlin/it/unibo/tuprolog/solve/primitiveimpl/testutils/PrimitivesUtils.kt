@@ -24,7 +24,7 @@ import kotlin.test.fail
 internal object PrimitivesUtils {
 
     /** Utility function to test whether a primitive throwing an error carries with it the request context */
-    internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request<ExecutionContext>, primitiveWrapper: PrimitiveWrapper) {
+    internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request<ExecutionContext>, primitiveWrapper: PrimitiveWrapper<out ExecutionContext>) {
         try {
             primitiveWrapper.primitive(request)
             fail("Exception should be thrown")

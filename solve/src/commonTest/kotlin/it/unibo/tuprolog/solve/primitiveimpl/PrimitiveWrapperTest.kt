@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.primitiveimpl
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +17,7 @@ import kotlin.test.assertFailsWith
 internal class PrimitiveWrapperTest {
 
     private val signature = Signature("ciao", 0)
-    private val underTestWrapper = object : PrimitiveWrapper(signature) {
+    private val underTestWrapper = object : PrimitiveWrapper<ExecutionContext>(signature) {
         override val uncheckedImplementation: Primitive = { emptySequence() }
     }
 

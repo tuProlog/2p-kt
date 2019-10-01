@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
@@ -19,12 +18,9 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-object Call : PrimitiveWrapper(Signature("call", 1)) {
+internal object Call : PrimitiveWrapper<ExecutionContextImpl>(Signature("call", 1)) {
 
-    override val uncheckedImplementation: Primitive = { mainRequest ->
-        // TODO: 25/09/2019 remove that
-        mainRequest as Solve.Request<ExecutionContextImpl>
-
+    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
         val toBeCalledGoal = mainRequest.arguments.single()
         when {
             toBeCalledGoal is Var -> throw InstantiationError(

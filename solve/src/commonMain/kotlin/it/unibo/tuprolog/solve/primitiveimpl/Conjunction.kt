@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -17,12 +16,9 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-object Conjunction : PrimitiveWrapper(Signature(Tuple.FUNCTOR, 2)) {
+internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Signature(Tuple.FUNCTOR, 2)) {
 
-    override val uncheckedImplementation: Primitive = { mainRequest ->
-        // TODO: 25/09/2019 remove that
-        mainRequest as Solve.Request<ExecutionContextImpl>
-
+    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
         sequence {
             val (leftSubGoal, rightSubGoal) = with(mainRequest) {
                 SolverUtils.orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)

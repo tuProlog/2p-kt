@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
@@ -19,12 +18,9 @@ import it.unibo.tuprolog.unify.Unification.Companion.mguWith
  *
  * @author Enrico
  */
-object Throw : PrimitiveWrapper(Signature("throw", 1)) {
+internal object Throw : PrimitiveWrapper<ExecutionContextImpl>(Signature("throw", 1)) {
 
-    override val uncheckedImplementation: Primitive = { mainRequest ->
-        // TODO: 25/09/2019 remove that
-        mainRequest as Solve.Request<ExecutionContextImpl>
-
+    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
         when (val throwArgument = mainRequest.arguments.single().freshCopy()) {
             // throw/1 argument is a Variable
             is Var -> throw InstantiationError(
