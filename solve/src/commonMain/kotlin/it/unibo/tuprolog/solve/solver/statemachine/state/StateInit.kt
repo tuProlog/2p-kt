@@ -21,7 +21,7 @@ internal class StateInit(
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val initializedRequest = initializeForSideEffects(solve)
+        val initializedRequest = solve.initializeForSideEffects()
         val currentGoal = initializedRequest.query
 
         when {
@@ -50,8 +50,8 @@ internal class StateInit(
     }
 
     /** Initializes the SideEffectsManager if is correct instance, does nothing otherwise */
-    private fun initializeForSideEffects(solve: Solve.Request<ExecutionContextImpl>) =
-            solve.copy(context = with(solve.context) {
+    private fun Solve.Request<ExecutionContextImpl>.initializeForSideEffects() =
+            copy(context = with(context) {
                 copy(
                         sideEffectManager = (sideEffectManager as? SideEffectManagerImpl)
                                 ?.run { sideEffectManager.stateInitInitialize(this@with) }

@@ -16,7 +16,7 @@ internal sealed class StateEnd(
         /** The [Solve.Response] characterizing this Final State */
         override val solve: Solve.Response,
 
-        // execution strategy in StateEnd is not so important, because no heavy computation is to be executed
+        // execution strategy in StateEnd is not so important to be set, because no heavy computation is to be executed
         override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractState(solve, executionStrategy), FinalState {
 
@@ -24,27 +24,25 @@ internal sealed class StateEnd(
 
     /** The *True* state is reached when a successful computational path has ended */
     internal data class True(override val solve: Solve.Response) : StateEnd(solve), FinalState {
-// TODO: 26/09/2019 check that true end state can be created with only a yes response ; and test
-
+        init {
+            require(solve.solution is Solution.Yes) { "True end state can be created only with Solution.Yes. Current: `${solve.solution}`" }
+        }
     }
 
     /** The *False* state is reached when a failed computational path has ended */
     internal data class False(override val solve: Solve.Response) : StateEnd(solve), FinalState {
-// TODO: 26/09/2019 check that false end state can be created with only a no response        ; and test
+        init {
+            require(solve.solution is Solution.No) { "False end state can be created only with Solution.No. Current: `${solve.solution}`" }
+        }
     }
 
     /** The *Halt* state is reached when an [HaltException] is caught, terminating the computation */
     internal data class Halt(override val solve: Solve.Response) : StateEnd(solve), FinalState {
-        // TODO: 26/09/2019 check that halt end state can be created with only a halt response; and test
+        init {
+            require(solve.solution is Solution.Halt) { "Halt end state can be created only with Solution.Halt. Current: `${solve.solution}`" }
+        }
 
         /** Shorthand property to access `solve.solution.exception` */
         val exception: TuPrologRuntimeException by lazy { (solve.solution as Solution.Halt).exception }
-    }
-
-    /** Bridge method to subclasses `copy(...)` */
-    fun makeCopy(solveResponse: Solve.Response = this.solve): StateEnd = when (this) {
-        is True -> copy(solveResponse)
-        is False -> copy(solveResponse)
-        is Halt -> copy(solveResponse)
     }
 }

@@ -164,7 +164,7 @@ internal object SolverSLDUtils {
         Scope.empty {
             mapOf(
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContext.copy(
+                        (it to DummyInstances.executionContextImpl.copy(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = prologStandardExampleDatabase,
@@ -187,7 +187,7 @@ internal object SolverSLDUtils {
                         )
                     },
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContext.copy(
+                        (it to DummyInstances.executionContextImpl.copy(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = prologStandardExampleDatabaseWithCut,
@@ -196,7 +196,7 @@ internal object SolverSLDUtils {
                         )) to ktListOf(Solution.No(it))
                     },
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContext.copy(
+                        (it to DummyInstances.executionContextImpl.copy(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = cutTestingDatabase,
@@ -214,7 +214,7 @@ internal object SolverSLDUtils {
                         )
                     },
                     structOf("my_reverse", listOf((1..4).map(::numOf)), varOf("L")).let {
-                        (it to DummyInstances.executionContext.copy(
+                        (it to DummyInstances.executionContextImpl.copy(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = backtrackingTestDatabase,

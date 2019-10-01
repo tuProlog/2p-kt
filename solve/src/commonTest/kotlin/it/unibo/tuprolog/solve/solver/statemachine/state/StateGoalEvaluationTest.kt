@@ -22,7 +22,7 @@ internal class StateGoalEvaluationTest {
             assertEquals(expectedNumber, nextStates.count())
 
             nextStates.forEach {
-                assertStateTypeAndContext(expectedType, StateGoalEvaluationUtils.expectedSideEffect, it)
+                assertStateTypeAndContext(expectedType, StateGoalEvaluationUtils.expectedSideEffectImpl, it)
             }
         }
     }

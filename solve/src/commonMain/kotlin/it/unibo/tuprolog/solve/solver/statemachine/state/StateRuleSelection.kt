@@ -41,7 +41,7 @@ internal class StateRuleSelection(
                         solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
 
                     }.forEach { subSolveRequest ->
-                        val subInitialState = StateInit(prepareSubSolveRequest(subSolveRequest), executionStrategy)
+                        val subInitialState = StateInit(subSolveRequest.prepareForSubRuleScope(), executionStrategy)
                                 .also { yield(it.asAlreadyExecuted()) }
 
                         var cutNextSiblings = false
@@ -70,8 +70,8 @@ internal class StateRuleSelection(
     }
 
     /** Prepares provided solveRequest "side effects manager" to enter this "rule sub-scope" */
-    private fun prepareSubSolveRequest(solveRequest: Solve.Request<ExecutionContextImpl>) =
-            solveRequest.copy(context = with(solveRequest.context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
+    private fun Solve.Request<ExecutionContextImpl>.prepareForSubRuleScope() =
+            copy(context = with(context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
 
     /** Extends parent clauses scope to include upper-scope ones, using side effect manager method, if correct instances are provided  */
     private fun extendParentScopeIfPossible(responseManager: SideEffectManager?, requestManager: SideEffectManager): SideEffectManager? =

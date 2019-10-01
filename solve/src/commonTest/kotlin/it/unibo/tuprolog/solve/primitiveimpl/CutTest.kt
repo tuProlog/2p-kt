@@ -21,7 +21,7 @@ internal class CutTest {
     @Test
     fun cutPrimitiveReturnsAlwaysYesResponseWithNoModificationFromRequest() {
         val substitution = Substitution.of("A", Truth.`true`())
-        val context = DummyInstances.executionContext.copy(substitution = substitution)
+        val context = DummyInstances.executionContextImpl.copy(substitution = substitution)
         val toBeTested = Cut.primitive(DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = context))
 
         assertEquals(1, toBeTested.count())
