@@ -13,13 +13,13 @@ import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
  * Utils singleton to help testing [StateGoalEvaluation]
@@ -30,6 +30,9 @@ internal object StateGoalEvaluationUtils {
 
     /** A side effect manager impl */
     internal val expectedSideEffectImpl = SideEffectManagerImpl()
+
+    /** A context with [expectedSideEffectImpl] */
+    private val contextWithExpectedSideEffectImpl = ExecutionContextImpl(sideEffectManager = expectedSideEffectImpl)
 
     /** Map containing requests that should make StateGoalEvaluation go into predicted state */
     internal val requestToNextStatesMap by lazy {
@@ -50,18 +53,18 @@ internal object StateGoalEvaluationUtils {
                 createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), sideEffectManager = expectedSideEffectImpl)) }
                         to Pair(1, StateEnd.Halt::class),
 
-                createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }
+                createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }
                         to Pair(1, StateEnd.Halt::class),
 
                 createPrimitiveRequest {
                     sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }))
+                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }))
                     }
                 } to Pair(1, StateEnd.Halt::class),
 
                 createPrimitiveRequest {
                     sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = DummyInstances.executionContext) }))
+                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }))
                         yield(Solve.Response(Solution.No(it.signature, it.arguments), sideEffectManager = expectedSideEffectImpl))
                     }
                 } to Pair(1, StateEnd.Halt::class),
