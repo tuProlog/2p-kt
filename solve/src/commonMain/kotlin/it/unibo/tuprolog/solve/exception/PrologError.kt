@@ -37,6 +37,8 @@ abstract class PrologError(
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
             : this(cause?.toString(), cause, context, type, extraData)
 
+    override fun toString(): String = errorStruct.toString()
+
     companion object {
 
         /**

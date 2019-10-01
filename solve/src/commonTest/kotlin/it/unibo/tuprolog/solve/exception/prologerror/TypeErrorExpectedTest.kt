@@ -3,9 +3,8 @@ package it.unibo.tuprolog.solve.exception.prologerror
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import it.unibo.tuprolog.solve.exception.prologerror.testutils.TypeErrorExpectedUtils
+import kotlin.test.*
 
 /**
  * Test class for [TypeError.Expected]
@@ -15,26 +14,50 @@ import kotlin.test.assertNull
 internal class TypeErrorExpectedTest {
 
     @Test
-    fun typeErrorExpectedEnumToAtomWorksAsExpected() {
-        TypeError.Expected.values().forEach {
-            assertEquals(Atom.of(it.toString().toLowerCase()), it.toAtom())
+    fun typeErrorExpectedToAtomWorksAsExpected() {
+        TypeErrorExpectedUtils.allNamesToInstances.forEach { (name, instance) ->
+            assertEquals(Atom.of(name), instance.toAtom())
         }
     }
 
     @Test
-    fun typeErrorExpectedEnumFromTermWorkForCorrectTerms() {
-        assertEquals(TypeError.Expected.CALLABLE, TypeError.Expected.fromTerm(Atom.of("callable"))!!)
-        assertEquals(TypeError.Expected.CALLABLE, TypeError.Expected.fromTerm(Atom.of("CALLABLE"))!!)
-
-        TypeError.Expected.values().forEach {
-            assertEquals(it, TypeError.Expected.fromTerm(it.toAtom()))
+    fun typeErrorExpectedOfReturnsPredefinedInstanceIfNameCorrect() {
+        TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
+            assertSame(instance, TypeError.Expected.of(name))
+            assertSame(instance, TypeError.Expected.of(name.toUpperCase()))
         }
+    }
+
+    @Test
+    fun typeErrorExpectedOfReturnsNewInstanceIfNameUnknown() {
+        TypeErrorExpectedUtils.nonPredefinedToInstances.forEach { (name, instance) ->
+            assertNotSame(instance, TypeError.Expected.of(name))
+            assertNotSame(instance, TypeError.Expected.of(name.toUpperCase()))
+        }
+    }
+
+    @Test
+    fun typeErrorExpectedConstantsArePredefinedInstances() {
+        assertSame(TypeError.Expected.CALLABLE, TypeError.Expected.of("callable"))
+    }
+
+    @Test
+    fun typeErrorExpectedFromTermWorkForPredefinedTerms() {
+        TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
+            assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name))!!)
+            assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name.toUpperCase()))!!)
+            assertSame(instance, TypeError.Expected.fromTerm(instance.toAtom())!!)
+        }
+    }
+
+    @Test
+    fun typeErrorExpectedFromTermWorkForCorrectTerms() {
+        assertNotSame(TypeError.Expected.fromTerm(Atom.of("ciao")), TypeError.Expected.fromTerm(Atom.of("ciao")))
     }
 
     @Test
     fun typeErrorExpectedEnumFromTermComplainsForIncorrectTerms() {
         assertNull(TypeError.Expected.fromTerm(Struct.of("callable", Var.anonymous())))
         assertNull(TypeError.Expected.fromTerm(Var.of("CALLABLE")))
-        assertNull(TypeError.Expected.fromTerm(Atom.of("ciao")))
     }
 }

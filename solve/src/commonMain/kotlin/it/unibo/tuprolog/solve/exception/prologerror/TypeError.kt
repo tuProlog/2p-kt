@@ -37,28 +37,47 @@ class TypeError(
     }
 
     /**
-     * The possible expected types
+     * A class describing the expected type whose absence caused the error
+     *
+     * @param type the type expected string description
      *
      * @author Enrico
      */
-    enum class Expected {
-        CALLABLE, ATOM, INTEGER, NUMBER, PREDICATE_INDICATOR, COMPOUND, LIST, CHARACTER;
-
-        // these are only some of the commonly used types... when implementing more built-ins types can be added
-        // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here
+    class Expected private constructor(private val type: String) {
 
         /** A function to transform the type to corresponding [Atom] representation */
-        fun toAtom(): Atom = Atom.of(toString().toLowerCase())
+        fun toAtom(): Atom = Atom.of(type)
+
+        override fun toString(): String = "Expected(type='$type')"
 
         companion object {
 
+            /** Predefined expected types Atom values */
+            private val predefinedExpectedTypes by lazy {
+                listOf("callable", "atom", "integer", "number", "predicate_indicator", "compound",
+                        "list", "character")
+                // these are only some of the commonly used types... when implementing more built-ins types can be added
+                // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here
+            }
+
+            /** Predefined expected instances */
+            private val predefinedNameToInstance by lazy { predefinedExpectedTypes.map { it to Expected(it) }.toMap() }
+
+            val CALLABLE by lazy { predefinedNameToInstance.getValue("callable") }
+            val ATOM by lazy { predefinedNameToInstance.getValue("atom") }
+            val INTEGER by lazy { predefinedNameToInstance.getValue("integer") }
+            val NUMBER by lazy { predefinedNameToInstance.getValue("number") }
+            val PREDICATE_INDICATOR by lazy { predefinedNameToInstance.getValue("predicate_indicator") }
+            val COMPOUND by lazy { predefinedNameToInstance.getValue("compound") }
+            val LIST by lazy { predefinedNameToInstance.getValue("list") }
+            val CHARACTER by lazy { predefinedNameToInstance.getValue("character") }
+
+            /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
+            fun of(type: String): Expected = predefinedNameToInstance[type.toLowerCase()] ?: Expected(type)
+
             /** Gets [Expected] instance from [term] representation, if possible */
             fun fromTerm(term: Term): Expected? = when (term) {
-                is Atom -> try {
-                    valueOf(term.value.toUpperCase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
+                is Atom -> of(term.value)
                 else -> null
             }
         }
