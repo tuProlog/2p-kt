@@ -21,8 +21,6 @@ sealed class Solve {
             val signature: Signature,
             /** Arguments with which the goal is invoked in this [Request] */
             val arguments: List<Term>,
-            /** The user's query, i.e. the 0-level goal triggering resolution */
-            val initialSolverQuery: Struct,
             /** The context that's current at Request making */
             val context: C,
             /** The time instant when the request was submitted for resolution */
@@ -94,5 +92,6 @@ sealed class Solve {
             val dynamicKB: ClauseDatabase? = null,
             /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
             val sideEffectManager: SideEffectManager? = null
-    ) : Solve()
+    ) : Solve() // TODO if sideEffectsManager is approved for common API maybe we should add a sideEffectManager field
+    //TODO even to common ExecutionContext interface, in order to exploit its "shouldXXX" method upon request processing
 }

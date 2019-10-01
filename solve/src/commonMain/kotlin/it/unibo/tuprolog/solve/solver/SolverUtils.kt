@@ -79,7 +79,6 @@ internal object SolverUtils {
             Solve.Request(
                     newGoal.extractSignature(),
                     newGoal.argsList,
-                    this.initialSolverQuery,
                     with(this.context) {
                         copy(
                                 substitution = (substitution + toAddSubstitutions) as Substitution.Unifier,
@@ -111,7 +110,7 @@ internal object SolverUtils {
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */
     fun Solve.Request<ExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
-            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, otherResponse.sideEffectManager) }
+            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager) }
 
     /** Checks if this sequence of elements holds more than one element, lazily */
     fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {

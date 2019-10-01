@@ -11,7 +11,6 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.aVarargSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anArgumentList
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionContext
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionMaxDuration
-import it.unibo.tuprolog.solve.testutils.SolveUtils.anInitialUserQuery
 import it.unibo.tuprolog.solve.testutils.SolveUtils.createRequest
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestFailedResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestHaltedResponse
@@ -37,11 +36,10 @@ internal class SolveRequestTest {
 
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Solve.Request(aSignature, anArgumentList, anInitialUserQuery, anExecutionContext, aRequestIssuingInstant, anExecutionMaxDuration)
+        val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext, aRequestIssuingInstant, anExecutionMaxDuration)
 
         assertEquals(aSignature, toBeTested.signature)
         assertEquals(anArgumentList, toBeTested.arguments)
-        assertEquals(anInitialUserQuery, toBeTested.initialSolverQuery)
         assertEquals(anExecutionContext, toBeTested.context)
         assertEquals(aRequestIssuingInstant, toBeTested.requestIssuingInstant)
         assertEquals(anExecutionMaxDuration, toBeTested.executionMaxDuration)
@@ -49,7 +47,7 @@ internal class SolveRequestTest {
 
     @Test
     fun requestDefaultValuesCorrect() {
-        val toBeTested = Solve.Request(aSignature, anArgumentList, anInitialUserQuery, anExecutionContext)
+        val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
         assertEquals(currentTime(), toBeTested.requestIssuingInstant)
         assertEquals(Long.MAX_VALUE, toBeTested.executionMaxDuration)

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,7 +18,7 @@ internal class PrimitiveTest {
 
     private val signature = Signature("f", 1)
 
-    private val aRequest = Solve.Request<ExecutionContext>(signature, listOf(Truth.`true`()), Truth.`true`(), DummyInstances.executionContext)
+    private val aRequest = Solve.Request<ExecutionContext>(signature, listOf(Truth.`true`()), DummyInstances.executionContext)
     private val aResponse = Solve.Response(Solution.No(Truth.fail()))
 
     private val testPrimitive: Primitive = { _ -> sequenceOf(aResponse) }

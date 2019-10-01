@@ -31,7 +31,6 @@ internal object SolveUtils {
     // Request parameters
     internal val aSignature = Signature("ciao", 2)
     internal val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
-    internal val anInitialUserQuery = Struct.of("ciao", Var.anonymous())
     internal val anExecutionContext = ExecutionContextImpl(someLibraries, someFlags, aStaticKB, aDynamicKB)
     internal const val aRequestIssuingInstant = 0L
     internal const val anExecutionMaxDuration = 300L
@@ -41,8 +40,8 @@ internal object SolveUtils {
 
     internal val differentLibraries by lazy { Libraries(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) } }
     internal val differentFlags by lazy { mapOf<Atom, Term>(Truth.`true`() to Truth.fail()).also { assertNotEquals(it, someFlags) } }
-    internal val differentStaticKB by lazy { ClauseDatabase.of(Fact.of(anInitialUserQuery)).also { assertNotEquals(it, aStaticKB) } }
-    internal val differentDynamicKB by lazy { ClauseDatabase.of(Fact.of(anInitialUserQuery)).also { assertNotEquals(it, aDynamicKB) } }
+    internal val differentStaticKB by lazy { ClauseDatabase.of(Fact.of(Truth.`true`())).also { assertNotEquals(it, aStaticKB) } }
+    internal val differentDynamicKB by lazy { ClauseDatabase.of(Fact.of(Truth.`true`())).also { assertNotEquals(it, aDynamicKB) } }
 
     internal val solutionSubstitution = Substitution.of("A", Truth.`true`())
     private val solutionExceptionContext = object : ExecutionContext {
@@ -83,7 +82,7 @@ internal object SolveUtils {
     }
 
     /** Utility function to create a request with some default values */
-    internal fun createRequest(signature: Signature = aSignature, arguments: KtList<Term> = anArgumentList, initialUserQuery: Struct = anInitialUserQuery, executionContext: ExecutionContext = anExecutionContext, requestIssuingInstant: TimeInstant = aRequestIssuingInstant, executionMaxDuration: TimeDuration = anExecutionMaxDuration) =
-            Solve.Request(signature, arguments, initialUserQuery, executionContext, requestIssuingInstant, executionMaxDuration)
+    internal fun createRequest(signature: Signature = aSignature, arguments: KtList<Term> = anArgumentList, executionContext: ExecutionContext = anExecutionContext, requestIssuingInstant: TimeInstant = aRequestIssuingInstant, executionMaxDuration: TimeDuration = anExecutionMaxDuration) =
+            Solve.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
 
 }

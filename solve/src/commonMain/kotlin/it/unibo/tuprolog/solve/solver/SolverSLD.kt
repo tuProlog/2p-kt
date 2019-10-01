@@ -21,7 +21,7 @@ internal class SolverSLD(
 ) : AbstractSolver(startContext) {
 
     override fun solve(goal: Struct): Sequence<Solution> =
-            solve(Solve.Request(goal.extractSignature(), goal.argsList, goal, startContext))
+            solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext))
                     .map { it.solution.withOnlyAnswerSubstitution() }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */

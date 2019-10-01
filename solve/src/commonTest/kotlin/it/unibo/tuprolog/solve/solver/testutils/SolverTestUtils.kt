@@ -167,7 +167,6 @@ internal object SolverTestUtils {
     internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
             query.extractSignature(),
             query.argsList,
-            query,
             DummyInstances.executionContext.copy(libraries = Libraries(Library.of(
                     alias = "Test",
                     theory = database,
