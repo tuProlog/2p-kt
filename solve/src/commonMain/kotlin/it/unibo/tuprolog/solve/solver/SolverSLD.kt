@@ -5,6 +5,7 @@ import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import kotlinx.coroutines.CoroutineScope
@@ -20,8 +21,8 @@ internal class SolverSLD(
         private val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractSolver(startContext) {
 
-    override fun solve(goal: Struct): Sequence<Solution> =
-            solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext))
+    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
+            solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext, executionMaxDuration = maxDuration))
                     .map { it.solution.withOnlyAnswerSubstitution() }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
