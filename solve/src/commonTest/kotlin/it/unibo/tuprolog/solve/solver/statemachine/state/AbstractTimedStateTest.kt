@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,7 @@ internal class AbstractTimedStateTest {
     @Test
     fun behaveWorksAsUsualIfLongMaxValueTimeoutSpecified() {
         val toBeTested = createAbstractTimeState(
-                DummyInstances.solveRequest.copy(executionMaxDuration = Long.MAX_VALUE),
+                DummyInstances.solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE),
                 DummyInstances.executionStrategy
         )
 

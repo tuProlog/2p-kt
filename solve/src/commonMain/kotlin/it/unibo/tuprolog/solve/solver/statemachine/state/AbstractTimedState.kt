@@ -25,7 +25,7 @@ internal abstract class AbstractTimedState(
     private val stateCurrentTime by lazy { getCurrentTime() }
 
     override fun behave(): Sequence<State> = when {
-        // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is Long.MAX_VALUE
+        // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is TimeDuration.MAX_VALUE
         // avoiding timeIsOver check
         timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
             sequenceOf(stateEndHalt(

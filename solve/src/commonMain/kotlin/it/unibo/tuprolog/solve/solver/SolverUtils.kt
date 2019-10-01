@@ -91,13 +91,13 @@ internal object SolverUtils {
                     adjustExecutionMaxDuration(this, currentTime)
             )
 
-    /** Re-computes the execution timeout, leaving it [Long.MAX_VALUE] if it was it, or decreasing it with elapsed time */
+    /** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
     private fun adjustExecutionMaxDuration(
             oldSolveRequest: Solve.Request<ExecutionContextImpl>,
             currentTime: TimeInstant
     ): TimeDuration =
             when (oldSolveRequest.executionMaxDuration) {
-                Long.MAX_VALUE -> Long.MAX_VALUE
+                TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE
                 else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
                         .takeIf { it >= 0 }
                         ?: 0

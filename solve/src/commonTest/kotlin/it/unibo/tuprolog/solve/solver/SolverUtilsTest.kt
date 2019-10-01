@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 
@@ -206,10 +207,10 @@ internal class SolverUtilsTest {
 
     @Test
     fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = DummyInstances.solveRequest.copy(executionMaxDuration = Long.MAX_VALUE)
+        val toBeTested = DummyInstances.solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE)
                 .newSolveRequest(Atom.of("a"), currentTime = 100L)
 
-        assertEquals(Long.MAX_VALUE, toBeTested.executionMaxDuration)
+        assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
     }
 
 //    @Test

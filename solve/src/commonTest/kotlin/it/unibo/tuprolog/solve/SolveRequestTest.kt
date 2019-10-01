@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
@@ -50,7 +51,7 @@ internal class SolveRequestTest {
         val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
         assertEquals(currentTime(), toBeTested.requestIssuingInstant)
-        assertEquals(Long.MAX_VALUE, toBeTested.executionMaxDuration)
+        assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
     }
 
     @Test

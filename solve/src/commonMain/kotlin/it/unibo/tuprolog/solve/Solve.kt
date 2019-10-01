@@ -26,7 +26,7 @@ sealed class Solve {
             /** The time instant when the request was submitted for resolution */
             val requestIssuingInstant: TimeInstant = currentTime(),
             /** The execution max duration after which the computation should end, because no more useful */
-            val executionMaxDuration: TimeDuration = Long.MAX_VALUE
+            val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE
     ) : Solve() {
         init {
             when {
