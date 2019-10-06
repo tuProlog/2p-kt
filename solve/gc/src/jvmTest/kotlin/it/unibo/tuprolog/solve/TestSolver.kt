@@ -54,9 +54,7 @@ fun main(args: Array<String>) {
     println("---")
 
     solver.solve { structOf("call", structOf(";", structOf(">", numOf(1), numOf(2)), structOf(">", numOf(1), atomOf("X")))) }
-            .forEach { println(it); (it as Solution.Halt).let {
-                it.exception.activationRecords.map { it.depth to it.goals.current }.forEach(::println)
-            } }
+            .forEach { println(it); (it as Solution.Halt).exception.prologStackTrace.forEach(::println) }
 
     println("---")
 

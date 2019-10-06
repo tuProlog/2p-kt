@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
+import it.unibo.tuprolog.solve.TimeInstant
 
 /**
  * Interface representing a state with a notion of "time"

@@ -5,6 +5,7 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
@@ -12,7 +13,6 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
-import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.*
 

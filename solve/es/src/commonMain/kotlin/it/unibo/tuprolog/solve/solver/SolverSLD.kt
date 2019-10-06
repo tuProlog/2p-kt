@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit
 import kotlinx.coroutines.CoroutineScope

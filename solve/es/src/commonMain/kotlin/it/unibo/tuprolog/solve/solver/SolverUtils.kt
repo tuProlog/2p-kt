@@ -3,15 +3,9 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffectManager
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
-import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
-import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 
 /**
  * Utilities object for implementing resolution behaviour
@@ -72,7 +66,7 @@ internal object SolverUtils {
             newGoal: Struct,
             toAddSubstitutions: Substitution = Substitution.empty(),
             baseSideEffectManager: SideEffectManager? = this.context.sideEffectManager,
-            currentTime: TimeInstant = currentTime(),
+            currentTime: TimeInstant = currentTimeInstant(),
             isChoicePointChild: Boolean = false,
             logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
     ): Solve.Request<ExecutionContextImpl> =

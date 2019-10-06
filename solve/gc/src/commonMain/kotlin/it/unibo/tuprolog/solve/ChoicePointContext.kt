@@ -5,7 +5,7 @@ import it.unibo.tuprolog.utils.Cursor
 
 sealed class ChoicePointContext(
         open val alternatives: Cursor<out Any>,
-        open val executionContext: ExecutionContext?,
+        open val executionContext: ExecutionContextImpl?,
         open val parent: ChoicePointContext?,
         open val depth: Int = 0
 ) {
@@ -30,7 +30,7 @@ sealed class ChoicePointContext(
 
     fun clone(
             alternatives: Cursor<out Any> = this.alternatives,
-            executionContext: ExecutionContext? = this.executionContext,
+            executionContext: ExecutionContextImpl? = this.executionContext,
             parent: ChoicePointContext? = this.parent,
             depth: Int = this.depth
     ): ChoicePointContext = when (this) {
@@ -40,14 +40,14 @@ sealed class ChoicePointContext(
 
     data class Primitives(
             override val alternatives: Cursor<out Solve.Response>,
-            override val executionContext: ExecutionContext?,
+            override val executionContext: ExecutionContextImpl?,
             override val parent: ChoicePointContext?,
             override val depth: Int)
         : ChoicePointContext(alternatives, executionContext, parent, depth)
 
     data class Rules(
             override val alternatives: Cursor<out Rule>,
-            override val executionContext: ExecutionContext?,
+            override val executionContext: ExecutionContextImpl?,
             override val parent: ChoicePointContext?,
             override val depth: Int)
         : ChoicePointContext(alternatives, executionContext, parent, depth) {
@@ -56,13 +56,13 @@ sealed class ChoicePointContext(
 
 fun ChoicePointContext?.nextDepth(): Int = if (this == null) 0 else this.depth + 1
 
-fun ChoicePointContext?.appendPrimitives(alternatives: Cursor<out Solve.Response>, executionContext: ExecutionContext? = null): ChoicePointContext? {
+fun ChoicePointContext?.appendPrimitives(alternatives: Cursor<out Solve.Response>, executionContext: ExecutionContextImpl? = null): ChoicePointContext? {
     return if (alternatives.isOver) this
     else
         ChoicePointContext.Primitives(alternatives, executionContext,this, nextDepth())
 }
 
-fun ChoicePointContext?.appendRules(alternatives: Cursor<out Rule>, executionContext: ExecutionContext? = null): ChoicePointContext? {
+fun ChoicePointContext?.appendRules(alternatives: Cursor<out Rule>, executionContext: ExecutionContextImpl? = null): ChoicePointContext? {
     return if (alternatives.isOver) this
         else
             ChoicePointContext.Rules(alternatives, executionContext,this, nextDepth())

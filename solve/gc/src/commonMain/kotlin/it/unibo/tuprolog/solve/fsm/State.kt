@@ -6,21 +6,19 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.unify.Unification
-import it.unibo.tuprolog.unify.Unification.Companion.matches
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 
 interface State {
-    val context: ExecutionContext
+    val context: ExecutionContextImpl
 
     fun next(): State
 }
 
-sealed class AbstractState(override val context: ExecutionContext) : State {
+sealed class AbstractState(override val context: ExecutionContextImpl) : State {
 
-    protected val executionTime: Long by lazy {
+    protected val executionTime: TimeInstant by lazy {
         currentTime()
     }
 
@@ -29,7 +27,7 @@ sealed class AbstractState(override val context: ExecutionContext) : State {
         if (deltaTime <= context.maxDuration) {
             computeNext()
         } else {
-            StateHalt(TimeOutException(deltaTime = deltaTime, context =  context), context.copy(step = nextStep()))
+            StateHalt(TimeOutException(deltaTime = deltaTime, context = context), context.copy(step = nextStep()))
         }
     }
 
@@ -37,7 +35,7 @@ sealed class AbstractState(override val context: ExecutionContext) : State {
 
     protected abstract fun computeNext(): State
 
-    fun currentTime(): Long = currentTimeMillis()
+    fun currentTime(): TimeInstant = currentTimeInstant()
 
     protected fun nextStep(): Long = context.step + 1
 
@@ -46,7 +44,7 @@ sealed class AbstractState(override val context: ExecutionContext) : State {
     protected fun previousDepth(): Int = (context.depth - 1).let { require(it >= 0); it }
 }
 
-data class StateInit(override val context: ExecutionContext) : AbstractState(context) {
+data class StateInit(override val context: ExecutionContextImpl) : AbstractState(context) {
 
     override fun computeNext(): State {
         return StateGoalSelection(
@@ -65,7 +63,7 @@ data class StateInit(override val context: ExecutionContext) : AbstractState(con
     }
 }
 
-data class StateGoalSelection(override val context: ExecutionContext) : AbstractState(context) {
+data class StateGoalSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
     override fun computeNext(): State {
 
         return if (context.goals.isOver) {
@@ -100,7 +98,7 @@ data class StateGoalSelection(override val context: ExecutionContext) : Abstract
     }
 }
 
-data class StatePrimitiveSelection(override val context: ExecutionContext) : AbstractState(context) {
+data class StatePrimitiveSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
 
     override fun computeNext(): State {
         return with(context) {
@@ -109,7 +107,8 @@ data class StatePrimitiveSelection(override val context: ExecutionContext) : Abs
                     if (libraries.hasPrimitive(signature)) {
 
                         val req = toRequest(signature, goal.argsList)
-                        val primitive = libraries.primitives[signature] ?: error("Inconsistent behaviour of Library.contains and Library.get")
+                        val primitive = libraries.primitives[signature]
+                                ?: error("Inconsistent behaviour of Library.contains and Library.get")
                         val primitiveExecutions = primitive(req).cursor().also { require(!it.isOver) }
 
 
@@ -140,56 +139,64 @@ data class StatePrimitiveSelection(override val context: ExecutionContext) : Abs
 
 }
 
-data class StatePrimitiveExecution(override val context: ExecutionContext) : AbstractState(context) {
+data class StatePrimitiveExecution(override val context: ExecutionContextImpl) : AbstractState(context) {
 
     override fun computeNext(): State {
-       return with(context) {
-           try {
-               when (val sol = primitives.current!!.solution) {
-                   is Solution.Yes -> {
-                       StateGoalSelection(
-                               copy(
-                                       goals = goals.next,
-                                       primitives = Cursor.empty(),
-                                       libraries = primitives.current!!.libraries ?: libraries,
-                                       staticKB = primitives.current!!.staticKB ?: staticKB,
-                                       dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                                       flags = primitives.current!!.flags ?: flags,
-                                       substitution = (substitution + sol.substitution) as Substitution.Unifier,
-                                       step = nextStep()
-                               )
-                       )
-                   }
-                   is Solution.No -> {
-                       StateBacktracking(
-                               copy(
-                                       primitives = Cursor.empty(),
-                                       libraries = primitives.current!!.libraries ?: libraries,
-                                       staticKB = primitives.current!!.staticKB ?: staticKB,
-                                       dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                                       flags = primitives.current!!.flags ?: flags,
-                                       step = nextStep()
-                               )
-                       )
-                   }
-                   is Solution.Halt -> StateException(sol.exception.also { it.context = parent }, copy(
-                           primitives = Cursor.empty(),
-                           libraries = primitives.current!!.libraries ?: libraries,
-                           staticKB = primitives.current!!.staticKB ?: staticKB,
-                           dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                           flags = primitives.current!!.flags ?: flags,
-                           step = nextStep()
-                   ))
-               }
-           }  catch (exception: TuPrologRuntimeException) {
-               StateException(exception.also { it.context = parent }, copy(step = nextStep()))
-           }
-       }
+        return with(context) {
+            try {
+                when (val sol = primitives.current!!.solution) {
+                    is Solution.Yes -> {
+                        StateGoalSelection(
+                                copy(
+                                        goals = goals.next,
+                                        primitives = Cursor.empty(),
+                                        libraries = primitives.current!!.libraries ?: libraries,
+                                        staticKB = primitives.current!!.staticKB ?: staticKB,
+                                        dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
+                                        flags = primitives.current!!.flags ?: flags,
+                                        substitution = (substitution + sol.substitution) as Substitution.Unifier,
+                                        step = nextStep()
+                                )
+                        )
+                    }
+                    is Solution.No -> {
+                        StateBacktracking(
+                                copy(
+                                        primitives = Cursor.empty(),
+                                        libraries = primitives.current!!.libraries ?: libraries,
+                                        staticKB = primitives.current!!.staticKB ?: staticKB,
+                                        dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
+                                        flags = primitives.current!!.flags ?: flags,
+                                        step = nextStep()
+                                )
+                        )
+                    }
+                    is Solution.Halt -> StateException(
+                            with(sol.exception) {
+                                // TODO Giovanni's review needed, changed to make it compile!!!
+                                TuPrologRuntimeException(message, cause, parent ?: context)
+                            },
+                            copy(
+                                    primitives = Cursor.empty(),
+                                    libraries = primitives.current!!.libraries ?: libraries,
+                                    staticKB = primitives.current!!.staticKB ?: staticKB,
+                                    dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
+                                    flags = primitives.current!!.flags ?: flags,
+                                    step = nextStep()
+                            ))
+                }
+            } catch (exception: TuPrologRuntimeException) {
+                StateException(with(exception) {
+                    // TODO Giovanni's review needed, changed to make it compile!!!
+                    TuPrologRuntimeException(message, cause, parent ?: context)
+                }, copy(step = nextStep()))
+            }
+        }
     }
 
 }
 
-data class StateException(override val exception: TuPrologRuntimeException, override val context: ExecutionContext) : ExceptionalState, AbstractState(context) {
+data class StateException(override val exception: TuPrologRuntimeException, override val context: ExecutionContextImpl) : ExceptionalState, AbstractState(context) {
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
@@ -202,7 +209,7 @@ data class StateException(override val exception: TuPrologRuntimeException, over
                         when (catcher) {
                             is Substitution.Unifier -> {
                                 val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
-                                val subGoals =  catchGoal[2][newSubstitution]  as Struct
+                                val subGoals = catchGoal[2][newSubstitution] as Struct
 
                                 StateGoalSelection(
                                         context.copy(
@@ -240,7 +247,7 @@ data class StateException(override val exception: TuPrologRuntimeException, over
 
 }
 
-data class StateRuleSelection(override val context: ExecutionContext) : AbstractState(context) {
+data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
     private val failureState: StateBacktracking by lazy {
         StateBacktracking(
                 context.copy(step = nextStep())
@@ -306,7 +313,7 @@ data class StateRuleSelection(override val context: ExecutionContext) : Abstract
 
 }
 
-data class StateRuleExecution(override val context: ExecutionContext) : AbstractState(context) {
+data class StateRuleExecution(override val context: ExecutionContextImpl) : AbstractState(context) {
     private val failureState: StateBacktracking by lazy {
         StateBacktracking(
                 context.copy(rules = Cursor.empty(), step = nextStep())
@@ -336,7 +343,7 @@ data class StateRuleExecution(override val context: ExecutionContext) : Abstract
 
 }
 
-data class StateBacktracking(override val context: ExecutionContext) : AbstractState(context) {
+data class StateBacktracking(override val context: ExecutionContextImpl) : AbstractState(context) {
     override fun computeNext(): State {
         return with(context) {
             if (choicePoints === null || !choicePoints.hasOpenAlternatives) {
@@ -354,7 +361,7 @@ data class StateBacktracking(override val context: ExecutionContext) : AbstractS
                                 executionContext = tempContext
                         )
 
-                        val nextContext: ExecutionContext = tempContext.copy(choicePoints = nextChoicePointContext)
+                        val nextContext: ExecutionContextImpl = tempContext.copy(choicePoints = nextChoicePointContext)
 
                         StateRuleExecution(nextContext)
                     }
@@ -369,7 +376,7 @@ data class StateBacktracking(override val context: ExecutionContext) : AbstractS
                                 executionContext = tempContext
                         )
 
-                        val nextContext: ExecutionContext = tempContext.copy(choicePoints = nextChoicePointContext)
+                        val nextContext: ExecutionContextImpl = tempContext.copy(choicePoints = nextChoicePointContext)
 
                         StatePrimitiveExecution(nextContext)
                     }
@@ -393,22 +400,22 @@ interface ExceptionalState : State {
 }
 
 
-sealed class AbstractEndState(override val solution: Solution, override val context: ExecutionContext) : EndState, AbstractState(context) {
+sealed class AbstractEndState(override val solution: Solution, override val context: ExecutionContextImpl) : EndState, AbstractState(context) {
 
     override fun computeNext(): State = throw NoSuchElementException()
 }
 
-data class StateEnd(override val solution: Solution, override val context: ExecutionContext) : AbstractEndState(solution, context) {
+data class StateEnd(override val solution: Solution, override val context: ExecutionContextImpl) : AbstractEndState(solution, context) {
     override fun computeNext(): State {
         return if (context.hasOpenAlternatives) {
             StateBacktracking(
                     context.copy(step = nextStep())
             )
         } else {
-             super.computeNext()
+            super.computeNext()
         }
     }
 }
 
-data class StateHalt(override val exception: TuPrologRuntimeException, override val context: ExecutionContext) : ExceptionalState, AbstractEndState(Solution.Halt(context.query, exception), context) {
+data class StateHalt(override val exception: TuPrologRuntimeException, override val context: ExecutionContextImpl) : ExceptionalState, AbstractEndState(Solution.Halt(context.query, exception), context) {
 }

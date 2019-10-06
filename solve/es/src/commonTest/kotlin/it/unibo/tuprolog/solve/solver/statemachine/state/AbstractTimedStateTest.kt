@@ -2,9 +2,9 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlinx.coroutines.CoroutineScope
 import kotlin.test.Test
@@ -52,7 +52,7 @@ internal class AbstractTimedStateTest {
         val toBeTested = createAbstractTimeState(
                 with(DummyInstances.solveRequest) {
                     copy(
-                            requestIssuingInstant = currentTime(),
+                            requestIssuingInstant = currentTimeInstant(),
                             executionMaxDuration = 1000
                     )
                 },
@@ -66,7 +66,7 @@ internal class AbstractTimedStateTest {
     fun behaveCanBeCalledMultipleTimesYieldingAlwaysSameResponse() {
         val toBeTested = createAbstractTimeState(
                 DummyInstances.solveRequest.copy(
-                        requestIssuingInstant = currentTime(),
+                        requestIssuingInstant = currentTimeInstant(),
                         executionMaxDuration = 20
                 ),
                 DummyInstances.executionStrategy
@@ -77,7 +77,7 @@ internal class AbstractTimedStateTest {
 
     @Test
     fun getCurrentTimeReturnsCurrentTime() {
-        val correct = currentTime()
+        val correct = currentTimeInstant()
         val toBeTested = createAbstractTimeState(DummyInstances.solveRequest, DummyInstances.executionStrategy).getCurrentTime()
         assertEquals(correct, toBeTested)
     }

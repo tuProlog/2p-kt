@@ -1,12 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.Solve.Response
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.solver.statemachine.TimeDuration
-import it.unibo.tuprolog.solve.solver.statemachine.TimeInstant
-import it.unibo.tuprolog.solve.solver.statemachine.currentTime
 import it.unibo.tuprolog.solve.solver.statemachine.stateEndHalt
 import kotlinx.coroutines.CoroutineScope
 
@@ -41,7 +37,7 @@ internal abstract class AbstractTimedState(
     /** Called only if executionTimeout has not been reached yet, and computation should go on */
     protected abstract fun behaveTimed(): Sequence<State>
 
-    override fun getCurrentTime(): TimeInstant = currentTime()
+    override fun getCurrentTime(): TimeInstant = currentTimeInstant()
 
     /** A function to check if time for execution has ended */
     private fun timeIsOver(currentDuration: TimeDuration, maxDuration: TimeDuration) =
