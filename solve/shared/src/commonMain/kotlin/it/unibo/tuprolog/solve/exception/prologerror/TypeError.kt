@@ -35,7 +35,8 @@ class TypeError(
                     ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
             context = context,
             expectedType = expectedType,
-            actualValue = actualValue
+            actualValue = actualValue,
+            extraData = actualValue
     )
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }

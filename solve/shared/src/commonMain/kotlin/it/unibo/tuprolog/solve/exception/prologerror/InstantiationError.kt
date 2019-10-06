@@ -28,7 +28,8 @@ class InstantiationError(
     constructor(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) : this(
             message = "Argument ${index ?: ""} `${variable
                     ?: ""}` of $procedure is unexpectedly not instantiated",
-            context = context
+            context = context,
+            extraData = variable
     )
 
     companion object {

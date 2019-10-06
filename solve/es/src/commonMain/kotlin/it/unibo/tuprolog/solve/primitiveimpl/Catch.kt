@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -16,38 +17,37 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  */
 internal object Catch : PrimitiveWrapper<ExecutionContextImpl>(Signature("catch", 3)) {
 
-    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
-        sequence {
-            val goalArgument = mainRequest.arguments.first()
+    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+            sequence {
+                val goalArgument = request.arguments.first()
 
-            SolverSLD().solve(mainRequest.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
-                when {
-                    // if i'm the catch selected by throw/1 primitive
-                    (goalResponse.sideEffectManager as? SideEffectManagerImpl)
-                            ?.run { isSelectedThrowCatch(mainRequest.context) }
-                            ?: false -> {
+                SolverSLD().solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
+                    when {
+                        // if i'm the catch selected by throw/1 primitive
+                        (goalResponse.sideEffectManager as? SideEffectManagerImpl)
+                                ?.run { isSelectedThrowCatch(request.context) }
+                                ?: false -> {
 
-                        val recoverGoalArgument = mainRequest.arguments.last().apply(goalResponse.solution.substitution)
+                            val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
-                        // attaching recover goal's solve request to catch parent, to not re-execute the catch if error thrown
-                        val recoverGoalSolveRequest = mainRequest.newSolveRequest(
-                                Struct.of(Call.functor, recoverGoalArgument),
-                                goalResponse.solution.substitution
-                        ).run {
-                            // ensure that this catch cannot be selected again, to catch some error
-                            copy(context = context
-                                    .copy(sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
-                                            ?.run { ensureNoMoreSelectableCatch(mainRequest.context) }
-                                            ?: context.sideEffectManager
-                                    )
-                            )
+                            // attaching recover goal's solve request to catch parent, to not re-execute the catch if error thrown
+                            val recoverGoalSolveRequest = request.newSolveRequest(
+                                    Struct.of(Call.functor, recoverGoalArgument),
+                                    goalResponse.solution.substitution
+                            ).run {
+                                // ensure that this catch cannot be selected again, to catch some error
+                                copy(context = context
+                                        .copy(sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
+                                                ?.run { ensureNoMoreSelectableCatch(request.context) }
+                                                ?: context.sideEffectManager
+                                        )
+                                )
+                            }
+
+                            yieldAll(SolverSLD().solve(recoverGoalSolveRequest).map { request.responseBy(it) })
                         }
-
-                        yieldAll(SolverSLD().solve(recoverGoalSolveRequest).map { mainRequest.responseBy(it) })
+                        else -> yield(request.responseBy(goalResponse))
                     }
-                    else -> yield(mainRequest.responseBy(goalResponse))
                 }
             }
-        }
-    }
 }

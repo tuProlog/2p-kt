@@ -9,15 +9,11 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 object Throw : UnaryPredicate("throw") {
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
             sequenceOf(
-                    ensuringAllArgumentsAreInstantiated(request) {
-                        ensuringAllArgumentsAreStructs(it) {
-                            computeSingleResponse(it)
-                        }
-                    }
+                    request.ensuringAllArgumentsAreInstantiated()
+                            .replyException(
+                                    handleError(request.context, request.arguments[0] as Struct)
+                            )
             )
-
-    override fun computeSingleResponse(request: Solve.Request<ExecutionContext>): Solve.Response =
-            request.replyException(handleError(request.context, request.arguments[0] as Struct))
 
     private fun handleError(context: ExecutionContext, error: Struct): TuPrologRuntimeException =
             when {

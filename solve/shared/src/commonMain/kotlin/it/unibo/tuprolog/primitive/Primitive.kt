@@ -11,7 +11,7 @@ typealias Primitive = (Solve.Request<ExecutionContext>) -> Sequence<Solve.Respon
  * as [Solve.Request] signature, throwing [IllegalArgumentException] otherwise
  */
 fun primitiveOf(supportedSignature: Signature, uncheckedPrimitive: Primitive): Primitive = {
-    when (it.signature) {
+    when (it.signature) { // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
         supportedSignature -> uncheckedPrimitive(it)
         else -> throw IllegalArgumentException("This primitive supports only this signature `$supportedSignature`")
     }

@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
@@ -20,34 +19,31 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  */
 internal object Call : PrimitiveWrapper<ExecutionContextImpl>(Signature("call", 1)) {
 
-    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
-        val toBeCalledGoal = mainRequest.arguments.single()
-        when {
-            toBeCalledGoal is Var -> throw InstantiationError(
-                    "call/1 argument should not be a Variable",
-                    context = mainRequest.context,
-                    extraData = toBeCalledGoal
-            )
+    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+            request.ensuringAllArgumentsAreInstantiated()
+                    .arguments.single()
+                    .let { toBeCalledGoal ->
+                        when {
+                            SolverUtils.isWellFormed(toBeCalledGoal) ->
+                                SolverSLD().solve(
+                                        request.newSolveRequest(toBeCalledGoal as Struct)
+                                ).map {
+                                    request.responseBy(
+                                            it.copy(sideEffectManager =
+                                            (it.sideEffectManager as? SideEffectManagerImpl)
+                                                    ?.resetCutWorkChanges(request.context.sideEffectManager)
+                                                    ?: it.sideEffectManager
+                                            )
+                                    )
+                                }
 
-            SolverUtils.isWellFormed(toBeCalledGoal) ->
-                SolverSLD().solve(
-                        mainRequest.newSolveRequest(toBeCalledGoal as Struct)
-                ).map {
-                    mainRequest.responseBy(
-                            it.copy(sideEffectManager =
-                            (it.sideEffectManager as? SideEffectManagerImpl)
-                                    ?.resetCutWorkChanges(mainRequest.context.sideEffectManager)
-                                    ?: it.sideEffectManager
+                            else -> throw TypeError(
+                                    message = "call/1 argument is neither a Variable nor a well-formed goal",
+                                    context = request.context,
+                                    expectedType = TypeError.Expected.CALLABLE,
+                                    actualValue = toBeCalledGoal
                             )
-                    )
-                }
+                        }
+                    }
 
-            else -> throw TypeError(
-                    message = "call/1 argument is neither a Variable nor a well-formed goal",
-                    context = mainRequest.context,
-                    expectedType = TypeError.Expected.CALLABLE,
-                    actualValue = toBeCalledGoal
-            )
-        }
-    }
 }

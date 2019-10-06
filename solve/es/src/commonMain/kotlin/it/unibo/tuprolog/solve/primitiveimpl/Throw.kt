@@ -1,13 +1,16 @@
 package it.unibo.tuprolog.solve.primitiveimpl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
@@ -20,56 +23,49 @@ import it.unibo.tuprolog.unify.Unification.Companion.mguWith
  */
 internal object Throw : PrimitiveWrapper<ExecutionContextImpl>(Signature("throw", 1)) {
 
-    override val uncheckedImplementation: (Solve.Request<ExecutionContextImpl>) -> Sequence<Solve.Response> = { mainRequest ->
-        when (val throwArgument = mainRequest.arguments.single().freshCopy()) {
-            // throw/1 argument is a Variable
-            is Var -> throw InstantiationError(
-                    "throw/1 argument should not be a not-instantiated variable",
-                    context = mainRequest.context,
-                    extraData = throwArgument
-            )
+    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+            request.ensuringAllArgumentsAreInstantiated()
+                    .arguments.single().freshCopy()
+                    .let { throwArgument ->
 
-            else -> {
-                val ancestorCatch = (mainRequest.context.sideEffectManager as? SideEffectManagerImpl)
-                        ?.run { retrieveAncestorCatchRequest(throwArgument) }
+                        val ancestorCatch = (request.context.sideEffectManager as? SideEffectManagerImpl)
+                                ?.run { retrieveAncestorCatchRequest(throwArgument) }
 
-                when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
+                        when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
 
-                    // no catch found that can handle thrown exception
-                    null, is Substitution.Fail -> {
-                        val errorCause = extractErrorCauseChain(throwArgument, mainRequest.context)
-                        when {
-                            isSystemErrorStruct(throwArgument) -> throw HaltException(
-                                    "Unhandled system_error, halting inferential machine",
-                                    errorCause,
-                                    mainRequest.context
-                            )
-                            // current unhandled exception is some other error
-                            else -> throw SystemError(
-                                    "Exception thrown, but no compatible catch/3 found",
-                                    errorCause,
-                                    mainRequest.context,
-                                    throwArgument
-                            )
+                            // no catch found that can handle thrown exception
+                            null, is Substitution.Fail -> {
+                                val errorCause = extractErrorCauseChain(throwArgument, request.context)
+                                when {
+                                    isSystemErrorStruct(throwArgument) -> throw HaltException(
+                                            "Unhandled system_error, halting inferential machine",
+                                            errorCause,
+                                            request.context
+                                    )
+                                    // current unhandled exception is some other error
+                                    else -> throw SystemError(
+                                            "Exception thrown, but no compatible catch/3 found",
+                                            errorCause,
+                                            request.context,
+                                            throwArgument
+                                    )
+                                }
+                            }
+
+                            // catch, to handle exception, found
+                            is Substitution.Unifier -> sequenceOf(with(request) {
+                                val newSubstitution = (context.substitution + catcherUnifyingSubstitution)
+                                        as Substitution.Unifier
+
+                                replySuccess(
+                                        newSubstitution,
+                                        sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
+                                                ?.run { throwCut(ancestorCatch.context) }
+                                                ?: context.sideEffectManager
+                                )
+                            })
                         }
                     }
-
-                    // catch, to handle exception, found
-                    is Substitution.Unifier -> sequenceOf(with(mainRequest) {
-                        val newSubstitution = (context.substitution + catcherUnifyingSubstitution)
-                                as Substitution.Unifier
-
-                        replySuccess(
-                                newSubstitution,
-                                sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
-                                        ?.run { throwCut(ancestorCatch.context) }
-                                        ?: context.sideEffectManager
-                        )
-                    })
-                }
-            }
-        }
-    }
 
     /** Utility function to check if throwArgument is an `error(system_error, ...)` */
     private fun isSystemErrorStruct(aTerm: Term) = with(aTerm as? Struct) {

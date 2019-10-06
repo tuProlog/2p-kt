@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.primitiveimpl.testutils
 
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
@@ -25,7 +25,7 @@ internal object PrimitivesUtils {
 
     /** Utility function to test whether a primitive throwing an error carries with it the request context */
     internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request<ExecutionContext>, primitiveWrapper: PrimitiveWrapper<out ExecutionContext>) {
-        try {
+        try { // there's a more advanced version in PrimitiveWrapperUtils... see if it can be imported or copy it there
             primitiveWrapper.primitive(request)
             fail("Exception should be thrown")
         } catch (e: TuPrologRuntimeException) {

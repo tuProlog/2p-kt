@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Primitive
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.solve.primitiveimpl.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
@@ -85,7 +85,7 @@ internal object StateGoalEvaluationUtils {
     /** Creates a request launching exactly given primitive behaviour */
     private fun createPrimitiveRequest(primitiveBehaviour: Primitive) =
             object : PrimitiveWrapper<ExecutionContext>(Signature("testPrimitive", 0)) {
-                override val uncheckedImplementation: Primitive = primitiveBehaviour
+                override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> = primitiveBehaviour(request)
             }.run {
                 SolverTestUtils.createSolveRequest(
                         signature withArgs emptyList(),
