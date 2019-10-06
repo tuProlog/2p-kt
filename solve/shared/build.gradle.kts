@@ -8,6 +8,7 @@ kotlin {
                 api(project(":unify"))
                 api(project(":theory"))
 
+                // TODO can be removed dependency from shared?? even below
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.0-RC2")
             }
         }
