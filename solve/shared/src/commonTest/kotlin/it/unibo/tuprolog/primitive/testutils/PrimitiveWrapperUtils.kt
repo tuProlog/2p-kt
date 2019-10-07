@@ -1,17 +1,16 @@
 package it.unibo.tuprolog.primitive.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.createRequest
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.assertTrue
 import kotlin.test.fail
-import kotlin.collections.List as KtList
 
 /**
  * Test class for [PrimitiveWrapper]
@@ -20,74 +19,22 @@ import kotlin.collections.List as KtList
  */
 internal object PrimitiveWrapperUtils {
 
-    /** Test data in form (Signature, goodRequestList, badRequestList)*/
-    private val primitiveSignaturesToGoodAndBadRequests by lazy {
-        listOf(
-                Triple(Signature("ciao", 0),
-                        listOf(Atom.of("ciao")),
-                        listOf(
-                                Atom.of("ciaO"), Atom.of("cc")
-                        )
-                ),
-                Triple(Signature("another", 1),
-                        listOf(
-                                Struct.of("another", Var.anonymous()),
-                                Struct.of("another", Truth.`true`())
-                        ),
-                        listOf(
-                                Atom.of("another"),
-                                Struct.of("another", Var.of("A"), Var.of("B")),
-                                Struct.of("other", Integer.of(2))
-                        )
-                ),
-                Triple(Signature("aVarargOne", 1, true),
-                        listOf(
-                                Struct.of("aVarargOne", Var.of("X")),
-                                Struct.of("aVarargOne", Integer.of(1), Real.of(1.5)),
-                                Struct.of("aVarargOne", Var.of("X"), Var.of("Y"), Truth.`true`())
-                        ),
-                        listOf(
-                                Atom.of("aVarargOne"),
-                                Struct.of("aVararg", Var.anonymous())
-                        )
-                )
-        )
-    }
-
     /** Utility function to create a primitive wrapper */
-    private inline fun createPrimitiveWrapper(signature: Signature, crossinline uncheckedImplementation: Primitive): PrimitiveWrapper<ExecutionContext> =
+    internal inline fun createPrimitiveWrapper(signature: Signature, crossinline uncheckedImplementation: Primitive): PrimitiveWrapper<ExecutionContext> =
             object : PrimitiveWrapper<ExecutionContext>(signature) {
                 override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
                         uncheckedImplementation(request)
             }
 
-    /** All primitives under test associated with good requests; primitives return `emptySequence()` */
-    internal val primitivesToCorrectRequests by lazy {
-        primitiveSignaturesToGoodAndBadRequests.map { (signature, good, _) ->
-            createPrimitiveWrapper(signature) { emptySequence() } to good
-        }
-    }
-
-    /** All primitives under test associated with bad requests that should be rejected */
-    internal val primitivesToBadRequests by lazy {
-        primitiveSignaturesToGoodAndBadRequests.map { (signature, _, bad) ->
-            createPrimitiveWrapper(signature) { emptySequence() } to bad
-        }
-    }
-
     /** All primitive Wrappers under test */
-    internal val primitiveWrappersToSignatureMap by lazy {
-        primitiveSignaturesToGoodAndBadRequests.map { it.first }.zip(primitivesToCorrectRequests.map { it.first })
+    internal val primitiveWrappersToSignatures by lazy {
+        PrimitiveUtils.primitiveToGoodRequests(::createPrimitiveWrapper).map { it.first }
+                .zip(PrimitiveUtils.primitiveSignatures)
     }
-
-    /** A function to create a Solve.Request with provided [signature] and [argList] */
-    internal fun createRequest(signature: Signature, argList: KtList<Term>) =
-            Solve.Request(signature, argList, DummyInstances.executionContext)
 
     /** All under test requests */
     private val allRequests by lazy {
-        primitiveSignaturesToGoodAndBadRequests
-                .flatMap { (_, good, bad) -> good + bad }
+        (PrimitiveUtils.primitiveGoodRawRequests + PrimitiveUtils.primitiveBadRawRequests).flatten()
                 .map { createRequest(it.extractSignature(), it.argsList) }
     }
 

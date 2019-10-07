@@ -2,15 +2,15 @@ package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
 import it.unibo.tuprolog.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreNumeric
+import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToBadRequests
+import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToGoodRequests
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.allGroundRequests
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.allNumericArgsRequests
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.assertOnError
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.createRequest
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveWrapper
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.nonAllGroundRequests
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.notAllNumericArgsRequest
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitiveWrappersToSignatureMap
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitivesToBadRequests
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitivesToCorrectRequests
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitiveWrappersToSignatures
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import kotlin.test.Test
@@ -27,40 +27,40 @@ internal class PrimitiveWrapperTest {
 
     @Test
     fun signatureCorrect() {
-        primitiveWrappersToSignatureMap.forEach { (signature, wrapper) ->
+        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
             assertEquals(signature, wrapper.signature)
         }
     }
 
     @Test
     fun functorCorrect() {
-        primitiveWrappersToSignatureMap.forEach { (signature, wrapper) ->
+        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
             assertEquals(signature.name, wrapper.functor)
         }
     }
 
     @Test
     fun primitiveWorksIfCorrectRequestProvided() {
-        primitivesToCorrectRequests.forEach { (wrapper, acceptedRequests) ->
+        primitiveToGoodRequests(::createPrimitiveWrapper).forEach { (wrapper, acceptedRequests) ->
             acceptedRequests.forEach {
                 if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                assertEquals(emptySequence(), wrapper.primitive(createRequest(it.extractSignature(), it.argsList)))
+                assertEquals(emptySequence(), wrapper.primitive(it))
             }
         }
     }
 
     @Test
     fun primitiveComplainsWithWrongRequestSignatureOrArguments() {
-        primitivesToBadRequests.forEach { (wrapper, badRequests) ->
+        primitiveToBadRequests(::createPrimitiveWrapper).forEach { (wrapper, badRequests) ->
             badRequests.forEach {
-                assertFailsWith<IllegalArgumentException> { wrapper.primitive(createRequest(it.extractSignature(), it.argsList)) }
+                assertFailsWith<IllegalArgumentException> { wrapper.primitive(it) }
             }
         }
     }
 
     @Test
     fun descriptionPairCorrect() {
-        primitiveWrappersToSignatureMap.forEach { (signature, wrapper) ->
+        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
             assertEquals(with(wrapper) { signature to primitive }, wrapper.descriptionPair)
         }
     }
