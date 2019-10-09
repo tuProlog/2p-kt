@@ -10,8 +10,11 @@ import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-fun Solver.solve(scopedContext: Scope.() -> Struct): Sequence<Solution> =
-        solve(scopedContext(Scope.empty()))
+fun Solver.Companion.mutable(libraries: Libraries = Libraries(),
+                             flags: Map<Atom, Term> = emptyMap(),
+                             staticKB: ClauseDatabase = ClauseDatabase.empty(),
+                             dynamicKB: ClauseDatabase = ClauseDatabase.empty()) =
+        MutableSolver(libraries, flags, staticKB, dynamicKB)
 
 data class MutableSolver(var libraries: Libraries = Libraries(),
                          /** Enabled flags */
