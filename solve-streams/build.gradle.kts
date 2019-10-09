@@ -4,7 +4,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":solve:shared"))
+                api(project(":solve"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.0-RC2")
             }
