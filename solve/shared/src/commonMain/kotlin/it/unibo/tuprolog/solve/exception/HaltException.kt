@@ -14,10 +14,15 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @author Enrico
  */
 class HaltException(
+        // TODO what about a field for the exit status code
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
+
+    override fun updateContext(context: ExecutionContext): HaltException {
+        return HaltException(message, cause, context)
+    }
 }

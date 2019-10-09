@@ -21,4 +21,8 @@ open class TuPrologRuntimeException(
 
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     val prologStackTrace: Sequence<Struct> by lazy { context.prologStackTrace }
+
+    open fun updateContext(context: ExecutionContext): TuPrologRuntimeException {
+        return TuPrologRuntimeException(message, cause, context)
+    }
 }
