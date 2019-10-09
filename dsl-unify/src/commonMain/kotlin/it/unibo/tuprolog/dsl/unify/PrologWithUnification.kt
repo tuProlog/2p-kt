@@ -26,6 +26,8 @@ interface PrologWithUnification : Prolog, Unification {
 
     companion object {
         fun empty(): PrologWithUnification = PrologWithUnificationImpl()
+
+        fun of(unification: Unification): PrologWithUnification = PrologWithUnificationImpl(unification)
     }
 }
 
