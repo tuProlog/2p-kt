@@ -44,6 +44,8 @@ data class ExecutionContextImpl(
     }
 
     override val prologStackTrace: Sequence<Struct> by lazy {
-        pathToRoot.filter { it.isActivationRecord }.map { it.goals.current!! } // TODO: 06/10/2019 Giovanni's review needed!!
+        pathToRoot.filter { it.isActivationRecord }
+                .filter { it.goals.hasNext }
+                .map { it.goals.current!! }
     }
 }

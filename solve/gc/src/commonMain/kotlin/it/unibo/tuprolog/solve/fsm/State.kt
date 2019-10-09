@@ -113,14 +113,14 @@ data class StatePrimitiveSelection(override val context: ExecutionContextImpl) :
                             val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
 
-                            val tempExecutionContext = context.copy(
+                            val tempExecutionContext = copy(
                                     goals = sequenceOf(goal).ensureStructs(),
                                     parent = context,
                                     depth = nextDepth(),
                                     step = nextStep()
                             )
 
-                            val newChoicePointContext = context.choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
+                            val newChoicePointContext = choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
 
                             StatePrimitiveExecution(
                                     tempExecutionContext.copy(
@@ -129,10 +129,7 @@ data class StatePrimitiveSelection(override val context: ExecutionContextImpl) :
                                     )
                             )
                         } catch (exception: TuPrologRuntimeException) {
-                            StateException(with(exception) {
-                                // TODO Giovanni's review needed, changed to make it compile!!!
-                                TuPrologRuntimeException(message, cause, parent ?: context)
-                            }, copy(step = nextStep()))
+                            StateException(exception.updateContext(context), copy(step = nextStep()))
                         }
                     } else {
                         StateRuleSelection(
@@ -179,10 +176,7 @@ data class StatePrimitiveExecution(override val context: ExecutionContextImpl) :
                         )
                     }
                     is Solution.Halt -> StateException(
-                            with(sol.exception) {
-                                // TODO Giovanni's review needed, changed to make it compile!!!
-                                TuPrologRuntimeException(message, cause, parent ?: context)
-                            },
+                            sol.exception.updateContext(context),
                             copy(
                                     primitives = Cursor.empty(),
                                     libraries = primitives.current!!.libraries ?: libraries,
@@ -193,10 +187,7 @@ data class StatePrimitiveExecution(override val context: ExecutionContextImpl) :
                             ))
                 }
             } catch (exception: TuPrologRuntimeException) {
-                StateException(with(exception) {
-                    // TODO Giovanni's review needed, changed to make it compile!!!
-                    TuPrologRuntimeException(message, cause, parent ?: context)
-                }, copy(step = nextStep()))
+                StateException(exception.updateContext(context), copy(step = nextStep()))
             }
         }
     }
