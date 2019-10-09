@@ -27,11 +27,17 @@ interface ClauseDatabase : Iterable<Clause> {
     /** Checks if given clause is present in this database */
     operator fun contains(head: Struct): Boolean
 
+    /** Checks if clauses exists in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    operator fun contains(indicator: Indicator): Boolean
+
     /** Retrieves matching clauses from this database */
     operator fun get(clause: Clause): Sequence<Clause>
 
-    /** Retrieves matching clauses from this database */
-    operator fun get(head: Struct): Sequence<Clause>
+    /** Retrieves matching rules from this database */
+    operator fun get(head: Struct): Sequence<Rule>
+
+    /** Retrieves all rules in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    operator fun get(indicator: Indicator): Sequence<Rule>
 
     /** Adds given clause before all other clauses in this database */
     fun assertA(clause: Clause): ClauseDatabase
@@ -60,12 +66,18 @@ interface ClauseDatabase : Iterable<Clause> {
     companion object {
 
         /** Creates an empty ClauseDatabase */
-        fun empty(): ClauseDatabase = ClauseDatabaseImpl(emptyList())
+        fun empty(): ClauseDatabase = of(emptySequence())
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(vararg clause: Clause): ClauseDatabase = ClauseDatabaseImpl(clause.toList())
+        fun of(vararg clause: Clause): ClauseDatabase = of(clause.asIterable())
+
+        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): ClauseDatabase = of(clause.map { Scope.empty(it) })
 
         /** Creates a ClauseDatabase with given clauses */
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses.toList())
+        fun of(clauses: Sequence<Clause>): ClauseDatabase = of(clauses.asIterable())
+
+        /** Creates a ClauseDatabase with given clauses */
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
     }
 }

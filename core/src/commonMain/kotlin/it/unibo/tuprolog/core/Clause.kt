@@ -45,9 +45,6 @@ interface Clause : Struct {
     companion object {
         const val FUNCTOR = ":-"
 
-        /** Contains notable functor in determining if a Clause [isWellFormed] */
-        val notableFunctors = listOf(",", ";", "->")
-
         fun of(head: Struct? = null, vararg body: Term): Clause =
                 when (head) {
                     null -> {
@@ -56,6 +53,23 @@ interface Clause : Struct {
                     }
                     else -> Rule.of(head, *body)
                 }
+
+        /** Contains notable functor in determining if a Clause [isWellFormed] */
+        val notableFunctors = listOf(",", ";", "->")
+
+        /** A visitor that checks whether [isWellFormed] (body constraints part) is respected */
+        val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
+
+            override fun defaultValue(term: Term): Boolean = term !is Numeric
+
+            override fun visit(term: Struct): Boolean = when {
+                term.functor in notableFunctors && term.arity == 2 ->
+                    term.argsSequence
+                            .map { arg -> arg.accept(this) }
+                            .reduce(Boolean::and)
+                else -> true
+            }
+        }
 
         /**
          * A visitor to prepare Clauses for execution
@@ -83,7 +97,7 @@ interface Clause : Struct {
 }
 
 /**
- * Prepares the receiver ClauseDatabase for execution, using the provided visitor
+ * Prepares the receiver Clause for execution, using the provided visitor
  *
  * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
  * as the Term: `product(A) :- call(A), call(A)`

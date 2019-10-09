@@ -7,10 +7,7 @@ import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
 /**
@@ -28,7 +25,7 @@ internal class DirectiveImplTest {
 
     @Test
     fun headNull() {
-        mixedDirectivesInstances.forEach { assertEquals(null, it.head) }
+        mixedDirectivesInstances.forEach { assertNull(it.head) }
     }
 
     @Test
@@ -53,8 +50,8 @@ internal class DirectiveImplTest {
 
     @Test
     fun isGroundTrueIfNoVariablesArePresent() {
-        groundDirectivesInstances.forEach { assertTrue { it.isGround } }
-        nonGroundDirectivesInstances.forEach { assertFalse { it.isGround } }
+        groundDirectivesInstances.forEach { assertTrue("$it isGround should be true") { it.isGround } }
+        nonGroundDirectivesInstances.forEach { assertFalse("$it isGround should be false") { it.isGround } }
     }
 
     @Test

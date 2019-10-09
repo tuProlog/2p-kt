@@ -92,7 +92,7 @@ internal class ConversionsTest {
     @Test
     fun stringAsAtom() {
         val correct = AtomUtils.mixedAtoms.map { Atom.of(it) }
-        val toBeTested = AtomUtils.mixedAtoms.map { it.asAtom() }
+        val toBeTested = AtomUtils.mixedAtoms.map { it.toAtom() }
 
         onCorrespondingItems(correct, toBeTested, ::assertEqualities)
     }
@@ -100,7 +100,7 @@ internal class ConversionsTest {
     @Test
     fun stringAsVar() {
         val correct = VarUtils.correctlyNamedVars.map { Var.of(it) }
-        val toBeTested = VarUtils.correctlyNamedVars.map { it.asVar() }
+        val toBeTested = VarUtils.correctlyNamedVars.map { it.toVar() }
 
         onCorrespondingItems(correct, toBeTested, ::assertDifferentVariableExceptForName)
     }

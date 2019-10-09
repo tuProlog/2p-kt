@@ -15,6 +15,7 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     override val clauses: KtList<Clause> by lazy { reteTree.indexedElements.toList() }
 
     override val rules: KtList<Rule> by lazy { super.rules.toList() }
+
     override val directives: KtList<Directive> by lazy { super.directives.toList() }
 
 
@@ -23,11 +24,27 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
 
-    override fun contains(clause: Clause): Boolean = reteTree.get(clause).any()
+
+    override fun contains(clause: Clause): Boolean = get(clause).any()
+
     override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
 
+    override fun contains(indicator: Indicator): Boolean = get(indicator).any()
+
+
     override fun get(clause: Clause): Sequence<Clause> = reteTree.get(clause)
-    override fun get(head: Struct): Sequence<Clause> = get(Rule.of(head, Var.anonymous()))
+
+    override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it as Rule }
+
+    override fun get(indicator: Indicator): Sequence<Rule> {
+        require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
+
+        return get(Rule.of(
+                Struct.of(indicator.indicatedName!!, (1..indicator.indicatedArity!!).map { Var.anonymous() }),
+                Var.anonymous())
+        ).map { it as Rule }
+    }
+
 
     override fun assertA(clause: Clause): ClauseDatabase =
             ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = true) })

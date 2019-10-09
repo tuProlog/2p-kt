@@ -60,6 +60,9 @@ internal object ReteNodeUtils {
                 },
                 Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())).run {
                     this to rules.filter { it matches this }
+                },
+                Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()).run {
+                    this to rules.filter { it matches this }
                 }
         )
     }
