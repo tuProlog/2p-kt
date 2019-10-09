@@ -58,6 +58,9 @@ interface Scope {
 
     fun anonymous(): Var
 
+    val `_`: Var
+        get() = anonymous()
+
     fun whatever(): Var
 
     fun numOf(value: BigDecimal): Real
@@ -77,6 +80,8 @@ interface Scope {
     fun numOf(value: Byte): Integer
 
     fun numOf(value: String): Numeric
+
+    fun truthOf(value: Boolean): Truth
 
     companion object {
 

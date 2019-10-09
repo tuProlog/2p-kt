@@ -8,10 +8,6 @@ import it.unibo.tuprolog.core.Set as LogicSet
 
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
 
-    ////////////////////
-    // Scope specific //
-    ////////////////////
-
     override fun contains(variable: Var): Boolean = variable.name in _variables
 
     override fun contains(variable: String): Boolean = variable in _variables
@@ -49,9 +45,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun toString(): String = variables.toString()
 
-    ///////////////////////
-    // General Factories //
-    ///////////////////////
+    override fun truthOf(value: Boolean): Truth = Truth.of(value)
 
     override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
 
