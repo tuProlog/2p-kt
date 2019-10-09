@@ -109,24 +109,31 @@ data class StatePrimitiveSelection(override val context: ExecutionContextImpl) :
                         val req = toRequest(signature, goal.argsList)
                         val primitive = libraries.primitives[signature]
                                 ?: error("Inconsistent behaviour of Library.contains and Library.get")
-                        val primitiveExecutions = primitive(req).cursor().also { require(!it.isOver) }
+                        try {
+                            val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
 
-                        val tempExecutionContext = context.copy(
-                                goals = sequenceOf(goal).ensureStructs(),
-                                parent = context,
-                                depth = nextDepth(),
-                                step = nextStep()
-                        )
+                            val tempExecutionContext = context.copy(
+                                    goals = sequenceOf(goal).ensureStructs(),
+                                    parent = context,
+                                    depth = nextDepth(),
+                                    step = nextStep()
+                            )
 
-                        val newChoicePointContext = context.choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
+                            val newChoicePointContext = context.choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
 
-                        StatePrimitiveExecution(
-                                tempExecutionContext.copy(
-                                        primitives = primitiveExecutions,
-                                        choicePoints = newChoicePointContext
-                                )
-                        )
+                            StatePrimitiveExecution(
+                                    tempExecutionContext.copy(
+                                            primitives = primitiveExecutions,
+                                            choicePoints = newChoicePointContext
+                                    )
+                            )
+                        } catch (exception: TuPrologRuntimeException) {
+                            StateException(with(exception) {
+                                // TODO Giovanni's review needed, changed to make it compile!!!
+                                TuPrologRuntimeException(message, cause, parent ?: context)
+                            }, copy(step = nextStep()))
+                        }
                     } else {
                         StateRuleSelection(
                                 context.copy(step = nextStep())
