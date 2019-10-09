@@ -6,7 +6,7 @@ import org.gciatto.kt.math.BigInteger
 
 import it.unibo.tuprolog.core.toTerm as extToTerm
 
-class Prolog : Scope by Scope.empty() {
+interface Prolog : Scope {
 
     fun Any.toTerm(): Term = when (this) {
         is Term -> this
@@ -32,6 +32,10 @@ class Prolog : Scope by Scope.empty() {
     infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
 
     infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
+
+    fun structOf(functor: String, vararg args: Any): Struct {
+        return structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+    }
 
     operator fun String.invoke(term: Any, vararg terms: Any): Term {
         return structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
@@ -147,18 +151,23 @@ class Prolog : Scope by Scope.empty() {
     }
 
     fun <R> scope(function: Prolog.() -> R): R {
-        return Prolog().function()
+        return Prolog.empty().function()
     }
 
     fun rule(function: Prolog.() -> Term): Rule {
-        return Prolog().function() as Rule
+        return Prolog.empty().function() as Rule
     }
 
     fun fact(function: Prolog.() -> Term): Fact {
-        return factOf(Prolog().function() as Struct)
+        return factOf(Prolog.empty().function() as Struct)
+    }
+
+    companion object {
+        fun empty(): Prolog = PrologImpl()
     }
 }
 
+
 fun <R> prolog(function: Prolog.() -> R): R {
-    return Prolog().function()
+    return Prolog.empty().function()
 }
