@@ -3,7 +3,7 @@ rootProject.name = '2p'
 include "core"
 include "unify"
 include "theory"
-include "dsl"
+include "dsl-core"
 include "solve:shared"
 include "solve:es"
 include "solve:gc"
