@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.libraries.stdlib
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.solve.ExecutionContext
 
-object EqualsTo : TermRelation.WithoutSideEffects("==") {
+/** Implementation of '=='/2 predicate */
+object EqualsTo : TermRelation.WithoutSideEffects<ExecutionContext>("==") {
     override fun relationWithoutSideEffects(x: Term, y: Term): Boolean =
             x == y
 }

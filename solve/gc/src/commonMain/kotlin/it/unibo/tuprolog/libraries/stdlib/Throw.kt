@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 
-object Throw : UnaryPredicate("throw") {
+object Throw : UnaryPredicate<ExecutionContext>("throw") {
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
             sequenceOf(
                     request.ensuringAllArgumentsAreInstantiated()

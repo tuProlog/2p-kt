@@ -22,7 +22,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) 
     /** A shorthand to get the primitive functor name */
     val functor: String = signature.name
 
-    /** The field containing the implementation of the primitive, without any check for application to correct signature */
+    /** The function expressing the implementation of the primitive, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
 
     /** Checked primitive implementation */

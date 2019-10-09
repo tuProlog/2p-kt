@@ -8,7 +8,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import org.gciatto.kt.math.BigInteger
 
-object Natural : UnaryPredicate("natural") {
+// TODO doc
+object Natural : UnaryPredicate<ExecutionContext>("natural") {
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
             when (val x = request.arguments[0]) {
                 is Var -> generateValues(x).map { request.replySuccess(Substitution.of(x, it)) }
