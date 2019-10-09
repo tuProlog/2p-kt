@@ -37,4 +37,8 @@ class InstantiationError(
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
     }
+
+    override fun updateContext(context: ExecutionContext): InstantiationError {
+        return InstantiationError(message, cause, context, extraData)
+    }
 }
