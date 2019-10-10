@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 abstract class AbstractSolverTest : SolverFactory {
 
+    @Test
     open fun testConjunction() {
         prolog {
             val solver = solverOf(
@@ -18,6 +20,7 @@ abstract class AbstractSolverTest : SolverFactory {
 
             val solutions = solver.solveGoal { "a" }.take(2).toList()
             assertTrue { solutions.isNotEmpty() }
+            println(solutions)
         }
     }
 

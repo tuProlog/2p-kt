@@ -1,5 +1,3 @@
-val ktVersion: String? by rootProject
-
 // Project specific kotlin multiplatform configuration
 kotlin {
 
@@ -8,8 +6,8 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
-                api("org.jetbrains.kotlin:kotlin-test-common:$ktVersion")
-                api("org.jetbrains.kotlin:test-annotations-common:$ktVersion")
+                api(kotlin("test-common"))
+                api(kotlin("test-annotations-common"))
             }
         }
 
@@ -17,9 +15,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
+                    api(kotlin("test-junit"))
                 }
             }
         }
@@ -27,9 +23,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
+                    api(kotlin("test-js"))
                 }
             }
         }

@@ -5,11 +5,11 @@ import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
 import org.gciatto.kt.math.BigInteger
 
-val dummyLibraries = Libraries(
+val libraries = Libraries(
         DefaultBuiltins
 )
 
-val dummyStatic = ClauseDatabase.of(
+val staticKb = ClauseDatabase.of(
         { ruleOf(structOf("a", varOf("X")), structOf("b", varOf("X"))) },
         { factOf(structOf("a", numOf(6))) },
         { ruleOf(structOf("b", varOf("X")), structOf("c", varOf("X")), structOf("d", varOf("X"))) },
@@ -31,10 +31,10 @@ val dummyStatic = ClauseDatabase.of(
 )
 
 fun main(args: Array<String>) {
-    val solver: MutableSolver = MutableSolver(libraries = dummyLibraries, staticKB = dummyStatic)
+    val solver: MutableSolver = MutableSolver(libraries = libraries, staticKB = staticKb)
 
-    println(dummyLibraries.theory)
-    println(dummyStatic)
+    println(libraries.theory)
+    println(staticKb)
 
     println()
 
