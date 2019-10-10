@@ -37,7 +37,7 @@ interface Prolog : Scope {
         return structOf(functor, *args.map { it.toTerm() }.toTypedArray())
     }
 
-    operator fun String.invoke(term: Any, vararg terms: Any): Term {
+    operator fun String.invoke(term: Any, vararg terms: Any): Struct {
         return structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
     }
 

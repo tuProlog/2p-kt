@@ -12,15 +12,21 @@ abstract class AbstractSolverTest : SolverFactory {
         prolog {
             val solver = solverOf(
                     staticKB = theoryOf(
-                            rule { "a" `if` ("b" and "c") },
-                            fact { "b" },
-                            fact { "c" }
+                            rule { "a"("X") impliedBy ("b"("X") and "c"("X")) },
+                            fact { "b"(1) },
+                            fact { "c"(1) }
                     )
             )
 
-            val solutions = solver.solveGoal { "a" }.take(2).toList()
-            assertTrue { solutions.isNotEmpty() }
-            println(solutions)
+            val solutions = solver.solve("a"("X")).take(2).toList()
+
+            assertTrue { solutions.size == 1 }
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertTrue { it.query == structOf("a", varOf("X")) }
+                assertTrue { it.solvedQuery == structOf("a", numOf(1)) }
+            }
         }
     }
 
