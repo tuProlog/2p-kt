@@ -154,12 +154,38 @@ interface Prolog : Scope {
         return Prolog.empty().function()
     }
 
-    fun rule(function: Prolog.() -> Term): Rule {
-        return Prolog.empty().function() as Rule
+    fun rule(function: Prolog.() -> Any): Rule {
+        return Prolog.empty().function().toTerm() as Rule
     }
 
-    fun fact(function: Prolog.() -> Term): Fact {
-        return factOf(Prolog.empty().function() as Struct)
+    fun clause(function: Prolog.() -> Any): Clause {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Clause -> t
+                is Struct -> return factOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a clause")
+            }
+        }
+    }
+
+    fun directive(function: Prolog.() -> Any): Directive {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Directive -> t
+                is Struct -> return directiveOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a directive")
+            }
+        }
+    }
+
+    fun fact(function: Prolog.() -> Any): Fact {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Fact -> t
+                is Struct -> return factOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a fact")
+            }
+        }
     }
 
     companion object {

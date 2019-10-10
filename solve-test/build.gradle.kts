@@ -1,3 +1,5 @@
+val ktVersion: String? by rootProject
+
 // Project specific kotlin multiplatform configuration
 kotlin {
 
@@ -6,8 +8,8 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation("org.jetbrains.kotlin:kotlin-test-common:$ktVersion")
+                implementation("org.jetbrains.kotlin:test-annotations-common:$ktVersion")
             }
         }
 
