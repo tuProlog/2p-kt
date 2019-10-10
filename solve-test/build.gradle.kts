@@ -8,8 +8,8 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
-                implementation("org.jetbrains.kotlin:kotlin-test-common:$ktVersion")
-                implementation("org.jetbrains.kotlin:test-annotations-common:$ktVersion")
+                api("org.jetbrains.kotlin:kotlin-test-common:$ktVersion")
+                api("org.jetbrains.kotlin:test-annotations-common:$ktVersion")
             }
         }
 
