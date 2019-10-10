@@ -7,7 +7,10 @@ class Prova {
     @Test
     fun testProlog() {
         prolog {
-            println("f"("X") mguWith structOf("f", 1))
+            println(theoryOf(
+                    fact { "member"("X", consOf("X", `_`))  },
+                    rule { "member"("X", consOf(`_`, "T")) impliedBy "member"("X", "T") }
+            ))
         }
     }
 }
