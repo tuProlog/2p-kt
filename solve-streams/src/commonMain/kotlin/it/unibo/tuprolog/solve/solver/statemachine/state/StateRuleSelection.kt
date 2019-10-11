@@ -25,7 +25,8 @@ internal class StateRuleSelection(
 
     override fun behaveTimed(): Sequence<State> = sequence {
         val currentGoal = solve.query
-        val matchingRules = solve.context.libraries.theory[currentGoal.freshCopy()] // TODO: 22/09/2019 check for matching rules even in staticKB and dynamicKB
+        val ruleSources = with(solve.context) { sequenceOf(libraries.theory, staticKB, dynamicKB) }
+        val matchingRules = ruleSources.flatMap { it[currentGoal.freshCopy()] }
         val isChoicePoint = moreThanOne(matchingRules)
 
         when {
