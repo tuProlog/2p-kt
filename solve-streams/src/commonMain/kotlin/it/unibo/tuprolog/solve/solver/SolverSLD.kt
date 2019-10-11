@@ -25,6 +25,18 @@ internal class SolverSLD(
         private val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractSolver(startContext) {
 
+    override val libraries: Libraries
+        get() = startContext.libraries
+
+    override val flags: Map<Atom, Term>
+        get() = startContext.flags
+
+    override val staticKB: ClauseDatabase
+        get() = startContext.staticKB
+
+    override val dynamicKB: ClauseDatabase
+        get() = startContext.dynamicKB
+
     constructor(
             libraries: Libraries = Libraries(),
             flags: Map<Atom, Term> = emptyMap(),
