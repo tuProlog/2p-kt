@@ -6,18 +6,21 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
-class TestMutableSolver : AbstractSolverTest() {
-    override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver {
-        return MutableSolver(libraries, flags, staticKB, dynamicKB)
+class TestMutableSolver : SolverFactory {
+
+    val prototype = SolverTestPrototype(this)
+
+    override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
+            MutableSolver(libraries, flags, staticKB, dynamicKB)
+
+
+    @Test
+    fun testConjunction() {
+        prototype.testConjunction()
     }
 
     @Test
-    override fun testConjunction() {
-        super.testConjunction()
-    }
-
-    @Test
-    override fun testConjunctionWithUnification() {
-        super.testConjunctionWithUnification()
+    fun testConjunctionWithUnification() {
+        prototype.testConjunctionWithUnification()
     }
 }

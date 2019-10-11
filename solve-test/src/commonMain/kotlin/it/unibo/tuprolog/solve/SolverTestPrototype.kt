@@ -1,14 +1,12 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-abstract class AbstractSolverTest : SolverFactory {
+class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
-    @Test
-    open fun testConjunction() {
+    fun testConjunction() {
         prolog {
             val solver = solverOf(
                     staticKB = theoryOf(
@@ -30,8 +28,7 @@ abstract class AbstractSolverTest : SolverFactory {
         }
     }
 
-    @Test
-    open fun testConjunctionWithUnification() {
+    fun testConjunctionWithUnification() {
         prolog {
             val solver = solverOf(
                     staticKB = theoryOf(

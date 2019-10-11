@@ -3,23 +3,35 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
-class TestSolverSLD : AbstractSolverTest() {
+class TestSolverSLD : SolverFactory {
+
+    val prototype = SolverTestPrototype(this)
+
+    override val defaultLibraries: Libraries
+        get() = Libraries(
+                Library.of(
+                        alias = "prolog.test.conjunction",
+                        primitives = mapOf(Conjunction.descriptionPair)
+                )
+        )
 
     override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
             SolverSLD(libraries, flags, staticKB, dynamicKB)
 
 
     @Test
-    override fun testConjunction() {
-        super.testConjunction()
+    fun testConjunction() {
+        prototype.testConjunction()
     }
 
     @Test
-    override fun testConjunctionWithUnification() {
-        super.testConjunctionWithUnification()
+    fun testConjunctionWithUnification() {
+        prototype.testConjunctionWithUnification()
     }
 }
