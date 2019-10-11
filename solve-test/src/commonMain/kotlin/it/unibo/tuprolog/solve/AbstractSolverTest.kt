@@ -18,14 +18,14 @@ abstract class AbstractSolverTest : SolverFactory {
                     )
             )
 
-            val solutions = solver.solve("a"("X")).take(2).toList()
+            val solutions = solver.solve("a"("N")).take(2).toList()
 
             assertTrue { solutions.size == 1 }
 
             solutions[0].let {
                 assertTrue { it is Solution.Yes }
-                assertTrue { it.query == structOf("a", varOf("X")) }
-                assertTrue { it.solvedQuery == structOf("a", numOf(1)) }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(1), it.solvedQuery)
             }
         }
     }
