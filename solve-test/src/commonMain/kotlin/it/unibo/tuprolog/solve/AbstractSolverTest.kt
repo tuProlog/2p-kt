@@ -12,6 +12,29 @@ abstract class AbstractSolverTest : SolverFactory {
         prolog {
             val solver = solverOf(
                     staticKB = theoryOf(
+                            rule { "a" impliedBy ("b" and "c") },
+                            fact { "b" },
+                            fact { "c" }
+                    )
+            )
+
+            val solutions = solver.solve(atomOf("a")).take(2).toList()
+
+            assertTrue { solutions.size == 1 }
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals(atomOf("a"), it.query)
+                assertEquals(atomOf("a"), it.solvedQuery)
+            }
+        }
+    }
+
+    @Test
+    open fun testConjunctionWithUnification() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
                             rule { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                             fact { "b"(1) },
                             fact { "c"(1) }

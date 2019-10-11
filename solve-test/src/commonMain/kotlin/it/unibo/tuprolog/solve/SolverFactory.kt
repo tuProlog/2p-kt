@@ -34,4 +34,5 @@ interface SolverFactory {
                     else -> throw IllegalArgumentException("Cannot convert $rawGoal into a struct")
                 }
             }
+
 }
