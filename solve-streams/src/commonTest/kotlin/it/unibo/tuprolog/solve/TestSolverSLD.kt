@@ -17,7 +17,6 @@ class TestSolverSLD : SolverFactory {
     override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
             SolverSLD(libraries, flags, staticKB, dynamicKB)
 
-
     @Test
     fun testConjunction() {
         prototype.testConjunction()
@@ -51,5 +50,10 @@ class TestSolverSLD : SolverFactory {
     @Test
     fun testConjunctionOfConjunctions() {
         prototype.testConjunctionOfConjunctions()
+    }
+
+    @Test
+    fun testMember() {
+        prototype.testMember();
     }
 }

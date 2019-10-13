@@ -189,4 +189,34 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    fun testMember() {
+        prolog {
+            val solver = solverOf()
+
+            val constants = arrayOf("a", "b", "c")
+            val goal = "member"("X", listOf(*constants))
+
+            val solutions = solver.solve(goal).take(constants.size + 2).toList()
+
+            assertEquals(constants.size + 1, solutions.size)
+
+            solutions.last().let {
+                assertTrue { it is Solution.No }
+                assertEquals(goal, it.query)
+                assertTrue { it.substitution is Substitution.Fail }
+                assertNull(it.solvedQuery)
+            }
+
+            for (i in constants.indices) {
+                solutions[i].let {
+                    assertTrue { it is Solution.Yes }
+                    assertEquals(goal, it.query)
+                    assertEquals("member"(constants[i], listOf(*constants)), it.solvedQuery)
+                    assertTrue { it.substitution is Substitution.Unifier }
+                    assertTrue { "X" in it.substitution }
+                    assertEquals(atomOf(constants[i]), it.substitution.getDeeply("X"))
+                }
+            }
+        }
+    }
 }

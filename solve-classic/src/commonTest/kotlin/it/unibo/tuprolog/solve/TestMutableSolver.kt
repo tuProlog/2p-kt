@@ -50,4 +50,9 @@ class TestMutableSolver : SolverFactory {
     fun testConjunctionOfConjunctions() {
         prototype.testConjunctionOfConjunctions()
     }
+
+    @Test
+    fun testMember() {
+        prototype.testMember();
+    }
 }
