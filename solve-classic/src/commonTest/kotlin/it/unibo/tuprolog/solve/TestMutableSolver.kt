@@ -41,4 +41,9 @@ class TestMutableSolver : SolverFactory {
     fun testFailure() {
         prototype.testFailure()
     }
+
+    @Test
+    fun testDisjunctionWithUnification() {
+        prototype.testDisjunctionWithUnification()
+    }
 }

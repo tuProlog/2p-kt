@@ -77,34 +77,6 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    fun testDisjunction() {
-        prolog {
-            val solver = solverOf(
-                    staticKB = theoryOf(
-                            rule { "a" impliedBy ("b" or "c") },
-                            fact { "b" },
-                            fact { "c" }
-                    )
-            )
-
-            val solutions = solver.solve(atomOf("a")).take(2).toList()
-
-            assertEquals(2, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
-        }
-    }
-
     fun testConjunctionWithUnification() {
         prolog {
             val solver = solverOf(
@@ -125,7 +97,67 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"(1), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
                 assertTrue { varOf("N") in it.substitution }
-                assertTrue { it.substitution[varOf("N")]!! matches numOf(1) }
+                assertEquals(numOf(1), it.substitution["N"])
+            }
+        }
+    }
+
+    fun testDisjunction() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a" impliedBy ("b" or "c") },
+                            fact { "b" },
+                            fact { "c" }
+                    )
+            )
+
+            val solutions = solver.solve(atomOf("a")).take(3).toList()
+
+            assertEquals(2, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals(atomOf("a"), it.query)
+                assertEquals(atomOf("a"), it.solvedQuery)
+            }
+
+            solutions[1].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals(atomOf("a"), it.query)
+                assertEquals(atomOf("a"), it.solvedQuery)
+            }
+        }
+    }
+
+    fun testDisjunctionWithUnification() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a"("X") impliedBy ("b"("X") or "c"("X")) },
+                            fact { "b"(1) },
+                            fact { "c"(2) }
+                    )
+            )
+
+            val solutions = solver.solve("a"("N")).take(3).toList()
+
+            assertEquals(2, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(1), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(1), it.substitution["N"])
+            }
+
+            solutions[1].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(1), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
