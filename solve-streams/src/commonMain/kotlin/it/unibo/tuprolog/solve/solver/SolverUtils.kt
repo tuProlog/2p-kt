@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.primitiveimpl.Throw
+import it.unibo.tuprolog.libraries.stdlib.Throw
 
 /**
  * Utilities object for implementing resolution behaviour

@@ -1,15 +1,15 @@
-package it.unibo.tuprolog.solve.primitiveimpl.testutils
+package it.unibo.tuprolog.libraries.stdlib.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.libraries.stdlib.Call
+import it.unibo.tuprolog.libraries.stdlib.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.Cut
+import it.unibo.tuprolog.libraries.stdlib.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.solve.primitiveimpl.Call
-import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
-import it.unibo.tuprolog.solve.primitiveimpl.Cut
-import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.collections.listOf as ktListOf

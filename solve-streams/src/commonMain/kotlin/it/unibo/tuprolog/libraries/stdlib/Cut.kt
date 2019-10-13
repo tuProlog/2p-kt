@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.primitiveimpl
+package it.unibo.tuprolog.libraries.stdlib
 
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature

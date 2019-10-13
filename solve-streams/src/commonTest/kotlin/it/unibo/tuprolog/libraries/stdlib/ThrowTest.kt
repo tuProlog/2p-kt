@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.solve.primitiveimpl
+package it.unibo.tuprolog.libraries.stdlib
 
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.ThrowUtils
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
+import it.unibo.tuprolog.libraries.stdlib.testutils.ThrowUtils
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

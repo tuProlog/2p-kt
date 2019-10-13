@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.solve.primitiveimpl
+package it.unibo.tuprolog.libraries.stdlib
 
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.CatchUtils
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.filterInterestingVariables
+import it.unibo.tuprolog.libraries.stdlib.testutils.CatchUtils
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils.filterInterestingVariables
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
 

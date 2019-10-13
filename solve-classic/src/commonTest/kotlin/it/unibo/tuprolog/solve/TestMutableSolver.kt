@@ -16,7 +16,6 @@ class TestMutableSolver : SolverFactory {
     override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
             MutableSolver(libraries, flags, staticKB, dynamicKB)
 
-
     @Test
     fun testConjunction() {
         prototype.testConjunction()

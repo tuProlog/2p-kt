@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.Conjunction
 import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -33,5 +33,25 @@ class TestSolverSLD : SolverFactory {
     @Test
     fun testConjunctionWithUnification() {
         prototype.testConjunctionWithUnification()
+    }
+
+    @Test
+    fun testBuiltinApi() {
+        prototype.testBuiltinApi()
+    }
+
+    @Test
+    fun testDisjunction() {
+        prototype.testDisjunction()
+    }
+
+    @Test
+    fun testFailure() {
+        prototype.testFailure()
+    }
+
+    @Test
+    fun testDisjunctionWithUnification() {
+        prototype.testDisjunctionWithUnification()
     }
 }

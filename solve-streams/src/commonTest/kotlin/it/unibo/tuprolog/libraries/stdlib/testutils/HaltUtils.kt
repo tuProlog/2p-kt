@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve.primitiveimpl.testutils
+package it.unibo.tuprolog.libraries.stdlib.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.libraries.stdlib.Call
+import it.unibo.tuprolog.libraries.stdlib.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.Halt
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.primitiveimpl.Call
-import it.unibo.tuprolog.solve.primitiveimpl.Conjunction
-import it.unibo.tuprolog.solve.primitiveimpl.Halt
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase

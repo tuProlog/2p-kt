@@ -1,15 +1,15 @@
-package it.unibo.tuprolog.solve.primitiveimpl.testutils
+package it.unibo.tuprolog.libraries.stdlib.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.libraries.stdlib.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.solve.primitiveimpl.Throw
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 
 /**

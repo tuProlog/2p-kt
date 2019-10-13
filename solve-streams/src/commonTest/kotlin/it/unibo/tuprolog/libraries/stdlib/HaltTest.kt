@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.solve.primitiveimpl
+package it.unibo.tuprolog.libraries.stdlib
 
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.HaltUtils
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
+import it.unibo.tuprolog.libraries.stdlib.testutils.HaltUtils
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils.assertRequestContextEqualToThrownErrorOne
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

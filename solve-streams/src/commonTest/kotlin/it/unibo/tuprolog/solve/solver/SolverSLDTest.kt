@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.primitiveimpl.testutils.PrimitivesUtils
+import it.unibo.tuprolog.libraries.stdlib.testutils.PrimitivesUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
