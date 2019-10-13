@@ -37,7 +37,7 @@ interface Prolog : Scope {
         return structOf(functor, *args.map { it.toTerm() }.toTypedArray())
     }
 
-    operator fun String.invoke(term: Any, vararg terms: Any): Term {
+    operator fun String.invoke(term: Any, vararg terms: Any): Struct {
         return structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
     }
 
@@ -154,13 +154,65 @@ interface Prolog : Scope {
         return Prolog.empty().function()
     }
 
-    fun rule(function: Prolog.() -> Term): Rule {
-        return Prolog.empty().function() as Rule
+    fun rule(function: Prolog.() -> Any): Rule {
+        return Prolog.empty().function().toTerm() as Rule
     }
 
-    fun fact(function: Prolog.() -> Term): Fact {
-        return factOf(Prolog.empty().function() as Struct)
+    fun clause(function: Prolog.() -> Any): Clause {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Clause -> t
+                is Struct -> return factOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a clause")
+            }
+        }
     }
+
+    fun directive(function: Prolog.() -> Any): Directive {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Directive -> t
+                is Struct -> return directiveOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a directive")
+            }
+        }
+    }
+
+    fun fact(function: Prolog.() -> Any): Fact {
+        return Prolog.empty().function().let {
+            when(val t = it.toTerm()) {
+                is Fact -> t
+                is Struct -> return factOf(t)
+                else -> throw IllegalArgumentException("Cannot convert $it into a fact")
+            }
+        }
+    }
+
+    operator fun Substitution.get(term: Any): Term? =
+        when (val t = term.toTerm()) {
+            is Var -> this[t]
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+        }
+
+    fun Substitution.getDeeply(term: Any): Term? =
+        when (val t = term.toTerm()) {
+            is Var -> this.getDeeply(t)
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+        }
+
+    fun Substitution.containsKey(term: Any): Boolean =
+        when (val t = term.toTerm()) {
+            is Var -> this.containsKey(t)
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+        }
+
+    operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
+
+    fun Substitution.containsValue(term: Any): Boolean =
+        when (val t = term.toTerm()) {
+            is Var -> this.containsValue(t)
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+        }
 
     companion object {
         fun empty(): Prolog = PrologImpl()

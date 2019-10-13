@@ -7,7 +7,7 @@ class Prova {
     @Test
     fun testProlog() {
         prolog {
-            println("f"("X") mguWith structOf("f", 1))
+            println("f"("X") mguWith "f"(1))
         }
     }
 }

@@ -8,25 +8,11 @@ kotlin {
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
-        jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
-                }
+        val commonTest by getting {
+            dependencies {
+                api(project(":solve-test"))
             }
         }
 
-        js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
-                }
-            }
-        }
     }
 }
