@@ -96,8 +96,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(1), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { varOf("N") in it.substitution }
-                assertEquals(numOf(1), it.substitution["N"])
+                assertTrue { "N" in it.substitution }
+                assertEquals(numOf(1), it.substitution.getDeeply("N"))
             }
         }
     }
@@ -149,15 +149,17 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(1), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(1), it.substitution["N"])
+                assertTrue { "N" in it.substitution }
+                assertEquals(numOf(1), it.substitution.getDeeply("N"))
             }
 
             solutions[1].let {
                 assertTrue { it is Solution.Yes }
                 assertEquals("a"("N"), it.query)
-                assertEquals("a"(1), it.solvedQuery)
+                assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
+                assertTrue { "N" in it.substitution }
+                assertEquals(numOf(2), it.substitution.getDeeply("N"))
             }
         }
     }
