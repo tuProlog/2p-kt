@@ -188,6 +188,24 @@ interface Prolog : Scope {
         }
     }
 
+    operator fun Substitution.get(term: Any): Term? =
+        when (val t = term.toTerm()) {
+            is Var -> this[t]
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class.simpleName}")
+        }
+
+    fun Substitution.containsKey(term: Any): Boolean =
+        when (val t = term.toTerm()) {
+            is Var -> this.containsKey(t)
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class.simpleName}")
+        }
+
+    fun Substitution.containsValue(term: Any): Boolean =
+        when (val t = term.toTerm()) {
+            is Var -> this.containsValue(t)
+            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class.simpleName}")
+        }
+
     companion object {
         fun empty(): Prolog = PrologImpl()
     }
