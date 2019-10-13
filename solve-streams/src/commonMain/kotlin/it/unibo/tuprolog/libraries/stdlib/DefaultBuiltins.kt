@@ -2,17 +2,17 @@ package it.unibo.tuprolog.libraries.stdlib
 
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
-import it.unibo.tuprolog.theory.ClauseDatabase
 
 object DefaultBuiltins : LibraryAliased by Library.of(
         alias = CommonBuiltins.alias,
         operatorSet = CommonBuiltins.operators,
-        theory = CommonBuiltins.theory + ClauseDatabase.of(
-                { ruleOf(tupleOf(varOf("A"), varOf("B")), varOf("A"), varOf("B")) },
-                { ruleOf(structOf("call", varOf("X")), varOf("X")) },
-                { ruleOf(structOf("catch", varOf("G"), whatever(), whatever()), varOf("G")) }
-        ),
+        theory = CommonBuiltins.theory,
         primitives = CommonBuiltins.primitives + sequenceOf(
+                Call,
+                Catch,
+                Conjunction,
+                Cut,
+                Halt,
                 Throw
         ).map { it.descriptionPair }.toMap()
 )
