@@ -77,6 +77,31 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    fun testConjunctionOfConjunctions() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
+                            fact { "b" },
+                            fact { "c" },
+                            fact { "d" },
+                            fact { "e" }
+                    )
+            )
+
+            val solutions = solver.solve(atomOf("a")).take(2).toList()
+
+            assertEquals(1, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals(atomOf("a"), it.query)
+                assertEquals(atomOf("a"), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+            }
+        }
+    }
+
     fun testConjunctionWithUnification() {
         prolog {
             val solver = solverOf(

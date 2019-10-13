@@ -47,4 +47,9 @@ class TestSolverSLD : SolverFactory {
     fun testDisjunctionWithUnification() {
         prototype.testDisjunctionWithUnification()
     }
+
+    @Test
+    fun testConjunctionOfConjunctions() {
+        prototype.testConjunctionOfConjunctions()
+    }
 }
