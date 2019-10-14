@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.ConsImpl
 import it.unibo.tuprolog.core.List as LogicList
 
-interface Cons : Struct, LogicList {
+interface Cons : LogicList {
 
     override val isCons: Boolean
         get() = true
@@ -24,9 +24,9 @@ interface Cons : Struct, LogicList {
     override val arity: Int
         get() = 2
 
-    override fun freshCopy(): Cons = super<LogicList>.freshCopy() as Cons
+    override fun freshCopy(): Cons = super.freshCopy() as Cons
 
-    override fun freshCopy(scope: Scope): Cons = super<LogicList>.freshCopy(scope) as Cons
+    override fun freshCopy(scope: Scope): Cons = super.freshCopy(scope) as Cons
 
     companion object {
         const val FUNCTOR = "."
