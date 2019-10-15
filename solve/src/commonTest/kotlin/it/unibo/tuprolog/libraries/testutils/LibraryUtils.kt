@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.operators.Associativity
+import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.Library
@@ -24,10 +24,10 @@ internal typealias RawLibrary = Pair<String, Triple<OperatorSet, ClauseDatabase,
  */
 internal object LibraryUtils {
 
-    private val plusOperator = Operator("+", Associativity.YFX, 500)
-    private val minusOperator = Operator("-", Associativity.YFX, 300)
+    private val plusOperator = Operator("+", Specifier.YFX, 500)
+    private val minusOperator = Operator("-", Specifier.YFX, 300)
 
-    private val minusOperatorOverridden = Operator("-", Associativity.YFX, 1000)
+    private val minusOperatorOverridden = Operator("-", Specifier.YFX, 1000)
 
     private val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
     private val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))

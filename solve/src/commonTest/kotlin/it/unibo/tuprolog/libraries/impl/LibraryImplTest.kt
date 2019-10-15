@@ -3,7 +3,7 @@ package it.unibo.tuprolog.libraries.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.operators.Associativity
+import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.Library
@@ -77,7 +77,7 @@ internal class LibraryImplTest {
 
             opSet.forEach { operator -> assertTrue { operator in libraryInstance } }
 
-            assertFalse { Operator("ciao", Associativity.XFX, 9) in libraryInstance }
+            assertFalse { Operator("ciao", Specifier.XFX, 9) in libraryInstance }
         }
     }
 

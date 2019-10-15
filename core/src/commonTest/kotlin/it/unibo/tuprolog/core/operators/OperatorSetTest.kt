@@ -13,14 +13,14 @@ import kotlin.test.assertTrue
  */
 internal class OperatorSetTest {
 
-    private val fakePlusOperator = Operator("+", Associativity.YFX, 500)
-    private val fakeMinusOperator = Operator("-", Associativity.YFX, 500)
-    private val fakeTimesOperator = Operator("*", Associativity.YFX, 400)
-    private val fakeDivisionOperator = Operator("/", Associativity.YFX, 400)
+    private val fakePlusOperator = Operator("+", Specifier.YFX, 500)
+    private val fakeMinusOperator = Operator("-", Specifier.YFX, 500)
+    private val fakeTimesOperator = Operator("*", Specifier.YFX, 400)
+    private val fakeDivisionOperator = Operator("/", Specifier.YFX, 400)
 
     private val operatorSet = OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator)
 
-    private val overridingFakePlusOperator = Operator("+", Associativity.YFX, 1000)
+    private val overridingFakePlusOperator = Operator("+", Specifier.YFX, 1000)
     private val overridingOperatorSet = OperatorSet(overridingFakePlusOperator)
 
     @Test
@@ -77,13 +77,13 @@ internal class OperatorSetTest {
         assertEquals(OperatorSet.DEFAULT.count(), OperatorSetUtils.defaultOperators.count())
 
         OperatorSetUtils.defaultOperators.forEach { expectedTriple ->
-            val (expectedFunctor, expectedAssociativity, expectedPriority) = expectedTriple
+            val (expectedFunctor, expectedSpecifier, expectedPriority) = expectedTriple
 
             // expectedOperator should be present in OperatorSet
-            val actualOperator = OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedAssociativity, expectedPriority) }
+            val actualOperator = OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedSpecifier, expectedPriority) }
 
             assertEquals(expectedFunctor, actualOperator.functor, "$actualOperator functor expected to be: $expectedFunctor")
-            assertEquals(expectedAssociativity, actualOperator.associativity, "$actualOperator associativity expected to be: $expectedAssociativity")
+            assertEquals(expectedSpecifier, actualOperator.specifier, "$actualOperator specifier expected to be: $expectedSpecifier")
             assertEquals(expectedPriority, actualOperator.priority, "$actualOperator priority expected to be: $expectedPriority")
         }
     }

@@ -16,10 +16,10 @@ import kotlin.test.*
 internal class OperatorTest {
 
     private val plusFunctor = "+"
-    private val plusAssociativity = Associativity.YFX
+    private val plusSpecifier = Specifier.YFX
     private val plusPriority = 500
 
-    private val plusOperator = Operator(plusFunctor, plusAssociativity, plusPriority)
+    private val plusOperator = Operator(plusFunctor, plusSpecifier, plusPriority)
 
     @Test
     fun functorCorrect() {
@@ -27,8 +27,8 @@ internal class OperatorTest {
     }
 
     @Test
-    fun associativityCorrect() {
-        assertEquals(plusAssociativity, plusOperator.associativity)
+    fun specifierCorrect() {
+        assertEquals(plusSpecifier, plusOperator.specifier)
     }
 
     @Test
@@ -39,27 +39,27 @@ internal class OperatorTest {
     @Test
     fun equalsWorksAsExpected() {
         val differentFunctor = plusFunctor + "x"
-        val differentAssociativity = (Associativity.values().toSet() - plusAssociativity).first()
+        val differentSpecifier = (Specifier.values().toSet() - plusSpecifier).first()
         val differentPriority = plusPriority + 1
 
         assertEquals(plusOperator, plusOperator)
-        assertEquals(plusOperator, Operator(plusFunctor, plusAssociativity, differentPriority))
+        assertEquals(plusOperator, Operator(plusFunctor, plusSpecifier, differentPriority))
 
-        assertNotEquals(plusOperator, Operator(differentFunctor, plusAssociativity, plusPriority))
-        assertNotEquals(plusOperator, Operator(plusFunctor, differentAssociativity, plusPriority))
+        assertNotEquals(plusOperator, Operator(differentFunctor, plusSpecifier, plusPriority))
+        assertNotEquals(plusOperator, Operator(plusFunctor, differentSpecifier, plusPriority))
     }
 
     @Test
     fun toStringWorksAsExpected() {
-        val correctToString = "Operator($plusPriority, $plusAssociativity, '$plusFunctor')"
+        val correctToString = "Operator($plusPriority, $plusSpecifier, '$plusFunctor')"
         assertEquals(correctToString, plusOperator.toString())
     }
 
     @Test
     fun compareToUsesPriorityToCompute() {
-        val lowOperator = Operator("operator", Associativity.YFX, 100)
-        val mediumOperator = Operator("operator", Associativity.YFX, 200)
-        val highOperator = Operator("operator", Associativity.YFX, 300)
+        val lowOperator = Operator("operator", Specifier.YFX, 100)
+        val mediumOperator = Operator("operator", Specifier.YFX, 200)
+        val highOperator = Operator("operator", Specifier.YFX, 300)
 
         assertTrue { lowOperator < mediumOperator }
         assertTrue { mediumOperator < highOperator }
@@ -75,7 +75,7 @@ internal class OperatorTest {
 
     @Test
     fun toTermWorksAsExpected() {
-        val correct = Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusAssociativity.toTerm(), plusFunctor.toTerm())
+        val correct = Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusSpecifier.toTerm(), plusFunctor.toTerm())
         val toBeTested = plusOperator.toTerm()
 
         assertEqualities(correct, toBeTested)
@@ -91,7 +91,7 @@ internal class OperatorTest {
 
     @Test
     fun fromTermParsesCorrectOperator() {
-        val toBeTested = Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusAssociativity.toTerm(), plusFunctor.toTerm()))
+        val toBeTested = Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusSpecifier.toTerm(), plusFunctor.toTerm()))
 
         assertEquals(plusOperator, toBeTested)
         toBeTested?.run { assertTrue(plusOperator.compareTo(toBeTested) == 0) }
@@ -102,17 +102,17 @@ internal class OperatorTest {
     fun fromTermReturnsNullIfNotCorrectOperator() {
         /** Utility function to help testing fromTerm method */
         fun testFromTerm(functor: String = Operator.FUNCTOR, priority: Term = plusPriority.toTerm(),
-                         associativity: Term = plusAssociativity.toTerm(), opFunctor: Term = plusFunctor.toTerm()) =
-                Operator.fromTerm(Struct.of(functor, priority, associativity, opFunctor))
+                         specifier: Term = plusSpecifier.toTerm(), opFunctor: Term = plusFunctor.toTerm()) =
+                Operator.fromTerm(Struct.of(functor, priority, specifier, opFunctor))
 
         assertEquals(plusOperator, testFromTerm())
 
-        assertNull(Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusAssociativity.toTerm())))
+        assertNull(Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusSpecifier.toTerm())))
         assertNull(testFromTerm(functor = "ciao"))
         assertNull(testFromTerm(priority = plusFunctor.toTerm()))
         assertNull(testFromTerm(priority = Var.anonymous()))
-        assertNull(testFromTerm(associativity = Var.anonymous()))
-        assertNull(testFromTerm(associativity = "a".toTerm()))
+        assertNull(testFromTerm(specifier = Var.anonymous()))
+        assertNull(testFromTerm(specifier = "a".toTerm()))
         assertNull(testFromTerm(opFunctor = Var.anonymous()))
     }
 }

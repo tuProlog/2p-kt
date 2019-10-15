@@ -46,47 +46,47 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         /** Arithmetic Operator's OperatorSet */
         val ARITHMETIC = OperatorSet(
                 sequenceOf("+", "-", "\\")
-                        .map { Operator(it, Associativity.FY, 200) }
+                        .map { Operator(it, Specifier.FY, 200) }
                         + sequenceOf("^")
-                        .map { Operator(it, Associativity.XFY, 200) }
+                        .map { Operator(it, Specifier.XFY, 200) }
                         + sequenceOf("**")
-                        .map { Operator(it, Associativity.XFX, 200) }
+                        .map { Operator(it, Specifier.XFX, 200) }
                         + sequenceOf("*", "/", "//", "rem", "mod", "<<", ">>")
-                        .map { Operator(it, Associativity.YFX, 400) }
+                        .map { Operator(it, Specifier.YFX, 400) }
                         + sequenceOf("+", "-", "\\/", "/\\")
-                        .map { Operator(it, Associativity.YFX, 500) }
+                        .map { Operator(it, Specifier.YFX, 500) }
         )
 
         /** Comparison Operator's OperatorSet */
         val COMPARISON = OperatorSet(
                 sequenceOf("=", "\\=")
-                        .map { Operator(it, Associativity.XFX, 700) }
+                        .map { Operator(it, Specifier.XFX, 700) }
                         + sequenceOf("==", "\\==", "@<", "@=<", "@>", "@>=")
-                        .map { Operator(it, Associativity.XFX, 700) }
+                        .map { Operator(it, Specifier.XFX, 700) }
                         + sequenceOf("=..")
-                        .map { Operator(it, Associativity.XFX, 700) }
+                        .map { Operator(it, Specifier.XFX, 700) }
                         + sequenceOf("is", "=:=", "=\\=", "<", "=<", ">", ">=")
-                        .map { Operator(it, Associativity.XFX, 700) }
+                        .map { Operator(it, Specifier.XFX, 700) }
         )
 
         /** Control Flow Operator's OperatorSet */
         val CONTROL_FLOW = OperatorSet(
                 sequenceOf(",")
-                        .map { Operator(it, Associativity.XFY, 1000) }
+                        .map { Operator(it, Specifier.XFY, 1000) }
                         + sequenceOf("->")
-                        .map { Operator(it, Associativity.XFY, 1050) }
+                        .map { Operator(it, Specifier.XFY, 1050) }
                         + sequenceOf(";")
-                        .map { Operator(it, Associativity.XFY, 1100) }
+                        .map { Operator(it, Specifier.XFY, 1100) }
                         + sequenceOf("\\+")
-                        .map { Operator(it, Associativity.FY, 900) }
+                        .map { Operator(it, Specifier.FY, 900) }
         )
 
         /** Clauses Operator's OperatorSet */
         val CLAUSES = OperatorSet(
                 sequenceOf(":-", "?-")
-                        .map { Operator(it, Associativity.FX, 1200) }
+                        .map { Operator(it, Specifier.FX, 1200) }
                         + sequenceOf(":-", "-->")
-                        .map { Operator(it, Associativity.XFX, 1200) }
+                        .map { Operator(it, Specifier.XFX, 1200) }
         )
 
         /** Default OperatorSet */

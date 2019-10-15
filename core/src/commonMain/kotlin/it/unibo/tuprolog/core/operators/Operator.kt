@@ -3,23 +3,23 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.*
 
 /** Class representing a Prolog Operator */
-class Operator(val functor: String, val associativity: Associativity, val priority: Int) : Comparable<Operator> {
+class Operator(val functor: String, val specifier: Specifier, val priority: Int) : Comparable<Operator> {
 
     override fun compareTo(other: Operator): Int =
             when {
                 priority > other.priority -> 1
                 priority < other.priority -> -1
-                else -> associativity.compareTo(other.associativity).let { associativityCompareTo ->
-                    when (associativityCompareTo) {
+                else -> specifier.compareTo(other.specifier).let { specifierCompareTo ->
+                    when (specifierCompareTo) {
                         0 -> functor.compareTo(other.functor)
-                        else -> associativityCompareTo
+                        else -> specifierCompareTo
                     }
                 }
             }
 
     /** Creates a Term from this operator */
     fun toTerm(): Struct =
-            Struct.of(FUNCTOR, priority.toTerm(), associativity.toTerm(), functor.toAtom())
+            Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -28,18 +28,18 @@ class Operator(val functor: String, val associativity: Associativity, val priori
         other as Operator
 
         if (functor != other.functor) return false
-        if (associativity != other.associativity) return false
+        if (specifier != other.specifier) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = functor.hashCode()
-        result = 31 * result + associativity.hashCode()
+        result = 31 * result + specifier.hashCode()
         return result
     }
 
-    override fun toString(): String = "Operator($priority, $associativity, '$functor')"
+    override fun toString(): String = "Operator($priority, $specifier, '$functor')"
 
     companion object {
 
@@ -57,7 +57,7 @@ class Operator(val functor: String, val associativity: Associativity, val priori
 
                     Operator(
                             args[2].`as`<Atom>().value,
-                            Associativity.fromTerm(args[1]),
+                            Specifier.fromTerm(args[1]),
                             args[0].`as`<Numeric>().intValue.toInt()
                     )
 
