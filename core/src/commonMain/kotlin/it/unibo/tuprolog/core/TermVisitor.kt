@@ -91,7 +91,7 @@ interface TermVisitor<T> {
     fun visitEmptySet(term: EmptySet): T = defaultValue(term)
 
     fun visit(term: List): T =
-            when(term) {
+            when (term) {
                 is Cons -> visit(term)
                 is EmptyList -> visit(term)
                 else -> visitList(term)
@@ -111,8 +111,12 @@ interface TermVisitor<T> {
 
     fun visitTuple(term: Tuple): T = defaultValue(term)
 
+    fun visit(term: Indicator): T = visitIndicator(term)
+
+    fun visitIndicator(term: Indicator): T = defaultValue(term)
+
     fun visit(term: Clause): T =
-            when(term) {
+            when (term) {
                 is Directive -> visit(term)
                 is Rule -> visit(term)
                 else -> visitClause(term)
