@@ -55,4 +55,24 @@ class TestMutableSolver : SolverFactory {
     fun testMember() {
         prototype.testMember();
     }
+
+    @Test
+    fun testBasicBacktracking1() {
+        prototype.testBasicBacktracking1()
+    }
+
+    @Test
+    fun testBasicBacktracking2() {
+        prototype.testBasicBacktracking2()
+    }
+
+    @Test
+    fun testBasicBacktracking3() {
+        prototype.testBasicBacktracking3()
+    }
+
+    @Test
+    fun testBasicBacktracking4() {
+        prototype.testBasicBacktracking4()
+    }
 }
