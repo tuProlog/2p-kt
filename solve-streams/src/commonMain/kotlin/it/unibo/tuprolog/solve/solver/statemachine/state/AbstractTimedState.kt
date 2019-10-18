@@ -28,7 +28,7 @@ internal abstract class AbstractTimedState(
                     TimeOutException(
                             "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
                             context = solve.context,
-                            deltaTime = stateCurrentTime - solve.requestIssuingInstant
+                            exceededDuration = solve.executionMaxDuration
                     )
             ))
         else -> behaveTimed()

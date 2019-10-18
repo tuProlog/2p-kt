@@ -27,7 +27,12 @@ internal object TuPrologRuntimeExceptionUtils {
             .also { assertNotEquals(it, aContext) }
 
     /** Utility function to check if exception contains same expected values */
-    fun assertSameMessageCauseContext(expectedMessage: String?, expectedCause: Throwable?, expectedContext: ExecutionContext, actualException: TuPrologRuntimeException) {
+    fun assertSameMessageCauseContext(
+            expectedMessage: String?,
+            expectedCause: Throwable?,
+            expectedContext: ExecutionContext,
+            actualException: TuPrologRuntimeException
+    ) {
         assertSame(expectedMessage, actualException.message)
         assertSame(expectedCause, actualException.cause)
         assertSame(expectedContext, actualException.context)

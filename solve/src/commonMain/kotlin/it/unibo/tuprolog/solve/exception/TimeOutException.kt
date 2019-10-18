@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.TimeDuration
  * @param message the detail message string.
  * @param cause the cause of this exception.
  * @param context The current context at exception creation
+ * @param exceededDuration The time duration exceeded
  *
  * @author Enrico
  */
@@ -16,14 +17,12 @@ class TimeOutException(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        val deltaTime: TimeDuration // TODO: 14/09/2019 what's the semantic of this field? how should be filled?
-        // [GC] deltaTime =def= actualTime - maxTime
-        // TODO maybe this is useless... what do you think?
+        val exceededDuration: TimeDuration
 ) : TuPrologRuntimeException(message, cause, context) {
 
-    constructor(cause: Throwable?, context: ExecutionContext, deltaTime: TimeDuration)
-            : this(cause?.toString(), cause, context, deltaTime)
+    constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration)
+            : this(cause?.toString(), cause, context, exceededDuration)
 
     override fun updateContext(newContext: ExecutionContext): TimeOutException =
-            TimeOutException(message, cause, newContext, deltaTime)
+            TimeOutException(message, cause, newContext, exceededDuration)
 }

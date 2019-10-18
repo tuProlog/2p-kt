@@ -27,7 +27,7 @@ sealed class AbstractState(override val context: ExecutionContextImpl) : State {
         if (deltaTime <= context.maxDuration) {
             computeNext()
         } else {
-            StateHalt(TimeOutException(deltaTime = deltaTime, context = context), context.copy(step = nextStep()))
+            StateHalt(TimeOutException(exceededDuration = context.maxDuration, context = context), context.copy(step = nextStep()))
         }
     }
 
