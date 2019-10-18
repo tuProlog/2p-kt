@@ -22,10 +22,6 @@ class SystemError(
         extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
-    override fun updateContext(newContext: ExecutionContext): SystemError {
-        return SystemError(message, cause, newContext, extraData)
-    }
-
     companion object {
 
         /** The system error Struct functor */

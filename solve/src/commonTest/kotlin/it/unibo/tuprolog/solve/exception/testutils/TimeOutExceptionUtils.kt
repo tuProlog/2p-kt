@@ -20,7 +20,7 @@ internal object TimeOutExceptionUtils {
     internal val aDifferentContext = TuPrologRuntimeExceptionUtils.aDifferentContext
 
     /** Utility function to check if exception contains same expected values */
-    fun assertSameMessageCauseContextDuration(
+    internal fun assertSameMessageCauseContextDuration(
             expectedMessage: String?,
             expectedCause: Throwable?,
             expectedContext: ExecutionContext,

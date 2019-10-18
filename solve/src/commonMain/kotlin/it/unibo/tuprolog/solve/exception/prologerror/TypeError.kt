@@ -41,10 +41,6 @@ class TypeError(
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }
 
-    override fun updateContext(newContext: ExecutionContext): TypeError {
-        return TypeError(message, cause, newContext, expectedType, actualValue, extraData)
-    }
-
     companion object {
 
         /** The type error Struct functor */

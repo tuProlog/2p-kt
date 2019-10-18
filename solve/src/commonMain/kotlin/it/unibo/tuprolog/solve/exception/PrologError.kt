@@ -28,22 +28,19 @@ abstract class PrologError(
         open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {
 
+    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
+            : this(cause?.toString(), cause, context, type, extraData)
+
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
     val errorStruct: Struct by lazy {
         extraData?.let { errorStructOf(type, it) }
                 ?: errorStructOf(type)
     }
 
-    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
-            : this(cause?.toString(), cause, context, type, extraData)
+    override fun updateContext(newContext: ExecutionContext): PrologError =
+            of(message, cause, newContext, type, extraData)
 
     override fun toString(): String = errorStruct.toString()
-
-    override fun updateContext(newContext: ExecutionContext): PrologError {
-        // TODO @Enrico which one do you prefer?
-//        throw NotImplementedError("Subclasses of PrologError should override this method")
-        return object : PrologError(message, cause, newContext, type, extraData) { }
-    }
 
     companion object {
 
@@ -58,7 +55,7 @@ abstract class PrologError(
                 context: ExecutionContext,
                 type: Struct,
                 extraData: Term? = null
-        ) = with(type) {
+        ): PrologError = with(type) {
             when {
                 functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)
                 functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)

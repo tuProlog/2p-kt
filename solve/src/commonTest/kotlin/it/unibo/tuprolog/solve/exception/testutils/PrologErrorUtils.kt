@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.exception.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
@@ -22,6 +24,8 @@ internal object PrologErrorUtils {
     internal val aType = Atom.of("myType")
     internal val someExtraData = Atom.of("extra")
 
+    internal val aDifferentContext = TuPrologRuntimeExceptionUtils.aDifferentContext
+
     /** Contains PrologErrors subclasses that will be recognized by type parameter */
     internal val recognizedSubTypes by lazy {
         mapOf(
@@ -29,6 +33,20 @@ internal object PrologErrorUtils {
                 Atom.of(SystemError.typeFunctor) to SystemError::class,
                 Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class
         )
+    }
+
+    /** Utility function to check if exception contains same expected values */
+    internal fun assertEqualPrologErrorData(
+            expectedMessage: String?,
+            expectedCause: Throwable?,
+            expectedContext: ExecutionContext,
+            expectedType: Struct,
+            expectedExtraData: Term?,
+            actualException: PrologError
+    ) {
+        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(expectedMessage, expectedCause, expectedContext, actualException)
+        assertEquals(expectedType, actualException.type)
+        assertEquals(expectedExtraData, actualException.extraData)
     }
 
     /** Asserts that [PrologError.errorStruct] returns correctly constructed structure */
