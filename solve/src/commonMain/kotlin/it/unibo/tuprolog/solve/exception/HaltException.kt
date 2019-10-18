@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @param message the detail message string.
  * @param cause the cause of this exception.
  * @param context The current context at exception creation
- * @param exitStatus The integer code representing the exit status code
+ * @param exitStatus The integer code representing the exit status code; it defaults to 1
  *
  * @author Enrico
  */

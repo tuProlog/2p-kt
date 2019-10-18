@@ -86,6 +86,12 @@ internal class ScopeImplTest {
     }
 
     @Test
+    @Ignore // TODO: 18/10/2019 enable after solving issue #43
+    fun varOfUnderscoreCreatesAlwaysDifferentAnonymousInstances() {
+        assertNotSame(emptyScopeInstance.varOf("_"), emptyScopeInstance.varOf("_"))
+    }
+
+    @Test
     fun whereExecutesTheGivenLambda() {
         mixedScopeInstances.forEach { aScope ->
             assertFailsWith<IllegalStateException> { aScope.where { throw IllegalStateException() } }
@@ -275,6 +281,12 @@ internal class ScopeImplTest {
     }
 
     @Test
+    fun underscoreProperty() {
+        TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.`_`)
+        assertTrue { emptyScopeInstance.`_`.isAnonymous }
+    }
+
+    @Test
     fun whatever() {
         TermTypeAssertionUtils.assertIsVar(emptyScopeInstance.whatever())
         assertTrue { emptyScopeInstance.whatever().isAnonymous }
@@ -348,6 +360,14 @@ internal class ScopeImplTest {
     fun numOfString() {
         val correctInstances = IntegerUtils.stringNumbers.map { Numeric.of(it) }
         val toBeTested = IntegerUtils.stringNumbers.map { emptyScopeInstance.numOf(it) }
+
+        onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
+    }
+
+    @Test
+    fun truthOfBoolean() {
+        val correctInstances = listOf(true, false).map { Truth.of(it) }
+        val toBeTested = listOf(true, false).map { emptyScopeInstance.truthOf(it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

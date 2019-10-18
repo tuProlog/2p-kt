@@ -22,8 +22,7 @@ internal object ScopeUtils {
         get() = listOf(
                 mutableMapOf("X" to Var.of("X")),
                 mutableMapOf("H" to Var.of("H"), "T" to Var.of("T")),
-                mutableMapOf("A" to Var.of("A"), "B" to Var.of("B"), "C" to Var.of("C")),
-                mutableMapOf("_" to Var.anonymous())
+                mutableMapOf("A" to Var.of("A"), "B" to Var.of("B"), "C" to Var.of("C"))
         )
 
 

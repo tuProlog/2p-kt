@@ -58,8 +58,7 @@ interface Scope {
 
     fun anonymous(): Var
 
-    val `_`: Var
-        get() = anonymous()
+    val `_`: Var get() = anonymous()
 
     fun whatever(): Var
 
