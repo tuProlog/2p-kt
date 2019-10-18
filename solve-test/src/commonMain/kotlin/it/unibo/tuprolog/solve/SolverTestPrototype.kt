@@ -54,6 +54,119 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    fun testBasicBacktracking1() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a"("X") impliedBy ("b"("X") and "c"("X")) },
+                            fact { "b"(1) },
+                            rule { "b"(2) impliedBy "!" },
+                            fact { "b"(3) },
+                            fact { "c"(2) },
+                            fact { "c"(3) }
+                    )
+            )
+
+            val solutions = solver.solve("a"("N")).take(2).toList()
+
+            assertEquals(1, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(2), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+            }
+        }
+    }
+
+    fun testBasicBacktracking2() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a"("X") impliedBy ("c"("X") and "b"("X")) },
+                            rule { "b"(2) impliedBy "!" },
+                            fact { "b"(3) },
+                            fact { "c"(3) },
+                            fact { "c"(2) }
+                    )
+            )
+
+            val solutions = solver.solve("a"("N")).take(3).toList()
+
+            assertEquals(2, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(3), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(3), it.substitution.getDeeply("N"))
+            }
+
+            solutions[1].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(2), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+            }
+        }
+    }
+
+    fun testBasicBacktracking3() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
+                            fact { "b"(2) },
+                            fact { "b"(3) },
+                            fact { "c"(2) },
+                            fact { "c"(3) }
+                    )
+            )
+
+            val solutions = solver.solve("a"("N")).take(2).toList()
+
+            assertEquals(1, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(2), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+            }
+        }
+    }
+
+    fun testBasicBacktracking4() {
+        prolog {
+            val solver = solverOf(
+                    staticKB = theoryOf(
+                            rule { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
+                            fact { "b"(2) },
+                            fact { "b"(3) },
+                            fact { "c"(2) },
+                            fact { "c"(3) }
+                    )
+            )
+
+            val solutions = solver.solve("a"("N")).take(2).toList()
+
+            assertEquals(1, solutions.size)
+
+            solutions[0].let {
+                assertTrue { it is Solution.Yes }
+                assertEquals("a"("N"), it.query)
+                assertEquals("a"(2), it.solvedQuery)
+                assertTrue { it.substitution is Substitution.Unifier }
+                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+            }
+        }
+    }
+
     fun testConjunction() {
         prolog {
             val solver = solverOf(
