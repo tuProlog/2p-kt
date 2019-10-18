@@ -43,9 +43,8 @@ internal class ConjunctionTest {
     fun conjunctionReturnsCorrectlyMultipleSolutionsOnLeftSide() {
         val responses = Conjunction.primitive(multipleSolutionRequest)
 
-        assertEquals(3, responses.count())
-        assertTrue { responses.first().solution is Solution.No }
-        responses.drop(1).forEach { assertTrue { it.solution is Solution.Yes } }
+        assertEquals(2, responses.count())
+        responses.forEach { assertTrue { it.solution is Solution.Yes } }
     }
 
     @Test

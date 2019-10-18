@@ -62,7 +62,7 @@ internal class StateRuleSelectionTest {
         val nextStates = StateRuleSelection(multipleMatchRequest, DummyInstances.executionStrategy).behave().toList()
         val databaseClauses = multipleMatchesDatabase.clauses.toList()
 
-        assertEquals(15, nextStates.count())
+        assertEquals(14, nextStates.count())
 
         val initStates = nextStates.map { it.unwrapIfNeeded() }.filterIsInstance<StateInit>()
         assertEquals(4, initStates.count())
@@ -94,7 +94,6 @@ internal class StateRuleSelectionTest {
         val interestingStates = nextStates
                 .filter { it is FinalState && it.solve.solution.query == multipleMatchRequest.query }
 
-        assertEquals(1, interestingStates.filterIsInstance<StateEnd.False>().count())
         assertEquals(2, interestingStates.filterIsInstance<StateEnd.True>().count())
     }
 

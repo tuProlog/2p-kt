@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
@@ -41,7 +42,7 @@ internal class StateRuleSelection(
 
                         solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
 
-                    }.forEach { subSolveRequest ->
+                    }.forEachWithLookahead { subSolveRequest, hasAlternatives ->
                         val subInitialState = StateInit(subSolveRequest.prepareForSubRuleScope(), executionStrategy)
                                 .also { yield(it.asAlreadyExecuted()) }
 
@@ -58,11 +59,13 @@ internal class StateRuleSelection(
                                 if ((subEndState.solve.sideEffectManager as? SideEffectManagerImpl)?.run { shouldCutExecuteInRuleSelection() } == true)
                                     cutNextSiblings = true
 
-                                yield(stateEnd(with(subEndState.solve) {
-                                    copy(sideEffectManager = extendParentScopeIfPossible(sideEffectManager, solve.context.sideEffectManager))
-                                }))
+                                // yield only non-false states or false states when there are no open alternatives (because no more or cut)
+                                if (subEndState !is StateEnd.False || !hasAlternatives || cutNextSiblings)
+                                    yield(stateEnd(with(subEndState.solve) {
+                                        copy(sideEffectManager = extendParentScopeIfPossible(sideEffectManager, solve.context.sideEffectManager))
+                                    }))
 
-                                if (it.wrappedState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
+                                if (subEndState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
                             }
                         }
                         if (cutNextSiblings) return@sequence // cut here other matching rules trial

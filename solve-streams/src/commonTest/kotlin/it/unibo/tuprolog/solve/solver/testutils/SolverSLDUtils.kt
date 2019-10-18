@@ -171,7 +171,6 @@ internal object SolverSLDUtils {
                                         primitives = mapOf(Conjunction.descriptionPair)
                                 ))
                         )) to ktListOf(
-                                Solution.No(it),
                                 Solution.Yes(it, Substitution.of(
                                         varOf("U") to atomOf("b"),
                                         varOf("V") to atomOf("b1")
