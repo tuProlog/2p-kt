@@ -22,7 +22,11 @@ open class TuPrologRuntimeException(
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     val prologStackTrace: Sequence<Struct> by lazy { context.prologStackTrace }
 
-    open fun updateContext(context: ExecutionContext): TuPrologRuntimeException {
-        return TuPrologRuntimeException(message, cause, context)
-    }
+    /**
+     * Creates a new exception instance with context field updated to [newContext].
+     *
+     * Subclasses should override this method and return the correct instance.
+     */
+    open fun updateContext(newContext: ExecutionContext): TuPrologRuntimeException =
+            TuPrologRuntimeException(message, cause, newContext)
 }

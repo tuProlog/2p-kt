@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.assertEquals
 
 /**
@@ -17,9 +16,9 @@ import kotlin.test.assertEquals
  */
 internal object PrologErrorUtils {
 
-    internal const val aMessage = "ciao"
-    internal val aCause = IllegalArgumentException()
-    internal val aContext = DummyInstances.executionContext
+    internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
+    internal val aCause = TuPrologRuntimeExceptionUtils.aCause
+    internal val aContext = TuPrologRuntimeExceptionUtils.aContext
     internal val aType = Atom.of("myType")
     internal val someExtraData = Atom.of("extra")
 

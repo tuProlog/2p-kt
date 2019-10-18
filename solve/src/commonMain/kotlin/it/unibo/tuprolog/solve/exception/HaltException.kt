@@ -22,7 +22,7 @@ class HaltException(
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
 
-    override fun updateContext(context: ExecutionContext): HaltException {
-        return HaltException(message, cause, context)
+    override fun updateContext(newContext: ExecutionContext): HaltException {
+        return HaltException(message, cause, newContext)
     }
 }

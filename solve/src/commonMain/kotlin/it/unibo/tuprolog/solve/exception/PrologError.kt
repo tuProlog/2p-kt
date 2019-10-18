@@ -39,10 +39,10 @@ abstract class PrologError(
 
     override fun toString(): String = errorStruct.toString()
 
-    override fun updateContext(context: ExecutionContext): PrologError {
+    override fun updateContext(newContext: ExecutionContext): PrologError {
         // TODO @Enrico which one do you prefer?
 //        throw NotImplementedError("Subclasses of PrologError should override this method")
-        return object : PrologError(message, cause, context, type, extraData) { }
+        return object : PrologError(message, cause, newContext, type, extraData) { }
     }
 
     companion object {

@@ -24,7 +24,6 @@ class TimeOutException(
     constructor(cause: Throwable?, context: ExecutionContext, deltaTime: TimeDuration)
             : this(cause?.toString(), cause, context, deltaTime)
 
-    override fun updateContext(context: ExecutionContext): TimeOutException {
-        return TimeOutException(message, cause, context, deltaTime)
-    }
+    override fun updateContext(newContext: ExecutionContext): TimeOutException =
+            TimeOutException(message, cause, newContext, deltaTime)
 }
