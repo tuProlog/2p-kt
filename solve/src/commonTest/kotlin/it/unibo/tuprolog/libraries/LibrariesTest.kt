@@ -2,8 +2,8 @@ package it.unibo.tuprolog.libraries
 
 import it.unibo.tuprolog.libraries.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
-import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasDuplicatingPrimitives
-import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasPrimitive
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasLibraryMap
+import it.unibo.tuprolog.libraries.testutils.LibraryUtils.aliasPrimitiveOrFunction
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.libraryWithAliasConstructor
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import kotlin.test.Test
@@ -92,7 +92,7 @@ internal class LibrariesTest {
 
     @Test
     fun primitivesCorrectWithSingleLibrary() {
-        val correct = allLibInstances.map { aliasDuplicatingPrimitives(it) }
+        val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.primitives) }
         val toBeTested = allLibInstances.map { Libraries(it).primitives }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -107,13 +107,39 @@ internal class LibrariesTest {
 
     @Test
     fun primitivesShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
-        val correct = aliasDuplicatingPrimitives(overriddenLibrary, overridingLibrary.alias) +
-                library.primitives.map { aliasPrimitive(library.alias, it) }
+        val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.primitives) +
+                library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
         val toBeTested = Libraries(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.primitives)
 
-        assertEquals(aliasDuplicatingPrimitives(library), Libraries(library, emptyLibrary).primitives)
+        assertEquals(aliasLibraryMap(library.alias, library.primitives), Libraries(library, emptyLibrary).primitives)
+    }
+
+    @Test
+    fun functionsCorrectWithSingleLibrary() {
+        val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.functions) }
+        val toBeTested = allLibInstances.map { Libraries(it).functions }
+
+        correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun functionsShouldReturnNonAliasedOverriddenPrimitiveFromLastlyAddedLibrary() {
+        val toBeTested = Libraries(library, overridingLibrary)
+
+        assertEquals(overriddenLibrary.functions, toBeTested.functions.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) })
+    }
+
+    @Test
+    fun functionsShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
+        val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.functions) +
+                library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
+        val toBeTested = Libraries(library, overridingLibrary)
+
+        assertEquals(correct, toBeTested.functions)
+
+        assertEquals(aliasLibraryMap(library.alias, library.functions), Libraries(library, emptyLibrary).functions)
     }
 
     @Test

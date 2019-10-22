@@ -17,7 +17,7 @@ internal class LibraryAliasedImplTest {
 
     @Test
     fun aliasCorrect() {
-        val correct = LibraryUtils.allLibraries.map { (alias, _) -> alias }
+        val correct = LibraryUtils.allLibraries.map { (alias) -> alias }
         val toBeTested = libraryAliasedInstances.map { it.alias }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
@@ -25,11 +25,10 @@ internal class LibraryAliasedImplTest {
 
     @Test
     fun aliasNotConsideredInEqualityTesting() {
-        LibraryUtils.allLibraries.map { (alias, lib) ->
-            val (opSet, theory, primitives) = lib
+        LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
             assertEquals(
-                    LibraryAliasedImpl(opSet, theory, primitives, alias),
-                    LibraryAliasedImpl(opSet, theory, primitives, alias + "x")
+                    LibraryAliasedImpl(opSet, theory, primitives, functions, alias),
+                    LibraryAliasedImpl(opSet, theory, primitives, functions, alias + "x")
             )
         }
     }

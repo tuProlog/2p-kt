@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.libraries
 
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.libraries.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
@@ -29,6 +31,14 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     override val primitives: Map<Signature, Primitive> by lazy {
         libraries.flatMap { lib ->
             lib.primitives.entries.asSequence().flatMap {
+                sequenceOf(it.toPair(), it.key.copy(name = lib.alias + LibraryAliased.ALIAS_SEPARATOR + it.key.name) to it.value)
+            }
+        }.toMap()
+    }
+
+    override val functions: Map<Signature, PrologFunction<Term>> by lazy {
+        libraries.flatMap { lib ->
+            lib.functions.entries.asSequence().flatMap {
                 sequenceOf(it.toPair(), it.key.copy(name = lib.alias + LibraryAliased.ALIAS_SEPARATOR + it.key.name) to it.value)
             }
         }.toMap()

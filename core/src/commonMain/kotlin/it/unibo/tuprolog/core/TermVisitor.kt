@@ -34,6 +34,7 @@ interface TermVisitor<T> {
                 is Atom -> visit(term)
                 is Tuple -> visit(term)
                 is Clause -> visit(term)
+                is Indicator -> visit(term)
                 else -> visitStruct(term)
             }
 
