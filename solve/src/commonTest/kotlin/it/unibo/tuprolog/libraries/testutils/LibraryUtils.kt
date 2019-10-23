@@ -4,12 +4,12 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
-import it.unibo.tuprolog.function.NullaryFunction
-import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.function.NullaryFunction
+import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.theory.ClauseDatabase

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.libraries.impl
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.function.PrologFunction
+import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature

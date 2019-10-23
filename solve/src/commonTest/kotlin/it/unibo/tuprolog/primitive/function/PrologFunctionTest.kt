@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.function
+package it.unibo.tuprolog.primitive.function
 
 import it.unibo.tuprolog.core.Atom
 import kotlin.test.Test

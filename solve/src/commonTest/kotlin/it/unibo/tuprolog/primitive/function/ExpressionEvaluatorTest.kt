@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.function
+package it.unibo.tuprolog.primitive.function
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.function.testutils.ExpressionEvaluatorUtils
-import it.unibo.tuprolog.function.testutils.ExpressionEvaluatorUtils.createContextWithFunctionBy
-import it.unibo.tuprolog.function.testutils.ExpressionEvaluatorUtils.inputFunctionOutputTriple
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.function.testutils.ExpressionEvaluatorUtils
+import it.unibo.tuprolog.primitive.function.testutils.ExpressionEvaluatorUtils.createContextWithFunctionBy
+import it.unibo.tuprolog.primitive.function.testutils.ExpressionEvaluatorUtils.inputFunctionOutputTriple
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
