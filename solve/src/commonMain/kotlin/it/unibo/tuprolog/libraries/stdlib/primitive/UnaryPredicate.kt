@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.libraries.stdlib
+package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.ExecutionContext

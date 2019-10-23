@@ -1,18 +1,19 @@
 package it.unibo.tuprolog.libraries.stdlib
 
-import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
+import it.unibo.tuprolog.primitive.Primitive
+import it.unibo.tuprolog.primitive.Signature
 
-object DefaultBuiltins : LibraryAliased by Library.of(
-        alias = CommonBuiltins.alias,
-        operatorSet = CommonBuiltins.operators,
-        theory = CommonBuiltins.theory,
-        primitives = CommonBuiltins.primitives + sequenceOf(
-                Call,
-                Catch,
-                Conjunction,
-                Cut,
-                Halt,
-                Throw
-        ).map { it.descriptionPair }.toMap()
-)
+object DefaultBuiltins : LibraryAliased by CommonBuiltins {
+
+        override val primitives: Map<Signature, Primitive> by lazy {
+                CommonBuiltins.primitives + sequenceOf(
+                        Call,
+                        Catch,
+                        Conjunction,
+                        Cut,
+                        Halt,
+                        Throw
+                ).map { it.descriptionPair }.toMap()
+        }
+}

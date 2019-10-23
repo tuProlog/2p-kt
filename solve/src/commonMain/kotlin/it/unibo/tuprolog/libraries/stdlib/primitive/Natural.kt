@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.libraries.stdlib
+package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Substitution
