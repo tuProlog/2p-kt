@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.libraries.stdlib
 
 import it.unibo.tuprolog.libraries.LibraryAliased
+import it.unibo.tuprolog.libraries.stdlib.primitive.*
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 

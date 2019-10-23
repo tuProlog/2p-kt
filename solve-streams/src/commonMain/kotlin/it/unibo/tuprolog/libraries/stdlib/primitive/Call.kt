@@ -1,8 +1,7 @@
-package it.unibo.tuprolog.libraries.stdlib
+package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -17,7 +16,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-internal object Call : PrimitiveWrapper<ExecutionContextImpl>(Signature("call", 1)) {
+internal object Call : PrimitiveWrapper<ExecutionContextImpl>("call", 1) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
             request.ensuringAllArgumentsAreInstantiated()

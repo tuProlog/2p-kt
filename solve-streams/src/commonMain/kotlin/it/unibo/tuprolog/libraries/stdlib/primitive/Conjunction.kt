@@ -1,8 +1,7 @@
-package it.unibo.tuprolog.libraries.stdlib
+package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.forEachWithLookahead
@@ -18,7 +17,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Signature(Tuple.FUNCTOR, 2)) {
+internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCTOR, 2) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
             sequence {

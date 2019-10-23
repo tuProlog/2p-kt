@@ -1,8 +1,7 @@
-package it.unibo.tuprolog.libraries.stdlib
+package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
@@ -15,7 +14,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
  *
  * @author Enrico
  */
-internal object Catch : PrimitiveWrapper<ExecutionContextImpl>(Signature("catch", 3)) {
+internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
             sequence {

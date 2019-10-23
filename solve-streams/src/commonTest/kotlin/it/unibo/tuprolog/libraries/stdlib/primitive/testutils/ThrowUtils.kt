@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.libraries.stdlib.testutils
+package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.libraries.stdlib.Throw
+import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils

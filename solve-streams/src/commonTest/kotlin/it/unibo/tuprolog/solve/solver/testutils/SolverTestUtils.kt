@@ -8,8 +8,8 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.libraries.stdlib.Conjunction
-import it.unibo.tuprolog.libraries.stdlib.Cut
+import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 

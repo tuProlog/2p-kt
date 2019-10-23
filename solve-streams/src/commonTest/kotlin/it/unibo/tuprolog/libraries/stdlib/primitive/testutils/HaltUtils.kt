@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.libraries.stdlib.testutils
+package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.libraries.stdlib.Call
-import it.unibo.tuprolog.libraries.stdlib.Conjunction
-import it.unibo.tuprolog.libraries.stdlib.Halt
+import it.unibo.tuprolog.libraries.stdlib.primitive.Call
+import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
