@@ -10,17 +10,17 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 /**
  * Wrapper class for [Primitive] implementation
  *
- * @param signature Supported primitive signature
- *
  * @author Enrico
  * @author Giovanni
  */
-abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) {
+abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
 
-    constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
+    /**
+     * @param signature Supported primitive signature
+     */
+    constructor(signature: Signature) : super(signature)
 
-    /** A shorthand to get the primitive functor name */
-    val functor: String = signature.name
+    constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
     /** The function expressing the implementation of the primitive, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
@@ -30,7 +30,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) 
     val primitive: Primitive by lazy { primitiveOf(signature, ::uncheckedImplementation as Primitive) }
 
     /** Gets this primitive description Pair formed by [signature] and [primitive] */
-    val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
+    override val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
 
 
     companion object {
