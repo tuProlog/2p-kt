@@ -12,25 +12,28 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * No additional check is implemented at this level
  *
+ * @param context the context in which the evaluation should happen
+ *
  * @author Enrico
  */
-open class ExpressionEvaluator(context: ExecutionContext) : TermVisitor<Term> {
+open class ExpressionEvaluator(protected val context: ExecutionContext) : TermVisitor<Term> {
 
-    protected val loadedFunctions = context.libraries.functions
+    /** Shorthand to access context loaded functions */
+    protected val loadedFunctions by lazy { context.libraries.functions }
 
     override fun defaultValue(term: Term): Term = term
 
     override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()].let {
         when (it) {
-            is NullaryFunction<*> -> it()
+            is NullaryFunction<*> -> it(context)
             else -> term
         }
     }
 
     override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()].let {
         when (it) {
-            is UnaryFunction<*> -> it(term.args.first().accept(this))
-            is BinaryFunction<*> -> it(term.args.first().accept(this), term.args.last().accept(this))
+            is UnaryFunction<*> -> it(term.args.first().accept(this), context)
+            is BinaryFunction<*> -> it(term.args.first().accept(this), term.args.last().accept(this), context)
             else -> term
         }
     }

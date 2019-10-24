@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.primitive.function
 
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
  * Interface defining Prolog functions that return [Term] instances or its subclasses
@@ -12,18 +13,18 @@ interface PrologFunction<out R : Term> : Function<R> {
     companion object {
 
         /** Creates a prolog function from provided lambda */
-        inline fun ofNullary(crossinline nullaryFunction: () -> Term): NullaryFunction<Term> = object : NullaryFunction<Term> {
-            override fun invoke(): Term = nullaryFunction()
+        inline fun ofNullary(crossinline nullaryFunction: (ExecutionContext) -> Term): NullaryFunction<Term> = object : NullaryFunction<Term> {
+            override fun invoke(context: ExecutionContext): Term = nullaryFunction(context)
         }
 
         /** Creates a prolog function from provided lambda */
-        inline fun ofUnary(crossinline unaryFunction: (Term) -> Term): UnaryFunction<Term> = object : UnaryFunction<Term> {
-            override fun invoke(input: Term): Term = unaryFunction(input)
+        inline fun ofUnary(crossinline unaryFunction: (Term, ExecutionContext) -> Term): UnaryFunction<Term> = object : UnaryFunction<Term> {
+            override fun invoke(input: Term, context: ExecutionContext): Term = unaryFunction(input, context)
         }
 
         /** Creates a prolog function from provided lambda */
-        inline fun ofBinary(crossinline binaryFunction: (Term, Term) -> Term): BinaryFunction<Term> = object : BinaryFunction<Term> {
-            override fun invoke(input1: Term, input2: Term): Term = binaryFunction(input1, input2)
+        inline fun ofBinary(crossinline binaryFunction: (Term, Term, ExecutionContext) -> Term): BinaryFunction<Term> = object : BinaryFunction<Term> {
+            override fun invoke(input1: Term, input2: Term, context: ExecutionContext): Term = binaryFunction(input1, input2, context)
         }
     }
 }
@@ -34,8 +35,8 @@ interface PrologFunction<out R : Term> : Function<R> {
  * @author Enrico
  */
 interface NullaryFunction<out R : Term> : PrologFunction<R> {
-    /** Invokes the function. */
-    operator fun invoke(): R
+    /** Invokes the function, passing the context if necessary. */
+    operator fun invoke(context: ExecutionContext): R
 }
 
 /**
@@ -44,8 +45,8 @@ interface NullaryFunction<out R : Term> : PrologFunction<R> {
  * @author Enrico
  */
 interface UnaryFunction<out R : Term> : PrologFunction<R> {
-    /** Invokes the function with the specified argument. */
-    operator fun invoke(input: Term): R
+    /** Invokes the function with the specified argument, and optionally a context if necessary. */
+    operator fun invoke(input: Term, context: ExecutionContext): R
 }
 
 /**
@@ -55,5 +56,5 @@ interface UnaryFunction<out R : Term> : PrologFunction<R> {
  */
 interface BinaryFunction<out R : Term> : PrologFunction<R> {
     /** Invokes the function with the specified argument. */
-    operator fun invoke(input1: Term, input2: Term): R
+    operator fun invoke(input1: Term, input2: Term, context: ExecutionContext): R
 }

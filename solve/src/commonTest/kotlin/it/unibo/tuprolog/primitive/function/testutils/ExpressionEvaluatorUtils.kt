@@ -3,11 +3,11 @@ package it.unibo.tuprolog.primitive.function.testutils
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.primitive.function.ExpressionEvaluator
-import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.function.ExpressionEvaluator
+import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.testutils.DummyInstances
 
@@ -33,17 +33,17 @@ internal object ExpressionEvaluatorUtils {
                 ),
                 Triple(
                         Struct.of("extractAnotherTerm", Atom.of("b")),
-                        PrologFunction.ofUnary { arg -> Struct.of("resultTerm", arg) },
+                        PrologFunction.ofUnary { arg, _ -> Struct.of("resultTerm", arg) },
                         Struct.of("resultTerm", Atom.of("b"))
                 ),
                 Triple(
                         Struct.of("concat", Atom.of("a"), Atom.of("b")),
-                        PrologFunction.ofBinary { term1, term2 -> Atom.of(term1.toString() + term2.toString()) },
+                        PrologFunction.ofBinary { term1, term2, _ -> Atom.of(term1.toString() + term2.toString()) },
                         Atom.of("ab")
                 ),
                 Triple(
                         Struct.of("concat", Struct.of("concat", Atom.of("a"), Atom.of("b")), Struct.of("concat", Atom.of("a"), Atom.of("b"))),
-                        PrologFunction.ofBinary { term1, term2 -> Atom.of(term1.toString() + term2.toString()) },
+                        PrologFunction.ofBinary { term1, term2, _ -> Atom.of(term1.toString() + term2.toString()) },
                         Atom.of("abab")
                 )
         )
