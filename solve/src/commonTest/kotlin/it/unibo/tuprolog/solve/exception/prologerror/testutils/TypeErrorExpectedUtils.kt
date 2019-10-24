@@ -11,7 +11,8 @@ internal object TypeErrorExpectedUtils {
 
     /** A map from predefined error names to predefined error instances */
     internal val predefinedErrorNamesToInstances by lazy {
-        listOf("callable", "atom", "integer", "number", "predicate_indicator", "compound", "list", "character")
+        listOf("callable", "atom", "integer", "number", "predicate_indicator", "compound", "list",
+                "character", "evaluable")
                 .map { it to TypeError.Expected.of(it) }
                 .toMap()
     }
