@@ -4,7 +4,10 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
+import org.gciatto.kt.math.BigDecimal
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 /**
  * Test class for [Numeric] companion object
@@ -101,5 +104,40 @@ internal class NumericTest {
 
         onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
         onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
+    }
+
+    @Test
+    fun test1() {
+        // TODO @enrico, please sibonify this test
+        assertNotEquals<Numeric>(
+                Numeric.of(1),
+                Numeric.of(1.0),
+                "Integers are different from reals"
+        )
+    }
+
+    @Test
+    fun test2() {
+        // TODO @enrico, please sibonify this test
+        assertEquals(
+                Real.of(BigDecimal.of(100, 1)),
+                Real.of(BigDecimal.of(1000, 2)),
+                "Comparison among reals does not takes trailing zeros into account"
+        )
+        assertEquals(
+                Real.of(BigDecimal.of("10.0")),
+                Real.of(BigDecimal.of("10.00")),
+                "Comparison among reals does not takes trailing zeros into account"
+        )
+    }
+
+    @Test
+    fun test3() {
+        // TODO @enrico, please sibonify this test
+        assertEquals(
+                Real.of(BigDecimal.of(100, 1)).hashCode(),
+                Real.of(BigDecimal.of(1000, 2)).hashCode(),
+                "Hash code of reals is consistent with equals"
+        )
     }
 }
