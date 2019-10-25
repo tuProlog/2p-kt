@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.testutils.DummyInstances
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,7 +20,6 @@ internal class SquareRootTest {
     }
 
     @Test
-    @Ignore // TODO: 25/10/2019 enable after Issue https://github.com/gciatto/kt-math/issues/1 will be solved
     fun computationCorrect() {
         assertEquals(
                 Numeric.of(1.1),

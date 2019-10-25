@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.MathContext
 
 /**
  * Implementation of `sqrt/1` arithmetic functor
@@ -23,5 +22,5 @@ object SquareRoot : UnaryMathFunction("sqrt") {
     /** Implements common behaviour for Integer and Real*/
     private fun commonBehaviour(decimal: BigDecimal): Real =
             // TODO: 25/10/2019 "undefined" checks missing (see the standard)
-            Numeric.of(decimal.sqrt(MathContext()))
+            Numeric.of(decimal.sqrt())
 }
