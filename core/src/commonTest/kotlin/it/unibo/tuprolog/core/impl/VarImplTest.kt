@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
@@ -66,11 +65,6 @@ internal class VarImplTest {
     @Test
     fun sameVarInstancesAreEquals() {
         onCorrespondingItems(mixedVarInstances, mixedVarInstances, ::assertEqualities)
-    }
-
-    @Test
-    fun strictlyEqualsWorksAsExpected() {
-        onCorrespondingItems(mixedVarInstances, mixedVarsSecondInstance, ::assertNotStrictlyEquals)
     }
 
     @Test

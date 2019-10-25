@@ -8,10 +8,6 @@ internal open class AtomImpl(override val functor: String) : StructImpl(functor,
 
     override val args: Array<Term> = super<StructImpl>.args
 
-    override fun strictlyEquals(other: Term): Boolean =
-            other is AtomImpl && other::class == this::class
-                    && value == other.value
-
     override val argsList: List<Term> by lazy { emptyList<Term>() }
 
     override val isGround: Boolean by lazy { super<Atom>.isGround }

@@ -3,9 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
@@ -79,18 +77,6 @@ class IntegerImplTest {
     @Test
     fun testIsPropertiesAndTypes() {
         integerInstances.forEach(TermTypeAssertionUtils::assertIsInteger)
-    }
-
-    @Test
-    fun strictlyEqualsWorksAsExpected() {
-        val oneInteger = IntegerImpl(BigInteger.of(1))
-        val oneReal = Real.of(1.0)
-        val oneAtom = Atom.of("1")
-
-        assertStrictlyEquals(oneInteger, oneInteger)
-
-        assertNotStrictlyEquals(oneInteger, oneReal)
-        assertNotStrictlyEquals(oneInteger, oneAtom)
     }
 
     @Test

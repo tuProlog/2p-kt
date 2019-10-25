@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
@@ -73,16 +72,6 @@ internal class AtomImplTest {
     @Test
     fun failAtomDetected() {
         assertTrue(AtomImpl("fail").isFail)
-    }
-
-    @Test
-    fun strictlyEqualsWorksAsExpected() {
-        val trueStruct = StructImpl("true", emptyArray())
-        val trueAtom = AtomImpl("true")
-        val trueTruth = Truth.`true`()
-
-        assertNotStrictlyEquals(trueAtom, trueStruct)
-        assertNotStrictlyEquals(trueAtom, trueTruth)
     }
 
     @Test

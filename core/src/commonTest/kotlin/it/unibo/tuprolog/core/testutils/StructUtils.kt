@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
@@ -24,7 +23,6 @@ internal object StructUtils {
         val copy = withVariables.freshCopy()
 
         assertStructurallyEquals(withVariables, copy)
-        assertNotStrictlyEquals(withVariables, copy)
         assertNotEquals(withVariables, copy)
         assertNotSame(withVariables, copy)
     }
@@ -40,7 +38,6 @@ internal object StructUtils {
         val secondVarBefore = termWithSameVarName.args[1]
 
         assertStructurallyEquals(firstVarBefore, secondVarBefore)
-        assertNotStrictlyEquals(firstVarBefore, secondVarBefore)
         assertNotSame(firstVarBefore, secondVarBefore)
 
         val consCopied = termWithSameVarName.freshCopy()

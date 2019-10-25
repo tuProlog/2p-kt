@@ -2,8 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
@@ -79,23 +77,11 @@ internal class RealImplTest {
     }
 
     @Test
-    fun strictlyEqualsWorksAsExpected() {
-        val oneReal = RealImpl(BigDecimal.of(1.1))
-        val oneAtom = Atom.of("1.1")
-
-        assertStrictlyEquals(oneReal, oneReal)
-
-        assertNotStrictlyEquals(oneReal, oneAtom)
-    }
-
-    @Test
     fun structurallyEqualsWorksAsExpected() {
         val oneReal = RealImpl(BigDecimal.of(-2.6))
         val oneAtom = Atom.of("-2.6")
 
         assertStructurallyEquals(oneReal, oneReal)
-
-        assertNotStrictlyEquals(oneReal, oneAtom)
     }
 
     @Test
