@@ -13,6 +13,7 @@ import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import org.gciatto.kt.math.MathContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -43,7 +44,7 @@ class IntegerImplTest {
 
     @Test
     fun correctDecimalValue() {
-        val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it) }
+        val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it, MathContext()) }
 
         onCorrespondingItems(expectedDecimals, integerInstances.map { it.decimalValue }) { expectedValue, integerDecimalValue ->
             assertEquals(expectedValue, integerDecimalValue)
