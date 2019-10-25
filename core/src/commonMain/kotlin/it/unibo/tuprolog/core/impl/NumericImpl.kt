@@ -20,13 +20,14 @@ internal abstract class NumericImpl : TermImpl(), Numeric {
     abstract override val intValue: BigInteger
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is NumericImpl) return false
-
-        return decimalValue.compareTo(other.decimalValue) == 0
+        throw NotImplementedError("Subclasses should override this methods")
     }
 
-    override fun hashCode(): Int = decimalValue.hashCode()
+    override fun hashCode(): Int {
+        throw NotImplementedError("Subclasses should override this methods")
+    }
 
-    override fun toString(): String = decimalValue.toString()
+    override fun toString(): String {
+        throw NotImplementedError("Subclasses should override this methods")
+    }
 }
