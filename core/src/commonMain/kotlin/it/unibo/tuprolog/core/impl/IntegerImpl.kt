@@ -4,12 +4,11 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import org.gciatto.kt.math.MathContext
 
 internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
 
     override val decimalValue: BigDecimal by lazy {
-        BigDecimal.of(intValue, MathContext())
+        BigDecimal.of(intValue)
     }
 
     override val intValue: BigInteger = value
