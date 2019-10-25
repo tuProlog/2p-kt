@@ -1,0 +1,31 @@
+package it.unibo.tuprolog.libraries.stdlib.function
+
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.testutils.DummyInstances
+import kotlin.math.E
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+/**
+ * Test class for [Exponential]
+ *
+ * @author Enrico
+ */
+internal class ExponentialTest {
+
+    @Test
+    fun functorNameCorrect() {
+        assertEquals(Signature("exp", 1), Exponential.signature)
+    }
+
+    @Test
+    fun computationCorrect() {
+        assertEquals(
+                Numeric.of(E),
+                Exponential.function(Integer.of(1), DummyInstances.executionContext)
+        )
+    }
+
+}

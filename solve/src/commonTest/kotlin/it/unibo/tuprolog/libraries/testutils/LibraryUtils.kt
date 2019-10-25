@@ -44,10 +44,10 @@ internal object LibraryUtils {
     private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to ::myOtherPrimitive)
 
     private val myFunction: PrologFunction<Term> = object : NullaryFunction<Term> {
-        override fun invoke(): Term = Truth.`true`()
+        override fun invoke(context: ExecutionContext): Term = Truth.`true`()
     }
     private val myOtherFunction: PrologFunction<Term> = object : NullaryFunction<Term> {
-        override fun invoke(): Term = Truth.fail()
+        override fun invoke(context: ExecutionContext): Term = Truth.fail()
     }
     private val functions = mapOf(Signature("myFunc1", 1) to myFunction)
     private val functionsOverridden = mapOf(Signature("myFunc1", 1) to myOtherFunction)
