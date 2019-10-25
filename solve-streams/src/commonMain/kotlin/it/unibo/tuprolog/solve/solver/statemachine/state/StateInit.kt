@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state
 
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
@@ -36,7 +36,7 @@ internal class StateInit(
                     prepareForExecution(currentGoal).also { preparedGoal ->
                         yield(StateGoalEvaluation(
                                 initializedRequest.copy(
-                                        signature = preparedGoal.extractSignature(),
+                                        signature = preparedGoal.toSignature(),
                                         arguments = preparedGoal.argsList
                                 ),
                                 executionStrategy

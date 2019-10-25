@@ -3,13 +3,13 @@ package it.unibo.tuprolog.solve.solver.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Primitive
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.libraries.stdlib.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.Cut
+import it.unibo.tuprolog.primitive.Primitive
+import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 
@@ -165,7 +165,7 @@ internal object SolverTestUtils {
 
     /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
     internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
-            query.extractSignature(),
+            query.toSignature(),
             query.argsList,
             DummyInstances.executionContextImpl.copy(libraries = Libraries(Library.of(
                     alias = "Test",

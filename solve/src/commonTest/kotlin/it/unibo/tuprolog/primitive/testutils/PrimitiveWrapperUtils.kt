@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.createRequest
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -35,7 +35,7 @@ internal object PrimitiveWrapperUtils {
     /** All under test requests */
     private val allRequests by lazy {
         (PrimitiveUtils.primitiveGoodRawRequests + PrimitiveUtils.primitiveBadRawRequests).flatten()
-                .map { createRequest(it.extractSignature(), it.argsList) }
+                .map { createRequest(it.toSignature(), it.argsList) }
     }
 
     /** All ground requests */

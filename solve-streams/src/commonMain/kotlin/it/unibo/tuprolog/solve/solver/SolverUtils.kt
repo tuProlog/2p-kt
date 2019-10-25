@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.libraries.stdlib.Throw
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.libraries.stdlib.Throw
 
 /**
  * Utilities object for implementing resolution behaviour
@@ -71,7 +71,7 @@ internal object SolverUtils {
             logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
     ): Solve.Request<ExecutionContextImpl> =
             Solve.Request(
-                    newGoal.extractSignature(),
+                    newGoal.toSignature(),
                     newGoal.argsList,
                     with(this.context) {
                         copy(
