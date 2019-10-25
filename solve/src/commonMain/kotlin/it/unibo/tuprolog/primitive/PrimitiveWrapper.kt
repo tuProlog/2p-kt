@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.primitive
 
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -44,20 +42,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                                 signature,
                                 notInstantiated.index,
                                 notInstantiated.value as Var
-                        )
-                    } ?: this
-                }
-
-        /** Utility function to ensure that all arguments of Solve.Request are [Numeric] */
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreNumeric(): Solve.Request<C> =
-                arguments.withIndex().firstOrNull { it.value !is Numeric }.let { notNumeric ->
-                    notNumeric?.run {
-                        throw TypeError(
-                                context,
-                                signature,
-                                TypeError.Expected.NUMBER,
-                                notNumeric.value,
-                                notNumeric.index
                         )
                     } ?: this
                 }

@@ -11,15 +11,18 @@ object CommonBuiltins : LibraryAliased by Library.of(
         operatorSet = OperatorSet.DEFAULT,
         theory = CommonRules,
         primitives = sequenceOf(
-                GreaterThan,
-                GreaterThanOrEqualsTo,
-                LowerThan,
-                LowerThanOrEqualsTo,
+                ArithmeticEqual,
+                ArithmeticNotEqual,
+                ArithmeticGreaterThan,
+                ArithmeticGreaterThanOrEqualTo,
+                ArithmeticLowerThan,
+                ArithmeticLowerThanOrEqualTo,
                 UnifiesWith,
                 NotUnifiableWith,
-                EqualsTo,
-                DifferentFrom,
-                Natural
+                TermIdentical,
+                TermNotIdentical,
+                Natural,
+                Is
         ).map { it.descriptionPair }.toMap(),
         functions = sequenceOf(
                 AbsoluteValue,

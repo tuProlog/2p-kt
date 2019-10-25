@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.MathContext
 
 /**
  * Implementation of `'/'/2` arithmetic functor
@@ -30,7 +31,7 @@ object FloatingPointDivision : BinaryMathFunction("/") {
             // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
             when (divisor) {
                 BigDecimal.ZERO -> throwZeroDivisorError(context)
-                else -> Numeric.of(dividend / divisor)
+                else -> Numeric.of(dividend.div(divisor, MathContext())!!)
             }
 
 }
