@@ -21,5 +21,5 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
         return value.compareTo(other.value) == 0
     }
 
-    override fun hashCode(): Int = value.hashCode()
+    override fun hashCode(): Int = value.stripTrailingZeros().hashCode()
 }
