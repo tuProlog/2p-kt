@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.IntegerImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import org.gciatto.kt.math.MathContext
 
 interface Integer : Numeric {
 
@@ -12,7 +13,7 @@ interface Integer : Numeric {
     override val value: BigInteger
 
     override val decimalValue: BigDecimal
-        get() = BigDecimal.of(value)
+        get() = BigDecimal.of(value, MathContext())
 
     override val intValue: BigInteger
         get() = value
