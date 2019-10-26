@@ -22,7 +22,7 @@ internal class SineTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(1),
+                Numeric.of(1.0),
                 Sine.function(Numeric.of(PI / 2.0), DummyInstances.executionContext)
         )
     }

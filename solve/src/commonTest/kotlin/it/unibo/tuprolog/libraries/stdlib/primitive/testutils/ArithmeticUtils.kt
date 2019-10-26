@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
 import it.unibo.tuprolog.libraries.stdlib.primitive.*
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -33,7 +33,7 @@ internal object ArithmeticUtils {
     /** Creates a solve request with given query struct */
     private fun createPrimitiveRequest(query: Struct): Solve.Request<ExecutionContext> =
             Solve.Request<ExecutionContext>(
-                    query.extractSignature(),
+                    query.toSignature(),
                     query.argsList,
                     commonBuiltinsContext
             )
@@ -82,12 +82,11 @@ internal object ArithmeticUtils {
                             atomOf("foo"),
                             numOf(77)
                     ) to Substitution.failed(),
-                    // TODO: 25/10/2019 enable after solving Issue #49
-//                    structOf(
-//                            Is.functor,
-//                            numOf(1.0),
-//                            numOf(1)
-//                    ) to Substitution.failed(),
+                    structOf(
+                            Is.functor,
+                            numOf(1.0),
+                            numOf(1)
+                    ) to Substitution.failed(),
                     structOf(
                             Is.functor,
                             varOf("X"),

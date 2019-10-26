@@ -23,7 +23,7 @@ internal class NaturalLogarithmTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(1),
+                Numeric.of(1.0),
                 NaturalLogarithm.function(Real.of(E), DummyInstances.executionContext)
         )
     }

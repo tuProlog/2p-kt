@@ -3,7 +3,7 @@ package it.unibo.tuprolog.primitive.function
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
 import it.unibo.tuprolog.libraries.stdlib.function.*
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
@@ -32,7 +32,7 @@ open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(
                     expectedType = TypeError.Expected.EVALUABLE,
                     actualValue = this
             )
-            this is Struct && this.extractSignature() !in allowedArithmeticSignatures -> throw TypeError(
+            this is Struct && this.toSignature() !in allowedArithmeticSignatures -> throw TypeError(
                     "The struct `$this` is not part of allowed arithmetic functions",
                     context = context,
                     expectedType = TypeError.Expected.EVALUABLE,
@@ -48,7 +48,7 @@ open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(
             this is Struct -> this.args.indexOfFirst { it !is Numeric }.takeIf { it != -1 }?.let { wrongArgIndex ->
                 throw TypeError(
                         context,
-                        this.extractSignature(),
+                        this.toSignature(),
                         TypeError.Expected.NUMBER,
                         this[wrongArgIndex],
                         wrongArgIndex
@@ -56,11 +56,11 @@ open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(
             }
 
             // the argument of a bitwise operator is evaluated to a non-integer value
-            this is Struct && this.extractSignature() in bitwiseStandardOperatorsSignatures ->
+            this is Struct && this.toSignature() in bitwiseStandardOperatorsSignatures ->
                 this.args.indexOfFirst { it !is Integer }.takeIf { it != -1 }?.let { wrongArgIndex ->
                     throw TypeError(
                             context,
-                            this.extractSignature(),
+                            this.toSignature(),
                             TypeError.Expected.INTEGER,
                             this[wrongArgIndex],
                             wrongArgIndex
