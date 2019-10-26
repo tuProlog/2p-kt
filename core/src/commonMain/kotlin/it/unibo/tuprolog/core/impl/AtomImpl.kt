@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-internal open class AtomImpl(override val functor: String) : StructImpl(functor, arrayOf()), Atom {
+internal open class AtomImpl(override val functor: String) : StructImpl(functor, emptyArray()), Atom {
 
     override val args: Array<Term> = super<StructImpl>.args
 

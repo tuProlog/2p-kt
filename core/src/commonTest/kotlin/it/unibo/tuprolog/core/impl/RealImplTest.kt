@@ -1,17 +1,16 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [RealImpl] and [Real]
@@ -77,11 +76,23 @@ internal class RealImplTest {
     }
 
     @Test
+    fun equalsWorksAsExpected() {
+        val oneReal = RealImpl(BigDecimal.of(1.1))
+        val oneAtom = Atom.of("1.1")
+
+        assertEquals(oneReal, oneReal)
+
+        assertNotEquals<Constant>(oneReal, oneAtom)
+    }
+
+    @Test
     fun structurallyEqualsWorksAsExpected() {
         val oneReal = RealImpl(BigDecimal.of(-2.6))
         val oneAtom = Atom.of("-2.6")
 
         assertStructurallyEquals(oneReal, oneReal)
+
+        assertNotStructurallyEquals(oneReal, oneAtom)
     }
 
     @Test

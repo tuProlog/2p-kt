@@ -7,10 +7,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
 /**
@@ -63,6 +60,16 @@ internal class StructImplTest {
         onCorrespondingItems(StructUtils.mixedStructVariables, mixedStructInstances.map { it.variables }) { expected, actual ->
             assertEquals(expected.toList(), actual.toList())
         }
+    }
+
+    @Test
+    fun equalsWorksAsExpected() {
+        val trueStruct = StructImpl("true", emptyArray())
+        val trueAtom = AtomImpl("true")
+        val trueTruth = Truth.`true`()
+
+        assertNotEquals(trueStruct, trueAtom)
+        assertNotEquals<Struct>(trueStruct, trueTruth)
     }
 
     @Test

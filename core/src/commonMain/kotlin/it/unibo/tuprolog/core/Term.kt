@@ -11,7 +11,6 @@ interface Term {
     fun <T : Term> castTo(): T = this as T
 
     infix fun structurallyEquals(other: Term): Boolean
-//    infix fun strictlyEquals(other: Term): Boolean
 
     /** A Sequence of all Term's contained variables */
     val variables: Sequence<Var>

@@ -7,10 +7,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [AtomImpl] and [Atom]
@@ -72,6 +69,16 @@ internal class AtomImplTest {
     @Test
     fun failAtomDetected() {
         assertTrue(AtomImpl("fail").isFail)
+    }
+
+    @Test
+    fun equalsWorksAsExpected() {
+        val trueStruct = StructImpl("true", emptyArray())
+        val trueAtom = AtomImpl("true")
+        val trueTruth = Truth.`true`()
+
+        assertNotEquals(trueAtom, trueStruct)
+        assertNotEquals<Atom>(trueAtom, trueTruth)
     }
 
     @Test

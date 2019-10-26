@@ -38,6 +38,7 @@ internal object StructUtils {
         val secondVarBefore = termWithSameVarName.args[1]
 
         assertStructurallyEquals(firstVarBefore, secondVarBefore)
+        assertNotEquals(firstVarBefore, secondVarBefore)
         assertNotSame(firstVarBefore, secondVarBefore)
 
         val consCopied = termWithSameVarName.freshCopy()
