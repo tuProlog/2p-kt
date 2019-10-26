@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import org.junit.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [currentTimeInstant] Java implementation
@@ -10,8 +10,15 @@ import kotlin.test.assertEquals
  */
 internal class CurrentTimeInstantKtJavaTest {
 
+    private val TOLERANCE = 10L // 10 ms
+
     @Test
     fun currentTimeReturnsActualTimeInMillis() {
-        assertEquals(System.currentTimeMillis(), currentTimeInstant())
+        val official = System.currentTimeMillis()
+        val our = currentTimeInstant()
+
+        assertTrue {
+            our - official < TOLERANCE
+        }
     }
 }

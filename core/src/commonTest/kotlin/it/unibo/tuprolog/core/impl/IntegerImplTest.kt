@@ -1,11 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStructurallyEquals
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
@@ -13,11 +9,7 @@ import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import org.gciatto.kt.math.MathContext
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [IntegerImpl] and [Integer]
@@ -44,7 +36,7 @@ class IntegerImplTest {
 
     @Test
     fun correctDecimalValue() {
-        val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it, MathContext()) }
+        val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it) }
 
         onCorrespondingItems(expectedDecimals, integerInstances.map { it.decimalValue }) { expectedValue, integerDecimalValue ->
             assertEquals(expectedValue, integerDecimalValue)
@@ -83,15 +75,15 @@ class IntegerImplTest {
     }
 
     @Test
-    fun strictlyEqualsWorksAsExpected() {
+    fun equalsWorksAsExpected() {
         val oneInteger = IntegerImpl(BigInteger.of(1))
         val oneReal = Real.of(1.0)
         val oneAtom = Atom.of("1")
 
-        assertStrictlyEquals(oneInteger, oneInteger)
+        assertEquals(oneInteger, oneInteger)
 
-        assertNotStrictlyEquals(oneInteger, oneReal)
-        assertNotStrictlyEquals(oneInteger, oneAtom)
+        assertNotEquals<Numeric>(oneInteger, oneReal)
+        assertNotEquals<Constant>(oneInteger, oneAtom)
     }
 
     @Test

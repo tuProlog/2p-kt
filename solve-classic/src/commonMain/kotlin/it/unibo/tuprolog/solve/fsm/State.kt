@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -103,7 +103,7 @@ data class StatePrimitiveSelection(override val context: ExecutionContextImpl) :
     override fun computeNext(): State {
         return with(context) {
             goals.current!!.let { goal ->
-                goal.extractSignature().let { signature ->
+                goal.toSignature().let { signature ->
                     if (libraries.hasPrimitive(signature)) {
 
                         val req = toRequest(signature, goal.argsList)

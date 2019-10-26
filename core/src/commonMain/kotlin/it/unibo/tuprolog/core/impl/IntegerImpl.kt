@@ -4,12 +4,11 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import org.gciatto.kt.math.MathContext
 
 internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
 
     override val decimalValue: BigDecimal by lazy {
-        BigDecimal.of(intValue, MathContext())
+        BigDecimal.of(intValue)
     }
 
     override val intValue: BigInteger = value
@@ -18,12 +17,9 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is NumericImpl) return false
+        if (other == null || this::class != other::class) return false
 
-        return when (other) {
-            is IntegerImpl -> value.compareTo(other.value) == 0
-            else -> decimalValue.compareTo(other.decimalValue) == 0
-        }
+        return value.compareTo((other as IntegerImpl).value) == 0
     }
 
     override fun hashCode(): Int = value.hashCode()

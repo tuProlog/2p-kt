@@ -19,9 +19,6 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         Var.VAR_REGEX_PATTERN.matches(name)
     }
 
-    override fun strictlyEquals(other: Term): Boolean =
-            other is VarImpl && other::class == this::class && completeName == other.completeName
-
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
 
     override fun freshCopy(): Var = VarImpl(name)

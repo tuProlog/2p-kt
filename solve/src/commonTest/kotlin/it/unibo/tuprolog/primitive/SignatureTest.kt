@@ -139,9 +139,9 @@ internal class SignatureTest {
 
     @Test
     fun structExtractSignatureWorksAsExpected() {
-        assertEquals(Signature(aAtom.value, aAtom.arity), aAtom.extractSignature())
+        assertEquals(Signature(aAtom.value, aAtom.arity), aAtom.toSignature())
         signatureTerms.forEach {
-            assertEquals(Signature(it.functor, it.arity), it.extractSignature())
+            assertEquals(Signature(it.functor, it.arity), it.toSignature())
         }
     }
 }

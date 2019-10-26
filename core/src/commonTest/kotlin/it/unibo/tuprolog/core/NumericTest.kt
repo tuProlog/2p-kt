@@ -4,7 +4,10 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
+import org.gciatto.kt.math.BigDecimal
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 /**
  * Test class for [Numeric] companion object
@@ -12,6 +15,19 @@ import kotlin.test.Test
  * @author Enrico
  */
 internal class NumericTest {
+
+    /** This map contains a mapping between real numbers and their version with some trailing zeros (i.e. 10.0 to 10.00) */
+    private val realToRealWithTrailingZerosMap by lazy {
+        RealUtils.decimalsAsFloats
+                .map { BigDecimal.of(it) }
+                .map {
+                    BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
+                            BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
+                } +
+                RealUtils.stringNumbers
+                        .filterNot { "E" in it }
+                        .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
+    }
 
     @Test
     fun numericOfBigDecimal() {
@@ -24,12 +40,12 @@ internal class NumericTest {
     @Test
     fun numericOfNumber() {
         val correctReal = RealUtils.decimalsAsDoubles.map { Real.of(it) }
-        @Suppress("USELESS_CAST") val toTestReal =
-                RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
+        @Suppress("USELESS_CAST")
+        val toTestReal = RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
 
         val correctInteger = IntegerUtils.bigIntegers.map { Integer.of(it) }
-        @Suppress("USELESS_CAST") val toTestInteger =
-                IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
+        @Suppress("USELESS_CAST")
+        val toTestInteger = IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
 
         onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
         onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
@@ -101,5 +117,35 @@ internal class NumericTest {
 
         onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
         onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
+    }
+
+    @Test
+    fun integerNotEqualToRealEvenIfSameValue() {
+        IntegerUtils.bigIntegers.map { it to it.toDouble() }.forEach { (integer, sameValueToDouble) ->
+            assertNotEquals<Numeric>(
+                    Numeric.of(integer),
+                    Numeric.of(sameValueToDouble)
+            )
+        }
+    }
+
+    @Test
+    fun realComparisonDoesNotTakeTrailingZerosIntoAccount() {
+        realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
+            assertEquals(
+                    Real.of(real),
+                    Real.of(realWithTrailingZeros)
+            )
+        }
+    }
+
+    @Test
+    fun realHashCodeIsConsistentWithEquals() {
+        realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
+            assertEquals(
+                    Real.of(real).hashCode(),
+                    Real.of(realWithTrailingZeros).hashCode()
+            )
+        }
     }
 }

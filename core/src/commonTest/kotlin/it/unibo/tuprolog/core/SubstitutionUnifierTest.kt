@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
@@ -51,7 +50,6 @@ internal class SubstitutionUnifierTest {
         onCorrespondingItems(correct, toBeTested) { expected, actual ->
             assertNotEquals(expected, actual)
             assertStructurallyEquals(expected, actual)
-            assertNotStrictlyEquals(expected, actual)
         }
     }
 

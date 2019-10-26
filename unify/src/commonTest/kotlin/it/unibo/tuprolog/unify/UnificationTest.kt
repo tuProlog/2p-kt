@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import it.unibo.tuprolog.unify.Unification.Companion.unifyWith
@@ -25,14 +22,6 @@ internal class UnificationTest {
     private val myExampleContext = Substitution.of("A", Atom.of("a"))
 
     @Test
-    fun naiveCreatesAUnificationStrategyThatUsesEqualsToCheckTermIdentity() {
-        Scope.empty {
-            assertEquals(Substitution.of(varOf("A"), aVar), Unification.naive().mgu(varOf("A"), aVar))
-        }
-        assertEquals(Substitution.empty(), Unification.naive().mgu(aVar, aVar))
-    }
-
-    @Test
     fun naiveWithoutArgsCreateUnificationStrategyWithEmptyContext() {
         assertEquals(Substitution.empty(), Unification.naive().context)
     }
@@ -41,15 +30,6 @@ internal class UnificationTest {
     fun passingNaiveAContextThisWillBeTheStrategyContext() {
         assertEquals(myExampleContext, Unification.naive(myExampleContext).context)
         assertEquals(Substitution.failed(), Unification.naive(Substitution.failed()).context)
-    }
-
-    @Test
-    fun strictCreatesAUnificationStrategyThatUsesStrictlyEqualsToCheckTermIdentity() {
-        val firstA = Var.of("A")
-        val secondA = Var.of("A")
-
-        assertEquals(Substitution.of(firstA to secondA), Unification.strict().mgu(firstA, secondA))
-        assertEquals(Substitution.empty(), Unification.strict().mgu(aVar, aVar))
     }
 
     @Test
@@ -64,11 +44,19 @@ internal class UnificationTest {
     }
 
     @Test
-    fun defaultUnificationStrategyUsesEqualsToCheckTermsIdentity() {
-        Scope.empty {
-            assertEquals(Substitution.of(varOf("A"), aVar), Unification.default.mgu(varOf("A"), aVar))
-        }
-        assertEquals(Substitution.empty(), Unification.default.mgu(aVar, aVar))
+    fun naiveStrategyComparesNumbersByValue() {
+        assertEquals(Substitution.empty(), Unification.naive().mgu(Integer.of(1), Real.of(1.0)))
+    }
+
+    @Test
+    fun strictStrategyComparesAllDataTypesWithEquals() {
+        val firstA = Var.of("A")
+        val secondA = Var.of("A")
+
+        assertEquals(Substitution.of(firstA to secondA), Unification.strict().mgu(firstA, secondA))
+        assertEquals(Substitution.empty(), Unification.strict().mgu(aVar, aVar))
+
+        assertEquals(Substitution.failed(), Unification.strict().mgu(Integer.of(1), Real.of(1.0)))
     }
 
     @Test

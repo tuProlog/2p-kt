@@ -42,34 +42,16 @@ internal object AssertionUtils {
             )
 
 
-    /** Asserts mutual strict equality for two [Term]s */
-    fun assertStrictlyEquals(expected: Term, actual: Term) =
-            assertTrue(
-                    expected strictlyEquals actual,
-                    actual strictlyEquals expected
-            )
-
-
-    /** Asserts mutual not strict equality for two [Term]s */
-    fun assertNotStrictlyEquals(expected: Term, actual: Term) =
-            assertFalse(
-                    expected strictlyEquals actual,
-                    actual strictlyEquals expected
-            )
-
-
     /** Asserts all types of equalities (normal, strict and structural) for two [Term]s */
     fun assertEqualities(expected: Term, actual: Term) {
         assertStructurallyEquals(expected, actual)
         assertEquals(expected, actual)
-        assertStrictlyEquals(expected, actual)
     }
 
     /** Asserts not equality of all types (normal, strict and structural) for two [Term]s */
     fun assertNoEqualities(expected: Term, actual: Term) {
         assertNotEquals(expected, actual)
         assertNotStructurallyEquals(expected, actual)
-        assertNotStrictlyEquals(expected, actual)
     }
 
     /** Executes the [function] with corresponding items in order */
