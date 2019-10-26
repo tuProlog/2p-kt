@@ -24,6 +24,7 @@ internal object EquationUtils {
                 Atom.of("a") to Atom.of("a"),
                 Atom.of("X") to Atom.of("X"),
                 Real.of("1.5") to Real.of("1.5"),
+                Real.of("1.5") to Real.of("1.500"),
                 Integer.of(0) to Integer.of(0),
                 Var.anonymous().let { it to it },
                 Scope.empty { varOf("X") to varOf("X") }
@@ -110,7 +111,8 @@ internal object EquationUtils {
                 Atom.of("a") to Atom.of("b"),
                 Atom.of("X") to Atom.of("Y"),
                 Real.of("1.5") to Real.of("1.3"),
-                Integer.of(0) to Integer.of(1)
+                Integer.of(0) to Integer.of(1),
+                Real.of(1.0) to Integer.of(1)
         )
     }
 
