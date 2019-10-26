@@ -1,26 +1,24 @@
 package it.unibo.tuprolog.primitive
 
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 /**
  * Wrapper class for [Primitive] implementation
  *
- * @param signature Supported primitive signature
- *
  * @author Enrico
  * @author Giovanni
  */
-abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) {
+abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
 
-    constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
+    /**
+     * @param signature Supported primitive signature
+     */
+    constructor(signature: Signature) : super(signature)
 
-    /** A shorthand to get the primitive functor name */
-    val functor: String = signature.name
+    constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
     /** The function expressing the implementation of the primitive, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
@@ -30,7 +28,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) 
     val primitive: Primitive by lazy { primitiveOf(signature, ::uncheckedImplementation as Primitive) }
 
     /** Gets this primitive description Pair formed by [signature] and [primitive] */
-    val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
+    override val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
 
 
     companion object {
@@ -44,20 +42,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext>(val signature: Signature) 
                                 signature,
                                 notInstantiated.index,
                                 notInstantiated.value as Var
-                        )
-                    } ?: this
-                }
-
-        /** Utility function to ensure that all arguments of Solve.Request are [Numeric] */
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreNumeric(): Solve.Request<C> =
-                arguments.withIndex().firstOrNull { it.value !is Numeric }.let { notNumeric ->
-                    notNumeric?.run {
-                        throw TypeError(
-                                context,
-                                signature,
-                                TypeError.Expected.NUMBER,
-                                notNumeric.value,
-                                notNumeric.index
                         )
                     } ?: this
                 }

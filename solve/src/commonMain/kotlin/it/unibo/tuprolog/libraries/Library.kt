@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.libraries
 
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.libraries.impl.LibraryImpl
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.primitive.toIndicator
 import it.unibo.tuprolog.theory.ClauseDatabase
 
@@ -20,6 +22,9 @@ interface Library {
 
     /** The library primitives, identified by their signatures */
     val primitives: Map<Signature, Primitive>
+
+    /** The library prolog functions, identified by their signature */
+    val functions: Map<Signature, PrologFunction<Term>>
 
     /**
      * Checks whether this library contains the provided signature.
@@ -45,19 +50,21 @@ interface Library {
         fun of(
                 operatorSet: OperatorSet = OperatorSet(),
                 theory: ClauseDatabase = ClauseDatabase.empty(),
-                primitives: Map<Signature, Primitive> = emptyMap()
-        ): Library = LibraryImpl(operatorSet, theory, primitives)
+                primitives: Map<Signature, Primitive> = emptyMap(),
+                functions: Map<Signature, PrologFunction<Term>> = emptyMap()
+        ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [LibraryAliased] with given parameters */
         fun of(
                 operatorSet: OperatorSet = OperatorSet(),
                 theory: ClauseDatabase = ClauseDatabase.empty(),
                 primitives: Map<Signature, Primitive> = emptyMap(),
+                functions: Map<Signature, PrologFunction<Term>> = emptyMap(),
                 alias: String
-        ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, alias)
+        ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
         /** Creates an instance of [LibraryAliased] starting from [Library] and an alias */
         fun of(library: Library, alias: String): LibraryAliased =
-                LibraryAliasedImpl(library.operators, library.theory, library.primitives, alias)
+                LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }
 }

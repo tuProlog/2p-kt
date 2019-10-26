@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.libraries.stdlib.Throw
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.toSignature
 import it.unibo.tuprolog.solve.Solution
@@ -9,6 +8,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest

@@ -66,7 +66,7 @@ class TypeError(
             /** Predefined expected types Atom values */
             private val predefinedExpectedTypes by lazy {
                 listOf("callable", "atom", "integer", "number", "predicate_indicator", "compound",
-                        "list", "character")
+                        "list", "character", "evaluable")
                 // these are only some of the commonly used types... when implementing more built-ins types can be added
                 // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here
             }
@@ -82,6 +82,7 @@ class TypeError(
             val COMPOUND by lazy { predefinedNameToInstance.getValue("compound") }
             val LIST by lazy { predefinedNameToInstance.getValue("list") }
             val CHARACTER by lazy { predefinedNameToInstance.getValue("character") }
+            val EVALUABLE by lazy { predefinedNameToInstance.getValue("evaluable") }
 
             /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
             fun of(type: String): Expected = predefinedNameToInstance[type.toLowerCase()]

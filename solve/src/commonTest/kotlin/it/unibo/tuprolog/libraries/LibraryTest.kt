@@ -20,9 +20,8 @@ internal class LibraryTest {
 
     @Test
     fun ofCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (_, lib) ->
-            val (opSet, theory, primitives) = lib
-            Library.of(opSet, theory, primitives)
+        val toBeTested = LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
+            Library.of(opSet, theory, primitives, functions)
         }
 
         assertEquals(correctInstances, toBeTested)
@@ -39,9 +38,8 @@ internal class LibraryTest {
 
     @Test
     fun ofWithAliasCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (alias, lib) ->
-            val (opSet, theory, primitives) = lib
-            Library.of(opSet, theory, primitives, alias)
+        val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
+            Library.of(opSet, theory, primitives, functions, alias)
         }
 
         assertEquals(correctInstancesWithAlias, toBeTested)
@@ -49,9 +47,8 @@ internal class LibraryTest {
 
     @Test
     fun ofLibraryAndAliasCreatesCorrectInstance() {
-        val toBeTested = LibraryUtils.allLibraries.map { (alias, lib) ->
-            val (opSet, theory, primitives) = lib
-            Library.of(LibraryImpl(opSet, theory, primitives), alias)
+        val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
+            Library.of(LibraryImpl(opSet, theory, primitives, functions), alias)
         }
 
         assertEquals(correctInstancesWithAlias, toBeTested)

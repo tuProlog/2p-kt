@@ -57,15 +57,21 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
                         .map { Operator(it, Specifier.YFX, 500) }
         )
 
-        /** Comparison Operator's OperatorSet */
-        val COMPARISON = OperatorSet(
+        /** Arithmetic Comparison Operator's OperatorSet */
+        val ARITHMETIC_COMPARISON = OperatorSet(
+                sequenceOf("=:=", "=\\=", "<", "=<", ">", ">=")
+                        .map { Operator(it, Specifier.XFX, 700) }
+        )
+
+        /** Term Comparison Operator's OperatorSet */
+        val TERM_COMPARISON = OperatorSet(
                 sequenceOf("=", "\\=")
                         .map { Operator(it, Specifier.XFX, 700) }
                         + sequenceOf("==", "\\==", "@<", "@=<", "@>", "@>=")
                         .map { Operator(it, Specifier.XFX, 700) }
                         + sequenceOf("=..")
                         .map { Operator(it, Specifier.XFX, 700) }
-                        + sequenceOf("is", "=:=", "=\\=", "<", "=<", ">", ">=")
+                        + sequenceOf("is")
                         .map { Operator(it, Specifier.XFX, 700) }
         )
 
@@ -92,7 +98,8 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         /** Default OperatorSet */
         val DEFAULT = OperatorSet(
                 ARITHMETIC.asSequence()
-                        + COMPARISON.asSequence()
+                        + ARITHMETIC_COMPARISON.asSequence()
+                        + TERM_COMPARISON.asSequence()
                         + CONTROL_FLOW.asSequence()
                         + CLAUSES.asSequence()
         )
