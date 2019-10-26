@@ -17,12 +17,9 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is NumericImpl) return false
+        if (other == null || this::class != other::class) return false
 
-        return when (other) {
-            is IntegerImpl -> value.compareTo(other.value) == 0
-            else -> decimalValue.compareTo(other.decimalValue) == 0
-        }
+        return value.compareTo((other as IntegerImpl).value) == 0
     }
 
     override fun hashCode(): Int = value.hashCode()

@@ -2,16 +2,12 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 import it.unibo.tuprolog.core.Set.Companion as LogicSet
 
 /**
@@ -67,13 +63,13 @@ internal class StructImplTest {
     }
 
     @Test
-    fun strictlyEqualsWorksAsExpected() {
+    fun equalsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.`true`()
 
-        assertNotStrictlyEquals(trueStruct, trueAtom)
-        assertNotStrictlyEquals(trueStruct, trueTruth)
+        assertNotEquals(trueStruct, trueAtom)
+        assertNotEquals<Struct>(trueStruct, trueTruth)
     }
 
     @Test

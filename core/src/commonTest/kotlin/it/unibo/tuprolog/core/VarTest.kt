@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNotStrictlyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.VarUtils
@@ -38,7 +37,6 @@ internal class VarTest {
         assertEqualities(anonymousVarInstance, anonymousVarInstance)
 
         assertStructurallyEquals(Var.of("_"), anonymousVarInstance)
-        assertNotStrictlyEquals(Var.of("_"), anonymousVarInstance)
         assertNotEquals(Var.of("_"), anonymousVarInstance)
         assertNotSame(Var.of("_"), anonymousVarInstance)
     }

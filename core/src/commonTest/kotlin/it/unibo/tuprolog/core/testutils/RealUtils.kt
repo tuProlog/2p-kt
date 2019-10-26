@@ -35,7 +35,9 @@ internal object RealUtils {
                 "-" + Float.MAX_VALUE.toString() to -BigDecimal.of(Float.MAX_VALUE.toString()),
                 "-" + Float.MIN_VALUE.toString() to -BigDecimal.of(Float.MIN_VALUE.toString()),
                 "-" + Double.MAX_VALUE.toString() to -BigDecimal.of(Double.MAX_VALUE.toString()),
-                "-" + Double.MIN_VALUE.toString() to -BigDecimal.of(Double.MIN_VALUE.toString())
+                "-" + Double.MIN_VALUE.toString() to -BigDecimal.of(Double.MIN_VALUE.toString()),
+                "10.0" to BigDecimal.TEN,
+                "10.000" to BigDecimal.TEN
         )
     }
 

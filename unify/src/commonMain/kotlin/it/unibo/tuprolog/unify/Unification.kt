@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.unify
 
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 
@@ -24,7 +26,7 @@ interface Unification {
     companion object {
 
         /** The default unification strategy that uses plain equals to determine [Term]s identity */
-        val default by lazy { naive() }
+        val default by lazy { strict() }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
         infix fun Term.mguWith(other: Term): Substitution = default.mgu(this, other)
@@ -35,16 +37,23 @@ interface Unification {
         /** Computes the unified term, using [default] unification strategy */
         infix fun Term.unifyWith(other: Term): Term? = default.unify(this, other)
 
-        /** Creates naive unification strategy, with given context, that checks [Term]s identity with it's [equals] */
+        /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
+         * methods, except in the case of numbers which are compared by value */
         fun naive(context: Substitution = Substitution.empty()): Unification =
                 object : AbstractUnificationStrategy(context) {
-                    override fun checkTermsEquality(first: Term, second: Term) = first == second
+                    override fun checkTermsEquality(first: Term, second: Term) =
+                        when {
+                            first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
+                            first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
+                            else -> first == second
+                        }
                 }
 
-        /** Creates a strict unification strategy, with given context, that checks [Term]s identity with [Term.strictlyEquals] */
+        /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
+         * methods */
         fun strict(context: Substitution = Substitution.empty()): Unification =
                 object : AbstractUnificationStrategy(context) {
-                    override fun checkTermsEquality(first: Term, second: Term) = first strictlyEquals second
+                    override fun checkTermsEquality(first: Term, second: Term) = first == second
                 }
     }
 }

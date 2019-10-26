@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import kotlin.js.Date
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [currentTimeInstant] Javascript implementation
@@ -11,9 +11,16 @@ import kotlin.test.assertEquals
  */
 internal class CurrentTimeInstantKtJsTest {
 
+    private val TOLERANCE = 10L // 10 ms
+
     @Test
     fun currentTimeReturnsActualTimeInMillis() {
-        assertEquals(Date().getTime().toLong(), currentTimeInstant())
+        val official = Date().getTime().toLong()
+        val our = currentTimeInstant()
+
+        assertTrue {
+            our - official < TOLERANCE
+        }
     }
 
 }
