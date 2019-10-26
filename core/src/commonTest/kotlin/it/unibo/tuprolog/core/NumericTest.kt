@@ -16,6 +16,19 @@ import kotlin.test.assertNotEquals
  */
 internal class NumericTest {
 
+    /** This map contains a mapping between real numbers and their version with some trailing zeros (i.e. 10.0 to 10.00) */
+    private val realToRealWithTrailingZerosMap by lazy {
+        RealUtils.decimalsAsFloats
+                .map { BigDecimal.of(it) }
+                .map {
+                    BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
+                            BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
+                } +
+                RealUtils.stringNumbers
+                        .filterNot { "E" in it }
+                        .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
+    }
+
     @Test
     fun numericOfBigDecimal() {
         val correct = RealUtils.bigDecimals.map { Real.of(it) }
@@ -27,12 +40,12 @@ internal class NumericTest {
     @Test
     fun numericOfNumber() {
         val correctReal = RealUtils.decimalsAsDoubles.map { Real.of(it) }
-        @Suppress("USELESS_CAST") val toTestReal =
-                RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
+        @Suppress("USELESS_CAST")
+        val toTestReal = RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
 
         val correctInteger = IntegerUtils.bigIntegers.map { Integer.of(it) }
-        @Suppress("USELESS_CAST") val toTestInteger =
-                IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
+        @Suppress("USELESS_CAST")
+        val toTestInteger = IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
 
         onCorrespondingItems(toTestReal, correctReal, ::assertEqualities)
         onCorrespondingItems(toTestInteger, correctInteger, ::assertEqualities)
@@ -107,37 +120,32 @@ internal class NumericTest {
     }
 
     @Test
-    fun test1() {
-        // TODO @enrico, please sibonify this test
-        assertNotEquals<Numeric>(
-                Numeric.of(1),
-                Numeric.of(1.0),
-                "Integers are different from reals"
-        )
+    fun integerNotEqualToRealEvenIfSameValue() {
+        IntegerUtils.bigIntegers.map { it to it.toDouble() }.forEach { (integer, sameValueToDouble) ->
+            assertNotEquals<Numeric>(
+                    Numeric.of(integer),
+                    Numeric.of(sameValueToDouble)
+            )
+        }
     }
 
     @Test
-    fun test2() {
-        // TODO @enrico, please sibonify this test
-        assertEquals(
-                Real.of(BigDecimal.of(100, 1)),
-                Real.of(BigDecimal.of(1000, 2)),
-                "Comparison among reals does not takes trailing zeros into account"
-        )
-        assertEquals(
-                Real.of(BigDecimal.of("10.0")),
-                Real.of(BigDecimal.of("10.00")),
-                "Comparison among reals does not takes trailing zeros into account"
-        )
+    fun realComparisonDoesNotTakeTrailingZerosIntoAccount() {
+        realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
+            assertEquals(
+                    Real.of(real),
+                    Real.of(realWithTrailingZeros)
+            )
+        }
     }
 
     @Test
-    fun test3() {
-        // TODO @enrico, please sibonify this test
-        assertEquals(
-                Real.of(BigDecimal.of(100, 1)).hashCode(),
-                Real.of(BigDecimal.of(1000, 2)).hashCode(),
-                "Hash code of reals is consistent with equals"
-        )
+    fun realHashCodeIsConsistentWithEquals() {
+        realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
+            assertEquals(
+                    Real.of(real).hashCode(),
+                    Real.of(realWithTrailingZeros).hashCode()
+            )
+        }
     }
 }

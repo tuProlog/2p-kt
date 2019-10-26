@@ -15,15 +15,9 @@ internal abstract class NumericImpl : TermImpl(), Numeric {
 
     abstract override val intValue: BigInteger
 
-    override fun equals(other: Any?): Boolean {
-        throw NotImplementedError("Subclasses should override this methods")
-    }
+    override fun equals(other: Any?): Boolean = throw NotImplementedError("Subclasses should override this methods")
 
-    override fun hashCode(): Int {
-        throw NotImplementedError("Subclasses should override this methods")
-    }
+    override fun hashCode(): Int = throw NotImplementedError("Subclasses should override this methods")
 
-    override fun toString(): String {
-        throw NotImplementedError("Subclasses should override this methods")
-    }
+    override fun toString(): String = throw NotImplementedError("Subclasses should override this methods")
 }
