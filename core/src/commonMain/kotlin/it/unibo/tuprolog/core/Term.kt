@@ -63,15 +63,7 @@ interface Term {
 
     fun apply(substitution: Substitution): Term = when {
         substitution.isEmpty() || this.isGround -> this
-        this is Var -> {
-            var current = this
-            val alreadyUsedSubstitution = mutableMapOf<Var, Term>() // to prevent infinite loop
-            while (current in substitution && current !in alreadyUsedSubstitution) {
-                current = substitution[current]!!
-                        .also { alreadyUsedSubstitution[current as Var] = it }
-            }
-            current
-        }
+        this is Var -> substitution[this] ?: this
         this is Struct && !this.isGround -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
         else -> this
     }
