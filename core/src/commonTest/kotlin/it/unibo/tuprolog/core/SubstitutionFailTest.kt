@@ -43,4 +43,10 @@ internal class SubstitutionFailTest {
         assertEquals(failedSubstitution, failedSubstitution + Substitution.of("A", Truth.`true`()))
         assertEquals(failedSubstitution, Substitution.of("A", Truth.`true`()) + failedSubstitution)
     }
+
+    @Test
+    fun failedSubstitutionMinusOtherSubstitutionReturnsAlwaysFailedSubstitution() {
+        assertEquals(failedSubstitution, failedSubstitution - Substitution.empty())
+        assertEquals(failedSubstitution, failedSubstitution - failedSubstitution)
+    }
 }

@@ -32,7 +32,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
                             // attaching recover goal's solve request to catch parent, to not re-execute the catch if error thrown
                             val recoverGoalSolveRequest = request.newSolveRequest(
                                     Struct.of(Call.functor, recoverGoalArgument),
-                                    goalResponse.solution.substitution
+                                    goalResponse.solution.substitution - request.context.substitution
                             ).run {
                                 // ensure that this catch cannot be selected again, to catch some error
                                 copy(context = context

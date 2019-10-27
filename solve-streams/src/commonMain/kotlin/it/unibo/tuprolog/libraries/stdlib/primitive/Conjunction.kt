@@ -36,7 +36,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                         is Solution.Yes -> {
                             val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
                                     prepareForExecution(rightSubGoal.apply(leftResponse.solution.substitution)),
-                                    leftResponse.solution.substitution,
+                                    leftResponse.solution.substitution - leftSubSolveRequest.context.substitution,
                                     baseSideEffectManager = leftResponse.sideEffectManager,
                                     logicalParentRequest = request
                             )
