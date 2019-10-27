@@ -29,10 +29,10 @@ interface Solver {
     /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
     val dynamicKB: ClauseDatabase
 
-    fun solve(maxDuration: TimeDuration = TimeDuration.MAX_VALUE, scopedContext: Scope.() -> Struct): Sequence<Solution> =
-            solve(scopedContext(Scope.empty()), maxDuration)
-
     companion object {
         // To be extended through extension methods
     }
 }
+
+inline fun Solver.solve(maxDuration: TimeDuration = TimeDuration.MAX_VALUE, scopedContext: Scope.() -> Struct): Sequence<Solution> =
+        solve(scopedContext(Scope.empty()), maxDuration)
