@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
@@ -61,6 +62,8 @@ abstract class PrologError(
                 functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)
                 functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->
                     TypeError(message, cause, context, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
+                functor == EvaluationError.typeFunctor && arity == 1 && EvaluationError.Type.fromTerm(args.single()) != null ->
+                    EvaluationError(message, cause, context, EvaluationError.Type.fromTerm(args.single())!!, extraData)
                 else -> object : PrologError(message, cause, context, type, extraData) {}
             }
         }

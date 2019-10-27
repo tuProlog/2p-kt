@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
@@ -31,7 +32,8 @@ internal object PrologErrorUtils {
         mapOf(
                 Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
                 Atom.of(SystemError.typeFunctor) to SystemError::class,
-                Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class
+                Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class,
+                Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class
         )
     }
 
