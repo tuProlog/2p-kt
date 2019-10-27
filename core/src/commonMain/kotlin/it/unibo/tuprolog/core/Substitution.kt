@@ -58,24 +58,6 @@ sealed class Substitution : Map<Var, Term> {
     fun applyTo(term: Term): Term = term[this]
 
     /**
-     * Like [Substitution.get], this method is aimed at retrieving the [Term] bound to [variable].
-     * However, in the case [variable] is bound to another [Var] which is in turn bound to some other [Term]
-     * (as so on, recursively) according to the current [Substitution], then this method returns the very last
-     * item in the chain.
-     *
-     * TODO @Enrico can you write a test for this method?
-     * */
-    fun getDeeply(variable: Var): Term? {
-        var term: Term? = null
-        var curr: Var? = variable
-        while (curr != null && curr in this) {
-            term = this[curr]
-            curr = if (term is Var) term else null
-        }
-        return term
-    }
-
-    /**
      * Creates a new substitution that's the *composition* of this and [other]
      *
      * However additional checks are performed:

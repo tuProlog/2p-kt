@@ -76,7 +76,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
@@ -102,7 +102,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(3), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(3), it.substitution.getDeeply("N"))
+                assertEquals(numOf(3), it.substitution["N"])
             }
 
             solutions[1].let {
@@ -110,7 +110,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
@@ -136,7 +136,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
@@ -162,7 +162,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"("N"), it.query)
                 assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
@@ -235,7 +235,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"(1), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
                 assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution.getDeeply("N"))
+                assertEquals(numOf(1), it.substitution["N"])
             }
         }
     }
@@ -288,7 +288,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"(1), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
                 assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution.getDeeply("N"))
+                assertEquals(numOf(1), it.substitution["N"])
             }
 
             solutions[1].let {
@@ -297,7 +297,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertEquals("a"(2), it.solvedQuery)
                 assertTrue { it.substitution is Substitution.Unifier }
                 assertTrue { "N" in it.substitution }
-                assertEquals(numOf(2), it.substitution.getDeeply("N"))
+                assertEquals(numOf(2), it.substitution["N"])
             }
         }
     }
@@ -327,7 +327,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                     assertEquals("member"(constants[i], listOf(*constants)), it.solvedQuery)
                     assertTrue { it.substitution is Substitution.Unifier }
                     assertTrue { "X" in it.substitution }
-                    assertEquals(atomOf(constants[i]), it.substitution.getDeeply("X"))
+                    assertEquals(atomOf(constants[i]), it.substitution["X"])
                 }
             }
         }
