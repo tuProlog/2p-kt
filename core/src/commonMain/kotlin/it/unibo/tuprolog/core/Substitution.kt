@@ -175,8 +175,8 @@ sealed class Substitution : Map<Var, Term> {
 
             /** Utility function to trim a single variable chain against a provided map, returning the last term */
             fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
-                var current: Term = this
-                val alreadyUsedKeys = mutableSetOf<Var>() // to prevent infinite loop
+                val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
+                var current: Term = mappings.getValue(this)
                 while (current is Var && current in mappings && current !in alreadyUsedKeys) {
                     alreadyUsedKeys += current
                     current = mappings.getValue(current)
@@ -186,7 +186,9 @@ sealed class Substitution : Map<Var, Term> {
 
             return when {
                 count() < 2 -> this
-                else -> this.mapValues { (varKey, _) -> varKey.trimVariableChain(this) }
+                else -> this.mapValues { (varKey, term) ->
+                    term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
+                }
             }
         }
 
