@@ -3,7 +3,7 @@ package it.unibo.tuprolog.primitive.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.collections.List as KtList
@@ -63,12 +63,12 @@ internal object PrimitiveUtils {
     /** All primitives under test associated with good requests; primitives return `emptySequence()` */
     internal inline fun <WrappedType> primitiveToGoodRequests(primitiveWrapperCreator: (Signature, Primitive) -> WrappedType) =
             primitiveSignaturesToGoodAndBadRequests.map { (signature, good, _) ->
-                primitiveWrapperCreator(signature) { emptySequence() } to good.map { createRequest(it.toSignature(), it.argsList) }
+                primitiveWrapperCreator(signature) { emptySequence() } to good.map { createRequest(it.extractSignature(), it.argsList) }
             }
 
     /** All primitives under test associated with bad requests that should be rejected */
     internal inline fun <WrappedType> primitiveToBadRequests(primitiveWrapperCreator: (Signature, Primitive) -> WrappedType) =
             primitiveSignaturesToGoodAndBadRequests.map { (signature, _, bad) ->
-                primitiveWrapperCreator(signature) { emptySequence() } to bad.map { createRequest(it.toSignature(), it.argsList) }
+                primitiveWrapperCreator(signature) { emptySequence() } to bad.map { createRequest(it.extractSignature(), it.argsList) }
             }
 }

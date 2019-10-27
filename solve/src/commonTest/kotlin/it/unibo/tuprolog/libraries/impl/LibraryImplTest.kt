@@ -10,7 +10,7 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -63,7 +63,7 @@ internal class LibraryImplTest {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
             val (_, _, theory, primitives) = libraryToAlias
 
-            theory.rules.map { it.head.toSignature() } + primitives.keys
+            theory.rules.map { it.head.extractSignature() } + primitives.keys
                     .forEach { signature -> assertTrue { signature in libraryInstance } }
 
             assertFalse { Signature("ciao", 3) in libraryInstance }
@@ -96,7 +96,7 @@ internal class LibraryImplTest {
 
             primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
 
-            (theory.rules.map { it.head.toSignature() } + Signature("ciao", 3)).forEach {
+            (theory.rules.map { it.head.extractSignature() } + Signature("ciao", 3)).forEach {
                 assertFalse { libraryInstance.hasPrimitive(it) }
             }
         }
@@ -107,7 +107,7 @@ internal class LibraryImplTest {
         LibraryUtils.allLibraries.zip(libraryInstances).forEach { (libraryToAlias, libraryInstance) ->
             val (_, _, theory, primitives) = libraryToAlias
 
-            theory.rules.map { it.head.toSignature() } + primitives.keys
+            theory.rules.map { it.head.extractSignature() } + primitives.keys
                     .forEach { signature -> assertTrue { libraryInstance.hasProtected(signature) } }
 
             assertFalse { libraryInstance.hasProtected(Signature("ciao", 3)) }

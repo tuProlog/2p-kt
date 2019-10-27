@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
@@ -30,7 +30,7 @@ internal class SolverSLDTest {
         SolverSLDUtils.contextAndRequestToSolutionMap.forEach { (input, expectedOutput) ->
             val (query, startContext) = input
 
-            val toBeTested = SolverSLD().solve(Solve.Request(query.toSignature(), query.argsList, startContext))
+            val toBeTested = SolverSLD().solve(Solve.Request(query.extractSignature(), query.argsList, startContext))
                     .map { PrimitivesUtils.filterInterestingVariables(it.solution) }.toList()
 
             assertSolutionsCorrect(expectedOutput, toBeTested)

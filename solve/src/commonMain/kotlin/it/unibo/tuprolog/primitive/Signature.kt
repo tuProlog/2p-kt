@@ -98,4 +98,4 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
 }
 
 /** Extracts this [Struct] indicator and converts it to [Signature] */
-fun Struct.toSignature(): Signature = Signature.fromIndicator(indicator)!!
+fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!

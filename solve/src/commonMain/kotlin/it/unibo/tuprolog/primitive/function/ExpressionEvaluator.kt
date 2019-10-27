@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
@@ -26,14 +26,14 @@ open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisi
     override fun visit(term: Term): Term =
             super.visit(term.apply { staticCheck(context) })
 
-    override fun visitAtom(term: Atom): Term = loadedFunctions[term.toSignature()].let {
+    override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()].let {
         when (it) {
             is NullaryFunction<*> -> it(context)
             else -> term
         }
     }
 
-    override fun visitStruct(term: Struct): Term = loadedFunctions[term.toSignature()].let {
+    override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()].let {
         when (it) {
             is UnaryFunction<*> -> it(
                     term.args.first().accept(this).apply { dynamicCheck(context) },

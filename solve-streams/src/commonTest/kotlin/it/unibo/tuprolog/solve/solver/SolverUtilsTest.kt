@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
@@ -135,7 +135,7 @@ internal class SolverUtilsTest {
         val toBeTested = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime = currentTime)
         val toBeTestedSubstitution = DummyInstances.solveRequest.newSolveRequest(newGoal, newSubstitution, currentTime = currentTime)
 
-        assertEquals(newGoal.toSignature(), toBeTested.signature)
+        assertEquals(newGoal.extractSignature(), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
 //        assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
 //        assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.logicalParentRequests.toList())

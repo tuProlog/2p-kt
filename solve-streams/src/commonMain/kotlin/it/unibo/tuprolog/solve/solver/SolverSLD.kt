@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.primitive.toSignature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
@@ -45,7 +45,7 @@ internal class SolverSLD(
     ) : this(ExecutionContextImpl(libraries, flags, staticKB, dynamicKB))
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
-            solve(Solve.Request(goal.toSignature(), goal.argsList, startContext, executionMaxDuration = maxDuration))
+            solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext, executionMaxDuration = maxDuration))
                     .map { it.solution.withOnlyAnswerSubstitution() }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
