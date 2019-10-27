@@ -29,7 +29,7 @@ internal class StateIntegrationTesting {
     /** Utility function to compute answer substitution */
     // TODO soluzione provvisioria in attesa di rifattorizzare i test
     private fun StateEnd.True.answerSubstitution() =
-            with(solve) { SolverUtils.reduceAndFilterSubstitution(solution.substitution, solution.query.variables) }
+            with(solve) { SolverUtils.filterSubstitution(solution.substitution, solution.query.variables) }
 
     @Test
     fun trueSolveRequestWorks() {

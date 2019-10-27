@@ -59,8 +59,8 @@ internal class SolverSLD(
     /** Utility function to calculate answerSubstitution on Solution.Yes */
     private fun Solution.withOnlyAnswerSubstitution() = when (this) {
         is Solution.Yes ->
-            // reduce substitution variable chains
-            copy(substitution = SolverUtils.reduceAndFilterSubstitution(substitution, query.variables))
+            // filter substitution
+            copy(substitution = SolverUtils.filterSubstitution(substitution, query.variables))
         else -> this
     }
 }

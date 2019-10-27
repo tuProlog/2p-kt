@@ -117,7 +117,7 @@ internal class StateRuleSelectionTest {
 //        }
 
         val expectedSubstitutions = listOf("c1", "c2", "d1", "d2").map(Atom.Companion::of)
-        val actualSubstitutions = interestingEndStates.map { with((it as FinalState).solve) { SolverUtils.reduceAndFilterSubstitution(solution.substitution, solution.query.variables) }.values.single() }
+        val actualSubstitutions = interestingEndStates.map { with((it as FinalState).solve) { SolverUtils.filterSubstitution(solution.substitution, solution.query.variables) }.values.single() }
         expectedSubstitutions.zip(actualSubstitutions).forEach { (expected, actual) ->
             assertEquals(expected, actual)
         }

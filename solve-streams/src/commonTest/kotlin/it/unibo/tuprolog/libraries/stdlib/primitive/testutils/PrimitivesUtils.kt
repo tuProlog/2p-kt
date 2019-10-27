@@ -67,8 +67,8 @@ internal object PrimitivesUtils {
     /** Utility method to filter interesting variables returned from a primitive (so without solver filter) */
     internal fun filterInterestingVariables(solution: Solution) = when (solution) {
         is Solution.Yes ->
-            // reduce substitution variable chains
-            solution.copy(substitution = SolverUtils.reduceAndFilterSubstitution(solution.substitution, solution.query.variables))
+            // filter substitution
+            solution.copy(substitution = SolverUtils.filterSubstitution(solution.substitution, solution.query.variables))
         else -> solution
     }
 }
