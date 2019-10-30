@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.libraries
 
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.impl.LibraryAliasedImpl
@@ -24,7 +23,7 @@ interface Library {
     val primitives: Map<Signature, Primitive>
 
     /** The library prolog functions, identified by their signature */
-    val functions: Map<Signature, PrologFunction<Term>>
+    val functions: Map<Signature, PrologFunction>
 
     /**
      * Checks whether this library contains the provided signature.
@@ -51,7 +50,7 @@ interface Library {
                 operatorSet: OperatorSet = OperatorSet(),
                 theory: ClauseDatabase = ClauseDatabase.empty(),
                 primitives: Map<Signature, Primitive> = emptyMap(),
-                functions: Map<Signature, PrologFunction<Term>> = emptyMap()
+                functions: Map<Signature, PrologFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [LibraryAliased] with given parameters */
@@ -59,7 +58,7 @@ interface Library {
                 operatorSet: OperatorSet = OperatorSet(),
                 theory: ClauseDatabase = ClauseDatabase.empty(),
                 primitives: Map<Signature, Primitive> = emptyMap(),
-                functions: Map<Signature, PrologFunction<Term>> = emptyMap(),
+                functions: Map<Signature, PrologFunction> = emptyMap(),
                 alias: String
         ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 

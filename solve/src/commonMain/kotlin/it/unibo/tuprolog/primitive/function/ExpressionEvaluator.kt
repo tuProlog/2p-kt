@@ -26,27 +26,20 @@ open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisi
     override fun visit(term: Term): Term =
             super.visit(term.apply { staticCheck(context) })
 
-    override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()].let {
-        when (it) {
-            is NullaryFunction<*> -> it(context)
-            else -> term
-        }
-    }
+    override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()]
+            ?.let { it(Compute.Request(term.extractSignature(), term.argsList, context)).result }
+            ?: term
 
-    override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()].let {
-        when (it) {
-            is UnaryFunction<*> -> it(
-                    term.args.first().accept(this).apply { dynamicCheck(context) },
-                    context
-            )
-            is BinaryFunction<*> -> it(
-                    term.args.first().accept(this).apply { dynamicCheck(context) },
-                    term.args.last().accept(this).apply { dynamicCheck(context) },
-                    context
-            )
-            else -> term
-        }
-    }
+    override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()]
+            ?.let {
+                it(Compute.Request(
+                        term.extractSignature(),
+                        term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(context) } }.toList(),
+                        context
+                )).result
+            }
+            ?: term
+
 
     /**
      * Template method to implement static checks, i.e. those checks that can be made before evaluating sub-expressions

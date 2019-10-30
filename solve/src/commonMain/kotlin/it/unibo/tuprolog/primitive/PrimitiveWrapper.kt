@@ -13,11 +13,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
  */
 abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
 
-    /**
-     * @param signature Supported primitive signature
-     */
     constructor(signature: Signature) : super(signature)
-
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
     /** The function expressing the implementation of the primitive, without any check for application to correct signature */
@@ -25,10 +21,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    val primitive: Primitive by lazy { primitiveOf(signature, ::uncheckedImplementation as Primitive) }
-
-    /** Gets this primitive description Pair formed by [signature] and [primitive] */
-    override val descriptionPair: Pair<Signature, Primitive> by lazy { signature to primitive }
+    final override val wrappedImplementation: Primitive by lazy { primitiveOf(signature, ::uncheckedImplementation as Primitive) }
 
 
     companion object {

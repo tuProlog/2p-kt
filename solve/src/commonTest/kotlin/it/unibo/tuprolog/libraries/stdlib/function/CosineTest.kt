@@ -2,8 +2,8 @@ package it.unibo.tuprolog.libraries.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,7 +23,7 @@ internal class CosineTest {
 
     @Test
     fun computationCorrect() {
-        val toBeTested = Cosine.function(Real.of(PI / 2.0), DummyInstances.executionContext).`as`<Numeric>().decimalValue.toDouble()
+        val toBeTested = Cosine.computeOf(Real.of(PI / 2.0)).`as`<Numeric>().decimalValue.toDouble()
         assertTrue("Cosine of \"PI/2\" should be closer to Zero") {
             toBeTested < 6.123233995736767E-17 && toBeTested > 6.123233995736765E-17
         }

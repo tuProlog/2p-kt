@@ -1,11 +1,8 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
@@ -13,7 +10,6 @@ import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Utils singleton to help testing Primitive implementations
@@ -21,16 +17,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal object PrimitivesUtils {
-
-    /** Utility function to test whether a primitive throwing an error carries with it the request context */
-    internal fun assertRequestContextEqualToThrownErrorOne(request: Solve.Request<ExecutionContext>, primitiveWrapper: PrimitiveWrapper<out ExecutionContext>) {
-        try { // there's a more advanced version in PrimitiveWrapperUtils... see if it can be imported or copy it there
-            primitiveWrapper.primitive(request)
-            fail("Exception should be thrown")
-        } catch (e: TuPrologRuntimeException) {
-            assertEquals(request.context, e.context)
-        }
-    }
 
     /**
      * Utility function to test whether the cause of errors generated is correctly filled

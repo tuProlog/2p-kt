@@ -2,8 +2,8 @@ package it.unibo.tuprolog.libraries.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.math.E
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +24,7 @@ internal class NaturalLogarithmTest {
     fun computationCorrect() {
         assertEquals(
                 Numeric.of(1.0),
-                NaturalLogarithm.function(Real.of(E), DummyInstances.executionContext)
+                NaturalLogarithm.computeOf(Real.of(E))
         )
     }
 

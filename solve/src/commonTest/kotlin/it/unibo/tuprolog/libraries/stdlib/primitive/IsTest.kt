@@ -19,7 +19,7 @@ internal class IsTest {
         isQueryToResult.forEach { (input, expectedResult) ->
             when (expectedResult) {
                 is Substitution.Unifier -> {
-                    Is.primitive(input).single().solution.let {
+                    Is.wrappedImplementation(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.Yes
                         }
@@ -27,7 +27,7 @@ internal class IsTest {
                     }
                 }
                 is Substitution.Fail -> {
-                    Is.primitive(input).single().solution.let {
+                    Is.wrappedImplementation(input).single().solution.let {
                         assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
                             it is Solution.No
                         }
@@ -36,7 +36,7 @@ internal class IsTest {
                 else ->
                     @Suppress("UNCHECKED_CAST")
                     (expectedResult as? KClass<out TuPrologRuntimeException>)
-                            ?.let { assertFailsWith(expectedResult) { Is.primitive(input) } }
+                            ?.let { assertFailsWith(expectedResult) { Is.wrappedImplementation(input) } }
                             ?: fail("Bad written test data!")
             }
         }

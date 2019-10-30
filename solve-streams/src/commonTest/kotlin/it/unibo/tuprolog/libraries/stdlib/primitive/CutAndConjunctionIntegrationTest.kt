@@ -24,7 +24,7 @@ internal class CutAndConjunctionIntegrationTest {
                     SolverTestUtils.factDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(2, responses.count())
             assertEquals(
                     ktListOf<Atom>(atomOf("a"), atomOf("b")),
@@ -41,7 +41,7 @@ internal class CutAndConjunctionIntegrationTest {
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
 
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(1, responses.count())
             assertEquals(atomOf("a"), responses.single().solution.substitution.values.single())
         }
@@ -59,7 +59,7 @@ internal class CutAndConjunctionIntegrationTest {
                     SolverTestUtils.factDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(1, responses.count())
             assertEquals(
                     ktListOf(atomOf("a"), atomOf("a")),
@@ -80,7 +80,7 @@ internal class CutAndConjunctionIntegrationTest {
                     SolverTestUtils.factDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(2, responses.count())
             assertEquals(
                     ktListOf(
@@ -105,7 +105,7 @@ internal class CutAndConjunctionIntegrationTest {
                     SolverTestUtils.factDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(1, responses.count())
             assertEquals(
                     ktListOf(atomOf("a"), atomOf("a")),
@@ -130,7 +130,7 @@ internal class CutAndConjunctionIntegrationTest {
                     ),
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(2, responses.count())
             assertEquals(
                     ktListOf(
@@ -163,7 +163,7 @@ internal class CutAndConjunctionIntegrationTest {
                     ),
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
-            val responses = Conjunction.primitive(request).toList()
+            val responses = Conjunction.wrappedImplementation(request).toList()
             assertEquals(4, responses.count())
             assertEquals(
                     ktListOf(

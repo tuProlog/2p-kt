@@ -13,7 +13,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author Enrico
  */
-abstract class MathFunction : FunctionWrapper {
+abstract class MathFunction : FunctionWrapper<ExecutionContext> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)

@@ -4,10 +4,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":solve"))
-                api(project(":dsl-theory"))
-                api(kotlin("test-common"))
-                api(kotlin("test-annotations-common"))
+                implementation(project(":solve"))
+                implementation(project(":dsl-theory"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
 
@@ -15,7 +15,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(kotlin("test-junit"))
+                    implementation(kotlin("test-junit"))
                 }
             }
         }
@@ -23,7 +23,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(kotlin("test-js"))
+                    implementation(kotlin("test-js"))
                 }
             }
         }

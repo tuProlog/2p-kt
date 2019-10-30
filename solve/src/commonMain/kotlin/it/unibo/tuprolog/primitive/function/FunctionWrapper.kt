@@ -1,21 +1,24 @@
 package it.unibo.tuprolog.primitive.function
 
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.AbstractWrapper
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
  * A class wrapping a [PrologFunction] implementation
  *
  * @author Enrico
  */
-abstract class FunctionWrapper : AbstractWrapper<PrologFunction<Term>> {
+abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFunction> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
 
-    /** Wrapped function implementation */
-    abstract val function: PrologFunction<Term>
+    /** The function expressing the implementation of the PrologFunction, without any check for application to correct signature */
+    protected abstract fun uncheckedImplementation(request: Compute.Request<C>): Compute.Response
 
-    override val descriptionPair: Pair<Signature, PrologFunction<Term>> by lazy { signature to function }
+    /** Checked PrologFunction implementation */
+    @Suppress("UNCHECKED_CAST")
+    final override val wrappedImplementation: PrologFunction by lazy { functionOf(signature, ::uncheckedImplementation as PrologFunction) }
+
 }

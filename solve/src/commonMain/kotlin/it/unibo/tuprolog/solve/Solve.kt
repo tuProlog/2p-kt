@@ -89,6 +89,5 @@ sealed class Solve {
             val dynamicKB: ClauseDatabase? = null,
             /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
             val sideEffectManager: SideEffectManager? = null
-    ) : Solve() // TODO if sideEffectsManager is approved for common API maybe we should add a sideEffectManager field
-    //TODO even to common ExecutionContext interface, in order to exploit its "shouldXXX" method upon request processing
+    ) : Solve()
 }
