@@ -49,4 +49,10 @@ internal class SubstitutionFailTest {
         assertEquals(failedSubstitution, failedSubstitution - Substitution.empty())
         assertEquals(failedSubstitution, failedSubstitution - failedSubstitution)
     }
+
+    @Test
+    fun failedSubstitutionFilteringReturnsAlwaysFailedSubstitution() {
+        assertEquals(failedSubstitution, failedSubstitution.filter { true })
+        assertEquals(failedSubstitution, failedSubstitution.filter { false })
+    }
 }

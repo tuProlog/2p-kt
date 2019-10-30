@@ -147,6 +147,12 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
+    fun filterReturnsOnlyCorrectBindings() {
+        assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar })
+        assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
+    }
+
+    @Test
     fun getReturnsLastBoundTermInTheVariableChain() {
         val myAtom = Atom.of("hello")
         val xVar = Var.of("X")

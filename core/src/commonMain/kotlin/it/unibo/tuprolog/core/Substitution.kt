@@ -70,13 +70,24 @@ sealed class Substitution : Map<Var, Term> {
     }
 
     /**
-     * Returns a substitution containing all entries of the original substitution except those
+     * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [other] substitution.
      */
     operator fun minus(other: Substitution): Substitution = when (this) {
         is Fail -> Fail
         else -> (this as Map<Var, Term> - other.keys).asUnifier()
     }
+
+    /**
+     * Returns a new substitution containing all key-value pairs matching the given [predicate].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
+    }
+
 
     /** Substitution companion with factory functionality */
     companion object {
