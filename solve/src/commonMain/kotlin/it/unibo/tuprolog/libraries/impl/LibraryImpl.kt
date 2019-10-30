@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.libraries.impl
 
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Primitive
@@ -17,7 +16,7 @@ internal open class LibraryImpl(
         override val operators: OperatorSet,
         override val theory: ClauseDatabase,
         override val primitives: Map<Signature, Primitive>,
-        override val functions: Map<Signature, PrologFunction<Term>>
+        override val functions: Map<Signature, PrologFunction>
 ) : Library {
 
     override fun equals(other: Any?): Boolean {

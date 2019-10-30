@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 /**
- * Test class for [Solve], [Solve.Request] and [Solve.Response]
+ * Test class for [Solve.Request]
  *
  * @author Enrico
  */

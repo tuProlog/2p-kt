@@ -2,8 +2,8 @@ package it.unibo.tuprolog.libraries.stdlib.function
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils
+import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,10 +23,9 @@ internal class BitwiseAndTest {
     fun computationCorrect() {
         assertEquals(
                 Integer.of(125),
-                BitwiseAnd.function(
+                BitwiseAnd.computeOf(
                         Integer.of(17 * 256 + 125),
-                        Integer.of(255),
-                        DummyInstances.executionContext
+                        Integer.of(255)
                 )
         )
     }

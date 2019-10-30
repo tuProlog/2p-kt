@@ -33,7 +33,7 @@ internal class ConjunctionTest {
 
     @Test
     fun conjunctionOfTrueReturnsTrue() {
-        val responses = Conjunction.primitive(trueAndTrueSolveRequest)
+        val responses = Conjunction.wrappedImplementation(trueAndTrueSolveRequest)
 
         assertEquals(1, responses.count())
         assertTrue { responses.single().solution is Solution.Yes }
@@ -41,7 +41,7 @@ internal class ConjunctionTest {
 
     @Test
     fun conjunctionReturnsCorrectlyMultipleSolutionsOnLeftSide() {
-        val responses = Conjunction.primitive(multipleSolutionRequest)
+        val responses = Conjunction.wrappedImplementation(multipleSolutionRequest)
 
         assertEquals(2, responses.count())
         responses.forEach { assertTrue { it.solution is Solution.Yes } }
@@ -50,7 +50,7 @@ internal class ConjunctionTest {
     @Test
     fun conjunctionFailsIfSomePredicateIsNotTrue() {
         failedRequests.forEach { request ->
-            val responses = Conjunction.primitive(request)
+            val responses = Conjunction.wrappedImplementation(request)
 
             assertTrue { responses.map(Solve.Response::solution).all { it is Solution.No } }
         }

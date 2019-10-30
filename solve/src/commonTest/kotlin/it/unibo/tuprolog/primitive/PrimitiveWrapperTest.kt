@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.primitive
 
 import it.unibo.tuprolog.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
-import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToBadRequests
-import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToGoodRequests
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.allGroundRequests
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.assertOnError
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveRequest
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveWrapper
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.defaultPrimitiveResult
 import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.nonAllGroundRequests
-import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitiveWrappersToSignatures
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitive
+import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
+import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
+import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,42 +24,22 @@ import kotlin.test.assertSame
 internal class PrimitiveWrapperTest {
 
     @Test
-    fun signatureCorrect() {
-        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
-            assertEquals(signature, wrapper.signature)
-        }
-    }
-
-    @Test
-    fun functorCorrect() {
-        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
-            assertEquals(signature.name, wrapper.functor)
-        }
-    }
-
-    @Test
     fun primitiveWorksIfCorrectRequestProvided() {
-        primitiveToGoodRequests(::createPrimitiveWrapper).forEach { (wrapper, acceptedRequests) ->
-            acceptedRequests.forEach {
-                if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                assertEquals(emptySequence(), wrapper.primitive(it))
-            }
-        }
+        wrapperToMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
+                .forEach { (wrapper, acceptedRequests) ->
+                    acceptedRequests.forEach {
+                        if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
+                        assertEquals(defaultPrimitiveResult, wrapper.wrappedImplementation(it))
+                    }
+                }
     }
 
     @Test
     fun primitiveComplainsWithWrongRequestSignatureOrArguments() {
-        primitiveToBadRequests(::createPrimitiveWrapper).forEach { (wrapper, badRequests) ->
+        wrapperToNotMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest).forEach { (wrapper, badRequests) ->
             badRequests.forEach {
-                assertFailsWith<IllegalArgumentException> { wrapper.primitive(it) }
+                assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
             }
-        }
-    }
-
-    @Test
-    fun descriptionPairCorrect() {
-        primitiveWrappersToSignatures.forEach { (wrapper, signature) ->
-            assertEquals(with(wrapper) { signature to primitive }, wrapper.descriptionPair)
         }
     }
 
@@ -78,7 +60,7 @@ internal class PrimitiveWrapperTest {
     @Test
     fun ensuringAllArgumentInstantiatedInstantiationErrorContainsCorrectData() {
         nonAllGroundRequests.forEach { request ->
-            assertOnError<InstantiationError>({ request.ensuringAllArgumentsAreInstantiated() }) { error ->
+            assertOverFailure<InstantiationError>({ request.ensuringAllArgumentsAreInstantiated() }) { error ->
                 assertSame(request.context, error.context)
                 assertSame(request.arguments.first { !it.isGround }, error.extraData)
             }

@@ -3,9 +3,7 @@ package it.unibo.tuprolog.libraries.stdlib.function
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.primitive.function.PrologFunction
-import it.unibo.tuprolog.primitive.function.UnaryFunction
+import it.unibo.tuprolog.primitive.function.Compute
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
@@ -17,12 +15,15 @@ import it.unibo.tuprolog.solve.ExecutionContext
  */
 abstract class UnaryMathFunction(name: String) : MathFunction(name, 1) {
 
-    override val function: UnaryFunction<Term> = PrologFunction.ofUnary { term, context ->
-        when (term) {
-            is Integer -> mathFunction(term, context)
-            is Real -> mathFunction(term, context)
-            else -> term
-        }
+    override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response = with(request) {
+        val term = arguments.single()
+        replyWith(
+                when (term) {
+                    is Integer -> mathFunction(term, context)
+                    is Real -> mathFunction(term, context)
+                    else -> term
+                }
+        )
     }
 
     /** The actual math function implementation, for [Integer]s */

@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.libraries.impl
 
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -17,7 +16,7 @@ internal open class LibraryAliasedImpl(
         override val operators: OperatorSet,
         override val theory: ClauseDatabase,
         override val primitives: Map<Signature, Primitive>,
-        override val functions: Map<Signature, PrologFunction<Term>>,
+        override val functions: Map<Signature, PrologFunction>,
         override val alias: String
 ) : LibraryImpl(operators, theory, primitives, functions), LibraryAliased {
 
