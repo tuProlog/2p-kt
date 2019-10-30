@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.solver.statemachine.state
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor.unwrapIfNeeded
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
@@ -117,7 +116,7 @@ internal class StateRuleSelectionTest {
 //        }
 
         val expectedSubstitutions = listOf("c1", "c2", "d1", "d2").map(Atom.Companion::of)
-        val actualSubstitutions = interestingEndStates.map { with((it as FinalState).solve) { SolverUtils.filterSubstitution(solution.substitution, solution.query.variables) }.values.single() }
+        val actualSubstitutions = interestingEndStates.map { with((it as FinalState).solve) { solution.substitution.filter { (`var`, _) -> `var` in solution.query.variables } }.values.single() }
         expectedSubstitutions.zip(actualSubstitutions).forEach { (expected, actual) ->
             assertEquals(expected, actual)
         }

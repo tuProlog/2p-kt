@@ -13,6 +13,40 @@ sealed class Substitution : Map<Var, Term> {
     /** Whether this Substitution is a failed one */
     open val isFailed: Boolean = false
 
+    /** Applies the Substitution to the given Term */
+    fun applyTo(term: Term): Term = term[this]
+
+    /**
+     * Creates a new substitution that's the *composition* of this and [other]
+     *
+     * However additional checks are performed:
+     * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
+     * - If the set of substitutions resulting from this union is contradicting, the result is [Substitution.Fail]
+     */
+    operator fun plus(other: Substitution): Substitution = when {
+        anyFailed(this, other) || anyContradiction(this, other) -> Fail
+        else -> (this as Map<Var, Term> + other).asUnifier()
+    }
+
+    /**
+     * Returns a new substitution containing all entries of the original substitution except those
+     * entries which variable keys are contained in the given [other] substitution.
+     */
+    open operator fun minus(other: Substitution): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term> - other.keys).asUnifier()
+    }
+
+    /**
+     * Returns a new substitution containing all key-value pairs matching the given [predicate].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    open fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
+    }
+
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class Unifier(mappings: Map<Var, Term>) : Substitution(),
             Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
@@ -22,6 +56,11 @@ sealed class Substitution : Map<Var, Term> {
         // different value, by definition of map type
 
         override val isSuccess: Boolean = true
+
+        override fun minus(other: Substitution): Unifier = super.minus(other) as Unifier
+
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
+                super.filter(predicate) as Unifier
 
         /** The mappings used to implement [equals], [hashCode] and [toString] */
         // this should be kept in sync with class "by" right expression
@@ -52,40 +91,8 @@ sealed class Substitution : Map<Var, Term> {
     /** The Failed Substitution instance */
     object Fail : Substitution(), Map<Var, Term> by emptyMap() {
         override val isFailed: Boolean = true
-    }
-
-    /** Applies the Substitution to the given Term */
-    fun applyTo(term: Term): Term = term[this]
-
-    /**
-     * Creates a new substitution that's the *composition* of this and [other]
-     *
-     * However additional checks are performed:
-     * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
-     * - If the set of substitutions resulting from this union is contradicting, the result is [Substitution.Fail]
-     */
-    operator fun plus(other: Substitution): Substitution = when {
-        anyFailed(this, other) || anyContradiction(this, other) -> Fail
-        else -> (this as Map<Var, Term> + other).asUnifier()
-    }
-
-    /**
-     * Returns a new substitution containing all entries of the original substitution except those
-     * entries which variable keys are contained in the given [other] substitution.
-     */
-    operator fun minus(other: Substitution): Substitution = when (this) {
-        is Fail -> Fail
-        else -> (this as Map<Var, Term> - other.keys).asUnifier()
-    }
-
-    /**
-     * Returns a new substitution containing all key-value pairs matching the given [predicate].
-     *
-     * The returned map preserves the entry iteration order of the original map.
-     */
-    fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution = when (this) {
-        is Fail -> Fail
-        else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
+        override fun minus(other: Substitution): Fail = Fail
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
     }
 
 

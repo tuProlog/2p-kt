@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.statemachine.state.*
 import it.unibo.tuprolog.solve.solver.statemachine.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
@@ -29,7 +28,7 @@ internal class StateIntegrationTesting {
     /** Utility function to compute answer substitution */
     // TODO soluzione provvisioria in attesa di rifattorizzare i test
     private fun StateEnd.True.answerSubstitution() =
-            with(solve) { SolverUtils.filterSubstitution(solution.substitution, solution.query.variables) }
+            with(solve) { solution.substitution.filter { (`var`, _) -> `var` in solution.query.variables } }
 
     @Test
     fun trueSolveRequestWorks() {

@@ -60,7 +60,7 @@ internal class SolverSLD(
     private fun Solution.withOnlyAnswerSubstitution() = when (this) {
         is Solution.Yes ->
             // filter substitution
-            copy(substitution = SolverUtils.filterSubstitution(substitution, query.variables))
+            copy(substitution = substitution.filter { (`var`, _) -> `var` in query.variables })
         else -> this
     }
 }

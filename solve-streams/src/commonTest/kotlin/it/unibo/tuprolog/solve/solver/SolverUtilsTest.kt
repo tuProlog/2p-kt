@@ -94,39 +94,6 @@ internal class SolverUtilsTest {
     }
 
     @Test
-    fun reduceAndFilterSubstitution() {
-        Scope.empty().where {
-            val startSubstitution = Substitution.of(
-                    varOf("A") to varOf("C"),
-                    varOf("C") to atomOf("c"),
-                    varOf("D") to atomOf("d")
-            )
-            val toBeTested = SolverUtils.filterSubstitution(startSubstitution, sequenceOf(varOf("A")))
-
-            assertEquals(Substitution.of(varOf("A"), atomOf("c")), toBeTested)
-        }
-    }
-
-    @Test
-    fun reduceAndFilterSubstitutionWithNullVariableSequenceReturnsAllSubstitution() {
-        Scope.empty().where {
-            val startSubstitution = Substitution.of(
-                    varOf("A") to varOf("C"),
-                    varOf("C") to Atom.of("c"),
-                    varOf("D") to Atom.of("d")
-            )
-            val toBeTested = SolverUtils.filterSubstitution(startSubstitution)
-
-            val correct = Substitution.of(
-                    varOf("A") to atomOf("c"),
-                    varOf("C") to atomOf("c"),
-                    varOf("D") to atomOf("d")
-            )
-            assertEquals(correct, toBeTested)
-        }
-    }
-
-    @Test
     fun newSolveRequestInjectsPassedParametersInOldRequest() {
         val newGoal = Struct.of("a", Atom.of("ciao"))
         val currentTime = 100L
