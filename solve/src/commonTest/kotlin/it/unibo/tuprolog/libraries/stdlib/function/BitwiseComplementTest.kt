@@ -2,8 +2,8 @@ package it.unibo.tuprolog.libraries.stdlib.function
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils
+import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,9 +23,7 @@ internal class BitwiseComplementTest {
     fun computationCorrect() {
         assertEquals(
                 Integer.of(10),
-                BitwiseComplement.function(
-                        BitwiseComplement.function(
-                                Integer.of(10), DummyInstances.executionContext), DummyInstances.executionContext)
+                BitwiseComplement.computeOf(BitwiseComplement.computeOf(Integer.of(10)))
         )
     }
 

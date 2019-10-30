@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.primitive
 
 /**
- * Abstract primitive wrapper class
+ * Signature to [Wrapped] type, abstract wrapper class
  *
- * @param signature Supported input signature
+ * @param signature the supported input signature
  *
  * @author Enrico
  */
@@ -14,6 +14,9 @@ abstract class AbstractWrapper<out Wrapped>(val signature: Signature) {
     /** A shorthand to get the signature functor name */
     val functor: String by lazy { signature.name }
 
+    /** The wrapped implementation */
+    abstract val wrappedImplementation: Wrapped
+
     /** Gets this wrapped primitive description Pair formed by [signature] and wrapped primitive type */
-    abstract val descriptionPair: Pair<Signature, Wrapped>
+    val descriptionPair: Pair<Signature, Wrapped> by lazy { signature to wrappedImplementation }
 }

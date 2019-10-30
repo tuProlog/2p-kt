@@ -16,7 +16,7 @@ internal class CatchTest {
     @Test
     fun catchWorksLikeCallIfNoErrorIsThrownByFirstArgument() {
         CatchUtils.requestSolutionMap.forEach { (request, solutionList) ->
-            val toBeTested = Catch.primitive(request).toList()
+            val toBeTested = Catch.wrappedImplementation(request).toList()
 
             assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
         }
@@ -25,7 +25,7 @@ internal class CatchTest {
     @Test
     fun catchPrologStandardExamplesWorkAsExpected() {
         CatchUtils.prologStandardCatchExamples.forEach { (request, solutionList) ->
-            val toBeTested = Catch.primitive(request).toList()
+            val toBeTested = Catch.wrappedImplementation(request).toList()
 
             assertSolutionsCorrect(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
         }
@@ -34,7 +34,7 @@ internal class CatchTest {
     @Test
     fun catchThrowPrologStandardExamplesWorkAsExpected() {
         CatchUtils.prologStandardThrowExamples.forEach { (request, solutionList) ->
-            val toBeTested = Catch.primitive(request).toList()
+            val toBeTested = Catch.wrappedImplementation(request).toList()
 
             assertSolutionsCorrect(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
         }

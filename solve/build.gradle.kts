@@ -10,6 +10,12 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":solve-test"))
+            }
+        }
+
         // Default source set for JVM-specific sources and dependencies:
         jvm {
             compilations["main"].defaultSourceSet {

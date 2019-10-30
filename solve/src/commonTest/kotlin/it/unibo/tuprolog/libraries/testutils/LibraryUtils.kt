@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.libraries.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
@@ -8,7 +11,7 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.NullaryFunction
+import it.unibo.tuprolog.primitive.function.Compute
 import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
@@ -27,7 +30,7 @@ internal object LibraryUtils {
             val opSet: OperatorSet,
             val theory: ClauseDatabase,
             val primitives: Map<Signature, Primitive>,
-            val functions: Map<Signature, PrologFunction<Term>>
+            val functions: Map<Signature, PrologFunction>
     )
 
     private val plusOperator = Operator("+", Specifier.YFX, 500)
@@ -43,14 +46,10 @@ internal object LibraryUtils {
     private val primitives = mapOf(Signature("myPrimitive1", 1) to ::myPrimitive)
     private val primitivesOverridden = mapOf(Signature("myPrimitive1", 1) to ::myOtherPrimitive)
 
-    private val myFunction: PrologFunction<Term> = object : NullaryFunction<Term> {
-        override fun invoke(context: ExecutionContext): Term = Truth.`true`()
-    }
-    private val myOtherFunction: PrologFunction<Term> = object : NullaryFunction<Term> {
-        override fun invoke(context: ExecutionContext): Term = Truth.fail()
-    }
-    private val functions = mapOf(Signature("myFunc1", 1) to myFunction)
-    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to myOtherFunction)
+    private fun myFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response = throw NotImplementedError()
+    private fun myOtherFunction(@Suppress("UNUSED_PARAMETER") r: Compute.Request<ExecutionContext>): Compute.Response = throw NotImplementedError()
+    private val functions = mapOf(Signature("myFunc1", 1) to ::myFunction)
+    private val functionsOverridden = mapOf(Signature("myFunc1", 1) to ::myOtherFunction)
 
     /** An empty library */
     internal val emptyLibrary by lazy {
@@ -100,19 +99,19 @@ internal object LibraryUtils {
 
 
     /** A method to disambiguate use of Library.of reference */
-    internal fun libraryWithAliasConstructor(opSet: OperatorSet, theory: ClauseDatabase, primitives: Map<Signature, Primitive>, functions: Map<Signature, PrologFunction<Term>>, alias: String): LibraryAliased =
+    internal fun libraryWithAliasConstructor(opSet: OperatorSet, theory: ClauseDatabase, primitives: Map<Signature, Primitive>, functions: Map<Signature, PrologFunction>, alias: String): LibraryAliased =
             Library.of(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
             rawLibrary: RawLibrary,
-            constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction<Term>>) -> Library
+            constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>) -> Library
     ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions)
 
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
             rawLibrary: RawLibrary,
-            constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction<Term>>, String) -> LibraryAliased
+            constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> LibraryAliased
     ): LibraryAliased = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 
     /** Utility function to alias a primitive/function */

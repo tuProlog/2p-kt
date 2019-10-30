@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.primitive
 
-import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils
-import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToBadRequests
-import it.unibo.tuprolog.primitive.testutils.PrimitiveUtils.primitiveToGoodRequests
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.createPrimitiveRequest
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.defaultPrimitiveResult
+import it.unibo.tuprolog.primitive.testutils.PrimitiveWrapperUtils.primitive
+import it.unibo.tuprolog.primitive.testutils.WrapperUtils.allSignatures
+import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
+import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -16,24 +19,25 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfReturnsPrimitiveBehavingExactlyAsProvidedOne() {
-        primitiveToGoodRequests(::primitiveOf).zip(PrimitiveUtils.primitiveSignatures).forEach { (testData, support) ->
-            val (checkedPrimitive, goodRequests) = testData
-            goodRequests.forEach {
-                if (support.vararg) return
-                assertEquals(emptySequence(), checkedPrimitive(it))
-            }
-        }
+        wrapperToMatchingSignatureRequest(::primitiveOf, primitive, ::createPrimitiveRequest).zip(allSignatures)
+                .forEach { (primitiveToGoodRequests, primitiveSignature) ->
+                    val (checkedPrimitive, goodRequests) = primitiveToGoodRequests
+                    goodRequests.forEach {
+                        if (primitiveSignature.vararg) return
+                        assertEquals(defaultPrimitiveResult, checkedPrimitive(it))
+                    }
+                }
         // TODO delete above test and enable the code below after solving TODO in "Signature"
-//        primitiveToGoodRequests(::primitiveOf).forEach { (checkedPrimitive, goodRequests) ->
+//        wrapperToMatchingSignatureRequest(::primitiveOf, primitive, ::createRequest).forEach { (checkedPrimitive, goodRequests) ->
 //            goodRequests.forEach {
-//                assertEquals(emptySequence(), checkedPrimitive(it))
+//                assertEquals(defaultPrimitiveResult, checkedPrimitive(it))
 //            }
 //        }
     }
 
     @Test
     fun primitiveOfComplainsIfDifferentRequestSignatureIsDetected() {
-        primitiveToBadRequests(::primitiveOf).forEach { (checkedPrimitive, badRequests) ->
+        wrapperToNotMatchingSignatureRequest(::primitiveOf, primitive, ::createPrimitiveRequest).forEach { (checkedPrimitive, badRequests) ->
             badRequests.forEach {
                 assertFailsWith<IllegalArgumentException> { checkedPrimitive(it) }
             }

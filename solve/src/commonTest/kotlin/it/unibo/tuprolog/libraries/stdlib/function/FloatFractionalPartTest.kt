@@ -3,8 +3,8 @@ package it.unibo.tuprolog.libraries.stdlib.function
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.libraries.stdlib.function.testutils.FloatFunctionUtils
+import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,10 +26,7 @@ internal class FloatFractionalPartTest {
             val (_, fractionalPart) = parts
             assertEquals(
                     fractionalPart,
-                    FloatFractionalPart.function(
-                            Numeric.of(input),
-                            DummyInstances.executionContext
-                    ).`as`<Real>().value.toDouble()
+                    FloatFractionalPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
             )
         }
     }

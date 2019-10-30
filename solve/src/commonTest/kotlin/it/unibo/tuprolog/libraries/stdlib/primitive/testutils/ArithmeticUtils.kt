@@ -45,15 +45,15 @@ internal object ArithmeticUtils {
             expectedResult: Any
     ) = when (expectedResult) {
         true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.primitive(input).single().solution is Solution.Yes
+            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.Yes
         }
         false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.primitive(input).single().solution is Solution.No
+            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.No
         }
         else ->
             @Suppress("UNCHECKED_CAST")
             (expectedResult as? KClass<out TuPrologRuntimeException>)
-                    ?.let { assertFailsWith(expectedResult) { arithmeticRelation.primitive(input) } }
+                    ?.let { assertFailsWith(expectedResult) { arithmeticRelation.wrappedImplementation(input) } }
                     ?: fail("Bad written test data!")
     }
 

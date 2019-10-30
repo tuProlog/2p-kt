@@ -1,60 +1,22 @@
 package it.unibo.tuprolog.primitive.function
 
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**
- * Interface defining Prolog functions that return [Term] instances or its subclasses
+ * A typealias for a prolog function that accepts a [Compute.Request] and returns a [Compute.Response]
  *
  * @author Enrico
  */
-interface PrologFunction<out R : Term> : Function<R> {
+typealias PrologFunction = (Compute.Request<ExecutionContext>) -> Compute.Response
 
-    companion object {
-
-        /** Creates a prolog function from provided lambda */
-        inline fun ofNullary(crossinline nullaryFunction: (ExecutionContext) -> Term): NullaryFunction<Term> = object : NullaryFunction<Term> {
-            override fun invoke(context: ExecutionContext): Term = nullaryFunction(context)
-        }
-
-        /** Creates a prolog function from provided lambda */
-        inline fun ofUnary(crossinline unaryFunction: (Term, ExecutionContext) -> Term): UnaryFunction<Term> = object : UnaryFunction<Term> {
-            override fun invoke(input: Term, context: ExecutionContext): Term = unaryFunction(input, context)
-        }
-
-        /** Creates a prolog function from provided lambda */
-        inline fun ofBinary(crossinline binaryFunction: (Term, Term, ExecutionContext) -> Term): BinaryFunction<Term> = object : BinaryFunction<Term> {
-            override fun invoke(input1: Term, input2: Term, context: ExecutionContext): Term = binaryFunction(input1, input2, context)
-        }
+/**
+ * Creates a new [PrologFunction], behaving exactly as given [uncheckedFunction], but accepting only provided [supportedSignature]
+ * as [Compute.Request] signature, throwing [IllegalArgumentException] otherwise
+ */
+fun functionOf(supportedSignature: Signature, uncheckedFunction: PrologFunction): PrologFunction = {
+    when (it.signature) { // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
+        supportedSignature -> uncheckedFunction(it)
+        else -> throw IllegalArgumentException("This function supports only this signature `$supportedSignature`")
     }
-}
-
-/**
- * Interface defining *nullary* Prolog functions that return a [Term] in output
- *
- * @author Enrico
- */
-interface NullaryFunction<out R : Term> : PrologFunction<R> {
-    /** Invokes the function, passing the context if necessary. */
-    operator fun invoke(context: ExecutionContext): R
-}
-
-/**
- * Interface defining *unary* Prolog functions that take a [Term] in input and return a [Term] in output
- *
- * @author Enrico
- */
-interface UnaryFunction<out R : Term> : PrologFunction<R> {
-    /** Invokes the function with the specified argument, and optionally a context if necessary. */
-    operator fun invoke(input: Term, context: ExecutionContext): R
-}
-
-/**
- * Interface defining *binary* Prolog functions that take two [Term]s in input and return a [Term] in output
- *
- * @author Enrico
- */
-interface BinaryFunction<out R : Term> : PrologFunction<R> {
-    /** Invokes the function with the specified argument. */
-    operator fun invoke(input1: Term, input2: Term, context: ExecutionContext): R
 }
