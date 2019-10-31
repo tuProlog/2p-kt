@@ -2,11 +2,15 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import kotlin.jvm.Synchronized
 
-internal class VarImpl(override val name: String, private val identifier: Int = instanceCount++) : TermImpl(), Var {
+internal class VarImpl(override val name: String, private val identifier: Int = instanceId()) : TermImpl(), Var {
 
     companion object {
         private var instanceCount = 0
+
+        @Synchronized
+        private fun instanceId() = instanceCount++
     }
 
     override val completeName: String by lazy {
