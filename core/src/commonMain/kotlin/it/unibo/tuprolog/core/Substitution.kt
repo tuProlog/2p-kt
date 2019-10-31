@@ -47,6 +47,14 @@ sealed class Substitution : Map<Var, Term> {
         else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
     }
 
+    /**
+     * Returns a new substitution containing all key-value pairs matching the given [predicate].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    inline fun filter(crossinline predicate: (key: Var, value: Term) -> Boolean): Substitution =
+            filter { (key, value) -> predicate(key, value) }
+
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class Unifier(mappings: Map<Var, Term>) : Substitution(),
             Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
