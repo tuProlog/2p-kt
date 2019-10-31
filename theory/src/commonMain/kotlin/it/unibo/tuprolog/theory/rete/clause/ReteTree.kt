@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.theory.rete
+package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.rete.clause.RootNode
+import it.unibo.tuprolog.theory.rete.ReteNode
 
 /** A factory singleton for Rete Trees */
 internal object ReteTree {

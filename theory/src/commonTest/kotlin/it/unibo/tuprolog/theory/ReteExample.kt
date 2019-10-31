@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.rete.ReteTree
+import it.unibo.tuprolog.theory.rete.clause.ReteTree
 
 fun main() {
     // f(a) :- do_something.
