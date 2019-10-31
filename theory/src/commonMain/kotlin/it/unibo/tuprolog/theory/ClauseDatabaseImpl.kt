@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.rete.ReteNode
-import it.unibo.tuprolog.theory.rete.ReteTree
+import it.unibo.tuprolog.theory.rete.clause.ReteTree
 import kotlin.collections.List as KtList
 
 internal class ClauseDatabaseImpl private constructor(private val reteTree: ReteNode<*, Clause>) : ClauseDatabase {
