@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.jvm.Synchronized
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
@@ -17,6 +18,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override val variables: Map<String, Var>
         get() = _variables.toMap()
 
+    @Synchronized
     override fun varOf(name: String): Var {
         if (name !in _variables) {
             _variables[name] = Var.of(name)
