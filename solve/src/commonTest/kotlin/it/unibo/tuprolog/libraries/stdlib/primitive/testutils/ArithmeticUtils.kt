@@ -7,13 +7,13 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
 import it.unibo.tuprolog.libraries.stdlib.primitive.*
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue

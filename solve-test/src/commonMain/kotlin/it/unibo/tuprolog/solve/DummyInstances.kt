@@ -1,16 +1,14 @@
-package it.unibo.tuprolog.testutils
-
-import it.unibo.tuprolog.solve.ExecutionContext
+package it.unibo.tuprolog.solve
 
 /**
  * Utils singleton that contains dummy instances, to be used when in a test something is not important
  *
  * @author Enrico
  */
-internal object DummyInstances {
+object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
-    internal val executionContext = object : ExecutionContext {
+    val executionContext = object : ExecutionContext {
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKB: Nothing by lazy { throw NotImplementedError() }

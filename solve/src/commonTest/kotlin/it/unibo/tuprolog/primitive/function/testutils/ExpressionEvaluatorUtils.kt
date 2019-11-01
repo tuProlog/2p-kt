@@ -8,8 +8,8 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.function.ExpressionEvaluator
 import it.unibo.tuprolog.primitive.function.PrologFunction
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.testutils.DummyInstances
 
 /**
  * Utils singleton to help testing [ExpressionEvaluator]

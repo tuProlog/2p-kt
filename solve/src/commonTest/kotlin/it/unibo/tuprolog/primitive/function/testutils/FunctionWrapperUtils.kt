@@ -8,8 +8,8 @@ import it.unibo.tuprolog.primitive.function.Compute
 import it.unibo.tuprolog.primitive.function.FunctionWrapper
 import it.unibo.tuprolog.primitive.function.PrologFunction
 import it.unibo.tuprolog.primitive.testutils.WrapperUtils
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.assertTrue
 
 /**
