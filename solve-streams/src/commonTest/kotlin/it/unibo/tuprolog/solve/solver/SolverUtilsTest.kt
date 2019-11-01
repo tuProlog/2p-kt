@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
@@ -8,7 +9,6 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
@@ -91,39 +91,6 @@ internal class SolverUtilsTest {
 
         assertEquals(correct, toBeTested1)
         assertEquals(correct, toBeTested2)
-    }
-
-    @Test
-    fun reduceAndFilterSubstitution() {
-        Scope.empty().where {
-            val startSubstitution = Substitution.of(
-                    varOf("A") to varOf("C"),
-                    varOf("C") to atomOf("c"),
-                    varOf("D") to atomOf("d")
-            )
-            val toBeTested = SolverUtils.reduceAndFilterSubstitution(startSubstitution, sequenceOf(varOf("A")))
-
-            assertEquals(Substitution.of(varOf("A"), atomOf("c")), toBeTested)
-        }
-    }
-
-    @Test
-    fun reduceAndFilterSubstitutionWithNullVariableSequenceReturnsAllSubstitution() {
-        Scope.empty().where {
-            val startSubstitution = Substitution.of(
-                    varOf("A") to varOf("C"),
-                    varOf("C") to Atom.of("c"),
-                    varOf("D") to Atom.of("d")
-            )
-            val toBeTested = SolverUtils.reduceAndFilterSubstitution(startSubstitution)
-
-            val correct = Substitution.of(
-                    varOf("A") to atomOf("c"),
-                    varOf("C") to atomOf("c"),
-                    varOf("D") to atomOf("d")
-            )
-            assertEquals(correct, toBeTested)
-        }
     }
 
     @Test

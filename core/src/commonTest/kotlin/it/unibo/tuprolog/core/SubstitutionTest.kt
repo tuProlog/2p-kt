@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.*
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Test class for [Substitution] companion object
@@ -13,6 +14,9 @@ import kotlin.test.*
  * @author Enrico
  */
 internal class SubstitutionTest {
+
+    private val aVar = Var.of("A")
+    private val bVar = Var.of("B")
 
     private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) }
 
@@ -52,6 +56,16 @@ internal class SubstitutionTest {
         val toBeTested = SubstitutionUtils.mixedSubstitutions.map { it.asUnifier() }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
+    }
+
+    @Test
+    fun asUnifierResultsInEmptySubstitutionIfIdentityMappings() {
+        assertEquals(Substitution.empty(), mapOf(aVar to aVar).asUnifier())
+    }
+
+    @Test
+    fun asUnifierResultsInEmptySubstitutionIfIndirectIdentityMappings() {
+        assertEquals(Substitution.empty(), mapOf(aVar to bVar, bVar to aVar).asUnifier())
     }
 
     @Test
@@ -172,6 +186,22 @@ internal class SubstitutionTest {
             )
 
             assertEquals(Substitution.Fail, toBeTested)
+        }
+    }
+
+    @Test
+    fun ofImplementationsReturnEmptySubstitutionIfIdentityPassedIn() {
+        Scope.empty {
+            val identityPairA = varOf("A") to varOf("A")
+            val identityPairB = varOf("B") to varOf("B")
+            val toBeTested = ktListOf(
+                    Substitution.of(identityPairA.first, identityPairA.second),
+                    Substitution.of(identityPairA, identityPairB),
+                    Substitution.of(ktListOf(identityPairA, identityPairB)),
+                    Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB))
+            )
+
+            toBeTested.forEach { assertEquals(Substitution.empty(), it) }
         }
     }
 }

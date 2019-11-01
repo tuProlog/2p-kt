@@ -194,12 +194,6 @@ interface Prolog : Scope {
             else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
         }
 
-    fun Substitution.getDeeply(term: Any): Term? =
-        when (val t = term.toTerm()) {
-            is Var -> this.getDeeply(t)
-            else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
-        }
-
     fun Substitution.containsKey(term: Any): Boolean =
         when (val t = term.toTerm()) {
             is Var -> this.containsKey(t)

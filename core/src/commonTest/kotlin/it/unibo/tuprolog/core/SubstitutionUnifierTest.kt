@@ -25,6 +25,23 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
+    fun unifierConstructorReturnsEmptyUnifierIfIdentityMappingsDetected() {
+        assertEquals(Substitution.Unifier(emptyMap()), Substitution.Unifier(mapOf(aVar to aVar)))
+    }
+
+    @Test
+    fun unifierConstructorReturnsEmptyUnifierIfCircularIdentityMappingsDetected() {
+        assertEquals(Substitution.Unifier(emptyMap()), Substitution.Unifier(mapOf(aVar to bVar, bVar to aVar)))
+    }
+
+    @Test
+    fun unifierConstructorReturnsTrimmedVariableChain() {
+        val correct = Substitution.Unifier(mapOf(aVar to xAtom, bVar to xAtom))
+        val toBeTested = Substitution.Unifier(mapOf(aVar to bVar, bVar to xAtom))
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
     fun isSuccessIsTrue() {
         substitutions.forEach { assertTrue { it.isSuccess } }
     }
@@ -77,6 +94,18 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
+    fun plusOtherSubstitutionReplacesPresentVariables() {
+        val myAtom = Atom.of("hello")
+        val xVar = Var.of("X")
+        val yVar = Var.of("Y")
+
+        val correct = Substitution.of(xVar to myAtom, yVar to myAtom)
+        val toBeTested = Substitution.of(xVar to yVar) + Substitution.of(yVar to myAtom)
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
     fun plusOtherSubstitutionIsIdempotentIfSameSubstitution() {
         assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution + aVarToXAtomSubstitution)
     }
@@ -97,5 +126,40 @@ internal class SubstitutionUnifierTest {
             assertEquals(Substitution.Fail, it + Substitution.Fail)
             assertEquals(Substitution.Fail, Substitution.Fail + it)
         }
+    }
+
+    @Test
+    fun minusOtherSubstitutionRemovesCorrectBindings() {
+        val correct = aVarToXAtomSubstitution
+        val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - bVarToXAtomSubstitution
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun minusOtherSubstitutionWithNoCommonVariablesDoesNothing() {
+        assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - bVarToXAtomSubstitution)
+    }
+
+    @Test
+    fun minusFailedSubstitutionDoesNothing() {
+        assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - Substitution.failed())
+    }
+
+    @Test
+    fun filterReturnsOnlyCorrectBindings() {
+        assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar })
+        assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
+    }
+
+    @Test
+    fun getReturnsLastBoundTermInTheVariableChain() {
+        val myAtom = Atom.of("hello")
+        val xVar = Var.of("X")
+        val yVar = Var.of("Y")
+
+        val toBeTested = Substitution.of(xVar to yVar) + Substitution.of(yVar to myAtom)
+
+        assertEquals(myAtom, toBeTested[xVar])
     }
 }

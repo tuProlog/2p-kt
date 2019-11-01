@@ -13,39 +13,11 @@ sealed class Substitution : Map<Var, Term> {
     /** Whether this Substitution is a failed one */
     open val isFailed: Boolean = false
 
-    /** Creates a new Successful Substitution (aka Unifier) with given mappings */
-    data class Unifier(private val mappings: Map<Var, Term>) : Substitution(), Map<Var, Term> by mappings {
-        override val isSuccess: Boolean = true
-    }
-
-    /** The Failed Substitution instance */
-    object Fail : Substitution(), Map<Var, Term> by emptyMap() {
-        override val isFailed: Boolean = true
-    }
-
     /** Applies the Substitution to the given Term */
     fun applyTo(term: Term): Term = term[this]
 
     /**
-     * Like [Substitution.get], this method is aimed at retrieving the [Term] bound to [variable].
-     * However, in the case [variable] is bound to another [Var] which is in turn bound to some other [Term]
-     * (as so on, recursively) according to the current [Substitution], then this method returns the very last
-     * item in the chain.
-     *
-     * TODO @Enrico can you write a test for this method?
-     * */
-    fun getDeeply(variable: Var): Term? {
-        var term: Term? = null
-        var curr: Var? = variable
-        while (curr != null && curr in this) {
-            term = this[curr]
-            curr = if (term is Var) term else null
-        }
-        return term
-    }
-
-    /**
-     * Creates a new substitution that's the union of this and [other]
+     * Creates a new substitution that's the *composition* of this and [other]
      *
      * However additional checks are performed:
      * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
@@ -55,6 +27,82 @@ sealed class Substitution : Map<Var, Term> {
         anyFailed(this, other) || anyContradiction(this, other) -> Fail
         else -> (this as Map<Var, Term> + other).asUnifier()
     }
+
+    /**
+     * Returns a new substitution containing all entries of the original substitution except those
+     * entries which variable keys are contained in the given [other] substitution.
+     */
+    open operator fun minus(other: Substitution): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term> - other.keys).asUnifier()
+    }
+
+    /**
+     * Returns a new substitution containing all key-value pairs matching the given [predicate].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    open fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
+    }
+
+    /**
+     * Returns a new substitution containing all key-value pairs matching the given [predicate].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    inline fun filter(crossinline predicate: (key: Var, value: Term) -> Boolean): Substitution =
+            filter { (key, value) -> predicate(key, value) }
+
+    /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
+    class Unifier(mappings: Map<Var, Term>) : Substitution(),
+            Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
+
+        // NOTE: no check for contradictions is made upon object construction
+        // because a map cannot have a mapping from same key to more than one
+        // different value, by definition of map type
+
+        override val isSuccess: Boolean = true
+
+        override fun minus(other: Substitution): Unifier = super.minus(other) as Unifier
+
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
+                super.filter(predicate) as Unifier
+
+        /** The mappings used to implement [equals], [hashCode] and [toString] */
+        // this should be kept in sync with class "by" right expression
+        // for now (27/10/2019) there's no more concise way to do this, because accessing directly the delegated object is not possible
+        private val delegatedMappings by lazy { mappings.trimVariableChains().withoutIdentityMappings() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Unifier
+
+            if (delegatedMappings != other.delegatedMappings) return false
+            if (isSuccess != other.isSuccess) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = delegatedMappings.hashCode()
+            result = 31 * result + isSuccess.hashCode()
+            return result
+        }
+
+        override fun toString(): String = delegatedMappings.toString()
+    }
+
+    /** The Failed Substitution instance */
+    object Fail : Substitution(), Map<Var, Term> by emptyMap() {
+        override val isFailed: Boolean = true
+        override fun minus(other: Substitution): Fail = Fail
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
+    }
+
 
     /** Substitution companion with factory functionality */
     companion object {
@@ -129,5 +177,31 @@ sealed class Substitution : Map<Var, Term> {
                             false
                         }
                 }
+
+        /** Utility function to trim all Map variable chains, i.e. all var keys will be bound to the last possible term */
+        private fun Map<Var, Term>.trimVariableChains(): Map<Var, Term> {
+
+            /** Utility function to trim a single variable chain against a provided map, returning the last term */
+            fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
+                val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
+                var current: Term = mappings.getValue(this)
+                while (current is Var && current in mappings && current !in alreadyUsedKeys) {
+                    alreadyUsedKeys += current
+                    current = mappings.getValue(current)
+                }
+                return current
+            }
+
+            return when {
+                count() < 2 -> this
+                else -> this.mapValues { (varKey, term) ->
+                    term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
+                }
+            }
+        }
+
+        /** Utility function to filter out identity mappings from a Map<Var, Term> */
+        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
+                filterNot { (`var`, term) -> `var` == term }
     }
 }

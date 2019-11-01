@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 
 /**
  * Utilities object for implementing resolution behaviour
@@ -47,19 +46,6 @@ internal object SolverUtils {
     fun prepareForExecution(goal: Term): Struct =
             // exploits "Clause" implementation of prepareForExecution() to do that
             Directive.of(goal).prepareForExecution().args.single().castTo()
-
-    /**
-     * Reduces substitution variable chains and retains only [toRetainVariables]
-     *
-     * If [toRetainVariables] is null, all reduced substitution will be returned
-     */
-    fun reduceAndFilterSubstitution(substitution: Substitution, toRetainVariables: Sequence<Var>? = null) =
-            with(substitution) { this.mapValues { (_, term) -> term.apply(this) } }
-                    .let { reducedSubstitution ->
-                        toRetainVariables
-                                ?.run { reducedSubstitution.filterKeys { it in toRetainVariables } }
-                                ?: reducedSubstitution
-                    }.asUnifier()
 
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(

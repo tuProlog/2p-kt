@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.testutils
 
 import it.unibo.tuprolog.core.*
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Utils object to test [Substitution]
@@ -11,7 +12,7 @@ internal object SubstitutionUtils {
 
     /** Returns terms that internally can have multiple times the provided [internalTerm] */
     internal fun termsWith(internalTerm: Term) =
-            listOf(
+            ktListOf(
                     internalTerm,
                     Struct.of("f", internalTerm, internalTerm),
                     Struct.fold("f", internalTerm, Atom.of("ciao"), internalTerm)
@@ -19,7 +20,7 @@ internal object SubstitutionUtils {
 
     /** Contains mixed groundSubstitutions and nonGroundSubstitutions */
     internal val mixedSubstitutions by lazy {
-        listOf(
+        ktListOf(
                 mapOf(Var.of("X") to Atom.of("x")),
                 mapOf(Var.of("A") to Struct.of("f", Atom.of("ciao")),
                         Var.of("B") to Empty.list()),
@@ -35,9 +36,9 @@ internal object SubstitutionUtils {
     /** Contains a duplicated pair substitution, that should result in unique final substitution */
     internal val duplicatedPairSubstitution by lazy {
         Scope.empty {
-            kotlin.collections.listOf(
-                    kotlin.collections.listOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a")),
-                    kotlin.collections.listOf(
+            ktListOf(
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a")),
+                    ktListOf(
                             varOf("A") to atomOf("a"), varOf("A") to atomOf("a"),
                             varOf("B") to atomOf("b"), varOf("B") to atomOf("b")
                     )
@@ -48,10 +49,11 @@ internal object SubstitutionUtils {
     /** Contains contradicting substitutions whose creation should result in [Substitution.Fail] */
     internal val contradictingSubstitutions by lazy {
         Scope.empty {
-            kotlin.collections.listOf(
-                    listOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b")),
-                    listOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C")),
-                    listOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a"))
+            ktListOf(
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("b")),
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C")),
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("a")),
+                    ktListOf(varOf("A") to atomOf("a"), varOf("A") to varOf("C"), varOf("C") to atomOf("b"))
             )
         }
     }
