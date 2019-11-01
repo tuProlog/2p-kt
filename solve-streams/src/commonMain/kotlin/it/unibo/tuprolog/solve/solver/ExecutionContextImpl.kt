@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -18,10 +19,11 @@ internal data class ExecutionContextImpl(
         override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
         override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
         override val substitution: Substitution.Unifier = Substitution.empty(),
-        override val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
-        override val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
-) : DeclarativeImplExecutionContext<SideEffectManagerImpl> {
+        /** The key strategies that a solver should use during resolution process */
+        val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
+        /** The side effects manager to be used during resolution process */
+        val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
+) : ExecutionContext {
 
     override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.map { it.query } }
-
 }
