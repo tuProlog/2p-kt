@@ -20,6 +20,17 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  */
 internal object SolverTestUtils {
 
+    /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
+    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
+            query.extractSignature(),
+            query.argsList,
+            ExecutionContextImpl(libraries = Libraries(Library.of(
+                    alias = "solve.solver.test",
+                    theory = database,
+                    primitives = primitives
+            )))
+    )
+
     /**
      * A database containing the following facts:
      * ```prolog
@@ -161,16 +172,5 @@ internal object SolverTestUtils {
             Struct.of("a", Var.of("X")),
             databaseWithCutAndConjunction,
             mapOf(Cut.descriptionPair, Conjunction.descriptionPair)
-    )
-
-    /** Creates a Solve.Request with provided goal, against provided database, loading given primitives */
-    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
-            query.extractSignature(),
-            query.argsList,
-            ExecutionContextImpl(libraries = Libraries(Library.of(
-                    alias = "Test",
-                    theory = database,
-                    primitives = primitives
-            )))
     )
 }
