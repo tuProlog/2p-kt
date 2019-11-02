@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.fsm.stateEndFalse
 import it.unibo.tuprolog.solve.solver.fsm.stateEndTrue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * The state responsible of initializing the state machine with the goal that has to be executed
@@ -17,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateInit(
         override val solve: Solve.Request<ExecutionContextImpl>,
-        override val executionStrategy: CoroutineScope
+        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {

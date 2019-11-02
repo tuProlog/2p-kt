@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.state.*
 import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -23,7 +22,7 @@ internal class StateIntegrationTesting {
 
     /** Shorthand function to execute a solveRequest */
     private fun execute(solveRequest: Solve.Request<ExecutionContextImpl>): Sequence<State> =
-            StateMachineExecutor.execute(StateInit(solveRequest, DummyInstances.executionStrategy))
+            StateMachineExecutor.execute(StateInit(solveRequest))
 
     /** Utility function to compute answer substitution */
     // TODO soluzione provvisioria in attesa di rifattorizzare i test

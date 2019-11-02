@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
-import it.unibo.tuprolog.solve.testutils.DummyInstances
+import it.unibo.tuprolog.solve.DummyInstances
 import kotlin.test.*
 
 /**
@@ -22,6 +22,9 @@ import kotlin.test.*
  * @author Enrico
  */
 internal class SolverUtilsTest {
+
+    /** A "true" solveRequest */
+    internal val solveRequest = Solve.Request(Signature("true", 0), emptyList(), ExecutionContextImpl())
 
     @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
@@ -99,13 +102,13 @@ internal class SolverUtilsTest {
         val currentTime = 100L
         val newSubstitution = Substitution.of("A", Atom.of("a"))
 
-        val toBeTested = DummyInstances.solveRequest.newSolveRequest(newGoal, currentTime = currentTime)
-        val toBeTestedSubstitution = DummyInstances.solveRequest.newSolveRequest(newGoal, newSubstitution, currentTime = currentTime)
+        val toBeTested = solveRequest.newSolveRequest(newGoal, currentTime = currentTime)
+        val toBeTestedSubstitution = solveRequest.newSolveRequest(newGoal, newSubstitution, currentTime = currentTime)
 
         assertEquals(newGoal.extractSignature(), toBeTested.signature)
         assertEquals(newGoal.argsList, toBeTested.arguments)
 //        assertEquals(listOf(DummyInstances.executionContext), toBeTested.context.clauseScopedParents.toList())
-//        assertEquals(listOf(DummyInstances.solveRequest), toBeTested.context.logicalParentRequests.toList())
+//        assertEquals(listOf(solveRequest), toBeTested.context.logicalParentRequests.toList())
         assertEquals(Substitution.empty(), toBeTested.context.substitution)
 
         assertEquals(newSubstitution, toBeTestedSubstitution.context.substitution)
@@ -113,51 +116,51 @@ internal class SolverUtilsTest {
 
 //    @Test
 //    fun newSolveRequestContextParentsAreOrderedAsLastInFirstOut() {
-//        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
+//        val intermediateRequest = solveRequest.newSolveRequest(Truth.fail())
 //        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`())
 //
 //        // precondition
 //        assertEquals(2, toBeTested.context.clauseScopedParents.count())
 //
 //        assertEquals(intermediateRequest.context, toBeTested.context.clauseScopedParents.first())
-//        assertEquals(DummyInstances.solveRequest.context, toBeTested.context.clauseScopedParents.last())
+//        assertEquals(solveRequest.context, toBeTested.context.clauseScopedParents.last())
 //    }
 
 //    @Test
 //    fun newSolveRequestSolveRequestParentsAreOrderedAsLastInFirstOut() {
-//        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
+//        val intermediateRequest = solveRequest.newSolveRequest(Truth.fail())
 //        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`())
 //
 //        // precondition
 //        assertEquals(2, toBeTested.context.logicalParentRequests.count())
 //
 //        assertEquals(intermediateRequest, toBeTested.context.logicalParentRequests.first())
-//        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.last())
+//        assertEquals(solveRequest, toBeTested.context.logicalParentRequests.last())
 //    }
 
 //    @Test
 //    fun newSolveRequestSolveRequestLogicalParentsCannotBeDuplicated() {
-//        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail())
-//        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = DummyInstances.solveRequest)
+//        val intermediateRequest = solveRequest.newSolveRequest(Truth.fail())
+//        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = solveRequest)
 //
 //        assertEquals(1, toBeTested.context.logicalParentRequests.count())
-//        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.single())
+//        assertEquals(solveRequest, toBeTested.context.logicalParentRequests.single())
 //    }
 
 //    @Test
 //    fun newSolveRequestSolveRequestLogicalParentsAreTruncatedIfNeeded() {
-//        val intermediateRequest = DummyInstances.solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.fail())
-//        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = DummyInstances.solveRequest)
+//        val intermediateRequest = solveRequest.newSolveRequest(Truth.fail()).newSolveRequest(Truth.fail())
+//        val toBeTested = intermediateRequest.newSolveRequest(Truth.`true`(), logicalParentRequest = solveRequest)
 //
 //        assertEquals(1, toBeTested.context.logicalParentRequests.count())
-//        assertEquals(DummyInstances.solveRequest, toBeTested.context.logicalParentRequests.single())
+//        assertEquals(solveRequest, toBeTested.context.logicalParentRequests.single())
 //    }
 
     @Test
     fun newSolveRequestAdjustsCurrentTimeoutIfNotMaxValue() {
         val initialStartTime = 40L
         val initialTimeout = 200L
-        val startSolveRequest = with(DummyInstances.solveRequest) {
+        val startSolveRequest = with(solveRequest) {
             copy(executionMaxDuration = initialTimeout, requestIssuingInstant = initialStartTime)
         }
 
@@ -174,7 +177,7 @@ internal class SolverUtilsTest {
 
     @Test
     fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = DummyInstances.solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE)
+        val toBeTested = solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE)
                 .newSolveRequest(Atom.of("a"), currentTime = 100L)
 
         assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
@@ -183,19 +186,19 @@ internal class SolverUtilsTest {
 //    @Test
 //    fun newSolveRequestSetsNewContextIsChoicePointFieldToPassedValueOrFalseByDefault() {
 //        assertTrue {
-//            DummyInstances.solveRequest.newSolveRequest(Atom.of("a"), isChoicePointChild = true)
+//            solveRequest.newSolveRequest(Atom.of("a"), isChoicePointChild = true)
 //                    .context.isChoicePointChild
 //        }
-//        assertFalse { DummyInstances.solveRequest.newSolveRequest(Atom.of("a")).context.isChoicePointChild }
+//        assertFalse { solveRequest.newSolveRequest(Atom.of("a")).context.isChoicePointChild }
 //
-//        val startsTrueChoicePointChildField = with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) }
+//        val startsTrueChoicePointChildField = with(solveRequest) { copy(context = context.copy(isChoicePointChild = true)) }
 //        assertFalse { startsTrueChoicePointChildField.newSolveRequest(Atom.of("a")).context.isChoicePointChild }
 //    }
 
 //    @Test
 //    fun newSolveRequestIsBasedOnProvidedContextIfPassed() {
 //        val myContext = DummyInstances.executionContext.copy(substitution = Substitution.of("HHH", Truth.fail()))
-//        val toBeTested = DummyInstances.solveRequest.newSolveRequest(Atom.of("a"), baseContext = myContext)
+//        val toBeTested = solveRequest.newSolveRequest(Atom.of("a"), baseContext = myContext)
 //
 //        assertSame(myContext, toBeTested.context.clauseScopedParents.first())
 //        assertEquals(myContext.substitution, toBeTested.context.substitution)
@@ -205,14 +208,14 @@ internal class SolverUtilsTest {
     fun newThrowSolveRequestBehavesLikeNewSolveRequestAddingThrowGoal() {
         val testError = SystemError(context = DummyInstances.executionContext)
 
-        val correct = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
-        val toBeTested = DummyInstances.solveRequest.newThrowSolveRequest(testError)
+        val correct = solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
+        val toBeTested = solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correct.signature, toBeTested.signature)
         assertEquals(correct.arguments, toBeTested.arguments)
 
-        val correctWithExtra = DummyInstances.solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
-        val toBeTestedWithExtra = DummyInstances.solveRequest.newThrowSolveRequest(testError)
+        val correctWithExtra = solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
+        val toBeTestedWithExtra = solveRequest.newThrowSolveRequest(testError)
 
         assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
         assertEquals(correctWithExtra.arguments, toBeTestedWithExtra.arguments)
@@ -235,17 +238,17 @@ internal class SolverUtilsTest {
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
         val correct = listOf(
-                with(DummyInstances.solveRequest) {
+                with(solveRequest) {
                     Solve.Response(Solution.Yes(signature, arguments, finalSubstitution), sideEffectManager = finalSideEffectManager)
                 },
-                with(DummyInstances.solveRequest) {
+                with(solveRequest) {
                     Solve.Response(Solution.No(signature, arguments), sideEffectManager = finalSideEffectManager)
                 },
-                with(DummyInstances.solveRequest) {
+                with(solveRequest) {
                     Solve.Response(Solution.Halt(signature, arguments, finalException), sideEffectManager = finalSideEffectManager)
                 }
         )
-        val toBeTested = underTestResponses.map { DummyInstances.solveRequest.responseBy(it) }
+        val toBeTested = underTestResponses.map { solveRequest.responseBy(it) }
 
         correct.zip(toBeTested).forEach { (expected, actual) ->
             assertEquals(expected.solution, actual.solution)

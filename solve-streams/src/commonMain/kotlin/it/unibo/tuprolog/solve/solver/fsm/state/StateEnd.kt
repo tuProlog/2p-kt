@@ -4,21 +4,15 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * Base class of states representing the computation end
  *
+ * @param solve The [Solve.Response] characterizing this Final State
+ *
  * @author Enrico
  */
-internal sealed class StateEnd(
-        /** The [Solve.Response] characterizing this Final State */
-        override val solve: Solve.Response,
-
-        // execution strategy in StateEnd is not so important to be set, because no heavy computation is to be executed
-        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractState(solve, executionStrategy), FinalState {
+internal sealed class StateEnd(override val solve: Solve.Response) : AbstractState(solve), FinalState {
 
     override fun behave(): Sequence<State> = emptySequence()
 

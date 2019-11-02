@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ internal class CutTest {
     fun cutPrimitiveReturnsAlwaysYesResponseWithNoModificationFromRequest() {
         val substitution = Substitution.of("A", Truth.`true`())
         val context = ExecutionContextImpl(substitution = substitution)
-        val toBeTested = Cut.wrappedImplementation(DummyInstances.solveRequest.copy(signature = cutPrimitiveSignature, context = context))
+        val toBeTested = Cut.wrappedImplementation(Solve.Request(cutPrimitiveSignature, emptyList(), context))
 
         assertEquals(1, toBeTested.count())
         with(toBeTested.single().solution) {

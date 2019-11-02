@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.testutils
 
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 
 /**
  * Utils singleton to help testing [StateEnd] and subclasses

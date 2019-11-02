@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.fsm.stateEnd
 import it.unibo.tuprolog.solve.solver.fsm.stateEndHalt
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * State responsible of solving a selected Goal, if it is a primitive
@@ -18,7 +19,7 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateGoalEvaluation(
         override val solve: Solve.Request<ExecutionContextImpl>,
-        override val executionStrategy: CoroutineScope
+        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.solver.SolverUtils
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

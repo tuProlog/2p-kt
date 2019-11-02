@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.Solve.Response
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.fsm.stateEndHalt
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Base class for all States that should have a timed behaviour
@@ -14,15 +15,15 @@ import kotlinx.coroutines.CoroutineScope
 internal abstract class AbstractTimedState(
         /** The [Solve.Request] that guides the State behaviour towards [Response]s */
         override val solve: Solve.Request<ExecutionContext>,
-        override val executionStrategy: CoroutineScope
+        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
 
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
     private val stateCurrentTime by lazy { getCurrentTime() }
 
     override fun behave(): Sequence<State> = when {
-        // optimization could be made (calling directly behaveTimed()) when solveRequest.executionTimeout is TimeDuration.MAX_VALUE
-        // avoiding timeIsOver check
+        solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
+
         timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
             sequenceOf(stateEndHalt(
                     TimeOutException(

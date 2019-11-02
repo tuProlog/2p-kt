@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.solver.fsm.stateEnd
 import it.unibo.tuprolog.solve.solver.fsm.stateEndFalse
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * State responsible of selecting a rule to be solved to demonstrate a goal
@@ -21,7 +22,7 @@ import kotlinx.coroutines.CoroutineScope
  */
 internal class StateRuleSelection(
         override val solve: Solve.Request<ExecutionContextImpl>,
-        override val executionStrategy: CoroutineScope
+        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.state
 
-import it.unibo.tuprolog.solve.testutils.DummyInstances.executionStrategy
-import it.unibo.tuprolog.solve.testutils.DummyInstances.solveRequest
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,8 +12,10 @@ import kotlin.test.assertEquals
  */
 internal class AbstractStateTest {
 
+    private val solveRequest = SolverTestUtils.createSolveRequest(Atom.of("test"))
+
     /** An [AbstractState] instance with dummy parameters, and emptySequence returning behaviour */
-    private val abstractStateUnderTest = object : AbstractState(solveRequest, executionStrategy) {
+    private val abstractStateUnderTest = object : AbstractState(solveRequest) {
         override fun behave(): Sequence<State> = emptySequence()
     }
 

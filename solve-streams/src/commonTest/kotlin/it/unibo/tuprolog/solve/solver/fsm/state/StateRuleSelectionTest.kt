@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor.unwrapIfNeeded
 import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateRuleSelectionUtils
 import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -25,7 +24,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun noMatchingRulesFoundGoesIntoFalseState() {
         val nonMatchingRequest = createSolveRequest(myQueryStruct, StateRuleSelectionUtils.singleMatchDatabase)
-        val nextStates = StateRuleSelection(nonMatchingRequest, DummyInstances.executionStrategy).behave()
+        val nextStates = StateRuleSelection(nonMatchingRequest).behave()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.single() is StateEnd.False }
@@ -35,7 +34,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun makingRuleSelectionBehaveComputesSubStatesOfOneMatchingRuleRequest() {
         val oneMatchRequest = createSolveRequest(Atom.of("b"), StateRuleSelectionUtils.singleMatchDatabase)
-        val nextStates = StateRuleSelection(oneMatchRequest, DummyInstances.executionStrategy).behave().toList()
+        val nextStates = StateRuleSelection(oneMatchRequest).behave().toList()
 
         assertEquals(3, nextStates.count())
         with(nextStates.component1()) {
@@ -58,7 +57,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun ruleSelectionBehaveWithMultipleChoices() {
         val multipleMatchRequest = createSolveRequest(myQueryStruct, multipleMatchesDatabase)
-        val nextStates = StateRuleSelection(multipleMatchRequest, DummyInstances.executionStrategy).behave().toList()
+        val nextStates = StateRuleSelection(multipleMatchRequest).behave().toList()
         val databaseClauses = multipleMatchesDatabase.clauses.toList()
 
         assertEquals(14, nextStates.count())
@@ -99,7 +98,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun multipleNestedMatchingRulesTest() {
         val request = createSolveRequest(myQueryStruct, StateRuleSelectionUtils.multipleNestedMatchesDatabase)
-        val nextStates = StateRuleSelection(request, DummyInstances.executionStrategy).behave().map { it.unwrapIfNeeded() }.toList()
+        val nextStates = StateRuleSelection(request).behave().map { it.unwrapIfNeeded() }.toList()
 
         val subsequentRuleSelectionStates = nextStates.filterIsInstance<StateRuleSelection>()
         assertEquals(2, subsequentRuleSelectionStates.count())

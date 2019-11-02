@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.solver.fsm.state
 
 import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateGoalEvaluationUtils
 import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateUtils.assertStateTypeAndContext
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,7 +15,7 @@ internal class StateGoalEvaluationTest {
     @Test
     fun stateGoalEvaluationNextStateIsComputedCorrectly() {
         StateGoalEvaluationUtils.requestToNextStatesMap.forEach { (request, expectedStates) ->
-            val nextStates = StateGoalEvaluation(request, DummyInstances.executionStrategy).behave().toList()
+            val nextStates = StateGoalEvaluation(request).behave().toList()
 
             val (expectedNumber, expectedType) = expectedStates
             assertEquals(expectedNumber, nextStates.count())
@@ -30,7 +29,7 @@ internal class StateGoalEvaluationTest {
     @Test
     fun stateGoalEvaluationNextStateOnPrologErrorIsSameStateWithThrowRequest() {
         StateGoalEvaluationUtils.exceptionThrowingPrimitiveRequests.forEach { (request, nextState) ->
-            val nextStates = StateGoalEvaluation(request, DummyInstances.executionStrategy).behave().toList()
+            val nextStates = StateGoalEvaluation(request).behave().toList()
 
             val (expectedNumber, expectedType) = nextState
             assertEquals(expectedNumber, nextStates.count())

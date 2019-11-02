@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.state.StateGoalEvaluation
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -25,7 +24,7 @@ internal object PrimitivesUtils {
      * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
      */
     internal fun assertErrorCauseChainComputedCorrectly(request: Solve.Request<ExecutionContextImpl>, expectedErrorSolution: Solution.Halt) {
-        val nextState = StateGoalEvaluation(request, DummyInstances.executionStrategy).behave().toList().single()
+        val nextState = StateGoalEvaluation(request).behave().toList().single()
 
         assertEquals(StateEnd.Halt::class, nextState::class)
         assertEquals(expectedErrorSolution.exception::class, (nextState as StateEnd.Halt).exception::class)
