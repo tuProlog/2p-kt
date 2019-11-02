@@ -1,21 +1,21 @@
 package it.unibo.tuprolog.solve.solver.statemachine.state.testutils
 
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateEnd
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateRuleSelection
@@ -43,7 +43,7 @@ internal object StateGoalEvaluationUtils {
                 createPrimitiveRequest {
                     sequenceOf(
                             Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffectImpl),
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager =  expectedSideEffectImpl)
+                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffectImpl)
                     )
                 } to Pair(2, StateEnd.True::class),
 

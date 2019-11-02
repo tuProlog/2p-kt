@@ -1,13 +1,11 @@
-package it.unibo.tuprolog.solve.solver
+package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.statemachine.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.statemachine.state.FinalState
 import it.unibo.tuprolog.solve.solver.statemachine.state.StateInit

@@ -7,14 +7,14 @@ import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
-class TestMutableSolver : SolverFactory {
+class SolverSLDSystemTesting : SolverFactory {
 
     val prototype = SolverTestPrototype(this)
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
     override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
-            MutableSolver(libraries, flags, staticKB, dynamicKB)
+            SolverSLD(libraries, flags, staticKB, dynamicKB)
 
     @Test
     fun testConjunction() {
@@ -53,7 +53,7 @@ class TestMutableSolver : SolverFactory {
 
     @Test
     fun testMember() {
-        prototype.testMember();
+        prototype.testMember()
     }
 
     @Test

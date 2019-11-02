@@ -1,9 +1,10 @@
-package it.unibo.tuprolog.solve.solver
+package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.testutils.DummyInstances
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,7 +1,4 @@
-package it.unibo.tuprolog.solve.solver
-
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solver
+package it.unibo.tuprolog.solve
 
 /**
  * Represent an abstract [Solver]

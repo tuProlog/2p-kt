@@ -12,8 +12,8 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.HaltUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SolverSLD
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
