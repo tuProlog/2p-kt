@@ -18,7 +18,7 @@ internal class SolverSLDTest {
         SolverSLDUtils.contextAndRequestToSolutionMap.forEach { (input, expectedOutput) ->
             val (query, startContext) = input
 
-            val toBeTested = SolverSLD(startContext).solve(query).toList()
+            val toBeTested = with(startContext) { SolverSLD(libraries, flags, staticKB, dynamicKB) }.solve(query).toList()
 
             assertSolutionsCorrect(expectedOutput, toBeTested)
         }

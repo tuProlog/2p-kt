@@ -19,32 +19,21 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class SolverSLD(
-        override val startContext: ExecutionContextImpl = ExecutionContextImpl(),
+        override val libraries: Libraries = Libraries(),
+        override val flags: Map<Atom, Term> = emptyMap(),
+        override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
+        override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+        /** The execution strategy to be used in dispatching asynchronous computations */
         private val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractSolver(startContext) {
-
-    override val libraries: Libraries
-        get() = startContext.libraries
-
-    override val flags: Map<Atom, Term>
-        get() = startContext.flags
-
-    override val staticKB: ClauseDatabase
-        get() = startContext.staticKB
-
-    override val dynamicKB: ClauseDatabase
-        get() = startContext.dynamicKB
-
-    constructor(
-            libraries: Libraries = Libraries(),
-            flags: Map<Atom, Term> = emptyMap(),
-            staticKB: ClauseDatabase = ClauseDatabase.empty(),
-            dynamicKB: ClauseDatabase = ClauseDatabase.empty()
-    ) : this(ExecutionContextImpl(libraries, flags, staticKB, dynamicKB))
+) : Solver {
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
-            solve(Solve.Request(goal.extractSignature(), goal.argsList, startContext, executionMaxDuration = maxDuration))
-                    .map { it.solution.withOnlyAnswerSubstitution() }
+            solve(Solve.Request(
+                    goal.extractSignature(),
+                    goal.argsList,
+                    ExecutionContextImpl(libraries, flags, staticKB, dynamicKB),
+                    executionMaxDuration = maxDuration
+            )).map { it.solution.calculateAnswerSubstitution() }
 
     /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
     internal fun solve(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> = StateMachineExecutor
@@ -54,11 +43,9 @@ internal class SolverSLD(
             .map { it.solve }
 
     // this should become useless when substitutions will be cleaned, while performing resolution
-    /** Utility function to calculate answerSubstitution on Solution.Yes */
-    private fun Solution.withOnlyAnswerSubstitution() = when (this) {
-        is Solution.Yes ->
-            // filter substitution
-            copy(substitution = substitution.filter { (`var`, _) -> `var` in query.variables })
+    /** Utility function to calculate answerSubstitution on [Solution.Yes] */
+    private fun Solution.calculateAnswerSubstitution() = when (this) {
+        is Solution.Yes -> copy(substitution = substitution.filter { (`var`, _) -> `var` in query.variables })
         else -> this
     }
 }
