@@ -3,14 +3,14 @@ package it.unibo.tuprolog.solve.solver.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
-import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
-import it.unibo.tuprolog.solve.testutils.DummyInstances
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -167,7 +167,7 @@ internal object SolverTestUtils {
     internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty(), primitives: Map<Signature, Primitive> = mapOf()) = Solve.Request(
             query.extractSignature(),
             query.argsList,
-            DummyInstances.executionContextImpl.copy(libraries = Libraries(Library.of(
+            ExecutionContextImpl(libraries = Libraries(Library.of(
                     alias = "Test",
                     theory = database,
                     primitives = primitives

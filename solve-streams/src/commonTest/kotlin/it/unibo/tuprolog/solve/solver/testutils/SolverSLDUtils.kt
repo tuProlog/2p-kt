@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverSLD
-import it.unibo.tuprolog.solve.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -164,7 +163,7 @@ internal object SolverSLDUtils {
         Scope.empty {
             mapOf(
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContextImpl.copy(
+                        (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = prologStandardExampleDatabase,
@@ -186,7 +185,7 @@ internal object SolverSLDUtils {
                         )
                     },
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContextImpl.copy(
+                        (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = prologStandardExampleDatabaseWithCut,
@@ -195,7 +194,7 @@ internal object SolverSLDUtils {
                         )) to ktListOf(Solution.No(it))
                     },
                     structOf("p", varOf("U"), varOf("V")).let {
-                        (it to DummyInstances.executionContextImpl.copy(
+                        (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = cutTestingDatabase,
@@ -213,7 +212,7 @@ internal object SolverSLDUtils {
                         )
                     },
                     structOf("my_reverse", listOf((1..4).map(::numOf)), varOf("L")).let {
-                        (it to DummyInstances.executionContextImpl.copy(
+                        (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
                                         theory = backtrackingTestDatabase,
