@@ -6,6 +6,7 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Catch
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
 /**
@@ -101,10 +102,10 @@ internal data class SideEffectManagerImpl(
      * - if cut was called, and the first "scoped" choice point context is to be cut
      */
     internal fun shouldCutExecuteInRuleSelection() =
-            clauseScopedParents.last() in toCutContextsParent
+            clauseScopedParents.lastOrNull() in toCutContextsParent
                     || shouldExecuteThrowCut()
 
-    /** A method to retrieve the first ancerstor catch request that has its second argument that unifies with [toUnifyArgument] */
+    /** A method to retrieve the first ancestor catch request that has its second argument that unifies with [toUnifyArgument] */
     internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<ExecutionContextImpl>? {
         val ancestorCatchesRequests = logicalParentRequests.filter { it.signature == Catch.signature }
                 .filterNot { it.context in throwNonSelectableParentContexts } // exclude already used catch requests
@@ -130,11 +131,9 @@ internal data class SideEffectManagerImpl(
      *
      * That implements expected ISO behaviour, for which *call/1 is said to be opaque (or not transparent) to cut.*
      */
-    internal fun resetCutWorkChanges(toRecoverSituation: SideEffectManager) =
-            (toRecoverSituation as? SideEffectManagerImpl)
-                    // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
-                    ?.let { this.copy(toCutContextsParent = toRecoverSituation.toCutContextsParent) }
-                    ?: this
+    internal fun resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl) =
+            // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
+            toRecoverSituation.let { this.copy(toCutContextsParent = toRecoverSituation.toCutContextsParent) }
 
 
     /**
@@ -144,9 +143,8 @@ internal data class SideEffectManagerImpl(
 
     /** Internal function to retrieve the first choice point to be Cut, if present */
     private fun getFirstChoicePointContext() = clauseScopedParents
-            .filter {
-                (it.sideEffectManager as? SideEffectManagerImpl)
-                        ?.run { isChoicePointChild }
-                        ?: false
-            }.mapNotNull { (it.sideEffectManager as? SideEffectManagerImpl)?.clauseScopedParents?.firstOrNull() }
+            .filter { it.sideEffectManager.isChoicePointChild }
+            .mapNotNull { it.sideEffectManager.clauseScopedParents.firstOrNull() }
 }
+
+// TODO: 02/11/2019 extension methods over SideEffectManager to enhance code readability
