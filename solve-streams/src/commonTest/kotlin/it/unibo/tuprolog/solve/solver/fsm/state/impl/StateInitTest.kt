@@ -4,10 +4,18 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverStrategies
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.allRequests
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.allWellFormedGoalRequests
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.nonWellFormedGoalRequest
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.trueRequest
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.wellFormedGoalRequestsNeedingPreparationForExecution
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.wellFormedGoalRequestsNotNeedingPreparationForExecution
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.assertOnlyOneNextState
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.getSideEffectsManager
 import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
@@ -18,71 +26,62 @@ import kotlin.test.assertTrue
 internal class StateInitTest {
 
     @Test
-    fun ifCurrentGoalMatchesSolverSuccessCheckStrategy() {
+    fun trueGoalGoesIntoTrueEndState() {
         // precondition
         assertTrue { SolverStrategies.prologStandard.successCheckStrategy(Truth.`true`(), DummyInstances.executionContext) }
 
-        val nextStates = StateInit(StateInitUtils.trueSolveRequest).behave()
+        val nextStates = StateInit(trueRequest).behave()
 
-        assertEquals(1, nextStates.count())
-        assertTrue { nextStates.single() is StateEnd.True }
+        assertOnlyOneNextState<StateEnd.True>(nextStates)
     }
 
     @Test
-    fun ifCurrentGoalIsAVarargPrimitive() {
-        val nextStates = StateInit(StateInitUtils.varargPrimitive).behave()
+    fun wellFormedGoalsGoIntoStateGoalEvaluation() {
+        allWellFormedGoalRequests.forEach {
+            val nextStates = StateInit(it).behave()
 
-        assertEquals(1, nextStates.count())
-        assertTrue { nextStates.single() is StateGoalEvaluation }
+            assertOnlyOneNextState<StateGoalEvaluation>(nextStates)
+        }
     }
 
     @Test
-    fun ifCurrentGoalIsAPrimitiveOrAWellFormedGoal() {
-        StateInitUtils.notVarargPrimitiveAndWellFormedGoalRequests
-                .filterNot { it == StateInitUtils.preparationNeededGoal }
+    fun wellFormedGoalsNotNeedingPreparationForExecutionAreTheSameInNextStateRequest() {
+        wellFormedGoalRequestsNotNeedingPreparationForExecution
                 .forEach {
                     val nextStates = StateInit(it).behave()
 
-                    assertEquals(1, nextStates.count())
-                    assertTrue { nextStates.single() is StateGoalEvaluation }
-
-                    assertEquals(it.query, (nextStates.first().solve as Solve.Request<*>).query)
+                    assertEquals(it.query, (nextStates.single().solve as Solve.Request<*>).query)
                 }
     }
 
     @Test
-    fun ifCurrentGoalNeedPreparationForExecution() {
-        val nextStates = StateInit(StateInitUtils.preparationNeededGoal).behave()
+    fun wellFormedGoalsNeedingPreparationForExecutionArePreparedInNextStateRequest() {
+        wellFormedGoalRequestsNeedingPreparationForExecution
+                .forEach {
+                    val nextStates = StateInit(it).behave()
 
-        assertEquals(
-                StateInitUtils.preparationNeededGoal.query.prepareForExecutionAsGoal(),
-                (nextStates.first().solve as Solve.Request<*>).query
-        )
+                    assertEquals(
+                            it.query.prepareForExecutionAsGoal(),
+                            (nextStates.single().solve as Solve.Request<*>).query
+                    )
+                }
     }
 
     @Test
-    fun ifGoalNotWellFormed() {
-        val nextStates = StateInit(StateInitUtils.nonWellFormedGoal).behave()
+    fun notWellFormedGoalGoesInStateEndFalse() {
+        val nextStates = StateInit(nonWellFormedGoalRequest).behave()
 
-        assertEquals(1, nextStates.count())
-        assertTrue { nextStates.single() is StateEnd.False }
+        assertOnlyOneNextState<StateEnd.False>(nextStates)
     }
 
-//    @Test
-//    fun stateInitializationCreatesNewContextAddingAsParentTheCurrentOne() {
-//        val toBeTested = StateInit(DummyInstances.solveRequest, DummyInstances.executionStrategy).behave().single()
-//
-//        assertSame((toBeTested.solve as Solve.Response).context!!.clauseScopedParents.single(), DummyInstances.executionContext)
-//    }
-//
-//    @Test
-//    fun stateInitializationResetsToFalseIsChoicePointChild() {
-//        val myState = StateInit(
-//                with(DummyInstances.solveRequest) { copy(context = context.copy(isChoicePointChild = true)) },
-//                DummyInstances.executionStrategy
-//        )
-//        val toBeTested = myState.behave().single().solve as Solve.Response
-//        assertEquals(false, toBeTested.context!!.isChoicePointChild)
-//        assertEquals(true, toBeTested.context!!.clauseScopedParents.single().isChoicePointChild)
-//    }
+    @Test
+    fun nextStateSideEffectManagerHasBeenInitializedHenceIsNotEquals() {
+        allRequests.forEach {
+            val beforeSideEffectManager = it.context.sideEffectManager
+
+            val nextState = StateInit(it).behave().single()
+
+            assertNotEquals(beforeSideEffectManager, nextState.solve.getSideEffectsManager())
+        }
+    }
 }

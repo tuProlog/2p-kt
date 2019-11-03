@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateGoalEvaluationUtils
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateUtils.assertStateTypeAndContext
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.assertStateTypeAndContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

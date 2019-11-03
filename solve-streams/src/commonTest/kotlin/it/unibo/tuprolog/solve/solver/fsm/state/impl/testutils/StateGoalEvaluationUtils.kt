@@ -69,7 +69,7 @@ internal object StateGoalEvaluationUtils {
                     }
                 } to Pair(1, StateEnd.Halt::class),
 
-                *StateInitUtils.notVarargPrimitiveAndWellFormedGoalRequests.map { it to Pair(1, StateRuleSelection::class) }.toTypedArray()
+                *StateInitUtils.allWellFormedGoalRequests.map { it to Pair(1, StateRuleSelection::class) }.toTypedArray()
         )
     }
 

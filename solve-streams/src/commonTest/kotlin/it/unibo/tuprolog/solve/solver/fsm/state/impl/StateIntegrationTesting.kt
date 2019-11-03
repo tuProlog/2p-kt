@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
@@ -6,13 +6,10 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.*
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateInit
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils
+import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
+import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,9 +30,12 @@ internal class StateIntegrationTesting {
     private fun StateEnd.True.answerSubstitution() =
             with(solve) { solution.substitution.filter { (`var`, _) -> `var` in solution.query.variables } }
 
+    private val trueRequest = createSolveRequest(Atom.of("true"))
+    private val failRequest = createSolveRequest(Atom.of("fail"))
+
     @Test
     fun trueSolveRequestWorks() {
-        val nextStates = execute(StateInitUtils.trueSolveRequest).toList()
+        val nextStates = execute(trueRequest).toList()
 
         assertEquals(1, nextStates.count())
         assertTrue { nextStates.component1() is StateEnd.True }
@@ -43,7 +43,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun nonPresentClause() {
-        val nextStates = execute(StateInitUtils.failSolveRequest).toList()
+        val nextStates = execute(failRequest).toList()
 
         assertEquals(3, nextStates.count())
         assertTrue { nextStates.component1() is StateGoalEvaluation }
