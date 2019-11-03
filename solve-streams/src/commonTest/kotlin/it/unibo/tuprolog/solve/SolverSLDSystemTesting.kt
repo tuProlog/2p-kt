@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -13,7 +11,7 @@ class SolverSLDSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
-    override fun solverOf(libraries: Libraries, flags: Map<Atom, Term>, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
+    override fun solverOf(libraries: Libraries, flags: PrologFlags, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
             SolverSLD(libraries, flags, staticKB, dynamicKB)
 
     @Test

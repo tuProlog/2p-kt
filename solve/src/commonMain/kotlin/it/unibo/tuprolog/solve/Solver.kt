@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
@@ -21,7 +19,7 @@ interface Solver {
     val libraries: Libraries
 
     /** Enabled flags */
-    val flags: Map<Atom, Term>
+    val flags: PrologFlags
 
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
     val staticKB: ClauseDatabase

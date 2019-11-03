@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -45,7 +44,7 @@ sealed class Solve {
         fun replyWith(
                 solution: Solution,
                 libraries: Libraries? = null,
-                flags: Map<Atom, Term>? = null,
+                flags: PrologFlags? = null,
                 staticKB: ClauseDatabase? = null,
                 dynamicKB: ClauseDatabase? = null,
                 sideEffectManager: SideEffectManager? = null
@@ -56,21 +55,21 @@ sealed class Solve {
         }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
-        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) = when (condition) {
+        fun replyWith(condition: Boolean, libraries: Libraries? = null, flags: PrologFlags? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) = when (condition) {
             true -> replySuccess(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, sideEffectManager = sideEffectManager)
             false -> replyFail(libraries, flags, staticKB, dynamicKB, sideEffectManager)
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
-        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+        fun replySuccess(substitution: Substitution.Unifier = Substitution.empty(), libraries: Libraries? = null, flags: PrologFlags? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
                 Response(Solution.Yes(query, substitution), libraries, flags, staticKB, dynamicKB, sideEffectManager)
 
         /** Creates a new failed [Response] to this Request */
-        fun replyFail(libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+        fun replyFail(libraries: Libraries? = null, flags: PrologFlags? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
                 Response(Solution.No(query), libraries, flags, staticKB, dynamicKB, sideEffectManager)
 
         /** Creates a new halt [Response] to this Request, with cause exception */
-        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: Map<Atom, Term>? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
+        fun replyException(exception: TuPrologRuntimeException, libraries: Libraries? = null, flags: PrologFlags? = null, staticKB: ClauseDatabase? = null, dynamicKB: ClauseDatabase? = null, sideEffectManager: SideEffectManager? = null) =
                 Response(Solution.Halt(query, exception), libraries, flags, staticKB, dynamicKB, sideEffectManager)
     }
 
@@ -82,7 +81,7 @@ sealed class Solve {
             /** The set of loaded libraries after request execution (use `null` in case nothing changed) */
             val libraries: Libraries? = null,
             /** The map of loaded flags after request execution (use `null` in case nothing changed) */
-            val flags: Map<Atom, Term>? = null,
+            val flags: PrologFlags? = null,
             /** The Static KB after request execution (use `null` in case nothing changed) */
             val staticKB: ClauseDatabase? = null,
             /** The Dynamic KB after request execution (use `null` in case nothing changed) */
