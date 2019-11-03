@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverStrategies
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateInitUtils
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

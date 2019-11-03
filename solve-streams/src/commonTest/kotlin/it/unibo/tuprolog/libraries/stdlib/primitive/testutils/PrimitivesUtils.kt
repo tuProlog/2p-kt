@@ -4,8 +4,8 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
-import it.unibo.tuprolog.solve.solver.fsm.state.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

@@ -1,9 +1,12 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.solver.fsm.state.AbstractState
+import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
+import it.unibo.tuprolog.solve.solver.fsm.state.State
 
 /**
  * Base class of states representing the computation end

@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.testutils
+package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
 
 /**
  * Utils singleton to help testing [StateEnd] and subclasses
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
  */
 internal object StateEndUtils {
 
-    /** The query to which response responds */
+    /** The query to which test responses respond */
     private val responseQuery = Truth.`true`()
 
     /** The exception inside [anExceptionalResponse] */

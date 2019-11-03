@@ -1,11 +1,12 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor.unwrapIfNeeded
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateRuleSelectionUtils
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
+import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateRuleSelectionUtils
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals

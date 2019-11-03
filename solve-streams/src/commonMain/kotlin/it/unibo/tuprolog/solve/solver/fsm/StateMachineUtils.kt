@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.solver.fsm.state.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**

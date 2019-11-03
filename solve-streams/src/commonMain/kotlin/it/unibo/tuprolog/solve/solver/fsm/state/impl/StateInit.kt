@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
@@ -6,6 +6,8 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
 import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
+import it.unibo.tuprolog.solve.solver.fsm.state.AbstractTimedState
+import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.fsm.stateEndFalse
 import it.unibo.tuprolog.solve.solver.fsm.stateEndTrue
 import kotlinx.coroutines.CoroutineScope

@@ -7,7 +7,11 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.state.*
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateInitUtils
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateInit
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals

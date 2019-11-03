@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateEndUtils.aNoResponse
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateEndUtils.aYesResponse
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateEndUtils.allResponseTypes
-import it.unibo.tuprolog.solve.solver.fsm.state.testutils.StateEndUtils.anExceptionalResponse
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aYesResponse
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.allResponseTypes
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.anExceptionalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.SideEffectManager
@@ -9,6 +9,10 @@ import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.fsm.state.AbstractTimedState
+import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
+import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.fsm.state.asAlreadyExecuted
 import it.unibo.tuprolog.solve.solver.fsm.stateEnd
 import it.unibo.tuprolog.solve.solver.fsm.stateEndFalse
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith

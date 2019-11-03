@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.testutils
+package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Truth
@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.StateGoalEvaluation
-import it.unibo.tuprolog.solve.solver.fsm.state.StateInit
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateInit
 
 /**
  * Utils singleton to help testing [StateInit]

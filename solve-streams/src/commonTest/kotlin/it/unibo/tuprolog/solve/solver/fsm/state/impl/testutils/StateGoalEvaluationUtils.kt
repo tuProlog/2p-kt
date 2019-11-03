@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.testutils
+package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
@@ -16,9 +16,9 @@ import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.StateEnd
-import it.unibo.tuprolog.solve.solver.fsm.state.StateGoalEvaluation
-import it.unibo.tuprolog.solve.solver.fsm.state.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 
 /**

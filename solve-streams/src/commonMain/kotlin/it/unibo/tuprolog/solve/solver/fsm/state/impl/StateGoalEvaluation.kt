@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -7,6 +7,8 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
+import it.unibo.tuprolog.solve.solver.fsm.state.AbstractTimedState
+import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.fsm.stateEnd
 import it.unibo.tuprolog.solve.solver.fsm.stateEndHalt
 import kotlinx.coroutines.CoroutineScope

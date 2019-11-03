@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.testutils
+package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.solver.fsm.state.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.fsm.state
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
