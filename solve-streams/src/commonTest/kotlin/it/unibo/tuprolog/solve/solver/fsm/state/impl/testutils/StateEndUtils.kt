@@ -26,7 +26,7 @@ import kotlin.test.assertNotEquals
 internal object StateEndUtils {
 
     /** The query to which test responses respond */
-    private val aQuery = Truth.`true`()
+    internal val aQuery = Truth.`true`()
 
     /** The exception inside [anExceptionalResponse] */
     internal val anException = HaltException(context = DummyInstances.executionContext)

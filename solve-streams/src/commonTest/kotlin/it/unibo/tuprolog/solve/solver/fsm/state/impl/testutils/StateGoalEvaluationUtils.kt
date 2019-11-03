@@ -4,9 +4,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -19,7 +17,7 @@ import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 
 /**
  * Utils singleton to help testing [StateGoalEvaluation]
@@ -28,68 +26,55 @@ import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
  */
 internal object StateGoalEvaluationUtils {
 
-    /** A side effect manager impl */
-    internal val expectedSideEffectImpl = SideEffectManagerImpl()
-
-    /** A context with [expectedSideEffectImpl] */
-    private val contextWithExpectedSideEffectImpl = ExecutionContextImpl(sideEffectManager = expectedSideEffectImpl)
-
-    /** Map containing requests that should make StateGoalEvaluation go into predicted state */
-    internal val requestToNextStatesMap by lazy {
-        mapOf(
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffectImpl)) }
-                        to Pair(1, StateEnd.True::class),
-
-                createPrimitiveRequest {
-                    sequenceOf(
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffectImpl),
-                            Solve.Response(Solution.Yes(it.signature, it.arguments, it.context.substitution), sideEffectManager = expectedSideEffectImpl)
-                    )
-                } to Pair(2, StateEnd.True::class),
-
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.No(it.signature, it.arguments), sideEffectManager = expectedSideEffectImpl)) }
-                        to Pair(1, StateEnd.False::class),
-
-                createPrimitiveRequest { sequenceOf(Solve.Response(Solution.Halt(it.signature, it.arguments, HaltException(context = it.context)), sideEffectManager = expectedSideEffectImpl)) }
-                        to Pair(1, StateEnd.Halt::class),
-
-                createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }
-                        to Pair(1, StateEnd.Halt::class),
-
-                createPrimitiveRequest {
-                    sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }))
-                    }
-                } to Pair(1, StateEnd.Halt::class),
-
-                createPrimitiveRequest {
-                    sequence {
-                        yieldAll(SolverSLD().solve(createPrimitiveRequest { throw HaltException(context = contextWithExpectedSideEffectImpl) }))
-                        yield(Solve.Response(Solution.No(it.signature, it.arguments), sideEffectManager = expectedSideEffectImpl))
-                    }
-                } to Pair(1, StateEnd.Halt::class),
-
-                *StateInitUtils.allWellFormedGoalRequests.map { it to Pair(1, StateRuleSelection::class) }.toTypedArray()
-        )
-    }
-
-    /** Map containing primitive requests that throw [PrologError] instances */
-    internal val exceptionThrowingPrimitiveRequests by lazy {
-        mapOf(
-                createPrimitiveRequest { throw InstantiationError(context = it.context) } to Pair(1, StateEnd.Halt::class),
-                createPrimitiveRequest { throw SystemError(context = it.context) } to Pair(1, StateEnd.Halt::class),
-                createPrimitiveRequest { throw TypeError(context = it.context, expectedType = TypeError.Expected.CALLABLE, actualValue = Var.of("X")) } to Pair(1, StateEnd.Halt::class)
-        )
-    }
+    internal val expectedContext = ExecutionContextImpl(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
-    private fun createPrimitiveRequest(primitiveBehaviour: Primitive) =
-            object : PrimitiveWrapper<ExecutionContext>(Signature("testPrimitive", 0)) {
+    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive) =
+            object : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
                 override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> = primitiveBehaviour(request)
             }.run {
-                SolverTestUtils.createSolveRequest(
+                createSolveRequest(
                         signature withArgs emptyList(),
                         primitives = mapOf(descriptionPair, Throw.descriptionPair)
                 )
             }
+
+    /** Test data in the form (primitive, list of state types in which it should go) */
+    internal val primitiveRequestToNextStateList by lazy {
+        mapOf(
+                createRequestForPrimitiveResponding { sequenceOf(it.replySuccess(it.context.substitution)) }
+                        to listOf(StateEnd.True::class),
+                createRequestForPrimitiveResponding { sequenceOf(it.replyFail()) }
+                        to listOf(StateEnd.False::class),
+                createRequestForPrimitiveResponding { sequenceOf(it.replyWith(true), it.replyWith(false)) }
+                        to listOf(StateEnd.True::class, StateEnd.False::class),
+                createRequestForPrimitiveResponding { sequenceOf(it.replyException(HaltException(context = it.context))) }
+                        to listOf(StateEnd.Halt::class),
+                createRequestForPrimitiveResponding { throw HaltException(context = it.context) }
+                        to listOf(StateEnd.Halt::class),
+                createRequestForPrimitiveResponding {
+                    sequence {
+                        yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    }
+                } to listOf(StateEnd.Halt::class),
+                createRequestForPrimitiveResponding {
+                    sequence {
+                        yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                        yield(it.replyFail())
+                    }
+                } to listOf(StateEnd.Halt::class)
+        )
+    }
+
+    /** Map containing primitive requests that throw [PrologError] instances */
+    internal val primitiveRequestThrowingPrologError by lazy {
+        listOf(
+                createRequestForPrimitiveResponding { throw InstantiationError(context = it.context) },
+                createRequestForPrimitiveResponding { throw SystemError(context = it.context) },
+                createRequestForPrimitiveResponding { throw TypeError(context = it.context, expectedType = TypeError.Expected.CALLABLE, actualValue = Var.of("X")) }
+        )
+    }
+
+    /** All requests that should make [StateGoalEvaluation] transit in [StateRuleSelection]  */
+    internal val nonPrimitiveRequests by lazy { StateInitUtils.allWellFormedGoalRequests }
 }

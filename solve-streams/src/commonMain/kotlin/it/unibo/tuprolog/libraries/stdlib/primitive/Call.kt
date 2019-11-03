@@ -24,7 +24,7 @@ internal object Call : PrimitiveWrapper<ExecutionContextImpl>("call", 1) {
                     .let { toBeCalledGoal ->
                         when {
                             toBeCalledGoal.isWellFormed() ->
-                                SolverSLD().solve(
+                                SolverSLD.solve(
                                         request.newSolveRequest(toBeCalledGoal as Struct)
                                 ).map {
                                     request.responseBy(

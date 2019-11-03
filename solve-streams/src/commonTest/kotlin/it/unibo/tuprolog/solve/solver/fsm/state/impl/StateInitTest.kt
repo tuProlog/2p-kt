@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverStrategies
@@ -12,7 +15,6 @@ import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.we
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils.wellFormedGoalRequestsNotNeedingPreparationForExecution
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.assertOnlyOneNextState
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.getSideEffectsManager
-import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -56,12 +58,14 @@ internal class StateInitTest {
 
     @Test
     fun wellFormedGoalsNeedingPreparationForExecutionArePreparedInNextStateRequest() {
+        fun prepareGoalForExecution(goal: Term) = Directive.of(goal).prepareForExecution().body
+
         wellFormedGoalRequestsNeedingPreparationForExecution
                 .forEach {
                     val nextStates = StateInit(it).behave()
 
                     assertEquals(
-                            it.query.prepareForExecutionAsGoal(),
+                            prepareGoalForExecution(it.query),
                             (nextStates.single().solve as Solve.Request<*>).query
                     )
                 }

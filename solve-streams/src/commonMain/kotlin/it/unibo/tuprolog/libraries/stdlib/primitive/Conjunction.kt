@@ -28,7 +28,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                 val leftSubSolveRequest = request.newSolveRequest(leftSubGoal as Struct)
 
                 var cutExecuted = false
-                SolverSLD().solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
+                SolverSLD.solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
                     if (leftResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
                         cutExecuted = true
 
@@ -41,7 +41,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                                     logicalParentRequest = request
                             )
 
-                            SolverSLD().solve(rightSubSolveRequest).forEachWithLookahead { rightResponse, hasRHSAlternatives ->
+                            SolverSLD.solve(rightSubSolveRequest).forEachWithLookahead { rightResponse, hasRHSAlternatives ->
                                 if (rightResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
                                     cutExecuted = true
 

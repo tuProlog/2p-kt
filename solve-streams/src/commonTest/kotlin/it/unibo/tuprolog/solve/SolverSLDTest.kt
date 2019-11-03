@@ -29,7 +29,7 @@ internal class SolverSLDTest {
         SolverSLDUtils.contextAndRequestToSolutionMap.forEach { (input, expectedOutput) ->
             val (query, startContext) = input
 
-            val toBeTested = SolverSLD().solve(Solve.Request(query.extractSignature(), query.argsList, startContext))
+            val toBeTested = SolverSLD.solve(Solve.Request(query.extractSignature(), query.argsList, startContext))
                     .map { PrimitivesUtils.filterInterestingVariables(it.solution) }.toList()
 
             assertSolutionsCorrect(expectedOutput, toBeTested)

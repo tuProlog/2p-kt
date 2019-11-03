@@ -7,27 +7,19 @@
 
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.exception.PrologError
 import kotlin.jvm.JvmName
 
 /** Check whether the receiver term is a well-formed predication */
 fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
 
 /**
- * Prepares the receiver Goal for execution
- *
- * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
- */
-fun Term.prepareForExecutionAsGoal(): Struct =
-        // exploits "Clause" implementation of prepareForExecution() to do that
-        Directive.of(this).prepareForExecution().args.single().castTo()
-
-/**
- *
+ * TODO remove this object, when refactoring finished
  *
  * @author Enrico
  */
@@ -90,10 +82,6 @@ internal object SolverUtils {
                         .takeIf { it >= 0 }
                         ?: 0
             }
-
-    /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
-    fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
-            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = error.context.getSideEffectManager())
 
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */

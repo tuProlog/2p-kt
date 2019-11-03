@@ -3,9 +3,9 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 
@@ -20,7 +20,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
             sequence {
                 val goalArgument = request.arguments.first()
 
-                SolverSLD().solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
+                SolverSLD.solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
                     when {
                         // if i'm the catch selected by throw/1 primitive
                         (goalResponse.sideEffectManager as? SideEffectManagerImpl)
@@ -43,7 +43,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
                                 )
                             }
 
-                            yieldAll(SolverSLD().solve(recoverGoalSolveRequest).map { request.responseBy(it) })
+                            yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.responseBy(it) })
                         }
                         else -> yield(request.responseBy(goalResponse))
                     }

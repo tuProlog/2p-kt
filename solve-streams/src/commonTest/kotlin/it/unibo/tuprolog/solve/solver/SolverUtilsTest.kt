@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
@@ -9,10 +8,8 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 import kotlin.test.*
 
@@ -81,19 +78,6 @@ internal class SolverUtilsTest {
 
         assertEquals(wellFormedGoal.isWellFormed(), wellFormedGoal.accept(Clause.bodyWellFormedVisitor))
         assertEquals(nonWellFormedGoal.isWellFormed(), nonWellFormedGoal.accept(Clause.bodyWellFormedVisitor))
-    }
-
-    @Test
-    fun prepareForExecutionWorksAsExpected() {
-        val aVar = Var.of("A")
-        val bVar = Var.of("B")
-        val correct = Tuple.of(Struct.of("call", aVar), Struct.of("call", bVar))
-
-        val toBeTested1 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal()
-        val toBeTested2 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal().prepareForExecutionAsGoal()
-
-        assertEquals(correct, toBeTested1)
-        assertEquals(correct, toBeTested2)
     }
 
     @Test
@@ -203,23 +187,6 @@ internal class SolverUtilsTest {
 //        assertSame(myContext, toBeTested.context.clauseScopedParents.first())
 //        assertEquals(myContext.substitution, toBeTested.context.substitution)
 //    }
-
-    @Test
-    fun newThrowSolveRequestBehavesLikeNewSolveRequestAddingThrowGoal() {
-        val testError = SystemError(context = DummyInstances.executionContext)
-
-        val correct = solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
-        val toBeTested = solveRequest.newThrowSolveRequest(testError)
-
-        assertEquals(correct.signature, toBeTested.signature)
-        assertEquals(correct.arguments, toBeTested.arguments)
-
-        val correctWithExtra = solveRequest.newSolveRequest(Struct.of(Throw.functor, testError.errorStruct))
-        val toBeTestedWithExtra = solveRequest.newThrowSolveRequest(testError)
-
-        assertEquals(correctWithExtra.signature, toBeTestedWithExtra.signature)
-        assertEquals(correctWithExtra.arguments, toBeTestedWithExtra.arguments)
-    }
 
     @Test
     fun responseBySelectCorrectlyTheTypeOfResponseToApply() {

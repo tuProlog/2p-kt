@@ -2,9 +2,13 @@ package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aDifferentSideEffectManager
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aDynamicKB
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aQuery
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aStaticKB
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aSubstitution
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aYesResponse
@@ -17,10 +21,7 @@ import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.som
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.someLibraries
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.theIntermediateStateRequest
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.theRequestSideEffectManager
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
+import kotlin.test.*
 
 /**
  * Test class for [StateEnd] and subclasses
@@ -158,12 +159,37 @@ internal class StateEndTest {
     }
 
     @Test
-    fun stateEndWithResponseForwardsToCorrectStateEndMethodUsingResponseData() {
+    fun stateEndWithResponseForwardsToCorrectStateEndMethodUsingResponseDataExceptForSideEffectManagerIfNull() {
         allResponseTypes.forEach { response ->
             val toBeTested = anIntermediateState.stateEnd(response)
 
             assertEquals(response.solution, toBeTested.solve.solution)
-            assertStateContentsCorrect(response.libraries, response.flags, response.staticKB, response.dynamicKB, response.sideEffectManager, toBeTested)
+            assertStateContentsCorrect(response.libraries, response.flags, response.staticKB, response.dynamicKB, theRequestSideEffectManager, toBeTested)
         }
+    }
+
+    @Test
+    fun stateEndWithResponseSideEffectManagerTaking() {
+        val contextImplInstance = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
+        val differentContextImplInstance = ExecutionContextImpl(sideEffectManager = aDifferentSideEffectManager).also { assertNotEquals(it, contextImplInstance) }
+
+        val endStateForwardingExceptionalResponseWithNonNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
+                Solution.Halt(aQuery, TuPrologRuntimeException(context = contextImplInstance)),
+                sideEffectManager = aDifferentSideEffectManager
+        ))
+        assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNonNullSideEffectManager.solve.sideEffectManager,
+                "stateEnd() should use provided Response SideEffectManager if not null")
+
+        val endStateForwardingExceptionalResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
+                Solution.Halt(aQuery, TuPrologRuntimeException(context = differentContextImplInstance))
+        ))
+        assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNullSideEffectManager.solve.sideEffectManager,
+                "stateEnd() should use exception context's SideEffectManager if Response one is null")
+
+        val endStateForwardingResponseWithNullSideEffectManager= anIntermediateState.stateEnd(Solve.Response(
+                Solution.No(aQuery)
+        ))
+        assertEquals(theRequestSideEffectManager, endStateForwardingResponseWithNullSideEffectManager.solve.sideEffectManager,
+                "stateEnd() should use current state solve.context to retrieve a SideEffectManager if no other available")
     }
 }
