@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
 
 /**
@@ -25,7 +25,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                     SolverUtils.orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
                 }.toList()
 
-                val leftSubSolveRequest = request.newSolveRequest(prepareForExecution(leftSubGoal))
+                val leftSubSolveRequest = request.newSolveRequest(leftSubGoal as Struct)
 
                 var cutExecuted = false
                 SolverSLD().solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
@@ -35,7 +35,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                     when (leftResponse.solution) {
                         is Solution.Yes -> {
                             val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                    prepareForExecution(rightSubGoal.apply(leftResponse.solution.substitution)),
+                                    rightSubGoal.apply(leftResponse.solution.substitution) as Struct,
                                     leftResponse.solution.substitution - leftSubSolveRequest.context.substitution,
                                     baseSideEffectManager = leftResponse.sideEffectManager,
                                     logicalParentRequest = request

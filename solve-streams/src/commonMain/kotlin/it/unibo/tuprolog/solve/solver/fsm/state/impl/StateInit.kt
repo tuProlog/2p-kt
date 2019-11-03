@@ -3,10 +3,9 @@ package it.unibo.tuprolog.solve.solver.fsm.state.impl
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.SolverUtils.isWellFormed
-import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.isWellFormed
+import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -21,41 +20,30 @@ internal class StateInit(
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
-        val initializedRequest = solve.initializeForSideEffects()
-        val currentGoal = initializedRequest.query
+        val initializedSideEffectsManager = with(solve.context) { sideEffectManager.stateInitInitialize(this) }
+        val currentGoal = solve.query
 
         when {
-            // current goal is already demonstrated
-            with(initializedRequest.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
-                yield(with(initializedRequest.context) { stateEndTrue(substitution, sideEffectManager = sideEffectManager) })
+            with(solve.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
+                // current goal is already demonstrated
+                yield(stateEndTrue(solve.context.substitution, sideEffectManager = initializedSideEffectsManager))
 
             else -> when {
-
-                // a primitive or well-formed goal
-                isWellFormed(currentGoal) ->
-                    prepareForExecution(currentGoal).also { preparedGoal ->
-                        yield(StateGoalEvaluation(
-                                initializedRequest.copy(
-                                        signature = preparedGoal.extractSignature(),
-                                        arguments = preparedGoal.argsList
-                                ),
-                                executionStrategy
-                        ))
-                    }
+                currentGoal.isWellFormed() -> currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->
+                    // a primitive call or well-formed goal
+                    yield(StateGoalEvaluation(
+                            solve.copy(
+                                    signature = preparedGoal.extractSignature(),
+                                    arguments = preparedGoal.argsList,
+                                    context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
+                            ),
+                            executionStrategy
+                    ))
+                }
 
                 // goal non well-formed
-                else -> yield(stateEndFalse(sideEffectManager = initializedRequest.context.sideEffectManager))
+                else -> yield(stateEndFalse(sideEffectManager = initializedSideEffectsManager))
             }
         }
     }
-
-    /** Initializes the SideEffectsManager if is correct instance, does nothing otherwise */
-    private fun Solve.Request<ExecutionContextImpl>.initializeForSideEffects() =
-            copy(context = with(context) {
-                copy(
-                        sideEffectManager = (sideEffectManager as? SideEffectManagerImpl)
-                                ?.run { sideEffectManager.stateInitInitialize(this@with) }
-                                ?: sideEffectManager
-                )
-            })
 }

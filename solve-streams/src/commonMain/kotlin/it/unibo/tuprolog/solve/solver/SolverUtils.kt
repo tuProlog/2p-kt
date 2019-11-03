@@ -1,3 +1,10 @@
+/**
+ * Utilities to implement Solver resolution behaviour
+ *
+ * @author Enrico
+ */
+@file:JvmName("SolverUtilsTemporary") // TODO: 03/11/2019 make it only "SolverUtils"
+
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
@@ -5,9 +12,22 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.jvm.JvmName
+
+/** Check whether the receiver term is a well-formed predication */
+fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
 
 /**
- * Utilities object for implementing resolution behaviour
+ * Prepares the receiver Goal for execution
+ *
+ * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
+ */
+fun Term.prepareForExecutionAsGoal(): Struct =
+        // exploits "Clause" implementation of prepareForExecution() to do that
+        Directive.of(this).prepareForExecution().args.single().castTo()
+
+/**
+ *
  *
  * @author Enrico
  */
@@ -34,18 +54,6 @@ internal object SolverUtils {
                 }
                 else -> emptySequence()
             }
-
-    /** Check whether the provided term is a well-formed predication */
-    fun isWellFormed(goal: Term): Boolean = goal.accept(Clause.bodyWellFormedVisitor)
-
-    /**
-     * Prepares the provided Goal for execution
-     *
-     * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
-     */
-    fun prepareForExecution(goal: Term): Struct =
-            // exploits "Clause" implementation of prepareForExecution() to do that
-            Directive.of(goal).prepareForExecution().args.single().castTo()
 
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(

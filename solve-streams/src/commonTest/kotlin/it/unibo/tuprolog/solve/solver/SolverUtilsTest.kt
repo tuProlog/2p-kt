@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
@@ -13,7 +14,6 @@ import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
-import it.unibo.tuprolog.solve.DummyInstances
 import kotlin.test.*
 
 /**
@@ -24,7 +24,7 @@ import kotlin.test.*
 internal class SolverUtilsTest {
 
     /** A "true" solveRequest */
-    internal val solveRequest = Solve.Request(Signature("true", 0), emptyList(), ExecutionContextImpl())
+    private val solveRequest = Solve.Request(Signature("true", 0), emptyList(), ExecutionContextImpl())
 
     @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
@@ -79,8 +79,8 @@ internal class SolverUtilsTest {
         val wellFormedGoal = Struct.of("a", Integer.of(2))
         val nonWellFormedGoal = Tuple.of(Atom.of("a"), Integer.of(3))
 
-        assertEquals(SolverUtils.isWellFormed(wellFormedGoal), wellFormedGoal.accept(Clause.bodyWellFormedVisitor))
-        assertEquals(SolverUtils.isWellFormed(nonWellFormedGoal), nonWellFormedGoal.accept(Clause.bodyWellFormedVisitor))
+        assertEquals(wellFormedGoal.isWellFormed(), wellFormedGoal.accept(Clause.bodyWellFormedVisitor))
+        assertEquals(nonWellFormedGoal.isWellFormed(), nonWellFormedGoal.accept(Clause.bodyWellFormedVisitor))
     }
 
     @Test
@@ -89,8 +89,8 @@ internal class SolverUtilsTest {
         val bVar = Var.of("B")
         val correct = Tuple.of(Struct.of("call", aVar), Struct.of("call", bVar))
 
-        val toBeTested1 = SolverUtils.prepareForExecution(Tuple.of(aVar, bVar))
-        val toBeTested2 = SolverUtils.prepareForExecution(SolverUtils.prepareForExecution(Tuple.of(aVar, bVar)))
+        val toBeTested1 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal()
+        val toBeTested2 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal().prepareForExecutionAsGoal()
 
         assertEquals(correct, toBeTested1)
         assertEquals(correct, toBeTested2)

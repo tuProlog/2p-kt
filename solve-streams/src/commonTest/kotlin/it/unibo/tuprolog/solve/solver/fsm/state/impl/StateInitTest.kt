@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverStrategies
-import it.unibo.tuprolog.solve.solver.SolverUtils.prepareForExecution
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateInitUtils
+import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -55,7 +55,7 @@ internal class StateInitTest {
         val nextStates = StateInit(StateInitUtils.preparationNeededGoal).behave()
 
         assertEquals(
-                prepareForExecution(StateInitUtils.preparationNeededGoal.query),
+                StateInitUtils.preparationNeededGoal.query.prepareForExecutionAsGoal(),
                 (nextStates.first().solve as Solve.Request<*>).query
         )
     }

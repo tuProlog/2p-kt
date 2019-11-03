@@ -3,13 +3,13 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.SolverSLD
-import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
+import it.unibo.tuprolog.solve.solver.isWellFormed
 
 /**
  * Implementation of primitive handling `call/1` behaviour
@@ -23,7 +23,7 @@ internal object Call : PrimitiveWrapper<ExecutionContextImpl>("call", 1) {
                     .arguments.single()
                     .let { toBeCalledGoal ->
                         when {
-                            SolverUtils.isWellFormed(toBeCalledGoal) ->
+                            toBeCalledGoal.isWellFormed() ->
                                 SolverSLD().solve(
                                         request.newSolveRequest(toBeCalledGoal as Struct)
                                 ).map {

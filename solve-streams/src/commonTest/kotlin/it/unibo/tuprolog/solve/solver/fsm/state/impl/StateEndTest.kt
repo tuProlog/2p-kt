@@ -136,20 +136,19 @@ internal class StateEndTest {
     @Test
     fun stateEndWithSolutionForwardsToTheCorrectStateEndMethod() {
         allResponseTypes.map { it.solution }.forEach { responseSolution ->
+            val toBeTested1 = anIntermediateState.stateEnd(responseSolution)
 
-            anIntermediateState.stateEnd(responseSolution).also { stateEndUnderTest ->
-                assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, stateEndUnderTest)
+            assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, toBeTested1)
 
-                when (responseSolution) {
-                    is Solution.Yes -> {
-                        assertEquals(StateEnd.True::class, stateEndUnderTest::class)
-                        assertEquals(responseSolution.substitution, stateEndUnderTest.solve.solution.substitution)
-                    }
-                    is Solution.No -> assertEquals(StateEnd.False::class, stateEndUnderTest::class)
-                    is Solution.Halt -> {
-                        assertEquals(StateEnd.Halt::class, stateEndUnderTest::class)
-                        assertEquals(responseSolution.exception, (stateEndUnderTest.solve.solution as Solution.Halt).exception)
-                    }
+            when (responseSolution) {
+                is Solution.Yes -> {
+                    assertEquals(StateEnd.True::class, toBeTested1::class)
+                    assertEquals(responseSolution.substitution, toBeTested1.solve.solution.substitution)
+                }
+                is Solution.No -> assertEquals(StateEnd.False::class, toBeTested1::class)
+                is Solution.Halt -> {
+                    assertEquals(StateEnd.Halt::class, toBeTested1::class)
+                    assertEquals(responseSolution.exception, (toBeTested1.solve.solution as Solution.Halt).exception)
                 }
             }
 
