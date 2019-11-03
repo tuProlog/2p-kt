@@ -85,7 +85,7 @@ internal object SolverUtils {
 
     /** Utility function to create "throw" solve requests; to be used when a prolog error occurs */
     fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError): Solve.Request<ExecutionContextImpl> =
-            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = (error.context as? ExecutionContextImpl)?.sideEffectManager)
+            this.newSolveRequest(Struct.of(Throw.functor, error.errorStruct), baseSideEffectManager = error.context.getSideEffectManager())
 
     /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
      * and arguments from receiver request and using given [otherResponse] substitution and context */

@@ -7,10 +7,8 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.newThrowSolveRequest
-import it.unibo.tuprolog.solve.solver.fsm.state.AbstractTimedState
 import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.stateEnd
-import it.unibo.tuprolog.solve.solver.fsm.stateEndHalt
+import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -35,7 +33,7 @@ internal class StateGoalEvaluation(
 
             } catch (exception: HaltException) {
 
-                yield(stateEndHalt(exception, sideEffectManager = (exception.context as? ExecutionContextImpl)?.sideEffectManager))
+                yield(stateEndHalt(exception, sideEffectManager = exception.context.getSideEffectManager()))
 
             } catch (prologError: PrologError) {
 

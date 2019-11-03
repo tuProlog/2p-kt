@@ -1,11 +1,23 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
+import it.unibo.tuprolog.solve.solver.fsm.state.IntermediateState
+import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 /**
  * Utils singleton to help testing [StateEnd] and subclasses
@@ -15,22 +27,50 @@ import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
 internal object StateEndUtils {
 
     /** The query to which test responses respond */
-    private val responseQuery = Truth.`true`()
+    private val aQuery = Truth.`true`()
 
     /** The exception inside [anExceptionalResponse] */
-    private val responseException = HaltException(context = DummyInstances.executionContext)
+    internal val anException = HaltException(context = DummyInstances.executionContext)
 
 
     /** A Yes Response */
-    internal val aYesResponse by lazy { Solve.Response(Solution.Yes(responseQuery)) }
+    internal val aYesResponse by lazy { Solve.Response(Solution.Yes(aQuery)) }
 
     /** A No Response */
-    internal val aNoResponse by lazy { Solve.Response(Solution.No(responseQuery)) }
+    internal val aNoResponse by lazy { Solve.Response(Solution.No(aQuery)) }
 
     /** An Exceptional Response */
-    internal val anExceptionalResponse by lazy { Solve.Response(Solution.Halt(responseQuery, responseException)) }
+    internal val anExceptionalResponse by lazy { Solve.Response(Solution.Halt(aQuery, anException)) }
 
 
     /** All Response types  */
     internal val allResponseTypes by lazy { listOf(aYesResponse, aNoResponse, anExceptionalResponse) }
+
+
+    internal val aSubstitution = Substitution.of("A", Truth.fail())
+    internal val someLibraries = Libraries(Library.of(alias = "stateEnd.test", operatorSet = OperatorSet.DEFAULT))
+    internal val someFlags = mapOf(Atom.of("function1") to Atom.of("off"))
+    internal val aStaticKB = ClauseDatabase.of({ factOf(atomOf("myStaticFact")) })
+    internal val aDynamicKB = ClauseDatabase.of({ factOf(atomOf("myDynamicFact")) })
+
+    internal val theRequestSideEffectManager = SideEffectManagerImpl()
+    internal val aDifferentSideEffectManager = SideEffectManagerImpl(isChoicePointChild = true).also { assertNotEquals(it, theRequestSideEffectManager) }
+    internal val theIntermediateStateRequest = SolverTestUtils.createSolveRequest(aQuery).copy(
+            context = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
+    )
+    internal val anIntermediateState = object : IntermediateState {
+        override val solve: Solve.Request<ExecutionContext> = SolverTestUtils.createSolveRequest(aQuery)
+        override fun behave(): Sequence<State> = emptySequence()
+        override val hasBehaved: Boolean = false
+    }
+
+    /** Utility function to assert that expected values are present inside the provided [actualStateEnd] */
+    internal fun assertStateContentsCorrect(expectedLibraries: Libraries?, expectedFlags: Map<Atom, Term>?, expectedStaticKB: ClauseDatabase?, expectedDynamicKB: ClauseDatabase?, expectedSideEffectManager: SideEffectManager?, actualStateEnd: StateEnd) =
+            with(actualStateEnd.solve) {
+                assertEquals(expectedLibraries, libraries)
+                assertEquals(expectedFlags, flags)
+                assertEquals(expectedStaticKB, staticKB)
+                assertEquals(expectedDynamicKB, dynamicKB)
+                assertEquals(expectedSideEffectManager, sideEffectManager)
+            }
 }

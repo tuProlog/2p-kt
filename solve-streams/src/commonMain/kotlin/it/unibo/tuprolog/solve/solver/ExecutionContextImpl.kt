@@ -29,3 +29,7 @@ internal data class ExecutionContextImpl(
 
     override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.map { it.query } }
 }
+
+/** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
+internal fun ExecutionContext.getSideEffectManager(): SideEffectManagerImpl? =
+        (this as? ExecutionContextImpl)?.sideEffectManager
