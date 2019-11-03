@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.PrologFlags
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeDuration
@@ -28,7 +27,7 @@ internal class SolverSLD(
     override val libraries: Libraries
         get() = startContext.libraries
 
-    override val flags: Map<Atom, Term>
+    override val flags: PrologFlags
         get() = startContext.flags
 
     override val staticKB: ClauseDatabase
@@ -39,7 +38,7 @@ internal class SolverSLD(
 
     constructor(
             libraries: Libraries = Libraries(),
-            flags: Map<Atom, Term> = emptyMap(),
+            flags: PrologFlags = emptyMap(),
             staticKB: ClauseDatabase = ClauseDatabase.empty(),
             dynamicKB: ClauseDatabase = ClauseDatabase.empty()
     ) : this(ExecutionContextImpl(libraries, flags, staticKB, dynamicKB))

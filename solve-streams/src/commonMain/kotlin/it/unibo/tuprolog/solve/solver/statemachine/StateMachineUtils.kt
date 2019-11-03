@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve.solver.statemachine
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.PrologFlags
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -37,7 +36,7 @@ internal fun IntermediateState.stateEnd(response: Solve.Response) =
 internal fun IntermediateState.stateEnd(
         solution: Solution,
         libraries: Libraries? = null,
-        flags: Map<Atom, Term>? = null,
+        flags: PrologFlags? = null,
         staticKB: ClauseDatabase? = null,
         dynamicKB: ClauseDatabase? = null,
         sideEffectManager: SideEffectManager? = null
@@ -50,7 +49,7 @@ internal fun IntermediateState.stateEnd(
 internal fun IntermediateState.stateEndTrue(
         substitution: Substitution.Unifier = Substitution.empty(),
         libraries: Libraries? = null,
-        flags: Map<Atom, Term>? = null,
+        flags: PrologFlags? = null,
         staticKB: ClauseDatabase? = null,
         dynamicKB: ClauseDatabase? = null,
         sideEffectManager: SideEffectManager? = null
@@ -58,7 +57,7 @@ internal fun IntermediateState.stateEndTrue(
 
 internal fun IntermediateState.stateEndFalse(
         libraries: Libraries? = null,
-        flags: Map<Atom, Term>? = null,
+        flags: PrologFlags? = null,
         staticKB: ClauseDatabase? = null,
         dynamicKB: ClauseDatabase? = null,
         sideEffectManager: SideEffectManager? = null
@@ -67,7 +66,7 @@ internal fun IntermediateState.stateEndFalse(
 internal fun IntermediateState.stateEndHalt(
         exception: TuPrologRuntimeException,
         libraries: Libraries? = null,
-        flags: Map<Atom, Term>? = null,
+        flags: PrologFlags? = null,
         staticKB: ClauseDatabase? = null,
         dynamicKB: ClauseDatabase? = null,
         sideEffectManager: SideEffectManager? = null

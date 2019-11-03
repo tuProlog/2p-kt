@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
 
 data class ExecutionContextImpl(
         override val libraries: Libraries = Libraries(),
-        override val flags: Map<Atom, Term> = emptyMap(),
+        override val flags: PrologFlags = emptyMap(),
         override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
         override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
         override val substitution: Substitution.Unifier = Substitution.empty(),
