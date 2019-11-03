@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.libraries.Libraries
@@ -65,7 +64,7 @@ internal object StateEndUtils {
     }
 
     /** Utility function to assert that expected values are present inside the provided [actualStateEnd] */
-    internal fun assertStateContentsCorrect(expectedLibraries: Libraries?, expectedFlags: Map<Atom, Term>?, expectedStaticKB: ClauseDatabase?, expectedDynamicKB: ClauseDatabase?, expectedSideEffectManager: SideEffectManager?, actualStateEnd: StateEnd) =
+    internal fun assertStateContentsCorrect(expectedLibraries: Libraries?, expectedFlags: PrologFlags?, expectedStaticKB: ClauseDatabase?, expectedDynamicKB: ClauseDatabase?, expectedSideEffectManager: SideEffectManager?, actualStateEnd: StateEnd) =
             with(actualStateEnd.solve) {
                 assertEquals(expectedLibraries, libraries)
                 assertEquals(expectedFlags, flags)

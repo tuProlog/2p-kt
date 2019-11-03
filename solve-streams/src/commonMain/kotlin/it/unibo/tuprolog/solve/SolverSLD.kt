@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
  */
 internal class SolverSLD(
         override val libraries: Libraries = Libraries(),
-        override val flags: Map<Atom, Term> = emptyMap(),
+        override val flags: PrologFlags = emptyMap(),
         override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
         override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
         /** The execution strategy to be used in dispatching asynchronous computations */
