@@ -1,26 +1,26 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aDifferentSideEffectManager
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aDynamicKB
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aNoResponse
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aQuery
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aStaticKB
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aSubstitution
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.aYesResponse
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.allResponseTypes
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.anException
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.anExceptionalResponse
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.anIntermediateState
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.assertStateContentsCorrect
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.someFlags
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.someLibraries
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.theIntermediateStateRequest
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateEndUtils.theRequestSideEffectManager
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDifferentSideEffectManager
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKB
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aQuery
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aStaticKB
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aSubstitution
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aYesResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.allResponseTypes
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anException
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anExceptionalResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anIntermediateState
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.assertStateContentsCorrect
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someFlags
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someLibraries
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theIntermediateStateRequest
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theRequestSideEffectManager
 import kotlin.test.*
 
 /**
@@ -186,7 +186,7 @@ internal class StateEndTest {
         assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNullSideEffectManager.solve.sideEffectManager,
                 "stateEnd() should use exception context's SideEffectManager if Response one is null")
 
-        val endStateForwardingResponseWithNullSideEffectManager= anIntermediateState.stateEnd(Solve.Response(
+        val endStateForwardingResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
                 Solution.No(aQuery)
         ))
         assertEquals(theRequestSideEffectManager, endStateForwardingResponseWithNullSideEffectManager.solve.sideEffectManager,

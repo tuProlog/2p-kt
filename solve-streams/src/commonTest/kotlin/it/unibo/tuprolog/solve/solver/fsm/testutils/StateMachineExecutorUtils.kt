@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.testutils
 
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.fsm.state.State
 import kotlin.reflect.KClass
 import kotlin.test.fail
 

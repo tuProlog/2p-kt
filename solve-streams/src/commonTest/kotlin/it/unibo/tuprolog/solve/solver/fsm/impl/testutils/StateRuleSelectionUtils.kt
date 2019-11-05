@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
+package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf

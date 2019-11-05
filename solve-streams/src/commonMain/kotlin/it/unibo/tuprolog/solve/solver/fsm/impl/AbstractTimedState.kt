@@ -1,12 +1,12 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.Solve.Response
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.solver.fsm.state.AbstractState
-import it.unibo.tuprolog.solve.solver.fsm.state.IntermediateState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.state.TimedState
+import it.unibo.tuprolog.solve.solver.fsm.AbstractState
+import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
+import it.unibo.tuprolog.solve.solver.fsm.State
+import it.unibo.tuprolog.solve.solver.fsm.TimedState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
+package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
@@ -10,9 +10,9 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.IntermediateState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
+import it.unibo.tuprolog.solve.solver.fsm.State
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertEquals

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -9,11 +9,7 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.extendParentScopeWith
-import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.fsm.state.AlreadyExecutedState
-import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.state.asAlreadyExecuted
+import it.unibo.tuprolog.solve.solver.fsm.*
 import it.unibo.tuprolog.solve.solver.orderWithStrategy
 import it.unibo.tuprolog.solve.solver.shouldCutExecuteInRuleSelection
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
@@ -25,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
  *
  * @author Enrico
  */
-internal class StateRuleSelection( // TODO: 04/11/2019 remove state package flattening to fsm as for solve-classic
+internal class StateRuleSelection(
         override val solve: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {

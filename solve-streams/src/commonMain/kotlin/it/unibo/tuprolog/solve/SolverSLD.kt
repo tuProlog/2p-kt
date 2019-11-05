@@ -4,9 +4,9 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.StateInit
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

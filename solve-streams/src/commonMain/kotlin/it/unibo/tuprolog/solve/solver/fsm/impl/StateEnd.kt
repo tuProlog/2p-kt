@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
@@ -8,10 +8,10 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.solver.fsm.state.AbstractState
-import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
-import it.unibo.tuprolog.solve.solver.fsm.state.IntermediateState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.fsm.AbstractState
+import it.unibo.tuprolog.solve.solver.fsm.FinalState
+import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.theory.ClauseDatabase
 

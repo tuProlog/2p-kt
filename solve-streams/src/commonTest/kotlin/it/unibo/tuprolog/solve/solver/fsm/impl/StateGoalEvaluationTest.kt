@@ -1,12 +1,12 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateGoalEvaluationUtils
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateGoalEvaluationUtils.createRequestForPrimitiveResponding
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateGoalEvaluationUtils.expectedContext
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateGoalEvaluationUtils.primitiveRequestThrowingPrologError
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.assertOnlyOneNextState
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateUtils.getSideEffectsManager
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateGoalEvaluationUtils
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateGoalEvaluationUtils.createRequestForPrimitiveResponding
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateGoalEvaluationUtils.expectedContext
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateGoalEvaluationUtils.primitiveRequestThrowingPrologError
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOneNextState
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.getSideEffectsManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
+package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

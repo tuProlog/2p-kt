@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve

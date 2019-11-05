@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Struct
@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.isWellFormed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,9 +1,5 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
-import it.unibo.tuprolog.solve.solver.fsm.state.AlreadyExecutedState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
-import it.unibo.tuprolog.solve.solver.fsm.state.asAlreadyExecuted
-
 /**
  * A class that makes the state machine execute its behaviour
  *

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state
+package it.unibo.tuprolog.solve.solver.fsm
 
 /**
  * A wrapper class representing States that should not be executed again, because they've already executed their behaviour

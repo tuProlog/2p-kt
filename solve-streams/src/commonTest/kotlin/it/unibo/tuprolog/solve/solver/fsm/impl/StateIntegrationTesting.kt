@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test

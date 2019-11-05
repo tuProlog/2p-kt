@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor.unwrapIfNeeded
-import it.unibo.tuprolog.solve.solver.fsm.state.AlreadyExecutedState
-import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.allFiniteStateMachines
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.allNextStatesFromThis
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.eightLeafSearchTreeState

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.fsm.state.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.fsm.state.State
+import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
