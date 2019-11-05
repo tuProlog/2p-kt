@@ -63,6 +63,9 @@ interface ClauseDatabase : Iterable<Clause> {
     /** Tries to delete all matching clauses from this database */
     fun retractAll(head: Struct): RetractResult = retractAll(Rule.of(head, Var.anonymous()))
 
+    /** An enhanced toString that prints the database in a Prolog program format, if [asPrologText] is `true` */
+    fun toString(asPrologText: Boolean): String
+
     companion object {
 
         /** Creates an empty ClauseDatabase */
