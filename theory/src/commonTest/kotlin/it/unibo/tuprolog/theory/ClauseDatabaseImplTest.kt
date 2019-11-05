@@ -68,20 +68,8 @@ internal class ClauseDatabaseImplTest {
 
     @Test
     fun plusClauseDatabaseFailsOnBadDatabase() {
-        val badClauseDatabase = object : ClauseDatabase {
+        val badClauseDatabase = object : ClauseDatabase by ClauseDatabase.empty() {
             override val clauses: Iterable<Clause> = ClauseDatabaseUtils.notWellFormedClauses
-            override fun plus(clauseDatabase: ClauseDatabase) = throw NotImplementedError()
-            override fun contains(clause: Clause) = throw NotImplementedError()
-            override fun contains(head: Struct) = throw NotImplementedError()
-            override fun contains(indicator: Indicator) = throw NotImplementedError()
-            override fun get(clause: Clause) = throw NotImplementedError()
-            override fun get(head: Struct) = throw NotImplementedError()
-            override fun get(indicator: Indicator) = throw NotImplementedError()
-            override fun assertA(clause: Clause) = throw NotImplementedError()
-            override fun assertZ(clause: Clause) = throw NotImplementedError()
-            override fun retract(clause: Clause) = throw NotImplementedError()
-            override fun retractAll(clause: Clause) = throw NotImplementedError()
-            override fun iterator() = throw NotImplementedError()
         }
         assertFailsWith<IllegalArgumentException> { filledClauseDatabase + badClauseDatabase }
     }
