@@ -20,7 +20,6 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOn
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverState
 import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
@@ -35,7 +34,7 @@ internal class StateRuleSelectionTest {
     /** A struct query in the form `f(V)` */
     private val theQuery = Struct.of("f", theQueryVariable)
 
-    /** A Solve.Request with three databases and three different facts, to test how they should be used in searching */
+    /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(theQuery.extractSignature(), theQuery.argsList,
             ExecutionContextImpl(
                     libraries = Libraries(Library.of(
@@ -67,7 +66,6 @@ internal class StateRuleSelectionTest {
     }
 
     @Test
-    @Ignore // TODO: 05/11/2019 make returned substitution only contain variables of outer scope
     fun oneMatchingRuleFoundExecutesTheRuleBodyAndFindsSolutions() {
         queryToOneMatchRuleDatabaseAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave().toList()
@@ -79,7 +77,6 @@ internal class StateRuleSelectionTest {
     }
 
     @Test
-    @Ignore // TODO: 05/11/2019 make returned substitution only contain variables of outer scope
     fun stateRuleSelectionFindsCorrectlyMultipleSolutions() {
         queryToMultipleMatchesDatabaseAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave()

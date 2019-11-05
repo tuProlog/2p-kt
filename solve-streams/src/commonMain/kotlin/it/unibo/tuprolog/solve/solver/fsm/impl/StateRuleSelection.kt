@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -69,7 +70,10 @@ internal class StateRuleSelection(
                                     val extendedScopeSideEffectManager = subState.solve.sideEffectManager
                                             .extendParentScopeWith(solve.context.sideEffectManager)
 
-                                    yield(stateEnd(subState.solve.copy(sideEffectManager = extendedScopeSideEffectManager)))
+                                    yield(stateEnd(subState.solve.copy(
+                                            solution = subState.solve.solution.removeQuerySubstitutions(),
+                                            sideEffectManager = extendedScopeSideEffectManager
+                                    )))
                                 }
 
                                 if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
@@ -97,5 +101,14 @@ internal class StateRuleSelection(
         /** Prepares provided solveRequest "side effects manager" to enter this "rule body sub-scope" */
         private fun Solve.Request<ExecutionContextImpl>.initializeForSubRuleScope() =
                 copy(context = with(context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
+
+        /**
+         * Utility function to eliminate from solution substitution non meaningful variables
+         * for the "upper scope" query, (i.e. variables introduced only for solving the "current" query)
+         */
+        private fun Solution.removeQuerySubstitutions() = when (this) {
+            is Solution.Yes -> copy(substitution = substitution - query.variables.asIterable())
+            else -> this
+        }
     }
 }
