@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils.StateRuleSelectionUtils.multipleMatchesDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,6 +18,13 @@ import kotlin.test.assertTrue
  * @author Enrico
  */
 internal class ConjunctionTest {
+
+    private val multipleMatchesDatabase = ClauseDatabase.of(
+            { ruleOf(structOf("f", atomOf("x")), structOf("failed")) },
+            { ruleOf(structOf("f", atomOf("y")), structOf("a", atomOf("b"))) },
+            { factOf(structOf("f", atomOf("z"))) },
+            { factOf(structOf("a", atomOf("b"))) }
+    )
 
     private val fAnonymousQuery = Struct.of("f", Var.anonymous())
     private val trueAndTrueSolveRequest = createSolveRequest(Tuple.of(Truth.`true`(), Truth.`true`()), multipleMatchesDatabase)
