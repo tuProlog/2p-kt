@@ -45,14 +45,26 @@ internal class SubstitutionFailTest {
     }
 
     @Test
+    fun failedSubstitutionMinusOtherSubstitutionKeysReturnsAlwaysFailedSubstitution() {
+        assertEquals(failedSubstitution, failedSubstitution - Substitution.empty().keys)
+        assertEquals(failedSubstitution, failedSubstitution - listOf(Var.anonymous()))
+    }
+
+    @Test
     fun failedSubstitutionMinusOtherSubstitutionReturnsAlwaysFailedSubstitution() {
         assertEquals(failedSubstitution, failedSubstitution - Substitution.empty())
         assertEquals(failedSubstitution, failedSubstitution - failedSubstitution)
     }
 
     @Test
-    fun failedSubstitutionFilteringReturnsAlwaysFailedSubstitution() {
+    fun failedSubstitutionFilteringEntriesReturnsAlwaysFailedSubstitution() {
         assertEquals(failedSubstitution, failedSubstitution.filter { (_, _) -> true })
         assertEquals(failedSubstitution, failedSubstitution.filter { (_, _) -> false })
+    }
+
+    @Test
+    fun failedSubstitutionFilteringWithParametersPredicateReturnsAlwaysFailedSubstitution() {
+        assertEquals(failedSubstitution, failedSubstitution.filter { _, _ -> true })
+        assertEquals(failedSubstitution, failedSubstitution.filter { _, _ -> false })
     }
 }
