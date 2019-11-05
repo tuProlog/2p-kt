@@ -58,7 +58,9 @@ interface Scope {
 
     fun anonymous(): Var
 
-    val `_`: Var get() = anonymous()
+    @Suppress("PropertyName")
+    val `_`: Var
+        get() = anonymous()
 
     fun whatever(): Var
 

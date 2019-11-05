@@ -74,7 +74,13 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
-    override fun toString(): String = clauses.joinToString(".\n", "", ".\n")
+    override fun toString(): String = "ClauseDatabase(clauses=$clauses)"
+
+    override fun toString(asPrologText: Boolean): String = when (asPrologText) {
+        true -> clauses.joinToString(".\n", "", ".\n")
+        false -> toString()
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
