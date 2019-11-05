@@ -129,6 +129,19 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
+    fun minusVariablesIterableRemovesCorrectBindings() {
+        val correct = aVarToXAtomSubstitution
+        val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - listOf(bVar)
+
+        assertEquals(correct, toBeTested)
+    }
+
+    @Test
+    fun minusVariableIterableWithNoCommonVariableDoesNothing() {
+        assertEquals(aVarToXAtomSubstitution, aVarToXAtomSubstitution - listOf(bVar))
+    }
+
+    @Test
     fun minusOtherSubstitutionRemovesCorrectBindings() {
         val correct = aVarToXAtomSubstitution
         val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - bVarToXAtomSubstitution
@@ -147,9 +160,15 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
-    fun filterReturnsOnlyCorrectBindings() {
+    fun filterMapEntryReturnsOnlyCorrectBindings() {
         assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar })
         assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
+    }
+
+    @Test
+    fun filterPredicateReturnsOnlyCorrectBindings() {
+        assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar })
+        assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { `var`, _ -> `var` == aVar })
     }
 
     @Test

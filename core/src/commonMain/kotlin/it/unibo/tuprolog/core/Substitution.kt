@@ -30,12 +30,18 @@ sealed class Substitution : Map<Var, Term> {
 
     /**
      * Returns a new substitution containing all entries of the original substitution except those
+     * entries which variable keys are contained in the given [keys] iterable.
+     */
+    open operator fun minus(keys: Iterable<Var>): Substitution = when (this) {
+        is Fail -> Fail
+        else -> (this as Map<Var, Term> - keys).asUnifier()
+    }
+
+    /**
+     * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [other] substitution.
      */
-    open operator fun minus(other: Substitution): Substitution = when (this) {
-        is Fail -> Fail
-        else -> (this as Map<Var, Term> - other.keys).asUnifier()
-    }
+    open operator fun minus(other: Substitution): Substitution = this - other.keys
 
     /**
      * Returns a new substitution containing all key-value pairs matching the given [predicate].
@@ -52,7 +58,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
-    inline fun filter(crossinline predicate: (key: Var, value: Term) -> Boolean): Substitution =
+    open fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
             filter { (key, value) -> predicate(key, value) }
 
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
@@ -65,10 +71,11 @@ sealed class Substitution : Map<Var, Term> {
 
         override val isSuccess: Boolean = true
 
+        override fun minus(keys: Iterable<Var>): Unifier = super.minus(keys) as Unifier
         override fun minus(other: Substitution): Unifier = super.minus(other) as Unifier
 
-        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
-                super.filter(predicate) as Unifier
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier = super.filter(predicate) as Unifier
+        override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier = super.filter(predicate) as Unifier
 
         /** The mappings used to implement [equals], [hashCode] and [toString] */
         // this should be kept in sync with class "by" right expression
@@ -100,7 +107,9 @@ sealed class Substitution : Map<Var, Term> {
     object Fail : Substitution(), Map<Var, Term> by emptyMap() {
         override val isFailed: Boolean = true
         override fun minus(other: Substitution): Fail = Fail
+        override fun minus(keys: Iterable<Var>): Fail = Fail
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
+        override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
     }
 
 
