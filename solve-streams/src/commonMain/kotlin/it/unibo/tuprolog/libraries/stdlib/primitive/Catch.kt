@@ -6,8 +6,8 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
+import it.unibo.tuprolog.solve.solver.newSolveRequest
+import it.unibo.tuprolog.solve.solver.replyWith
 
 /**
  * Implementation of primitive handling `catch/3` behaviour
@@ -43,9 +43,9 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
                                 )
                             }
 
-                            yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.responseBy(it) })
+                            yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
                         }
-                        else -> yield(request.responseBy(goalResponse))
+                        else -> yield(request.replyWith(goalResponse))
                     }
                 }
             }

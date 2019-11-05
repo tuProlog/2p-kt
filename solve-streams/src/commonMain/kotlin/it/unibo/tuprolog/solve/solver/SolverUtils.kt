@@ -3,7 +3,7 @@
  *
  * @author Enrico
  */
-@file:JvmName("SolverUtilsTemporary") // TODO: 03/11/2019 make it only "SolverUtils"
+@file:JvmName("SolverUtils")
 
 package it.unibo.tuprolog.solve.solver
 
@@ -36,62 +36,60 @@ fun <E> Sequence<E>.orderWithStrategy(
             else -> emptySequence()
         }
 
-/**
- * TODO remove this object, when refactoring finished
- *
- * @author Enrico
- */
-internal object SolverUtils {
-
-    /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
-    fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
-            newGoal: Struct,
-            toAddSubstitutions: Substitution = Substitution.empty(),
-            baseSideEffectManager: SideEffectManager? = this.context.sideEffectManager,
-            currentTime: TimeInstant = currentTimeInstant(),
-            isChoicePointChild: Boolean = false,
-            logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
-    ): Solve.Request<ExecutionContextImpl> =
-            Solve.Request(
-                    newGoal.extractSignature(),
-                    newGoal.argsList,
-                    with(this.context) {
-                        copy(
-                                substitution = (substitution + toAddSubstitutions) as Substitution.Unifier,
-                                sideEffectManager = (baseSideEffectManager as? SideEffectManagerImpl)
-                                        ?.creatingNewRequest(this, isChoicePointChild, logicalParentRequest)
-                                        ?: sideEffectManager
-                        )
-                    },
-                    this.requestIssuingInstant,
-                    adjustExecutionMaxDuration(this, currentTime)
-            )
-
-    /** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
-    private fun adjustExecutionMaxDuration(
-            oldSolveRequest: Solve.Request<ExecutionContextImpl>,
-            currentTime: TimeInstant
-    ): TimeDuration =
-            when (oldSolveRequest.executionMaxDuration) {
-                TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE
-                else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
-                        .takeIf { it >= 0 }
-                        ?: 0
-            }
-
-    /** Creates a [Solve.Response] with [Solution] according to otherSolution response, taking signature
-     * and arguments from receiver request and using given [otherResponse] substitution and context */
-    fun Solve.Request<ExecutionContext>.responseBy(otherResponse: Solve.Response): Solve.Response =
-            with(otherResponse) { replyWith(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager) }
-
-    /** Checks if this sequence of elements holds more than one element, lazily */
-    fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
-        when {
-            !hasNext() -> false // no element
-            else -> {
-                next()
-                hasNext() // more elements, if first element has a next element
-            }
+/** Checks if this sequence of elements holds more than one element, lazily */
+fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
+    when {
+        !hasNext() -> false // no element
+        else -> {
+            next()
+            hasNext() // more elements, if first element has a next element
         }
     }
 }
+
+/**
+ * A method to create a new [Solve.Request] physically chained to receiver request.
+ *
+ * @param newGoal The new solve request goal
+ * @param toAddSubstitutions The added substitutions to new request context, if any
+ * @param baseSideEffectManager The base side effect manager to be injected in the new solve request, if different from physical parent request one
+ * @param currentTime The current time instant on new request creation, if different from method invocation time instant
+ * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
+ * @param logicalParentRequest The Solve Request to be considered the "logical parent" of new request, if different from receiver request
+ */
+internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
+        newGoal: Struct,
+        toAddSubstitutions: Substitution = Substitution.empty(),
+        baseSideEffectManager: SideEffectManagerImpl? = context.sideEffectManager,
+        currentTime: TimeInstant = currentTimeInstant(),
+        isChoicePointChild: Boolean = false,
+        logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
+): Solve.Request<ExecutionContextImpl> = copy(
+        newGoal.extractSignature(),
+        newGoal.argsList,
+        context.copy(
+                substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
+                sideEffectManager = baseSideEffectManager
+                        ?.creatingNewRequest(context, isChoicePointChild, logicalParentRequest)
+                        ?: context.sideEffectManager
+        ),
+        executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
+)
+
+/** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
+private fun adjustExecutionMaxDuration(
+        oldSolveRequest: Solve.Request<ExecutionContextImpl>,
+        currentTime: TimeInstant
+): TimeDuration = when (oldSolveRequest.executionMaxDuration) {
+    TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE
+    else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
+            .takeIf { it >= 0 }
+            ?: 0
+}
+
+/** Responds to this solve request forwarding the provided [otherResponse] data */
+fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
+        with(otherResponse) {
+            replyWith(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager
+                    ?: this@replyWith.context.getSideEffectManager())
+        }

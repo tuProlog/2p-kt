@@ -6,13 +6,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.forEachWithLookahead
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
-import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.extendParentScopeWith
+import it.unibo.tuprolog.solve.solver.*
 import it.unibo.tuprolog.solve.solver.fsm.*
-import it.unibo.tuprolog.solve.solver.orderWithStrategy
-import it.unibo.tuprolog.solve.solver.shouldCutExecuteInRuleSelection
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +66,7 @@ internal class StateRuleSelection(
                                             .extendParentScopeWith(solve.context.sideEffectManager)
 
                                     yield(stateEnd(subState.solve.copy(
-                                            solution = subState.solve.solution.removeQuerySubstitutions(),
+                                            solution = subState.solve.solution.removeQueryVarSubstitutions(),
                                             sideEffectManager = extendedScopeSideEffectManager
                                     )))
                                 }
@@ -106,7 +101,7 @@ internal class StateRuleSelection(
          * Utility function to eliminate from solution substitution non meaningful variables
          * for the "upper scope" query, (i.e. variables introduced only for solving the "current" query)
          */
-        private fun Solution.removeQuerySubstitutions() = when (this) {
+        private fun Solution.removeQueryVarSubstitutions() = when (this) {
             is Solution.Yes -> copy(substitution = substitution - query.variables.asIterable())
             else -> this
         }
