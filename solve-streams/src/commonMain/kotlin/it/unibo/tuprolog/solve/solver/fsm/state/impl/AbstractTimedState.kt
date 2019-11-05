@@ -46,4 +46,6 @@ internal abstract class AbstractTimedState(
     /** A function to check if time for execution has ended */
     private fun timeIsOver(currentDuration: TimeDuration, maxDuration: TimeDuration) =
             currentDuration >= maxDuration
+
+    override fun toString(): String = "${this::class} with $solve"
 }

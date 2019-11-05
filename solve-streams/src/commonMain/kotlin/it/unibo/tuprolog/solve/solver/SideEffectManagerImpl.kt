@@ -36,7 +36,7 @@ internal data class SideEffectManagerImpl(
 
 ) : SideEffectManager {
 
-    override fun cut(): SideEffectManager = this.copy(
+    override fun cut(): SideEffectManager = copy(
             toCutContextsParent = sequence {
                 yieldAll(toCutContextsParent) // this may be removed, but more testing needed
                 yieldAll(getFirstChoicePointContext())
@@ -56,11 +56,10 @@ internal data class SideEffectManagerImpl(
 
 
     /** Initializes isChoicePointChild to `false` whatever it was, and adds given [currentContext] to clauseScopedParents */
-    internal fun stateInitInitialize(currentContext: ExecutionContextImpl): SideEffectManagerImpl =
-            this.copy(
-                    clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
-                    isChoicePointChild = false
-            )
+    internal fun stateInitInitialize(currentContext: ExecutionContextImpl): SideEffectManagerImpl = copy(
+            clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
+            isChoicePointChild = false
+    )
 
     /**
      * Method that updates internal structures when creating a new solve request
@@ -69,30 +68,34 @@ internal data class SideEffectManagerImpl(
      * @param isChoicePointChild whether this solve request is child of a ChoicePoint
      * @param logicalParentRequest the Solve.Request to be considered logically the parent of this (to correctly implement `catch/throw` interaction)
      */
-    internal fun creatingNewRequest(currentContext: ExecutionContextImpl, isChoicePointChild: Boolean, logicalParentRequest: Solve.Request<ExecutionContextImpl>) =
-            this.copy(
-                    clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
-                    isChoicePointChild = isChoicePointChild,
-                    logicalParentRequests = sequence {
-                        when (logicalParentRequest) {
-                            in logicalParentRequests -> yieldAll(logicalParentRequests.dropWhile { it != logicalParentRequest })
-                            else -> {
-                                yield(logicalParentRequest)
-                                yieldAll(logicalParentRequests)
-                            }
-                        }
+    internal fun creatingNewRequest(
+            currentContext: ExecutionContextImpl,
+            isChoicePointChild: Boolean,
+            logicalParentRequest: Solve.Request<ExecutionContextImpl>
+    ) = copy(
+            clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
+            isChoicePointChild = isChoicePointChild,
+            logicalParentRequests = sequence {
+                when (logicalParentRequest) {
+                    in logicalParentRequests -> yieldAll(logicalParentRequests.dropWhile { it != logicalParentRequest })
+                    else -> {
+                        yield(logicalParentRequest)
+                        yieldAll(logicalParentRequests)
                     }
-            )
+                }
+            }
+    )
 
     /** Method that updates sideEffects manager to not consider parents older than current first, because entering new "rule-scope" */
-    internal fun enterRuleSubScope() = this.copy(clauseScopedParents = sequenceOf(this.clauseScopedParents.first()))
+    internal fun enterRuleSubScope() = copy(clauseScopedParents = sequenceOf(clauseScopedParents.first()))
 
     /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
-    internal fun extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl) =
-            this.copy(clauseScopedParents = sequence {
+    internal fun extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl) = copy(
+            clauseScopedParents = sequence {
                 yieldAll(clauseScopedParents)
                 yieldAll(upperScopeSideEffectsManager.clauseScopedParents)
-            })
+            }
+    )
 
     /**
      * Method that queries if a Cut should be executed in StateRuleSelection
@@ -114,7 +117,7 @@ internal data class SideEffectManagerImpl(
     }
 
     /** Method to set the catch request whose not explored children should be cut from search tree */
-    internal fun throwCut(ancestorCatchContext: ExecutionContextImpl) = this.copy(
+    internal fun throwCut(ancestorCatchContext: ExecutionContextImpl) = copy(
             throwRelatedToCutContextsParent = ancestorCatchContext
     )
 
@@ -122,7 +125,7 @@ internal data class SideEffectManagerImpl(
     internal fun isSelectedThrowCatch(contextImpl: ExecutionContextImpl) = throwRelatedToCutContextsParent == contextImpl
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
-    internal fun ensureNoMoreSelectableCatch(contextImpl: ExecutionContextImpl) = this.copy(
+    internal fun ensureNoMoreSelectableCatch(contextImpl: ExecutionContextImpl) = copy(
             throwNonSelectableParentContexts = throwNonSelectableParentContexts + contextImpl
     )
 
@@ -133,7 +136,7 @@ internal data class SideEffectManagerImpl(
      */
     internal fun resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl) =
             // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
-            toRecoverSituation.let { this.copy(toCutContextsParent = toRecoverSituation.toCutContextsParent) }
+            copy(toCutContextsParent = toRecoverSituation.toCutContextsParent)
 
 
     /**
@@ -147,4 +150,10 @@ internal data class SideEffectManagerImpl(
             .mapNotNull { it.sideEffectManager.clauseScopedParents.firstOrNull() }
 }
 
-// TODO: 02/11/2019 extension methods over SideEffectManager to enhance code readability
+/** Bridge method to reach [SideEffectManagerImpl.shouldCutExecuteInRuleSelection] homonym method from a [SideEffectManager] */
+internal fun SideEffectManager?.shouldCutExecuteInRuleSelection(): Boolean =
+        (this as? SideEffectManagerImpl)?.shouldCutExecuteInRuleSelection() ?: false
+
+/** Bridge method to reach [SideEffectManagerImpl.extendParentScopeWith] homonym method from a [SideEffectManager] */
+internal fun SideEffectManager?.extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl): SideEffectManagerImpl? =
+        (this as? SideEffectManagerImpl)?.extendParentScopeWith(upperScopeSideEffectsManager)

@@ -1,17 +1,21 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.impl
 
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.SideEffectManager
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.SolverUtils.moreThanOne
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.orderedWithStrategy
+import it.unibo.tuprolog.solve.solver.extendParentScopeWith
+import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
+import it.unibo.tuprolog.solve.solver.fsm.state.AlreadyExecutedState
 import it.unibo.tuprolog.solve.solver.fsm.state.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.fsm.state.asAlreadyExecuted
+import it.unibo.tuprolog.solve.solver.orderWithStrategy
+import it.unibo.tuprolog.solve.solver.shouldCutExecuteInRuleSelection
 import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,21 +25,23 @@ import kotlinx.coroutines.Dispatchers
  *
  * @author Enrico
  */
-internal class StateRuleSelection(
+internal class StateRuleSelection( // TODO: 04/11/2019 remove state package flattening to fsm as for solve-classic
         override val solve: Solve.Request<ExecutionContextImpl>,
         override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
+    /** The execute function to be used when a [State] needs, internally, to execute sub-[State]s behaviour */
+    private val subStateExecute: (State) -> Sequence<AlreadyExecutedState> = StateMachineExecutor::executeWrapping
+
     override fun behaveTimed(): Sequence<State> = sequence {
         val currentGoal = solve.query
-        val ruleSources = with(solve.context) { sequenceOf(libraries.theory, staticKB, dynamicKB) }
-        val matchingRules = ruleSources.flatMap { it[currentGoal.freshCopy()] }
+        val matchingRules = solve.context.retrieveRulesMatching(currentGoal)
         val isChoicePoint = moreThanOne(matchingRules)
 
         when {
-            matchingRules.none() -> yield(stateEndFalse(sideEffectManager = solve.context.sideEffectManager))
+            matchingRules.none() -> yield(stateEndFalse())
 
-            else -> with(solve.context) { orderedWithStrategy(matchingRules, this, solverStrategies::clauseChoiceStrategy) }
+            else -> with(solve.context) { matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy) }
                     .map { it.freshCopy() }
                     .map { refreshedRule ->
                         val unifyingSubstitution = currentGoal mguWith refreshedRule.head
@@ -45,7 +51,7 @@ internal class StateRuleSelection(
                         solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
 
                     }.forEachWithLookahead { subSolveRequest, hasAlternatives ->
-                        val subInitialState = StateInit(subSolveRequest.prepareForSubRuleScope(), executionStrategy)
+                        val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope(), executionStrategy)
                                 .also { yield(it.asAlreadyExecuted()) }
 
                         var cutNextSiblings = false
@@ -54,20 +60,23 @@ internal class StateRuleSelection(
                         subStateExecute(subInitialState).forEach {
                             yield(it)
 
-                            // find in sub-goal state sequence, the final state responding to current solveRequest
-                            if (with(it.wrappedState) { this is FinalState && solve.solution.query == subSolveRequest.query }) {
-                                val subEndState = it.wrappedState as StateEnd
+                            val subState = it.wrappedState
 
-                                if ((subEndState.solve.sideEffectManager as? SideEffectManagerImpl)?.run { shouldCutExecuteInRuleSelection() } == true)
+                            // find in sub-goal state sequence, the final state responding to current solveRequest
+                            if (subState is FinalState && subState.solve.solution.query == subSolveRequest.query) {
+
+                                if (subState.solve.sideEffectManager.shouldCutExecuteInRuleSelection())
                                     cutNextSiblings = true
 
                                 // yield only non-false states or false states when there are no open alternatives (because no more or cut)
-                                if (subEndState !is StateEnd.False || !hasAlternatives || cutNextSiblings)
-                                    yield(stateEnd(with(subEndState.solve) {
-                                        copy(sideEffectManager = extendParentScopeIfPossible(sideEffectManager, solve.context.sideEffectManager))
-                                    }))
+                                if (subState !is StateEnd.False || !hasAlternatives || cutNextSiblings) {
+                                    val extendedScopeSideEffectManager = subState.solve.sideEffectManager
+                                            .extendParentScopeWith(solve.context.sideEffectManager)
 
-                                if (subEndState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
+                                    yield(stateEnd(subState.solve.copy(sideEffectManager = extendedScopeSideEffectManager)))
+                                }
+
+                                if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
                             }
                         }
                         if (cutNextSiblings) return@sequence // cut here other matching rules trial
@@ -75,14 +84,22 @@ internal class StateRuleSelection(
         }
     }
 
-    /** Prepares provided solveRequest "side effects manager" to enter this "rule sub-scope" */
-    private fun Solve.Request<ExecutionContextImpl>.prepareForSubRuleScope() =
-            copy(context = with(context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
+    private companion object {
 
-    /** Extends parent clauses scope to include upper-scope ones, using side effect manager method, if correct instances are provided  */
-    private fun extendParentScopeIfPossible(responseManager: SideEffectManager?, requestManager: SideEffectManager): SideEffectManager? =
-            (responseManager as? SideEffectManagerImpl)
-                    ?.run { (requestManager as? SideEffectManagerImpl)?.let { extendParentScopeWith(requestManager) } }
-                    ?: responseManager
+        /**
+         * Retrieves from receiver [ExecutionContext] those rules whose head matches [currentGoal]
+         *
+         * 1) It searches for matches inside libraries, if nothing found
+         * 2) it looks inside both staticKB and dynamicKB
+         */
+        private fun ExecutionContext.retrieveRulesMatching(currentGoal: Struct): Sequence<Rule> =
+                currentGoal.freshCopy().let { refreshedGoal ->
+                    libraries.theory[refreshedGoal].takeIf { it.any() }
+                            ?: sequenceOf(staticKB, dynamicKB).flatMap { it[refreshedGoal] }
+                }
 
+        /** Prepares provided solveRequest "side effects manager" to enter this "rule body sub-scope" */
+        private fun Solve.Request<ExecutionContextImpl>.initializeForSubRuleScope() =
+                copy(context = with(context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
+    }
 }

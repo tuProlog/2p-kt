@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.solver.fsm.state.impl.testutils
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.SideEffectManager
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.fsm.state.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
@@ -16,9 +19,27 @@ import kotlin.test.fail
 internal object StateUtils {
 
     /** Utility function to assert that there's only one next state of given type */
-    internal inline fun <reified N> assertOnlyOneNextState(actualNextStateSequence: Sequence<State>) {
+    internal inline fun <reified S : State> assertOnlyOneNextState(actualNextStateSequence: Sequence<State>) {
         assertEquals(1, actualNextStateSequence.count(), "Expected only one state, but ${actualNextStateSequence.toList()}")
-        assertTrue { actualNextStateSequence.single() is N }
+        assertTrue { actualNextStateSequence.single() is S }
+    }
+
+    /** Utility function to assert over a State instance after casting it to expected type */
+    internal inline fun <reified S : State> assertOverState(state: State, assertion: (S) -> Unit) {
+        assertTrue("Expected state type to be ${S::class} but was ${state::class}") { state is S }
+        assertion(state as S)
+    }
+
+    /** Utility function to assert over filtered [S] instances among those in provided sequence */
+    internal inline fun <reified S : State> assertOverFilteredStateInstances(
+            states: Sequence<State>,
+            assertion: (index: Int, state: S) -> Unit
+    ) = states.filterIsInstance<S>().forEachIndexed(assertion)
+
+    /** Utility function to assert that receiver solution contains expected query and substitution */
+    internal fun Solution.assertCorrectQueryAndSubstitution(query: Struct, substitution: Substitution) {
+        assertEquals(query, this.query)
+        assertEquals(substitution, this.substitution)
     }
 
     /** Utility function to extract the SideEffectsManager from a [Solve] either Request or Response */

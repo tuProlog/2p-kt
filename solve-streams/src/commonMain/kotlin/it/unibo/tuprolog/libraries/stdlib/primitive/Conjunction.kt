@@ -8,9 +8,9 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SolverUtils
 import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
 import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
+import it.unibo.tuprolog.solve.solver.orderWithStrategy
 
 /**
  * Implementation of primitive handling `','/2` behaviour
@@ -22,7 +22,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
             sequence {
                 val (leftSubGoal, rightSubGoal) = with(request) {
-                    SolverUtils.orderedWithStrategy(arguments.asSequence(), context, context.solverStrategies::predicationChoiceStrategy)
+                    arguments.asSequence().orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
                 }.toList()
 
                 val leftSubSolveRequest = request.newSolveRequest(leftSubGoal as Struct)

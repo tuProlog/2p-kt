@@ -20,20 +20,22 @@ import kotlin.test.*
  */
 internal class SolverUtilsTest {
 
+    private val aContext = ExecutionContextImpl()
+
     /** A "true" solveRequest */
-    private val solveRequest = Solve.Request(Signature("true", 0), emptyList(), ExecutionContextImpl())
+    private val solveRequest = Solve.Request(Signature("true", 0), emptyList(), aContext)
 
     @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
         assertEquals(
                 emptySequence<Nothing>().toList(),
-                SolverUtils.orderedWithStrategy(emptySequence<Nothing>(), DummyInstances.executionContext) { seq, _ -> seq.first() }.toList()
+                emptySequence<Nothing>().orderWithStrategy(aContext) { seq, _ -> seq.first() }.toList()
         )
     }
 
     @Test
     fun orderWithStrategyPassesCorrectlyParametersToSelectionFunction() {
-        SolverUtils.orderedWithStrategy(emptySequence<Unit>(), DummyInstances.executionContext) { sequence, context ->
+        emptySequence<Unit>().orderWithStrategy(aContext) { sequence, context ->
             assertEquals(emptySequence(), sequence)
             assertEquals(DummyInstances.executionContext, context)
         }
@@ -42,7 +44,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyAppliesCorrectlySelectionStrategy() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 55)
-        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.min()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.min()!! }
 
         assertEquals(testSequence.sorted().toList(), toBeTested.toList())
     }
@@ -50,7 +52,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyDoesntRemoveDuplicatedItems() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 5)
-        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ -> seq.max()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.max()!! }
 
         assertEquals(testSequence.sortedDescending().toList(), toBeTested.toList())
     }
@@ -60,9 +62,7 @@ internal class SolverUtilsTest {
         val testSequence = sequenceOf({ 1 }, { 5 }, { 2 }, { 9 }, { 3 }, { 0 }, { 5 }, { throw IllegalStateException() })
         val testSeqElemCount = testSequence.count()
 
-        val toBeTested = SolverUtils.orderedWithStrategy(testSequence, DummyInstances.executionContext) { seq, _ ->
-            seq.first().also { it() }
-        }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.first().also { it() } }
         val testSeqIterator = testSequence.iterator()
         val toBeTestedIterator = toBeTested.iterator()
 

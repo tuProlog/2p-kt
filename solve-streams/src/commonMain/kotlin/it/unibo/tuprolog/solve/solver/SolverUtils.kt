@@ -18,34 +18,30 @@ import kotlin.jvm.JvmName
 /** Check whether the receiver term is a well-formed predication */
 fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
 
+/** Computes the ordered selection of elements, lazily, according to provided selection strategy */
+fun <E> Sequence<E>.orderWithStrategy(
+        context: ExecutionContext,
+        selectionStrategy: (Sequence<E>, ExecutionContext) -> E
+): Sequence<E> =
+        when (any()) {
+            true -> sequence {
+                selectionStrategy(this@orderWithStrategy, context).let { selected ->
+                    yield(selected)
+                    yieldAll(
+                            filterIndexed { index, _ -> index != indexOf(selected) }
+                                    .orderWithStrategy(context, selectionStrategy)
+                    )
+                }
+            }
+            else -> emptySequence()
+        }
+
 /**
  * TODO remove this object, when refactoring finished
  *
  * @author Enrico
  */
 internal object SolverUtils {
-
-    /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
-    fun <E> orderedWithStrategy(
-            elements: Sequence<E>,
-            context: ExecutionContext,
-            selectionStrategy: (Sequence<E>, ExecutionContext) -> E
-    ): Sequence<E> =
-            when (elements.any()) {
-                true -> sequence {
-                    selectionStrategy(elements, context).let { selected ->
-                        yield(selected)
-                        yieldAll(
-                                orderedWithStrategy(
-                                        elements.filterIndexed { index, _ -> index != elements.indexOf(selected) },
-                                        context,
-                                        selectionStrategy
-                                )
-                        )
-                    }
-                }
-                else -> emptySequence()
-            }
 
     /** A method to create [Solve.Request] relative to specific [newGoal], based on [receiver request][this] */
     fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
