@@ -3,6 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.reflect.KClass
 
 import it.unibo.tuprolog.core.toTerm as extToTerm
 
@@ -26,99 +27,59 @@ interface Prolog : Scope {
         is Array<*> -> this.map { it!!.toTerm() }.extToTerm()
         is Sequence<*> -> this.map { it!!.toTerm() }.extToTerm()
         is Iterable<*> -> this.map { it!!.toTerm() }.extToTerm()
-        else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Term::class}")
+        else -> raiseErrorConvertingTo(Term::class)
     }
 
-    infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
+    fun structOf(functor: String, vararg args: Any): Struct =
+            structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
-    infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
+    operator fun String.invoke(term: Any, vararg terms: Any): Struct =
+            structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
 
-    fun structOf(functor: String, vararg args: Any): Struct {
-        return structOf(functor, *args.map { it.toTerm() }.toTypedArray())
-    }
+    operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
 
-    operator fun String.invoke(term: Any, vararg terms: Any): Struct {
-        return structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
-    }
+    operator fun Any.minus(other: Any): Struct = structOf("-", this.toTerm(), other.toTerm())
 
-    operator fun Any.plus(other: Any): Struct {
-        return structOf("+", this.toTerm(), other.toTerm())
-    }
+    operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
 
-    operator fun Any.minus(other: Any): Struct {
-        return structOf("-", this.toTerm(), other.toTerm())
-    }
+    operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
 
-    operator fun Any.times(other: Any): Struct {
-        return structOf("*", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 
-    operator fun Any.div(other: Any): Struct {
-        return structOf("/", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.greaterThanOrEqualsTo(other: Any): Struct =
+            structOf(">=", this.toTerm(), other.toTerm())
 
-    infix fun Any.greaterThan(other: Any): Struct {
-        return structOf(">", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.nonLowerThan(other: Any): Struct = this greaterThanOrEqualsTo other
 
-    infix fun Any.greaterThanOrEqualsTo(other: Any): Struct {
-        return structOf(">=", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.lowerThan(other: Any): Struct = structOf("<", this.toTerm(), other.toTerm())
 
-    infix fun Any.nonLowerThan(other: Any): Struct {
-        return this greaterThanOrEqualsTo other
-    }
+    infix fun Any.lowerThanOrEqualsTo(other: Any): Struct =
+            structOf("=<", this.toTerm(), other.toTerm())
 
-    infix fun Any.lowerThan(other: Any): Struct {
-        return structOf("<", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.nonGreaterThan(other: Any): Struct = this lowerThanOrEqualsTo other
 
-    infix fun Any.lowerThanOrEqualsTo(other: Any): Struct {
-        return structOf("=<", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.intDiv(other: Any): Struct = structOf("//", this.toTerm(), other.toTerm())
 
-    infix fun Any.nonGreaterThan(other: Any): Struct {
-        return this lowerThanOrEqualsTo other
-    }
+    operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
 
-    infix fun Any.intDiv(other: Any): Struct {
-        return structOf("//", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.and(other: Any): Struct = tupleOf(this.toTerm(), other.toTerm())
 
-    operator fun Any.rem(other: Any): Struct {
-        return structOf("rem", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.or(other: Any): Struct = structOf(";", this.toTerm(), other.toTerm())
 
-    infix fun Any.and(other: Any): Struct {
-        return tupleOf(this.toTerm(), other.toTerm())
-    }
+    infix fun Any.pow(other: Any): Struct = structOf("**", this.toTerm(), other.toTerm())
 
-    infix fun Any.or(other: Any): Struct {
-        return structOf(";", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.sup(other: Any): Struct = structOf("^", this.toTerm(), other.toTerm())
 
-    infix fun Any.pow(other: Any): Struct {
-        return structOf("**", this.toTerm(), other.toTerm())
-    }
-
-    infix fun Any.sup(other: Any): Struct {
-        return structOf("^", this.toTerm(), other.toTerm())
-    }
+    infix fun Any.`is`(other: Any): Struct = structOf("is", this.toTerm(), other.toTerm())
 
     infix fun Any.impliedBy(other: Any): Rule {
         when (val t = this.toTerm()) {
             is Struct -> return ruleOf(t, other.toTerm())
-            else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Struct::class}")
+            else -> raiseErrorConvertingTo(Struct::class)
         }
     }
 
-    infix fun Any.`is`(other: Any): Struct {
-        return structOf("is", this.toTerm(), other.toTerm())
-    }
-
-    infix fun Any.`if`(other: Any): Rule {
-        return this impliedBy other
-    }
+    infix fun Any.`if`(other: Any): Rule = this impliedBy other
 
     fun Any.impliedBy(vararg other: Any): Rule =
             this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
@@ -126,78 +87,63 @@ interface Prolog : Scope {
     fun Any.`if`(vararg other: Any): Rule =
             this.impliedBy(*other)
 
-    fun tupleOf(vararg terms: Any): Tuple {
-        return tupleOf(*terms.map { it.toTerm() }.toTypedArray())
-    }
+    fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List {
-        return this.listOf(*terms.map { it.toTerm() }.toTypedArray())
-    }
+    fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List =
+            this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set {
-        return this.setOf(*terms.map { it.toTerm() }.toTypedArray())
-    }
+    fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set =
+            this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    fun consOf(head: Any, tail: Any): Cons {
-        return consOf(head.toTerm(), tail.toTerm())
-    }
+    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
 
-    fun factOf(term: Any): Fact {
-        return factOf(term.toTerm() as Struct)
-    }
+    fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
 
-    fun directiveOf(term: Any, vararg terms: Any): Directive {
-        return directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
-    }
+    fun directiveOf(term: Any, vararg terms: Any): Directive =
+            directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
-    fun <R> scope(function: Prolog.() -> R): R {
-        return Prolog.empty().function()
-    }
+    fun <R> scope(function: Prolog.() -> R): R = Prolog.empty().function()
 
-    fun rule(function: Prolog.() -> Any): Rule {
-        return Prolog.empty().function().toTerm() as Rule
-    }
+    fun rule(function: Prolog.() -> Any): Rule = Prolog.empty().function().toTerm() as Rule
 
-    fun clause(function: Prolog.() -> Any): Clause {
-        return Prolog.empty().function().let {
-            when (val t = it.toTerm()) {
-                is Clause -> t
-                is Struct -> return factOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a clause")
-            }
+    fun clause(function: Prolog.() -> Any): Clause = Prolog.empty().function().let {
+        when (val t = it.toTerm()) {
+            is Clause -> t
+            is Struct -> return factOf(t)
+            else -> it.raiseErrorConvertingTo(Clause::class)
         }
     }
 
-    fun directive(function: Prolog.() -> Any): Directive {
-        return Prolog.empty().function().let {
-            when (val t = it.toTerm()) {
-                is Directive -> t
-                is Struct -> return directiveOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a directive")
-            }
+    fun directive(function: Prolog.() -> Any): Directive = Prolog.empty().function().let {
+        when (val t = it.toTerm()) {
+            is Directive -> t
+            is Struct -> return directiveOf(t)
+            else -> it.raiseErrorConvertingTo(Directive::class)
         }
     }
 
-    fun fact(function: Prolog.() -> Any): Fact {
-        return Prolog.empty().function().let {
-            when (val t = it.toTerm()) {
-                is Fact -> t
-                is Struct -> return factOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a fact")
-            }
+    fun fact(function: Prolog.() -> Any): Fact = Prolog.empty().function().let {
+        when (val t = it.toTerm()) {
+            is Fact -> t
+            is Struct -> return factOf(t)
+            else -> it.raiseErrorConvertingTo(Fact::class)
         }
     }
+
+    infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
+
+    infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
 
     operator fun Substitution.get(term: Any): Term? =
             when (val t = term.toTerm()) {
                 is Var -> this[t]
-                else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+                else -> term.raiseErrorConvertingTo(Var::class)
             }
 
     fun Substitution.containsKey(term: Any): Boolean =
             when (val t = term.toTerm()) {
                 is Var -> this.containsKey(t)
-                else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+                else -> term.raiseErrorConvertingTo(Var::class)
             }
 
     operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
@@ -207,10 +153,11 @@ interface Prolog : Scope {
 
     companion object {
         fun empty(): Prolog = PrologImpl()
+
+        /** Utility method to launch conversion failed errors */
+        private fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
+                throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }
 
-
-fun <R> prolog(function: Prolog.() -> R): R {
-    return Prolog.empty().function()
-}
+fun <R> prolog(function: Prolog.() -> R): R = Prolog.empty().function()
