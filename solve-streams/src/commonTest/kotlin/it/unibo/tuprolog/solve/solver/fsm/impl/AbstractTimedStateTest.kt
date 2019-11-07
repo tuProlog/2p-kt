@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [AbstractTimedState]
@@ -57,15 +58,24 @@ internal class AbstractTimedStateTest {
 
     @Test
     fun behaveCanBeCalledMultipleTimesYieldingAlwaysSameResponse() {
-        val toBeTested = createTimeState(createTimedRequest(currentTimeInstant(), 20))
+        val maxDuration = 1000L
+        val currentTime = currentTimeInstant()
 
-        repeat(1000) { assertEquals(behaviourResponse.toList(), toBeTested.behave().toList()) }
+        val toBeTested = createTimeState(createTimedRequest(currentTimeInstant(), maxDuration))
+        while (currentTime + maxDuration * 1.5 > currentTimeInstant())
+            assertEquals(behaviourResponse.toList(), toBeTested.behave().toList())
     }
 
     @Test
     fun getCurrentTimeReturnsCurrentTime() {
-        val correct = currentTimeInstant()
+        val toleranceInMillis = 500L
+
+        val currentTime = currentTimeInstant()
         val toBeTested = createTimeState(createTimedRequest()).getCurrentTime()
-        assertEquals(correct, toBeTested)
+
+        assertTrue { currentTime <= toBeTested }
+        assertTrue("getCurrentTime() exceeded the $toleranceInMillis tolerance: $currentTime << $toBeTested") {
+            toBeTested < currentTime + toleranceInMillis
+        }
     }
 }
