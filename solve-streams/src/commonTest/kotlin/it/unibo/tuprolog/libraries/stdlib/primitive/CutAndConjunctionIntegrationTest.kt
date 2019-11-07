@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
@@ -21,7 +22,7 @@ internal class CutAndConjunctionIntegrationTest {
     fun cutAsFirstGoalInConjunctionDoesNothing() {
         Scope.empty().where {
             val request = SolverTestUtils.createSolveRequest(tupleOf(atomOf("!"), structOf("g", varOf("A"))),
-                    SolverTestUtils.factDatabase,
+                    simpleFactDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
             val responses = Conjunction.wrappedImplementation(request).toList()
@@ -37,7 +38,7 @@ internal class CutAndConjunctionIntegrationTest {
     fun cutAsSecondGoalInConjunctionCutsFirstGoalAlternatives() {
         Scope.empty().where {
             val request = SolverTestUtils.createSolveRequest(tupleOf(structOf("g", varOf("A")), atomOf("!")),
-                    SolverTestUtils.factDatabase,
+                    simpleFactDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
 
@@ -56,7 +57,7 @@ internal class CutAndConjunctionIntegrationTest {
                             structOf("g", varOf("B")),
                             atomOf("!")
                     )),
-                    SolverTestUtils.factDatabase,
+                    simpleFactDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
             val responses = Conjunction.wrappedImplementation(request).toList()
@@ -77,7 +78,7 @@ internal class CutAndConjunctionIntegrationTest {
                             atomOf("!"),
                             structOf("g", varOf("B"))
                     )),
-                    SolverTestUtils.factDatabase,
+                    simpleFactDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
             val responses = Conjunction.wrappedImplementation(request).toList()
@@ -102,7 +103,7 @@ internal class CutAndConjunctionIntegrationTest {
                             structOf("g", varOf("B")),
                             atomOf("!")
                     )),
-                    SolverTestUtils.factDatabase,
+                    simpleFactDatabase,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
             val responses = Conjunction.wrappedImplementation(request).toList()
@@ -124,9 +125,9 @@ internal class CutAndConjunctionIntegrationTest {
                             structOf("g", varOf("B"))
                     )),
                     ClauseDatabase.of(
-                            SolverTestUtils.factDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
+                            simpleFactDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
                                     ktListOf(Rule.of(structOf("g", atomOf("cutting")), atomOf("!"))) +
-                                    SolverTestUtils.factDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
+                                    simpleFactDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
                     ),
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )
@@ -152,14 +153,14 @@ internal class CutAndConjunctionIntegrationTest {
                             structOf("g", varOf("B"))
                     )),
                     ClauseDatabase.of(
-                            SolverTestUtils.factDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
+                            simpleFactDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
                                     ktListOf(
                                             Rule.of(structOf("g", atomOf("cutting")), structOf("g1", atomOf("deep1"))),
                                             Rule.of(structOf("g1", atomOf("deep1")), structOf("g2", atomOf("deep2"))),
                                             Rule.of(structOf("g1", atomOf("deep1")), structOf("g3", atomOf("deep3"))),
                                             Rule.of(structOf("g2", atomOf("deep2")), atomOf("!")),
                                             Rule.of(structOf("g3", atomOf("deep3")), atomOf("!"))) +
-                                    SolverTestUtils.factDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
+                                    simpleFactDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
                     ),
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
             )

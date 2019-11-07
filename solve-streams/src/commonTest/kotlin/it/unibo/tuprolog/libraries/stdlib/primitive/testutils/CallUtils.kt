@@ -1,16 +1,17 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Call
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.collections.listOf as ktListOf
 
@@ -28,8 +29,8 @@ internal object CallUtils {
      * - `call(true)` **will result in** `Yes()`
      * - `call((true,true))` **will result in** `Yes()`
      * - `call('!')` **will result in** `Yes()`
-     * - `call(h(A))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a), Yes(A -> b), Yes(A -> c)`
-     * - `call((g(A), '!'))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a)`
+     * - `call(h(A))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a), Yes(A -> b), Yes(A -> c)`
+     * - `call((g(A), '!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a)`
      */
     internal val requestSolutionMap by lazy {
         mapOf(
@@ -48,19 +49,20 @@ internal object CallUtils {
                             Solution.Yes(it, Substitution.empty())
                     )
                 },
-                Struct.of(Call.functor, SolverTestUtils.threeResponseRequest.query).let { query ->
-                    Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
-                        createSolveRequest(query, database = SolverTestUtils.factDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
-                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
-                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("b"))),
-                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("c")))
+                prolog {
+                    Call.functor("h"("A")).run {
+                        // TODO: 07/11/2019 refactor with yesSolution()
+                        createSolveRequest(this, database = simpleFactDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
+                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("a"))),
+                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("b"))),
+                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("c")))
                         )
                     }
                 },
                 Scope.empty {
                     structOf(Call.functor, tupleOf(structOf("g", varOf("A")), atomOf("!"))).let { query ->
                         createSolveRequest(query,
-                                database = SolverTestUtils.factDatabase,
+                                database = simpleFactDatabase,
                                 primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
                         ) to ktListOf(
                                 Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a")))
@@ -137,13 +139,13 @@ internal object CallUtils {
     /**
      * A request to test that [Call] limits [Cut] to have effect only inside its goal; `call/1` is said to be *opaque* (or not transparent) to cut.
      *
-     * - `call(g(A), call('!'))` against [factDatabase][SolverTestUtils.factDatabase]  **will result in** `Yes(A -> a), Yes(A -> b)`
+     * - `call(g(A), call('!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a), Yes(A -> b)`
      */
     internal val requestToSolutionOfCallWithCut by lazy {
         Scope.empty {
             structOf(Call.functor, tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
                 createSolveRequest(query,
-                        database = SolverTestUtils.factDatabase,
+                        database = simpleFactDatabase,
                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
                 ) to ktListOf(
                         Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),

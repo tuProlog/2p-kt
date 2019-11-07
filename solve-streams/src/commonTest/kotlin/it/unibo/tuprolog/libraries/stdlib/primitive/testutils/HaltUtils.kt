@@ -1,14 +1,16 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Call
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Utils singleton to help testing [Halt]
@@ -34,34 +36,34 @@ internal object HaltUtils {
         mapOf(
                 Struct.of("call", Atom.of("halt")).let {
                     createSolveRequest(it, primitives = mapOf(Halt.descriptionPair, Call.descriptionPair)).run {
-                        this to listOf(
+                        this to ktListOf(
                                 Solution.Halt(it, HaltException(context = this.context))
                         )
                     }
                 },
                 Tuple.of(Atom.of("halt"), Atom.of("halt")).let {
                     createSolveRequest(it, primitives = mapOf(Halt.descriptionPair, Conjunction.descriptionPair)).run {
-                        this to listOf(
+                        this to ktListOf(
                                 Solution.Halt(it, HaltException(context = this.context))
                         )
                     }
                 },
                 Struct.of("call", Tuple.of(Atom.of("halt"), Atom.of("halt"))).let {
                     createSolveRequest(it, primitives = mapOf(Halt.descriptionPair, Call.descriptionPair, Conjunction.descriptionPair)).run {
-                        this to listOf(
+                        this to ktListOf(
                                 Solution.Halt(it, HaltException(context = this.context))
                         )
                     }
                 },
-                Tuple.of(Atom.of("halt"), SolverTestUtils.threeResponseRequest.query).let { query ->
-                    Scope.of(*SolverTestUtils.threeResponseRequest.arguments.map { it as Var }.toTypedArray()).run {
+                prolog {
+                    tupleOf("halt", "h"("A")).run {
                         createSolveRequest(
-                                query,
-                                database = SolverTestUtils.factDatabase,
+                                this,
+                                database = simpleFactDatabase,
                                 primitives = mapOf(Conjunction.descriptionPair, Halt.descriptionPair)
-                        ).run {
-                            this to listOf(
-                                    Solution.Halt(query, HaltException(context = this.context))
+                        ).let { solveRequest ->
+                            solveRequest to ktListOf( // TODO: 07/11/2019 refactor with haltSolution()
+                                    Solution.Halt(this, HaltException(context = solveRequest.context))
                             )
                         }
                     }
@@ -73,7 +75,7 @@ internal object HaltUtils {
                                 database = haltTestingDatabase,
                                 primitives = mapOf(Halt.descriptionPair)
                         ).run {
-                            this to listOf(
+                            this to ktListOf(
                                     Solution.Yes(it, Substitution.of(varOf("V"), atomOf("a"))),
                                     Solution.Halt(it, HaltException(context = this.context))
                             )

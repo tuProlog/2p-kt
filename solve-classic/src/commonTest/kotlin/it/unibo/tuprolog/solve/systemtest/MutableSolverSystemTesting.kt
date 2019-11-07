@@ -15,6 +15,11 @@ class MutableSolverSystemTesting : SolverFactory {
             MutableSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
+    fun testTrue() {
+        prototype.testTrue()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

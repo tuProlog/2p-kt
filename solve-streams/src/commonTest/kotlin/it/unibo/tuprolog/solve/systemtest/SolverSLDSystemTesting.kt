@@ -1,7 +1,8 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.systemtest
 
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
@@ -13,6 +14,11 @@ class SolverSLDSystemTesting : SolverFactory {
 
     override fun solverOf(libraries: Libraries, flags: PrologFlags, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
             SolverSLD(libraries, flags, staticKB, dynamicKB)
+
+    @Test
+    fun testTrue() {
+        prototype.testTrue()
+    }
 
     @Test
     fun testConjunction() {

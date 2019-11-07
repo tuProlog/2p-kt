@@ -6,6 +6,7 @@ import it.unibo.tuprolog.primitive.Signature
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.collections.listOf as ktListOf
 
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
@@ -36,6 +37,21 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
         }
     }
+
+    fun testTrue() {
+        prolog {
+            val solver = solverOf()
+            val query = truthOf(true)
+            val solutions = solver.solve(truthOf(true)).toList()
+
+            assertEquals(
+                    ktListOf(query.yesSolution()),
+                    solutions
+            )
+        }
+    }
+
+//    fun testUnification()
 
     fun testFailure() {
         prolog {

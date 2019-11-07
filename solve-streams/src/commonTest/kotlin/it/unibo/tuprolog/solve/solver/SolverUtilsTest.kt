@@ -3,10 +3,7 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import kotlin.test.*
 
@@ -155,11 +152,11 @@ internal class SolverUtilsTest {
         val expectedSideEffectsManager = SideEffectManagerImpl()
         val expectedException = HaltException(context = DummyInstances.executionContext)
 
-        val aSignature = Signature("ciao", 0)
+        val aQuery = Atom.of("ciao")
 
-        val aYesResponse = Solve.Response(Solution.Yes(aSignature, emptyList(), expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
-        val aNoResponse = Solve.Response(Solution.No(aSignature, emptyList()), sideEffectManager = expectedSideEffectsManager)
-        val anHaltResponse = Solve.Response(Solution.Halt(aSignature, emptyList(), expectedException), sideEffectManager = expectedSideEffectsManager)
+        val aYesResponse = Solve.Response(aQuery.yesSolution(expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
+        val aNoResponse = Solve.Response(aQuery.noSolution(), sideEffectManager = expectedSideEffectsManager)
+        val anHaltResponse = Solve.Response(aQuery.haltSolution(expectedException), sideEffectManager = expectedSideEffectsManager)
 
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
@@ -180,7 +177,7 @@ internal class SolverUtilsTest {
 
     @Test
     fun replyWithIfNoSideEffectManagerPresentInProvidedForwardedResponseDefaultsToRequestsSideEffectManager() {
-        val aNoResponseWithoutSideEffectManager = Solve.Response(Solution.No(Signature("ciao", 0), emptyList()))
+        val aNoResponseWithoutSideEffectManager = Solve.Response(Atom.of("ciao").noSolution())
 
         val toBeTested = solveRequest.replyWith(aNoResponseWithoutSideEffectManager)
 

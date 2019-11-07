@@ -32,38 +32,15 @@ internal object SolverTestUtils {
     )
 
     /**
-     * A database containing the following facts:
-     * ```prolog
-     * f(a).
-     * g(a).
-     * g(b).
-     * h(a).
-     * h(b).
-     * h(c).
-     * ```
-     */
-    internal val factDatabase = ClauseDatabase.of(
-            Fact.of(Struct.of("f", Atom.of("a"))),
-            Fact.of(Struct.of("g", Atom.of("a"))),
-            Fact.of(Struct.of("g", Atom.of("b"))),
-            Fact.of(Struct.of("h", Atom.of("a"))),
-            Fact.of(Struct.of("h", Atom.of("b"))),
-            Fact.of(Struct.of("h", Atom.of("c")))
-    )
-
-    /** Request for solving `?- f(A)` against [factDatabase]; should result in substitution `A\a` */
-    internal val oneResponseRequest = createSolveRequest(Struct.of("f", Var.of("A")), factDatabase)
-    /** Request for solving `?- h(A)` against [factDatabase]; should result in substitution `A\a, A\b, A\c` */
-    internal val threeResponseRequest = createSolveRequest(Struct.of("h", Var.of("A")), factDatabase)
-
-    /**
      * A database containing the following rules:
      * ```prolog
      * f(only) :- !.
      * f(a).
+     *
      * h(a).
      * h(only) :- !.
      * h(b).
+     *
      * g(A) :- e(A).
      * g(A) :- d(A).
      * e(a) :- !.

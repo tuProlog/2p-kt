@@ -1,13 +1,17 @@
-package it.unibo.tuprolog.solve.solver.fsm.impl
+package it.unibo.tuprolog.solve.solver.fsm.impl.integrationtest
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOneNextState
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
 import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
@@ -19,33 +23,27 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
-internal class StateIntegrationTesting {
+internal class StateIntegrationTesting { // TODO: 05/11/2019 maybe before refactoring this, a refactor in where and how general tests are held/made is necessary to not write thousand [ClauseDatabase]s
 
     /** Shorthand function to execute a solveRequest */
-    private fun execute(solveRequest: Solve.Request<ExecutionContextImpl>): Sequence<State> =
-            StateMachineExecutor.execute(StateInit(solveRequest))
-
-    /** Utility function to compute answer substitution */
-    // TODO soluzione provvisioria in attesa di rifattorizzare i test
-    private fun StateEnd.True.answerSubstitution() =
-            with(solve) { solution.substitution.filter { (`var`, _) -> `var` in solution.query.variables } }
-
-    private val trueRequest = createSolveRequest(Atom.of("true"))
-    private val failRequest = createSolveRequest(Atom.of("fail"))
+    private fun Solve.Request<ExecutionContextImpl>.executeFSM(): Sequence<State> =
+            StateMachineExecutor.execute(StateInit(this))
 
     @Test
     fun trueSolveRequestWorks() {
-        val nextStates = execute(trueRequest).toList()
+        val nextStates = createSolveRequest(Atom.of("true")).executeFSM()
 
-        assertEquals(1, nextStates.count())
-        assertTrue { nextStates.component1() is StateEnd.True }
+        assertOnlyOneNextState<StateEnd.True>(nextStates)
     }
+
+    // TODO: 07/11/2019 still to review tests below this comment
 
     @Test
     fun nonPresentClause() {
-        val nextStates = execute(failRequest).toList()
+        val nextStates = createSolveRequest(Atom.of("ciao")).executeFSM().toList()
 
         assertEquals(3, nextStates.count())
+        // TODO: 05/11/2019 create a method to programmatically check for correct state sequence
         assertTrue { nextStates.component1() is StateGoalEvaluation }
         assertTrue { nextStates.component2() is StateRuleSelection }
         assertTrue { nextStates.component3() is StateEnd.False }
@@ -53,7 +51,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun requiringSimpleQueryWithVariableInstantiationWorks() {
-        val nextStates = execute(SolverTestUtils.oneResponseRequest).toList()
+        val nextStates = createSolveRequest(Struct.of("f", Var.of("A")), simpleFactDatabase).executeFSM().toList()
 
         assertEquals(5, nextStates.count())
         assertTrue { nextStates[0] is StateGoalEvaluation }
@@ -62,7 +60,7 @@ internal class StateIntegrationTesting {
         assertTrue { nextStates[3] is StateEnd.True }
         assertTrue { nextStates[4] is StateEnd.True }
 
-        val answerSubstitution = (nextStates[4] as StateEnd.True).answerSubstitution()
+        val answerSubstitution = (nextStates.last() as FinalState).solve.solution.substitution
         val scope = Scope.of(*answerSubstitution.keys.toTypedArray())
 
         assertEquals(Atom.of("a"), answerSubstitution[scope.varOf("A")])
@@ -71,7 +69,9 @@ internal class StateIntegrationTesting {
 
     @Test
     fun requiringQueryWithMultipleInstantiationsWorks() {
-        val nextStates = execute(SolverTestUtils.threeResponseRequest).toList()
+        val hSolveRequest = createSolveRequest(Struct.of("h", Var.of("A")), simpleFactDatabase)
+
+        val nextStates = hSolveRequest.executeFSM().toList()
 
         assertEquals(11, nextStates.count())
 
@@ -79,10 +79,10 @@ internal class StateIntegrationTesting {
         assertEquals(6, trueEndStates.count())
         assertEquals(trueEndStates.count(), nextStates.filterIsInstance<StateEnd>().count())
 
-        val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.threeResponseRequest.query }
+        val interestingStates = trueEndStates.filter { it.solve.solution.query == hSolveRequest.query }
         assertEquals(3, interestingStates.count())
 
-        val answerSubstitution = interestingStates.map { it.answerSubstitution() }
+        val answerSubstitution = interestingStates.map { it.solve.solution.substitution }
 
         val correctSubstitution = listOf("a", "b", "c").map(Atom.Companion::of)
         correctSubstitution.zip(answerSubstitution).forEach { (expectedSubstituent, substitution) ->
@@ -115,7 +115,7 @@ internal class StateIntegrationTesting {
 
     @Test
     fun requiringQueryWithCutDoesntReturnOtherAlternatives() {
-        val nextStates = execute(SolverTestUtils.oneResponseBecauseOfCut).toList()
+        val nextStates = SolverTestUtils.oneResponseBecauseOfCut.executeFSM().toList()
 
         assertEquals(6, nextStates.count())
 
@@ -125,12 +125,12 @@ internal class StateIntegrationTesting {
 
         val interestingStates = trueEndStates.filter { it.solve.solution.query == SolverTestUtils.oneResponseBecauseOfCut.query }
         assertEquals(1, interestingStates.count())
-        assertEquals(Atom.of("only"), interestingStates.single().answerSubstitution().values.single())
+        assertEquals(Atom.of("only"), interestingStates.single().solve.solution.substitution.values.single())
     }
 
     @Test
     fun twoAlternativesBeforeCutExecutionShouldBeReturned() {
-        val nextStates = execute(SolverTestUtils.twoResponseBecauseOfCut).toList()
+        val nextStates = SolverTestUtils.twoResponseBecauseOfCut.executeFSM().toList()
 
         val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
         assertEquals(4, trueEndStates.count())
@@ -140,13 +140,13 @@ internal class StateIntegrationTesting {
         assertEquals(2, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("only")),
-                interestingStates.map { it.answerSubstitution().values.single() }
+                interestingStates.map { it.solve.solution.substitution.values.single() }
         )
     }
 
     @Test
     fun threeAlternativesBecauseOfInternalCutExecution() {
-        val nextStates = execute(SolverTestUtils.threeResponseBecauseOfCut).toList()
+        val nextStates = SolverTestUtils.threeResponseBecauseOfCut.executeFSM().toList()
 
         val trueEndStates = nextStates.filterIsInstance<StateEnd.True>()
         assertEquals(9, trueEndStates.count())
@@ -156,13 +156,13 @@ internal class StateIntegrationTesting {
         assertEquals(3, interestingStates.count())
         assertEquals(
                 listOf(Atom.of("a"), Atom.of("c"), Atom.of("d")),
-                interestingStates.map { it.answerSubstitution().values.single() }
+                interestingStates.map { it.solve.solution.substitution.values.single() }
         )
     }
 
     @Test
     fun twoResponseOnConjunctionAndCutDatabaseWorks() {
-        val nextStates = execute(SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase).toList()
+        val nextStates = SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase.executeFSM().toList()
 
         val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
                 .filter { it.solve.solution.query == SolverTestUtils.twoResponseOnConjunctionAndMiddleCutDatabase.query }
@@ -173,14 +173,14 @@ internal class StateIntegrationTesting {
                             Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a1")),
                             Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("b1"))
                     ),
-                    interestingStates.map { it.answerSubstitution() }
+                    interestingStates.map { it.solve.solution.substitution }
             )
         }
     }
 
     @Test
     fun threeResponseOnCutAndConjunctionDatabase() {
-        val nextStates = execute(SolverTestUtils.threeResponseOnCutAndConjunctionDatabase).toList()
+        val nextStates = SolverTestUtils.threeResponseOnCutAndConjunctionDatabase.executeFSM().toList()
 
         val interestingStates = nextStates.filterIsInstance<StateEnd.True>()
                 .filter { it.solve.solution.query == SolverTestUtils.threeResponseOnCutAndConjunctionDatabase.query }
@@ -192,7 +192,7 @@ internal class StateIntegrationTesting {
                             Substitution.of(varOf("X") to numOf(4)),
                             Substitution.of(varOf("X") to numOf(6))
                     ),
-                    interestingStates.map { it.answerSubstitution() }
+                    interestingStates.map { it.solve.solution.substitution }
             )
         }
     }
