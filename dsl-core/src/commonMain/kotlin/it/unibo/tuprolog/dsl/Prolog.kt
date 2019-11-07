@@ -3,6 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.reflect.KClass
 
 import it.unibo.tuprolog.core.toTerm as extToTerm
 
@@ -26,7 +27,7 @@ interface Prolog : Scope {
         is Array<*> -> this.map { it!!.toTerm() }.extToTerm()
         is Sequence<*> -> this.map { it!!.toTerm() }.extToTerm()
         is Iterable<*> -> this.map { it!!.toTerm() }.extToTerm()
-        else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Term::class}")
+        else -> raiseErrorConvertingTo(Term::class)
     }
 
     infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
@@ -108,7 +109,7 @@ interface Prolog : Scope {
     infix fun Any.impliedBy(other: Any): Rule {
         when (val t = this.toTerm()) {
             is Struct -> return ruleOf(t, other.toTerm())
-            else -> throw IllegalArgumentException("Cannot convert ${this::class} into ${Struct::class}")
+            else -> raiseErrorConvertingTo(Struct::class)
         }
     }
 
@@ -163,7 +164,7 @@ interface Prolog : Scope {
             when (val t = it.toTerm()) {
                 is Clause -> t
                 is Struct -> return factOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a clause")
+                else -> it.raiseErrorConvertingTo(Clause::class)
             }
         }
     }
@@ -173,7 +174,7 @@ interface Prolog : Scope {
             when (val t = it.toTerm()) {
                 is Directive -> t
                 is Struct -> return directiveOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a directive")
+                else -> it.raiseErrorConvertingTo(Directive::class)
             }
         }
     }
@@ -183,7 +184,7 @@ interface Prolog : Scope {
             when (val t = it.toTerm()) {
                 is Fact -> t
                 is Struct -> return factOf(t)
-                else -> throw IllegalArgumentException("Cannot convert $it into a fact")
+                else -> it.raiseErrorConvertingTo(Fact::class)
             }
         }
     }
@@ -191,13 +192,13 @@ interface Prolog : Scope {
     operator fun Substitution.get(term: Any): Term? =
             when (val t = term.toTerm()) {
                 is Var -> this[t]
-                else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+                else -> term.raiseErrorConvertingTo(Var::class)
             }
 
     fun Substitution.containsKey(term: Any): Boolean =
             when (val t = term.toTerm()) {
                 is Var -> this.containsKey(t)
-                else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
+                else -> term.raiseErrorConvertingTo(Var::class)
             }
 
     operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
@@ -207,6 +208,10 @@ interface Prolog : Scope {
 
     companion object {
         fun empty(): Prolog = PrologImpl()
+
+        /** Utility method to launch conversion failed errors */
+        private fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
+                throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }
 
