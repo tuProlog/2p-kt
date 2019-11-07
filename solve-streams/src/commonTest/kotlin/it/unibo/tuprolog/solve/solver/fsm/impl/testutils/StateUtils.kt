@@ -33,8 +33,9 @@ internal object StateUtils {
     /** Utility function to assert over filtered [S] instances among those in provided sequence */
     internal inline fun <reified S : State> assertOverFilteredStateInstances(
             states: Sequence<State>,
+            noinline filteringPredicate: (state: S) -> Boolean = { true },
             assertion: (index: Int, state: S) -> Unit
-    ) = states.filterIsInstance<S>().forEachIndexed(assertion)
+    ) = states.filterIsInstance<S>().filter(filteringPredicate).forEachIndexed(assertion)
 
     /** Utility function to assert that receiver solution contains expected query and substitution */
     internal fun Solution.assertCorrectQueryAndSubstitution(query: Struct, substitution: Substitution) {

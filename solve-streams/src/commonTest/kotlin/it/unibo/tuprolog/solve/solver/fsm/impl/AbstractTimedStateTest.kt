@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.fsm.State
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -26,7 +26,7 @@ internal class AbstractTimedStateTest {
 
     /** Creates a test solve request with given timing fields, or defaults if not provided */
     private fun createTimedRequest(requestIssuingInstant: TimeInstant? = null, maxDuration: TimeDuration? = null) =
-            with(SolverTestUtils.createSolveRequest(Truth.`true`())) {
+            with(createSolveRequest(Truth.`true`())) {
                 copy(
                         requestIssuingInstant = requestIssuingInstant ?: this.requestIssuingInstant,
                         executionMaxDuration = maxDuration ?: this.executionMaxDuration

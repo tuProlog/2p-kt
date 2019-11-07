@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.Libraries
@@ -20,6 +18,7 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOn
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverState
 import kotlin.test.Test
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Test class for [StateRuleSelection]
@@ -93,17 +92,19 @@ internal class StateRuleSelectionTest {
         val nextStates = StateRuleSelection(threeDBSolveRequest).behave().toList()
 
         assertOverState<StateEnd.True>(nextStates.last()) {
-            it.solve.solution.assertCorrectQueryAndSubstitution(theQuery, Substitution.of(theQueryVariable, Atom.of("a")))
+            it.solve.solution.assertCorrectQueryAndSubstitution(theQuery, prolog { theQueryVariable to "a" })
         }
     }
 
     @Test
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
         val dynamicAndStaticKBSolveRequest = with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries())) }
-        val correctSubstitutions = listOf(
-                Substitution.of(theQueryVariable, Atom.of("b")),
-                Substitution.of(theQueryVariable, Atom.of("c"))
-        )
+        val correctSubstitutions = prolog {
+            ktListOf(
+                    theQueryVariable to "b",
+                    theQueryVariable to "c"
+            )
+        }
 
         val nextStates = StateRuleSelection(dynamicAndStaticKBSolveRequest).behave()
 

@@ -3,6 +3,14 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -38,6 +46,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    /** Test `true` goal */
     fun testTrue() {
         prolog {
             val solver = solverOf()
@@ -51,7 +60,57 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-//    fun testUnification()
+    /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
+    fun testUnification() {
+        prolog {
+            val solver = solverOf(staticKB = simpleFactDatabase)
+
+            simpleFactDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
+    fun testSimpleCutAlternatives() {
+        prolog {
+            val solver = solverOf(staticKB = simpleCutDatabase)
+
+            simpleCutDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
+    fun testCutAndConjunction() {
+        prolog {
+            val solver = solverOf(staticKB = simpleCutAndConjunctionDatabase)
+
+            simpleCutAndConjunctionDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
+    fun testCutConjunctionAndBacktracking() {
+        prolog {
+            val solver = solverOf(staticKB = cutConjunctionAndBacktrackingDatabase)
+
+            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertEquals(solutionList, solutions)
+            }
+        }
+    }
 
     fun testFailure() {
         prolog {

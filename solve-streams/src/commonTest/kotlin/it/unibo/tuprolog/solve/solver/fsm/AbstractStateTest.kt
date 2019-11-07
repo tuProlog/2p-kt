@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
  */
 internal class AbstractStateTest {
 
-    private val solveRequest = SolverTestUtils.createSolveRequest(Atom.of("test"))
+    private val solveRequest = createSolveRequest(Atom.of("test"))
 
     /** An [AbstractState] instance with dummy parameters, and emptySequence returning behaviour */
     private val abstractStateUnderTest = object : AbstractState(solveRequest) {

@@ -36,18 +36,14 @@ internal object StateRuleSelectionUtils {
             ktListOf(
                     Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
                     Triple(atomOf("a"), theory({ "a" }, { "b" }), emptyUnifier),
-                    Triple(
-                            "f"("Var"),
-                            theory({ "f"("a") }),
-                            Substitution.of(varOf("Var"), atomOf("a"))
-                    ),
+                    Triple("f"("Var"), theory({ "f"("a") }), "Var" to "a"),
                     Triple(
                             "f"("Var"),
                             theory(
                                     { "f"("a") },
                                     { "f"("a", "b") }
                             ),
-                            Substitution.of(varOf("Var"), atomOf("a"))
+                            "Var" to "a"
                     )
             )
         }
@@ -65,7 +61,7 @@ internal object StateRuleSelectionUtils {
                                     { "f"("Var") impliedBy "g"("Var") },
                                     { "g"("a") }
                             ),
-                            Substitution.of(varOf("Var"), atomOf("a"))
+                            "Var" to "a"
                     )
             )
         }
@@ -99,8 +95,8 @@ internal object StateRuleSelectionUtils {
                                     { "g"("b") }
                             ),
                             ktListOf(
-                                    Substitution.of(varOf("Var") to atomOf("a")),
-                                    Substitution.of(varOf("Var") to atomOf("b"))
+                                    "Var" to "a",
+                                    "Var" to "b"
                             )
                     ),
                     Triple(
@@ -114,11 +110,10 @@ internal object StateRuleSelectionUtils {
                                     { "h"("d2") }
                             ),
                             ktListOf(
-                                    Substitution.of(varOf("V") to atomOf("c1")),
-                                    Substitution.of(varOf("V") to atomOf("c2")),
-                                    Substitution.of(varOf("V") to atomOf("d1")),
-                                    Substitution.of(varOf("V") to atomOf("d2"))
-                            )
+                                    "V" to "c1",
+                                    "V" to "c2",
+                                    "V" to "d1",
+                                    "V" to "d2")
                     )
             )
         }

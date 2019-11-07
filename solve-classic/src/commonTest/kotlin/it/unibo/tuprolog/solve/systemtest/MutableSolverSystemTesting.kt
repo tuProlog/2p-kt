@@ -1,8 +1,10 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.systemtest
 
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class MutableSolverSystemTesting : SolverFactory {
@@ -17,6 +19,29 @@ class MutableSolverSystemTesting : SolverFactory {
     @Test
     fun testTrue() {
         prototype.testTrue()
+    }
+
+    @Test
+    fun testUnification() {
+        prototype.testUnification()
+    }
+
+    @Test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    fun testSimpleCutAlternatives() {
+        prototype.testSimpleCutAlternatives()
+    }
+
+    @Test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    fun testCutAndConjunction() {
+        prototype.testCutAndConjunction()
+    }
+
+    @Test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    fun testCutConjunctionAndBacktracking() {
+        prototype.testCutConjunctionAndBacktracking()
     }
 
     @Test

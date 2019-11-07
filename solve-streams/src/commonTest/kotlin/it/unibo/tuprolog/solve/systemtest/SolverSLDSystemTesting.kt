@@ -21,6 +21,26 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testUnification() {
+        prototype.testUnification()
+    }
+
+    @Test
+    fun testSimpleCutAlternatives() {
+        prototype.testSimpleCutAlternatives()
+    }
+
+    @Test
+    fun testCutAndConjunction() {
+        prototype.testCutAndConjunction()
+    }
+
+    @Test
+    fun testCutConjunctionAndBacktracking() {
+        prototype.testCutConjunctionAndBacktracking()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

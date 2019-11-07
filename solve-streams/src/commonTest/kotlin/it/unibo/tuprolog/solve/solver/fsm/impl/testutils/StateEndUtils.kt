@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -46,11 +46,11 @@ internal object StateEndUtils {
 
     internal val theRequestSideEffectManager = SideEffectManagerImpl()
     internal val aDifferentSideEffectManager = SideEffectManagerImpl(isChoicePointChild = true).also { assertNotEquals(it, theRequestSideEffectManager) }
-    internal val theIntermediateStateRequest = SolverTestUtils.createSolveRequest(aQuery).copy(
+    internal val theIntermediateStateRequest = createSolveRequest(aQuery).copy(
             context = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
     )
     internal val anIntermediateState = object : IntermediateState {
-        override val solve: Solve.Request<ExecutionContext> = SolverTestUtils.createSolveRequest(aQuery)
+        override val solve: Solve.Request<ExecutionContext> = createSolveRequest(aQuery)
         override fun behave(): Sequence<State> = emptySequence()
         override val hasBehaved: Boolean = false
     }
