@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.extractSignature
@@ -19,7 +19,6 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertCorrec
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOneNextState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverState
-import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
 /**
@@ -32,17 +31,17 @@ internal class StateRuleSelectionTest {
     private val theQueryVariable = Var.of("V")
 
     /** A struct query in the form `f(V)` */
-    private val theQuery = Struct.of("f", theQueryVariable)
+    private val theQuery = prolog { "f"(theQueryVariable) }
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(theQuery.extractSignature(), theQuery.argsList,
             ExecutionContextImpl(
                     libraries = Libraries(Library.of(
                             alias = "testLib",
-                            theory = ClauseDatabase.of({ factOf(structOf("f", atomOf("a"))) })
+                            theory = prolog { theory({ "f"("a") }) }
                     )),
-                    staticKB = ClauseDatabase.of({ factOf(structOf("f", atomOf("b"))) }),
-                    dynamicKB = ClauseDatabase.of({ factOf(structOf("f", atomOf("c"))) })
+                    staticKB = prolog { theory({ "f"("b") }) },
+                    dynamicKB = prolog { theory({ "f"("c") }) }
             ))
 
     @Test
