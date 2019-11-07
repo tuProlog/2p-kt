@@ -203,10 +203,7 @@ interface Prolog : Scope {
     operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
 
     fun Substitution.containsValue(term: Any): Boolean =
-            when (val t = term.toTerm()) {
-                is Var -> this.containsValue(t)
-                else -> throw IllegalArgumentException("Cannot cast $term to ${Var::class}")
-            }
+            this.containsValue(term.toTerm())
 
     companion object {
         fun empty(): Prolog = PrologImpl()
