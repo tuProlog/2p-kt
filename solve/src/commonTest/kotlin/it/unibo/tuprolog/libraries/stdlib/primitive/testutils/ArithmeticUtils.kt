@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
 import it.unibo.tuprolog.libraries.stdlib.primitive.*
@@ -59,278 +59,96 @@ internal object ArithmeticUtils {
 
     /** [Is] primitive test data (input, [Substitution | ErrorType]) */
     internal val isQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            Is.functor,
-                            varOf("Y"),
-                            structOf("*",
-                                    structOf("+",
-                                            numOf(1),
-                                            numOf(2)
-                                    ),
-                                    numOf(3)
-                            )
-                    ) to Substitution.of(varOf("Y"), numOf(9)),
-                    structOf(
-                            Is.functor,
-                            varOf("Result"),
-                            structOf("+", numOf(3), numOf(11.0))
-                    ) to Substitution.of(varOf("Result"), numOf(14.0)),
-                    structOf(
-                            Is.functor,
-                            atomOf("foo"),
-                            numOf(77)
-                    ) to Substitution.failed(),
-                    structOf(
-                            Is.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to Substitution.failed(),
-                    structOf(
-                            Is.functor,
-                            varOf("X"),
-                            structOf(
-                                    "+",
-                                    structOf("+", varOf("N"), numOf(1)),
-                                    structOf("/", numOf(3), numOf(0))
-                            )
-                    ) to InstantiationError::class,
-                    structOf(
-                            Is.functor,
-                            varOf("C"),
-                            structOf("/", numOf(3), numOf(0))
-                    ) to EvaluationError::class
+                    Is.functor("Y", "*"("+"(1, 2), 3)) to ("Y" to 9),
+                    Is.functor("Result", "+"(3, 11.0)) to ("Result" to 14.0),
+                    Is.functor("foo", 77) to Substitution.failed(),
+                    Is.functor(1.0, 1) to Substitution.failed(),
+                    Is.functor("X", "+"("+"("N", 1), "/"(3, 0))) to InstantiationError::class,
+                    Is.functor("C", "/"(3, 0)) to EvaluationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** Equal functor test data (input, [true | false | ErrorType]) */
     internal val equalQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticEqual.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticEqual.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(7), numOf(1))
-                    ) to true,
-                    structOf(
-                            ArithmeticEqual.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to false,
-                    structOf(
-                            ArithmeticEqual.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticEqual.functor,
-                            numOf(1),
-                            structOf(
-                                    "+",
-                                    varOf("N"),
-                                    structOf("/", numOf(3), numOf(0))
-                            )
-                    ) to InstantiationError::class
+                    ArithmeticEqual.functor(1.0, 1) to true,
+                    ArithmeticEqual.functor("*"(3, 2), "-"(7, 1)) to true,
+                    ArithmeticEqual.functor(0.333, "/"(1, 3)) to false,
+                    ArithmeticEqual.functor(0, 1) to false,
+                    ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** NotEqual functor test data (input, [true | false | ErrorType]) */
     internal val notEqualQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticNotEqual.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticNotEqual.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to true,
-                    structOf(
-                            ArithmeticNotEqual.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticNotEqual.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(7), numOf(1))
-                    ) to false,
-                    structOf(
-                            ArithmeticNotEqual.functor,
-                            numOf(1),
-                            structOf(
-                                    "+",
-                                    varOf("N"),
-                                    structOf("/", numOf(3), numOf(0))
-                            )
-                    ) to InstantiationError::class
+                    ArithmeticNotEqual.functor(0, 1) to true,
+                    ArithmeticNotEqual.functor(0.333, "/"(1, 3)) to true,
+                    ArithmeticNotEqual.functor(1.0, 1) to false,
+                    ArithmeticNotEqual.functor("*"(3, 2), "-"(7, 1)) to false,
+                    ArithmeticNotEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(6), numOf(1))
-                    ) to true,
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to false,
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            varOf("X"),
-                            numOf(5)
-                    ) to InstantiationError::class,
-                    structOf(
-                            ArithmeticGreaterThan.functor,
-                            varOf("N"),
-                            structOf("/", numOf(3), numOf(0))
-                    ) to InstantiationError::class
+                    ArithmeticGreaterThan.functor("*"(3, 2), "-"(6, 1)) to true,
+                    ArithmeticGreaterThan.functor(1.0, 1) to false,
+                    ArithmeticGreaterThan.functor(0, 1) to false,
+                    ArithmeticGreaterThan.functor(0.333, "/"(1, 3)) to false,
+                    ArithmeticGreaterThan.functor("X", 5) to InstantiationError::class,
+                    ArithmeticGreaterThan.functor("N", "/"(3, 0)) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val greaterOrEqualQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(7), numOf(1))
-                    ) to true,
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to false,
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            varOf("X"),
-                            numOf(5)
-                    ) to InstantiationError::class,
-                    structOf(
-                            ArithmeticGreaterThanOrEqualTo.functor,
-                            varOf("N"),
-                            structOf("/", numOf(3), numOf(0))
-                    ) to InstantiationError::class
+                    ArithmeticGreaterThanOrEqualTo.functor("*"(3, 2), "-"(7, 1)) to true,
+                    ArithmeticGreaterThanOrEqualTo.functor(1.0, 1) to true,
+                    ArithmeticGreaterThanOrEqualTo.functor(0, 1) to false,
+                    ArithmeticGreaterThanOrEqualTo.functor(0.333, "/"(1, 3)) to false,
+                    ArithmeticGreaterThanOrEqualTo.functor("X", 5) to InstantiationError::class,
+                    ArithmeticGreaterThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to true,
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to false,
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(7), numOf(1))
-                    ) to false,
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            varOf("X"),
-                            numOf(5)
-                    ) to InstantiationError::class,
-                    structOf(
-                            ArithmeticLowerThan.functor,
-                            numOf(1),
-                            structOf(
-                                    "+",
-                                    varOf("N"),
-                                    structOf("/", numOf(3), numOf(0))
-                            )
-                    ) to InstantiationError::class
+                    ArithmeticLowerThan.functor(0, 1) to true,
+                    ArithmeticLowerThan.functor(0.333, "/"(1, 3)) to true,
+                    ArithmeticLowerThan.functor(1.0, 1) to false,
+                    ArithmeticLowerThan.functor("*"(3, 2), "-"(7, 1)) to false,
+                    ArithmeticLowerThan.functor("X", 5) to InstantiationError::class,
+                    ArithmeticLowerThan.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
 
     /** Greater functor test data (input, [true | false | ErrorType]) */
     internal val lowerOrEqualQueryToResult by lazy {
-        Scope.empty {
+        prolog {
             mapOf(
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            numOf(0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            numOf(1.0),
-                            numOf(1)
-                    ) to true,
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            numOf(0.333),
-                            structOf("/", numOf(1), numOf(3))
-                    ) to true,
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            structOf("*", numOf(3), numOf(2)),
-                            structOf("-", numOf(6), numOf(1))
-                    ) to false,
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            varOf("X"),
-                            numOf(5)
-                    ) to InstantiationError::class,
-                    structOf(
-                            ArithmeticLowerThanOrEqualTo.functor,
-                            varOf("N"),
-                            structOf("/", numOf(3), numOf(0))
-                    ) to InstantiationError::class
+                    ArithmeticLowerThanOrEqualTo.functor(0, 1) to true,
+                    ArithmeticLowerThanOrEqualTo.functor(1.0, 1) to true,
+                    ArithmeticLowerThanOrEqualTo.functor(0.333, "/"(1, 3)) to true,
+                    ArithmeticLowerThanOrEqualTo.functor("*"(3, 2), "-"(6, 1)) to false,
+                    ArithmeticLowerThanOrEqualTo.functor("X", 5) to InstantiationError::class,
+                    ArithmeticLowerThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
             ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
         }
     }
