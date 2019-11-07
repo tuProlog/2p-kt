@@ -3,7 +3,7 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.filterInterestingVariables
-import it.unibo.tuprolog.solve.solver.testutils.SolverSLDUtils.assertSolutionsCorrect
+import it.unibo.tuprolog.solve.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
 
 /**

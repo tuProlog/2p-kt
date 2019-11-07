@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals

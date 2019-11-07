@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 

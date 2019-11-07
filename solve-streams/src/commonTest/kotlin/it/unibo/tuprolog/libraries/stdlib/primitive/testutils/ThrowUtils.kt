@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 
 /**
  * Utils singleton to help testing [Throw]

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals

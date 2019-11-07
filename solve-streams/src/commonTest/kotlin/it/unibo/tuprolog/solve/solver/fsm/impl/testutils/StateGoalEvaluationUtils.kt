@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 
 /**
  * Utils singleton to help testing [StateGoalEvaluation]

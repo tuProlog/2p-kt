@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.solver.fsm.State
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

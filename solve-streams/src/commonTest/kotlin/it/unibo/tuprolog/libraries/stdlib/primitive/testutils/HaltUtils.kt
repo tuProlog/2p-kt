@@ -8,7 +8,7 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.exception.HaltException
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 

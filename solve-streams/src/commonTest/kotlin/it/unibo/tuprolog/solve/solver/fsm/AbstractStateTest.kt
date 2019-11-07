@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

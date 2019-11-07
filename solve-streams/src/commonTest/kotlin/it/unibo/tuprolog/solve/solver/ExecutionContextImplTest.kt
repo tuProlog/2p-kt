@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

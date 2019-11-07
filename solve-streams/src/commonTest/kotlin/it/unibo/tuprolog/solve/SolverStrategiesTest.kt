@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.SolverStrategies.Companion.prologStandard
 import it.unibo.tuprolog.solve.solver.orderWithStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Test class for [SolverStrategies.Companion]
@@ -20,8 +20,8 @@ internal class SolverStrategiesTest {
 
     private val aContext = DummyInstances.executionContext
 
-    private val predication = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c")).argsSequence
-    private val clauses = listOf(Fact.of(Atom.of("a")), Fact.of(Atom.of("b")), Fact.of(Atom.of("c"))).asSequence()
+    private val predication = prolog { tupleOf("a", "b", "c") }.argsSequence
+    private val clauses = prolog { ktListOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
 
     @Test
     fun prologStandardPredicationChoiceStrategy() {

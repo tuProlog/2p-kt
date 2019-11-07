@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.solver.testutils
+package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.libraries.Libraries

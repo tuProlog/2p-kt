@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 

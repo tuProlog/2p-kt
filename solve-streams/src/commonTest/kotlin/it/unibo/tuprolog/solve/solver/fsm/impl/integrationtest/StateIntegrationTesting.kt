@@ -23,7 +23,7 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOneNextState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
-import it.unibo.tuprolog.solve.solver.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
