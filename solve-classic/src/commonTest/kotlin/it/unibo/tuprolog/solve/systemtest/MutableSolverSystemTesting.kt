@@ -50,6 +50,12 @@ class MutableSolverSystemTesting : SolverFactory {
         prototype.testMaxDurationParameterAndTimeOutException()
     }
 
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testPrologStandardSearchTreeExample() {
+        prototype.testPrologStandardSearchTreeExample()
+    }
+
     @Test
     fun testConjunction() {
         prototype.testConjunction()

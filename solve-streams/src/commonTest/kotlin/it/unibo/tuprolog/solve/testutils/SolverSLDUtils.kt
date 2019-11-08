@@ -13,11 +13,9 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -26,41 +24,6 @@ import kotlin.collections.listOf as ktListOf
  * @author Enrico
  */
 internal object SolverSLDUtils {
-
-    /**
-     * The clause database used in Prolog Standard reference manual, when explaining solver functionality
-     *
-     * ```prolog
-     * p(X, Y) :- q(X), r(X, Y).
-     * p(X, Y) :- s(X).
-     * s(d).
-     * q(a).
-     * q(b).
-     * q(c).
-     * r(b, b1).
-     * r(c, c1).
-     * ```
-     */
-    private val prologStandardExampleDatabase by lazy {
-        ClauseDatabase.of(
-                {
-                    ruleOf(structOf("p", varOf("X"), varOf("Y")),
-                            structOf("q", varOf("X")),
-                            structOf("r", varOf("X"), varOf("Y"))
-                    )
-                },
-                {
-                    ruleOf(structOf("p", varOf("X"), varOf("Y")),
-                            structOf("s", varOf("X")))
-                },
-                { factOf(structOf("s", atomOf("d"))) },
-                { factOf(structOf("q", atomOf("a"))) },
-                { factOf(structOf("q", atomOf("b"))) },
-                { factOf(structOf("q", atomOf("c"))) },
-                { factOf(structOf("r", atomOf("b"), atomOf("b1"))) },
-                { factOf(structOf("r", atomOf("c"), atomOf("c1"))) }
-        )
-    }
 
     /**
      * Same as [prologStandardExampleDatabase] but first clause contains cut
@@ -180,7 +143,7 @@ internal object SolverSLDUtils {
                                 ) as Substitution.Unifier),
                                 Solution.Yes(it, Substitution.of(
                                         varOf("U") to atomOf("d"),
-                                        varOf("V") to whatever()
+                                        varOf("V") to varOf("Y")
                                 ) as Substitution.Unifier)
                         )
                     },
@@ -239,24 +202,5 @@ internal object SolverSLDUtils {
     /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
     private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request<ExecutionContextImpl>, Iterable<Solution>>) =
             requestSolutionMap.mapKeys { it.key.query to it.key.context }.entries.map { it.toPair() }
-
-    /** Utility method to check if given solutions match */
-    internal fun assertSolutionsCorrect(expected: Iterable<Solution>, actual: Iterable<Solution>) {
-        assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}` Actual: `${actual.toList()}`")
-
-        expected.zip(actual).forEach { (expected, actual) ->
-            assertEquals(expected::class, actual::class, "Expected: `$expected` Actual: `$actual`")
-            assertEquals(expected.query, actual.query, "Expected: `$expected` Actual: `$actual`")
-            assertEquals(expected.substitution.count(), actual.substitution.count(), "Expected: `$expected` Actual: `$actual`")
-
-            val actualVarScope = Scope.of(*actual.substitution.keys.toTypedArray())
-            expected.substitution.forEach { (varExpected, termExpected) ->
-                actual.substitution[actualVarScope.varOf(varExpected.name)].let {
-                    assertNotNull(it)
-                    assertTrue("Expected: `$termExpected` Actual: `$it`") { it.structurallyEquals(termExpected) }
-                }
-            }
-        }
-    }
 
 }

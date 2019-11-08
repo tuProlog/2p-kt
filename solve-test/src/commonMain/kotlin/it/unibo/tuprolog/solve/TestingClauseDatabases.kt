@@ -260,6 +260,55 @@ object TestingClauseDatabases {
             )
         }
     }
+
+    /**
+     * The clause database used in Prolog Standard reference manual, when explaining solver functionality and search-trees
+     *
+     * ```prolog
+     * p(X, Y) :- q(X), r(X, Y).
+     * p(X, Y) :- s(X).
+     * s(d).
+     * q(a).
+     * q(b).
+     * q(c).
+     * r(b, b1).
+     * r(c, c1).
+     * ```
+     */
+    val prologStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                    { "p"("X", "Y") `if` tupleOf("q"("X"), "r"("X", "Y")) },
+                    { "p"("X", "Y") `if` "s"("X") },
+                    { "s"("d") },
+                    { "q"("a") },
+                    { "q"("b") },
+                    { "q"("c") },
+                    { "r"("b", "b1") },
+                    { "r"("c", "c1") }
+            )
+        }
+    }
+
+    /**
+     * Notable [prologStandardExampleDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- p(U, V).
+     * ```
+     */
+    val prologStandardExampleDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    "p"("U", "V").run {
+                        to(ktListOf(
+                                yesSolution(Substitution.of("U" to "b", "V" to "b1")),
+                                yesSolution(Substitution.of("U" to "c", "V" to "c1")),
+                                yesSolution(Substitution.of("U" to "d", "V" to "Y"))
+                        ))
+                    }
+            )
+        }
+    }
 }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */

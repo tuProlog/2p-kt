@@ -73,9 +73,8 @@ internal class AbstractTimedStateTest {
         val currentTime = currentTimeInstant()
         val toBeTested = createTimeState(createTimedRequest()).getCurrentTime()
 
-        assertTrue { currentTime <= toBeTested }
         assertTrue("getCurrentTime() exceeded the $toleranceInMillis tolerance: $currentTime << $toBeTested") {
-            toBeTested < currentTime + toleranceInMillis
+            toBeTested - currentTime < toleranceInMillis
         }
     }
 }

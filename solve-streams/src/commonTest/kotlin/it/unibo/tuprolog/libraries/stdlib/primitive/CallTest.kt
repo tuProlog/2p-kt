@@ -3,8 +3,8 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.solve.assertOverFailure
+import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.testutils.SolverSLDUtils.assertSolutionsCorrect
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -21,7 +21,7 @@ internal class CallTest {
         CallUtils.requestSolutionMap.forEach { (request, solutionList) ->
             val toBeTested = Call.wrappedImplementation(request).toList()
 
-            assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+            assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }
     }
 
@@ -46,7 +46,7 @@ internal class CallTest {
         val (request, solutionList) = CallUtils.requestToSolutionOfCallWithCut
         val toBeTested = Call.wrappedImplementation(request).toList()
 
-        assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+        assertSolutionEquals(solutionList, toBeTested.map { it.solution })
     }
 
     @Test

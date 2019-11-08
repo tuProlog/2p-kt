@@ -3,7 +3,7 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.filterInterestingVariables
-import it.unibo.tuprolog.solve.testutils.SolverSLDUtils.assertSolutionsCorrect
+import it.unibo.tuprolog.solve.assertSolutionEquals
 import kotlin.test.Test
 
 /**
@@ -18,7 +18,7 @@ internal class CatchTest {
         CatchUtils.requestSolutionMap.forEach { (request, solutionList) ->
             val toBeTested = Catch.wrappedImplementation(request).toList()
 
-            assertSolutionsCorrect(solutionList, toBeTested.map { it.solution })
+            assertSolutionEquals(solutionList, toBeTested.map { it.solution })
         }
     }
 
@@ -27,7 +27,7 @@ internal class CatchTest {
         CatchUtils.prologStandardCatchExamples.forEach { (request, solutionList) ->
             val toBeTested = Catch.wrappedImplementation(request).toList()
 
-            assertSolutionsCorrect(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
+            assertSolutionEquals(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
         }
     }
 
@@ -36,7 +36,7 @@ internal class CatchTest {
         CatchUtils.prologStandardThrowExamples.forEach { (request, solutionList) ->
             val toBeTested = Catch.wrappedImplementation(request).toList()
 
-            assertSolutionsCorrect(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
+            assertSolutionEquals(solutionList, toBeTested.map { filterInterestingVariables(it.solution) })
         }
     }
 

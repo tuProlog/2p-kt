@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Utils singleton to help testing [Compute]
@@ -37,9 +38,13 @@ internal object ComputeUtils {
             expectedRequestIssuingInstant: TimeInstant,
             expectedMaxDuration: TimeDuration
     ) {
+        val toleranceInMillis = 10L // 10 ms
         assertEquals(expectedSignature, signature)
         assertEquals(expectedArguments, arguments)
         assertEquals(expectedContext, context)
+        assertTrue("Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from expected one `$expectedRequestIssuingInstant`") {
+            requestIssuingInstant - expectedRequestIssuingInstant < toleranceInMillis
+        }
         assertEquals(expectedRequestIssuingInstant, requestIssuingInstant)
         assertEquals(expectedMaxDuration, executionMaxDuration)
     }

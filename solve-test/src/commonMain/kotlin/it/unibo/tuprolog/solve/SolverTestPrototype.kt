@@ -7,12 +7,15 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrack
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -55,7 +58,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = truthOf(true)
             val solutions = solver.solve(truthOf(true)).toList()
 
-            assertEquals(
+            assertSolutionEquals(
                     ktListOf(query.yesSolution()),
                     solutions
             )
@@ -70,7 +73,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             simpleFactDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
-                assertEquals(solutionList, solutions)
+                assertSolutionEquals(solutionList, solutions)
             }
         }
     }
@@ -83,7 +86,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             simpleCutDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
-                assertEquals(solutionList, solutions)
+                assertSolutionEquals(solutionList, solutions)
             }
         }
     }
@@ -96,7 +99,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             simpleCutAndConjunctionDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
-                assertEquals(solutionList, solutions)
+                assertSolutionEquals(solutionList, solutions)
             }
         }
     }
@@ -109,7 +112,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
-                assertEquals(solutionList, solutions)
+                assertSolutionEquals(solutionList, solutions)
             }
         }
     }
@@ -120,9 +123,22 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val solver = solverOf(staticKB = infiniteComputationDatabase)
 
             infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal, maxDuration = 500L).toList()
+                val solutions = solver.solve(goal, maxDuration = 100L).toList()
 
-                assertEquals(solutionList.single()::class, solutions.single()::class)
+                assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [prologStandardExampleDatabase] */
+    fun testPrologStandardSearchTreeExample() {
+        prolog {
+            val solver = solverOf(staticKB = prologStandardExampleDatabase)
+
+            prologStandardExampleDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
             }
         }
     }

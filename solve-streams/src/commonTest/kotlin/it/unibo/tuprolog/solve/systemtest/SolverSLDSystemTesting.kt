@@ -46,6 +46,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testPrologStandardSearchTreeExample() {
+        prototype.testPrologStandardSearchTreeExample()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }
