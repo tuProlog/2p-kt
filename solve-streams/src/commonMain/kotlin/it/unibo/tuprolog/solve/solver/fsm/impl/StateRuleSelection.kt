@@ -50,8 +50,6 @@ internal class StateRuleSelection(
 
                         // execute internally the sub-request in a sub-state-machine, to see what it will respond
                         subStateExecute(subInitialState).forEach {
-                            yield(it)
-
                             val subState = it.wrappedState
 
                             // find in sub-goal state sequence, the final state responding to current solveRequest
@@ -72,7 +70,8 @@ internal class StateRuleSelection(
                                 }
 
                                 if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
-                            }
+
+                            } else yield(it) // return wrapped subState as is, only if not interested in it
                         }
                         if (cutNextSiblings) return@sequence // cut here other matching rules trial
                     }
