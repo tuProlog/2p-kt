@@ -7,7 +7,6 @@
 
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Scope
 import kotlin.jvm.JvmName
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -51,10 +50,8 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
             assertEquals(expected.substitution.count(), actual.substitution.count(), reportMsg(expected, actual))
             assertEquals(expected.substitution.keys, actual.substitution.keys, reportMsg(expected, actual))
 
-            val actualVarScope = Scope.of(*actual.substitution.keys.toTypedArray())
-
             expected.substitution.forEach { (varExpected, termExpected) ->
-                actual.substitution[actualVarScope.varOf(varExpected.name)]!!.let { termActual ->
+                actual.substitution[varExpected]!!.let { termActual ->
                     assertTrue(reportMsg(termExpected, termActual)) { termActual.structurallyEquals(termExpected) }
 
                     // if the substitution contain variables, compare only names, because instances will be different
