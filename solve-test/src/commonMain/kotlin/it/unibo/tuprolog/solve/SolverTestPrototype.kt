@@ -5,6 +5,8 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
@@ -108,6 +110,19 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 val solutions = solver.solve(goal).toList()
 
                 assertEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [infiniteComputationDatabase] */
+    fun testMaxDurationParameterAndTimeOutException() {
+        prolog {
+            val solver = solverOf(staticKB = infiniteComputationDatabase)
+
+            infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal, maxDuration = 500L).toList()
+
+                assertEquals(solutionList.single()::class, solutions.single()::class)
             }
         }
     }

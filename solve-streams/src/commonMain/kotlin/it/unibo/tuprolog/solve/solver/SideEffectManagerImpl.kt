@@ -57,7 +57,7 @@ internal data class SideEffectManagerImpl(
 
     /** Initializes isChoicePointChild to `false` whatever it was, and adds given [currentContext] to clauseScopedParents */
     internal fun stateInitInitialize(currentContext: ExecutionContextImpl): SideEffectManagerImpl = copy(
-            clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
+            clauseScopedParents = sequenceOf(currentContext) + clauseScopedParents,
             isChoicePointChild = false
     )
 
@@ -73,17 +73,13 @@ internal data class SideEffectManagerImpl(
             isChoicePointChild: Boolean,
             logicalParentRequest: Solve.Request<ExecutionContextImpl>
     ) = copy(
-            clauseScopedParents = sequence { yield(currentContext); yieldAll(clauseScopedParents) },
+            clauseScopedParents = sequenceOf(currentContext) + clauseScopedParents,
             isChoicePointChild = isChoicePointChild,
-            logicalParentRequests = sequence {
-                when (logicalParentRequest) {
-                    in logicalParentRequests -> yieldAll(logicalParentRequests.dropWhile { it != logicalParentRequest })
-                    else -> {
-                        yield(logicalParentRequest)
-                        yieldAll(logicalParentRequests)
-                    }
-                }
+            logicalParentRequests = when (logicalParentRequest) {
+                in logicalParentRequests -> logicalParentRequests.dropWhile { it != logicalParentRequest }
+                else -> sequenceOf(logicalParentRequest) + logicalParentRequests
             }
+
     )
 
     /** Method that updates sideEffects manager to not consider parents older than current first, because entering new "rule-scope" */
@@ -91,10 +87,7 @@ internal data class SideEffectManagerImpl(
 
     /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
     internal fun extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl) = copy(
-            clauseScopedParents = sequence {
-                yieldAll(clauseScopedParents)
-                yieldAll(upperScopeSideEffectsManager.clauseScopedParents)
-            }
+            clauseScopedParents = clauseScopedParents + upperScopeSideEffectsManager.clauseScopedParents
     )
 
     /**

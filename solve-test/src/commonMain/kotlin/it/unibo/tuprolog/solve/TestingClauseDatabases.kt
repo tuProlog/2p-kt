@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import kotlin.collections.listOf as ktListOf
 
@@ -222,6 +223,38 @@ object TestingClauseDatabases {
                                 yesSolution("X" to 2),
                                 yesSolution("X" to 4),
                                 yesSolution("X" to 6)
+                        ))
+                    }
+            )
+        }
+    }
+
+    /**
+     * A database containing the following rules:
+     * ```prolog
+     * a :- b.
+     * b :- a.
+     * ```
+     */
+    val infiniteComputationDatabase = prolog {
+        theory(
+                { "a" `if` "b" },
+                { "b" `if` "a" }
+        )
+    }
+
+    /**
+     * Notable [infiniteComputationDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- a(X).
+     * ```
+     */
+    val infiniteComputationDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    atomOf("a").run {
+                        to(ktListOf(
+                                haltSolution(TimeOutException(context = DummyInstances.executionContext, exceededDuration = 0))
                         ))
                     }
             )

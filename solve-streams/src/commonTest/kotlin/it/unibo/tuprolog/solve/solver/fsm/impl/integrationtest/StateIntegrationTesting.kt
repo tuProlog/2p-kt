@@ -3,10 +3,13 @@ package it.unibo.tuprolog.solve.solver.fsm.impl.integrationtest
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
@@ -89,5 +92,23 @@ internal class StateIntegrationTesting {
     @Test
     fun queriesWithCutConjunctionAndBacktrackingDatabase() {
         assertCorrectSolutions(cutConjunctionAndBacktrackingDatabase, cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions)
+    }
+
+    @Test
+    fun timeoutExceptionCorrectlyThrown() {
+        infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+            val maxDuration = 500L
+            val request = Solve.Request(
+                    goal.extractSignature(),
+                    goal.argsList,
+                    ExecutionContextImpl(staticKB = infiniteComputationDatabase),
+                    executionMaxDuration = maxDuration
+            )
+            val nextStates = request.executeFSM()
+
+            assertOverFilteredStateInstances<FinalState>(nextStates, { it.solve.solution.query == goal }) { index, finalState ->
+                assertEquals(solutionList[index]::class, finalState.solve.solution::class)
+            }
+        }
     }
 }

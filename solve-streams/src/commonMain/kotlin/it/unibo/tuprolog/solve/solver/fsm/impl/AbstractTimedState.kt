@@ -22,7 +22,7 @@ internal abstract class AbstractTimedState(
 ) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
 
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
-    private val stateCurrentTime by lazy { getCurrentTime() }
+    private val stateCurrentTime by lazy { currentTimeInstant() }
 
     override fun behave(): Sequence<State> = when {
         solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
@@ -41,7 +41,7 @@ internal abstract class AbstractTimedState(
     /** Called only if executionTimeout has not been reached yet, and computation should go on */
     protected abstract fun behaveTimed(): Sequence<State>
 
-    override fun getCurrentTime(): TimeInstant = currentTimeInstant()
+    override fun getCurrentTime(): TimeInstant = stateCurrentTime
 
     /** A function to check if time for execution has ended */
     private fun timeIsOver(currentDuration: TimeDuration, maxDuration: TimeDuration) =

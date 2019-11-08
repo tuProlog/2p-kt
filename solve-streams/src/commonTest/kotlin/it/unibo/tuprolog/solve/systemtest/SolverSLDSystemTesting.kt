@@ -41,6 +41,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testMaxDurationParameterAndTimeOutException() {
+        prototype.testMaxDurationParameterAndTimeOutException()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

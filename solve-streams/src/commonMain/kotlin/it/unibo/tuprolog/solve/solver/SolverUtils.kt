@@ -73,6 +73,7 @@ internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
                         ?.creatingNewRequest(context, isChoicePointChild, logicalParentRequest)
                         ?: context.sideEffectManager
         ),
+        requestIssuingInstant = currentTime,
         executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
 )
 

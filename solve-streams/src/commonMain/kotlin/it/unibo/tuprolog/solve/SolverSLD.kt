@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
  *
  * @author Enrico
  */
-internal class SolverSLD(
+data class SolverSLD(
         override val libraries: Libraries = Libraries(),
         override val flags: PrologFlags = emptyMap(),
         override val staticKB: ClauseDatabase = ClauseDatabase.empty(),

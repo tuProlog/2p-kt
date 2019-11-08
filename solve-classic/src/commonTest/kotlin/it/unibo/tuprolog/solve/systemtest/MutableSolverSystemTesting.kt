@@ -27,21 +27,27 @@ class MutableSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testSimpleCutAlternatives() {
         prototype.testSimpleCutAlternatives()
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testCutAndConjunction() {
         prototype.testCutAndConjunction()
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test
+    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testCutConjunctionAndBacktracking() {
         prototype.testCutConjunctionAndBacktracking()
+    }
+
+    @Test
+    @Ignore // TODO: 08/11/2019 maxDuration parameter not honored, implement correctly that feature (issue #53)
+    fun testMaxDurationParameterAndTimeOutException() {
+        prototype.testMaxDurationParameterAndTimeOutException()
     }
 
     @Test
