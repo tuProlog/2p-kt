@@ -1,9 +1,11 @@
-package it.unibo.tuprolog.libraries.stdlib.primitive
+package it.unibo.tuprolog.libraries.stdlib.primitive.integrationtest
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
+import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils
 import it.unibo.tuprolog.theory.ClauseDatabase

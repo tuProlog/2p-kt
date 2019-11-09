@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils.assertErrorCauseChainComputedCorrectly
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import kotlin.test.Test
 

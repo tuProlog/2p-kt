@@ -102,21 +102,6 @@ internal class StateIntegrationTesting {
     }
 
     @Test
-    fun prologStandardSearchTreeExample() {
-        assertSolutionsCorrect(prologStandardExampleDatabaseNotableGoalToSolution, prologStandardExampleDatabase)
-    }
-
-    @Test
-    fun prologStandardSearchTreeWithCutExample() {
-        assertSolutionsCorrect(prologStandardExampleWithCutDatabaseNotableGoalToSolution, prologStandardExampleWithCutDatabase)
-    }
-
-    @Test
-    fun testBacktrackingWithCustomReverseListImplementation() {
-        assertSolutionsCorrect(customReverseListDatabaseNotableGoalToSolution, customReverseListDatabase)
-    }
-
-    @Test
     fun timeoutExceptionCorrectlyThrown() {
         infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
             val maxDuration = 100L
@@ -132,5 +117,20 @@ internal class StateIntegrationTesting {
                 assertEquals(solutionList[index]::class, finalState.solve.solution::class)
             }
         }
+    }
+
+    @Test
+    fun prologStandardSearchTreeExample() {
+        assertSolutionsCorrect(prologStandardExampleDatabaseNotableGoalToSolution, prologStandardExampleDatabase)
+    }
+
+    @Test
+    fun prologStandardSearchTreeWithCutExample() {
+        assertSolutionsCorrect(prologStandardExampleWithCutDatabaseNotableGoalToSolution, prologStandardExampleWithCutDatabase)
+    }
+
+    @Test
+    fun testBacktrackingWithCustomReverseListImplementation() {
+        assertSolutionsCorrect(customReverseListDatabaseNotableGoalToSolution, customReverseListDatabase)
     }
 }

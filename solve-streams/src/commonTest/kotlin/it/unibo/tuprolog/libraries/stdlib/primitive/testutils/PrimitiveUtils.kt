@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
  *
  * @author Enrico
  */
-internal object PrimitivesUtils {
+internal object PrimitiveUtils {
 
     /**
      * Utility function to test whether the cause of errors generated is correctly filled
