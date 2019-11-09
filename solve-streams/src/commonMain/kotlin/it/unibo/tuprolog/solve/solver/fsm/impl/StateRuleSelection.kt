@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -35,14 +36,13 @@ internal class StateRuleSelection(
 
             else -> with(solve.context) { matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy) }
                     .map { it.freshCopy() }
-                    .map { refreshedRule ->
+                    .forEachWithLookahead { refreshedRule, hasAlternatives ->
                         val unifyingSubstitution = currentGoal mguWith refreshedRule.head
 
                         val wellFormedRuleBody = refreshedRule.body.apply(unifyingSubstitution) as Struct
 
-                        solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
+                        val subSolveRequest = solve.newSolveRequest(wellFormedRuleBody, unifyingSubstitution, isChoicePointChild = isChoicePoint)
 
-                    }.forEachWithLookahead { subSolveRequest, hasAlternatives ->
                         val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope(), executionStrategy)
                                 .also { yield(it.asAlreadyExecuted()) }
 
@@ -64,7 +64,7 @@ internal class StateRuleSelection(
                                             .extendParentScopeWith(solve.context.sideEffectManager)
 
                                     yield(stateEnd(subState.solve.copy(
-                                            solution = subState.solve.solution.removeQueryVarSubstitutions(),
+                                            solution = subState.solve.solution.removeSubstitutionFor(refreshedRule.variables),
                                             sideEffectManager = extendedScopeSideEffectManager
                                     )))
                                 }
@@ -100,8 +100,8 @@ internal class StateRuleSelection(
          * Utility function to eliminate from solution substitution non meaningful variables
          * for the "upper scope" query, (i.e. variables introduced only for solving the "current" query)
          */
-        private fun Solution.removeQueryVarSubstitutions() = when (this) {
-            is Solution.Yes -> copy(substitution = substitution - query.variables.asIterable())
+        private fun Solution.removeSubstitutionFor(unusedVariables: Sequence<Var>) = when (this) {
+            is Solution.Yes -> copy(substitution = substitution - unusedVariables.asIterable())
             else -> this
         }
     }

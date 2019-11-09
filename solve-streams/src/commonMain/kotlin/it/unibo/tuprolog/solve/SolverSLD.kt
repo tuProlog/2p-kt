@@ -34,7 +34,7 @@ data class SolverSLD(
                             executionMaxDuration = maxDuration
                     ),
                     executionStrategy
-            ).map { it.solution.calculateAnswerSubstitution() }
+            ).map { it.solution }
 
 
     internal companion object {
@@ -48,12 +48,5 @@ data class SolverSLD(
                         .filterIsInstance<FinalState>()
                         .filter { it.solve.solution.query == goalRequest.query }
                         .map { it.solve }
-
-        // this should become useless when substitutions will be cleaned, while performing resolution
-        /** Utility function to calculate answerSubstitution on [Solution.Yes] */
-        private fun Solution.calculateAnswerSubstitution() = when (this) {
-            is Solution.Yes -> copy(substitution = substitution.filter { (`var`, _) -> `var` in query.variables })
-            else -> this
-        }
     }
 }

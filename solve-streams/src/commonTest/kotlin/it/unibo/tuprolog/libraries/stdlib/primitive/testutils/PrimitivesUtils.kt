@@ -47,12 +47,4 @@ internal object PrimitivesUtils {
             actualCause = actualCause?.cause
         }
     }
-
-    /** Utility method to filter interesting variables returned from a primitive (so without solver filter) */
-    internal fun filterInterestingVariables(solution: Solution) = when (solution) {
-        is Solution.Yes ->
-            // filter substitution
-            solution.copy(substitution = solution.substitution.filter { (`var`, _) -> `var` in solution.query.variables })
-        else -> solution
-    }
 }

@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitivesUtils
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.testutils.SolverSLDUtils
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -42,7 +41,7 @@ internal class SolverSLDTest {
             val (query, startContext) = input
 
             val toBeTested = SolverSLD.solve(Solve.Request(query.extractSignature(), query.argsList, startContext))
-                    .map { PrimitivesUtils.filterInterestingVariables(it.solution) }.toList()
+                    .map { it.solution }.toList()
 
             assertSolutionEquals(expectedOutput, toBeTested)
         }
