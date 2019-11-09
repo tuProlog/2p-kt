@@ -6,12 +6,16 @@ import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
@@ -100,6 +104,16 @@ internal class StateIntegrationTesting {
     @Test
     fun prologStandardSearchTreeExample() {
         assertSolutionsCorrect(prologStandardExampleDatabaseNotableGoalToSolution, prologStandardExampleDatabase)
+    }
+
+    @Test
+    fun prologStandardSearchTreeWithCutExample() {
+        assertSolutionsCorrect(prologStandardExampleWithCutDatabaseNotableGoalToSolution, prologStandardExampleWithCutDatabase)
+    }
+
+    @Test
+    fun testBacktrackingWithCustomReverseListImplementation() {
+        assertSolutionsCorrect(customReverseListDatabaseNotableGoalToSolution, customReverseListDatabase)
     }
 
     @Test

@@ -51,6 +51,16 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testPrologStandardSearchTreeWithCutExample() {
+        prototype.testPrologStandardSearchTreeWithCutExample()
+    }
+
+    @Test
+    fun testBacktrackingWithCustomReverseListImplementation() {
+        prototype.testBacktrackingWithCustomReverseListImplementation()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

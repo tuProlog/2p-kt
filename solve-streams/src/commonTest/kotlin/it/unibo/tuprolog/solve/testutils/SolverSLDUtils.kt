@@ -13,9 +13,10 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabase
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -25,101 +26,7 @@ import kotlin.collections.listOf as ktListOf
  */
 internal object SolverSLDUtils {
 
-    /**
-     * Same as [prologStandardExampleDatabase] but first clause contains cut
-     *
-     * ```prolog
-     * p(X, Y) :- q(X), !, r(X, Y).
-     * p(X, Y) :- s(X).
-     * s(d).
-     * q(a).
-     * q(b).
-     * q(c).
-     * r(b, b1).
-     * r(c, c1).
-     * ```
-     */
-    private val prologStandardExampleDatabaseWithCut by lazy {
-        ClauseDatabase.of(
-                Scope.empty {
-                    ruleOf(structOf("p", varOf("X"), varOf("Y")),
-                            structOf("q", varOf("X")),
-                            atomOf("!"),
-                            structOf("r", varOf("X"), varOf("Y"))
-                    )
-                },
-                *prologStandardExampleDatabase.clauses.drop(1).toTypedArray()
-        )
-    }
-
-    /**
-     * A database that exercises cut functionality
-     *
-     * ```prolog
-     * p(X, Y) :- q(X), !, r(Y).
-     * p(X, Y) :- s(X).
-     * s(d).
-     * q(a).
-     * q(b).
-     * q(c).
-     * r(b1).
-     * r(c1).
-     * ```
-     */
-    private val cutTestingDatabase by lazy {
-        ClauseDatabase.of(
-                {
-                    ruleOf(structOf("p", varOf("X"), varOf("Y")),
-                            structOf("q", varOf("X")),
-                            atomOf("!"),
-                            structOf("r", varOf("Y"))
-                    )
-                },
-                {
-                    ruleOf(structOf("p", varOf("X"), varOf("Y")),
-                            structOf("s", varOf("X")))
-                },
-                { factOf(structOf("s", atomOf("d"))) },
-                { factOf(structOf("q", atomOf("a"))) },
-                { factOf(structOf("q", atomOf("b"))) },
-                { factOf(structOf("q", atomOf("c"))) },
-                { factOf(structOf("r", atomOf("b1"))) },
-                { factOf(structOf("r", atomOf("c1"))) }
-        )
-    }
-
-    /**
-     * A database that should test backtracking functionality
-     *
-     * ```prolog
-     * my_reverse(L1,L2) :- my_rev(L1,L2,[]).
-     *
-     * my_rev([],L2,L2) :- !.
-     * my_rev([X|Xs],L2,Acc) :- my_rev(Xs,L2,[X|Acc]).
-     * ```
-     */
-    private val backtrackingTestDatabase by lazy {
-        ClauseDatabase.of(
-                {
-                    ruleOf(
-                            structOf("my_reverse", varOf("L1"), varOf("L2")),
-                            structOf("my_rev", varOf("L1"), varOf("L2"), listOf())
-                    )
-                },
-                {
-                    ruleOf(
-                            structOf("my_rev", listOf(), varOf("L2"), varOf("L2")),
-                            atomOf("!")
-                    )
-                },
-                {
-                    ruleOf(
-                            structOf("my_rev", listFrom(ktListOf(varOf("X")), varOf("Xs")), varOf("L2"), varOf("Acc")),
-                            structOf("my_rev", varOf("Xs"), varOf("L2"), listFrom(ktListOf(varOf("X")), varOf("Acc")))
-                    )
-                }
-        )
-    }
+    // TODO: 08/11/2019 remove this whole class when all primitive testing databases will be moved to common testing
 
     /** Contains context and goal requests to be launched with solver, and corresponding expected solutions */
     internal val contextAndRequestToSolutionMap by lazy {
@@ -151,34 +58,16 @@ internal object SolverSLDUtils {
                         (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
-                                        theory = prologStandardExampleDatabaseWithCut,
+                                        theory = prologStandardExampleWithCutDatabase,
                                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                                 ))
                         )) to ktListOf(Solution.No(it))
-                    },
-                    structOf("p", varOf("U"), varOf("V")).let {
-                        (it to ExecutionContextImpl(
-                                libraries = Libraries(Library.of(
-                                        alias = "testLib",
-                                        theory = cutTestingDatabase,
-                                        primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-                                ))
-                        )) to ktListOf(
-                                Solution.Yes(it, Substitution.of(
-                                        varOf("U") to atomOf("a"),
-                                        varOf("V") to atomOf("b1")
-                                ) as Substitution.Unifier),
-                                Solution.Yes(it, Substitution.of(
-                                        varOf("U") to atomOf("a"),
-                                        varOf("V") to atomOf("c1")
-                                ) as Substitution.Unifier)
-                        )
                     },
                     structOf("my_reverse", listOf((1..4).map(::numOf)), varOf("L")).let {
                         (it to ExecutionContextImpl(
                                 libraries = Libraries(Library.of(
                                         alias = "testLib",
-                                        theory = backtrackingTestDatabase,
+                                        theory = customReverseListDatabase,
                                         primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                                 ))
                         )) to ktListOf(

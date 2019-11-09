@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
@@ -144,6 +145,7 @@ object TestingClauseDatabases {
      * A database containing the following rules:
      * ```prolog
      * f(X, Y) :- q(X), !, r(Y).
+     * f(X, Y) :- r(X).
      * q(a).
      * q(b).
      * r(a1).
@@ -153,6 +155,7 @@ object TestingClauseDatabases {
     val simpleCutAndConjunctionDatabase = prolog {
         theory(
                 { "f"("X", "Y") `if` tupleOf("q"("X"), "!", "r"("Y")) },
+                { "f"("X", "Y") `if` "r"("X") },
                 { "q"("a") },
                 { "q"("b") },
                 { "r"("a1") },
@@ -305,6 +308,82 @@ object TestingClauseDatabases {
                                 yesSolution(Substitution.of("U" to "c", "V" to "c1")),
                                 yesSolution(Substitution.of("U" to "d", "V" to "Y"))
                         ))
+                    }
+            )
+        }
+    }
+
+    /**
+     * Same as [prologStandardExampleDatabase] but first clause contains cut
+     *
+     * ```prolog
+     * p(X, Y) :- q(X), !, r(X, Y).
+     * p(X, Y) :- s(X).
+     * s(d).
+     * q(a).
+     * q(b).
+     * q(c).
+     * r(b, b1).
+     * r(c, c1).
+     * ```
+     */
+    val prologStandardExampleWithCutDatabase by lazy {
+        prolog {
+            theory({ "p"("X", "Y") `if` tupleOf("q"("X"), "!", "r"("X", "Y")) }) +
+                    theoryOf(*prologStandardExampleDatabase.clauses.drop(1).toTypedArray())
+        }
+    }
+
+    /**
+     * Notable [prologStandardExampleWithCutDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- p(U, V).
+     * ```
+     */
+    val prologStandardExampleWithCutDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    "p"("U", "V").run {
+                        to(ktListOf(noSolution()))
+                    }
+            )
+        }
+    }
+
+    /**
+     * A database that implements custom "reverse" over lists; it should test backtracking functionality
+     *
+     * ```prolog
+     * my_reverse(L1, L2) :- my_rev(L1, L2, []).
+     *
+     * my_rev([], L2, L2) :- !.
+     * my_rev([X | Xs], L2, Acc) :- my_rev(Xs, L2, [X | Acc]).
+     * ```
+     */
+    val customReverseListDatabase by lazy {
+        prolog {
+            theory(
+                    { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
+                    { "my_rev"(List.empty(), "L2", "L2") `if` "!" },
+                    {
+                        "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
+                                "my_rev"("Xs", "L2", consOf("X", "Acc"))
+                    }
+            )
+        }
+    }
+
+    /**
+     * Notable [customReverseListDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- p(U, V).
+     * ```
+     */
+    val customReverseListDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    "my_reverse"(listOf(1, 2, 3, 4), "L").run {
+                        to(ktListOf(yesSolution("L" to listOf(4, 3, 2, 1))))
                     }
             )
         }

@@ -3,19 +3,22 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -117,7 +120,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    /** Test with [infiniteComputationDatabase] */
+    /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
     fun testMaxDurationParameterAndTimeOutException() {
         prolog {
             val solver = solverOf(staticKB = infiniteComputationDatabase)
@@ -130,12 +133,38 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    /** Test with [prologStandardExampleDatabase] */
+    /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeExample() {
         prolog {
             val solver = solverOf(staticKB = prologStandardExampleDatabase)
 
             prologStandardExampleDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
+    fun testPrologStandardSearchTreeWithCutExample() {
+        prolog {
+            val solver = solverOf(staticKB = prologStandardExampleWithCutDatabase)
+
+            prologStandardExampleWithCutDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [customReverseListDatabaseNotableGoalToSolution] */
+    fun testBacktrackingWithCustomReverseListImplementation() {
+        prolog {
+            val solver = solverOf(staticKB = customReverseListDatabase)
+
+            customReverseListDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
                 assertSolutionEquals(solutionList, solutions)

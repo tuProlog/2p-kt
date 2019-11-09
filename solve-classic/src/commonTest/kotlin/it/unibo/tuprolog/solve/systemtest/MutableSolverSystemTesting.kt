@@ -56,6 +56,18 @@ class MutableSolverSystemTesting : SolverFactory {
         prototype.testPrologStandardSearchTreeExample()
     }
 
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testPrologStandardSearchTreeWithCutExample() {
+        prototype.testPrologStandardSearchTreeWithCutExample()
+    }
+
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testBacktrackingWithCustomReverseListImplementation() {
+        prototype.testBacktrackingWithCustomReverseListImplementation()
+    }
+
     @Test
     fun testConjunction() {
         prototype.testConjunction()
