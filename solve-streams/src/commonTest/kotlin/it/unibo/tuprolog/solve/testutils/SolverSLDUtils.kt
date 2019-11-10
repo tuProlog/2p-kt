@@ -10,12 +10,12 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.HaltUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ThrowUtils
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.SolverSLD
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.prologStandardExampleWithCutDatabase
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import kotlin.collections.listOf as ktListOf
 

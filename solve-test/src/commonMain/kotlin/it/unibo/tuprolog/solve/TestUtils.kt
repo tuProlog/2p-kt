@@ -7,10 +7,22 @@
 
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import kotlin.jvm.JvmName
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
+
+/** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
+fun Struct.yesSolution(withSubstitution: Substitution = Substitution.empty()) = Solution.Yes(this, withSubstitution as Substitution.Unifier)
+
+/** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
+fun Struct.noSolution() = Solution.No(this)
+
+/** Utility function to help writing tests; it creates a [Solution.Halt] with receiver query and provided exception */
+fun Struct.haltSolution(withException: TuPrologRuntimeException) = Solution.Halt(this, withException)
 
 /** Utility function to assert [assertion] over thrown exception by [throwExpression] */
 inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit, assertion: (E) -> Unit) =
