@@ -1,16 +1,20 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ConjunctionUtils.failedRequests
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ConjunctionUtils.myRequestToSolutions
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ConjunctionUtils.trueAndTrueSolveRequest
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ConjunctionUtils.twoMatchesDB
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.collections.listOf as ktListOf
 
 /**
  * Test class for [Conjunction]
@@ -19,90 +23,58 @@ import kotlin.test.assertTrue
  */
 internal class ConjunctionTest {
 
-    private val multipleMatchesDatabase = ClauseDatabase.of(
-            { ruleOf(structOf("f", atomOf("x")), structOf("failed")) },
-            { ruleOf(structOf("f", atomOf("y")), structOf("a", atomOf("b"))) },
-            { factOf(structOf("f", atomOf("z"))) },
-            { factOf(structOf("a", atomOf("b"))) }
-    )
-
-    private val fAnonymousQuery = Struct.of("f", Var.anonymous())
-    private val trueAndTrueSolveRequest = createSolveRequest(Tuple.of(Truth.`true`(), Truth.`true`()), multipleMatchesDatabase)
-    private val multipleSolutionRequest = createSolveRequest(Tuple.of(fAnonymousQuery, Truth.`true`()), multipleMatchesDatabase)
-
-    private val failedRequests by lazy {
-        listOf(
-                createSolveRequest(Tuple.of(Truth.fail(), fAnonymousQuery), multipleMatchesDatabase),
-                createSolveRequest(Tuple.of(fAnonymousQuery, Truth.fail()), multipleMatchesDatabase),
-                createSolveRequest(Tuple.of(fAnonymousQuery, fAnonymousQuery, Truth.fail()), multipleMatchesDatabase)
-        )
-    }
-
     @Test
     fun conjunctionOfTrueReturnsTrue() {
         val responses = Conjunction.wrappedImplementation(trueAndTrueSolveRequest)
 
-        assertEquals(1, responses.count())
-        assertTrue { responses.single().solution is Solution.Yes }
+        assertOnlyOneSolution(responses, trueAndTrueSolveRequest.query.yesSolution())
     }
 
     @Test
-    fun conjunctionReturnsCorrectlyMultipleSolutionsOnLeftSide() {
-        val responses = Conjunction.wrappedImplementation(multipleSolutionRequest)
+    fun conjunctionComputesCorrectlyAllSolutions() {
+        myRequestToSolutions.forEach { (goal, solutions) ->
+            val responses = Conjunction.wrappedImplementation(createSolveRequest(goal, twoMatchesDB)).asIterable()
 
-        assertEquals(2, responses.count())
-        responses.forEach { assertTrue { it.solution is Solution.Yes } }
-    }
-
-    @Test
-    fun conjunctionFailsIfSomePredicateIsNotTrue() {
-        failedRequests.forEach { request ->
-            val responses = Conjunction.wrappedImplementation(request)
-
-            assertTrue { responses.map(Solve.Response::solution).all { it is Solution.No } }
+            assertSolutionEquals(solutions, responses.map { it.solution })
         }
     }
 
-//    @Test
-//    fun conjunctionReturnsResponseContextWithOnlySubstitutionEnriched() {
-//        val aScope = Scope.of("L", "R")
-//        val firstSubstitution = Substitution.of(aScope.varOf("L"), Atom.of("first"))
-//        val secondSubstitution = Substitution.of(aScope.varOf("R"), Atom.of("second"))
-//        val aToBeCutContext = DummyInstances.executionContext.copy()
-//        val leftPrimitive = object : PrimitiveWrapper(Signature("left", 0)) {
-//            override val uncheckedImplementation: Primitive = {
-//                it as Solve.Request<ExecutionContextImpl>
-//
-//                sequenceOf(
-//                        Solve.Response(
-//                                Solution.Yes(it.signature, it.arguments, (it.context.substitution + firstSubstitution).asUnifier()),
-//                                context = it.context.copy(
-//                                        substitution = (it.context.substitution + firstSubstitution).asUnifier(),
-//                                        toCutContextsParent = sequenceOf(aToBeCutContext)
-//                                )
-//                        )
-//                )
-//            }
-//        }
-//        val rightPrimitive = object : PrimitiveWrapper(Signature("right", 0)) {
-//            override val uncheckedImplementation: Primitive = {
-//                it as Solve.Request<ExecutionContextImpl>
-//                sequenceOf(
-//                        Solve.Response(
-//                                Solution.Yes(it.signature, it.arguments, (it.context.substitution + secondSubstitution).asUnifier()),
-//                                context = it.context.copy(substitution = (it.context.substitution + secondSubstitution).asUnifier())
-//                        )
-//                )
-//            }
-//        }
-//        val request = createSolveRequest(
-//                Tuple.of(Atom.of("left"), Atom.of("right")),
-//                primitives = mapOf(*listOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
-//        )
-//
-//        val responses = Conjunction.primitive(request).toList()
-//        assertEquals(1, responses.count())
-//        assertEquals(Substitution.of(firstSubstitution, secondSubstitution), responses.single().context!!.substitution)
-//        assertSame(aToBeCutContext, responses.single().context!!.toCutContextsParent.single())
-//    }
+    @Test
+    fun conjunctionFailsIfSomePredicateFails() {
+        failedRequests.forEach { request ->
+            val responses = Conjunction.wrappedImplementation(request)
+
+            assertOnlyOneSolution(responses, request.query.noSolution())
+        }
+    }
+
+    @Test
+    fun conjunctionExecutesLeftAndRightArgumentsRemovingNotReachableVariablesExceptForRightAdded() {
+        prolog {
+            val preRequestSubstitution = "PreRequest" to "a"
+            val firstSubstitution = "L" to "first"
+            val secondSubstitution = "R" to "second"
+
+            val leftPrimitive = object : PrimitiveWrapper<ExecutionContext>("left", 0) {
+                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
+                        sequenceOf(request.replySuccess(firstSubstitution))
+            }
+            val rightPrimitive = object : PrimitiveWrapper<ExecutionContext>("right", 0) {
+                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
+                        sequenceOf(request.replySuccess(secondSubstitution))
+            }
+
+            val goal = "left" and "right"
+            val request = Solve.Request(goal.extractSignature(), goal.argsList, ExecutionContextImpl(
+                    substitution = preRequestSubstitution,
+                    libraries = Libraries(Library.of(alias = "conjunction.test",
+                            primitives = mapOf(*ktListOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
+                    ))
+            ))
+
+            val responses = Conjunction.wrappedImplementation(request)
+
+            assertOnlyOneSolution(responses, request.query.yesSolution(secondSubstitution))
+        }
+    }
 }

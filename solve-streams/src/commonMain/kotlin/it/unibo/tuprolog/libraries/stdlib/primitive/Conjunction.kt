@@ -22,11 +22,12 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                     arguments.asSequence().orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
                 }.toList()
 
+                // no preparation for execution needed in this implementation because, StateInit always does it before
                 val leftSubSolveRequest = request.newSolveRequest(leftSubGoal as Struct)
 
                 var cutExecuted = false
                 SolverSLD.solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
-                    if (leftResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
+                    if (leftResponse.sideEffectManager?.shouldCutExecuteInPrimitive() == true)
                         cutExecuted = true
 
                     when (leftResponse.solution) {
@@ -39,7 +40,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                             )
 
                             SolverSLD.solve(rightSubSolveRequest).forEachWithLookahead { rightResponse, hasRHSAlternatives ->
-                                if (rightResponse.sideEffectManager?.run { shouldCutExecuteInPrimitive() } == true)
+                                if (rightResponse.sideEffectManager?.shouldCutExecuteInPrimitive() == true)
                                     cutExecuted = true
 
                                 // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
