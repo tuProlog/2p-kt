@@ -63,7 +63,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val solutions = solver.solve(truthOf(true)).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yesSolution()),
+                    ktListOf(query.yes()),
                     solutions
             )
         }
@@ -183,14 +183,14 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                                 (goal and true).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
                                 (true and goal).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
 
-                                (goal and false).run { to(ktListOf(noSolution())) },
-                                (false and goal).run { to(ktListOf(noSolution())) }
+                                (goal and false).hasSolutions({ no() }),
+                                (false and goal).hasSolutions({ no() })
                         )
                     }
                 }
             }
 
-            allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions)->
+            allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
                 val solver = solverOf(staticKB = database)
 
                 goalToSolutions.forEach { (goal, solutionList) ->

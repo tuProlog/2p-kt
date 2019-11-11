@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.haltSolution
-import it.unibo.tuprolog.solve.noSolution
+import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDifferentSideEffectManager
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKB
@@ -176,20 +176,20 @@ internal class StateEndTest {
         val differentContextImplInstance = ExecutionContextImpl(sideEffectManager = aDifferentSideEffectManager).also { assertNotEquals(it, contextImplInstance) }
 
         val endStateForwardingExceptionalResponseWithNonNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
-                aQuery.haltSolution(TuPrologRuntimeException(context = contextImplInstance)),
+                aQuery.halt(TuPrologRuntimeException(context = contextImplInstance)),
                 sideEffectManager = aDifferentSideEffectManager
         ))
         assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNonNullSideEffectManager.solve.sideEffectManager,
                 "stateEnd() should use provided Response SideEffectManager if not null")
 
         val endStateForwardingExceptionalResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
-                aQuery.haltSolution(TuPrologRuntimeException(context = differentContextImplInstance))
+                aQuery.halt(TuPrologRuntimeException(context = differentContextImplInstance))
         ))
         assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNullSideEffectManager.solve.sideEffectManager,
                 "stateEnd() should use exception context's SideEffectManager if Response one is null")
 
         val endStateForwardingResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
-                aQuery.noSolution()
+                aQuery.no()
         ))
         assertEquals(theRequestSideEffectManager, endStateForwardingResponseWithNullSideEffectManager.solve.sideEffectManager,
                 "stateEnd() should use current state solve.context to retrieve a SideEffectManager if no other available")

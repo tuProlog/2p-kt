@@ -31,9 +31,9 @@ internal object StateEndUtils {
     /** The exception inside [anExceptionalResponse] */
     internal val anException = HaltException(context = DummyInstances.executionContext)
 
-    internal val aYesResponse by lazy { Solve.Response(aQuery.yesSolution()) }
-    internal val aNoResponse by lazy { Solve.Response(aQuery.noSolution()) }
-    internal val anExceptionalResponse by lazy { Solve.Response(aQuery.haltSolution(anException)) }
+    internal val aYesResponse by lazy { Solve.Response(aQuery.yes()) }
+    internal val aNoResponse by lazy { Solve.Response(aQuery.no()) }
+    internal val anExceptionalResponse by lazy { Solve.Response(aQuery.halt(anException)) }
 
     internal val allResponseTypes by lazy { listOf(aYesResponse, aNoResponse, anExceptionalResponse) }
 

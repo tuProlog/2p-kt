@@ -27,7 +27,7 @@ internal class ConjunctionTest {
     fun conjunctionOfTrueReturnsTrue() {
         val responses = Conjunction.wrappedImplementation(trueAndTrueSolveRequest)
 
-        assertOnlyOneSolution(responses, trueAndTrueSolveRequest.query.yesSolution())
+        assertOnlyOneSolution(responses, trueAndTrueSolveRequest.query.yes())
     }
 
     @Test
@@ -44,7 +44,7 @@ internal class ConjunctionTest {
         failedRequests.forEach { request ->
             val responses = Conjunction.wrappedImplementation(request)
 
-            assertOnlyOneSolution(responses, request.query.noSolution())
+            assertOnlyOneSolution(responses, request.query.no())
         }
     }
 
@@ -74,7 +74,7 @@ internal class ConjunctionTest {
 
             val responses = Conjunction.wrappedImplementation(request)
 
-            assertOnlyOneSolution(responses, request.query.yesSolution(secondSubstitution))
+            assertOnlyOneSolution(responses, request.query.yes(secondSubstitution))
         }
     }
 }

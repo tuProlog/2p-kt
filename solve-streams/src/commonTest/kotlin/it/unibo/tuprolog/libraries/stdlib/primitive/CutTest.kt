@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
-import it.unibo.tuprolog.solve.yesSolution
+import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 import kotlin.test.assertNotSame
 
@@ -31,7 +31,7 @@ internal class CutTest {
         val context = ExecutionContextImpl(substitution = unchangedSubstitution)
         val solutions = Cut.wrappedImplementation(cutRequest(context))
 
-        assertOnlyOneSolution(solutions, Atom.of("!").yesSolution(unchangedSubstitution))
+        assertOnlyOneSolution(solutions, Atom.of("!").yes(unchangedSubstitution))
     }
 
     @Test

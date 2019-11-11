@@ -155,9 +155,9 @@ internal class SolverUtilsTest {
 
         val aQuery = Atom.of("ciao")
 
-        val aYesResponse = Solve.Response(aQuery.yesSolution(expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
-        val aNoResponse = Solve.Response(aQuery.noSolution(), sideEffectManager = expectedSideEffectsManager)
-        val anHaltResponse = Solve.Response(aQuery.haltSolution(expectedException), sideEffectManager = expectedSideEffectsManager)
+        val aYesResponse = Solve.Response(aQuery.yes(expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
+        val aNoResponse = Solve.Response(aQuery.no(), sideEffectManager = expectedSideEffectsManager)
+        val anHaltResponse = Solve.Response(aQuery.halt(expectedException), sideEffectManager = expectedSideEffectsManager)
 
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
@@ -178,7 +178,7 @@ internal class SolverUtilsTest {
 
     @Test
     fun replyWithIfNoSideEffectManagerPresentInProvidedForwardedResponseDefaultsToRequestsSideEffectManager() {
-        val aNoResponseWithoutSideEffectManager = Solve.Response(Atom.of("ciao").noSolution())
+        val aNoResponseWithoutSideEffectManager = Solve.Response(Atom.of("ciao").no())
 
         val toBeTested = solveRequest.replyWith(aNoResponseWithoutSideEffectManager)
 

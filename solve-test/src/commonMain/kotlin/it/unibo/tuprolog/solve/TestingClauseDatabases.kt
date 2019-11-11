@@ -49,24 +49,18 @@ object TestingClauseDatabases {
     val simpleFactDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "a")
-                        ))
-                    },
-                    "g"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "a"),
-                                yesSolution("A" to "b")
-                        ))
-                    },
-                    "h"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "a"),
-                                yesSolution("A" to "b"),
-                                yesSolution("A" to "c")
-                        ))
-                    }
+                    "f"("A").hasSolutions(
+                            { yes("A" to "a") }
+                    ),
+                    "g"("A").hasSolutions(
+                            { yes("A" to "a") },
+                            { yes("A" to "b") }
+                    ),
+                    "h"("A").hasSolutions(
+                            { yes("A" to "a") },
+                            { yes("A" to "b") },
+                            { yes("A" to "c") }
+                    )
             )
         }
     }
@@ -118,24 +112,18 @@ object TestingClauseDatabases {
     val simpleCutDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "only")
-                        ))
-                    },
-                    "g"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "a"),
-                                yesSolution("A" to "only")
-                        ))
-                    },
-                    "h"("A").run {
-                        to(ktListOf(
-                                yesSolution("A" to "a"),
-                                yesSolution("A" to "c"),
-                                yesSolution("A" to "d")
-                        ))
-                    }
+                    "f"("A").hasSolutions(
+                            { yes("A" to "only") }
+                    ),
+                    "g"("A").hasSolutions(
+                            { yes("A" to "a") },
+                            { yes("A" to "only") }
+                    ),
+                    "h"("A").hasSolutions(
+                            { yes("A" to "a") },
+                            { yes("A" to "c") },
+                            { yes("A" to "d") }
+                    )
             )
         }
     }
@@ -171,12 +159,10 @@ object TestingClauseDatabases {
     val simpleCutAndConjunctionDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A", "B").run {
-                        to(ktListOf(
-                                yesSolution(Substitution.of("A" to "a", "B" to "a1")),
-                                yesSolution(Substitution.of("A" to "a", "B" to "b1"))
-                        ))
-                    }
+                    "f"("A", "B").hasSolutions(
+                            { yes(Substitution.of("A" to "a", "B" to "a1")) },
+                            { yes(Substitution.of("A" to "a", "B" to "b1")) }
+                    )
             )
         }
     }
@@ -220,13 +206,11 @@ object TestingClauseDatabases {
     val cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "a"("X").run {
-                        to(ktListOf(
-                                yesSolution("X" to 2),
-                                yesSolution("X" to 4),
-                                yesSolution("X" to 6)
-                        ))
-                    }
+                    "a"("X").hasSolutions(
+                            { yes("X" to 2) },
+                            { yes("X" to 4) },
+                            { yes("X" to 6) }
+                    )
             )
         }
     }
@@ -254,11 +238,9 @@ object TestingClauseDatabases {
     val infiniteComputationDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    atomOf("a").run {
-                        to(ktListOf(
-                                haltSolution(TimeOutException(context = DummyInstances.executionContext, exceededDuration = 0))
-                        ))
-                    }
+                    atomOf("a").hasSolutions(
+                            { halt(TimeOutException(context = DummyInstances.executionContext, exceededDuration = 0)) }
+                    )
             )
         }
     }
@@ -295,9 +277,9 @@ object TestingClauseDatabases {
     val customReverseListDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    "my_reverse"(listOf(1, 2, 3, 4), "L").run {
-                        to(ktListOf(yesSolution("L" to listOf(4, 3, 2, 1))))
-                    }
+                    "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
+                            { yes("L" to listOf(4, 3, 2, 1)) }
+                    )
             )
         }
     }

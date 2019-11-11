@@ -49,13 +49,11 @@ object PrologStandardExampleDatabases {
     val prologStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    "p"("U", "V").run {
-                        to(ktListOf(
-                                yesSolution(Substitution.of("U" to "b", "V" to "b1")),
-                                yesSolution(Substitution.of("U" to "c", "V" to "c1")),
-                                yesSolution(Substitution.of("U" to "d", "V" to "Y"))
-                        ))
-                    }
+                    "p"("U", "V").hasSolutions(
+                            { yes(Substitution.of("U" to "b", "V" to "b1")) },
+                            { yes(Substitution.of("U" to "c", "V" to "c1")) },
+                            { yes(Substitution.of("U" to "d", "V" to "Y")) }
+                    )
             )
         }
     }
@@ -90,9 +88,7 @@ object PrologStandardExampleDatabases {
     val prologStandardExampleWithCutDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    "p"("U", "V").run {
-                        to(ktListOf(noSolution()))
-                    }
+                    "p"("U", "V").hasSolutions({ no() })
             )
         }
     }

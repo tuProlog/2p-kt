@@ -15,14 +15,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
+/** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
+fun Struct.hasSolutions(vararg solution: Struct.() -> Solution) =
+        this to solution.map { it() }
+
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
-fun Struct.yesSolution(withSubstitution: Substitution = Substitution.empty()) = Solution.Yes(this, withSubstitution as Substitution.Unifier)
+fun Struct.yes(withSubstitution: Substitution = Substitution.empty()) = Solution.Yes(this, withSubstitution as Substitution.Unifier)
 
 /** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
-fun Struct.noSolution() = Solution.No(this)
+fun Struct.no() = Solution.No(this)
 
 /** Utility function to help writing tests; it creates a [Solution.Halt] with receiver query and provided exception */
-fun Struct.haltSolution(withException: TuPrologRuntimeException) = Solution.Halt(this, withException)
+fun Struct.halt(withException: TuPrologRuntimeException) = Solution.Halt(this, withException)
 
 /** Utility function to help writing tests; it forwards the `copy` method call to subclasses changing only the `query` field */
 fun Solution.changeQueryTo(query: Struct) = when (this) {
