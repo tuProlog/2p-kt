@@ -61,6 +61,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testConjunctionProperties() {
+        prototype.testConjunctionProperties()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

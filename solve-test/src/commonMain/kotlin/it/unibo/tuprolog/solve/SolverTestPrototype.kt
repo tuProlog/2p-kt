@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExam
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.allPrologTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
@@ -168,6 +169,36 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 val solutions = solver.solve(goal).toList()
 
                 assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** A test with all goals used in conjunction with `true` or `fail` to test Conjunction properties */
+    fun testConjunctionProperties() {
+        prolog {
+            val allDatabasesWithGoalsAndSolutions by lazy {
+                allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                        ktListOf(
+                                (goal and true).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
+                                (true and goal).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
+
+                                (goal and false).run { to(ktListOf(noSolution())) },
+                                (false and goal).run { to(ktListOf(noSolution())) }
+                        )
+                    }
+                }
+            }
+
+            allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions)->
+                val solver = solverOf(staticKB = database)
+
+                goalToSolutions.forEach { (goal, solutionList) ->
+                    println("$goal: $solutionList")
+                    val solutions = solver.solve(goal).toList()
+
+                    assertSolutionEquals(solutionList, solutions)
+                }
             }
         }
     }

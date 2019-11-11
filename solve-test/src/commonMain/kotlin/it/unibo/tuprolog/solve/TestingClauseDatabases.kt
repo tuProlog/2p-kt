@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import kotlin.collections.listOf as ktListOf
 
@@ -299,5 +300,16 @@ object TestingClauseDatabases {
                     }
             )
         }
+    }
+
+    /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
+    val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
+        mapOf(
+                simpleFactDatabase to simpleFactDatabaseNotableGoalToSolutions,
+                simpleCutDatabase to simpleCutDatabaseNotableGoalToSolutions,
+                simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
+                cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
+                customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution
+        ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
     }
 }

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
+import kotlin.collections.listOf as ktListOf
 
 /**
  * An object containing the collection of Prolog Standard databases and requests, testing ISO functionality
@@ -47,9 +48,9 @@ object PrologStandardExampleDatabases {
      */
     val prologStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
-            kotlin.collections.listOf(
+            ktListOf(
                     "p"("U", "V").run {
-                        to(kotlin.collections.listOf(
+                        to(ktListOf(
                                 yesSolution(Substitution.of("U" to "b", "V" to "b1")),
                                 yesSolution(Substitution.of("U" to "c", "V" to "c1")),
                                 yesSolution(Substitution.of("U" to "d", "V" to "Y"))
@@ -88,13 +89,19 @@ object PrologStandardExampleDatabases {
      */
     val prologStandardExampleWithCutDatabaseNotableGoalToSolution by lazy {
         prolog {
-            kotlin.collections.listOf(
+            ktListOf(
                     "p"("U", "V").run {
-                        to(kotlin.collections.listOf(noSolution()))
+                        to(ktListOf(noSolution()))
                     }
             )
         }
     }
 
-
+    /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
+    val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
+        mapOf(
+                prologStandardExampleDatabase to prologStandardExampleDatabaseNotableGoalToSolution,
+                prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution
+        )
+    }
 }

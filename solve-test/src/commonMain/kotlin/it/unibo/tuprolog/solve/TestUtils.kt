@@ -24,6 +24,13 @@ fun Struct.noSolution() = Solution.No(this)
 /** Utility function to help writing tests; it creates a [Solution.Halt] with receiver query and provided exception */
 fun Struct.haltSolution(withException: TuPrologRuntimeException) = Solution.Halt(this, withException)
 
+/** Utility function to help writing tests; it forwards the `copy` method call to subclasses changing only the `query` field */
+fun Solution.changeQueryTo(query: Struct) = when (this) {
+    is Solution.Yes -> copy(query)
+    is Solution.No -> copy(query)
+    is Solution.Halt -> copy(query)
+}
+
 /** Utility function to assert [assertion] over thrown exception by [throwExpression] */
 inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit, assertion: (E) -> Unit) =
         try {

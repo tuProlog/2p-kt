@@ -22,8 +22,12 @@ internal data class SideEffectManagerImpl(
         private val clauseScopedParents: Sequence<ExecutionContextImpl> = emptySequence(),
         /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
         private val isChoicePointChild: Boolean = false,
+        /** A filed to indicate in which scope level is this sideEffectManager */
+        private val ruleScopeLevel: Int = 0,
         /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
         private val toCutContextsParent: Sequence<ExecutionContextImpl> = emptySequence(),
+        /** Filled when cut execution happens, this indicates which scope level should be cut */
+        private val toCutScopeLevel: Int? = null,
 
         // Catch / Throw side effects fields
 
@@ -40,7 +44,8 @@ internal data class SideEffectManagerImpl(
             toCutContextsParent = sequence {
                 yieldAll(toCutContextsParent) // this may be removed, but more testing needed
                 yieldAll(getFirstChoicePointContext())
-            }
+            },
+            toCutScopeLevel = ruleScopeLevel
     )
 
     /**
@@ -48,10 +53,10 @@ internal data class SideEffectManagerImpl(
      *
      * A cut should execute:
      * - if throw was called, and not already caught
-     * - if cut was called, and there's some clauseScopedParent to be cut
+     * - if cut was called, and there's some clauseScopedParent to be cut in correct ruleScopeLevel
      */
     override fun shouldCutExecuteInPrimitive(): Boolean =
-            clauseScopedParents.any { it in toCutContextsParent }
+            clauseScopedParents.any { it in toCutContextsParent } && ruleScopeLevel == toCutScopeLevel
                     || shouldExecuteThrowCut()
 
 
@@ -83,11 +88,15 @@ internal data class SideEffectManagerImpl(
     )
 
     /** Method that updates sideEffects manager to not consider parents older than current first, because entering new "rule-scope" */
-    internal fun enterRuleSubScope() = copy(clauseScopedParents = sequenceOf(clauseScopedParents.first()))
+    internal fun enterRuleSubScope() = copy(
+            clauseScopedParents = sequenceOf(clauseScopedParents.first()),
+            ruleScopeLevel = ruleScopeLevel.inc()
+    )
 
     /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
     internal fun extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl) = copy(
-            clauseScopedParents = clauseScopedParents + upperScopeSideEffectsManager.clauseScopedParents
+            clauseScopedParents = clauseScopedParents + upperScopeSideEffectsManager.clauseScopedParents,
+            ruleScopeLevel = ruleScopeLevel.dec()
     )
 
     /**

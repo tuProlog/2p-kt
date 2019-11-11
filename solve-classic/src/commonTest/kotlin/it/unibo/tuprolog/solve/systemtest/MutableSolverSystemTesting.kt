@@ -33,13 +33,13 @@ class MutableSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
+    @Ignore // TODO: (issue #52)
     fun testCutAndConjunction() {
         prototype.testCutAndConjunction()
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
+    @Ignore // TODO: (issue #52)
     fun testCutConjunctionAndBacktracking() {
         prototype.testCutConjunctionAndBacktracking()
     }
@@ -66,6 +66,12 @@ class MutableSolverSystemTesting : SolverFactory {
     @Ignore
     fun testBacktrackingWithCustomReverseListImplementation() {
         prototype.testBacktrackingWithCustomReverseListImplementation()
+    }
+
+    @Test // TODO (issue #52, #53)
+    @Ignore
+    fun testConjunctionProperties() {
+        prototype.testConjunctionProperties()
     }
 
     @Test
