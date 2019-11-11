@@ -61,6 +61,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testWithPrologStandardConjunctionExamples() {
+        prototype.testWithPrologStandardConjunctionExamples()
+    }
+
+    @Test
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties()
     }

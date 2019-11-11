@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
@@ -166,6 +168,19 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val solver = solverOf(staticKB = customReverseListDatabase)
 
             customReverseListDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
+    fun testWithPrologStandardConjunctionExamples() {
+        prolog {
+            val solver = solverOf(staticKB = conjunctionStandardExampleDatabase)
+
+            conjunctionStandardExampleDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
                 val solutions = solver.solve(goal).toList()
 
                 assertSolutionEquals(solutionList, solutions)

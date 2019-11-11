@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -93,11 +94,52 @@ object PrologStandardExampleDatabases {
         }
     }
 
+    /**
+     * The database used in Prolog standard while writing examples for Conjunction
+     * ```prolog
+     * legs(A, 6) :- insect(A).
+     * legs(A, 4) :- animal(A).
+     * insect(bee).
+     * insect(ant).
+     * fly(bee).
+     * ```
+     */
+    val conjunctionStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                    { "legs"("A", 6) `if` "insect"("A") },
+                    { "legs"("A", 4) `if` "animal"("A") },
+                    { "insect"("bee") },
+                    { "insect"("ant") },
+                    { "fly"("bee") }
+            )
+        }
+    }
+
+    /**
+     * Notable [conjunctionStandardExampleDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- (insect(X) ; legs(X, 6)) , fly(X).
+     * ```
+     */
+    val conjunctionStandardExampleDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    (("insect"("X") or "legs"("X", 6)) and "fly"("X")).hasSolutions(
+                            { yes("X" to "bee") },
+                            { yes("X" to "bee") },
+                            { no() }
+                    )
+            )
+        }
+    }
+
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
     val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
                 prologStandardExampleDatabase to prologStandardExampleDatabaseNotableGoalToSolution,
-                prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution
+                prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution,
+                conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution
         )
     }
 }

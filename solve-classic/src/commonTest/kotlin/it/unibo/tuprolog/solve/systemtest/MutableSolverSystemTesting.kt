@@ -68,7 +68,13 @@ class MutableSolverSystemTesting : SolverFactory {
         prototype.testBacktrackingWithCustomReverseListImplementation()
     }
 
-    @Test // TODO (issue #52, #53)
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testWithPrologStandardConjunctionExamples() {
+        prototype.testWithPrologStandardConjunctionExamples()
+    }
+
+    @Test // TODO (issue #52)
     @Ignore
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties()
