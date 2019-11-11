@@ -20,7 +20,10 @@ fun Struct.hasSolutions(vararg solution: Struct.() -> Solution) =
         this to solution.map { it() }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
-fun Struct.yes(withSubstitution: Substitution = Substitution.empty()) = Solution.Yes(this, withSubstitution as Substitution.Unifier)
+fun Struct.yes(vararg withSubstitution: Substitution) = Solution.Yes(
+        this,
+        Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier
+)
 
 /** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
 fun Struct.no() = Solution.No(this)

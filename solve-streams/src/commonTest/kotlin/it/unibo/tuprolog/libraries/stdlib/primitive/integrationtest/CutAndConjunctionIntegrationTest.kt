@@ -1,16 +1,17 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.integrationtest
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
-import it.unibo.tuprolog.solve.testutils.SolverTestUtils
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.assertSolutionEquals
+import it.unibo.tuprolog.solve.changeQueryTo
+import it.unibo.tuprolog.solve.hasSolutions
+import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -22,160 +23,99 @@ internal class CutAndConjunctionIntegrationTest {
 
     @Test
     fun cutAsFirstGoalInConjunctionDoesNothing() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(tupleOf(atomOf("!"), structOf("g", varOf("A"))),
-                    simpleFactDatabase,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(2, responses.count())
-            assertEquals(
-                    ktListOf<Atom>(atomOf("a"), atomOf("b")),
-                    responses.map { it.solution.substitution.values.single() }.toList()
-            )
+        prolog {
+            val modifiedSimpleFactDatabaseGoals = simpleFactDatabaseNotableGoalToSolutions.map { (goal, expectedSolutions) ->
+                ("!" and goal).run { to(expectedSolutions.map { it.changeQueryTo(this) }) }
+            }
+
+            modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
+                val request = createSolveRequest(goal, simpleFactDatabase, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+                val solutions = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
         }
     }
 
     @Test
     fun cutAsSecondGoalInConjunctionCutsFirstGoalAlternatives() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(tupleOf(structOf("g", varOf("A")), atomOf("!")),
-                    simpleFactDatabase,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
+        prolog {
+            val modifiedSimpleFactDatabaseGoals = simpleFactDatabaseNotableGoalToSolutions.map { (goal, expectedSolutions) ->
+                (goal and "!").hasSolutions({ expectedSolutions.first().changeQueryTo(this) })
+            }
 
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(1, responses.count())
-            assertEquals(atomOf("a"), responses.single().solution.substitution.values.single())
+            modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
+                val request = createSolveRequest(goal, simpleFactDatabase, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+                val solutions = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
         }
     }
 
     @Test
     fun cutAsThirdGoalInConjunctionCutsOtherGoalsAlternatives() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(
-                    tupleOf(ktListOf(
-                            structOf("g", varOf("A")),
-                            structOf("g", varOf("B")),
-                            atomOf("!")
-                    )),
-                    simpleFactDatabase,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(1, responses.count())
-            assertEquals(
-                    ktListOf(atomOf("a"), atomOf("a")),
-                    responses.single().solution.substitution.values.toList()
-            )
+        prolog {
+            val query = "g"("A") and "g"("B") and "!"
+            val request = createSolveRequest(query, simpleFactDatabase, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+            val responses = Conjunction.wrappedImplementation(request)
+
+            assertOnlyOneSolution(query.yes("A" to "a", "B" to "a"), responses)
         }
     }
 
     @Test
     fun cutInMiddleOfGoalConjunctionWorksAsExpected() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(
-                    tupleOf(ktListOf(
-                            structOf("g", varOf("A")),
-                            atomOf("!"),
-                            structOf("g", varOf("B"))
-                    )),
-                    simpleFactDatabase,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(2, responses.count())
-            assertEquals(
+        prolog {
+            val query = "g"("A") and "!" and "g"("B")
+            val request = createSolveRequest(query, simpleFactDatabase, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+            val responses = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()
+
+            assertSolutionEquals(
                     ktListOf(
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a")),
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("b"))
+                            query.yes("A" to "a", "B" to "a"),
+                            query.yes("A" to "a", "B" to "b")
                     ),
-                    responses.map { it.solution.substitution }.toList()
+                    responses
             )
         }
     }
 
     @Test
     fun multipleCutGoalInConjunctionWorksAsExpected() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(
-                    tupleOf(ktListOf(
-                            structOf("g", varOf("A")),
-                            atomOf("!"),
-                            structOf("g", varOf("B")),
-                            atomOf("!")
-                    )),
-                    simpleFactDatabase,
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(1, responses.count())
-            assertEquals(
-                    ktListOf(atomOf("a"), atomOf("a")),
-                    responses.single().solution.substitution.values.toList()
-            )
-        }
-    }
+        prolog {
+            val query = "g"("A") and "!" and "g"("B") and "!"
+            val request = createSolveRequest(query, simpleFactDatabase, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+            val responses = Conjunction.wrappedImplementation(request)
 
-    @Test
-    fun nestedCutsInConjunctionsWorkAsExpected() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(
-                    tupleOf(ktListOf(
-                            structOf("g", varOf("A")),
-                            atomOf("!"),
-                            structOf("g", varOf("B"))
-                    )),
-                    ClauseDatabase.of(
-                            simpleFactDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
-                                    ktListOf(Rule.of(structOf("g", atomOf("cutting")), atomOf("!"))) +
-                                    simpleFactDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
-                    ),
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
-            )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(2, responses.count())
-            assertEquals(
-                    ktListOf(
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a")),
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("cutting"))
-                    ),
-                    responses.map { it.solution.substitution }.toList()
-            )
+            assertOnlyOneSolution(query.yes("A" to "a", "B" to "a"), responses)
         }
     }
 
     @Test
     fun deepCutsInConjunctionsDoesntCutOuterScopeNodes() {
-        Scope.empty().where {
-            val request = SolverTestUtils.createSolveRequest(
-                    tupleOf(ktListOf(
-                            structOf("g", varOf("A")),
-                            atomOf("!"),
-                            structOf("g", varOf("B"))
-                    )),
-                    ClauseDatabase.of(
-                            simpleFactDatabase.takeWhile { it.head != structOf("g", atomOf("b")) } +
-                                    ktListOf(
-                                            Rule.of(structOf("g", atomOf("cutting")), structOf("g1", atomOf("deep1"))),
-                                            Rule.of(structOf("g1", atomOf("deep1")), structOf("g2", atomOf("deep2"))),
-                                            Rule.of(structOf("g1", atomOf("deep1")), structOf("g3", atomOf("deep3"))),
-                                            Rule.of(structOf("g2", atomOf("deep2")), atomOf("!")),
-                                            Rule.of(structOf("g3", atomOf("deep3")), atomOf("!"))) +
-                                    simpleFactDatabase.dropWhile { it.head != structOf("g", atomOf("b")) }
-                    ),
-                    mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
+        prolog {
+            val database = theoryOf(
+                    *simpleFactDatabase.takeWhile { it.head != "g"("b") }.toTypedArray(),
+                    rule { "g"("cutting") `if` "g1"("deep1") },
+                    rule { "g1"("deep1") `if` "g2"("deep2") },
+                    rule { "g1"("deep1") `if` "g3"("deep3") },
+                    rule { "g2"("deep2") `if` "!" },
+                    rule { "g3"("deep3") `if` "!" },
+                    *simpleFactDatabase.dropWhile { it.head != "g"("b") }.toTypedArray()
             )
-            val responses = Conjunction.wrappedImplementation(request).toList()
-            assertEquals(4, responses.count())
-            assertEquals(
+            val query = "g"("A") and "!" and "g"("B")
+            val request = createSolveRequest(query, database, mapOf(Conjunction.descriptionPair, Cut.descriptionPair))
+            val responses = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()
+
+            assertSolutionEquals(
                     ktListOf(
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("a")),
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("cutting")),
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("cutting")),
-                            Substitution.of(varOf("A") to atomOf("a"), varOf("B") to atomOf("b"))
+                            query.yes("A" to "a", "B" to "a"),
+                            query.yes("A" to "a", "B" to "cutting"),
+                            query.yes("A" to "a", "B" to "cutting"),
+                            query.yes("A" to "a", "B" to "b")
                     ),
-                    responses.map { it.solution.substitution }.toList()
+                    responses
             )
         }
     }

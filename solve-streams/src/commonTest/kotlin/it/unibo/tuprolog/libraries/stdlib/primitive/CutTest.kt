@@ -31,7 +31,7 @@ internal class CutTest {
         val context = ExecutionContextImpl(substitution = unchangedSubstitution)
         val solutions = Cut.wrappedImplementation(cutRequest(context))
 
-        assertOnlyOneSolution(solutions, Atom.of("!").yes(unchangedSubstitution))
+        assertOnlyOneSolution(Atom.of("!").yes(unchangedSubstitution), solutions)
     }
 
     @Test

@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 internal object PrimitiveUtils {
 
     /** Utility function to assert that there's only one Solution of given type, with given query and substitution */
-    internal fun assertOnlyOneSolution(solutions: Sequence<Solve.Response>, expectedSolution: Solution) {
+    internal fun assertOnlyOneSolution(expectedSolution: Solution, solutions: Sequence<Solve.Response>) {
         assertEquals(1, solutions.count(), "Expected only one solution, but ${solutions.toList()}")
         with(solutions.single().solution) {
             assertEquals(expectedSolution::class, this::class)

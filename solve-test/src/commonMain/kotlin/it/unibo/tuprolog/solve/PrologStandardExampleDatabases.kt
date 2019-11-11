@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import kotlin.collections.listOf as ktListOf
@@ -51,9 +50,9 @@ object PrologStandardExampleDatabases {
         prolog {
             ktListOf(
                     "p"("U", "V").hasSolutions(
-                            { yes(Substitution.of("U" to "b", "V" to "b1")) },
-                            { yes(Substitution.of("U" to "c", "V" to "c1")) },
-                            { yes(Substitution.of("U" to "d", "V" to "Y")) }
+                            { yes("U" to "b", "V" to "b1") },
+                            { yes("U" to "c", "V" to "c1") },
+                            { yes("U" to "d", "V" to "Y") }
                     )
             )
         }

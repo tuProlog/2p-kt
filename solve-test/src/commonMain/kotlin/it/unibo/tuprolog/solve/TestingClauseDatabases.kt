@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.List
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -160,8 +159,8 @@ object TestingClauseDatabases {
         prolog {
             ktListOf(
                     "f"("A", "B").hasSolutions(
-                            { yes(Substitution.of("A" to "a", "B" to "a1")) },
-                            { yes(Substitution.of("A" to "a", "B" to "b1")) }
+                            { yes("A" to "a", "B" to "a1") },
+                            { yes("A" to "a", "B" to "b1") }
                     )
             )
         }
