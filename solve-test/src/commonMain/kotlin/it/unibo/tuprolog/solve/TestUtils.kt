@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
-fun Struct.hasSolutions(vararg solution: Struct.() -> Solution) =
+fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) =
         this to solution.map { it() }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */

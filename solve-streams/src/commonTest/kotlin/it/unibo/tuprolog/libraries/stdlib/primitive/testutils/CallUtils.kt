@@ -8,17 +8,14 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Call
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
-import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
-import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.solve.yes
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -47,9 +44,12 @@ internal object CallUtils {
     internal val requestSolutionMap by lazy {
         prolog {
             mapOf(
-                    Call.functor(true).run { to(ktListOf(yes())) },
-                    Call.functor("true" and "true").run { to(ktListOf(yes())) },
-                    Call.functor("!").run { to(ktListOf(yes())) },
+                    Call.functor(true)
+                            .hasSolutions({ yes() }),
+                    Call.functor("true" and "true")
+                            .hasSolutions({ yes() }),
+                    Call.functor("!")
+                            .hasSolutions({ yes() }),
                     *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
                         Call.functor(goal).run { to(solutionList.changeQueriesTo(this)) }
                     }.toTypedArray(),
@@ -75,36 +75,32 @@ internal object CallUtils {
     internal val requestToErrorSolutionMap by lazy {
         prolog {
             mapOf(
-                    Call.functor("X").run {
-                        to(ktListOf(
-                                halt(HaltException(context = aContext,
-                                        cause = with(InstantiationError(
-                                                context = aContext,
-                                                extraData = varOf("X")
-                                        )) {
-                                            SystemError(context = aContext,
-                                                    cause = this,
-                                                    extraData = this.errorStruct
-                                            )
-                                        }
-                                ))
+                    Call.functor("X").hasSolutions({
+                        halt(HaltException(context = aContext,
+                                cause = with(InstantiationError(
+                                        context = aContext,
+                                        extraData = varOf("X")
+                                )) {
+                                    SystemError(context = aContext,
+                                            cause = this,
+                                            extraData = this.errorStruct
+                                    )
+                                }
                         ))
-                    },
-                    Call.functor(true and 1).run {
-                        to(ktListOf(
-                                halt(HaltException(context = aContext,
-                                        cause = with(TypeError(context = aContext,
-                                                expectedType = TypeError.Expected.CALLABLE,
-                                                actualValue = Tuple.of(Truth.`true`(), Integer.of(1))
-                                        )) {
-                                            SystemError(context = aContext,
-                                                    cause = this,
-                                                    extraData = this.errorStruct
-                                            )
-                                        }
-                                )))
-                        )
-                    }
+                    }),
+                    Call.functor(true and 1).hasSolutions({
+                        halt(HaltException(context = aContext,
+                                cause = with(TypeError(context = aContext,
+                                        expectedType = TypeError.Expected.CALLABLE,
+                                        actualValue = Tuple.of(Truth.`true`(), Integer.of(1))
+                                )) {
+                                    SystemError(context = aContext,
+                                            cause = this,
+                                            extraData = this.errorStruct
+                                    )
+                                }
+                        ))
+                    })
             ).mapKeys { (query, _) ->
                 createSolveRequest(query,
                         primitives = mapOf(*ktListOf(Call, Cut, Throw, Conjunction).map { it.descriptionPair }.toTypedArray())

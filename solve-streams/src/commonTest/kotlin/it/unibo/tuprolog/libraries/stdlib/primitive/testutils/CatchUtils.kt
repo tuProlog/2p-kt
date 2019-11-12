@@ -101,36 +101,29 @@ internal object CatchUtils {
     internal val prologStandardThrowExamplesWithError by lazy {
         prolog {
             mapOf(
-                    Catch.functor(Throw.functor("f"("X", "X")), "f"("X", "g"("X")), true).run {
-                        to(ktListOf(
-                                halt(HaltException(context = aContext,
-                                        cause = SystemError(context = aContext, extraData = "f"("X", "X"))
-                                ))
+                    Catch.functor(Throw.functor("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({
+                        halt(HaltException(context = aContext,
+                                cause = SystemError(context = aContext, extraData = "f"("X", "X"))
                         ))
-                    },
-
-                    Catch.functor(Throw.functor(1), "X", false or "X").run {
-                        to(ktListOf(
-                                halt(HaltException(context = aContext,
-                                        cause = with(TypeError(context = aContext,
-                                                expectedType = TypeError.Expected.CALLABLE,
-                                                actualValue = false or 1
-                                        )) {
-                                            SystemError(context = aContext,
-                                                    cause = this,
-                                                    extraData = this.errorStruct
-                                            )
-                                        }
-                                ))
+                    }),
+                    Catch.functor(Throw.functor(1), "X", false or "X").hasSolutions({
+                        halt(HaltException(context = aContext,
+                                cause = with(TypeError(context = aContext,
+                                        expectedType = TypeError.Expected.CALLABLE,
+                                        actualValue = false or 1
+                                )) {
+                                    SystemError(context = aContext,
+                                            cause = this,
+                                            extraData = this.errorStruct
+                                    )
+                                }
                         ))
-                    },
-                    Catch.functor(Throw.functor(false), true, "G").run {
-                        to(ktListOf(
-                                halt(HaltException(context = aContext,
-                                        cause = SystemError(context = aContext, extraData = truthOf(false))
-                                ))
+                    }),
+                    Catch.functor(Throw.functor(false), true, "G").hasSolutions({
+                        halt(HaltException(context = aContext,
+                                cause = SystemError(context = aContext, extraData = truthOf(false))
                         ))
-                    }
+                    })
             ).mapKeys { (query, _) ->
                 createSolveRequest(query,
                         database = catchAndThrowStandardExampleDatabase,
