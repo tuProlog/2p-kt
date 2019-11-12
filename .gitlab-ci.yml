@@ -20,3 +20,11 @@ build:
 test:
   stage: test
   script: gradle check $GOPTS
+
+publish-bintray:
+  stage: deploy
+  script: gradle publishAllToBintray
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  when: manual
