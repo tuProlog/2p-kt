@@ -8,7 +8,6 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.HaltUtils
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.ThrowUtils
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
@@ -76,7 +75,6 @@ internal object SolverSLDUtils {
                                 ) as Substitution.Unifier)
                         )
                     },
-                    *extractQueryContextSolutionPairs(HaltUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CallUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CallUtils.requestToErrorSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray(),

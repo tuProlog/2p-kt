@@ -1,13 +1,9 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
 import it.unibo.tuprolog.libraries.stdlib.primitive.*
-import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -25,18 +21,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal object ArithmeticUtils {
-
-    private val commonBuiltinsContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val libraries: Libraries = Libraries(CommonBuiltins)
-    }
-
-    /** Creates a solve request with given query struct */
-    private fun createPrimitiveRequest(query: Struct): Solve.Request<ExecutionContext> =
-            Solve.Request<ExecutionContext>(
-                    query.extractSignature(),
-                    query.argsList,
-                    commonBuiltinsContext
-            )
 
     /** Utility method to check if the arithmetic relation responses are correct */
     internal fun assertCorrectResponse(
@@ -67,7 +51,7 @@ internal object ArithmeticUtils {
                     Is.functor(1.0, 1) to Substitution.failed(),
                     Is.functor("X", "+"("+"("N", 1), "/"(3, 0))) to InstantiationError::class,
                     Is.functor("C", "/"(3, 0)) to EvaluationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -80,7 +64,7 @@ internal object ArithmeticUtils {
                     ArithmeticEqual.functor(0.333, "/"(1, 3)) to false,
                     ArithmeticEqual.functor(0, 1) to false,
                     ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -93,7 +77,7 @@ internal object ArithmeticUtils {
                     ArithmeticNotEqual.functor(1.0, 1) to false,
                     ArithmeticNotEqual.functor("*"(3, 2), "-"(7, 1)) to false,
                     ArithmeticNotEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -107,7 +91,7 @@ internal object ArithmeticUtils {
                     ArithmeticGreaterThan.functor(0.333, "/"(1, 3)) to false,
                     ArithmeticGreaterThan.functor("X", 5) to InstantiationError::class,
                     ArithmeticGreaterThan.functor("N", "/"(3, 0)) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -121,7 +105,7 @@ internal object ArithmeticUtils {
                     ArithmeticGreaterThanOrEqualTo.functor(0.333, "/"(1, 3)) to false,
                     ArithmeticGreaterThanOrEqualTo.functor("X", 5) to InstantiationError::class,
                     ArithmeticGreaterThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -135,7 +119,7 @@ internal object ArithmeticUtils {
                     ArithmeticLowerThan.functor("*"(3, 2), "-"(7, 1)) to false,
                     ArithmeticLowerThan.functor("X", 5) to InstantiationError::class,
                     ArithmeticLowerThan.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 
@@ -149,7 +133,7 @@ internal object ArithmeticUtils {
                     ArithmeticLowerThanOrEqualTo.functor("*"(3, 2), "-"(6, 1)) to false,
                     ArithmeticLowerThanOrEqualTo.functor("X", 5) to InstantiationError::class,
                     ArithmeticLowerThanOrEqualTo.functor("N", "/"(3, 0)) to InstantiationError::class
-            ).mapKeys { (query, _) -> createPrimitiveRequest(query) }
+            ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
 

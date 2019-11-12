@@ -105,6 +105,11 @@ class MutableSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testHaltPrimitive() {
+        prototype.testHaltPrimitive()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

@@ -338,6 +338,26 @@ object TestingClauseDatabases {
         }
     }
 
+    /**
+     * Halt primitive request goals and respective expected [Solution]s
+     *
+     * Contained requests:
+     * ```prolog
+     * ?- halt.
+     * ?- catch(halt, _, true).
+     * ?- catch(catch(throw(something), _, halt), _, true).
+     * ```
+     */
+    val haltTestingGoalsToSolutions by lazy {
+        prolog {
+            ktListOf(
+                    atomOf("halt").hasSolutions({ halt(haltException) }),
+                    "catch"("halt", `_`, true).hasSolutions({ halt(haltException) }),
+                    "catch"("catch"("throw"("something"), `_`, "halt"), `_`, true).hasSolutions({ halt(haltException) })
+            )
+        }
+    }
+
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
     val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
@@ -347,7 +367,8 @@ object TestingClauseDatabases {
                 cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
                 customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
                 ClauseDatabase.empty() to callTestingGoalsToSolutions,
-                ClauseDatabase.empty() to catchTestingGoalsToSolutions
+                ClauseDatabase.empty() to catchTestingGoalsToSolutions,
+                ClauseDatabase.empty() to haltTestingGoalsToSolutions
         ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
     }
 }

@@ -13,7 +13,6 @@ object DefaultBuiltins : LibraryAliased by CommonBuiltins {
                         Catch,
                         Conjunction,
                         Cut,
-                        Halt,
                         Throw
                 ).map { it.descriptionPair }.toMap()
         }

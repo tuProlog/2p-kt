@@ -21,6 +21,7 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.haltTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
@@ -54,6 +55,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertTrue { Signature("call", 1) in builtins }
                 assertTrue { Signature("catch", 3) in builtins }
                 assertTrue { Signature("throw", 1) in builtins }
+                assertTrue { Signature("halt", 0) in builtins }
                 assertTrue { Signature(",", 2) in builtins }
                 assertTrue { Signature(";", 2) in builtins }
                 assertTrue { Signature("->", 2) in builtins }
@@ -193,7 +195,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution]*/
+    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
     fun testCallPrimitive() {
         assertSolverSolutionsCorrect(
                 solverOf(staticKB = callStandardExampleDatabase),
@@ -222,7 +224,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution]*/
+    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
     fun testCatchPrimitive() {
         assertSolverSolutionsCorrect(
                 solverOf(staticKB = catchAndThrowStandardExampleDatabase),
@@ -238,11 +240,17 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** A test in which all testing goals are called through the Catch primitive */
     fun testCatchPrimitiveTransparency() {
         prolog {
+
+            fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
+                "halt" -> true
+                else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
+            }
+
             allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
                             "catch"(goal, `_`, false).run {
-                                if (expectedSolutions.any { it is Solution.Halt && atomOf("halt") !in it.query.args })
+                                if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() })
                                     hasSolutions({ no() })
                                 else to(expectedSolutions.changeQueriesTo(this))
                             },
@@ -258,6 +266,14 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 )
             }
         }
+    }
+
+    /** Halt primitive testing with [haltTestingGoalsToSolutions] */
+    fun testHaltPrimitive() {
+        assertSolverSolutionsCorrect(
+                solverOf(),
+                haltTestingGoalsToSolutions
+        )
     }
 
     fun testFailure() {

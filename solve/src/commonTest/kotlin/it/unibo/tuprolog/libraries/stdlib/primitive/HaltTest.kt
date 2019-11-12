@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.HaltUtils
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -15,15 +16,17 @@ import kotlin.test.assertFailsWith
  */
 internal class HaltTest {
 
+    private val haltSolveRequest = createSolveRequest(Atom.of("halt"))
+
     @Test
     fun haltPrimitiveThrowsHaltException() {
-        assertFailsWith<HaltException> { Halt.wrappedImplementation(HaltUtils.exposedHaltBehaviourRequest) }
+        assertFailsWith<HaltException> { Halt.wrappedImplementation(haltSolveRequest) }
     }
 
     @Test
     fun haltPrimitiveExceptionContainsCorrectContext() {
-        assertOverFailure<TuPrologRuntimeException>({ Halt.wrappedImplementation(HaltUtils.exposedHaltBehaviourRequest) }) {
-            assertEquals(HaltUtils.exposedHaltBehaviourRequest.context, it.context)
+        assertOverFailure<TuPrologRuntimeException>({ Halt.wrappedImplementation(haltSolveRequest) }) {
+            assertEquals(haltSolveRequest.context, it.context)
         }
     }
 }
