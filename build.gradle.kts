@@ -6,7 +6,6 @@ plugins {
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version "0.9.18"
-//    id("com.moowork.node") version "1.3.1"
 }
 
 repositories {
@@ -15,11 +14,14 @@ repositories {
     }
 }
 
+group = "it.unibo.tuprolog"
+version = "0.0.1-SNAPSHOT"
+
 // apply next commands to all subprojects
 subprojects {
 
-    group = "it.unibo.tuprolog"
-    version = "1.0-SNAPSHOT"
+    group = rootProject.group
+    version = rootProject.version
 
     // ** NOTE ** legacy plugin application, because the new "plugins" block is not available inside "subprojects" scope yet
     // when it will be available it should be moved here
@@ -33,8 +35,8 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://dl.bintray.com/kotlin/dokka")
-        maven("https://jitpack.io")
-        mavenLocal()
+//        maven("https://jitpack.io")
+//        mavenLocal()
     }
 
     // Common kotlin multiplatform configuration for sub-projects
@@ -196,13 +198,13 @@ subprojects {
             }
 
             pom {
-                name.set("Kotlin Math")
-                description.set("Pure Kotlin porting of the java.math package")
-                url.set("https://github.com/gciatto/kt-math")
+                name.set("2P in Kotlin")
+                description.set("Multplatform Prolog environment, in Kotlin")
+                url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
                 licenses {
                     license {
-                        name.set("GNU General Public License, version 2, with the Classpath Exception")
-                        url.set("https://openjdk.java.net/legal/gplv2+ce.html")
+                        name.set("Apache 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
                     }
                 }
 
@@ -210,32 +212,42 @@ subprojects {
                     developer {
                         email.set("giovanni.ciatto@gmail.com")
                         url.set("https://about.me/gciatto")
-                        organization.set("GitHub")
-                        organizationUrl.set("https://github.com")
+                        organization.set("University of Bologna")
+                        organizationUrl.set("https://www.unibo.it/it")
+                    }
+                    developer {
+                        email.set("siboxd@gmail.com")
+                        url.set("https://github.com/siboXD")
                     }
                 }
 
                 scm {
-                    connection.set("scm:git:git:///github.com/gciatto/kt-math.git")
-                    developerConnection.set("scm:git:ssh://github.com:gciatto/kt-math.git")
-                    url.set("https://github.com/gciatto/kt-math")
+                    connection.set("scm:git:git:///gitlab.com/pika-lab/tuprolog/2p-in-kotlin.git")
+                    url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
                 }
             }
 
         }
 
         repositories {
+//            val mavenRepoUrl = if (version.toString().contains("SNAPSHOT")) {
+//                "https://oss.sonatype.org/content/repositories/snapshots/"
+//            } else {
+//                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//            }
+//
+//            maven(mavenRepoUrl) {
+//                credentials {
+//                    username = project.property("ossrhUsername").toString()
+//                    password = project.property("ossrhPassword").toString()
+//                }
+//            }
+            val bintrayRepoUrl = "https://dl.bintray.com/pika-lab/tuprolog"
 
-            val mavenRepoUrl = if (version.toString().contains("SNAPSHOT")) {
-                "https://oss.sonatype.org/content/repositories/snapshots/"
-            } else {
-                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            }
-
-            maven(mavenRepoUrl) {
+            maven(bintrayRepoUrl) {
                 credentials {
-                    username = project.property("ossrhUsername").toString()
-                    password = project.property("ossrhPassword").toString()
+                    username = project.property("bintrayUser").toString()
+                    password = project.property("bintrayKey").toString()
                 }
             }
         }
@@ -253,6 +265,4 @@ subprojects {
             dependsOn(*pubs.toTypedArray())
         }
     }
-
-    //configurations.forEach { println(it.name) }
 }
