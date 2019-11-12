@@ -47,31 +47,20 @@ internal object CallUtils {
     internal val requestSolutionMap by lazy {
         prolog {
             mapOf(
-                    Call.functor(true).run {
-                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair)) to ktListOf(yes())
-                    },
-                    Call.functor("true" and "true").run {
-                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)) to ktListOf(yes())
-                    },
-                    Call.functor("!").run {
-                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Cut.descriptionPair)) to ktListOf(yes())
-                    },
+                    Call.functor(true).run { to(ktListOf(yes())) },
+                    Call.functor("true" and "true").run { to(ktListOf(yes())) },
+                    Call.functor("!").run { to(ktListOf(yes())) },
                     *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
-                        Call.functor(goal).run {
-                            createSolveRequest(this, database = simpleFactDatabase, primitives = mapOf(Call.descriptionPair)) to
-                                    solutionList.changeQueriesTo(this)
-                        }
+                        Call.functor(goal).run { to(solutionList.changeQueriesTo(this)) }
                     }.toTypedArray(),
                     *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
-                        Call.functor(goal and "!").run {
-                            createSolveRequest(
-                                    this,
-                                    database = simpleFactDatabase,
-                                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
-                            ) to solutionList.subList(0, 1).changeQueriesTo(this)
-                        }
+                        Call.functor(goal and "!").run { to(solutionList.subList(0, 1).changeQueriesTo(this)) }
                     }.toTypedArray()
-            )
+            ).mapKeys { (query, _) ->
+                createSolveRequest(query, database = simpleFactDatabase,
+                        primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                )
+            }
         }
     }
 
@@ -87,7 +76,7 @@ internal object CallUtils {
         prolog {
             mapOf(
                     Call.functor("X").run {
-                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)) to ktListOf(
+                        to(ktListOf(
                                 halt(HaltException(context = aContext,
                                         cause = with(InstantiationError(
                                                 context = aContext,
@@ -99,10 +88,10 @@ internal object CallUtils {
                                             )
                                         }
                                 ))
-                        )
+                        ))
                     },
                     Call.functor(true and 1).run {
-                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)) to ktListOf(
+                        to(ktListOf(
                                 halt(HaltException(context = aContext,
                                         cause = with(TypeError(context = aContext,
                                                 expectedType = TypeError.Expected.CALLABLE,
@@ -113,10 +102,14 @@ internal object CallUtils {
                                                     extraData = this.errorStruct
                                             )
                                         }
-                                ))
+                                )))
                         )
                     }
-            )
+            ).mapKeys { (query, _) ->
+                createSolveRequest(query,
+                        primitives = mapOf(*ktListOf(Call, Cut, Throw, Conjunction).map { it.descriptionPair }.toTypedArray())
+                )
+            }
         }
     }
 
@@ -127,17 +120,17 @@ internal object CallUtils {
      */
     internal val requestToSolutionOfCallWithCut by lazy {
         prolog {
-            ktListOf(
+            mapOf(
                     *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
                         Call.functor(goal and Call.functor("!")).run {
-                            createSolveRequest(
-                                    this,
-                                    database = simpleFactDatabase,
-                                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
-                            ) to solutionList.changeQueriesTo(this)
+                            to(solutionList.changeQueriesTo(this))
                         }
                     }.toTypedArray()
-            )
+            ).mapKeys { (query, _) ->
+                createSolveRequest(query, database = simpleFactDatabase,
+                        primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                )
+            }
         }
     }
 }

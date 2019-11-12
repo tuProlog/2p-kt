@@ -31,10 +31,10 @@ internal object ConjunctionUtils {
     /** Requests that should fail */
     internal val failedRequests = prolog {
         ktListOf(
-                createSolveRequest("true" and "fail"),
-                createSolveRequest("fail" and "true"),
-                createSolveRequest("true" and "true" and "fail")
-        )
+                "true" and "fail",
+                "fail" and "true",
+                "true" and "true" and "fail"
+        ).map { createSolveRequest(it) }
     }
 
 }
