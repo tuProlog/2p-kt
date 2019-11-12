@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
@@ -31,6 +32,14 @@ import kotlin.test.assertTrue
 import kotlin.collections.listOf as ktListOf
 
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
+
+    private fun assertSolverSolutionsCorrect(solver: Solver, goalToSolutions: List<Pair<Struct, List<Solution>>>) {
+        goalToSolutions.forEach { (goal, solutionList) ->
+            val solutions = solver.solve(goal).toList()
+
+            assertSolutionEquals(solutionList, solutions)
+        }
+    }
 
     fun testBuiltinApi() {
         prolog {
@@ -76,119 +85,77 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     fun testUnification() {
-        prolog {
-            val solver = solverOf(staticKB = simpleFactDatabase)
-
-            simpleFactDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = simpleFactDatabase),
+                simpleFactDatabaseNotableGoalToSolutions
+        )
     }
 
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     fun testSimpleCutAlternatives() {
-        prolog {
-            val solver = solverOf(staticKB = simpleCutDatabase)
-
-            simpleCutDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = simpleCutDatabase),
+                simpleCutDatabaseNotableGoalToSolutions
+        )
     }
 
     /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
     fun testCutAndConjunction() {
-        prolog {
-            val solver = solverOf(staticKB = simpleCutAndConjunctionDatabase)
-
-            simpleCutAndConjunctionDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = simpleCutAndConjunctionDatabase),
+                simpleCutAndConjunctionDatabaseNotableGoalToSolutions
+        )
     }
 
     /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
     fun testCutConjunctionAndBacktracking() {
-        prolog {
-            val solver = solverOf(staticKB = cutConjunctionAndBacktrackingDatabase)
-
-            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = cutConjunctionAndBacktrackingDatabase),
+                cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+        )
     }
 
     /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
     fun testMaxDurationParameterAndTimeOutException() {
-        prolog {
-            val solver = solverOf(staticKB = infiniteComputationDatabase)
+        val solver = solverOf(staticKB = infiniteComputationDatabase)
 
-            infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal, maxDuration = 100L).toList()
+        infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+            val solutions = solver.solve(goal, maxDuration = 100L).toList()
 
-                assertSolutionEquals(solutionList, solutions)
-            }
+            assertSolutionEquals(solutionList, solutions)
         }
     }
 
     /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeExample() {
-        prolog {
-            val solver = solverOf(staticKB = prologStandardExampleDatabase)
-
-            prologStandardExampleDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = prologStandardExampleDatabase),
+                prologStandardExampleDatabaseNotableGoalToSolution
+        )
     }
 
     /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeWithCutExample() {
-        prolog {
-            val solver = solverOf(staticKB = prologStandardExampleWithCutDatabase)
-
-            prologStandardExampleWithCutDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = prologStandardExampleWithCutDatabase),
+                prologStandardExampleWithCutDatabaseNotableGoalToSolution
+        )
     }
 
     /** Test with [customReverseListDatabaseNotableGoalToSolution] */
     fun testBacktrackingWithCustomReverseListImplementation() {
-        prolog {
-            val solver = solverOf(staticKB = customReverseListDatabase)
-
-            customReverseListDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = customReverseListDatabase),
+                customReverseListDatabaseNotableGoalToSolution
+        )
     }
 
     /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
     fun testWithPrologStandardConjunctionExamples() {
-        prolog {
-            val solver = solverOf(staticKB = conjunctionStandardExampleDatabase)
-
-            conjunctionStandardExampleDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = conjunctionStandardExampleDatabase),
+                conjunctionStandardExampleDatabaseNotableGoalToSolution
+        )
     }
 
     /** A test with all goals used in conjunction with `true` or `fail` to test Conjunction properties */
@@ -214,34 +181,25 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             }
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
-                val solver = solverOf(staticKB = database)
-
-                goalToSolutions.forEach { (goal, solutionList) ->
-                    val solutions = solver.solve(goal).toList()
-
-                    assertSolutionEquals(solutionList, solutions)
-                }
+                assertSolverSolutionsCorrect(
+                        solverOf(staticKB = database),
+                        goalToSolutions
+                )
             }
         }
     }
 
     /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution]*/
     fun testCallPrimitive() {
-        prolog {
-            val solver = solverOf(staticKB = callStandardExampleDatabase)
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = callStandardExampleDatabase),
+                callStandardExampleDatabaseGoalsToSolution
+        )
 
-            callStandardExampleDatabaseGoalsToSolution.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-
-            callTestingGoalsToSolutions.forEach { (goal, solutionList) ->
-                val solutions = solver.solve(goal).toList()
-
-                assertSolutionEquals(solutionList, solutions)
-            }
-        }
+        assertSolverSolutionsCorrect(
+                solverOf(),
+                callTestingGoalsToSolutions
+        )
     }
 
     /** A test in which all testing goals are called through the Call primitive */
@@ -252,13 +210,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                     "call"(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
                 }
             }.forEach { (database, goalToSolutions) ->
-                val solver = solverOf(staticKB = database)
-
-                goalToSolutions.forEach { (goal, solutionList) ->
-                    val solutions = solver.solve(goal).toList()
-
-                    assertSolutionEquals(solutionList, solutions)
-                }
+                assertSolverSolutionsCorrect(
+                        solverOf(staticKB = database),
+                        goalToSolutions
+                )
             }
         }
     }
