@@ -92,6 +92,18 @@ class MutableSolverSystemTesting : SolverFactory {
         prototype.testCallPrimitiveTransparency()
     }
 
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testCatchPrimitive() {
+        prototype.testCatchPrimitive()
+    }
+
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testCatchPrimitiveTransparency() {
+        prototype.testCatchPrimitiveTransparency()
+    }
+
     @Test
     fun testConjunction() {
         prototype.testConjunction()

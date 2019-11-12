@@ -31,15 +31,6 @@ internal class CatchTest {
     }
 
     @Test
-    fun catchThrowPrologStandardExamplesWorkAsExpected() {
-        CatchUtils.prologStandardThrowExamples.forEach { (request, solutionList) ->
-            val toBeTested = Catch.wrappedImplementation(request).toList()
-
-            assertSolutionEquals(solutionList, toBeTested.map { it.solution })
-        }
-    }
-
-    @Test
     fun catchErrorChainComputedCorrectly() {
         CatchUtils.prologStandardThrowExamplesWithError.forEach { (request, solutionList) ->
             assertErrorCauseChainComputedCorrectly(request, solutionList.single())

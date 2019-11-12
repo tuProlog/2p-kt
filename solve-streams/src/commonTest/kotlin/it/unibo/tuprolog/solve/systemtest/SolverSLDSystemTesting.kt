@@ -81,6 +81,16 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testCatchPrimitive() {
+        prototype.testCatchPrimitive()
+    }
+
+    @Test
+    fun testCatchPrimitiveTransparency() {
+        prototype.testCatchPrimitiveTransparency()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

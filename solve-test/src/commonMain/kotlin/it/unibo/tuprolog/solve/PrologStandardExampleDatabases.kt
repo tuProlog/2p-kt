@@ -179,13 +179,65 @@ object PrologStandardExampleDatabases {
         }
     }
 
+    /**
+     * The database used in Prolog standard while writing examples for Catch
+     * ```prolog
+     * p.
+     * p :- throw(b).
+     * r(X) :- throw(X).
+     * q :- catch(p, B, true), r(c).
+     * ```
+     */
+    val catchAndThrowStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                    { "p" },
+                    { "p" `if` "throw"("b") },
+                    { "r"("X") `if` "throw"("X") },
+                    { "q" `if` ("catch"("p", "B", true) and "r"("c")) }
+            )
+        }
+    }
+
+    /**
+     * Notable [catchAndThrowStandardExampleDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- catch(p, X, true).
+     * ?- catch(q, C, true).
+     * ?- catch(throw(exit(1)), exit(X), true).
+     * ?- catch(throw(true), X, X).
+     * ?- catch(throw(fail), X, X).
+     * ?- catch(throw(f(X, X)), f(X, g(X)), true).
+     * ?- catch(throw(1), X, (fail; X)).
+     * ?- catch(throw(fail), true, G).
+     * ```
+     */
+    val catchAndThrowStandardExampleDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                    "catch"("p", "X", true).hasSolutions(
+                            { yes() },
+                            { yes("X" to "b") }
+                    ),
+                    "catch"("q", "C", true).hasSolutions({ yes("C" to "c") }),
+                    "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
+                    "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
+                    "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
+                    "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(haltException) }),
+                    "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(haltException) }),
+                    "catch"("throw"(false), true, "G").hasSolutions({ halt(haltException) })
+            )
+        }
+    }
+
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
     val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
                 prologStandardExampleDatabase to prologStandardExampleDatabaseNotableGoalToSolution,
                 prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution,
                 conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution,
-                callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution
+                callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution,
+                catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution
         )
     }
 }

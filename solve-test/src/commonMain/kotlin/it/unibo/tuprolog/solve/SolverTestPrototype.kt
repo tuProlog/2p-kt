@@ -6,6 +6,8 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
@@ -14,6 +16,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExam
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.allPrologTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.callTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.catchTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
@@ -33,6 +36,7 @@ import kotlin.collections.listOf as ktListOf
 
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
+    /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
     private fun assertSolverSolutionsCorrect(solver: Solver, goalToSolutions: List<Pair<Struct, List<Solution>>>) {
         goalToSolutions.forEach { (goal, solutionList) ->
             val solutions = solver.solve(goal).toList()
@@ -208,6 +212,44 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.map { (goal, expectedSolutions) ->
                     "call"(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
+                }
+            }.forEach { (database, goalToSolutions) ->
+                assertSolverSolutionsCorrect(
+                        solverOf(staticKB = database),
+                        goalToSolutions
+                )
+            }
+        }
+    }
+
+    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution]*/
+    fun testCatchPrimitive() {
+        assertSolverSolutionsCorrect(
+                solverOf(staticKB = catchAndThrowStandardExampleDatabase),
+                catchAndThrowStandardExampleDatabaseNotableGoalToSolution
+        )
+
+        assertSolverSolutionsCorrect(
+                solverOf(),
+                catchTestingGoalsToSolutions
+        )
+    }
+
+    /** A test in which all testing goals are called through the Catch primitive */
+    fun testCatchPrimitiveTransparency() {
+        prolog {
+            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                    ktListOf(
+                            "catch"(goal, `_`, false).run {
+                                if (expectedSolutions.any { it is Solution.Halt && atomOf("halt") !in it.query.args })
+                                    hasSolutions({ no() })
+                                else to(expectedSolutions.changeQueriesTo(this))
+                            },
+                            "catch"(goal, "notUnifyingCatcher", false).run {
+                                to(expectedSolutions.changeQueriesTo(this))
+                            }
+                    )
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(

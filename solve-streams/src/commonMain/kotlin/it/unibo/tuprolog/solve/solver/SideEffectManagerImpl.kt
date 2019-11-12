@@ -123,7 +123,7 @@ internal data class SideEffectManagerImpl(
             throwRelatedToCutContextsParent = ancestorCatchContext
     )
 
-    /** Method to query if provided context is that selected by [throwCut] invocation */
+    /** Method to query if provided context was that selected by [throwCut] invocation */
     internal fun isSelectedThrowCatch(contextImpl: ExecutionContextImpl) = throwRelatedToCutContextsParent == contextImpl
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
@@ -163,3 +163,7 @@ internal fun SideEffectManager?.extendParentScopeWith(upperScopeSideEffectsManag
 /** Bridge method to reach [SideEffectManagerImpl.resetCutWorkChanges] homonym method from a [SideEffectManager] */
 internal fun SideEffectManager?.resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl): SideEffectManagerImpl? =
         (this as? SideEffectManagerImpl)?.resetCutWorkChanges(toRecoverSituation)
+
+/** Bridge method to reach [SideEffectManagerImpl.isSelectedThrowCatch] homonym method from a [SideEffectManager] */
+internal fun SideEffectManager?.isSelectedThrowCatch(context: ExecutionContextImpl): Boolean =
+        (this as? SideEffectManagerImpl)?.isSelectedThrowCatch(context) ?: false

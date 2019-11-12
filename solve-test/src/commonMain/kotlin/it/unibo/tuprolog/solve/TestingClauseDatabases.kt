@@ -314,6 +314,30 @@ object TestingClauseDatabases {
         }
     }
 
+    /**
+     * Catch primitive request goals and respective expected [Solution]s
+     *
+     * Contained requests:
+     * ```prolog
+     * ?- catch(true, _, fail).
+     * ?- catch(catch(throw(external(deepBall)), internal(I), fail), external(E), true).
+     * ?- catch(throw(first), X, throw(second)).
+     * ```
+     */
+    val catchTestingGoalsToSolutions by lazy {
+        prolog {
+            ktListOf(
+                    "catch"(true, `_`, false).hasSolutions({ yes() }),
+                    "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true).hasSolutions(
+                            { yes("E" to "deepBall") }
+                    ),
+                    "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
+                            { halt(haltException) }
+                    )
+            )
+        }
+    }
+
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
     val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
@@ -322,7 +346,8 @@ object TestingClauseDatabases {
                 simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
                 cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
                 customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
-                ClauseDatabase.empty() to callTestingGoalsToSolutions
+                ClauseDatabase.empty() to callTestingGoalsToSolutions,
+                ClauseDatabase.empty() to catchTestingGoalsToSolutions
         ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
     }
 }

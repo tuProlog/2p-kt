@@ -82,7 +82,6 @@ internal object SolverSLDUtils {
                     *extractQueryContextSolutionPairs(ThrowUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CatchUtils.requestSolutionMap).toTypedArray(),
                     *extractQueryContextSolutionPairs(CatchUtils.prologStandardCatchExamples).toTypedArray(),
-                    *extractQueryContextSolutionPairs(CatchUtils.prologStandardThrowExamples).toTypedArray(),
                     *extractQueryContextSolutionPairs(CatchUtils.prologStandardThrowExamplesWithError).toTypedArray()
             )
         }
@@ -91,5 +90,9 @@ internal object SolverSLDUtils {
     /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
     private fun extractQueryContextSolutionPairs(requestSolutionMap: Map<Solve.Request<ExecutionContextImpl>, Iterable<Solution>>) =
             requestSolutionMap.mapKeys { it.key.query to it.key.context }.entries.map { it.toPair() }
+
+    /** An utility method to convert (request, solution list) format, to ((query, context), solution list) one */
+    private fun extractQueryContextSolutionPairs(requestSolutionMap: List<Pair<Solve.Request<ExecutionContextImpl>, Iterable<Solution>>>) =
+            extractQueryContextSolutionPairs(requestSolutionMap.toMap())
 
 }
