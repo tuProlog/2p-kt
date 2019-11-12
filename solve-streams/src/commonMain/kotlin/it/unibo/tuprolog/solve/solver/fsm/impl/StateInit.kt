@@ -1,14 +1,11 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
-import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.isWellFormed
+import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -48,17 +45,5 @@ internal class StateInit(
                 else -> yield(stateEndFalse(sideEffectManager = initializedSideEffectsManager))
             }
         }
-    }
-
-    private companion object {
-
-        /**
-         * Prepares the receiver Goal for execution
-         *
-         * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
-         */
-        private fun Term.prepareForExecutionAsGoal(): Struct =
-                // exploits "Clause" implementation of prepareForExecution() to do that
-                Directive.of(this).prepareForExecution().args.single().castTo()
     }
 }

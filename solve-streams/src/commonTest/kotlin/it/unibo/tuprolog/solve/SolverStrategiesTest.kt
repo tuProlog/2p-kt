@@ -20,7 +20,7 @@ internal class SolverStrategiesTest {
 
     private val aContext = DummyInstances.executionContext
 
-    private val predication = prolog { tupleOf("a", "b", "c") }.argsSequence
+    private val predication = prolog { "a" and "b" and "c" }.argsSequence
     private val clauses = prolog { ktListOf(fact { "a" }, fact { "b" }, fact { "c" }) }.asSequence()
 
     @Test

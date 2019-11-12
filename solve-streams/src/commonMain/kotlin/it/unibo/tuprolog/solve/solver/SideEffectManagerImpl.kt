@@ -159,3 +159,7 @@ internal fun SideEffectManager?.shouldCutExecuteInRuleSelection(): Boolean =
 /** Bridge method to reach [SideEffectManagerImpl.extendParentScopeWith] homonym method from a [SideEffectManager] */
 internal fun SideEffectManager?.extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl): SideEffectManagerImpl? =
         (this as? SideEffectManagerImpl)?.extendParentScopeWith(upperScopeSideEffectsManager)
+
+/** Bridge method to reach [SideEffectManagerImpl.resetCutWorkChanges] homonym method from a [SideEffectManager] */
+internal fun SideEffectManager?.resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl): SideEffectManagerImpl? =
+        (this as? SideEffectManagerImpl)?.resetCutWorkChanges(toRecoverSituation)

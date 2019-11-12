@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestSolutionMap
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestToErrorSolutionMap
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestToSolutionOfCallWithCut
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertErrorCauseChainComputedCorrectly
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.deepCause
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -18,7 +21,7 @@ internal class CallTest {
 
     @Test
     fun callForwardsResponsesFromArgumentExecutionIfWellFormedGoalAndNotVariable() {
-        CallUtils.requestSolutionMap.forEach { (request, solutionList) ->
+        requestSolutionMap.forEach { (request, solutionList) ->
             val toBeTested = Call.wrappedImplementation(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
@@ -27,14 +30,14 @@ internal class CallTest {
 
     @Test
     fun callThrowExceptionIfCallArgIsVariableOrNotWellFormed() {
-        CallUtils.exposedErrorThrowingRequests.forEach { (request, errorType) ->
-            assertFailsWith(errorType) { Call.wrappedImplementation(request) }
+        requestToErrorSolutionMap.forEach { (request, solutionList) ->
+            assertFailsWith(solutionList.single().deepCause()::class) { Call.wrappedImplementation(request) }
         }
     }
 
     @Test
     fun callPrimitiveErrorContainsCorrectContext() {
-        CallUtils.exposedErrorThrowingRequests.forEach { (request, _) ->
+        requestToErrorSolutionMap.forEach { (request, _) ->
             assertOverFailure<TuPrologRuntimeException>({ Call.wrappedImplementation(request) }) {
                 assertEquals(request.context, it.context)
             }
@@ -43,15 +46,16 @@ internal class CallTest {
 
     @Test
     fun callShouldLimitCutPowersToTheInnerGoal() {
-        val (request, solutionList) = CallUtils.requestToSolutionOfCallWithCut
-        val toBeTested = Call.wrappedImplementation(request).toList()
+        requestToSolutionOfCallWithCut.forEach { (request, solutionList) ->
+            val toBeTested = Call.wrappedImplementation(request).toList()
 
-        assertSolutionEquals(solutionList, toBeTested.map { it.solution })
+            assertSolutionEquals(solutionList, toBeTested.map { it.solution })
+        }
     }
 
     @Test
     fun callErrorChainComputedCorrectly() {
-        CallUtils.requestToErrorSolutionMap.forEach { (request, solutionList) ->
+        requestToErrorSolutionMap.forEach { (request, solutionList) ->
             assertErrorCauseChainComputedCorrectly(request, solutionList.single())
         }
     }

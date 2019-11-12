@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
@@ -10,6 +12,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExam
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.allPrologTestingDatabasesToRespectiveGoalsAndSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
@@ -195,10 +198,15 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                         ktListOf(
-                                (goal and true).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
-                                (true and goal).run { to(expectedSolutions.map { it.changeQueryTo(this) }) },
+                                (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
+                                (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
 
-                                (goal and false).hasSolutions({ no() }),
+                                (goal and false).run {
+                                    if (expectedSolutions.any { it is Solution.Halt })
+                                        to(expectedSolutions.changeQueriesTo(this))
+                                    else hasSolutions({ no() })
+                                },
+
                                 (false and goal).hasSolutions({ no() })
                         )
                     }
@@ -209,7 +217,44 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 val solver = solverOf(staticKB = database)
 
                 goalToSolutions.forEach { (goal, solutionList) ->
-                    println("$goal: $solutionList")
+                    val solutions = solver.solve(goal).toList()
+
+                    assertSolutionEquals(solutionList, solutions)
+                }
+            }
+        }
+    }
+
+    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution]*/
+    fun testCallPrimitive() {
+        prolog {
+            val solver = solverOf(staticKB = callStandardExampleDatabase)
+
+            callStandardExampleDatabaseGoalsToSolution.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
+
+            callTestingGoalsToSolutions.forEach { (goal, solutionList) ->
+                val solutions = solver.solve(goal).toList()
+
+                assertSolutionEquals(solutionList, solutions)
+            }
+        }
+    }
+
+    /** A test in which all testing goals are called through the Call primitive */
+    fun testCallPrimitiveTransparency() {
+        prolog {
+            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions.map { (goal, expectedSolutions) ->
+                    "call"(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
+                }
+            }.forEach { (database, goalToSolutions) ->
+                val solver = solverOf(staticKB = database)
+
+                goalToSolutions.forEach { (goal, solutionList) ->
                     val solutions = solver.solve(goal).toList()
 
                     assertSolutionEquals(solutionList, solutions)

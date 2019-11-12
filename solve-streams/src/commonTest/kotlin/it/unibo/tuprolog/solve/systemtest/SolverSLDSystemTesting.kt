@@ -71,6 +71,16 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testCallPrimitive() {
+        prototype.testCallPrimitive()
+    }
+
+    @Test
+    fun testCallPrimitiveTransparency() {
+        prototype.testCallPrimitiveTransparency()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

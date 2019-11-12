@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -28,7 +29,7 @@ object PrologStandardExampleDatabases {
     val prologStandardExampleDatabase by lazy {
         prolog {
             theory(
-                    { "p"("X", "Y") `if` tupleOf("q"("X"), "r"("X", "Y")) },
+                    { "p"("X", "Y") `if` ("q"("X") and "r"("X", "Y")) },
                     { "p"("X", "Y") `if` "s"("X") },
                     { "s"("d") },
                     { "q"("a") },
@@ -74,7 +75,7 @@ object PrologStandardExampleDatabases {
      */
     val prologStandardExampleWithCutDatabase by lazy {
         prolog {
-            theory({ "p"("X", "Y") `if` tupleOf("q"("X"), "!", "r"("X", "Y")) }) +
+            theory({ "p"("X", "Y") `if` ("q"("X") and "!" and "r"("X", "Y")) }) +
                     theoryOf(*prologStandardExampleDatabase.clauses.drop(1).toTypedArray())
         }
     }
@@ -133,12 +134,58 @@ object PrologStandardExampleDatabases {
         }
     }
 
+    /**
+     * The database used in Prolog standard while writing examples for Call
+     * ```prolog
+     * a(1).
+     * a(2).
+     * ```
+     */
+    val callStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                    { "a"(1) },
+                    { "a"(2) }
+            )
+        }
+    }
+
+    /**
+     * Prolog Standard examples to test call primitive with [callStandardExampleDatabase]
+     * ```prolog
+     * ?- call('!') ; true.
+     * ?- Z = !, call( (Z = !, a(X), Z) ).
+     * ?- call( (Z = !, a(X), Z) ).
+     * ?- call(fail).
+     * ?- call(true, X).
+     * ?- call(true, fail, 1).
+     * ```
+     */
+    val callStandardExampleDatabaseGoalsToSolution by lazy {
+        prolog {
+            ktListOf(
+                    ("call"("!") or true).hasSolutions({ yes() }, { yes() }),
+                    ("="("Z", "!") and "call"("="("Z", "!") and "a"("X") and "Z")).hasSolutions(
+                            { yes("X" to 1, "Z" to "!") }
+                    ),
+                    "call"("="("Z", "!") and "a"("X") and "Z").hasSolutions(
+                            { yes("X" to 1, "Z" to "!") },
+                            { yes("X" to 2, "Z" to "!") }
+                    ),
+                    "call"(false).hasSolutions({ no() }),
+                    "call"(true and "X").hasSolutions({ halt(haltException) }),
+                    "call"("true" and "false" and 1).hasSolutions({ halt(haltException) })
+            )
+        }
+    }
+
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
     val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
                 prologStandardExampleDatabase to prologStandardExampleDatabaseNotableGoalToSolution,
                 prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution,
-                conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution
+                conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution,
+                callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution
         )
     }
 }

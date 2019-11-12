@@ -38,6 +38,9 @@ fun Solution.changeQueryTo(query: Struct) = when (this) {
     is Solution.Halt -> copy(query)
 }
 
+/** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
+fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(query) }
+
 /** Utility function to assert [assertion] over thrown exception by [throwExpression] */
 inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit, assertion: (E) -> Unit) =
         try {

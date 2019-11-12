@@ -7,16 +7,22 @@
 
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.*
 import kotlin.jvm.JvmName
 
 /** Check whether the receiver term is a well-formed predication */
 fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
+
+/**
+ * Prepares the receiver Goal for execution
+ *
+ * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
+ */
+fun Term.prepareForExecutionAsGoal(): Struct =
+        // exploits "Clause" implementation of prepareForExecution() to do that
+        Directive.of(this).prepareForExecution().args.single().castTo()
 
 /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
 fun <E> Sequence<E>.orderWithStrategy(

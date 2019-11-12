@@ -27,6 +27,17 @@ internal object PrimitiveUtils {
         }
     }
 
+    /** Utility function to extract deep cause of a [Solution.Halt] exception */
+    internal fun Solution.Halt.deepCause(): Throwable {
+        var exceptionCause: Throwable = exception
+
+        while (exceptionCause.cause != null) {
+            exceptionCause = exceptionCause.cause!!
+        }
+
+        return exceptionCause
+    }
+
     /**
      * Utility function to test whether the cause of errors generated is correctly filled
      *

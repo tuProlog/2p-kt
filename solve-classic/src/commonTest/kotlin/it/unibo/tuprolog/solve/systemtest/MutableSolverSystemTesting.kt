@@ -80,6 +80,18 @@ class MutableSolverSystemTesting : SolverFactory {
         prototype.testConjunctionProperties()
     }
 
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testCallPrimitive() {
+        prototype.testCallPrimitive()
+    }
+
+    @Test // TODO (issue #52)
+    @Ignore
+    fun testCallPrimitiveTransparency() {
+        prototype.testCallPrimitiveTransparency()
+    }
+
     @Test
     fun testConjunction() {
         prototype.testConjunction()

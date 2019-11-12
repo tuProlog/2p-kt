@@ -29,6 +29,19 @@ internal class SolverUtilsTest {
     }
 
     @Test
+    fun prepareForExecutionAsGoalWorksAsExpected() {
+        val aVar = Var.of("A")
+        val bVar = Var.of("B")
+        val correct = Tuple.of(Struct.of("call", aVar), Struct.of("call", bVar))
+
+        val toBeTested1 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal()
+        val toBeTested2 = Tuple.of(aVar, bVar).prepareForExecutionAsGoal().prepareForExecutionAsGoal()
+
+        assertEquals(correct, toBeTested1)
+        assertEquals(correct, toBeTested2)
+    }
+
+    @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
         assertEquals(
                 emptySequence<Nothing>().toList(),

@@ -1,18 +1,24 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Call
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
-import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.yes
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -22,55 +28,51 @@ import kotlin.collections.listOf as ktListOf
  */
 internal object CallUtils {
 
+    private val aContext = DummyInstances.executionContext
+
     /**
      * Call primitive working examples, with expected responses
      *
      * Contained requests:
      * - `call(true)` **will result in** `Yes()`
-     * - `call((true,true))` **will result in** `Yes()`
+     * - `call((true, true))` **will result in** `Yes()`
      * - `call('!')` **will result in** `Yes()`
+     * - `call(f(A))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a)`
+     * - `call(g(A))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a), Yes(A -> b)`
      * - `call(h(A))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a), Yes(A -> b), Yes(A -> c)`
+     * - `call((f(A), '!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a)`
      * - `call((g(A), '!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a)`
+     * - `call((h(A), '!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a)`
      */
     internal val requestSolutionMap by lazy {
-        mapOf(
-                Struct.of(Call.functor, Truth.`true`()).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair)) to ktListOf(
-                            Solution.Yes(it, Substitution.empty())
-                    )
-                },
-                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Truth.`true`())).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)) to ktListOf(
-                            Solution.Yes(it, Substitution.empty())
-                    )
-                },
-                Struct.of(Call.functor, Atom.of("!")).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Cut.descriptionPair)) to ktListOf(
-                            Solution.Yes(it, Substitution.empty())
-                    )
-                },
-                prolog {
-                    Call.functor("h"("A")).run {
-                        // TODO: 07/11/2019 refactor with yesSolution()
-                        createSolveRequest(this, database = simpleFactDatabase, primitives = mapOf(Call.descriptionPair)) to ktListOf(
-                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("a"))),
-                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("b"))),
-                                Solution.Yes(this, Substitution.of(varOf("A"), atomOf("c")))
-                        )
-                    }
-                },
-                Scope.empty {
-                    structOf(Call.functor, tupleOf(structOf("g", varOf("A")), atomOf("!"))).let { query ->
-                        createSolveRequest(query,
-                                database = simpleFactDatabase,
-                                primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
-                        ) to ktListOf(
-                                Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a")))
-                        )
-                    }
-                }
-                // TODO: once tests will be refactored, here will go all other examples, because "call" should call them and results should be the same
-        )
+        prolog {
+            mapOf(
+                    Call.functor(true).run {
+                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair)) to ktListOf(yes())
+                    },
+                    Call.functor("true" and "true").run {
+                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair)) to ktListOf(yes())
+                    },
+                    Call.functor("!").run {
+                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Cut.descriptionPair)) to ktListOf(yes())
+                    },
+                    *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
+                        Call.functor(goal).run {
+                            createSolveRequest(this, database = simpleFactDatabase, primitives = mapOf(Call.descriptionPair)) to
+                                    solutionList.changeQueriesTo(this)
+                        }
+                    }.toTypedArray(),
+                    *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
+                        Call.functor(goal and "!").run {
+                            createSolveRequest(
+                                    this,
+                                    database = simpleFactDatabase,
+                                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                            ) to solutionList.subList(0, 1).changeQueriesTo(this)
+                        }
+                    }.toTypedArray()
+            )
+        }
     }
 
     /**
@@ -82,58 +84,40 @@ internal object CallUtils {
      * - `call((true, 1))`  **will result in** `Halt()`
      */
     internal val requestToErrorSolutionMap by lazy {
-        mapOf(
-                Struct.of(Call.functor, Var.of("X")).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)).run {
-                        this to ktListOf(
-                                Solution.Halt(it, HaltException(
-                                        context = this.context,
-                                        cause = SystemError(
-                                                context = this.context,
-                                                cause = InstantiationError(
-                                                        context = this.context,
-                                                        extraData = Var.of("X")
-                                                ),
-                                                extraData = InstantiationError(
-                                                        context = this.context,
-                                                        extraData = Var.of("X")
-                                                ).errorStruct
-                                        )
-                                )))
-                    }
-                },
-                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Integer.of(1))).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)).run {
-                        this to ktListOf(
-                                Solution.Halt(it, HaltException(
-                                        context = this.context,
-                                        cause = with(TypeError(
-                                                expectedType = TypeError.Expected.CALLABLE,
-                                                actualValue = Tuple.of(Truth.`true`(), Integer.of(1)),
-                                                context = this.context
+        prolog {
+            mapOf(
+                    Call.functor("X").run {
+                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)) to ktListOf(
+                                halt(HaltException(context = aContext,
+                                        cause = with(InstantiationError(
+                                                context = aContext,
+                                                extraData = varOf("X")
                                         )) {
-                                            SystemError(
-                                                    context = this.context,
+                                            SystemError(context = aContext,
                                                     cause = this,
                                                     extraData = this.errorStruct
                                             )
                                         }
-                                )))
+                                ))
+                        )
+                    },
+                    Call.functor(true and 1).run {
+                        createSolveRequest(this, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)) to ktListOf(
+                                halt(HaltException(context = aContext,
+                                        cause = with(TypeError(context = aContext,
+                                                expectedType = TypeError.Expected.CALLABLE,
+                                                actualValue = Tuple.of(Truth.`true`(), Integer.of(1))
+                                        )) {
+                                            SystemError(context = aContext,
+                                                    cause = this,
+                                                    extraData = this.errorStruct
+                                            )
+                                        }
+                                ))
+                        )
                     }
-                }
-        )
-    }
-
-    /** Requests that will throw exceptions directly, if primitive invoked (same as [requestToErrorSolutionMap])*/
-    internal val exposedErrorThrowingRequests by lazy {
-        mapOf(
-                Struct.of(Call.functor, Var.of("A")).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Throw.descriptionPair)) to InstantiationError::class
-                },
-                Struct.of(Call.functor, Tuple.of(Truth.`true`(), Integer.of(1))).let {
-                    createSolveRequest(it, primitives = mapOf(Call.descriptionPair, Conjunction.descriptionPair, Throw.descriptionPair)) to TypeError::class
-                }
-        )
+            )
+        }
     }
 
     /**
@@ -142,16 +126,18 @@ internal object CallUtils {
      * - `call(g(A), call('!'))` against [factDatabase][simpleFactDatabase]  **will result in** `Yes(A -> a), Yes(A -> b)`
      */
     internal val requestToSolutionOfCallWithCut by lazy {
-        Scope.empty {
-            structOf(Call.functor, tupleOf(structOf("g", varOf("A")), structOf("call", atomOf("!")))).let { query ->
-                createSolveRequest(query,
-                        database = simpleFactDatabase,
-                        primitives = mapOf(Conjunction.descriptionPair, Cut.descriptionPair, Call.descriptionPair)
-                ) to ktListOf(
-                        Solution.Yes(query, Substitution.of(varOf("A"), atomOf("a"))),
-                        Solution.Yes(query, Substitution.of(varOf("A"), atomOf("b")))
-                )
-            }
+        prolog {
+            ktListOf(
+                    *simpleFactDatabaseNotableGoalToSolutions.map { (goal, solutionList) ->
+                        Call.functor(goal and Call.functor("!")).run {
+                            createSolveRequest(
+                                    this,
+                                    database = simpleFactDatabase,
+                                    primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
+                            ) to solutionList.changeQueriesTo(this)
+                        }
+                    }.toTypedArray()
+            )
         }
     }
 }

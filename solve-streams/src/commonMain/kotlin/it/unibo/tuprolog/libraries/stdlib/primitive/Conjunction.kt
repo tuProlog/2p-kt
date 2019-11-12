@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solution
@@ -23,7 +22,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                 }.toList()
 
                 // no preparation for execution needed in this implementation because, StateInit always does it before
-                val leftSubSolveRequest = request.newSolveRequest(leftSubGoal as Struct)
+                val leftSubSolveRequest = request.newSolveRequest(leftSubGoal.prepareForExecutionAsGoal())
 
                 var cutExecuted = false
                 SolverSLD.solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
@@ -33,7 +32,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                     when (leftResponse.solution) {
                         is Solution.Yes -> {
                             val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-                                    rightSubGoal.apply(leftResponse.solution.substitution) as Struct,
+                                    rightSubGoal.apply(leftResponse.solution.substitution).prepareForExecutionAsGoal(),
                                     leftResponse.solution.substitution - leftSubSolveRequest.context.substitution,
                                     leftResponse.sideEffectManager as? SideEffectManagerImpl,
                                     logicalParentRequest = request

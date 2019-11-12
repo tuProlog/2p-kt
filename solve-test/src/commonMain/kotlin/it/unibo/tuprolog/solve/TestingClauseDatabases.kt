@@ -3,7 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -12,6 +14,9 @@ import kotlin.collections.listOf as ktListOf
  * @author Enrico
  */
 object TestingClauseDatabases {
+
+    internal val haltException = HaltException(context = DummyInstances.executionContext)
+    private val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
 
     /**
      * A database containing the following facts:
@@ -140,7 +145,7 @@ object TestingClauseDatabases {
      */
     val simpleCutAndConjunctionDatabase = prolog {
         theory(
-                { "f"("X", "Y") `if` tupleOf("q"("X"), "!", "r"("Y")) },
+                { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
                 { "f"("X", "Y") `if` "r"("X") },
                 { "q"("a") },
                 { "q"("b") },
@@ -185,7 +190,7 @@ object TestingClauseDatabases {
         theory(
                 { "a"("X") `if` "b"("X") },
                 { "a"(6) },
-                { "b"("X") `if` tupleOf("c"("X"), "d"("X")) },
+                { "b"("X") `if` ("c"("X") and "d"("X")) },
                 { "b"(4) `if` "!" },
                 { "b"(5) },
                 { "c"(1) },
@@ -237,9 +242,7 @@ object TestingClauseDatabases {
     val infiniteComputationDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    atomOf("a").hasSolutions(
-                            { halt(TimeOutException(context = DummyInstances.executionContext, exceededDuration = 0)) }
-                    )
+                    atomOf("a").hasSolutions({ halt(timeOutException) })
             )
         }
     }
@@ -270,7 +273,7 @@ object TestingClauseDatabases {
     /**
      * Notable [customReverseListDatabase] request goals and respective expected [Solution]s
      * ```prolog
-     * ?- p(U, V).
+     * ?- my_reverse([1, 2, 3, 4], L).
      * ```
      */
     val customReverseListDatabaseNotableGoalToSolution by lazy {
@@ -283,6 +286,34 @@ object TestingClauseDatabases {
         }
     }
 
+    /**
+     * Call primitive request goals and respective expected [Solution]s
+     *
+     * Contained requests:
+     * ```prolog
+     * ?- call(true).
+     * ?- call(fail).
+     * ?- call(halt).
+     * ?- call((true, true)).
+     * ?- call('!').
+     * ?- call(X).
+     * ?- call((true, 1)).
+     * ```
+     */
+    val callTestingGoalsToSolutions by lazy {
+        prolog {
+            ktListOf(
+                    "call"(true).hasSolutions({ yes() }),
+                    "call"(false).hasSolutions({ no() }),
+                    "call"("halt").hasSolutions({ halt(haltException) }),
+                    "call"("true" and "true").hasSolutions({ yes() }),
+                    "call"("!").hasSolutions({ yes() }),
+                    "call"("X").hasSolutions({ halt(haltException) }),
+                    "call"("true" and 1).hasSolutions({ halt(haltException) })
+            )
+        }
+    }
+
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
     val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
@@ -290,7 +321,8 @@ object TestingClauseDatabases {
                 simpleCutDatabase to simpleCutDatabaseNotableGoalToSolutions,
                 simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
                 cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
-                customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution
+                customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
+                ClauseDatabase.empty() to callTestingGoalsToSolutions
         ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
     }
 }

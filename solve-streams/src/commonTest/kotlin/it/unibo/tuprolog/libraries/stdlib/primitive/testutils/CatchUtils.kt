@@ -6,6 +6,7 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Catch
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
@@ -41,7 +42,7 @@ internal object CatchUtils {
                         createSolveRequest(it,
                                 callRequest.context.libraries.theory,
                                 callRequest.context.libraries.primitives + Catch.descriptionPair
-                        ) to solutions.map { callSolution -> callSolution.copy(query = it) }
+                        ) to solutions.changeQueriesTo(it)
                     }
                 }.toTypedArray(),
                 *CallUtils.requestSolutionMap.map { (callRequest, solutions) ->
@@ -49,7 +50,7 @@ internal object CatchUtils {
                         createSolveRequest(it,
                                 callRequest.context.libraries.theory,
                                 callRequest.context.libraries.primitives + Catch.descriptionPair
-                        ) to solutions.map { callSolution -> callSolution.copy(query = it) }
+                        ) to solutions.changeQueriesTo(it)
                     }
                 }.toTypedArray(),
                 *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
