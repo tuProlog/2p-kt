@@ -7,6 +7,7 @@ plugins {
     signing
     id("org.jetbrains.dokka") version "0.9.18"
     id("com.jfrog.bintray") version "1.8.4"
+    id ("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
 }
 
 repositories {
@@ -15,7 +16,16 @@ repositories {
 }
 
 group = "it.unibo.tuprolog"
-version = "0.0.1"
+
+gitSemVer {
+    minimumVersion.set("0.1.0")
+    developmentIdentifier.set("dev")
+    noTagIdentifier.set("archeo")
+    developmentCounterLength.set(2) // How many digits after `dev`
+    version = computeGitSemVer() // THIS IS MANDATORY, AND MUST BE LAST IN THIS BLOCK!
+}
+
+println("2p-Kt version: $version")
 
 // apply next commands to all subprojects
 subprojects {
@@ -247,9 +257,7 @@ subprojects {
 //        }
 
         bintray {
-            println(project.property("bintrayUser"))
             user = project.property("bintrayUser").toString()
-            println(project.property("bintrayKey"))
             key = project.property("bintrayKey").toString()
             setPublications("kotlinMultiplatform", "js", "jvm", "metadata")
             override = true
