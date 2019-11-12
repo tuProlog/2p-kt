@@ -284,7 +284,13 @@ subprojects {
     }
 
     signing {
-        useGpgCmd()
+        // env ORG_GRADLE_PROJECT_signingKey
+        val signingKey: String? by project
+        // env ORG_GRADLE_PROJECT_signingPassword
+        val signingPassword: String? by project
+
+        useInMemoryPgpKeys(signingKey, signingPassword)
+
         sign(publishing.publications)
     }
 
