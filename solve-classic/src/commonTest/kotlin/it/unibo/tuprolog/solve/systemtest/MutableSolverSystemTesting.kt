@@ -9,7 +9,7 @@ import kotlin.test.Test
 
 class MutableSolverSystemTesting : SolverFactory {
 
-    val prototype = SolverTestPrototype(this)
+    private val prototype = SolverTestPrototype(this)
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 

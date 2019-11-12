@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 class SolverSLDSystemTesting : SolverFactory {
 
-    val prototype = SolverTestPrototype(this)
+    private val prototype = SolverTestPrototype(this)
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
