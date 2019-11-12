@@ -15,7 +15,7 @@ repositories {
 }
 
 group = "it.unibo.tuprolog"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 // apply next commands to all subprojects
 subprojects {
@@ -247,16 +247,18 @@ subprojects {
 //        }
 
         bintray {
+            println(project.property("bintrayUser"))
             user = project.property("bintrayUser").toString()
+            println(project.property("bintrayKey"))
             key = project.property("bintrayKey").toString()
             setPublications("kotlinMultiplatform", "js", "jvm", "metadata")
             override = true
             with(pkg) {
-                repo = "Alchemist"
+                repo = "tuprolog"
                 name = project.name
                 userOrg = "pika-lab"
                 vcsUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin"
-                setLicenses("Apache 2.0")
+                setLicenses("Apache-2.0")
                 with(version) {
                     name = project.version.toString()
                 }
