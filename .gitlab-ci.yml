@@ -1,4 +1,4 @@
-image: gciatto/my-images:jdk12-alpine-gradle531
+image: pikalab/ci:jdk12oracle-gradle6-git
 
 variables:
   GOPTS: "--no-daemon --console=plain"
@@ -11,13 +11,12 @@ cache:
     - /root/.gradle/
     - gradle/
     - build/
-    - .gradle/wrapper
-    - .gradle/caches
+    - .gradle/
 
 build:
   stage: build
-  script: ./gradlew assemble $GOPTS
+  script: gradle assemble $GOPTS
 
 test:
   stage: test
-  script: ./gradlew check $GOPTS
+  script: gradle check $GOPTS

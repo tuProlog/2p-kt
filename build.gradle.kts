@@ -1,3 +1,4 @@
+import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
@@ -275,6 +276,10 @@ subprojects {
                     name = project.version.toString()
                 }
             }
+        }
+
+        tasks.withType<BintrayUploadTask> {
+            dependsOn("publishAllToBintray")
         }
     }
 
