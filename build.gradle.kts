@@ -6,12 +6,12 @@ plugins {
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version "0.9.18"
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 repositories {
-    maven {
-        url = uri("https://plugins.gradle.org/m2/")
-    }
+    mavenCentral()
+    maven("https://dl.bintray.com/kotlin/dokka")
 }
 
 group = "it.unibo.tuprolog"
@@ -29,6 +29,7 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "com.jfrog.bintray")
 //    apply(plugin = "com.moowork.node")
 
     // projects dependencies repositories
@@ -185,7 +186,6 @@ subprojects {
     // https://docs.gradle.org/current/userguide/signing_plugin.html
     publishing {
         publications.withType<MavenPublication> {
-
             groupId = project.group.toString()
             version = project.version.toString()
 
@@ -198,8 +198,8 @@ subprojects {
             }
 
             pom {
-                name.set("2P in Kotlin")
-                description.set("Multplatform Prolog environment, in Kotlin")
+                name.set("2P in Kotlin -- Module `${this@subprojects.name}`")
+                description.set("Multi-platform Prolog environment, in Kotlin")
                 url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
                 licenses {
                     license {
@@ -210,12 +210,14 @@ subprojects {
 
                 developers {
                     developer {
+                        name.set("Giovanni Ciatto")
                         email.set("giovanni.ciatto@gmail.com")
                         url.set("https://about.me/gciatto")
                         organization.set("University of Bologna")
                         organizationUrl.set("https://www.unibo.it/it")
                     }
                     developer {
+                        name.set("Enrico Siboni")
                         email.set("siboxd@gmail.com")
                         url.set("https://github.com/siboXD")
                     }
@@ -229,7 +231,7 @@ subprojects {
 
         }
 
-        repositories {
+//        repositories {
 //            val mavenRepoUrl = if (version.toString().contains("SNAPSHOT")) {
 //                "https://oss.sonatype.org/content/repositories/snapshots/"
 //            } else {
@@ -242,12 +244,21 @@ subprojects {
 //                    password = project.property("ossrhPassword").toString()
 //                }
 //            }
-            val bintrayRepoUrl = "https://dl.bintray.com/pika-lab/tuprolog"
+//        }
 
-            maven(bintrayRepoUrl) {
-                credentials {
-                    username = project.property("bintrayUser").toString()
-                    password = project.property("bintrayKey").toString()
+        bintray {
+            user = project.property("bintrayUser").toString()
+            key = project.property("bintrayKey").toString()
+            setPublications("kotlinMultiplatform", "js", "jvm", "metadata")
+            override = true
+            with(pkg) {
+                repo = "Alchemist"
+                name = project.name
+                userOrg = "pika-lab"
+                vcsUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin"
+                setLicenses("Apache 2.0")
+                with(version) {
+                    name = project.version.toString()
                 }
             }
         }
