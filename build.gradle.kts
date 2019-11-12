@@ -27,6 +27,10 @@ gitSemVer {
 
 println("2p-Kt version: $version")
 
+tasks.register<DefaultTask>("publishAllToBintray") {
+    group = "publishing"
+}
+
 // apply next commands to all subprojects
 subprojects {
 
