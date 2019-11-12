@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.exception.prologerror
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Truth
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,6 +14,7 @@ internal class ErrorUtilsTest {
 
     private val errorDescription = Atom.of("myErrorDesc")
     private val errorExtraData = Atom.of("myExtra")
+    private val defaultCustomErrorData = Atom.of("")
 
     @Test
     fun standardErrorWrapperFunctorCorrect() {
@@ -32,7 +32,7 @@ internal class ErrorUtilsTest {
     @Test
     fun errorStructOfWithOnlyFirstArgFillsExtraDataWithTrue() {
         assertEquals(
-                Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, Truth.`true`()),
+                Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, defaultCustomErrorData),
                 ErrorUtils.errorStructOf(errorDescription)
         )
     }

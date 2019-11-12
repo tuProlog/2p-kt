@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.exception.prologerror
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Truth
 
 /**
  * Prolog error handling utilities
@@ -24,7 +24,7 @@ object ErrorUtils {
      * If the error [errorDescription] is composite like `type_error(callable, Goal)` the corresponding struct, according to prolog standard, will be
      * `error(type_error(callable, Goal), `[customErrorData]`)`
      */
-    fun errorStructOf(errorDescription: Struct, customErrorData: Term = Truth.`true`()) =
+    fun errorStructOf(errorDescription: Struct, customErrorData: Term = Atom.of("")) =
             Struct.of(errorWrapperFunctor, errorDescription, customErrorData)
 
 }
