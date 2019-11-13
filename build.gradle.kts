@@ -294,7 +294,7 @@ subprojects {
         sign(publishing.publications)
 
         println("Configuring signing for the following publications: ${
-        publishing.publications.names.map { project.name + "-" + it }.joinToString(", ")
+            publishing.publications.names.map { project.name + "-" + it }.joinToString(", ")
         }")
     }
 
