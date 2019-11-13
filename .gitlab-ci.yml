@@ -4,28 +4,33 @@ variables:
   GOPTS: "--no-daemon --console=plain --stacktrace"
   CI: "true"
   BEFORE_TASK: ""
+  AFTER_TASK: ""
+  GCMD: "gradle"
+  BUILD_TASK: "assemble"
+  TEST_TASK: "check"
+  BINTRAY_TASK: "publishAllToBintray"
 
 before_script:
   - chmod +x gradlew
 
-#cache:
-#  paths:
-#    - /root/.gradle/
-#    - gradle/
-#    - build/
-#    - .gradle/
+cache:
+  paths:
+    - /root/.gradle/
+    - gradle/
+    - build/
+    - .gradle/
 
 build:
   stage: build
-  script: gradle $BEFORE_TASK assemble $GOPTS
+  script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
 
 test:
   stage: test
-  script: gradle $BEFORE_TASK check $GOPTS
+  script: $GCMD $BEFORE_TASK $TEST_TASK $AFTER_TASK $GOPTS
 
 publish-bintray:
   stage: deploy
-  script: gradle $BEFORE_TASK publishAllToBintray $GOPTS
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
