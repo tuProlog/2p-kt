@@ -28,7 +28,7 @@ gitSemVer {
 
 println("2p-Kt version: $version")
 
-tasks.register<DefaultTask>("publishAllToBintray") {
+val publishAllToBintrayTask = tasks.create<DefaultTask>("publishAllToBintray") {
     group = "publishing"
 }
 
@@ -279,7 +279,7 @@ subprojects {
         }
 
         tasks.withType<BintrayUploadTask> {
-            dependsOn("publishAllToBintray")
+            publishAllToBintrayTask.dependsOn(this)
         }
     }
 
