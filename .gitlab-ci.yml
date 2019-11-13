@@ -1,8 +1,9 @@
 image: pikalab/ci:jdk12oracle-gradle6-git
 
 variables:
-  GRADLE_OPTS: "--no-daemon --console=plain"
+  GOPTS: "--no-daemon --console=plain"
   CI: "true"
+  BEFORE_TASK: ""
 
 before_script:
   - chmod +x gradlew
@@ -16,15 +17,15 @@ cache:
 
 build:
   stage: build
-  script: gradle assemble $GRADLE_OPTS
+  script: gradle $BEFORE_TASK assemble $GOPTS
 
 test:
   stage: test
-  script: gradle check $GRADLE_OPTS
+  script: gradle $BEFORE_TASK check $GOPTS
 
 publish-bintray:
   stage: deploy
-  script: gradle clean publishAllToBintray $GRADLE_OPTS
+  script: gradle $BEFORE_TASK publishAllToBintray $GOPTS
   environment:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
