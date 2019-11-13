@@ -1,7 +1,7 @@
 image: pikalab/ci:jdk12oracle-gradle6-git
 
 variables:
-  GOPTS: "--no-daemon --console=plain"
+  GOPTS: "--no-daemon --console=plain --stacktrace"
   CI: "true"
   BEFORE_TASK: ""
 
