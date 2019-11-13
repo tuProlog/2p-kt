@@ -289,6 +289,14 @@ subprojects {
         // env ORG_GRADLE_PROJECT_signingPassword
         val signingPassword: String? by project
 
+        if (signingKey.isNullOrBlank()) {
+            System.err.println("WARNING: signingKey is not set")
+        }
+
+        if (signingPassword.isNullOrBlank()) {
+            System.err.println("WARNING: signingPassword is not set")
+        }
+
         useInMemoryPgpKeys(signingKey, signingPassword)
 
         sign(publishing.publications)
