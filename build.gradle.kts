@@ -32,6 +32,23 @@ val publishAllToBintrayTask = tasks.create<DefaultTask>("publishAllToBintray") {
     group = "publishing"
 }
 
+fun getPropertyOrWarnForAbsence(key: String): String? {
+    val value = property(key)?.toString()
+    if (signingKey.isNullOrBlank()) {
+        System.err.println("WARNING: $key is not set")
+    }
+    return value
+}
+
+// env ORG_GRADLE_PROJECT_signingKey
+val signingKey = getPropertyOrWarnForAbsence("signingKey")
+// env ORG_GRADLE_PROJECT_signingPassword
+val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
+// env ORG_GRADLE_PROJECT_bintrayUser
+val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
+// env ORG_GRADLE_PROJECT_bintrayKey
+val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
+
 // apply next commands to all subprojects
 subprojects {
 
@@ -45,14 +62,11 @@ subprojects {
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
-//    apply(plugin = "com.moowork.node")
 
     // projects dependencies repositories
     repositories {
         mavenCentral()
         maven("https://dl.bintray.com/kotlin/dokka")
-//        maven("https://jitpack.io")
-//        mavenLocal()
     }
 
     // Common kotlin multiplatform configuration for sub-projects
@@ -262,8 +276,8 @@ subprojects {
 //        }
 
         bintray {
-            user = project.property("bintrayUser").toString()
-            key = project.property("bintrayKey").toString()
+            user = bintrayUser
+            key = bintrayKey
             setPublications("kotlinMultiplatform", "js", "jvm", "metadata")
             override = true
             with(pkg) {
@@ -284,26 +298,13 @@ subprojects {
     }
 
     signing {
-        // env ORG_GRADLE_PROJECT_signingKey
-        val signingKey: String? by project
-        // env ORG_GRADLE_PROJECT_signingPassword
-        val signingPassword: String? by project
-
-        if (signingKey.isNullOrBlank()) {
-            System.err.println("WARNING: signingKey is not set")
-        }
-
-        if (signingPassword.isNullOrBlank()) {
-            System.err.println("WARNING: signingPassword is not set")
-        }
-
         useInMemoryPgpKeys(signingKey, signingPassword)
 
         sign(publishing.publications)
 
-        println("Configuring signing for the following publications: ${
-            publishing.publications.names.map { project.name + "-" + it }.joinToString(", ")
-        }")
+//        println("Configuring signing for the following publications: ${
+//            publishing.publications.names.map { project.name + "-" + it }.joinToString(", ")
+//        }")
     }
 
     publishing {
