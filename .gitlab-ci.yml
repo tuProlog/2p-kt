@@ -1,7 +1,14 @@
-image: gciatto/my-images:jdk12-alpine-gradle531
+image: pikalab/ci:jdk12oracle-gradle6-git
 
 variables:
-  GOPTS: "--no-daemon --console=plain"
+  GOPTS: "--no-daemon --console=plain --stacktrace"
+  CI: "true"
+  BEFORE_TASK: ""
+  AFTER_TASK: ""
+  GCMD: "gradle"
+  BUILD_TASK: "assemble"
+  TEST_TASK: "check"
+  BINTRAY_TASK: "publishAllToBintray"
 
 before_script:
   - chmod +x gradlew
@@ -11,13 +18,38 @@ cache:
     - /root/.gradle/
     - gradle/
     - build/
-    - .gradle/wrapper
-    - .gradle/caches
+    - .gradle/
 
-build:
+Compile:
   stage: build
-  script: ./gradlew assemble $GOPTS
+  script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
 
-test:
+Test:
   stage: test
-  script: ./gradlew check $GOPTS
+  script: $GCMD $BEFORE_TASK $TEST_TASK $AFTER_TASK $GOPTS
+
+Automatically publish to Bintray (dev):
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  only:
+    - /^develop$/
+
+Automatically publish Releases to Bintray:
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  only:
+    - /^(master)|(release)$/
+
+Manually publish to Bintray:
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  when: manual
