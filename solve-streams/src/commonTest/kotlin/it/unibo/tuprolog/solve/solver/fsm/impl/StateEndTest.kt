@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDifferentSideEffectManager
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKB
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aNoResponse
@@ -38,6 +39,11 @@ internal class StateEndTest {
                 StateEnd.False(aNoResponse),
                 StateEnd.Halt(anExceptionalResponse)
         )
+    }
+
+    @Test
+    fun testingPreconditions() {
+        assertEquals(SideEffectManagerImpl(), SideEffectManagerImpl(), "Two empty SideEffectManager instances should be equal.")
     }
 
     @Test
