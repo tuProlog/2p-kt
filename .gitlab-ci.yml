@@ -20,15 +20,33 @@ cache:
     - build/
     - .gradle/
 
-build:
+Compile:
   stage: build
   script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
 
-test:
+Test:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_TASK $AFTER_TASK $GOPTS
 
-publish-bintray:
+Automatically publish to Bintray (dev):
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  only:
+    - /^develop$/
+
+Automatically publish Releases to Bintray:
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Bintray
+    url: "https://bintray.com/pika-lab/tuprolog"
+  only:
+    - /^(master)|(release)$/
+
+Manually publish to Bintray:
   stage: deploy
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
