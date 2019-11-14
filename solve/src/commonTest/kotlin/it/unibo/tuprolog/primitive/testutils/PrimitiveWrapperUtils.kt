@@ -5,9 +5,9 @@ import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.assertTrue
 
 /**

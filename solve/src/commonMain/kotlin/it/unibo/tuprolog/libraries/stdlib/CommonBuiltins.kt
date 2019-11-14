@@ -22,7 +22,8 @@ object CommonBuiltins : LibraryAliased by Library.of(
                 TermIdentical,
                 TermNotIdentical,
                 Natural,
-                Is
+                Is,
+                Halt
         ).map { it.descriptionPair }.toMap(),
         functions = sequenceOf(
                 AbsoluteValue,

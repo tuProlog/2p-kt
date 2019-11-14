@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.testutils.DummyInstances
 import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
 

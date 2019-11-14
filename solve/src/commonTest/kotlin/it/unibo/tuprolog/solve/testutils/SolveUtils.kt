@@ -6,7 +6,6 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.testutils.DummyInstances
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList

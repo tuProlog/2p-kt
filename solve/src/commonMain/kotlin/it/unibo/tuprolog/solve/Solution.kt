@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import kotlin.jvm.JvmStatic
 
 /** A class representing a solution to a goal */
 sealed class Solution {
@@ -55,9 +56,13 @@ sealed class Solution {
         }
     }
 
-    /** Internal function to check signature validity in constructing Solution instances */
-    protected fun noVarargSignatureCheck(signature: Signature) =
-            require(!signature.vararg) {
-                "The signature should be a well-formed indicator, not vararg `$signature`"
-            }
+    protected companion object {
+
+        /** Internal function to check signature validity in constructing Solution instances */
+        @JvmStatic
+        protected fun noVarargSignatureCheck(signature: Signature) =
+                require(!signature.vararg) {
+                    "The signature should be a well-formed indicator, not vararg `$signature`"
+                }
+    }
 }

@@ -1,13 +1,11 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
-import it.unibo.tuprolog.solve.solver.SolverSLD
-import it.unibo.tuprolog.solve.solver.SolverUtils.newSolveRequest
-import it.unibo.tuprolog.solve.solver.SolverUtils.responseBy
+import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.solver.*
 
 /**
  * Implementation of primitive handling `catch/3` behaviour
@@ -20,33 +18,32 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
             sequence {
                 val goalArgument = request.arguments.first()
 
-                SolverSLD().solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
+                SolverSLD.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
                     when {
                         // if i'm the catch selected by throw/1 primitive
-                        (goalResponse.sideEffectManager as? SideEffectManagerImpl)
-                                ?.run { isSelectedThrowCatch(request.context) }
-                                ?: false -> {
+                        goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
 
                             val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
-                            // attaching recover goal's solve request to catch parent, to not re-execute the catch if error thrown
-                            val recoverGoalSolveRequest = request.newSolveRequest(
-                                    Struct.of(Call.functor, recoverGoalArgument),
-                                    goalResponse.solution.substitution - request.context.substitution
-                            ).run {
-                                // ensure that this catch cannot be selected again, to catch some error
-                                copy(context = context
-                                        .copy(sideEffectManager = (context.sideEffectManager as? SideEffectManagerImpl)
-                                                ?.run { ensureNoMoreSelectableCatch(request.context) }
-                                                ?: context.sideEffectManager
-                                        )
-                                )
-                            }
+                            // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown
+                            val recoverGoalSolveRequest = request
+                                    .newSolveRequest(
+                                            call(recoverGoalArgument),
+                                            goalResponse.solution.substitution - request.context.substitution
+                                    )
+                                    .ensureNoMoreSelectableCatch(request.context)
 
-                            yieldAll(SolverSLD().solve(recoverGoalSolveRequest).map { request.responseBy(it) })
+                            yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
                         }
-                        else -> yield(request.responseBy(goalResponse))
+                        else -> yield(request.replyWith(goalResponse))
                     }
                 }
             }
+
+    /** Utility function to create the struct: call([goal]) */
+    private fun call(goal: Term) = Struct.of(Call.functor, goal)
+
+    /** Calls [SideEffectManagerImpl.ensureNoMoreSelectableCatch] */
+    private fun Solve.Request<ExecutionContextImpl>.ensureNoMoreSelectableCatch(notSelectableContext: ExecutionContextImpl) =
+            copy(context = context.copy(sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext)))
 }
