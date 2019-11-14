@@ -34,7 +34,7 @@ val publishAllToBintrayTask = tasks.create<DefaultTask>("publishAllToBintray") {
 
 fun getPropertyOrWarnForAbsence(key: String): String? {
     val value = property(key)?.toString()
-    if (signingKey.isNullOrBlank()) {
+    if (value.isNullOrBlank()) {
         System.err.println("WARNING: $key is not set")
     }
     return value
@@ -48,6 +48,10 @@ val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
 val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
 // env ORG_GRADLE_PROJECT_bintrayKey
 val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
+// env ORG_GRADLE_PROJECT_ossrhUsername
+val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
+// env ORG_GRADLE_PROJECT_ossrhPassword
+val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
 // apply next commands to all subprojects
 subprojects {
