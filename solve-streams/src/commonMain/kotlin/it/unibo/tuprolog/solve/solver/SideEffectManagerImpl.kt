@@ -52,7 +52,7 @@ internal data class SideEffectManagerImpl(
      * - if throw was called, and not already caught
      * - if cut was called, and there's some clauseScopedParent to be cut in correct ruleScopeLevel
      */
-    override fun shouldCutExecuteInPrimitive(): Boolean =
+    override fun shouldCutExecuteInPrimitive(): Boolean = // TODO: 17/11/2019 this method is useless now... what todo? review this implementation removing useless Conjunction related stuff
             clauseScopedParents.value.any { it in toCutContextsParent.value } && ruleScopeLevel == toCutScopeLevel
                     || shouldExecuteThrowCut()
 
@@ -141,7 +141,7 @@ internal data class SideEffectManagerImpl(
     /**
      * Method to query if the throw Cut should execute; the throw cut can exit clause Scope, so it uses different data structures
      */
-    private fun shouldExecuteThrowCut() = logicalParentRequests.value.any { it.context == throwRelatedToCutContextsParent }
+    internal fun shouldExecuteThrowCut() = logicalParentRequests.value.any { it.context == throwRelatedToCutContextsParent }
 
     /** Internal function to retrieve the first choice point to be Cut, if present */
     private fun getFirstChoicePointContext() = clauseScopedParents.value
@@ -195,3 +195,7 @@ internal fun SideEffectManager?.resetCutWorkChanges(toRecoverSituation: SideEffe
 /** Bridge method to reach [SideEffectManagerImpl.isSelectedThrowCatch] homonym method from a [SideEffectManager] */
 internal fun SideEffectManager?.isSelectedThrowCatch(context: ExecutionContextImpl): Boolean =
         (this as? SideEffectManagerImpl)?.isSelectedThrowCatch(context) ?: false
+
+/** Bridge method to reach [SideEffectManagerImpl.shouldExecuteThrowCut] homonym method from a [SideEffectManager] */
+internal fun SideEffectManager?.shouldExecuteThrowCut(): Boolean =
+    (this as? SideEffectManagerImpl)?.shouldExecuteThrowCut() ?: false
