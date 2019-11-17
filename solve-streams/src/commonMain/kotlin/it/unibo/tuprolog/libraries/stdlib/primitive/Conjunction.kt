@@ -26,72 +26,41 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
             }
 
             solveConjunctionGoals(
-                request, request, subGoals, request.context.sideEffectManager, Substitution.empty(),
+                request,
+                subGoals,
+                Substitution.empty(),
+                request.context.sideEffectManager,
                 previousGoalsHadAlternatives = false
             )
-
-//            val (leftSubGoal, rightSubGoal) = with(request) {
-//                arguments.asSequence().orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
-//            }.toList()
-//
-//            val leftSubSolveRequest = request.newSolveRequest(leftSubGoal.prepareForExecutionAsGoal())
-//
-//            var cutExecuted = false
-//            SolverSLD.solve(leftSubSolveRequest).forEachWithLookahead { leftResponse, hasLHSAlternatives ->
-//                if (leftResponse.sideEffectManager?.shouldCutExecuteInPrimitive() == true)
-//                    cutExecuted = true
-//
-//                when (leftResponse.solution) {
-//                    is Solution.Yes -> {
-//                        val rightSubSolveRequest = leftSubSolveRequest.newSolveRequest(
-//                            rightSubGoal.apply(leftResponse.solution.substitution).prepareForExecutionAsGoal(),
-//                            leftResponse.solution.substitution - leftSubSolveRequest.context.substitution,
-//                            leftResponse.sideEffectManager as? SideEffectManagerImpl,
-//                            logicalParentRequest = request
-//                        )
-//
-//                        SolverSLD.solve(rightSubSolveRequest)
-//                            .forEachWithLookahead { rightResponse, hasRHSAlternatives ->
-//                                if (rightResponse.sideEffectManager?.shouldCutExecuteInPrimitive() == true)
-//                                    cutExecuted = true
-//
-//                                // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
-//                                if (rightResponse.solution !is Solution.No || (!hasLHSAlternatives && !hasRHSAlternatives) || cutExecuted)
-//                                    yield(request.replyWith(rightResponse))
-//
-//                            }
-//                    }
-//                    else -> {
-//                        // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
-//                        if (leftResponse.solution !is Solution.No || !hasLHSAlternatives || cutExecuted)
-//                            yield(request.replyWith(leftResponse))
-//                    }
-//                }
-//                if (cutExecuted) return@sequence
-//            }
         }
 
+    /**
+     * This utility method implements the conjunction solving procedure
+     *
+     * @param mainRequest The initial conjunction request with all goals, to be referred as the only logical parent
+     * @param goals The goals in conjunction together, to be solved left to right
+     * @param accumulatedSubstitutions This is a substitution accumulator, that maintains the diff from the [mainRequest] substitution
+     * @param previousResponseSideEffectManager This is the previous response side effect manager, needed to propagate information during execution
+     * @param previousGoalsHadAlternatives This signals if previous conjunction goals had unexplored alternatives
+     */
     private suspend fun SequenceScope<Solve.Response>.solveConjunctionGoals(
         mainRequest: Solve.Request<ExecutionContextImpl>,
-        previousGoalRequest: Solve.Request<ExecutionContextImpl>,
         goals: Iterable<Term>,
-        previousResponseSideEffectManager: SideEffectManagerImpl?,
         accumulatedSubstitutions: Substitution,
+        previousResponseSideEffectManager: SideEffectManagerImpl?,
         previousGoalsHadAlternatives: Boolean
     ): Boolean {
         val goal = goals.first().apply(accumulatedSubstitutions).prepareForExecutionAsGoal()
 
-        val goalRequest = previousGoalRequest.newSolveRequest(
+        val goalRequest = mainRequest.newSolveRequest(
             goal,
-            accumulatedSubstitutions - previousGoalRequest.context.substitution,
-            baseSideEffectManager = previousResponseSideEffectManager,
-            logicalParentRequest = mainRequest
+            accumulatedSubstitutions,
+            baseSideEffectManager = previousResponseSideEffectManager ?: mainRequest.context.sideEffectManager
         )
 
         var cutExecuted = false
         SolverSLD.solve(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
-            // TODO: 17/11/2019 a cleaner way to detect cut execution should be added through SideEffectManager
-            if ("!" == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
+            if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 
             when {
@@ -99,10 +68,9 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                     if (
                         solveConjunctionGoals(
                             mainRequest,
-                            goalRequest,
                             goals.drop(1),
+                            goalResponse.solution.substitution - mainRequest.context.substitution,
                             goalResponse.sideEffectManager as? SideEffectManagerImpl,
-                            goalResponse.solution.substitution,
                             previousGoalsHadAlternatives || currentHasAlternatives
                         )
                     ) cutExecuted = true
@@ -112,7 +80,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                         yield(mainRequest.replyWith(goalResponse))
 
             }
-            if (cutExecuted) return true
+            if (cutExecuted) return true // cut other alternatives of current and previous goals
         }
         return cutExecuted
     }
