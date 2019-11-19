@@ -12,9 +12,9 @@ internal object SetUtils {
     /** Contains set arguments, containing ground terms */
     internal val groundSets by lazy {
         listOf(
-                arrayOf(Truth.`true`()),
-                arrayOf(Atom.of("hey"), Atom.of("!")),
-                arrayOf(Integer.of(1), Real.of(1.5), Truth.fail(), Atom.of("ciao"))
+            arrayOf(Truth.`true`()),
+            arrayOf(Atom.of("hey"), Atom.of("!")),
+            arrayOf(Integer.of(1), Real.of(1.5), Truth.fail(), Atom.of("ciao"))
         )
     }
     /** Contains [groundSets] wrapped with Tuple if needed to be used in constructing Set instances */
@@ -23,8 +23,8 @@ internal object SetUtils {
     /** Contains set arguments, containing non ground terms (aka variables or containing variables) */
     internal val notGroundSets by lazy {
         listOf(
-                arrayOf(Var.of("MyVar")),
-                arrayOf(Var.of("A"), Var.anonymous(), Cons.singleton(Var.of("Var")))
+            arrayOf(Var.of("MyVar")),
+            arrayOf(Var.of("A"), Var.anonymous(), Cons.singleton(Var.of("Var")))
         )
     }
 

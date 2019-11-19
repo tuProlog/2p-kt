@@ -13,9 +13,9 @@ internal class ReteTreeTest {
 
     private val reteTreeTestContents by lazy {
         listOf(
-                ReteNodeUtils.rules,
-                ReteNodeUtils.directives,
-                ReteNodeUtils.mixedClauses
+            ReteNodeUtils.rules,
+            ReteNodeUtils.directives,
+            ReteNodeUtils.mixedClauses
         )
     }
 

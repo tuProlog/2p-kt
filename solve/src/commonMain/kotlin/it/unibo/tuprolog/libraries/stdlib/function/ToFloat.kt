@@ -13,12 +13,12 @@ import it.unibo.tuprolog.solve.ExecutionContext
 object ToFloat : UnaryMathFunction("float") {
 
     override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(integer)
+        commonBehaviour(integer)
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(real)
+        commonBehaviour(real)
 
     /** Implementation of common behaviour for Integer and Real */
     private fun commonBehaviour(numeric: Numeric) =
-            Numeric.of(numeric.decimalValue)
+        Numeric.of(numeric.decimalValue)
 }

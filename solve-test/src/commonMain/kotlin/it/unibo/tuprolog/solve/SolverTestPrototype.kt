@@ -85,8 +85,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val solutions = solver.solve(query).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -94,32 +94,32 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     fun testUnification() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = simpleFactDatabase),
-                simpleFactDatabaseNotableGoalToSolutions
+            solverOf(staticKB = simpleFactDatabase),
+            simpleFactDatabaseNotableGoalToSolutions
         )
     }
 
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     fun testSimpleCutAlternatives() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = simpleCutDatabase),
-                simpleCutDatabaseNotableGoalToSolutions
+            solverOf(staticKB = simpleCutDatabase),
+            simpleCutDatabaseNotableGoalToSolutions
         )
     }
 
     /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
     fun testCutAndConjunction() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = simpleCutAndConjunctionDatabase),
-                simpleCutAndConjunctionDatabaseNotableGoalToSolutions
+            solverOf(staticKB = simpleCutAndConjunctionDatabase),
+            simpleCutAndConjunctionDatabaseNotableGoalToSolutions
         )
     }
 
     /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
     fun testCutConjunctionAndBacktracking() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = cutConjunctionAndBacktrackingDatabase),
-                cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
+            solverOf(staticKB = cutConjunctionAndBacktrackingDatabase),
+            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
         )
     }
 
@@ -137,32 +137,32 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeExample() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = prologStandardExampleDatabase),
-                prologStandardExampleDatabaseNotableGoalToSolution
+            solverOf(staticKB = prologStandardExampleDatabase),
+            prologStandardExampleDatabaseNotableGoalToSolution
         )
     }
 
     /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeWithCutExample() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = prologStandardExampleWithCutDatabase),
-                prologStandardExampleWithCutDatabaseNotableGoalToSolution
+            solverOf(staticKB = prologStandardExampleWithCutDatabase),
+            prologStandardExampleWithCutDatabaseNotableGoalToSolution
         )
     }
 
     /** Test with [customReverseListDatabaseNotableGoalToSolution] */
     fun testBacktrackingWithCustomReverseListImplementation() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = customReverseListDatabase),
-                customReverseListDatabaseNotableGoalToSolution
+            solverOf(staticKB = customReverseListDatabase),
+            customReverseListDatabaseNotableGoalToSolution
         )
     }
 
     /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
     fun testWithPrologStandardConjunctionExamples() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = conjunctionStandardExampleDatabase),
-                conjunctionStandardExampleDatabaseNotableGoalToSolution
+            solverOf(staticKB = conjunctionStandardExampleDatabase),
+            conjunctionStandardExampleDatabaseNotableGoalToSolution
         )
     }
 
@@ -173,16 +173,16 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                         ktListOf(
-                                (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
-                                (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
+                            (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
+                            (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
 
-                                (goal and false).run {
-                                    if (expectedSolutions.any { it is Solution.Halt })
-                                        to(expectedSolutions.changeQueriesTo(this))
-                                    else hasSolutions({ no() })
-                                },
+                            (goal and false).run {
+                                if (expectedSolutions.any { it is Solution.Halt })
+                                    to(expectedSolutions.changeQueriesTo(this))
+                                else hasSolutions({ no() })
+                            },
 
-                                (false and goal).hasSolutions({ no() })
+                            (false and goal).hasSolutions({ no() })
                         )
                     }
                 }
@@ -190,8 +190,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                        solverOf(staticKB = database),
-                        goalToSolutions
+                    solverOf(staticKB = database),
+                    goalToSolutions
                 )
             }
         }
@@ -200,13 +200,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
     fun testCallPrimitive() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = callStandardExampleDatabase),
-                callStandardExampleDatabaseGoalsToSolution
+            solverOf(staticKB = callStandardExampleDatabase),
+            callStandardExampleDatabaseGoalsToSolution
         )
 
         assertSolverSolutionsCorrect(
-                solverOf(),
-                callTestingGoalsToSolutions
+            solverOf(),
+            callTestingGoalsToSolutions
         )
     }
 
@@ -219,8 +219,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                        solverOf(staticKB = database),
-                        goalToSolutions
+                    solverOf(staticKB = database),
+                    goalToSolutions
                 )
             }
         }
@@ -229,13 +229,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
     fun testCatchPrimitive() {
         assertSolverSolutionsCorrect(
-                solverOf(staticKB = catchAndThrowStandardExampleDatabase),
-                catchAndThrowStandardExampleDatabaseNotableGoalToSolution
+            solverOf(staticKB = catchAndThrowStandardExampleDatabase),
+            catchAndThrowStandardExampleDatabaseNotableGoalToSolution
         )
 
         assertSolverSolutionsCorrect(
-                solverOf(),
-                catchTestingGoalsToSolutions
+            solverOf(),
+            catchTestingGoalsToSolutions
         )
     }
 
@@ -251,20 +251,20 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
-                            "catch"(goal, `_`, false).run {
-                                if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() })
-                                    hasSolutions({ no() })
-                                else to(expectedSolutions.changeQueriesTo(this))
-                            },
-                            "catch"(goal, "notUnifyingCatcher", false).run {
-                                to(expectedSolutions.changeQueriesTo(this))
-                            }
+                        "catch"(goal, `_`, false).run {
+                            if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() })
+                                hasSolutions({ no() })
+                            else to(expectedSolutions.changeQueriesTo(this))
+                        },
+                        "catch"(goal, "notUnifyingCatcher", false).run {
+                            to(expectedSolutions.changeQueriesTo(this))
+                        }
                     )
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                        solverOf(staticKB = database),
-                        goalToSolutions
+                    solverOf(staticKB = database),
+                    goalToSolutions
                 )
             }
         }
@@ -273,8 +273,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Halt primitive testing with [haltTestingGoalsToSolutions] */
     fun testHaltPrimitive() {
         assertSolverSolutionsCorrect(
-                solverOf(),
-                haltTestingGoalsToSolutions
+            solverOf(),
+            haltTestingGoalsToSolutions
         )
     }
 
@@ -292,14 +292,14 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking1() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy ("b"("X") and "c"("X")) },
-                            { "b"(1) },
-                            { "b"(2) impliedBy "!" },
-                            { "b"(3) },
-                            { "c"(2) },
-                            { "c"(3) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy ("b"("X") and "c"("X")) },
+                    { "b"(1) },
+                    { "b"(2) impliedBy "!" },
+                    { "b"(3) },
+                    { "c"(2) },
+                    { "c"(3) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()
@@ -322,13 +322,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking2() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy ("c"("X") and "b"("X")) },
-                            { "b"(2) impliedBy "!" },
-                            { "b"(3) },
-                            { "c"(3) },
-                            { "c"(2) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy ("c"("X") and "b"("X")) },
+                    { "b"(2) impliedBy "!" },
+                    { "b"(3) },
+                    { "c"(3) },
+                    { "c"(2) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()
@@ -360,13 +360,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking3() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
-                            { "b"(2) },
-                            { "b"(3) },
-                            { "c"(2) },
-                            { "c"(3) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
+                    { "b"(2) },
+                    { "b"(3) },
+                    { "c"(2) },
+                    { "c"(3) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()
@@ -389,13 +389,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking4() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
-                            { "b"(2) },
-                            { "b"(3) },
-                            { "c"(2) },
-                            { "c"(3) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
+                    { "b"(2) },
+                    { "b"(3) },
+                    { "c"(2) },
+                    { "c"(3) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()
@@ -418,11 +418,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunction() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a" impliedBy ("b" and "c") },
-                            { "b" },
-                            { "c" }
-                    )
+                staticKB = theory(
+                    { "a" impliedBy ("b" and "c") },
+                    { "b" },
+                    { "c" }
+                )
             )
             val query = atomOf("a")
             val solutions = solver.solve(query).toList()
@@ -434,13 +434,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunctionOfConjunctions() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
-                            { "b" },
-                            { "c" },
-                            { "d" },
-                            { "e" }
-                    )
+                staticKB = theory(
+                    { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
+                    { "b" },
+                    { "c" },
+                    { "d" },
+                    { "e" }
+                )
             )
             val query = atomOf("a")
             val solutions = solver.solve(query).toList()
@@ -462,11 +462,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunctionWithUnification() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy ("b"("X") and "c"("X")) },
-                            { "b"(1) },
-                            { "c"(1) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy ("b"("X") and "c"("X")) },
+                    { "b"(1) },
+                    { "c"(1) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()
@@ -490,11 +490,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testDisjunction() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a" impliedBy ("b" or "c") },
-                            { "b" },
-                            { "c" }
-                    )
+                staticKB = theory(
+                    { "a" impliedBy ("b" or "c") },
+                    { "b" },
+                    { "c" }
+                )
             )
             val query = atomOf("a")
             val solutions = solver.solve(query).toList()
@@ -524,11 +524,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testDisjunctionWithUnification() {
         prolog {
             val solver = solverOf(
-                    staticKB = theory(
-                            { "a"("X") impliedBy ("b"("X") or "c"("X")) },
-                            { "b"(1) },
-                            { "c"(2) }
-                    )
+                staticKB = theory(
+                    { "a"("X") impliedBy ("b"("X") or "c"("X")) },
+                    { "b"(1) },
+                    { "c"(2) }
+                )
             )
             val query = "a"("N")
             val solutions = solver.solve(query).toList()

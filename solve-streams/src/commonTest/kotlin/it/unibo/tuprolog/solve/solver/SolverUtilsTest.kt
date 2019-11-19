@@ -44,8 +44,8 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyWithEmptyElementsDoesNothing() {
         assertEquals(
-                emptySequence<Nothing>().toList(),
-                emptySequence<Nothing>().orderWithStrategy(aContext) { seq, _ -> seq.first() }.toList()
+            emptySequence<Nothing>().toList(),
+            emptySequence<Nothing>().orderWithStrategy(aContext) { seq, _ -> seq.first() }.toList()
         )
     }
 
@@ -75,7 +75,8 @@ internal class SolverUtilsTest {
 
     @Test
     fun orderWithStrategyWorksLazily() {
-        val testSequence = sequenceOf({ 1 }, { 5 }, { 2 }, { 9 }, { 3 }, { 0 }, { 5 }, { throw IllegalStateException() })
+        val testSequence =
+            sequenceOf({ 1 }, { 5 }, { 2 }, { 9 }, { 3 }, { 0 }, { 5 }, { throw IllegalStateException() })
         val testSeqElemCount = testSequence.count()
 
         val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.first().also { it() } }
@@ -155,7 +156,7 @@ internal class SolverUtilsTest {
     @Test
     fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
         val toBeTested = solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE)
-                .newSolveRequest(Atom.of("a"), currentTime = 100L)
+            .newSolveRequest(Atom.of("a"), currentTime = 100L)
 
         assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
     }
@@ -168,17 +169,19 @@ internal class SolverUtilsTest {
 
         val aQuery = Atom.of("ciao")
 
-        val aYesResponse = Solve.Response(aQuery.yes(expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
+        val aYesResponse =
+            Solve.Response(aQuery.yes(expectedSubstitution), sideEffectManager = expectedSideEffectsManager)
         val aNoResponse = Solve.Response(aQuery.no(), sideEffectManager = expectedSideEffectsManager)
-        val anHaltResponse = Solve.Response(aQuery.halt(expectedException), sideEffectManager = expectedSideEffectsManager)
+        val anHaltResponse =
+            Solve.Response(aQuery.halt(expectedException), sideEffectManager = expectedSideEffectsManager)
 
         val underTestResponses = listOf(aYesResponse, aNoResponse, anHaltResponse)
 
         val correct = with(solveRequest) {
             listOf(
-                    replySuccess(expectedSubstitution, sideEffectManager = expectedSideEffectsManager),
-                    replyFail(sideEffectManager = expectedSideEffectsManager),
-                    replyException(expectedException, sideEffectManager = expectedSideEffectsManager)
+                replySuccess(expectedSubstitution, sideEffectManager = expectedSideEffectsManager),
+                replyFail(sideEffectManager = expectedSideEffectsManager),
+                replyException(expectedException, sideEffectManager = expectedSideEffectsManager)
             )
         }
         val toBeTested = underTestResponses.map { solveRequest.replyWith(it) }

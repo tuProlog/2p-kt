@@ -52,23 +52,26 @@ internal class ConsImplTest {
 
     @Test
     fun unfoldedListCorrect() {
-        onCorrespondingItems(consInstancesUnfoldedLists, consInstances.map { it.unfoldedList }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            consInstancesUnfoldedLists,
+            consInstances.map { it.unfoldedList }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun unfoldedSequenceCorrect() {
-        onCorrespondingItems(consInstancesUnfoldedLists, consInstances.map { it.unfoldedSequence.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            consInstancesUnfoldedLists,
+            consInstances.map { it.unfoldedSequence.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun unfoldedArrayCorrect() {
-        onCorrespondingItems(consInstancesUnfoldedLists, consInstances.map { it.unfoldedArray.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            consInstancesUnfoldedLists,
+            consInstances.map { it.unfoldedArray.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
@@ -80,16 +83,18 @@ internal class ConsImplTest {
 
     @Test
     fun toArrayReturnValue() {
-        onCorrespondingItems(consInstancesElementLists, consInstances.map { it.toArray().toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            consInstancesElementLists,
+            consInstances.map { it.toArray().toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun toSequenceReturnValue() {
-        onCorrespondingItems(consInstancesElementLists, consInstances.map { it.toSequence().toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            consInstancesElementLists,
+            consInstances.map { it.toSequence().toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
@@ -113,10 +118,10 @@ internal class ConsImplTest {
     @Test
     fun isGroundTrueOnlyIfNoVariablesArePresent() {
         assertFalse(
-                ConsUtils.oneElementList(::ConsImpl).isGround,
-                ConsUtils.twoElementList(::ConsImpl).isGround,
-                ConsUtils.twoElementListWithPipe(::ConsImpl).isGround,
-                ConsUtils.threeElementListWithPipe(::ConsImpl).isGround
+            ConsUtils.oneElementList(::ConsImpl).isGround,
+            ConsUtils.twoElementList(::ConsImpl).isGround,
+            ConsUtils.twoElementListWithPipe(::ConsImpl).isGround,
+            ConsUtils.threeElementListWithPipe(::ConsImpl).isGround
         )
 
         assertTrue(ConsUtils.threeElementList(::ConsImpl).isGround)

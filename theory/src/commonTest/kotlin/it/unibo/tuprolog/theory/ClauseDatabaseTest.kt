@@ -31,8 +31,10 @@ internal class ClauseDatabaseTest {
 
     @Test
     fun ofVarargScopeToClauseCreatesCorrectInstance() {
-        val toBeTested = ClauseDatabase.of(*ClauseDatabaseUtils.wellFormedClauses
-                .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }.toTypedArray()
+        val toBeTested = ClauseDatabase.of(
+            *ClauseDatabaseUtils.wellFormedClauses
+                .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }
+                .toTypedArray()
         )
 
         assertEquals(correctInstance, toBeTested)

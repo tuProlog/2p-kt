@@ -18,7 +18,8 @@ import kotlin.test.assertNotEquals
  */
 internal class StructTest {
 
-    private val correctNonSpecialStructInstances = StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
+    private val correctNonSpecialStructInstances =
+        StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
 
     @Test
     fun structOfShouldCreateSubClassInstanceWithSpecialStructs() {
@@ -28,8 +29,11 @@ internal class StructTest {
 
     @Test
     fun structOfCreatesCorrectNonSpecificStructInstances() {
-        onCorrespondingItems(correctNonSpecialStructInstances,
-                StructUtils.nonSpecialStructs.map { (functor, args) -> Struct.of(functor, args.asSequence()) }, ::assertEqualities)
+        onCorrespondingItems(
+            correctNonSpecialStructInstances,
+            StructUtils.nonSpecialStructs.map { (functor, args) -> Struct.of(functor, args.asSequence()) },
+            ::assertEqualities
+        )
     }
 
     @Test
@@ -117,7 +121,8 @@ internal class StructTest {
     @Test
     fun structFoldCanCreateFoldedConsInstancesEmptyListTerminated() {
         val correctInstances = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { List.of(it) }
-        val toBeTested = ConsUtils.onlyConsEmptyListTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it, EmptyList()) }
+        val toBeTested =
+            ConsUtils.onlyConsEmptyListTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it, EmptyList()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -141,7 +146,8 @@ internal class StructTest {
     @Test
     fun structFoldCanCreateTupleSpecifyingTerminal() {
         val correctInstances = TupleUtils.tupleInstancesElementLists.map { Tuple.of(it) }
-        val toBeTested = TupleUtils.tupleInstancesElementLists.map { Struct.fold(Tuple.FUNCTOR, it.dropLast(), it.last()) }
+        val toBeTested =
+            TupleUtils.tupleInstancesElementLists.map { Struct.fold(Tuple.FUNCTOR, it.dropLast(), it.last()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -162,13 +168,17 @@ internal class StructTest {
 
     private val arbitraryFoldedStructElements = listOf(Atom.of("hello"), Atom.of("world"), Atom.of("!"))
     private val arbitraryFoldedStructCorrectInstance =
-            StructImpl("f", arrayOf(
-                    Atom.of("hello"),
-                    StructImpl("f", arrayOf(
-                            Atom.of("world"),
-                            Atom.of("!")
-                    ))
-            ))
+        StructImpl(
+            "f", arrayOf(
+                Atom.of("hello"),
+                StructImpl(
+                    "f", arrayOf(
+                        Atom.of("world"),
+                        Atom.of("!")
+                    )
+                )
+            )
+        )
 
     @Test
     fun structFoldCreatesArbitraryFoldedStructsWithoutSpecifyingTerminal() {
@@ -179,7 +189,11 @@ internal class StructTest {
 
     @Test
     fun structFoldCreatesArbitraryFoldedStructsSpecifyingTerminal() {
-        val toBeTested = Struct.fold("f", arbitraryFoldedStructElements.dropLast().asIterable(), arbitraryFoldedStructElements.last())
+        val toBeTested = Struct.fold(
+            "f",
+            arbitraryFoldedStructElements.dropLast().asIterable(),
+            arbitraryFoldedStructElements.last()
+        )
 
         assertEqualities(arbitraryFoldedStructCorrectInstance, toBeTested)
     }

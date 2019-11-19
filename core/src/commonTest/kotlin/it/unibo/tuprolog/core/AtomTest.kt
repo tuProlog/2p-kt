@@ -56,9 +56,9 @@ internal class AtomTest {
         val correctAtomInstances = correctAtoms.map { Atom.of(it) }
 
         correctAtoms.zip(correctAtomInstances)
-                .filter { (atomString, _) -> atomString matches Atom.ATOM_REGEX_PATTERN }
-                .forEach { (_, atomInstance) ->
-                    assertTrue { atomInstance.isFunctorWellFormed }
-                }
+            .filter { (atomString, _) -> atomString matches Atom.ATOM_REGEX_PATTERN }
+            .forEach { (_, atomInstance) ->
+                assertTrue { atomInstance.isFunctorWellFormed }
+            }
     }
 }

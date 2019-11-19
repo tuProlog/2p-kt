@@ -23,8 +23,8 @@ internal class ArcTangentTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                PI,
-                ArcTangent.computeOf(Integer.of(1)).`as`<Real>().value.toDouble() * 4
+            PI,
+            ArcTangent.computeOf(Integer.of(1)).`as`<Real>().value.toDouble() * 4
         )
     }
 

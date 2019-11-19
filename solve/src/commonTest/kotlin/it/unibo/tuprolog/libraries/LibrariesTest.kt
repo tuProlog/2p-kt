@@ -25,7 +25,8 @@ internal class LibrariesTest {
     private val duplicatedAliasLibrary = makeLib(LibraryUtils.duplicatedAliasLibrary, ::libraryWithAliasConstructor)
 
     private val differentAliasInstances = listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary)
-    private val allLibInstances = listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary)
+    private val allLibInstances =
+        listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary)
 
     /** A test instance with [differentAliasInstances] */
     private val librariesInstance = Libraries(differentAliasInstances)
@@ -42,7 +43,10 @@ internal class LibrariesTest {
 
     @Test
     fun varargConstructor() {
-        assertEquals(differentAliasInstances.toSet(), Libraries(*differentAliasInstances.toTypedArray()).libraries.toSet())
+        assertEquals(
+            differentAliasInstances.toSet(),
+            Libraries(*differentAliasInstances.toTypedArray()).libraries.toSet()
+        )
     }
 
     @Test
@@ -102,7 +106,10 @@ internal class LibrariesTest {
     fun primitivesShouldReturnNonAliasedOverriddenPrimitiveFromLastlyAddedLibrary() {
         val toBeTested = Libraries(library, overridingLibrary)
 
-        assertEquals(overriddenLibrary.primitives, toBeTested.primitives.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) })
+        assertEquals(
+            overriddenLibrary.primitives,
+            toBeTested.primitives.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) }
+        )
     }
 
     @Test
@@ -128,7 +135,10 @@ internal class LibrariesTest {
     fun functionsShouldReturnNonAliasedOverriddenPrimitiveFromLastlyAddedLibrary() {
         val toBeTested = Libraries(library, overridingLibrary)
 
-        assertEquals(overriddenLibrary.functions, toBeTested.functions.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) })
+        assertEquals(
+            overriddenLibrary.functions,
+            toBeTested.functions.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) }
+        )
     }
 
     @Test
@@ -159,7 +169,10 @@ internal class LibrariesTest {
         val instances = differentAliasInstances
         val instancesCount = instances.count()
 
-        assertEquals(Libraries(instances), Libraries(instances.take(instancesCount / 2)) + Libraries(instances.drop(instancesCount / 2)))
+        assertEquals(
+            Libraries(instances),
+            Libraries(instances.take(instancesCount / 2)) + Libraries(instances.drop(instancesCount / 2))
+        )
     }
 
     @Test

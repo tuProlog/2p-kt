@@ -20,10 +20,10 @@ interface Var : Term {
     override fun freshCopy(): Var = super.freshCopy() as Var
 
     override fun freshCopy(scope: Scope): Var =
-            when {
-                isAnonymous -> scope.anonymous()
-                else -> scope.varOf(name)
-            }
+        when {
+            isAnonymous -> scope.anonymous()
+            else -> scope.varOf(name)
+        }
 
     val isNameWellFormed: Boolean
 

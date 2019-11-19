@@ -65,9 +65,9 @@ internal class RootNodeTest {
         filledRootNode.put(aRule, true)
 
         assertCorrectAndPartialOrderRespected(filledRootNode,
-                ReteNodeUtils.mixedClauses.toMutableList().apply {
-                    addAll(0, listOf(aRule, aDirective))
-                })
+            ReteNodeUtils.mixedClauses.toMutableList().apply {
+                addAll(0, listOf(aRule, aDirective))
+            })
     }
 
     @Test
@@ -95,7 +95,9 @@ internal class RootNodeTest {
             ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
-                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching, limit) { remove(query, limit) }
+                assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching, limit) {
+                    remove(query, limit)
+                }
             }
         }
     }
@@ -106,7 +108,9 @@ internal class RootNodeTest {
         ReteNodeUtils.mixedClausesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
-            assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) { remove(query, negativeLimit) }
+            assertRemovedFromReteNodeRespectingPartialOrder(filledRootNode, allMatching) {
+                remove(query, negativeLimit)
+            }
         }
     }
 

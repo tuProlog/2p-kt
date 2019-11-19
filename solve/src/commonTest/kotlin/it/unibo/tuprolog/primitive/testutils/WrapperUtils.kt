@@ -16,34 +16,37 @@ internal object WrapperUtils {
     /** Test data in the form of (Signature, matchingList, notMatchingList)*/
     private val signaturesToMatchingAndNotMatchingStruct by lazy {
         listOf(
-                Triple(Signature("ciao", 0),
-                        listOf(Atom.of("ciao")),
-                        listOf(
-                                Atom.of("ciaO"), Atom.of("cc")
-                        )
-                ),
-                Triple(Signature("another", 1),
-                        listOf(
-                                Struct.of("another", Var.anonymous()),
-                                Struct.of("another", Truth.`true`())
-                        ),
-                        listOf(
-                                Atom.of("another"),
-                                Struct.of("another", Var.of("A"), Var.of("B")),
-                                Struct.of("other", Integer.of(2))
-                        )
-                ),
-                Triple(Signature("aVarargOne", 1, true),
-                        listOf(
-                                Struct.of("aVarargOne", Var.of("X")),
-                                Struct.of("aVarargOne", Integer.of(1), Real.of(1.5)),
-                                Struct.of("aVarargOne", Var.of("X"), Var.of("Y"), Truth.`true`())
-                        ),
-                        listOf(
-                                Atom.of("aVarargOne"),
-                                Struct.of("aVararg", Var.anonymous())
-                        )
+            Triple(
+                Signature("ciao", 0),
+                listOf(Atom.of("ciao")),
+                listOf(
+                    Atom.of("ciaO"), Atom.of("cc")
                 )
+            ),
+            Triple(
+                Signature("another", 1),
+                listOf(
+                    Struct.of("another", Var.anonymous()),
+                    Struct.of("another", Truth.`true`())
+                ),
+                listOf(
+                    Atom.of("another"),
+                    Struct.of("another", Var.of("A"), Var.of("B")),
+                    Struct.of("other", Integer.of(2))
+                )
+            ),
+            Triple(
+                Signature("aVarargOne", 1, true),
+                listOf(
+                    Struct.of("aVarargOne", Var.of("X")),
+                    Struct.of("aVarargOne", Integer.of(1), Real.of(1.5)),
+                    Struct.of("aVarargOne", Var.of("X"), Var.of("Y"), Truth.`true`())
+                ),
+                listOf(
+                    Atom.of("aVarargOne"),
+                    Struct.of("aVararg", Var.anonymous())
+                )
+            )
         )
     }
 
@@ -56,18 +59,18 @@ internal object WrapperUtils {
 
     /** Creates a map from under test Wrappers to matching signature requests */
     internal inline fun <Request, WrappedType, WrappingType> wrapperToMatchingSignatureRequest(
-            wrapperCreator: (Signature, WrappedType) -> WrappingType,
-            wrapped: WrappedType,
-            requestCreator: (Signature, KtList<Term>) -> Request
+        wrapperCreator: (Signature, WrappedType) -> WrappingType,
+        wrapped: WrappedType,
+        requestCreator: (Signature, KtList<Term>) -> Request
     ) = signaturesToMatchingAndNotMatchingStruct.map { (signature, good, _) ->
         wrapperCreator(signature, wrapped) to good.map { requestCreator(it.extractSignature(), it.argsList) }
     }
 
     /** Creates a map from under test Wrappers to not matching signature requests which therefore should be rejected */
     internal inline fun <Request, WrappedType, WrappingType> wrapperToNotMatchingSignatureRequest(
-            wrapperCreator: (Signature, WrappedType) -> WrappingType,
-            wrapped: WrappedType,
-            requestCreator: (Signature, KtList<Term>) -> Request
+        wrapperCreator: (Signature, WrappedType) -> WrappingType,
+        wrapped: WrappedType,
+        requestCreator: (Signature, KtList<Term>) -> Request
     ) = signaturesToMatchingAndNotMatchingStruct.map { (signature, _, bad) ->
         wrapperCreator(signature, wrapped) to bad.map { requestCreator(it.extractSignature(), it.argsList) }
     }

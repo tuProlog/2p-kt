@@ -24,19 +24,19 @@ internal object ArithmeticEvaluatorUtils {
     /** A map from term input to raised error type */
     internal val inputToErrorType by lazy {
         mapOf(
-                Var.of("MyVar") to InstantiationError::class,
-                Atom.of("PI") to TypeError::class,
-                Struct.of("ciao", Integer.of(2)) to TypeError::class,
-                Struct.of("/", Integer.of(2), Integer.of(0)) to EvaluationError::class
+            Var.of("MyVar") to InstantiationError::class,
+            Atom.of("PI") to TypeError::class,
+            Struct.of("ciao", Integer.of(2)) to TypeError::class,
+            Struct.of("/", Integer.of(2), Integer.of(0)) to EvaluationError::class
         )
     }
 
     /** A map from arithmetic term input to its expected evaluation result */
     internal val inputToResult by lazy {
         mapOf(
-                Struct.of("abs", Integer.of(-1)) to Integer.of(1),
-                Struct.of("rem", Integer.of(5), Integer.of(2)) to Integer.of(1),
-                Struct.of("/", Integer.of(2), Integer.of(4)) to Real.of(0.5)
+            Struct.of("abs", Integer.of(-1)) to Integer.of(1),
+            Struct.of("rem", Integer.of(5), Integer.of(2)) to Integer.of(1),
+            Struct.of("/", Integer.of(2), Integer.of(4)) to Real.of(0.5)
         )
     }
 }

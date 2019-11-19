@@ -40,14 +40,22 @@ internal class ScopeTest {
     fun scopeOfVarargVariablesWorksAsExpected() {
         val toBeTested = ScopeUtils.nonEmptyScopeVars.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
 
-        onCorrespondingItems(correctNonEmptyScopeInstances.map { it.variables }, toBeTested, ::assertScopeCorrectContents)
+        onCorrespondingItems(
+            correctNonEmptyScopeInstances.map { it.variables },
+            toBeTested,
+            ::assertScopeCorrectContents
+        )
     }
 
     @Test
     fun scopeOfVarargStringsWorksAsExpected() {
         val toBeTested = ScopeUtils.nonEmptyScopeVarNames.map { Scope.of(*it.toTypedArray()) }.map { it.variables }
 
-        onCorrespondingItems(correctNonEmptyScopeInstances.map { it.variables }, toBeTested, ::assertScopeCorrectContents)
+        onCorrespondingItems(
+            correctNonEmptyScopeInstances.map { it.variables },
+            toBeTested,
+            ::assertScopeCorrectContents
+        )
     }
 
     @Test
@@ -75,7 +83,8 @@ internal class ScopeTest {
 
             assertEquals(myResult, toBeTestedResult)
 
-            val toBeTestedResult2 = Scope.of<Int>(aVar.name) { assertEquals(aVar.name, this[aVar.name]?.name); myResult }
+            val toBeTestedResult2 =
+                Scope.of<Int>(aVar.name) { assertEquals(aVar.name, this[aVar.name]?.name); myResult }
             assertEquals(myResult, toBeTestedResult2)
         }
     }

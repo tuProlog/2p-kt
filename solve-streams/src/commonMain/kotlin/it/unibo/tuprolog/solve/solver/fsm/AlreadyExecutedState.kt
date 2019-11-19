@@ -13,6 +13,6 @@ class AlreadyExecutedState(internal val wrappedState: State) : State by wrappedS
 
 /** Extension method to wrap a [State], marking it as already executed */
 internal fun State.asAlreadyExecuted(): AlreadyExecutedState =
-        (this as? AlreadyExecutedState)
-                ?.let { it }
-                ?: AlreadyExecutedState(this)
+    (this as? AlreadyExecutedState)
+        ?.let { it }
+        ?: AlreadyExecutedState(this)

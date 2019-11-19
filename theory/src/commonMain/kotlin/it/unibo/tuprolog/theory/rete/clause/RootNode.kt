@@ -7,8 +7,8 @@ import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
 import it.unibo.tuprolog.theory.rete.ReteNode
 
 /** The root node, of the Rete Tree indexing [Clause]s */
-internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf())
-    : AbstractIntermediateReteNode<String?, Clause>(children) {
+internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf()) :
+    AbstractIntermediateReteNode<String?, Clause>(children) {
 
     override val header = "Root"
 
@@ -33,15 +33,15 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
     }
 
     override fun selectChildren(element: Clause) = sequenceOf(
-            when (element) {
-                is Directive -> children[null]
-                is Rule -> children[element.head.functor]
-                else -> null
-            }
+        when (element) {
+            is Directive -> children[null]
+            is Rule -> children[element.head.functor]
+            else -> null
+        }
     )
 
     override fun removeWithNonZeroLimit(element: Clause, limit: Int): Sequence<Clause> =
-            selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
+        selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
     override fun deepCopy(): RootNode = RootNode(children.deepCopy({ it }, { it.deepCopy() }))
 }

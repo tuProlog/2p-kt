@@ -20,29 +20,29 @@ interface List : Struct {
         }
 
     fun toArray(): Array<Term> =
-            when {
-                unfoldedArray.last() is EmptyList -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
-                else -> unfoldedArray
-            }
+        when {
+            unfoldedArray.last() is EmptyList -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
+            else -> unfoldedArray
+        }
 
     fun toList(): KtList<Term> =
-            when {
-                unfoldedList.last() is EmptyList -> unfoldedList.slice(0 until unfoldedArray.lastIndex)
-                else -> unfoldedList
-            }
+        when {
+            unfoldedList.last() is EmptyList -> unfoldedList.slice(0 until unfoldedArray.lastIndex)
+            else -> unfoldedList
+        }
 
     fun toSequence(): Sequence<Term> = toList().asSequence()
 
     override fun freshCopy(): List = super.freshCopy() as List
 
     override fun freshCopy(scope: Scope): List =
-            when {
-                isGround -> this
-                else -> {
-                    val cloned = unfoldedList.map { it.freshCopy(scope) }
-                    scope.listFrom(cloned.subList(0, cloned.lastIndex), cloned.last())
-                }
+        when {
+            isGround -> this
+            else -> {
+                val cloned = unfoldedList.map { it.freshCopy(scope) }
+                scope.listFrom(cloned.subList(0, cloned.lastIndex), cloned.last())
             }
+        }
 
     companion object {
 

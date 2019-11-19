@@ -45,9 +45,10 @@ internal object StateEndUtils {
     internal val aDynamicKB = ClauseDatabase.of({ factOf(atomOf("myDynamicFact")) })
 
     internal val theRequestSideEffectManager = SideEffectManagerImpl()
-    internal val aDifferentSideEffectManager = SideEffectManagerImpl(isChoicePointChild = true).also { assertNotEquals(it, theRequestSideEffectManager) }
+    internal val aDifferentSideEffectManager =
+        SideEffectManagerImpl(isChoicePointChild = true).also { assertNotEquals(it, theRequestSideEffectManager) }
     internal val theIntermediateStateRequest = createSolveRequest(aQuery).copy(
-            context = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
+        context = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
     )
     internal val anIntermediateState = object : IntermediateState {
         override val solve: Solve.Request<ExecutionContext> = createSolveRequest(aQuery)
@@ -56,12 +57,18 @@ internal object StateEndUtils {
     }
 
     /** Utility function to assert that expected values are present inside the provided [actualStateEnd] */
-    internal fun assertStateContentsCorrect(expectedLibraries: Libraries?, expectedFlags: PrologFlags?, expectedStaticKB: ClauseDatabase?, expectedDynamicKB: ClauseDatabase?, expectedSideEffectManager: SideEffectManager?, actualStateEnd: StateEnd) =
-            with(actualStateEnd.solve) {
-                assertEquals(expectedLibraries, libraries)
-                assertEquals(expectedFlags, flags)
-                assertEquals(expectedStaticKB, staticKB)
-                assertEquals(expectedDynamicKB, dynamicKB)
-                assertEquals(expectedSideEffectManager, sideEffectManager)
-            }
+    internal fun assertStateContentsCorrect(
+        expectedLibraries: Libraries?,
+        expectedFlags: PrologFlags?,
+        expectedStaticKB: ClauseDatabase?,
+        expectedDynamicKB: ClauseDatabase?,
+        expectedSideEffectManager: SideEffectManager?,
+        actualStateEnd: StateEnd
+    ) = with(actualStateEnd.solve) {
+        assertEquals(expectedLibraries, libraries)
+        assertEquals(expectedFlags, flags)
+        assertEquals(expectedStaticKB, staticKB)
+        assertEquals(expectedDynamicKB, dynamicKB)
+        assertEquals(expectedSideEffectManager, sideEffectManager)
+    }
 }

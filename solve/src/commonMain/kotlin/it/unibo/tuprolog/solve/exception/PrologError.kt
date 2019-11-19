@@ -22,11 +22,11 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
  * @author Enrico
  */
 abstract class PrologError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        open val type: Struct,
-        open val extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    open val type: Struct,
+    open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
@@ -35,11 +35,11 @@ abstract class PrologError(
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
     val errorStruct: Struct by lazy {
         extraData?.let { errorStructOf(type, it) }
-                ?: errorStructOf(type)
+            ?: errorStructOf(type)
     }
 
     override fun updateContext(newContext: ExecutionContext): PrologError =
-            of(message, cause, newContext, type, extraData)
+        of(message, cause, newContext, type, extraData)
 
     override fun toString(): String = errorStruct.toString()
 
@@ -51,11 +51,11 @@ abstract class PrologError(
          * It creates correct subclass instance if [type] detected, otherwise defaulting to a [PrologError] instance
          */
         fun of(
-                message: String? = null,
-                cause: Throwable? = null,
-                context: ExecutionContext,
-                type: Struct,
-                extraData: Term? = null
+            message: String? = null,
+            cause: Throwable? = null,
+            context: ExecutionContext,
+            type: Struct,
+            extraData: Term? = null
         ): PrologError = with(type) {
             when {
                 functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)

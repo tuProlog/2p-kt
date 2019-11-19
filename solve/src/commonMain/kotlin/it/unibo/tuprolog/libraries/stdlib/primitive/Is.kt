@@ -15,13 +15,13 @@ import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 object Is : TermRelation.WithSideEffects<ExecutionContext>("is") {
 
     override fun Solve.Request<ExecutionContext>.computeSingleResponse(): Solve.Response =
-            ArithmeticEvaluator(context).let {
-                when (val effects: Substitution = relationWithSideEffects(arguments[0], arguments[1].accept(it))) {
-                    is Substitution.Unifier -> replySuccess(effects)
-                    else -> replyFail()
-                }
+        ArithmeticEvaluator(context).let {
+            when (val effects: Substitution = relationWithSideEffects(arguments[0], arguments[1].accept(it))) {
+                is Substitution.Unifier -> replySuccess(effects)
+                else -> replyFail()
             }
+        }
 
     override fun relationWithSideEffects(x: Term, y: Term): Substitution =
-            x mguWith y
+        x mguWith y
 }

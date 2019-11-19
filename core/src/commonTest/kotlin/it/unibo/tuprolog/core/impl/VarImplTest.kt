@@ -81,9 +81,12 @@ internal class VarImplTest {
 
     @Test
     fun anonymousVarDetection() {
-        VarUtils.mixedVars.filter { it != Var.ANONYMOUS_VAR_NAME }.map { VarImpl(it) }.forEach { nonAnonymousVarInstance ->
-            assertFalse { nonAnonymousVarInstance.isAnonymous }
-        }
+        VarUtils.mixedVars
+            .filter { it != Var.ANONYMOUS_VAR_NAME }
+            .map { VarImpl(it) }
+            .forEach { nonAnonymousVarInstance ->
+                assertFalse { nonAnonymousVarInstance.isAnonymous }
+            }
 
         assertTrue(VarImpl("_").isAnonymous)
     }

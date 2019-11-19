@@ -17,12 +17,12 @@ import kotlin.test.fail
 
 /** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
 fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) =
-        this to solution.map { it() }
+    this to solution.map { it() }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
 fun Struct.yes(vararg withSubstitution: Substitution) = Solution.Yes(
-        this,
-        Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier
+    this,
+    Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier
 )
 
 /** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
@@ -43,13 +43,13 @@ fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(q
 
 /** Utility function to assert [assertion] over thrown exception by [throwExpression] */
 inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit, assertion: (E) -> Unit) =
-        try {
-            throwExpression()
-            fail("Expected an Exception to be thrown!")
-        } catch (error: Throwable) {
-            assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
-            assertion(error as E)
-        }
+    try {
+        throwExpression()
+        fail("Expected an Exception to be thrown!")
+    } catch (error: Throwable) {
+        assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
+        assertion(error as E)
+    }
 
 /**
  * Utility method to assert that two [Solution]s are equals, with some exceptions.
@@ -62,8 +62,11 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
 fun assertSolutionEquals(expected: Solution, actual: Solution) {
 
     fun reportMsg(expected: Any, actual: Any) = "Expected: `$expected` Actual: `$actual`"
-    fun assertSameClass(expected: Solution, actual: Solution) = assertEquals(expected::class, actual::class, reportMsg(expected, actual))
-    fun assertSameQuery(expected: Solution, actual: Solution) = assertEquals(expected.query, actual.query, reportMsg(expected, actual))
+    fun assertSameClass(expected: Solution, actual: Solution) =
+        assertEquals(expected::class, actual::class, reportMsg(expected, actual))
+
+    fun assertSameQuery(expected: Solution, actual: Solution) =
+        assertEquals(expected.query, actual.query, reportMsg(expected, actual))
 
     when {
         expected is Solution.Halt -> {
@@ -85,9 +88,9 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
 
                     // if the substitution contain variables, compare only names, because instances will be different
                     assertEquals(
-                            termExpected.variables.map { it.name }.toList(),
-                            termActual.variables.map { it.name }.toList(),
-                            "Comparing variable names of expected `$expected` with `$actual`"
+                        termExpected.variables.map { it.name }.toList(),
+                        termActual.variables.map { it.name }.toList(),
+                        "Comparing variable names of expected `$expected` with `$actual`"
                     )
                 }
             }
@@ -103,9 +106,9 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
  * @param equalityAssertion the equality assertion is delegated to [assertSolutionEquals] by default
  */
 inline fun assertSolutionEquals(
-        expected: Iterable<Solution>,
-        actual: Iterable<Solution>,
-        equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals
+    expected: Iterable<Solution>,
+    actual: Iterable<Solution>,
+    equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals
 ) {
     assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}` Actual: `${actual.toList()}`")
 

@@ -16,15 +16,15 @@ internal class TimeRepresentationKtTest {
         val timeLag = 300
 
         val timeInstantsSequence =
-                generateSequence(startTime) {
-                    currentTimeInstant().takeIf { it < startTime + timeLag }
-                }.chunked(2)
+            generateSequence(startTime) {
+                currentTimeInstant().takeIf { it < startTime + timeLag }
+            }.chunked(2)
 
         assertTrue {
             timeInstantsSequence
-                    .fold(true) { timeFlowedAheadTillNow, times ->
-                        timeFlowedAheadTillNow && times.first() <= times.last()
-                    }
+                .fold(true) { timeFlowedAheadTillNow, times ->
+                    timeFlowedAheadTillNow && times.first() <= times.last()
+                }
         }
     }
 

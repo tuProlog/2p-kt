@@ -8,7 +8,7 @@ plugins {
     signing
     id("org.jetbrains.dokka") version "0.9.18"
     id("com.jfrog.bintray") version "1.8.4"
-    id ("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
+    id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
 }
 
 repositories {

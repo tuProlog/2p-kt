@@ -18,11 +18,11 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @author Enrico
  */
 class EvaluationError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        val errorType: Type,
-        extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    val errorType: Type,
+    extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     override val type: Struct by lazy { Struct.of(super.type.functor, errorType.toAtom()) }

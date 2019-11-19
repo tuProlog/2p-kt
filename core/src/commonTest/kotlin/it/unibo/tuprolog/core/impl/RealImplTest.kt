@@ -30,9 +30,10 @@ internal class RealImplTest {
 
     @Test
     fun correctDecimalValue() {
-        onCorrespondingItems(RealUtils.bigDecimals, realInstances.map { it.decimalValue }) { expectedValue, realDecimalValue ->
-            assertEquals(expectedValue, realDecimalValue)
-        }
+        onCorrespondingItems(
+            RealUtils.bigDecimals,
+            realInstances.map { it.decimalValue }
+        ) { expectedValue, realDecimalValue -> assertEquals(expectedValue, realDecimalValue) }
     }
 
     @Test

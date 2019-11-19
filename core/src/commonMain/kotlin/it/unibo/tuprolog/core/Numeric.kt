@@ -39,10 +39,10 @@ interface Numeric : Constant, Comparable<Numeric> {
         }
 
         fun of(number: String): Numeric =
-                try {
-                    Integer.of(number)
-                } catch (ex: NumberFormatException) {
-                    Real.of(number)
-                }
+            try {
+                Integer.of(number)
+            } catch (ex: NumberFormatException) {
+                Real.of(number)
+            }
     }
 }

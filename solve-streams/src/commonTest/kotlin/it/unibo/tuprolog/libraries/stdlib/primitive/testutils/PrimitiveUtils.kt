@@ -44,7 +44,10 @@ internal object PrimitiveUtils {
      * It passes request to StateGoalEvaluation, then it executes the primitive exercising the error situation;
      * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
      */
-    internal fun assertErrorCauseChainComputedCorrectly(request: Solve.Request<ExecutionContextImpl>, expectedErrorSolution: Solution.Halt) {
+    internal fun assertErrorCauseChainComputedCorrectly(
+        request: Solve.Request<ExecutionContextImpl>,
+        expectedErrorSolution: Solution.Halt
+    ) {
         val nextState = StateGoalEvaluation(request).behave().toList().single()
 
         assertEquals(StateEnd.Halt::class, nextState::class)

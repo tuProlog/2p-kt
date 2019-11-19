@@ -15,15 +15,15 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  * @author Enrico
  */
 internal data class ExecutionContextImpl(
-        override val libraries: Libraries = Libraries(),
-        override val flags: PrologFlags = emptyMap(),
-        override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-        override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-        override val substitution: Substitution.Unifier = Substitution.empty(),
-        /** The key strategies that a solver should use during resolution process */
-        val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
-        /** The side effects manager to be used during resolution process */
-        val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
+    override val libraries: Libraries = Libraries(),
+    override val flags: PrologFlags = emptyMap(),
+    override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val substitution: Substitution.Unifier = Substitution.empty(),
+    /** The key strategies that a solver should use during resolution process */
+    val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
+    /** The side effects manager to be used during resolution process */
+    val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
 ) : ExecutionContext {
 
     override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.value.map { it.query } }
@@ -31,4 +31,4 @@ internal data class ExecutionContextImpl(
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
 internal fun ExecutionContext.getSideEffectManager(): SideEffectManagerImpl? =
-        (this as? ExecutionContextImpl)?.sideEffectManager
+    (this as? ExecutionContextImpl)?.sideEffectManager

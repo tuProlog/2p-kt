@@ -32,11 +32,11 @@ internal object ComputeUtils {
 
     /** Utility function to assert [Compute.Request] contents are correct */
     internal fun Compute.Request<ExecutionContext>.assertContainsCorrectData(
-            expectedSignature: Signature,
-            expectedArguments: List<Term>,
-            expectedContext: ExecutionContext,
-            expectedRequestIssuingInstant: TimeInstant,
-            expectedMaxDuration: TimeDuration
+        expectedSignature: Signature,
+        expectedArguments: List<Term>,
+        expectedContext: ExecutionContext,
+        expectedRequestIssuingInstant: TimeInstant,
+        expectedMaxDuration: TimeDuration
     ) {
         val toleranceInMillis = 10L // 10 ms
         assertEquals(expectedSignature, signature)
@@ -57,11 +57,11 @@ internal object ComputeUtils {
 
     /** Utility function to create a request with some default values */
     internal fun createRequest(
-            signature: Signature = aSignature,
-            arguments: List<Term> = anArgumentList,
-            executionContext: ExecutionContext = anExecutionContext,
-            requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
-            executionMaxDuration: TimeDuration = anExecutionMaxDuration
+        signature: Signature = aSignature,
+        arguments: List<Term> = anArgumentList,
+        executionContext: ExecutionContext = anExecutionContext,
+        requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
+        executionMaxDuration: TimeDuration = anExecutionMaxDuration
     ) = Compute.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
 
 }

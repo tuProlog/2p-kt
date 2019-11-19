@@ -16,10 +16,10 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @author Enrico
  */
 class SystemError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     companion object {

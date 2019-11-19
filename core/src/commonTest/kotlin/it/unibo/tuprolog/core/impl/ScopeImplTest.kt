@@ -53,7 +53,11 @@ internal class ScopeImplTest {
 
     @Test
     fun variablesCorrect() {
-        onCorrespondingItems(ScopeUtils.mixedScopes, mixedScopeInstances.map { it.variables }, ::assertScopeCorrectContents)
+        onCorrespondingItems(
+            ScopeUtils.mixedScopes,
+            mixedScopeInstances.map { it.variables },
+            ::assertScopeCorrectContents
+        )
     }
 
     @Test
@@ -115,9 +119,10 @@ internal class ScopeImplTest {
     @Test
     fun withReturnsComputationResultsAfterExecution() {
         val myResult = 3
-        onCorrespondingItems(mixedScopeInstances.map { myResult }, mixedScopeInstances.map { it.with { myResult } }) { expected, actual ->
-            assertEquals(expected, actual)
-        }
+        onCorrespondingItems(
+            mixedScopeInstances.map { myResult },
+            mixedScopeInstances.map { it.with { myResult } }
+        ) { expected, actual -> assertEquals(expected, actual) }
     }
 
     @Test
@@ -170,8 +175,10 @@ internal class ScopeImplTest {
 
     @Test
     fun listFrom() {
-        val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it.dropLast(), it.last()) }
-        val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.listFrom(it.dropLast(), it.last()) }
+        val correctInstances =
+            ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it.dropLast(), it.last()) }
+        val toBeTested =
+            ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.listFrom(it.dropLast(), it.last()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -211,7 +218,8 @@ internal class ScopeImplTest {
     @Test
     fun structOfFunctorAndSequence() {
         val correctInstances = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args.asSequence()) }
-        val toBeTested = StructUtils.mixedStructs.map { (functor, args) -> emptyScopeInstance.structOf(functor, args.asSequence()) }
+        val toBeTested =
+            StructUtils.mixedStructs.map { (functor, args) -> emptyScopeInstance.structOf(functor, args.asSequence()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -261,7 +269,8 @@ internal class ScopeImplTest {
     @Test
     fun indicatorOfTerms() {
         val correctInstances = IndicatorUtils.mixedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
-        val toBeTested = IndicatorUtils.mixedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
+        val toBeTested =
+            IndicatorUtils.mixedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
@@ -269,7 +278,8 @@ internal class ScopeImplTest {
     @Test
     fun indicatorOfNameAndArity() {
         val correctInstances = IndicatorUtils.rawWellFormedIndicators.map { (name, arity) -> Indicator.of(name, arity) }
-        val toBeTested = IndicatorUtils.rawWellFormedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
+        val toBeTested =
+            IndicatorUtils.rawWellFormedIndicators.map { (name, arity) -> emptyScopeInstance.indicatorOf(name, arity) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

@@ -24,21 +24,23 @@ open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisi
     override fun defaultValue(term: Term): Term = term
 
     override fun visit(term: Term): Term =
-            super.visit(term.apply { staticCheck(context) })
+        super.visit(term.apply { staticCheck(context) })
 
     override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()]
-            ?.let { it(Compute.Request(term.extractSignature(), term.argsList, context)).result }
-            ?: term
+        ?.let { it(Compute.Request(term.extractSignature(), term.argsList, context)).result }
+        ?: term
 
     override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()]
-            ?.let {
-                it(Compute.Request(
-                        term.extractSignature(),
-                        term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(term, context) } }.toList(),
-                        context
-                )).result
-            }
-            ?: term
+        ?.let {
+            it(
+                Compute.Request(
+                    term.extractSignature(),
+                    term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(term, context) } }.toList(),
+                    context
+                )
+            ).result
+        }
+        ?: term
 
 
     /**

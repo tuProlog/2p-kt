@@ -15,7 +15,7 @@ interface Unification {
 
     /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them */
     fun match(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Boolean =
-            mgu(term1, term2, occurCheckEnabled) !== Substitution.failed()
+        mgu(term1, term2, occurCheckEnabled) !== Substitution.failed()
 
     /** Unifies two [Term]s if possible */
     fun unify(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Term? {
@@ -40,20 +40,20 @@ interface Unification {
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
         fun naive(context: Substitution = Substitution.empty()): Unification =
-                object : AbstractUnificationStrategy(context) {
-                    override fun checkTermsEquality(first: Term, second: Term) =
-                        when {
-                            first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
-                            first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
-                            else -> first == second
-                        }
-                }
+            object : AbstractUnificationStrategy(context) {
+                override fun checkTermsEquality(first: Term, second: Term) =
+                    when {
+                        first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
+                        first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
+                        else -> first == second
+                    }
+            }
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
         fun strict(context: Substitution = Substitution.empty()): Unification =
-                object : AbstractUnificationStrategy(context) {
-                    override fun checkTermsEquality(first: Term, second: Term) = first == second
-                }
+            object : AbstractUnificationStrategy(context) {
+                override fun checkTermsEquality(first: Term, second: Term) = first == second
+            }
     }
 }

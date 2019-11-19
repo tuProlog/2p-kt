@@ -101,7 +101,9 @@ internal class NoArgsNodeTest {
         ReteNodeUtils.noArgHeadedRules.forEach { queryAndResult ->
             init() // because removal of side-effects is needed
 
-            assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) { remove(queryAndResult, negativeLimit) }
+            assertRemovedFromReteNode(filledNoArgsNode, listOf(queryAndResult)) {
+                remove(queryAndResult, negativeLimit)
+            }
         }
     }
 

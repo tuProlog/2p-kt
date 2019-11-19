@@ -59,11 +59,11 @@ sealed class Substitution : Map<Var, Term> {
      * The returned map preserves the entry iteration order of the original map.
      */
     open fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
-            filter { (key, value) -> predicate(key, value) }
+        filter { (key, value) -> predicate(key, value) }
 
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class Unifier(mappings: Map<Var, Term>) : Substitution(),
-            Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
+        Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
 
         // NOTE: no check for contradictions is made upon object construction
         // because a map cannot have a mapping from same key to more than one
@@ -145,7 +145,7 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Creates a new Substitution from given substitutions; if any failure or contradiction is found, the result will be [Substitution.Fail] */
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
-                substitutions.fold(substitution, Substitution::plus)
+            substitutions.fold(substitution, Substitution::plus)
 
         /** Utility function to check if any of provided Substitution is failed */
         private fun anyFailed(vararg substitution: Substitution): Boolean = substitution.any { it.isFailed }
@@ -156,15 +156,15 @@ sealed class Substitution : Map<Var, Term> {
          * Computational Complexity: length of the smaller among provided substitutions
          */
         private fun anyContradiction(substitution: Substitution, other: Substitution): Boolean =
-                when {
-                    substitution.count() < other.count() -> substitution to other
-                    else -> other to substitution
-                }.let { (smaller, bigger) ->
-                    smaller.any { (`var`, substitution) ->
-                        // if var is present and different, contradiction is present
-                        bigger[`var`]?.let { it != substitution } ?: false
-                    }
+            when {
+                substitution.count() < other.count() -> substitution to other
+                else -> other to substitution
+            }.let { (smaller, bigger) ->
+                smaller.any { (`var`, substitution) ->
+                    // if var is present and different, contradiction is present
+                    bigger[`var`]?.let { it != substitution } ?: false
                 }
+            }
 
         /**
          * Utility function to check if there's any contradiction in provided substitution pairs
@@ -172,20 +172,20 @@ sealed class Substitution : Map<Var, Term> {
          * Computational Complexity: length of the entire sequence (if no contradiction found)
          */
         private fun anyContradiction(substitutionPairs: Sequence<Pair<Var, Term>>): Boolean =
-                when {
-                    substitutionPairs.none() -> false // no pair, no contradiction
-                    with(substitutionPairs.iterator()) { next(); !hasNext() } -> false // one pair, no contradiction
-                    else ->
-                        mutableMapOf<Var, Term>().let { alreadySeenSubstitutions ->
-                            substitutionPairs.forEach { (`var`, substitution) ->
-                                when (val alreadyPresent = alreadySeenSubstitutions[`var`]) {
-                                    null -> alreadySeenSubstitutions[`var`] = substitution
-                                    else -> if (alreadyPresent != substitution) return@let true // contradiction found
-                                }
+            when {
+                substitutionPairs.none() -> false // no pair, no contradiction
+                with(substitutionPairs.iterator()) { next(); !hasNext() } -> false // one pair, no contradiction
+                else ->
+                    mutableMapOf<Var, Term>().let { alreadySeenSubstitutions ->
+                        substitutionPairs.forEach { (`var`, substitution) ->
+                            when (val alreadyPresent = alreadySeenSubstitutions[`var`]) {
+                                null -> alreadySeenSubstitutions[`var`] = substitution
+                                else -> if (alreadyPresent != substitution) return@let true // contradiction found
                             }
-                            false
                         }
-                }
+                        false
+                    }
+            }
 
         /** Utility function to trim all Map variable chains, i.e. all var keys will be bound to the last possible term */
         private fun Map<Var, Term>.trimVariableChains(): Map<Var, Term> {
@@ -211,6 +211,6 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
         private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
-                filterNot { (`var`, term) -> `var` == term }
+            filterNot { (`var`, term) -> `var` == term }
     }
 }

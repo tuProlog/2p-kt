@@ -31,10 +31,10 @@ interface Prolog : Scope {
     }
 
     fun structOf(functor: String, vararg args: Any): Struct =
-            structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
-            structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
+        structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
 
     operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
 
@@ -47,14 +47,14 @@ interface Prolog : Scope {
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 
     infix fun Any.greaterThanOrEqualsTo(other: Any): Struct =
-            structOf(">=", this.toTerm(), other.toTerm())
+        structOf(">=", this.toTerm(), other.toTerm())
 
     infix fun Any.nonLowerThan(other: Any): Struct = this greaterThanOrEqualsTo other
 
     infix fun Any.lowerThan(other: Any): Struct = structOf("<", this.toTerm(), other.toTerm())
 
     infix fun Any.lowerThanOrEqualsTo(other: Any): Struct =
-            structOf("=<", this.toTerm(), other.toTerm())
+        structOf("=<", this.toTerm(), other.toTerm())
 
     infix fun Any.nonGreaterThan(other: Any): Struct = this lowerThanOrEqualsTo other
 
@@ -82,25 +82,25 @@ interface Prolog : Scope {
     infix fun Any.`if`(other: Any): Rule = this impliedBy other
 
     fun Any.impliedBy(vararg other: Any): Rule =
-            this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
+        this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
 
     fun Any.`if`(vararg other: Any): Rule =
-            this.impliedBy(*other)
+        this.impliedBy(*other)
 
     fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
     fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List =
-            this.listOf(*terms.map { it.toTerm() }.toTypedArray())
+        this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
     fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set =
-            this.setOf(*terms.map { it.toTerm() }.toTypedArray())
+        this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
     fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
 
     fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
 
     fun directiveOf(term: Any, vararg terms: Any): Directive =
-            directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
+        directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     fun <R> scope(function: Prolog.() -> R): R = Prolog.empty().function()
 
@@ -135,28 +135,28 @@ interface Prolog : Scope {
     infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
 
     operator fun Substitution.get(term: Any): Term? =
-            when (val t = term.toTerm()) {
-                is Var -> this[t]
-                else -> term.raiseErrorConvertingTo(Var::class)
-            }
+        when (val t = term.toTerm()) {
+            is Var -> this[t]
+            else -> term.raiseErrorConvertingTo(Var::class)
+        }
 
     fun Substitution.containsKey(term: Any): Boolean =
-            when (val t = term.toTerm()) {
-                is Var -> this.containsKey(t)
-                else -> term.raiseErrorConvertingTo(Var::class)
-            }
+        when (val t = term.toTerm()) {
+            is Var -> this.containsKey(t)
+            else -> term.raiseErrorConvertingTo(Var::class)
+        }
 
     operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
 
     fun Substitution.containsValue(term: Any): Boolean =
-            this.containsValue(term.toTerm())
+        this.containsValue(term.toTerm())
 
     companion object {
         fun empty(): Prolog = PrologImpl()
 
         /** Utility method to launch conversion failed errors */
         private fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
-                throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
+            throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }
 

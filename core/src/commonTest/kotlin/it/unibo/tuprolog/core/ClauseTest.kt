@@ -17,16 +17,16 @@ internal class ClauseTest {
     private val mixedClauses = RuleUtils.mixedRules + DirectiveUtils.mixedDirectives.map { Pair(null, it) }
 
     private val correctInstances =
-            RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) } +
-                    DirectiveUtils.mixedDirectives.map { Directive.of(it) }
+        RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) } +
+                DirectiveUtils.mixedDirectives.map { Directive.of(it) }
 
     private val wellFormedClauseInstances =
-            RuleUtils.wellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                    DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
+        RuleUtils.wellFormedRules.map { (head, body) -> Rule.of(head, body) } +
+                DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
 
     private val nonWellFormedClauseInstances =
-            RuleUtils.nonWellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                    DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
+        RuleUtils.nonWellFormedRules.map { (head, body) -> Rule.of(head, body) } +
+                DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
 
     /**
      * A function replacing correctly variables with call structure where needed
@@ -47,7 +47,7 @@ internal class ClauseTest {
     }
 
     private val wellFormedClausesCorrectlyPreparedForExecution =
-            correctInstances.filter { it.isWellFormed }.map { replaceCorrectVarWithCalls(it) as Clause }
+        correctInstances.filter { it.isWellFormed }.map { replaceCorrectVarWithCalls(it) as Clause }
 
     @Test
     fun clauseOfReturnsCorrectRuleOrDirectiveInstance() {
@@ -95,8 +95,16 @@ internal class ClauseTest {
 
     @Test
     fun bodyWellFormedVisitorWorksAsExpected() {
-        wellFormedClauseInstances.forEach { assertTrue("${it.body} bodyWellFormedVisitor should return true") { it.body.accept(Clause.bodyWellFormedVisitor) } }
-        nonWellFormedClauseInstances.forEach { assertFalse("${it.body} bodyWellFormedVisitor should return false") { it.body.accept(Clause.bodyWellFormedVisitor) } }
+        wellFormedClauseInstances.forEach {
+            assertTrue("${it.body} bodyWellFormedVisitor should return true") {
+                it.body.accept(Clause.bodyWellFormedVisitor)
+            }
+        }
+        nonWellFormedClauseInstances.forEach {
+            assertFalse("${it.body} bodyWellFormedVisitor should return false") {
+                it.body.accept(Clause.bodyWellFormedVisitor)
+            }
+        }
     }
 
     @Test
@@ -104,18 +112,19 @@ internal class ClauseTest {
         val aVar = Var.of("A")
         val aFactWithVarInHead = Fact.of(Tuple.of(aVar, aVar))
         val aRuleWithVarInHead = Rule.of(Tuple.of(aVar, aVar), Tuple.of(aVar, aVar))
-        val aRuleWithVarInHeadAfterPreparation = Rule.of(Tuple.of(aVar, aVar), Tuple.of(Struct.of("call", aVar), Struct.of("call", aVar)))
+        val aRuleWithVarInHeadAfterPreparation =
+            Rule.of(Tuple.of(aVar, aVar), Tuple.of(Struct.of("call", aVar), Struct.of("call", aVar)))
 
         val toBeTested = (correctInstances.filter { it.isWellFormed } + listOf(
-                aFactWithVarInHead,
-                aRuleWithVarInHead,
-                aRuleWithVarInHeadAfterPreparation
+            aFactWithVarInHead,
+            aRuleWithVarInHead,
+            aRuleWithVarInHeadAfterPreparation
         )).map { it.accept(Clause.defaultPreparationForExecutionVisitor) }
 
         val correct = wellFormedClausesCorrectlyPreparedForExecution + listOf(
-                aFactWithVarInHead,
-                aRuleWithVarInHeadAfterPreparation,
-                aRuleWithVarInHeadAfterPreparation
+            aFactWithVarInHead,
+            aRuleWithVarInHeadAfterPreparation,
+            aRuleWithVarInHeadAfterPreparation
         )
 
         assertEquals(correct, toBeTested)
@@ -133,7 +142,8 @@ internal class ClauseTest {
     @Test
     fun prepareForExecutionIsIdempotent() {
         val correct = correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution() }
-        val toBeTested = correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution().prepareForExecution() }
+        val toBeTested =
+            correctInstances.filter { it.isWellFormed }.map { it.prepareForExecution().prepareForExecution() }
 
         onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }

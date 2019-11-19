@@ -9,22 +9,22 @@ import it.unibo.tuprolog.solve.Solve
 abstract class TermRelation<E : ExecutionContext>(operator: String) : BinaryRelation<E>(operator) {
 
     override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> =
-            sequenceOf(request.computeSingleResponse())
+        sequenceOf(request.computeSingleResponse())
 
     /** Base class for implementing a relation *without side effects* between [Term]s */
     abstract class WithoutSideEffects<E : ExecutionContext>(operator: String) : TermRelation<E>(operator) {
 
         override fun Solve.Request<E>.computeSingleResponse(): Solve.Response =
-                replyWith(relationWithoutSideEffects(arguments[0], arguments[1]))
+            replyWith(relationWithoutSideEffects(arguments[0], arguments[1]))
     }
 
     /** Base class for implementing a relation *with side effects* between [Term]s */
     abstract class WithSideEffects<E : ExecutionContext>(operator: String) : TermRelation<E>(operator) {
 
         override fun Solve.Request<E>.computeSingleResponse(): Solve.Response =
-                when (val effects: Substitution = relationWithSideEffects(arguments[0], arguments[1])) {
-                    is Substitution.Unifier -> replySuccess(effects)
-                    else -> replyFail()
-                }
+            when (val effects: Substitution = relationWithSideEffects(arguments[0], arguments[1])) {
+                is Substitution.Unifier -> replySuccess(effects)
+                else -> replyFail()
+            }
     }
 }
