@@ -14,7 +14,7 @@ sealed class Equation<out A : Term, out B : Term>(
     open val lhs: A,
     /** The right-hand side of the equation */
     open val rhs: B
-) {
+) : ToTermConvertible {
 
 
     /** An equation of identical [Term]s */
@@ -32,9 +32,9 @@ sealed class Equation<out A : Term, out B : Term>(
     data class Contradiction<out A : Term, out B : Term>(override val lhs: A, override val rhs: B) :
         Equation<A, B>(lhs, rhs)
 
-    fun toPair(): Pair<A, B> = Pair(lhs, rhs)
+    override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
-    fun toTerm(): Struct =  Struct.of("=", lhs, rhs)
+    fun toPair(): Pair<A, B> = Pair(lhs, rhs)
 
     fun swap(): Equation<Term, Term> = of(rhs, lhs)
 

@@ -71,7 +71,8 @@ internal class EquationTest {
 
     @Test
     fun equationOfShouldReturnCorrectNumberOfEquations() {
-        assertEquals(EquationUtils.mixedAllEquations.count(),
+        assertEquals(
+            EquationUtils.mixedAllEquations.count(),
             EquationUtils.mixedAllEquations.map { Equation.of(it) }.count()
         )
     }

@@ -10,14 +10,14 @@ fun Signature.toIndicator(): Indicator? =
     }
 
 /** The signature of a query Struct or a Primitive */
-data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) {
+data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) : ToTermConvertible {
 
     init {
         require(arity >= 0) { "Signature arity should be greater than or equals to 0: $arity" }
     }
 
     /** Converts this signature to a Struct `'/'([name],[arity])` or `'/'([name],'+'([arity], vararg))` */
-    fun toTerm(): Struct =
+    override fun toTerm(): Struct =
         when {
             vararg -> Struct.of(FUNCTOR, Atom.of(name), Struct.of(varargStructFunctor, Integer.of(arity), varargAtom))
             else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.operators
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
 
 /**
  * Enumeration containing all type of specifiers that can be given to Operators.
@@ -16,7 +17,7 @@ import it.unibo.tuprolog.core.Term
  * | fy     |         | xfy   | right         |
  *
  */
-enum class Specifier {
+enum class Specifier : ToTermConvertible {
     /** Postfix and no-associative */
     XF,
     /** Postfix and left-associative */
@@ -42,7 +43,7 @@ enum class Specifier {
     val isPostfix: Boolean by lazy { POSTFIX.contains(this) }
 
     /** Creates an atom containing the specifier symbolic name */
-    fun toTerm(): Atom = atomRepresentation
+    override fun toTerm(): Atom = atomRepresentation
 
     private val atomRepresentation by lazy { Atom.of(name.toLowerCase()) }
 
