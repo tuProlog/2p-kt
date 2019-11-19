@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.exception.prologerror
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -45,7 +46,7 @@ class TypeError(
         extraData = actualValue
     )
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }
+    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
 
     companion object {
 
@@ -60,10 +61,10 @@ class TypeError(
      *
      * @author Enrico
      */
-    class Expected private constructor(private val type: String) {
+    class Expected private constructor(private val type: String) : ToTermConvertible {
 
         /** A function to transform the type to corresponding [Atom] representation */
-        fun toAtom(): Atom = Atom.of(type)
+        override fun toTerm(): Atom = Atom.of(type)
 
         override fun toString(): String = type
 

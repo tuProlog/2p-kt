@@ -36,7 +36,7 @@ internal class TypeErrorTest {
     @Test
     fun typeErrorTypeCorrect() {
         assertEquals(
-            Struct.of(correctTypeFunctor, testErrorType.toAtom(), callableTypeErrorActualValue),
+            Struct.of(correctTypeFunctor, testErrorType.toTerm(), callableTypeErrorActualValue),
             aCallableTypeError.type
         )
     }

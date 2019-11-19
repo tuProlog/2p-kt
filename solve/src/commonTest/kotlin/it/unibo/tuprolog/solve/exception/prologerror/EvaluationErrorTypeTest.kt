@@ -17,7 +17,7 @@ internal class EvaluationErrorTypeTest {
     @Test
     fun evaluationErrorTypeEnumToAtomWorksAsExpected() {
         EvaluationError.Type.values().forEach {
-            assertEquals(Atom.of(it.toString().toLowerCase()), it.toAtom())
+            assertEquals(Atom.of(it.toString().toLowerCase()), it.toTerm())
         }
     }
 
@@ -27,7 +27,7 @@ internal class EvaluationErrorTypeTest {
         assertEquals(EvaluationError.Type.INT_OVERFLOW, EvaluationError.Type.fromTerm(Atom.of("INT_OVERFLOW"))!!)
 
         EvaluationError.Type.values().forEach {
-            assertEquals(it, EvaluationError.Type.fromTerm(it.toAtom()))
+            assertEquals(it, EvaluationError.Type.fromTerm(it.toTerm()))
         }
     }
 
