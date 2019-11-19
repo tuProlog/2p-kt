@@ -55,8 +55,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates an Equation with provided left-hand and right-hand sides */
         fun <A : Term, B : Term> of(
-            lhs: A,
-            rhs: B,
+            lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Equation<Term, Term> =
             when {
@@ -116,6 +115,7 @@ fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution 
 fun Substitution.toEquations(): KtList<Equation<Var, Term>> =
     this.entries.map { (variable, term) -> Equation.Assignment(variable, term) }
 
+/** Creates an equation with [this] and [that] terms */
 @Suppress("unused", "FunctionName")
 @JsName("termEq")
 infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)

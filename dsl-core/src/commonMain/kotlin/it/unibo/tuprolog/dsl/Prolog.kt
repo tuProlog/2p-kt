@@ -3,6 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.js.JsName
 import kotlin.reflect.KClass
 
 import it.unibo.tuprolog.core.toTerm as extToTerm
@@ -44,6 +45,11 @@ interface Prolog : Scope {
     operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
 
     operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
+
+    /** Creates a structure whose functor is `'='/2` (term unification operator) */
+    @Suppress("unused", "FunctionName")
+    @JsName("termUnify")
+    infix fun Any.`=`(other: Any): Struct = structOf("=",this, other)
 
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 
