@@ -3,7 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.50" // keep this value aligned with the one in gradle.properties
+    kotlin("multiplatform") version "1.3.60" // keep this value aligned with the one in gradle.properties
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version "0.9.18"
