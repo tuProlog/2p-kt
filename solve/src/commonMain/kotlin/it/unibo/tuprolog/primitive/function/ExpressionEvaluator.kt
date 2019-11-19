@@ -34,7 +34,7 @@ open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisi
             ?.let {
                 it(Compute.Request(
                         term.extractSignature(),
-                        term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(context) } }.toList(),
+                        term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(term, context) } }.toList(),
                         context
                 )).result
             }
@@ -51,7 +51,7 @@ open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisi
     /**
      * Template method to implement dynamic checks, i.e. those checks that must be made after sub-expression evaluation, on its result
      *
-     * * This is a stub implementation, that does nothing
+     * This is a stub implementation, that does nothing
      */
-    protected open fun Term.dynamicCheck(context: ExecutionContext): Unit = Unit
+    protected open fun Term.dynamicCheck(enclosingTerm: Struct, context: ExecutionContext): Unit = Unit
 }

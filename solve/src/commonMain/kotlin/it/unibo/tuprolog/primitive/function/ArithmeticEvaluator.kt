@@ -42,30 +42,23 @@ open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(
     }
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (dynamically) */
-    override fun Term.dynamicCheck(context: ExecutionContext) {
+    override fun Term.dynamicCheck(enclosingTerm: Struct, context: ExecutionContext) {
         when {
             // the argument of an arithmetic functor is evaluated to a non-numeric value
-            this is Struct -> this.args.indexOfFirst { it !is Numeric }.takeIf { it != -1 }?.let { wrongArgIndex ->
-                throw TypeError(
-                        context,
-                        this.extractSignature(),
-                        TypeError.Expected.NUMBER,
-                        this[wrongArgIndex],
-                        wrongArgIndex
-                )
-            }
+            this !is Numeric -> throw TypeError(
+                    "An argument of an arithmetic functor got evaluated to a non-numeric value",
+                    context = context,
+                    expectedType = TypeError.Expected.NUMBER,
+                    actualValue = this
+            )
 
             // the argument of a bitwise operator is evaluated to a non-integer value
-            this is Struct && this.extractSignature() in bitwiseStandardOperatorsSignatures ->
-                this.args.indexOfFirst { it !is Integer }.takeIf { it != -1 }?.let { wrongArgIndex ->
-                    throw TypeError(
-                            context,
-                            this.extractSignature(),
-                            TypeError.Expected.INTEGER,
-                            this[wrongArgIndex],
-                            wrongArgIndex
-                    )
-                }
+            this !is Integer && enclosingTerm.extractSignature() in bitwiseStandardOperatorsSignatures -> throw TypeError(
+                    "The argument of a bitwise operator was evaluated to a non-integer value",
+                    context = context,
+                    expectedType = TypeError.Expected.INTEGER,
+                    actualValue = this
+            )
         }
     }
 
