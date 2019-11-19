@@ -30,6 +30,8 @@ sealed class Equation<out A : Term, out B : Term>(
 
     fun toPair(): Pair<A, B> = Pair(lhs, rhs)
 
+    fun toTerm(): Struct =  Struct.of("=", lhs, rhs)
+
     fun swap(): Equation<Term, Term> = of(rhs, lhs)
 
     /**
@@ -91,5 +93,6 @@ fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution 
 fun Substitution.toEquations(): KtList<Equation<Var, Term>> =
         this.entries.map { (variable, term) -> Equation.Assignment(variable, term) }
 
+@Suppress("unused", "FunctionName")
 @JsName("termEq")
 infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)
