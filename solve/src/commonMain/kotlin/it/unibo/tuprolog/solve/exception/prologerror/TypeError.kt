@@ -21,22 +21,28 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
  * @author Enrico
  */
 class TypeError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        val expectedType: Expected,
-        val actualValue: Term,
-        extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    val expectedType: Expected,
+    val actualValue: Term,
+    extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     /** This constructor automatically fills [message] field with provided information */
-    constructor(context: ExecutionContext, procedure: Signature, expectedType: Expected, actualValue: Term, index: Int? = null) : this(
-            message = "Argument ${index
-                    ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
-            context = context,
-            expectedType = expectedType,
-            actualValue = actualValue,
-            extraData = actualValue
+    constructor(
+        context: ExecutionContext,
+        procedure: Signature,
+        expectedType: Expected,
+        actualValue: Term,
+        index: Int? = null
+    ) : this(
+        message = "Argument ${index
+            ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
+        context = context,
+        expectedType = expectedType,
+        actualValue = actualValue,
+        extraData = actualValue
     )
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toAtom(), actualValue) }
@@ -65,8 +71,10 @@ class TypeError(
 
             /** Predefined expected types Atom values */
             private val predefinedExpectedTypes by lazy {
-                listOf("callable", "atom", "integer", "number", "predicate_indicator", "compound",
-                        "list", "character", "evaluable")
+                listOf(
+                    "callable", "atom", "integer", "number", "predicate_indicator", "compound",
+                    "list", "character", "evaluable"
+                )
                 // these are only some of the commonly used types... when implementing more built-ins types can be added
                 // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here
             }
@@ -86,7 +94,7 @@ class TypeError(
 
             /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
             fun of(type: String): Expected = predefinedNameToInstance[type.toLowerCase()]
-                    ?: Expected(type)
+                ?: Expected(type)
 
             /** Gets [Expected] instance from [term] representation, if possible */
             fun fromTerm(term: Term): Expected? = when (term) {

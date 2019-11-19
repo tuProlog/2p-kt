@@ -13,8 +13,12 @@ class MutableSolverSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
-    override fun solverOf(libraries: Libraries, flags: PrologFlags, staticKB: ClauseDatabase, dynamicKB: ClauseDatabase): Solver =
-            MutableSolver(libraries, flags, staticKB, dynamicKB)
+    override fun solverOf(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKB: ClauseDatabase,
+        dynamicKB: ClauseDatabase
+    ): Solver = MutableSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
     fun testTrue() {

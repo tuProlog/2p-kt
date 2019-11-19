@@ -22,11 +22,11 @@ internal object FunctionUtils {
 
     /** Utility function to create a Compute request for functions  */
     private fun createComputeRequest(signature: Signature, vararg argument: Term) =
-            Compute.Request(signature, argument.toList(), DummyInstances.executionContext)
+        Compute.Request(signature, argument.toList(), DummyInstances.executionContext)
 
     /** Helper function that invokes the function wrapper implementation with provided arguments */
     internal fun FunctionWrapper<ExecutionContext>.computeOf(vararg argument: Term): Term =
-            wrappedImplementation(createComputeRequest(signature, *argument)).result
+        wrappedImplementation(createComputeRequest(signature, *argument)).result
 
     /** Utility function to assert that a unaryMathFunction rejects non integer parameters */
     internal fun assertRejectsNonIntegerParameters(unaryMathFunction: UnaryMathFunction) {

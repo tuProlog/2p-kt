@@ -13,8 +13,8 @@ import org.gciatto.kt.math.BigInteger
 object Remainder : IntegersBinaryMathFunction("rem") {
 
     override fun mathFunction(integer1: Integer, integer2: Integer, context: ExecutionContext): Numeric =
-            when (integer2.value) {
-                BigInteger.ZERO -> throwZeroDivisorError(context)
-                else -> Numeric.of(integer1.value.rem(integer2.value))
-            }
+        when (integer2.value) {
+            BigInteger.ZERO -> throwZeroDivisorError(context)
+            else -> Numeric.of(integer1.value.rem(integer2.value))
+        }
 }

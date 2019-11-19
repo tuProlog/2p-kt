@@ -21,13 +21,18 @@ internal object TimeOutExceptionUtils {
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertSameMessageCauseContextDuration(
-            expectedMessage: String?,
-            expectedCause: Throwable?,
-            expectedContext: ExecutionContext,
-            expectedExceededTimeDuration: TimeDuration,
-            actualException: TimeOutException
+        expectedMessage: String?,
+        expectedCause: Throwable?,
+        expectedContext: ExecutionContext,
+        expectedExceededTimeDuration: TimeDuration,
+        actualException: TimeOutException
     ) {
-        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(expectedMessage, expectedCause, expectedContext, actualException)
+        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
+            expectedMessage,
+            expectedCause,
+            expectedContext,
+            actualException
+        )
         assertEquals(expectedExceededTimeDuration, actualException.exceededDuration)
     }
 }

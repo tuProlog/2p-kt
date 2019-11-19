@@ -8,8 +8,8 @@ import it.unibo.tuprolog.core.Term
  *
  * @author Enrico
  */
-internal class IndicatorImpl(override val nameTerm: Term, override val arityTerm: Term)
-    : StructImpl(Indicator.FUNCTOR, arrayOf(nameTerm, arityTerm)), Indicator {
+internal class IndicatorImpl(override val nameTerm: Term, override val arityTerm: Term) :
+    StructImpl(Indicator.FUNCTOR, arrayOf(nameTerm, arityTerm)), Indicator {
 
     override val functor: String = Indicator.FUNCTOR
 

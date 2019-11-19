@@ -72,7 +72,7 @@ internal class SubstitutionTest {
     fun ofVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
         val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
-                .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
+            .map { (variable, withTerm) -> Substitution.of(variable, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
@@ -81,7 +81,7 @@ internal class SubstitutionTest {
     fun ofStringVariableAndTerm() {
         val correct = correctInstances.filter { it.size == 1 }
         val toBeTested = SubstitutionUtils.mixedSubstitutionsAsPairs.filter { it.size == 1 }.map { it.first() }
-                .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
+            .map { (variable, withTerm) -> Substitution.of(variable.name, withTerm) }
 
         onCorrespondingItems(correct, toBeTested) { expectedMap, actualMap ->
             onCorrespondingItems(expectedMap.keys, actualMap.keys, ::assertDifferentVariableExceptForName)
@@ -157,17 +157,19 @@ internal class SubstitutionTest {
     @Test
     fun ofSubstitutionsWithAlwaysSameSubstitutionsReturnsThemNotDuplicated() {
         Scope.of("A", "B") {
-            val correct = Substitution.Unifier(mapOf(
+            val correct = Substitution.Unifier(
+                mapOf(
                     varOf("A") to atomOf("a"),
                     varOf("B") to atomOf("b")
-            ))
+                )
+            )
 
             val toBeTested = Substitution.of(
-                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
-                    Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
-                    Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
+                Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
+                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
+                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
             )
 
             assertEquals(correct, toBeTested)
@@ -178,11 +180,11 @@ internal class SubstitutionTest {
     fun ofSubstitutionsWithContradictingOnesReturnsFailed() {
         Scope.of("A", "B") {
             val toBeTested = Substitution.of(
-                    Substitution.Unifier(mapOf(varOf("B") to atomOf("f"))),
-                    Substitution.Unifier(mapOf(varOf("B") to varOf("A"))),
-                    Substitution.Unifier(mapOf(varOf("A") to atomOf("b"))),
-                    Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                    Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
+                Substitution.Unifier(mapOf(varOf("B") to atomOf("f"))),
+                Substitution.Unifier(mapOf(varOf("B") to varOf("A"))),
+                Substitution.Unifier(mapOf(varOf("A") to atomOf("b"))),
+                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
             )
 
             assertEquals(Substitution.Fail, toBeTested)
@@ -195,10 +197,10 @@ internal class SubstitutionTest {
             val identityPairA = varOf("A") to varOf("A")
             val identityPairB = varOf("B") to varOf("B")
             val toBeTested = ktListOf(
-                    Substitution.of(identityPairA.first, identityPairA.second),
-                    Substitution.of(identityPairA, identityPairB),
-                    Substitution.of(ktListOf(identityPairA, identityPairB)),
-                    Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB))
+                Substitution.of(identityPairA.first, identityPairA.second),
+                Substitution.of(identityPairA, identityPairB),
+                Substitution.of(ktListOf(identityPairA, identityPairB)),
+                Substitution.of(Substitution.of(identityPairA), Substitution.of(identityPairB))
             )
 
             toBeTested.forEach { assertEquals(Substitution.empty(), it) }

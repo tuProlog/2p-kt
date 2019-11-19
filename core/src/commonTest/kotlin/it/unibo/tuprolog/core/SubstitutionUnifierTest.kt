@@ -81,13 +81,17 @@ internal class SubstitutionUnifierTest {
     @Test
     fun equalsWorksAsExpected() {
         assertEquals(Substitution.Unifier(mapOf(aVar to xAtom)), Substitution.Unifier(mapOf(aVar to xAtom)))
-        assertNotEquals(Substitution.Unifier(mapOf(Var.of("A") to xAtom)), Substitution.Unifier(mapOf(Var.of("A") to xAtom)))
+        assertNotEquals(
+            Substitution.Unifier(mapOf(Var.of("A") to xAtom)),
+            Substitution.Unifier(mapOf(Var.of("A") to xAtom))
+        )
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
     @Test
     fun plusOtherSubstitutionPutsSubstitutionsTogether() {
-        val correct = Substitution.of((aVarToXAtomSubstitution.entries + bVarToXAtomSubstitution.entries).map { it.toPair() })
+        val correct =
+            Substitution.of((aVarToXAtomSubstitution.entries + bVarToXAtomSubstitution.entries).map { it.toPair() })
         val toBeTested = aVarToXAtomSubstitution + bVarToXAtomSubstitution
 
         assertEquals(correct, toBeTested)
@@ -113,8 +117,8 @@ internal class SubstitutionUnifierTest {
     @Test
     fun plusOtherSubstitutionContradictingBaseOneReturnsFailedSubstitution() {
         val toBeTested = listOf(
-                Substitution.of(bVar to Truth.`true`()) + bVarToXAtomSubstitution,
-                bVarToXAtomSubstitution + Substitution.of(bVar to Truth.`true`())
+            Substitution.of(bVar to Truth.`true`()) + bVarToXAtomSubstitution,
+            bVarToXAtomSubstitution + Substitution.of(bVar to Truth.`true`())
         )
 
         toBeTested.forEach { assertEquals(Substitution.Fail, it) }
@@ -161,13 +165,19 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun filterMapEntryReturnsOnlyCorrectBindings() {
-        assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar })
+        assertEquals(
+            aVarToXAtomSubstitution,
+            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { (`var`, _) -> `var` == aVar }
+        )
         assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { (`var`, _) -> `var` == aVar })
     }
 
     @Test
     fun filterPredicateReturnsOnlyCorrectBindings() {
-        assertEquals(aVarToXAtomSubstitution, (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar })
+        assertEquals(
+            aVarToXAtomSubstitution,
+            (aVarToXAtomSubstitution + bVarToXAtomSubstitution).filter { `var`, _ -> `var` == aVar }
+        )
         assertEquals(Substitution.empty(), bVarToXAtomSubstitution.filter { `var`, _ -> `var` == aVar })
     }
 

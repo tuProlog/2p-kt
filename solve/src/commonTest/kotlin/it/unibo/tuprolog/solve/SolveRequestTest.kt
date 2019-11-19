@@ -35,7 +35,13 @@ internal class SolveRequestTest {
 
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext, aRequestIssuingInstant, anExecutionMaxDuration)
+        val toBeTested = Solve.Request(
+            aSignature,
+            anArgumentList,
+            anExecutionContext,
+            aRequestIssuingInstant,
+            anExecutionMaxDuration
+        )
 
         assertEquals(aSignature, toBeTested.signature)
         assertEquals(anArgumentList, toBeTested.arguments)
@@ -83,7 +89,10 @@ internal class SolveRequestTest {
     @Test
     fun requestComputesCorrectlyQueryStruct() {
         assertEquals(Struct.of(aSignature.name, anArgumentList), createRequest(aSignature, anArgumentList).query)
-        assertEquals(Struct.of(aVarargSignature.name, varargArgumentList), createRequest(aVarargSignature, varargArgumentList).query)
+        assertEquals(
+            Struct.of(aVarargSignature.name, varargArgumentList),
+            createRequest(aVarargSignature, varargArgumentList).query
+        )
     }
 
     @Test
@@ -96,15 +105,15 @@ internal class SolveRequestTest {
     fun replyWithSolutionCreatesCorrectResponse() {
         defaultRequestResponses.forEach {
             assertEquals(
-                    createRequest().replyWith(
-                            it.solution,
-                            differentLibraries,
-                            differentFlags,
-                            differentStaticKB,
-                            differentDynamicKB,
-                            aSideEffectManager
-                    ),
-                    it
+                createRequest().replyWith(
+                    it.solution,
+                    differentLibraries,
+                    differentFlags,
+                    differentStaticKB,
+                    differentDynamicKB,
+                    aSideEffectManager
+                ),
+                it
             )
         }
     }
@@ -112,75 +121,75 @@ internal class SolveRequestTest {
     @Test
     fun replySuccessCreatesCorrectResponse() {
         assertEquals(
-                createRequest().replySuccess(
-                        solutionSubstitution,
-                        differentLibraries,
-                        differentFlags,
-                        differentStaticKB,
-                        differentDynamicKB,
-                        aSideEffectManager
-                ),
-                defaultRequestSuccessResponse
+            createRequest().replySuccess(
+                solutionSubstitution,
+                differentLibraries,
+                differentFlags,
+                differentStaticKB,
+                differentDynamicKB,
+                aSideEffectManager
+            ),
+            defaultRequestSuccessResponse
         )
     }
 
     @Test
     fun replyFailCreatesCorrectResponse() {
         assertEquals(
-                createRequest().replyFail(
-                        differentLibraries,
-                        differentFlags,
-                        differentStaticKB,
-                        differentDynamicKB,
-                        aSideEffectManager
-                ),
-                defaultRequestFailedResponse
+            createRequest().replyFail(
+                differentLibraries,
+                differentFlags,
+                differentStaticKB,
+                differentDynamicKB,
+                aSideEffectManager
+            ),
+            defaultRequestFailedResponse
         )
     }
 
     @Test
     fun replyExceptionCreatesCorrectResponse() {
         assertEquals(
-                createRequest().replyException(
-                        solutionException,
-                        differentLibraries,
-                        differentFlags,
-                        differentStaticKB,
-                        differentDynamicKB,
-                        aSideEffectManager
-                ),
-                defaultRequestHaltedResponse
+            createRequest().replyException(
+                solutionException,
+                differentLibraries,
+                differentFlags,
+                differentStaticKB,
+                differentDynamicKB,
+                aSideEffectManager
+            ),
+            defaultRequestHaltedResponse
         )
     }
 
     @Test
     fun replyWithBooleanCreatesCorrectResponse() {
         assertEquals(
-                createRequest().replyWith(
-                        true,
-                        differentLibraries,
-                        differentFlags,
-                        differentStaticKB,
-                        differentDynamicKB,
-                        aSideEffectManager
-                ),
-                defaultRequestSuccessResponse.copy(
-                        solution = (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
-                                substitution = Substitution.empty()
-                        )
+            createRequest().replyWith(
+                true,
+                differentLibraries,
+                differentFlags,
+                differentStaticKB,
+                differentDynamicKB,
+                aSideEffectManager
+            ),
+            defaultRequestSuccessResponse.copy(
+                solution = (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
+                    substitution = Substitution.empty()
                 )
+            )
         )
 
         assertEquals(
-                createRequest().replyWith(
-                        false,
-                        differentLibraries,
-                        differentFlags,
-                        differentStaticKB,
-                        differentDynamicKB,
-                        aSideEffectManager
-                ),
-                defaultRequestFailedResponse
+            createRequest().replyWith(
+                false,
+                differentLibraries,
+                differentFlags,
+                differentStaticKB,
+                differentDynamicKB,
+                aSideEffectManager
+            ),
+            defaultRequestFailedResponse
         )
     }
 }

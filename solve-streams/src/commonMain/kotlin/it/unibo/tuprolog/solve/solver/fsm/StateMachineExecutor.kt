@@ -27,7 +27,7 @@ internal object StateMachineExecutor {
      * external execution should just skip those states execution, because already internally evaluated.
      */
     internal fun executeWrapping(state: State): Sequence<AlreadyExecutedState> =
-            execute(state).map { it.asAlreadyExecuted() }
+        execute(state).map { it.asAlreadyExecuted() }
 
     /**
      * Internal function to execute the state behaviour lazily

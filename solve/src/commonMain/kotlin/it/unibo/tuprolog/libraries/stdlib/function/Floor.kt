@@ -15,12 +15,12 @@ import org.gciatto.kt.math.RoundingMode
 object Floor : UnaryMathFunction("floor") {
 
     override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(integer.decimalValue)
+        commonBehaviour(integer.decimalValue)
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(real.value)
+        commonBehaviour(real.value)
 
     /** Implementation of common behaviour for Real and Integer */
     private fun commonBehaviour(decimal: BigDecimal): Integer =
-            Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
+        Numeric.of(decimal.setScale(0, RoundingMode.FLOOR).toBigInteger())
 }

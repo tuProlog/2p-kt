@@ -7,8 +7,8 @@ package it.unibo.tuprolog.core.exception
  * @param cause the cause of this exception.
  */
 open class TuPrologException(
-        override val message: String? = null,
-        override val cause: Throwable? = null
+    override val message: String? = null,
+    override val cause: Throwable? = null
 ) : RuntimeException(message, cause) {
 
     // left this auxiliary constructor to initialize message when only cause is present

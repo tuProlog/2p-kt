@@ -4,10 +4,10 @@ import it.unibo.tuprolog.core.*
 
 /** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
 fun Signature.toIndicator(): Indicator? =
-        when {
-            this.vararg -> null
-            else -> Indicator.of(this.name, this.arity)
-        }
+    when {
+        this.vararg -> null
+        else -> Indicator.of(this.name, this.arity)
+    }
 
 /** The signature of a query Struct or a Primitive */
 data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) {
@@ -18,10 +18,10 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
 
     /** Converts this signature to a Struct `'/'([name],[arity])` or `'/'([name],'+'([arity], vararg))` */
     fun toTerm(): Struct =
-            when {
-                vararg -> Struct.of(FUNCTOR, Atom.of(name), Struct.of(varargStructFunctor, Integer.of(arity), varargAtom))
-                else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
-            }
+        when {
+            vararg -> Struct.of(FUNCTOR, Atom.of(name), Struct.of(varargStructFunctor, Integer.of(arity), varargAtom))
+            else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
+        }
 
     /** Creates corresponding Struct of this Signature with provided arguments */
     infix fun withArgs(arguments: Iterable<Term>): Struct = when {
@@ -60,8 +60,8 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
                     functor == FUNCTOR && arity == 2 && args.first().isAtom -> when {
                         args.last().isInt ->
                             Signature(
-                                    args.first().`as`<Atom>().value,
-                                    args.last().`as`<Integer>().intValue.toInt()
+                                args.first().`as`<Atom>().value,
+                                args.last().`as`<Integer>().intValue.toInt()
                             )
 
                         with(args.last()) {
@@ -69,9 +69,9 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
                                     args.first().isInt &&
                                     args.last() == varargAtom
                         } -> Signature(
-                                args.first().`as`<Atom>().value,
-                                args.last().`as`<Struct>()[0].`as`<Integer>().intValue.toInt(),
-                                true
+                            args.first().`as`<Atom>().value,
+                            args.last().`as`<Struct>()[0].`as`<Integer>().intValue.toInt(),
+                            true
                         )
 
                         else -> null

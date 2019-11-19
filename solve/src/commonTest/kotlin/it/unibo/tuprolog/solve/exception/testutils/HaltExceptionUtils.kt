@@ -20,13 +20,18 @@ internal object HaltExceptionUtils {
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertSameMessageCauseContextStatus(
-            expectedMessage: String?,
-            expectedCause: Throwable?,
-            expectedContext: ExecutionContext,
-            expectedExitStatus: Int,
-            actualException: HaltException
+        expectedMessage: String?,
+        expectedCause: Throwable?,
+        expectedContext: ExecutionContext,
+        expectedExitStatus: Int,
+        actualException: HaltException
     ) {
-        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(expectedMessage, expectedCause, expectedContext, actualException)
+        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
+            expectedMessage,
+            expectedCause,
+            expectedContext,
+            actualException
+        )
         assertEquals(expectedExitStatus, actualException.exitStatus)
     }
 }

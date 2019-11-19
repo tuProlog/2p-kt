@@ -10,9 +10,9 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 abstract class AbstractState(
-        override val solve: Solve,
-        /** The execution scope where state behavior should execute computationally */
-        protected open val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    override val solve: Solve,
+    /** The execution scope where state behavior should execute computationally */
+    protected open val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : State {
 
     override val hasBehaved = false

@@ -23,9 +23,9 @@ interface Rule : Clause {
         const val FUNCTOR = ":-"
 
         fun of(head: Struct, vararg body: Term): Rule =
-                when {
-                    body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)
-                    else -> RuleImpl(head, Tuple.wrapIfNeeded(*body))
-                }
+            when {
+                body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)
+                else -> RuleImpl(head, Tuple.wrapIfNeeded(*body))
+            }
     }
 }

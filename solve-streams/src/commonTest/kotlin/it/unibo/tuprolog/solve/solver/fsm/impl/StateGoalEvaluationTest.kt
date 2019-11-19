@@ -40,8 +40,8 @@ internal class StateGoalEvaluationTest {
         val throwingPrimitive = createRequestForPrimitiveResponding { throw HaltException(context = expectedContext) }
         val nonThrowingPrimitive = createRequestForPrimitiveResponding {
             sequenceOf(
-                    it.replyException(HaltException(context = expectedContext)),
-                    it.replyFail()
+                it.replyException(HaltException(context = expectedContext)),
+                it.replyFail()
             )
         }
 
@@ -49,8 +49,8 @@ internal class StateGoalEvaluationTest {
         val nonThrowingEndState = StateGoalEvaluation(nonThrowingPrimitive).behave().single()
 
         assertEquals(
-                throwingEndState.solve.getSideEffectsManager(),
-                nonThrowingEndState.solve.getSideEffectsManager()
+            throwingEndState.solve.getSideEffectsManager(),
+            nonThrowingEndState.solve.getSideEffectsManager()
         )
     }
 

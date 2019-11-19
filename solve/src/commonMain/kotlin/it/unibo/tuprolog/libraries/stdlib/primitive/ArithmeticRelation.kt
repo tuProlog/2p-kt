@@ -10,18 +10,18 @@ import it.unibo.tuprolog.solve.Solve
 abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation<E>(operator) {
 
     override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> =
-            sequenceOf(
-                    request.ensuringAllArgumentsAreInstantiated()
-                            .computeSingleResponse()
-            )
+        sequenceOf(
+            request.ensuringAllArgumentsAreInstantiated()
+                .computeSingleResponse()
+        )
 
     override fun Solve.Request<E>.computeSingleResponse(): Solve.Response =
-            ArithmeticEvaluator(context).let {
-                replyWith(relationWithoutSideEffects(arguments[0].accept(it), arguments[1].accept(it)))
-            }
+        ArithmeticEvaluator(context).let {
+            replyWith(relationWithoutSideEffects(arguments[0].accept(it), arguments[1].accept(it)))
+        }
 
     override fun relationWithoutSideEffects(x: Term, y: Term): Boolean =
-            arithmeticRelation(x as Numeric, y as Numeric)
+        arithmeticRelation(x as Numeric, y as Numeric)
 
     /** Template method that should implement the arithmetic relation between [x] and [y] */
     protected abstract fun arithmeticRelation(x: Numeric, y: Numeric): Boolean

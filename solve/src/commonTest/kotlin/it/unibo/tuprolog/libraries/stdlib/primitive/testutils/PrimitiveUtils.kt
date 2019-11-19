@@ -22,11 +22,14 @@ internal object PrimitiveUtils {
     }
 
     /** Creates a solve request with [database] and [CommonBuiltins] loaded and given query struct*/
-    internal fun createSolveRequest(query: Struct, database: ClauseDatabase = ClauseDatabase.empty()): Solve.Request<ExecutionContext> =
-            Solve.Request<ExecutionContext>(
-                    query.extractSignature(),
-                    query.argsList,
-                    contextWith(database)
-            )
+    internal fun createSolveRequest(
+        query: Struct,
+        database: ClauseDatabase = ClauseDatabase.empty()
+    ): Solve.Request<ExecutionContext> =
+        Solve.Request<ExecutionContext>(
+            query.extractSignature(),
+            query.argsList,
+            contextWith(database)
+        )
 
 }

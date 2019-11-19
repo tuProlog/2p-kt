@@ -25,8 +25,8 @@ internal class FloatFractionalPartTest {
         FloatFunctionUtils.numbersToFloatParts.forEach { (input, parts) ->
             val (_, fractionalPart) = parts
             assertEquals(
-                    fractionalPart,
-                    FloatFractionalPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
+                fractionalPart,
+                FloatFractionalPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
             )
         }
     }

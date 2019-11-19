@@ -23,8 +23,8 @@ internal class ExponentialTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(E),
-                Exponential.computeOf(Integer.of(1))
+            Numeric.of(E),
+            Exponential.computeOf(Integer.of(1))
         )
     }
 

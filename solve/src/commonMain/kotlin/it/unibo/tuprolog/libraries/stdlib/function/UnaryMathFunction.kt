@@ -18,11 +18,11 @@ abstract class UnaryMathFunction(name: String) : MathFunction(name, 1) {
     override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response = with(request) {
         val term = arguments.single()
         replyWith(
-                when (term) {
-                    is Integer -> mathFunction(term, context)
-                    is Real -> mathFunction(term, context)
-                    else -> term
-                }
+            when (term) {
+                is Integer -> mathFunction(term, context)
+                is Real -> mathFunction(term, context)
+                else -> term
+            }
         )
     }
 

@@ -53,46 +53,58 @@ internal sealed class StateEnd(override val solve: Solve.Response) : AbstractSta
 
 /** Transition from this intermediate state to [StateEnd.True], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndTrue(
-        substitution: Substitution.Unifier = Substitution.empty(),
-        libraries: Libraries? = null,
-        flags: PrologFlags? = null,
-        staticKB: ClauseDatabase? = null,
-        dynamicKB: ClauseDatabase? = null,
-        sideEffectManager: SideEffectManager? = null
-) = StateEnd.True(solve.replySuccess(substitution, libraries, flags, staticKB, dynamicKB,
-        sideEffectManager ?: solve.context.getSideEffectManager()))
+    substitution: Substitution.Unifier = Substitution.empty(),
+    libraries: Libraries? = null,
+    flags: PrologFlags? = null,
+    staticKB: ClauseDatabase? = null,
+    dynamicKB: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null
+) = StateEnd.True(
+    solve.replySuccess(
+        substitution, libraries, flags, staticKB, dynamicKB,
+        sideEffectManager ?: solve.context.getSideEffectManager()
+    )
+)
 
 /** Transition from this intermediate state to [StateEnd.False], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndFalse(
-        libraries: Libraries? = null,
-        flags: PrologFlags? = null,
-        staticKB: ClauseDatabase? = null,
-        dynamicKB: ClauseDatabase? = null,
-        sideEffectManager: SideEffectManager? = null
-) = StateEnd.False(solve.replyFail(libraries, flags, staticKB, dynamicKB,
-        sideEffectManager ?: solve.context.getSideEffectManager()))
+    libraries: Libraries? = null,
+    flags: PrologFlags? = null,
+    staticKB: ClauseDatabase? = null,
+    dynamicKB: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null
+) = StateEnd.False(
+    solve.replyFail(
+        libraries, flags, staticKB, dynamicKB,
+        sideEffectManager ?: solve.context.getSideEffectManager()
+    )
+)
 
 /** Transition from this intermediate state to [StateEnd.Halt], creating a [Solve.Response] with given data */
 internal fun IntermediateState.stateEndHalt(
-        exception: TuPrologRuntimeException,
-        libraries: Libraries? = null,
-        flags: PrologFlags? = null,
-        staticKB: ClauseDatabase? = null,
-        dynamicKB: ClauseDatabase? = null,
-        sideEffectManager: SideEffectManager? = null
-) = StateEnd.Halt(solve.replyException(exception, libraries, flags, staticKB, dynamicKB,
+    exception: TuPrologRuntimeException,
+    libraries: Libraries? = null,
+    flags: PrologFlags? = null,
+    staticKB: ClauseDatabase? = null,
+    dynamicKB: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null
+) = StateEnd.Halt(
+    solve.replyException(
+        exception, libraries, flags, staticKB, dynamicKB,
         sideEffectManager
-                ?: exception.context.getSideEffectManager()
-                ?: solve.context.getSideEffectManager()))
+            ?: exception.context.getSideEffectManager()
+            ?: solve.context.getSideEffectManager()
+    )
+)
 
 /** Transition from this intermediate state to the correct [StateEnd] depending on provided [solution] */
 internal fun IntermediateState.stateEnd(
-        solution: Solution,
-        libraries: Libraries? = null,
-        flags: PrologFlags? = null,
-        staticKB: ClauseDatabase? = null,
-        dynamicKB: ClauseDatabase? = null,
-        sideEffectManager: SideEffectManager? = null
+    solution: Solution,
+    libraries: Libraries? = null,
+    flags: PrologFlags? = null,
+    staticKB: ClauseDatabase? = null,
+    dynamicKB: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null
 ): StateEnd = when (solution) {
     is Solution.Yes -> stateEndTrue(solution.substitution, libraries, flags, staticKB, dynamicKB, sideEffectManager)
     is Solution.No -> stateEndFalse(libraries, flags, staticKB, dynamicKB, sideEffectManager)
@@ -101,4 +113,4 @@ internal fun IntermediateState.stateEnd(
 
 /** Transition from this intermediate state to a [StateEnd] containing provided [response] data */
 internal fun IntermediateState.stateEnd(response: Solve.Response) =
-        with(response) { stateEnd(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager) }
+    with(response) { stateEnd(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager) }

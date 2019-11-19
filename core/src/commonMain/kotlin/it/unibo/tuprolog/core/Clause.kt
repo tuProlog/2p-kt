@@ -46,13 +46,13 @@ interface Clause : Struct {
         const val FUNCTOR = ":-"
 
         fun of(head: Struct? = null, vararg body: Term): Clause =
-                when (head) {
-                    null -> {
-                        require(body.any()) { "If Clause head is null, at least one body element, is required" }
-                        Directive.of(body.asIterable())
-                    }
-                    else -> Rule.of(head, *body)
+            when (head) {
+                null -> {
+                    require(body.any()) { "If Clause head is null, at least one body element, is required" }
+                    Directive.of(body.asIterable())
                 }
+                else -> Rule.of(head, *body)
+            }
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         val notableFunctors = listOf(",", ";", "->")
@@ -65,8 +65,8 @@ interface Clause : Struct {
             override fun visit(term: Struct): Boolean = when {
                 term.functor in notableFunctors && term.arity == 2 ->
                     term.argsSequence
-                            .map { arg -> arg.accept(this) }
-                            .reduce(Boolean::and)
+                        .map { arg -> arg.accept(this) }
+                        .reduce(Boolean::and)
                 else -> true
             }
         }

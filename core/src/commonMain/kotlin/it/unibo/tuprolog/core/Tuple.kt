@@ -36,21 +36,21 @@ interface Tuple : Struct {
     override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
     override fun freshCopy(scope: Scope): Tuple =
-            when {
-                isGround -> this
-                else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
-            }
+        when {
+            isGround -> this
+            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+        }
 
     companion object {
 
         const val FUNCTOR = ","
 
         fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::`true`): Term =
-                when {
-                    terms.isEmpty() -> default()
-                    terms.size == 1 -> terms.single()
-                    else -> of(terms.toList())
-                }
+            when {
+                terms.isEmpty() -> default()
+                terms.size == 1 -> terms.single()
+                else -> of(terms.toList())
+            }
 
         fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
 
@@ -64,7 +64,7 @@ interface Tuple : Struct {
             }
 
             return terms.slice(0 until terms.lastIndex)
-                    .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
+                .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
         }
     }
 }

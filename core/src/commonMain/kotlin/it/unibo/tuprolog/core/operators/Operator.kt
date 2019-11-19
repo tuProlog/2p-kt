@@ -6,20 +6,20 @@ import it.unibo.tuprolog.core.*
 class Operator(val functor: String, val specifier: Specifier, val priority: Int) : Comparable<Operator> {
 
     override fun compareTo(other: Operator): Int =
-            when {
-                priority > other.priority -> 1
-                priority < other.priority -> -1
-                else -> specifier.compareTo(other.specifier).let { specifierCompareTo ->
-                    when (specifierCompareTo) {
-                        0 -> functor.compareTo(other.functor)
-                        else -> specifierCompareTo
-                    }
+        when {
+            priority > other.priority -> 1
+            priority < other.priority -> -1
+            else -> specifier.compareTo(other.specifier).let { specifierCompareTo ->
+                when (specifierCompareTo) {
+                    0 -> functor.compareTo(other.functor)
+                    else -> specifierCompareTo
                 }
             }
+        }
 
     /** Creates a Term from this operator */
     fun toTerm(): Struct =
-            Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
+        Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -56,9 +56,9 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
                         args[0] is Integer && args[1] is Atom && args[2] is Atom -> try {
 
                     Operator(
-                            args[2].`as`<Atom>().value,
-                            Specifier.fromTerm(args[1]),
-                            args[0].`as`<Numeric>().intValue.toInt()
+                        args[2].`as`<Atom>().value,
+                        Specifier.fromTerm(args[1]),
+                        args[0].`as`<Numeric>().intValue.toInt()
                     )
 
                 } catch (ex: IllegalArgumentException) {

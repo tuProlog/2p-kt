@@ -35,15 +35,18 @@ internal class StateEndTest {
 
     private val stateEndCorrectInstances by lazy {
         listOf(
-                StateEnd.True(aYesResponse),
-                StateEnd.False(aNoResponse),
-                StateEnd.Halt(anExceptionalResponse)
+            StateEnd.True(aYesResponse),
+            StateEnd.False(aNoResponse),
+            StateEnd.Halt(anExceptionalResponse)
         )
     }
 
     @Test
     fun testingPreconditions() {
-        assertEquals(SideEffectManagerImpl(), SideEffectManagerImpl(), "Two empty SideEffectManager instances should be equal.")
+        assertEquals(
+            SideEffectManagerImpl(), SideEffectManagerImpl(),
+            "Two empty SideEffectManager instances should be equal."
+        )
     }
 
     @Test
@@ -78,7 +81,10 @@ internal class StateEndTest {
     @Test
     fun haltContainsInsertedData() {
         assertSame(anExceptionalResponse, StateEnd.Halt(anExceptionalResponse).solve)
-        assertSame((anExceptionalResponse.solution as Solution.Halt).exception, StateEnd.Halt(anExceptionalResponse).exception)
+        assertSame(
+            (anExceptionalResponse.solution as Solution.Halt).exception,
+            StateEnd.Halt(anExceptionalResponse).exception
+        )
     }
 
     @Test
@@ -90,13 +96,27 @@ internal class StateEndTest {
 
     @Test
     fun stateEndTrueForwardsCorrectlyParameters() {
-        val toBeTested = anIntermediateState.stateEndTrue(aSubstitution, someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager)
+        val toBeTested = anIntermediateState.stateEndTrue(
+            aSubstitution,
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager
+        )
 
         with(toBeTested.solve) {
             assertEquals(aSubstitution, solution.substitution)
             assertEquals(theIntermediateStateRequest.query, solution.query)
         }
-        assertStateContentsCorrect(someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -110,11 +130,24 @@ internal class StateEndTest {
 
     @Test
     fun stateEndFalseForwardsCorrectlyParameters() {
-        val toBeTested = anIntermediateState.stateEndFalse(someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager)
+        val toBeTested = anIntermediateState.stateEndFalse(
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager
+        )
 
         assertEquals(theIntermediateStateRequest.query, toBeTested.solve.solution.query)
 
-        assertStateContentsCorrect(someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -126,13 +159,27 @@ internal class StateEndTest {
 
     @Test
     fun stateEndHaltForwardsCorrectlyParameters() {
-        val toBeTested = anIntermediateState.stateEndHalt(anException, someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager)
+        val toBeTested = anIntermediateState.stateEndHalt(
+            anException,
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager
+        )
 
         with(toBeTested.solve) {
             assertEquals(anException, (solution as Solution.Halt).exception)
             assertEquals(theIntermediateStateRequest.query, solution.query)
         }
-        assertStateContentsCorrect(someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            someLibraries,
+            someFlags,
+            aStaticKB,
+            aDynamicKB,
+            aDifferentSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -161,8 +208,22 @@ internal class StateEndTest {
                 }
             }
 
-            val toBeTested2 = anIntermediateState.stateEnd(responseSolution, someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager)
-            assertStateContentsCorrect(someLibraries, someFlags, aStaticKB, aDynamicKB, aDifferentSideEffectManager, toBeTested2)
+            val toBeTested2 = anIntermediateState.stateEnd(
+                responseSolution,
+                someLibraries,
+                someFlags,
+                aStaticKB,
+                aDynamicKB,
+                aDifferentSideEffectManager
+            )
+            assertStateContentsCorrect(
+                someLibraries,
+                someFlags,
+                aStaticKB,
+                aDynamicKB,
+                aDifferentSideEffectManager,
+                toBeTested2
+            )
         }
     }
 
@@ -172,32 +233,52 @@ internal class StateEndTest {
             val toBeTested = anIntermediateState.stateEnd(response)
 
             assertEquals(response.solution, toBeTested.solve.solution)
-            assertStateContentsCorrect(response.libraries, response.flags, response.staticKB, response.dynamicKB, theRequestSideEffectManager, toBeTested)
+            assertStateContentsCorrect(
+                response.libraries,
+                response.flags,
+                response.staticKB,
+                response.dynamicKB,
+                theRequestSideEffectManager,
+                toBeTested
+            )
         }
     }
 
     @Test
     fun stateEndWithResponseSideEffectManagerTaking() {
         val contextImplInstance = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
-        val differentContextImplInstance = ExecutionContextImpl(sideEffectManager = aDifferentSideEffectManager).also { assertNotEquals(it, contextImplInstance) }
+        val differentContextImplInstance = ExecutionContextImpl(sideEffectManager = aDifferentSideEffectManager)
+            .also { assertNotEquals(it, contextImplInstance) }
 
-        val endStateForwardingExceptionalResponseWithNonNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
+        val endStateForwardingExceptionalResponseWithNonNullSideEffectManager = anIntermediateState.stateEnd(
+            Solve.Response(
                 aQuery.halt(TuPrologRuntimeException(context = contextImplInstance)),
                 sideEffectManager = aDifferentSideEffectManager
-        ))
-        assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNonNullSideEffectManager.solve.sideEffectManager,
-                "stateEnd() should use provided Response SideEffectManager if not null")
+            )
+        )
+        assertEquals(
+            aDifferentSideEffectManager,
+            endStateForwardingExceptionalResponseWithNonNullSideEffectManager.solve.sideEffectManager,
+            "stateEnd() should use provided Response SideEffectManager if not null"
+        )
 
-        val endStateForwardingExceptionalResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
+        val endStateForwardingExceptionalResponseWithNullSideEffectManager = anIntermediateState.stateEnd(
+            Solve.Response(
                 aQuery.halt(TuPrologRuntimeException(context = differentContextImplInstance))
-        ))
-        assertEquals(aDifferentSideEffectManager, endStateForwardingExceptionalResponseWithNullSideEffectManager.solve.sideEffectManager,
-                "stateEnd() should use exception context's SideEffectManager if Response one is null")
+            )
+        )
+        assertEquals(
+            aDifferentSideEffectManager,
+            endStateForwardingExceptionalResponseWithNullSideEffectManager.solve.sideEffectManager,
+            "stateEnd() should use exception context's SideEffectManager if Response one is null"
+        )
 
-        val endStateForwardingResponseWithNullSideEffectManager = anIntermediateState.stateEnd(Solve.Response(
-                aQuery.no()
-        ))
-        assertEquals(theRequestSideEffectManager, endStateForwardingResponseWithNullSideEffectManager.solve.sideEffectManager,
-                "stateEnd() should use current state solve.context to retrieve a SideEffectManager if no other available")
+        val endStateForwardingResponseWithNullSideEffectManager = anIntermediateState.stateEnd(
+            Solve.Response(aQuery.no())
+        )
+        assertEquals(
+            theRequestSideEffectManager, endStateForwardingResponseWithNullSideEffectManager.solve.sideEffectManager,
+            "stateEnd() should use current state solve.context to retrieve a SideEffectManager if no other available"
+        )
     }
 }

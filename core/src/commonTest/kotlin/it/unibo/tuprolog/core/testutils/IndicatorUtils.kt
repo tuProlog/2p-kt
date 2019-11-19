@@ -12,15 +12,15 @@ internal object IndicatorUtils {
     /** Contains well-formed [Indicator]s in raw format */
     internal val rawWellFormedIndicators by lazy {
         listOf(
-                "sumlist" to 2,
-                "." to 2,
-                "/" to 2,
-                "animal" to 1,
-                "1" to 0,
-                "true" to 0,
-                "fail" to 0,
-                "[]" to 0,
-                "{}" to 0
+            "sumlist" to 2,
+            "." to 2,
+            "/" to 2,
+            "animal" to 1,
+            "1" to 0,
+            "true" to 0,
+            "fail" to 0,
+            "[]" to 0,
+            "{}" to 0
         )
     }
 
@@ -32,18 +32,18 @@ internal object IndicatorUtils {
     /** Contains non well-formed [Indicator]s, due to bad name */
     internal val nonWellFormedNameIndicator by lazy {
         listOf(
-                Var.anonymous() to Integer.of(2),
-                Struct.of(".", Truth.`true`()) to Integer.of(2)
+            Var.anonymous() to Integer.of(2),
+            Struct.of(".", Truth.`true`()) to Integer.of(2)
         )
     }
 
     /** Contains non well-formed [Indicator]s, due to bad arity */
     internal val nonWellFormedArityIndicator by lazy {
         listOf(
-                Atom.of("/") to Integer.of(-2),
-                Atom.of("animal") to Integer.of(-1),
-                Atom.of("1") to Real.of(0.5),
-                Truth.`true`() to Var.anonymous()
+            Atom.of("/") to Integer.of(-2),
+            Atom.of("animal") to Integer.of(-1),
+            Atom.of("1") to Real.of(0.5),
+            Truth.`true`() to Var.anonymous()
         )
     }
 

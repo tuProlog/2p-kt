@@ -5,12 +5,12 @@ interface TermVisitor<T> {
     fun defaultValue(term: Term): T
 
     fun visit(term: Term): T =
-            when (term) {
-                is Var -> visit(term)
-                is Constant -> visit(term)
-                is Struct -> visit(term)
-                else -> visitTerm(term)
-            }
+        when (term) {
+            is Var -> visit(term)
+            is Constant -> visit(term)
+            is Struct -> visit(term)
+            else -> visitTerm(term)
+        }
 
     fun visitTerm(term: Term): T = defaultValue(term)
 
@@ -19,33 +19,33 @@ interface TermVisitor<T> {
     fun visitVar(term: Var): T = defaultValue(term)
 
     fun visit(term: Constant): T =
-            when (term) {
-                is Numeric -> visit(term)
-                is Atom -> visit(term)
-                else -> visitConstant(term)
-            }
+        when (term) {
+            is Numeric -> visit(term)
+            is Atom -> visit(term)
+            else -> visitConstant(term)
+        }
 
     fun visitConstant(term: Constant): T = defaultValue(term)
 
     fun visit(term: Struct): T =
-            when (term) {
-                is List -> visit(term)
-                is Set -> visit(term)
-                is Atom -> visit(term)
-                is Tuple -> visit(term)
-                is Clause -> visit(term)
-                is Indicator -> visit(term)
-                else -> visitStruct(term)
-            }
+        when (term) {
+            is List -> visit(term)
+            is Set -> visit(term)
+            is Atom -> visit(term)
+            is Tuple -> visit(term)
+            is Clause -> visit(term)
+            is Indicator -> visit(term)
+            else -> visitStruct(term)
+        }
 
     fun visitStruct(term: Struct): T = defaultValue(term)
 
     fun visit(term: Atom): T =
-            when (term) {
-                is Empty -> visit(term)
-                is Truth -> visit(term)
-                else -> visitAtom(term)
-            }
+        when (term) {
+            is Empty -> visit(term)
+            is Truth -> visit(term)
+            else -> visitAtom(term)
+        }
 
     fun visitAtom(term: Atom): T = defaultValue(term)
 
@@ -54,11 +54,11 @@ interface TermVisitor<T> {
     fun visitTruth(term: Truth): T = defaultValue(term)
 
     fun visit(term: Numeric): T =
-            when (term) {
-                is Real -> visit(term)
-                is Integer -> visit(term)
-                else -> visitNumeric(term)
-            }
+        when (term) {
+            is Real -> visit(term)
+            is Integer -> visit(term)
+            else -> visitNumeric(term)
+        }
 
     fun visitNumeric(term: Numeric): T = defaultValue(term)
 
@@ -71,19 +71,19 @@ interface TermVisitor<T> {
     fun visitReal(term: Real): T = defaultValue(term)
 
     fun visit(term: Set): T =
-            when (term) {
-                is EmptySet -> visit(term)
-                else -> visitSet(term)
-            }
+        when (term) {
+            is EmptySet -> visit(term)
+            else -> visitSet(term)
+        }
 
     fun visitSet(term: Set): T = defaultValue(term)
 
     fun visit(term: Empty): T =
-            when (term) {
-                is EmptySet -> visit(term)
-                is EmptyList -> visit(term)
-                else -> visitEmpty(term)
-            }
+        when (term) {
+            is EmptySet -> visit(term)
+            is EmptyList -> visit(term)
+            else -> visitEmpty(term)
+        }
 
     fun visitEmpty(term: Empty): T = defaultValue(term)
 
@@ -92,11 +92,11 @@ interface TermVisitor<T> {
     fun visitEmptySet(term: EmptySet): T = defaultValue(term)
 
     fun visit(term: List): T =
-            when (term) {
-                is Cons -> visit(term)
-                is EmptyList -> visit(term)
-                else -> visitList(term)
-            }
+        when (term) {
+            is Cons -> visit(term)
+            is EmptyList -> visit(term)
+            else -> visitList(term)
+        }
 
     fun visitList(term: List): T = defaultValue(term)
 
@@ -117,19 +117,19 @@ interface TermVisitor<T> {
     fun visitIndicator(term: Indicator): T = defaultValue(term)
 
     fun visit(term: Clause): T =
-            when (term) {
-                is Directive -> visit(term)
-                is Rule -> visit(term)
-                else -> visitClause(term)
-            }
+        when (term) {
+            is Directive -> visit(term)
+            is Rule -> visit(term)
+            else -> visitClause(term)
+        }
 
     fun visitClause(term: Clause): T = defaultValue(term)
 
     fun visit(term: Rule): T =
-            when (term) {
-                is Fact -> visitFact(term)
-                else -> visitRule(term)
-            }
+        when (term) {
+            is Fact -> visitFact(term)
+            else -> visitRule(term)
+        }
 
     fun visitRule(term: Rule): T = defaultValue(term)
 

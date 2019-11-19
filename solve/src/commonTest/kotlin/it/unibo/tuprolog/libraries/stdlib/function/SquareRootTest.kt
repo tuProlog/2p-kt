@@ -22,8 +22,8 @@ internal class SquareRootTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(1.1),
-                SquareRoot.computeOf(Real.of(1.21))
+            Numeric.of(1.1),
+            SquareRoot.computeOf(Real.of(1.21))
         )
     }
 

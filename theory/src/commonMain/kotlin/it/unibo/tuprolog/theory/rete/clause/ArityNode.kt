@@ -7,8 +7,10 @@ import it.unibo.tuprolog.theory.rete.ReteNode
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
 /** An intermediate node indexing by Rules head's arity */
-internal data class ArityNode(private val arity: Int, override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf())
-    : AbstractIntermediateReteNode<Term?, Rule>(children) {
+internal data class ArityNode(
+    private val arity: Int,
+    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
+) : AbstractIntermediateReteNode<Term?, Rule>(children) {
 
     init {
         require(arity >= 0) { "ArityNode arity should be greater than or equal to 0" }
@@ -22,7 +24,7 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
             val child = children.getOrElse(headFirstArg) {
 
                 children.retrieve<ArgNode> { head -> head != null && head structurallyEquals headFirstArg }
-                        .singleOrNull()
+                    .singleOrNull()
             }
 
             child ?: ArgNode(0, headFirstArg).also { children[headFirstArg] = it }
@@ -40,22 +42,22 @@ internal data class ArityNode(private val arity: Int, override val children: Mut
     }
 
     override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
-            selectChildren(element)
-                    .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
-                        yetRemoved.also {
-                            it += currentChild?.remove(element, limit - it.count())
-                                    ?: emptySequence()
-                        }
-                    }.asSequence()
+        selectChildren(element)
+            .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
+                yetRemoved.also {
+                    it += currentChild?.remove(element, limit - it.count())
+                        ?: emptySequence()
+                }
+            }.asSequence()
 
     // removeAll optimized implementation w.r.t. super class
     override fun removeAll(element: Rule): Sequence<Rule> =
-            selectChildren(element)
-                    .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
-                        yetRemoved.also {
-                            it += currentChild?.removeAll(element) ?: emptySequence()
-                        }
-                    }.asSequence()
+        selectChildren(element)
+            .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
+                yetRemoved.also {
+                    it += currentChild?.removeAll(element) ?: emptySequence()
+                }
+            }.asSequence()
 
     override fun deepCopy(): ArityNode = ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
 }

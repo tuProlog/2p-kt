@@ -25,12 +25,13 @@ internal class IndicatorTest {
     @Test
     fun ofNameAndArityCreatesCorrectInstance() {
         val toBeTested = IndicatorUtils.mixedIndicators
-                .filter { (name, arity) -> name.isAtom && arity.isInt }
-                .map { (name, arity) ->
-                    Indicator.of(
-                            name.`as`<Atom>().value,
-                            arity.`as`<Integer>().intValue.toInt())
-                }
+            .filter { (name, arity) -> name.isAtom && arity.isInt }
+            .map { (name, arity) ->
+                Indicator.of(
+                    name.`as`<Atom>().value,
+                    arity.`as`<Integer>().intValue.toInt()
+                )
+            }
 
         onCorrespondingItems(correctInstances.filter { it.isWellFormed }, toBeTested, ::assertEqualities)
     }

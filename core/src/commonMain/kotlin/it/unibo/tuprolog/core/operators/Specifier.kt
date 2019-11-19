@@ -69,9 +69,9 @@ enum class Specifier {
          * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
          */
         fun fromTerm(term: Term): Specifier =
-                when (term) {
-                    is Atom -> fromTerm(term)
-                    else -> throw IllegalArgumentException("Argument `$term` must be an atom")
-                }
+            when (term) {
+                is Atom -> fromTerm(term)
+                else -> throw IllegalArgumentException("Argument `$term` must be an atom")
+            }
     }
 }

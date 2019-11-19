@@ -20,22 +20,22 @@ internal class FunctionWrapperTest {
     @Test
     fun functionWorksIfCorrectRequestProvided() {
         wrapperToMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)
-                .forEach { (wrapper, acceptedRequests) ->
-                    acceptedRequests.forEach {
-                        if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                        assertEquals(defaultFunctionResult, wrapper.wrappedImplementation(it))
-                    }
+            .forEach { (wrapper, acceptedRequests) ->
+                acceptedRequests.forEach {
+                    if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
+                    assertEquals(defaultFunctionResult, wrapper.wrappedImplementation(it))
                 }
+            }
     }
 
     @Test
     fun functionComplainsWithWrongRequestSignatureOrArguments() {
         wrapperToNotMatchingSignatureRequest(::createFunctionWrapper, function, ::createFunctionRequest)
-                .forEach { (wrapper, badRequests) ->
-                    badRequests.forEach {
-                        assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
-                    }
+            .forEach { (wrapper, badRequests) ->
+                badRequests.forEach {
+                    assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
                 }
+            }
     }
 
 }

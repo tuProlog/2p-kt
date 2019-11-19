@@ -144,9 +144,9 @@ internal class ClauseDatabaseImplTest {
         }
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
-                .forEach { (query, result) ->
-                    if (result.isNotEmpty()) assertTrue { query.head.indicator in filledClauseDatabase }
-                }
+            .forEach { (query, result) ->
+                if (result.isNotEmpty()) assertTrue { query.head.indicator in filledClauseDatabase }
+            }
     }
 
     @Test
@@ -154,14 +154,16 @@ internal class ClauseDatabaseImplTest {
         assertFalse(filledClauseDatabase.contains(anIndependentFact.head.indicator))
 
         ClauseDatabaseUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
-                .forEach { (query, result) ->
-                    if (result.isEmpty()) assertFalse { query.head.indicator in filledClauseDatabase }
-                }
+            .forEach { (query, result) ->
+                if (result.isEmpty()) assertFalse { query.head.indicator in filledClauseDatabase }
+            }
     }
 
     @Test
     fun containsIndicatorComplainsIfIndicatorNonWellFormed() {
-        assertFailsWith<IllegalArgumentException> { Indicator.of(Var.anonymous(), Var.anonymous()) in filledClauseDatabase }
+        assertFailsWith<IllegalArgumentException> {
+            Indicator.of(Var.anonymous(), Var.anonymous()) in filledClauseDatabase
+        }
     }
 
     @Test
@@ -174,30 +176,32 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun getStruct() {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap
-                .forEach { (query, result) ->
-                    val a = filledClauseDatabase[query.head].toList()
-                    assertEquals(result, a)
-                }
+            .forEach { (query, result) ->
+                val a = filledClauseDatabase[query.head].toList()
+                assertEquals(result, a)
+            }
     }
 
     @Test
     fun getIndicator() {
         ClauseDatabaseUtils.rulesQueryResultByFunctorAndArity
-                .forEach { (query, result) ->
-                    val a = filledClauseDatabase[query.head.indicator].toList()
-                    assertEquals(result, a)
-                }
+            .forEach { (query, result) ->
+                val a = filledClauseDatabase[query.head.indicator].toList()
+                assertEquals(result, a)
+            }
     }
 
     @Test
     fun getIndicatorComplainsIfIndicatorNonWellFormed() {
-        assertFailsWith<IllegalArgumentException> { filledClauseDatabase.get(Indicator.of(Var.anonymous(), Var.anonymous())) }
+        assertFailsWith<IllegalArgumentException> {
+            filledClauseDatabase.get(Indicator.of(Var.anonymous(), Var.anonymous()))
+        }
     }
 
     @Test
     fun assertAClause() {
         val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
-                .apply { add(0, aRule) }
+            .apply { add(0, aRule) }
         val toBeTested = filledClauseDatabase.assertA(aRule)
 
         assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
@@ -213,7 +217,7 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun assertAStruct() {
         val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
-                .apply { add(0, Fact.of(aRule.head)) }
+            .apply { add(0, Fact.of(aRule.head)) }
         val toBeTested = filledClauseDatabase.assertA(aRule.head)
 
         assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
@@ -245,7 +249,10 @@ internal class ClauseDatabaseImplTest {
     fun assertZStruct() {
         val toBeTested = filledClauseDatabase.assertZ(aRule.head)
 
-        assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + Fact.of(aRule.head), toBeTested.clauses)
+        assertClauseHeadPartialOrderingRespected(
+            ClauseDatabaseUtils.wellFormedClauses + Fact.of(aRule.head),
+            toBeTested.clauses
+        )
     }
 
     @Test
@@ -369,8 +376,8 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun iteratorReturnsCorrectInstance() {
         assertEquals(
-                filledClauseDatabase.clauses.iterator().asSequence().toList(),
-                filledClauseDatabase.iterator().asSequence().toList()
+            filledClauseDatabase.clauses.iterator().asSequence().toList(),
+            filledClauseDatabase.iterator().asSequence().toList()
         )
     }
 

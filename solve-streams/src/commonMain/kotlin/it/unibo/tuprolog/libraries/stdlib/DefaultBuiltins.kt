@@ -7,13 +7,13 @@ import it.unibo.tuprolog.primitive.Signature
 
 object DefaultBuiltins : LibraryAliased by CommonBuiltins {
 
-        override val primitives: Map<Signature, Primitive> by lazy {
-                CommonBuiltins.primitives + sequenceOf(
-                        Call,
-                        Catch,
-                        Conjunction,
-                        Cut,
-                        Throw
-                ).map { it.descriptionPair }.toMap()
-        }
+    override val primitives: Map<Signature, Primitive> by lazy {
+        CommonBuiltins.primitives + sequenceOf(
+            Call,
+            Catch,
+            Conjunction,
+            Cut,
+            Throw
+        ).map { it.descriptionPair }.toMap()
+    }
 }

@@ -47,14 +47,20 @@ internal class StateIntegrationTesting {
 
     /** Shorthand function to execute a solveRequest */
     private fun Solve.Request<ExecutionContextImpl>.executeFSM(): Sequence<State> =
-            StateMachineExecutor.execute(StateInit(this))
+        StateMachineExecutor.execute(StateInit(this))
 
     /** Utility function to test correct states behaviour inside this class */
-    private fun assertSolutionsCorrect(querySolutionsMap: List<Pair<Struct, List<Solution>>>, database: ClauseDatabase) {
+    private fun assertSolutionsCorrect(
+        querySolutionsMap: List<Pair<Struct, List<Solution>>>,
+        database: ClauseDatabase
+    ) {
         querySolutionsMap.forEach { (goal, solutionList) ->
             val nextStates = createSolveRequest(goal, database, DefaultBuiltins.primitives).executeFSM()
 
-            assertOverFilteredStateInstances<FinalState>(nextStates, { it.solve.solution.query == goal }) { index, finalState ->
+            assertOverFilteredStateInstances<FinalState>(
+                nextStates,
+                { it.solve.solution.query == goal }
+            ) { index, finalState ->
                 assertSolutionEquals(solutionList[index], finalState.solve.solution)
             }
         }
@@ -72,12 +78,12 @@ internal class StateIntegrationTesting {
         val nextStates = createSolveRequest(Atom.of("ciao")).executeFSM().toList()
 
         assertEquals(
-                listOf(
-                        StateGoalEvaluation::class,
-                        StateRuleSelection::class,
-                        StateEnd.False::class
-                ),
-                nextStates.map { it::class }
+            listOf(
+                StateGoalEvaluation::class,
+                StateRuleSelection::class,
+                StateEnd.False::class
+            ),
+            nextStates.map { it::class }
         )
     }
 
@@ -98,7 +104,10 @@ internal class StateIntegrationTesting {
 
     @Test
     fun queriesWithCutConjunctionAndBacktrackingDatabase() {
-        assertSolutionsCorrect(cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions, cutConjunctionAndBacktrackingDatabase)
+        assertSolutionsCorrect(
+            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
+            cutConjunctionAndBacktrackingDatabase
+        )
     }
 
     @Test
@@ -106,14 +115,17 @@ internal class StateIntegrationTesting {
         infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
             val maxDuration = 100L
             val request = Solve.Request(
-                    goal.extractSignature(),
-                    goal.argsList,
-                    ExecutionContextImpl(staticKB = infiniteComputationDatabase),
-                    executionMaxDuration = maxDuration
+                goal.extractSignature(),
+                goal.argsList,
+                ExecutionContextImpl(staticKB = infiniteComputationDatabase),
+                executionMaxDuration = maxDuration
             )
             val nextStates = request.executeFSM()
 
-            assertOverFilteredStateInstances<FinalState>(nextStates, { it.solve.solution.query == goal }) { index, finalState ->
+            assertOverFilteredStateInstances<FinalState>(
+                nextStates,
+                { it.solve.solution.query == goal }
+            ) { index, finalState ->
                 assertEquals(solutionList[index]::class, finalState.solve.solution::class)
             }
         }
@@ -126,7 +138,10 @@ internal class StateIntegrationTesting {
 
     @Test
     fun prologStandardSearchTreeWithCutExample() {
-        assertSolutionsCorrect(prologStandardExampleWithCutDatabaseNotableGoalToSolution, prologStandardExampleWithCutDatabase)
+        assertSolutionsCorrect(
+            prologStandardExampleWithCutDatabaseNotableGoalToSolution,
+            prologStandardExampleWithCutDatabase
+        )
     }
 
     @Test

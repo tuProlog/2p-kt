@@ -21,22 +21,24 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: Primitive by lazy { primitiveOf(signature, ::uncheckedImplementation as Primitive) }
+    final override val wrappedImplementation: Primitive by lazy {
+        primitiveOf(signature, ::uncheckedImplementation as Primitive)
+    }
 
 
     companion object {
 
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
-                arguments.withIndex().firstOrNull { it.value is Var }.let { notInstantiated ->
-                    notInstantiated?.run {
-                        throw InstantiationError(
-                                context,
-                                signature,
-                                notInstantiated.index,
-                                notInstantiated.value as Var
-                        )
-                    } ?: this
-                }
+            arguments.withIndex().firstOrNull { it.value is Var }.let { notInstantiated ->
+                notInstantiated?.run {
+                    throw InstantiationError(
+                        context,
+                        signature,
+                        notInstantiated.index,
+                        notInstantiated.value as Var
+                    )
+                } ?: this
+            }
     }
 }
