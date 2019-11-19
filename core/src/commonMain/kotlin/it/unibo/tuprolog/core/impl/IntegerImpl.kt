@@ -25,8 +25,8 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
     override fun hashCode(): Int = value.hashCode()
 
     override fun compareTo(other: Numeric): Int =
-            when (other) {
-                is IntegerImpl -> value.compareTo(other.value)
-                else -> super<NumericImpl>.compareTo(other)
-            }
+        when (other) {
+            is IntegerImpl -> value.compareTo(other.value)
+            else -> super<NumericImpl>.compareTo(other)
+        }
 }

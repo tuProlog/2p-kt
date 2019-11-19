@@ -3,12 +3,12 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.50" // keep this value aligned with the one in gradle.properties
+    kotlin("multiplatform") version "1.3.60" // keep this value aligned with the one in gradle.properties
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version "0.9.18"
     id("com.jfrog.bintray") version "1.8.4"
-    id ("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
+    id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
 }
 
 repositories {

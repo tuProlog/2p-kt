@@ -8,8 +8,8 @@ class Prova {
     fun testProlog() {
         prolog {
             println(theoryOf(
-                    fact { "member"("X", consOf("X", `_`))  },
-                    rule { "member"("X", consOf(`_`, "T")) impliedBy "member"("X", "T") }
+                fact { "member"("X", consOf("X", `_`)) },
+                rule { "member"("X", consOf(`_`, "T")) impliedBy "member"("X", "T") }
             ))
         }
     }

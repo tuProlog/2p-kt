@@ -14,15 +14,15 @@ import it.unibo.tuprolog.solve.TimeDuration
  * @author Enrico
  */
 class TimeOutException(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        val exceededDuration: TimeDuration
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    val exceededDuration: TimeDuration
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration)
             : this(cause?.toString(), cause, context, exceededDuration)
 
     override fun updateContext(newContext: ExecutionContext): TimeOutException =
-            TimeOutException(message, cause, newContext, exceededDuration)
+        TimeOutException(message, cause, newContext, exceededDuration)
 }

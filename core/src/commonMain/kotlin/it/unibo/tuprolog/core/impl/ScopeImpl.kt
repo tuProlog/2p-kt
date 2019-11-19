@@ -27,10 +27,10 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     }
 
     override fun where(lambda: Scope.() -> Unit): Scope =
-            this.also(lambda)
+        this.also(lambda)
 
     override fun <R> with(lambda: Scope.() -> R): R =
-            with(this, lambda)
+        with(this, lambda)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -58,7 +58,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun listOf(vararg terms: Term): LogicList = LogicList.of(*terms)
 
     override fun listFrom(terms: Iterable<Term>, last: Term?): LogicList =
-            LogicList.from(terms, last)
+        LogicList.from(terms, last)
 
     override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms.toList())
 
@@ -73,7 +73,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun factOf(head: Struct): Fact = Fact.of(head)
 
     override fun ruleOf(head: Struct, body1: Term, vararg body: Term): Rule =
-            Rule.of(head, body1, *body)
+        Rule.of(head, body1, *body)
 
     override fun directiveOf(body1: Term, vararg body: Term): Directive = Directive.of(body1, *body)
 

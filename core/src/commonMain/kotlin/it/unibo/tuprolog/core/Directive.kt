@@ -27,6 +27,6 @@ interface Directive : Clause {
         }
 
         fun of(body1: Term, vararg body: Term): Directive =
-                of(listOf(body1, *body))
+            of(listOf(body1, *body))
     }
 }

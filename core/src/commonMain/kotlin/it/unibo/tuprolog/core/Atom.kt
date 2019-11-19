@@ -42,12 +42,12 @@ interface Atom : Struct, Constant {
         val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()
 
         fun of(value: String): Atom =
-                when (value) {
-                    Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
-                    Empty.EMPTY_SET_FUNCTOR -> Empty.set()
-                    Truth.TRUE_FUNCTOR -> Truth.`true`()
-                    Truth.FAIL_FUNCTOR -> Truth.fail()
-                    else -> AtomImpl(value)
-                }
+            when (value) {
+                Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
+                Empty.EMPTY_SET_FUNCTOR -> Empty.set()
+                Truth.TRUE_FUNCTOR -> Truth.`true`()
+                Truth.FAIL_FUNCTOR -> Truth.fail()
+                else -> AtomImpl(value)
+            }
     }
 }

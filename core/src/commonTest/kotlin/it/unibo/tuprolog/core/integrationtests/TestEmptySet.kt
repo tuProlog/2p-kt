@@ -17,12 +17,13 @@ class TestEmptySet {
     private val notCorrectAtom = "{ }"
 
     private val heterogeneousCreatedInstances = listOf(
-            EmptySet(),
-            Empty.set(),
-            LogicSet.empty(),
-            LogicSet.of(),
-            Atom.of(correctAtom),
-            Struct.of(correctAtom))
+        EmptySet(),
+        Empty.set(),
+        LogicSet.empty(),
+        LogicSet.of(),
+        Atom.of(correctAtom),
+        Struct.of(correctAtom)
+    )
 
     @Test
     fun variousCreationMethodsCreateCorrectlyEmptySet() {

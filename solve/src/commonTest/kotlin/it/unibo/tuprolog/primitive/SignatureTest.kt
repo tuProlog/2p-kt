@@ -20,7 +20,8 @@ internal class SignatureTest {
     private val varargSignature = Signature(signatureName, signatureArity, true)
 
     private val normalSignatureTerm = Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity))
-    private val varargSignatureTerm = Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg")))
+    private val varargSignatureTerm =
+        Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg")))
 
     private val signatures = listOf(normalSignature, varargSignature)
     private val signatureTerms = listOf(normalSignatureTerm, varargSignatureTerm)
@@ -88,14 +89,42 @@ internal class SignatureTest {
     @Test
     fun fromTermWithStructReturnsNullIfSomethingNotMatchingCorrectPattern() {
         assertNull(Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())))
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.`true`())
+            )
+        )
         assertNull(Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
         assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`()))))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))))
-        assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))))
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of("/", Atom.of(signatureName), Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")))
+            )
+        )
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of(
+                    "/",
+                    Atom.of(signatureName),
+                    Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.`true`())
+                )
+            )
+        )
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg")))
+            )
+        )
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous()))
+            )
+        )
+        assertNull(
+            Signature.fromSignatureTerm(
+                Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg")))
+            )
+        )
     }
 
     @Test

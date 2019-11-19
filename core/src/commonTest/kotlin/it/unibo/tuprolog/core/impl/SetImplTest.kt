@@ -28,7 +28,11 @@ internal class SetImplTest {
 
     @Test
     fun argsCorrect() {
-        onCorrespondingItems(SetUtils.mixedSetsTupleWrapped, mixedSetsInstances.map { it.args.first() }, ::assertEqualities)
+        onCorrespondingItems(
+            SetUtils.mixedSetsTupleWrapped,
+            mixedSetsInstances.map { it.args.first() },
+            ::assertEqualities
+        )
     }
 
     @Test
@@ -44,27 +48,30 @@ internal class SetImplTest {
     fun unfoldedSequenceCorrect() {
         val correctElementLists = SetUtils.mixedSets.map { it.toList() }
 
-        onCorrespondingItems(correctElementLists, mixedSetsInstances.map { it.unfoldedSequence.toList() }) { expected, actual ->
-            assertEquals(expected, actual)
-        }
+        onCorrespondingItems(
+            correctElementLists,
+            mixedSetsInstances.map { it.unfoldedSequence.toList() }
+        ) { expected, actual -> assertEquals(expected, actual) }
     }
 
     @Test
     fun unfoldedArrayCorrect() {
         val correctElementLists = SetUtils.mixedSets.map { it.toList() }
 
-        onCorrespondingItems(correctElementLists, mixedSetsInstances.map { it.unfoldedArray.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            correctElementLists,
+            mixedSetsInstances.map { it.unfoldedArray.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun toStringShouldWorkAsExpected() {
         val setsToString = SetUtils.mixedSets.map { "{${it.joinToString(", ")}}" }
 
-        onCorrespondingItems(setsToString, mixedSetsInstances.map { it.toString() }) { expectedToString, actualToString ->
-            assertEquals(expectedToString, actualToString)
-        }
+        onCorrespondingItems(
+            setsToString,
+            mixedSetsInstances.map { it.toString() }
+        ) { expectedToString, actualToString -> assertEquals(expectedToString, actualToString) }
     }
 
     @Test
@@ -108,9 +115,10 @@ internal class SetImplTest {
     fun toSequenceReturnValue() {
         val mixedSets = SetUtils.mixedSets.map { it.toList() }
 
-        onCorrespondingItems(mixedSets, mixedSetsInstances.map { it.toSequence().toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            mixedSets,
+            mixedSetsInstances.map { it.toSequence().toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test

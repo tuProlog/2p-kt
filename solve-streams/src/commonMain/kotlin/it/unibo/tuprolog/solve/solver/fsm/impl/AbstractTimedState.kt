@@ -16,9 +16,9 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal abstract class AbstractTimedState(
-        /** The [Solve.Request] that guides the State behaviour towards [Response]s */
-        override val solve: Solve.Request<ExecutionContext>,
-        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    /** The [Solve.Request] that guides the State behaviour towards [Response]s */
+    override val solve: Solve.Request<ExecutionContext>,
+    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
 
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
@@ -28,13 +28,15 @@ internal abstract class AbstractTimedState(
         solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
 
         timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
-            sequenceOf(stateEndHalt(
+            sequenceOf(
+                stateEndHalt(
                     TimeOutException(
-                            "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
-                            context = solve.context,
-                            exceededDuration = solve.executionMaxDuration
+                        "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
+                        context = solve.context,
+                        exceededDuration = solve.executionMaxDuration
                     )
-            ))
+                )
+            )
         else -> behaveTimed()
     }
 
@@ -45,7 +47,7 @@ internal abstract class AbstractTimedState(
 
     /** A function to check if time for execution has ended */
     private fun timeIsOver(currentDuration: TimeDuration, maxDuration: TimeDuration) =
-            currentDuration >= maxDuration
+        currentDuration >= maxDuration
 
     override fun toString(): String = "${this::class} with $solve"
 }

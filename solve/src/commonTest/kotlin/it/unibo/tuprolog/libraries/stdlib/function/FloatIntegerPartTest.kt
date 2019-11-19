@@ -24,8 +24,8 @@ internal class FloatIntegerPartTest {
         FloatFunctionUtils.numbersToFloatParts.forEach { (input, parts) ->
             val (integerPart, _) = parts
             assertEquals(
-                    integerPart,
-                    FloatIntegerPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
+                integerPart,
+                FloatIntegerPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
             )
         }
     }

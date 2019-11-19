@@ -38,32 +38,35 @@ internal object CatchUtils {
      */
     internal val requestSolutionMap by lazy {
         mapOf(
-                *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
-                    createSolveRequest(goal, primitives = mapOf(*ktListOf(Call, Catch, Throw).map { it.descriptionPair }.toTypedArray())) to solutionList
-                }.toTypedArray(),
+            *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
+                createSolveRequest(
+                    goal,
+                    primitives = mapOf(*ktListOf(Call, Catch, Throw).map { it.descriptionPair }.toTypedArray())
+                ) to solutionList
+            }.toTypedArray(),
 
-                *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->
-                    ktListOf(
-                            prolog { Catch.functor(callRequest.query, `_`, false) },
-                            prolog { Catch.functor(callRequest.arguments.single(), `_`, false) }
-                    ).map {
-                        with(callRequest.context.libraries) {
-                            createSolveRequest(it, theory, primitives + Catch.descriptionPair)
-                        } to solutions.changeQueriesTo(it)
-                    }
-                }.toTypedArray(),
+            *CallUtils.requestSolutionMap.flatMap { (callRequest, solutions) ->
+                ktListOf(
+                    prolog { Catch.functor(callRequest.query, `_`, false) },
+                    prolog { Catch.functor(callRequest.arguments.single(), `_`, false) }
+                ).map {
+                    with(callRequest.context.libraries) {
+                        createSolveRequest(it, theory, primitives + Catch.descriptionPair)
+                    } to solutions.changeQueriesTo(it)
+                }
+            }.toTypedArray(),
 
-                *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
-                    val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
-                    prolog {
-                        Catch.functor(callRequest.arguments.single(), "X", true).run {
-                            createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
-                                    solutions.map {
-                                        yes("X" to (it.exception.cause?.cause as PrologError).errorStruct)
-                                    }
-                        }
+            *CallUtils.requestToErrorSolutionMap.map { (callRequest, solutions) ->
+                val updatedPrimitives = callRequest.context.libraries.primitives + Catch.descriptionPair
+                prolog {
+                    Catch.functor(callRequest.arguments.single(), "X", true).run {
+                        createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
+                                solutions.map {
+                                    yes("X" to (it.exception.cause?.cause as PrologError).errorStruct)
+                                }
                     }
-                }.toTypedArray()
+                }
+            }.toTypedArray()
         )
     }
 
@@ -80,13 +83,16 @@ internal object CatchUtils {
      */
     internal val prologStandardCatchExamples by lazy {
         catchAndThrowStandardExampleDatabaseNotableGoalToSolution
-                .filter { (_, solutionList) -> solutionList.none { it is Solution.Halt } }
-                .map { (goal, solutionList) ->
-                    createSolveRequest(goal,
-                            primitives = mapOf(*ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()),
-                            database = catchAndThrowStandardExampleDatabase
-                    ) to solutionList
-                }
+            .filter { (_, solutionList) -> solutionList.none { it is Solution.Halt } }
+            .map { (goal, solutionList) ->
+                createSolveRequest(
+                    goal,
+                    primitives = mapOf(
+                        *ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()
+                    ),
+                    database = catchAndThrowStandardExampleDatabase
+                ) to solutionList
+            }
     }
 
     /**
@@ -101,33 +107,42 @@ internal object CatchUtils {
     internal val prologStandardThrowExamplesWithError by lazy {
         prolog {
             mapOf(
-                    Catch.functor(Throw.functor("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = SystemError(context = aContext, extraData = "f"("X", "X"))
-                        ))
-                    }),
-                    Catch.functor(Throw.functor(1), "X", false or "X").hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = with(TypeError(context = aContext,
-                                        expectedType = TypeError.Expected.CALLABLE,
-                                        actualValue = false or 1
-                                )) {
-                                    SystemError(context = aContext,
-                                            cause = this,
-                                            extraData = this.errorStruct
-                                    )
-                                }
-                        ))
-                    }),
-                    Catch.functor(Throw.functor(false), true, "G").hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = SystemError(context = aContext, extraData = truthOf(false))
-                        ))
-                    })
+                Catch.functor(Throw.functor("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({
+                    halt(
+                        HaltException(
+                            context = aContext,
+                            cause = SystemError(context = aContext, extraData = "f"("X", "X"))
+                        )
+                    )
+                }),
+                Catch.functor(Throw.functor(1), "X", false or "X").hasSolutions({
+                    halt(HaltException(context = aContext,
+                        cause = with(
+                            TypeError(
+                                context = aContext,
+                                expectedType = TypeError.Expected.CALLABLE,
+                                actualValue = false or 1
+                            )
+                        ) {
+                            SystemError(context = aContext, cause = this, extraData = this.errorStruct)
+                        }
+                    ))
+                }),
+                Catch.functor(Throw.functor(false), true, "G").hasSolutions({
+                    halt(
+                        HaltException(
+                            context = aContext,
+                            cause = SystemError(context = aContext, extraData = truthOf(false))
+                        )
+                    )
+                })
             ).mapKeys { (query, _) ->
-                createSolveRequest(query,
-                        database = catchAndThrowStandardExampleDatabase,
-                        primitives = mapOf(*ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray())
+                createSolveRequest(
+                    query,
+                    database = catchAndThrowStandardExampleDatabase,
+                    primitives = mapOf(
+                        *ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()
+                    )
                 )
             }
         }

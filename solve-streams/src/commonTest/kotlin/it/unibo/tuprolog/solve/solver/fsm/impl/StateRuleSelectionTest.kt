@@ -34,14 +34,14 @@ internal class StateRuleSelectionTest {
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(theQuery.extractSignature(), theQuery.argsList,
-            ExecutionContextImpl(
-                    libraries = Libraries(Library.of(
-                            alias = "testLib",
-                            theory = prolog { theory({ "f"("a") }) }
-                    )),
-                    staticKB = prolog { theory({ "f"("b") }) },
-                    dynamicKB = prolog { theory({ "f"("c") }) }
-            ))
+        ExecutionContextImpl(
+            libraries = Libraries(Library.of(
+                alias = "testLib",
+                theory = prolog { theory({ "f"("a") }) }
+            )),
+            staticKB = prolog { theory({ "f"("b") }) },
+            dynamicKB = prolog { theory({ "f"("c") }) }
+        ))
 
     @Test
     fun noMatchingRulesFoundMakeItGoIntoFalseState() {
@@ -98,11 +98,12 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
-        val dynamicAndStaticKBSolveRequest = with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries())) }
+        val dynamicAndStaticKBSolveRequest =
+            with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries())) }
         val correctSubstitutions = prolog {
             ktListOf(
-                    theQueryVariable to "b",
-                    theQueryVariable to "c"
+                theQueryVariable to "b",
+                theQueryVariable to "c"
             )
         }
 

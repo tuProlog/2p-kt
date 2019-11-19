@@ -24,16 +24,16 @@ internal class ErrorUtilsTest {
     @Test
     fun errorStructOfWithArgsCreatesCorrectStruct() {
         assertEquals(
-                Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, errorExtraData),
-                ErrorUtils.errorStructOf(errorDescription, errorExtraData)
+            Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, errorExtraData),
+            ErrorUtils.errorStructOf(errorDescription, errorExtraData)
         )
     }
 
     @Test
     fun errorStructOfWithOnlyFirstArgFillsExtraDataWithTrue() {
         assertEquals(
-                Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, defaultCustomErrorData),
-                ErrorUtils.errorStructOf(errorDescription)
+            Struct.of(ErrorUtils.errorWrapperFunctor, errorDescription, defaultCustomErrorData),
+            ErrorUtils.errorStructOf(errorDescription)
         )
     }
 }

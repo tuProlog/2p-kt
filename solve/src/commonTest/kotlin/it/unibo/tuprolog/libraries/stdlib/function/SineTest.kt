@@ -22,8 +22,8 @@ internal class SineTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(1.0),
-                Sine.computeOf(Numeric.of(PI / 2.0))
+            Numeric.of(1.0),
+            Sine.computeOf(Numeric.of(PI / 2.0))
         )
     }
 

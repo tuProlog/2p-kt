@@ -22,8 +22,8 @@ internal class BitwiseComplementTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Integer.of(10),
-                BitwiseComplement.computeOf(BitwiseComplement.computeOf(Integer.of(10)))
+            Integer.of(10),
+            BitwiseComplement.computeOf(BitwiseComplement.computeOf(Integer.of(10)))
         )
     }
 

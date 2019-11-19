@@ -32,5 +32,7 @@ interface Solver {
     }
 }
 
-inline fun Solver.solve(maxDuration: TimeDuration = TimeDuration.MAX_VALUE, scopedContext: Scope.() -> Struct): Sequence<Solution> =
-        solve(scopedContext(Scope.empty()), maxDuration)
+inline fun Solver.solve(
+    maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    scopedContext: Scope.() -> Struct
+): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)

@@ -13,15 +13,15 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @author Enrico
  */
 class HaltException(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        val exitStatus: Int = 1
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    val exitStatus: Int = 1
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, exitStatus: Int = 1)
             : this(cause?.toString(), cause, context, exitStatus)
 
     override fun updateContext(newContext: ExecutionContext): HaltException =
-            HaltException(message, cause, newContext, exitStatus)
+        HaltException(message, cause, newContext, exitStatus)
 }

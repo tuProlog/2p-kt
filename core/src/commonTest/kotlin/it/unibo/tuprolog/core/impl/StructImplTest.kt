@@ -18,20 +18,27 @@ import it.unibo.tuprolog.core.Set.Companion as LogicSet
 internal class StructImplTest {
 
     private val mixedStructInstances = StructUtils.mixedStructs.map { (functor, args) -> StructImpl(functor, args) }
-    private val nonSpecialStructInstances = StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
+    private val nonSpecialStructInstances =
+        StructUtils.nonSpecialStructs.map { (functor, args) -> StructImpl(functor, args) }
     private val groundStructInstances = StructUtils.groundStructs.map { (functor, args) -> StructImpl(functor, args) }
-    private val nonGroundStructInstances = StructUtils.nonGroundStructs.map { (functor, args) -> StructImpl(functor, args) }
+    private val nonGroundStructInstances =
+        StructUtils.nonGroundStructs.map { (functor, args) -> StructImpl(functor, args) }
 
     @Test
     fun functorCorrect() {
-        onCorrespondingItems(StructUtils.mixedStructFunctors, mixedStructInstances.map { it.functor }) { expected, actual ->
+        onCorrespondingItems(
+            StructUtils.mixedStructFunctors,
+            mixedStructInstances.map { it.functor }) { expected, actual ->
             assertEquals(expected, actual)
         }
     }
 
     @Test
     fun argsCorrect() {
-        onCorrespondingItems(StructUtils.mixedStructArguments, mixedStructInstances.map { it.args }) { expected, actual ->
+        onCorrespondingItems(
+            StructUtils.mixedStructArguments,
+            mixedStructInstances.map { it.args }
+        ) { expected, actual ->
             assertEquals(expected.toList(), actual.toList())
             assertTrue { expected.contentDeepEquals(actual) }
         }
@@ -57,9 +64,10 @@ internal class StructImplTest {
 
     @Test
     fun variablesCorrect() {
-        onCorrespondingItems(StructUtils.mixedStructVariables, mixedStructInstances.map { it.variables }) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-        }
+        onCorrespondingItems(
+            StructUtils.mixedStructVariables,
+            mixedStructInstances.map { it.variables }
+        ) { expected, actual -> assertEquals(expected.toList(), actual.toList()) }
     }
 
     @Test
@@ -85,7 +93,7 @@ internal class StructImplTest {
     @Test
     fun isFunctorWellFormed() {
         mixedStructInstances.filter { it.functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN }
-                .forEach { assertTrue { it.isFunctorWellFormed } }
+            .forEach { assertTrue { it.isFunctorWellFormed } }
     }
 
     @Test
@@ -142,7 +150,7 @@ internal class StructImplTest {
     @Test
     fun factDetected() {
         val isFact: (Struct) -> Boolean =
-                { aStruct -> aStruct.functor == Clause.FUNCTOR && aStruct.arity == 2 && aStruct.args.last().isTrue }
+            { aStruct -> aStruct.functor == Clause.FUNCTOR && aStruct.arity == 2 && aStruct.args.last().isTrue }
 
         mixedStructInstances.filter(isFact).forEach { assertTrue { it.isFact } }
         mixedStructInstances.filterNot(isFact).forEach { assertFalse { it.isFact } }
@@ -175,10 +183,10 @@ internal class StructImplTest {
     @Test
     fun listDetected() {
         val isList: (Struct) -> Boolean =
-                { aStruct ->
-                    aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
-                            aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
-                }
+            { aStruct ->
+                aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
+                        aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
+            }
 
         mixedStructInstances.filter(isList).forEach { assertTrue { it.isList } }
         mixedStructInstances.filterNot(isList).forEach { assertFalse { it.isList } }
@@ -187,10 +195,10 @@ internal class StructImplTest {
     @Test
     fun setDetected() {
         val isSet: (Struct) -> Boolean =
-                { aStruct ->
-                    aStruct.functor == LogicSet.FUNCTOR && aStruct.arity == 1 ||
-                            aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
-                }
+            { aStruct ->
+                aStruct.functor == LogicSet.FUNCTOR && aStruct.arity == 1 ||
+                        aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
+            }
 
         mixedStructInstances.filter(isSet).forEach { assertTrue { it.isSet } }
         mixedStructInstances.filterNot(isSet).forEach { assertFalse { it.isSet } }
@@ -198,7 +206,8 @@ internal class StructImplTest {
 
     @Test
     fun emptySetDetected() {
-        val isEmptySet: (Struct) -> Boolean = { aStruct -> aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0 }
+        val isEmptySet: (Struct) -> Boolean =
+            { aStruct -> aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0 }
 
         mixedStructInstances.filter(isEmptySet).forEach { assertTrue { it.isEmptySet } }
         mixedStructInstances.filterNot(isEmptySet).forEach { assertFalse { it.isEmptySet } }
@@ -206,7 +215,8 @@ internal class StructImplTest {
 
     @Test
     fun emptyListDetected() {
-        val isEmptyList: (Struct) -> Boolean = { aStruct -> aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0 }
+        val isEmptyList: (Struct) -> Boolean =
+            { aStruct -> aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0 }
 
         mixedStructInstances.filter(isEmptyList).forEach { assertTrue { it.isEmptyList } }
         mixedStructInstances.filterNot(isEmptyList).forEach { assertFalse { it.isEmptyList } }
@@ -244,7 +254,7 @@ internal class StructImplTest {
     @Test
     fun freshCopyShouldRenewVariables() {
         val nonGroundNonSpecialStructInstances = (StructUtils.nonGroundStructs - StructUtils.specialStructs)
-                .map { (functor, args) -> StructImpl(functor, args) }
+            .map { (functor, args) -> StructImpl(functor, args) }
 
         nonGroundNonSpecialStructInstances.forEach(StructUtils::assertFreshCopyRenewsContainedVariables)
     }

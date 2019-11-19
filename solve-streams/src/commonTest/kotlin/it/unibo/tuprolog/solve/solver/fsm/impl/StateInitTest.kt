@@ -30,7 +30,12 @@ internal class StateInitTest {
     @Test
     fun trueGoalGoesIntoTrueEndState() {
         // precondition
-        assertTrue { SolverStrategies.prologStandard.successCheckStrategy(Truth.`true`(), DummyInstances.executionContext) }
+        assertTrue {
+            SolverStrategies.prologStandard.successCheckStrategy(
+                Truth.`true`(),
+                DummyInstances.executionContext
+            )
+        }
 
         val nextStates = StateInit(trueRequest).behave()
 
@@ -49,11 +54,11 @@ internal class StateInitTest {
     @Test
     fun wellFormedGoalsNotNeedingPreparationForExecutionAreTheSameInNextStateRequest() {
         wellFormedGoalRequestsNotNeedingPreparationForExecution
-                .forEach {
-                    val nextStates = StateInit(it).behave()
+            .forEach {
+                val nextStates = StateInit(it).behave()
 
-                    assertEquals(it.query, (nextStates.single().solve as Solve.Request<*>).query)
-                }
+                assertEquals(it.query, (nextStates.single().solve as Solve.Request<*>).query)
+            }
     }
 
     @Test
@@ -61,14 +66,14 @@ internal class StateInitTest {
         fun prepareGoalForExecution(goal: Term) = Directive.of(goal).prepareForExecution().body
 
         wellFormedGoalRequestsNeedingPreparationForExecution
-                .forEach {
-                    val nextStates = StateInit(it).behave()
+            .forEach {
+                val nextStates = StateInit(it).behave()
 
-                    assertEquals(
-                            prepareGoalForExecution(it.query),
-                            (nextStates.single().solve as Solve.Request<*>).query
-                    )
-                }
+                assertEquals(
+                    prepareGoalForExecution(it.query),
+                    (nextStates.single().solve as Solve.Request<*>).query
+                )
+            }
     }
 
     @Test

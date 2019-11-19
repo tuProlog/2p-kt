@@ -13,7 +13,7 @@ interface Cursor<T> {
         return ConjunctionCursor(this, other)
     }
 
-    fun <R> map(mapper: (T)->R): Cursor<out R> {
+    fun <R> map(mapper: (T) -> R): Cursor<out R> {
         return MapperCursor(this, mapper)
     }
 
@@ -105,7 +105,7 @@ internal data class LazyCursor<T>(val iterator: Iterator<T>) : AbstractCursor<T>
     }
 }
 
-internal data class MapperCursor<T, R>(val wrapped: Cursor<out T>, val mapper: (T)->R) : AbstractCursor<R>() {
+internal data class MapperCursor<T, R>(val wrapped: Cursor<out T>, val mapper: (T) -> R) : AbstractCursor<R>() {
     override val next: Cursor<out R> by lazy { MapperCursor(wrapped.next, mapper) }
 
     override val current: R? by lazy {
@@ -158,7 +158,7 @@ fun <T> Collection<T>.cursor(): Cursor<out T> {
 }
 
 fun main(args: Array<String>) {
-    var i = (1 .. Int.MAX_VALUE).asSequence().map { println("$$it"); it }.cursor().map { it * 2 }
+    var i = (1..Int.MAX_VALUE).asSequence().map { println("$$it"); it }.cursor().map { it * 2 }
 
     while (i.hasNext) {
         println(i.current)

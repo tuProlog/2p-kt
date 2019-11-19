@@ -22,11 +22,11 @@ internal class ExponentiationTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Numeric.of(-125.0),
-                Exponentiation.computeOf(
-                        Integer.of(-5),
-                        Integer.of(3)
-                )
+            Numeric.of(-125.0),
+            Exponentiation.computeOf(
+                Integer.of(-5),
+                Integer.of(3)
+            )
         )
     }
 

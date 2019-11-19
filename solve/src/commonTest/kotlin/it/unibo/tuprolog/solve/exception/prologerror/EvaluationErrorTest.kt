@@ -15,8 +15,8 @@ internal class EvaluationErrorTest {
 
     private val testErrorType = EvaluationError.Type.FLOAT_OVERFLOW
     private val aCallableTypeError = EvaluationError(
-            context = PrologErrorUtils.aContext,
-            errorType = testErrorType
+        context = PrologErrorUtils.aContext,
+        errorType = testErrorType
     )
     private val correctTypeFunctor = "evaluation_error"
 
@@ -33,8 +33,8 @@ internal class EvaluationErrorTest {
     @Test
     fun evaluationErrorTypeCorrect() {
         assertEquals(
-                Struct.of(correctTypeFunctor, testErrorType.toAtom()),
-                aCallableTypeError.type
+            Struct.of(correctTypeFunctor, testErrorType.toAtom()),
+            aCallableTypeError.type
         )
     }
 

@@ -21,26 +21,26 @@ fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
  * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
  */
 fun Term.prepareForExecutionAsGoal(): Struct =
-        // exploits "Clause" implementation of prepareForExecution() to do that
-        Directive.of(this).prepareForExecution().args.single().castTo()
+    // exploits "Clause" implementation of prepareForExecution() to do that
+    Directive.of(this).prepareForExecution().args.single().castTo()
 
 /** Computes the ordered selection of elements, lazily, according to provided selection strategy */
 fun <E> Sequence<E>.orderWithStrategy(
-        context: ExecutionContext,
-        selectionStrategy: (Sequence<E>, ExecutionContext) -> E
+    context: ExecutionContext,
+    selectionStrategy: (Sequence<E>, ExecutionContext) -> E
 ): Sequence<E> =
-        when (any()) {
-            true -> sequence {
-                selectionStrategy(this@orderWithStrategy, context).let { selected ->
-                    yield(selected)
-                    yieldAll(
-                            filterIndexed { index, _ -> index != indexOf(selected) }
-                                    .orderWithStrategy(context, selectionStrategy)
-                    )
-                }
+    when (any()) {
+        true -> sequence {
+            selectionStrategy(this@orderWithStrategy, context).let { selected ->
+                yield(selected)
+                yieldAll(
+                    filterIndexed { index, _ -> index != indexOf(selected) }
+                        .orderWithStrategy(context, selectionStrategy)
+                )
             }
-            else -> emptySequence()
         }
+        else -> emptySequence()
+    }
 
 /** Checks if this sequence of elements holds more than one element, lazily */
 fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
@@ -63,36 +63,38 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
  * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
  */
 internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
-        newGoal: Struct,
-        toAddSubstitutions: Substitution = Substitution.empty(),
-        baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
-        currentTime: TimeInstant = currentTimeInstant(),
-        isChoicePointChild: Boolean = false
+    newGoal: Struct,
+    toAddSubstitutions: Substitution = Substitution.empty(),
+    baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
+    currentTime: TimeInstant = currentTimeInstant(),
+    isChoicePointChild: Boolean = false
 ): Solve.Request<ExecutionContextImpl> = copy(
-        newGoal.extractSignature(),
-        newGoal.argsList,
-        context.copy(
-                substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
-                sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
-        ),
-        requestIssuingInstant = currentTime,
-        executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
+    newGoal.extractSignature(),
+    newGoal.argsList,
+    context.copy(
+        substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
+        sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
+    ),
+    requestIssuingInstant = currentTime,
+    executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
 )
 
 /** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
 private fun adjustExecutionMaxDuration(
-        oldSolveRequest: Solve.Request<ExecutionContextImpl>,
-        currentTime: TimeInstant
+    oldSolveRequest: Solve.Request<ExecutionContextImpl>,
+    currentTime: TimeInstant
 ): TimeDuration = when (oldSolveRequest.executionMaxDuration) {
     TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE
     else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
-            .takeIf { it >= 0 }
-            ?: 0
+        .takeIf { it >= 0 }
+        ?: 0
 }
 
 /** Responds to this solve request forwarding the provided [otherResponse] data */
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
-        with(otherResponse) {
-            replyWith(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager
-                    ?: this@replyWith.context.getSideEffectManager())
-        }
+    with(otherResponse) {
+        replyWith(
+            solution, libraries, flags, staticKB, dynamicKB, sideEffectManager
+                ?: this@replyWith.context.getSideEffectManager()
+        )
+    }

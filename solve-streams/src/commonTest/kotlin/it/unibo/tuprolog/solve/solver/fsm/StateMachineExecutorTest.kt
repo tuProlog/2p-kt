@@ -77,14 +77,15 @@ internal class StateMachineExecutorTest {
 
         assertEquals(3, toBeTested.count())
         toBeTested.toList().getOrNull(2)
-                ?.run { assertTrue(hasBehaved) }
-                ?: fail("No state at that index")
+            ?.run { assertTrue(hasBehaved) }
+            ?: fail("No state at that index")
     }
 
     @Test
     fun executeUnwrapsAlreadyExecutedStatesIfNeeded() {
         val nextStates = 3
-        val stateSequence = StateMachineExecutor.execute(allNextStatesFromThis(nextStates, AlreadyExecutedState(endState)))
+        val stateSequence =
+            StateMachineExecutor.execute(allNextStatesFromThis(nextStates, AlreadyExecutedState(endState)))
         assertEquals(nextStates, stateSequence.count())
         stateSequence.forEach { assertSame(endState, it) }
     }
@@ -96,8 +97,8 @@ internal class StateMachineExecutorTest {
 
         assertEquals(correctlyExecuted.flatten().count(), toBeTested.flatten().count())
         assertEquals(
-                correctlyExecuted.flatten().map { it.toString() },
-                toBeTested.flatten().map { it.wrappedState.toString() }
+            correctlyExecuted.flatten().map { it.toString() },
+            toBeTested.flatten().map { it.wrappedState.toString() }
         )
     }
 

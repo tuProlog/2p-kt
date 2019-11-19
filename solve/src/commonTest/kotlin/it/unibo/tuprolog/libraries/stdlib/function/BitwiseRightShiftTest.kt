@@ -22,11 +22,11 @@ internal class BitwiseRightShiftTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Integer.of(4),
-                BitwiseRightShift.computeOf(
-                        Integer.of(16),
-                        Integer.of(2)
-                )
+            Integer.of(4),
+            BitwiseRightShift.computeOf(
+                Integer.of(16),
+                Integer.of(2)
+            )
         )
     }
 

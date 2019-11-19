@@ -20,18 +20,18 @@ internal class AbstractTimedStateTest {
 
     /** Creates an [AbstractTimedState] instance with provided parameters, and emptySequence returning behaviour */
     private fun createTimeState(solveRequest: Solve.Request<ExecutionContext>) =
-            object : AbstractTimedState(solveRequest) {
-                override fun behaveTimed(): Sequence<State> = behaviourResponse
-            }
+        object : AbstractTimedState(solveRequest) {
+            override fun behaveTimed(): Sequence<State> = behaviourResponse
+        }
 
     /** Creates a test solve request with given timing fields, or defaults if not provided */
     private fun createTimedRequest(requestIssuingInstant: TimeInstant? = null, maxDuration: TimeDuration? = null) =
-            with(createSolveRequest(Truth.`true`())) {
-                copy(
-                        requestIssuingInstant = requestIssuingInstant ?: this.requestIssuingInstant,
-                        executionMaxDuration = maxDuration ?: this.executionMaxDuration
-                )
-            }
+        with(createSolveRequest(Truth.`true`())) {
+            copy(
+                requestIssuingInstant = requestIssuingInstant ?: this.requestIssuingInstant,
+                executionMaxDuration = maxDuration ?: this.executionMaxDuration
+            )
+        }
 
     @Test
     fun behaveWorksAsUsualIfLongMaxValueTimeoutSpecified() {

@@ -50,8 +50,8 @@ internal class ArgNodeTest {
         allEmptyArgNodes = zeroIndexEmptyArgNodes + twoIndexEmptyArgNodes
 
         allFilledArgNodes = listOf(
-                ArgNode(0, aAtom), ArgNode(0, bAtom),
-                ArgNode(2, aAtom), ArgNode(2, bAtom)
+            ArgNode(0, aAtom), ArgNode(0, bAtom),
+            ArgNode(2, aAtom), ArgNode(2, bAtom)
         ).map { argNode -> argNode.apply { aAtomRules.forEach { put(it) } } }
     }
 
@@ -125,8 +125,9 @@ internal class ArgNodeTest {
     fun putClauseForwardsCorrectlyTheBeforeFlagToChildren() {
         zeroIndexEmptyArgNodes.forEach {
             val clauses = listOf(
-                    Fact.of(Struct.of("f", aAtom, Var.of("A"))),
-                    Fact.of(Struct.of("f", aAtom, Var.anonymous())))
+                Fact.of(Struct.of("f", aAtom, Var.of("A"))),
+                Fact.of(Struct.of("f", aAtom, Var.anonymous()))
+            )
 
             it.run { clauses.forEach { clause -> put(clause, true) } }
 

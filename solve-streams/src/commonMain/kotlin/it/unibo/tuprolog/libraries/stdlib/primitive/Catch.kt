@@ -15,35 +15,39 @@ import it.unibo.tuprolog.solve.solver.*
 internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
-            sequence {
-                val goalArgument = request.arguments.first()
+        sequence {
+            val goalArgument = request.arguments.first()
 
-                SolverSLD.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
-                    when {
-                        // if i'm the catch selected by throw/1 primitive
-                        goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
+            SolverSLD.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
+                when {
+                    // if i'm the catch selected by throw/1 primitive
+                    goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
 
-                            val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
+                        val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
-                            // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown
-                            val recoverGoalSolveRequest = request
-                                    .newSolveRequest(
-                                            call(recoverGoalArgument),
-                                            goalResponse.solution.substitution - request.context.substitution
-                                    )
-                                    .ensureNoMoreSelectableCatch(request.context)
+                        // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown
+                        val recoverGoalSolveRequest = request
+                            .newSolveRequest(
+                                call(recoverGoalArgument),
+                                goalResponse.solution.substitution - request.context.substitution
+                            )
+                            .ensureNoMoreSelectableCatch(request.context)
 
-                            yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
-                        }
-                        else -> yield(request.replyWith(goalResponse))
+                        yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
                     }
+                    else -> yield(request.replyWith(goalResponse))
                 }
             }
+        }
 
     /** Utility function to create the struct: call([goal]) */
     private fun call(goal: Term) = Struct.of(Call.functor, goal)
 
     /** Calls [SideEffectManagerImpl.ensureNoMoreSelectableCatch] */
     private fun Solve.Request<ExecutionContextImpl>.ensureNoMoreSelectableCatch(notSelectableContext: ExecutionContextImpl) =
-            copy(context = context.copy(sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext)))
+        copy(
+            context = context.copy(
+                sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext)
+            )
+        )
 }

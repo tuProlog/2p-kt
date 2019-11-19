@@ -91,13 +91,13 @@ interface Scope {
         fun of(vararg vars: String): Scope = of(*vars) {}
 
         fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope =
-                of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
+            of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
 
         fun of(vararg vars: Var): Scope = of(*vars) {}
 
         fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
-                ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
-                        .where(lambda)
+            ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
+                .where(lambda)
 
 
         fun <R> empty(lambda: Scope.() -> R): R = empty().with(lambda)

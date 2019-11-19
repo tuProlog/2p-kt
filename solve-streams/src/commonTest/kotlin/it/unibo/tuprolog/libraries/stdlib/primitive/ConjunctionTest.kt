@@ -57,20 +57,28 @@ internal class ConjunctionTest {
 
             val leftPrimitive = object : PrimitiveWrapper<ExecutionContext>("left", 0) {
                 override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                        sequenceOf(request.replySuccess(firstSubstitution))
+                    sequenceOf(request.replySuccess(firstSubstitution))
             }
             val rightPrimitive = object : PrimitiveWrapper<ExecutionContext>("right", 0) {
                 override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                        sequenceOf(request.replySuccess(secondSubstitution))
+                    sequenceOf(request.replySuccess(secondSubstitution))
             }
 
             val goal = "left" and "right"
-            val request = Solve.Request(goal.extractSignature(), goal.argsList, ExecutionContextImpl(
+            val request = Solve.Request(
+                goal.extractSignature(), goal.argsList, ExecutionContextImpl(
                     substitution = preRequestSubstitution,
-                    libraries = Libraries(Library.of(alias = "conjunction.test",
-                            primitives = mapOf(*ktListOf(Conjunction, leftPrimitive, rightPrimitive).map { it.descriptionPair }.toTypedArray())
-                    ))
-            ))
+                    libraries = Libraries(
+                        Library.of(
+                            alias = "conjunction.test",
+                            primitives = mapOf(
+                                *ktListOf(Conjunction, leftPrimitive, rightPrimitive)
+                                    .map { it.descriptionPair }.toTypedArray()
+                            )
+                        )
+                    )
+                )
+            )
 
             val responses = Conjunction.wrappedImplementation(request)
 

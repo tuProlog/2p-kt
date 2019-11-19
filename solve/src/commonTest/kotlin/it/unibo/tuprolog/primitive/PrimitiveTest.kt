@@ -20,13 +20,13 @@ internal class PrimitiveTest {
     @Test
     fun primitiveOfReturnsPrimitiveBehavingExactlyAsProvidedOne() {
         wrapperToMatchingSignatureRequest(::primitiveOf, primitive, ::createPrimitiveRequest).zip(allSignatures)
-                .forEach { (primitiveToGoodRequests, primitiveSignature) ->
-                    val (checkedPrimitive, goodRequests) = primitiveToGoodRequests
-                    goodRequests.forEach {
-                        if (primitiveSignature.vararg) return
-                        assertEquals(defaultPrimitiveResult, checkedPrimitive(it))
-                    }
+            .forEach { (primitiveToGoodRequests, primitiveSignature) ->
+                val (checkedPrimitive, goodRequests) = primitiveToGoodRequests
+                goodRequests.forEach {
+                    if (primitiveSignature.vararg) return
+                    assertEquals(defaultPrimitiveResult, checkedPrimitive(it))
                 }
+            }
         // TODO delete above test and enable the code below after solving TODO in "Signature"
 //        wrapperToMatchingSignatureRequest(::primitiveOf, primitive, ::createRequest).forEach { (checkedPrimitive, goodRequests) ->
 //            goodRequests.forEach {
@@ -37,10 +37,11 @@ internal class PrimitiveTest {
 
     @Test
     fun primitiveOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(::primitiveOf, primitive, ::createPrimitiveRequest).forEach { (checkedPrimitive, badRequests) ->
-            badRequests.forEach {
-                assertFailsWith<IllegalArgumentException> { checkedPrimitive(it) }
+        wrapperToNotMatchingSignatureRequest(::primitiveOf, primitive, ::createPrimitiveRequest)
+            .forEach { (checkedPrimitive, badRequests) ->
+                badRequests.forEach {
+                    assertFailsWith<IllegalArgumentException> { checkedPrimitive(it) }
+                }
             }
-        }
     }
 }

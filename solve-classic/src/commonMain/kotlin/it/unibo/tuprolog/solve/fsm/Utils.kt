@@ -8,25 +8,28 @@ import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 
 fun Sequence<Term>.ensureStructs(): Cursor<out Struct> =
-        map { require(it is Struct); it as Struct }.cursor()
+    map { require(it is Struct); it as Struct }.cursor()
 
 fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
-        map { require(it is Rule); it as Rule }.cursor()
+    map { require(it is Rule); it as Rule }.cursor()
 
 fun Struct.toGoals(): Cursor<out Struct> =
-        when (this) {
-            is Tuple -> toSequence()
-            else -> sequenceOf(this)
-        }.ensureStructs()
+    when (this) {
+        is Tuple -> toSequence()
+        else -> sequenceOf(this)
+    }.ensureStructs()
 
 // TODO Giovanni's review needed!! with Git > Show History
-fun ExecutionContextImpl.toRequest(signature: Signature, arguments: kotlin.collections.List<Term>): Solve.Request<ExecutionContextImpl> =
-        Solve.Request(
-                signature,
-                arguments,
-                ExecutionContextImpl(
-                        libraries, flags, staticKB, dynamicKB, substitution, query
-                ),
-                requestIssuingInstant = startTime, // TODO how to assign those field in this implementation?? is still needed?
-                executionMaxDuration = maxDuration
-        )
+fun ExecutionContextImpl.toRequest(
+    signature: Signature,
+    arguments: kotlin.collections.List<Term>
+): Solve.Request<ExecutionContextImpl> =
+    Solve.Request(
+        signature,
+        arguments,
+        ExecutionContextImpl(
+            libraries, flags, staticKB, dynamicKB, substitution, query
+        ),
+        requestIssuingInstant = startTime, // TODO how to assign those field in this implementation?? is still needed?
+        executionMaxDuration = maxDuration
+    )

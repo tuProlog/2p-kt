@@ -14,13 +14,13 @@ import org.gciatto.kt.math.BigDecimal
 object SquareRoot : UnaryMathFunction("sqrt") {
 
     override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(integer.decimalValue)
+        commonBehaviour(integer.decimalValue)
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(real.value)
+        commonBehaviour(real.value)
 
     /** Implements common behaviour for Integer and Real*/
     private fun commonBehaviour(decimal: BigDecimal): Real =
-            // TODO: 25/10/2019 "undefined" checks missing (see the standard)
-            Numeric.of(decimal.sqrt())
+        // TODO: 25/10/2019 "undefined" checks missing (see the standard)
+        Numeric.of(decimal.sqrt())
 }

@@ -28,14 +28,15 @@ internal object StateMachineExecutorUtils {
      *
      * `state->state->state->...->otherState`
      */
-    internal fun oneStateAtATimeState(nextCountToProceed: Int, otherState: State): State = object : State by defaultDummyEndState {
-        override fun behave(): Sequence<State> = sequence {
-            if (nextCountToProceed > 0) yield(oneStateAtATimeState(nextCountToProceed - 1, otherState))
-            else yield(otherState)
-        }
+    internal fun oneStateAtATimeState(nextCountToProceed: Int, otherState: State): State =
+        object : State by defaultDummyEndState {
+            override fun behave(): Sequence<State> = sequence {
+                if (nextCountToProceed > 0) yield(oneStateAtATimeState(nextCountToProceed - 1, otherState))
+                else yield(otherState)
+            }
 
-        override fun toString(): String = "${this::class.className()} nextCountToProceed:$nextCountToProceed"
-    }
+            override fun toString(): String = "${this::class.className()} nextCountToProceed:$nextCountToProceed"
+        }
 
     /**
      * Creates a state that returns [nextCount] alternative paths to [nextState]
@@ -47,18 +48,19 @@ internal object StateMachineExecutorUtils {
      *        >   nextState
      * ```
      */
-    internal fun allNextStatesFromThis(nextCount: Int, nextState: State): State = object : State by defaultDummyEndState {
-        override fun behave(): Sequence<State> = sequence {
-            repeat(nextCount) { yield(nextState) }
-        }
+    internal fun allNextStatesFromThis(nextCount: Int, nextState: State): State =
+        object : State by defaultDummyEndState {
+            override fun behave(): Sequence<State> = sequence {
+                repeat(nextCount) { yield(nextState) }
+            }
 
-        override fun toString(): String = "${this::class.className()} nextCount:$nextCount"
-    }
+            override fun toString(): String = "${this::class.className()} nextCount:$nextCount"
+        }
 
     /** Returns the same state but with [State.hasBehaved] set true, and before behave execution it launches [onBehaveAction] hook */
     internal fun toBehavedState(
-            state: State,
-            onBehaveAction: () -> Unit = { fail("Behave method should not be called for `hasBehaved = true` states") }
+        state: State,
+        onBehaveAction: () -> Unit = { fail("Behave method should not be called for `hasBehaved = true` states") }
     ) = object : State by state {
         override val hasBehaved: Boolean = true
         override fun behave(): Sequence<State> = onBehaveAction().run { state.behave() }
@@ -73,23 +75,29 @@ internal object StateMachineExecutorUtils {
     internal val twoAlternativeState = allNextStatesFromThis(2, endState)
     /** A state that generates a search Tree with eight leafs */
     internal val eightLeafSearchTreeState =
-            allNextStatesFromThis(2,
-                    allNextStatesFromThis(2,
-                            allNextStatesFromThis(2, endState)))
+        allNextStatesFromThis(
+            2,
+            allNextStatesFromThis(
+                2,
+                allNextStatesFromThis(2, endState)
+            )
+        )
     /** A [threeShotState] that won't produce any state because already executed */
     internal val threeShotStateAlreadyExecuted = toBehavedState(threeShotState)
     /** A `fiveShotState` that has the third state that has already executed */
-    internal val thirdStateHasAlreadyBehaved = oneStateAtATimeState(2,
-            toBehavedState(oneStateAtATimeState(2, endState)))
+    internal val thirdStateHasAlreadyBehaved = oneStateAtATimeState(
+        2,
+        toBehavedState(oneStateAtATimeState(2, endState))
+    )
 
     /** All state machines that are finite */
     internal val allFiniteStateMachines = listOf(
-            oneShotState,
-            threeShotState,
-            twoAlternativeState,
-            eightLeafSearchTreeState,
-            threeShotStateAlreadyExecuted,
-            thirdStateHasAlreadyBehaved
+        oneShotState,
+        threeShotState,
+        twoAlternativeState,
+        eightLeafSearchTreeState,
+        threeShotStateAlreadyExecuted,
+        thirdStateHasAlreadyBehaved
     )
 
     /** Utility function to print meaningful names in object toString */

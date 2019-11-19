@@ -5,7 +5,8 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.List as LogicList
 
-internal class ConsImpl(override val head: Term, override val tail: Term) : StructImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
+internal class ConsImpl(override val head: Term, override val tail: Term) :
+    StructImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
 
     override val unfoldedSequence: Sequence<Term> by lazy {
         sequenceOf(head) + if (tail.isList) tail.`as`<LogicList>().unfoldedSequence else sequenceOf(tail)

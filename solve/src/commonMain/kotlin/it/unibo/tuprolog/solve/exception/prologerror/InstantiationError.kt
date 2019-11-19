@@ -18,18 +18,18 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @author Enrico
  */
 class InstantiationError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     /** This constructor automatically fills [message] field with provided information */
     constructor(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) : this(
-            message = "Argument ${index ?: ""} `${variable
-                    ?: ""}` of $procedure is unexpectedly not instantiated",
-            context = context,
-            extraData = variable
+        message = "Argument ${index ?: ""} `${variable
+            ?: ""}` of $procedure is unexpectedly not instantiated",
+        context = context,
+        extraData = variable
     )
 
     companion object {

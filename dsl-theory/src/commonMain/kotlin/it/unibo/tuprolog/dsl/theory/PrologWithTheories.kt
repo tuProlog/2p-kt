@@ -12,9 +12,9 @@ interface PrologWithTheories : PrologWithUnification {
     }
 
     fun theory(vararg clauseFunctions: Prolog.() -> Any): ClauseDatabase = theoryOf(
-            *clauseFunctions.map { function ->
-                Prolog.empty().function().let { clause { it } }
-            }.toTypedArray()
+        *clauseFunctions.map { function ->
+            Prolog.empty().function().let { clause { it } }
+        }.toTypedArray()
     )
 
     companion object {

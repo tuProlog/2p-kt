@@ -20,13 +20,13 @@ internal class PrologFunctionTest {
     @Test
     fun functionOfReturnsPrologFunctionBehavingExactlyAsProvidedOne() {
         wrapperToMatchingSignatureRequest(::functionOf, function, ::createFunctionRequest).zip(allSignatures)
-                .forEach { (functionToGoodRequests, functionSignature) ->
-                    val (checkedFunction, goodRequests) = functionToGoodRequests
-                    goodRequests.forEach {
-                        if (functionSignature.vararg) return
-                        assertEquals(defaultFunctionResult, checkedFunction(it))
-                    }
+            .forEach { (functionToGoodRequests, functionSignature) ->
+                val (checkedFunction, goodRequests) = functionToGoodRequests
+                goodRequests.forEach {
+                    if (functionSignature.vararg) return
+                    assertEquals(defaultFunctionResult, checkedFunction(it))
                 }
+            }
         // TODO delete above test and enable the code below after solving TODO in "Signature"
 //        wrapperToMatchingSignatureRequest(::functionOf, function, ::createRequest).forEach { (checkedFunction, goodRequests) ->
 //            goodRequests.forEach {
@@ -37,11 +37,12 @@ internal class PrologFunctionTest {
 
     @Test
     fun functionOfComplainsIfDifferentRequestSignatureIsDetected() {
-        wrapperToNotMatchingSignatureRequest(::functionOf, function, ::createFunctionRequest).forEach { (checkedFunction, badRequests) ->
-            badRequests.forEach {
-                assertFailsWith<IllegalArgumentException> { checkedFunction(it) }
+        wrapperToNotMatchingSignatureRequest(::functionOf, function, ::createFunctionRequest)
+            .forEach { (checkedFunction, badRequests) ->
+                badRequests.forEach {
+                    assertFailsWith<IllegalArgumentException> { checkedFunction(it) }
+                }
             }
-        }
     }
 
 }

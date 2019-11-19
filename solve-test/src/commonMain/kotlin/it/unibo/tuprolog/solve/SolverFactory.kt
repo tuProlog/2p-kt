@@ -17,9 +17,11 @@ interface SolverFactory {
     val defaultDynamicKB: ClauseDatabase
         get() = ClauseDatabase.empty()
 
-    fun solverOf(libraries: Libraries = defaultLibraries,
-                 flags: PrologFlags = defaultFlags,
-                 staticKB: ClauseDatabase = defaultStaticKB,
-                 dynamicKB: ClauseDatabase = defaultDynamicKB): Solver
+    fun solverOf(
+        libraries: Libraries = defaultLibraries,
+        flags: PrologFlags = defaultFlags,
+        staticKB: ClauseDatabase = defaultStaticKB,
+        dynamicKB: ClauseDatabase = defaultDynamicKB
+    ): Solver
 
 }

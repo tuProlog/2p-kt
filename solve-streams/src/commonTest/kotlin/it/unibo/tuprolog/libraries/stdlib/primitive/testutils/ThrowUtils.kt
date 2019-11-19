@@ -25,10 +25,10 @@ internal object ThrowUtils {
     internal val exposedErrorThrowingBehaviourRequest by lazy {
         prolog {
             mapOf(
-                    Throw.functor("A").run { to(InstantiationError::class) },
-                    Throw.functor(1).run { to(SystemError::class) },
-                    Throw.functor("ciao").run { to(SystemError::class) },
-                    Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).run { to(HaltException::class) }
+                Throw.functor("A").run { to(InstantiationError::class) },
+                Throw.functor(1).run { to(SystemError::class) },
+                Throw.functor("ciao").run { to(SystemError::class) },
+                Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).run { to(HaltException::class) }
             ).mapKeys { (query, _) -> createSolveRequest(query, primitives = mapOf(Throw.descriptionPair)) }
         }
     }
@@ -37,34 +37,39 @@ internal object ThrowUtils {
     internal val requestSolutionMap by lazy {
         prolog {
             mapOf(
-                    Throw.functor(1).hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = SystemError(context = aContext, extraData = numOf(1))
-                        ))
-                    }),
-                    Throw.functor("X").hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = with(InstantiationError(
-                                        context = aContext,
-                                        extraData = varOf("X")
-                                )) {
-                                    SystemError(context = aContext,
-                                            cause = this,
-                                            extraData = this.errorStruct
-                                    )
-                                }
-                        ))
-                    }),
-                    Throw.functor("ciao").hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = SystemError(context = aContext, extraData = Atom.of("ciao"))
-                        ))
-                    }),
-                    Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).hasSolutions({
-                        halt(HaltException(context = aContext,
-                                cause = SystemError(context = aContext)
-                        ))
-                    })
+                Throw.functor(1).hasSolutions({
+                    halt(
+                        HaltException(
+                            context = aContext,
+                            cause = SystemError(context = aContext, extraData = numOf(1))
+                        )
+                    )
+                }),
+                Throw.functor("X").hasSolutions({
+                    halt(HaltException(context = aContext,
+                        cause = with(
+                            InstantiationError(context = aContext, extraData = varOf("X"))
+                        ) {
+                            SystemError(context = aContext, cause = this, extraData = this.errorStruct)
+                        }
+                    ))
+                }),
+                Throw.functor("ciao").hasSolutions({
+                    halt(
+                        HaltException(
+                            context = aContext,
+                            cause = SystemError(context = aContext, extraData = Atom.of("ciao"))
+                        )
+                    )
+                }),
+                Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).hasSolutions({
+                    halt(
+                        HaltException(
+                            context = aContext,
+                            cause = SystemError(context = aContext)
+                        )
+                    )
+                })
             ).mapKeys { (query, _) -> createSolveRequest(query, primitives = mapOf(Throw.descriptionPair)) }
         }
     }

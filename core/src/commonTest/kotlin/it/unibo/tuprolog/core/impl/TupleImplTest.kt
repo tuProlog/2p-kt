@@ -44,7 +44,8 @@ internal class TupleImplTest {
 
     @Test
     fun argsCorrect() {
-        val tupleInstancesArgs = tupleInstancesLefts.zip(tupleInstancesRights).map { (left, right) -> arrayOf(left, right) }
+        val tupleInstancesArgs =
+            tupleInstancesLefts.zip(tupleInstancesRights).map { (left, right) -> arrayOf(left, right) }
 
         onCorrespondingItems(tupleInstancesArgs, tupleInstances.map { it.args }) { expected, actual ->
             assertEquals(expected.toList(), actual.toList())
@@ -54,44 +55,50 @@ internal class TupleImplTest {
 
     @Test
     fun unfoldedListCorrect() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.unfoldedList }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.unfoldedList }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun unfoldedSequenceCorrect() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.unfoldedSequence.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.unfoldedSequence.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun unfoldedArrayCorrect() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.unfoldedArray.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.unfoldedArray.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun toListReturnValue() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun toArrayReturnValue() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.toArray().toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.toArray().toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test
     fun toSequenceReturnValue() {
-        onCorrespondingItems(tupleInstancesElementLists, tupleInstances.map { it.toSequence().toList() }) { expectedList, actualList ->
-            assertEquals(expectedList, actualList)
-        }
+        onCorrespondingItems(
+            tupleInstancesElementLists,
+            tupleInstances.map { it.toSequence().toList() }
+        ) { expectedList, actualList -> assertEquals(expectedList, actualList) }
     }
 
     @Test

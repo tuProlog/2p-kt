@@ -19,13 +19,13 @@ abstract class BinaryMathFunction(name: String) : MathFunction(name, 2) {
         val term1 = arguments.first()
         val term2 = arguments.last()
         replyWith(
-                when {
-                    term1 is Integer && term2 is Integer -> mathFunction(term1, term2, context)
-                    term1 is Real && term2 is Integer -> mathFunction(term1, term2, context)
-                    term1 is Integer && term2 is Real -> mathFunction(term1, term2, context)
-                    term1 is Real && term2 is Real -> mathFunction(term1, term2, context)
-                    else -> throw IllegalStateException("One, or both, of the two terms (`$term1`, `$term2`) is neither an Integer nor a Real")
-                }
+            when {
+                term1 is Integer && term2 is Integer -> mathFunction(term1, term2, context)
+                term1 is Real && term2 is Integer -> mathFunction(term1, term2, context)
+                term1 is Integer && term2 is Real -> mathFunction(term1, term2, context)
+                term1 is Real && term2 is Real -> mathFunction(term1, term2, context)
+                else -> throw IllegalStateException("One, or both, of the two terms (`$term1`, `$term2`) is neither an Integer nor a Real")
+            }
         )
     }
 

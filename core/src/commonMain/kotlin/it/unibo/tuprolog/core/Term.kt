@@ -69,12 +69,12 @@ interface Term {
     }
 
     fun apply(substitution: Substitution, vararg substitutions: Substitution): Term =
-            apply(Substitution.of(substitution, *substitutions))
+        apply(Substitution.of(substitution, *substitutions))
 
     operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term =
-            apply(substitution, *substitutions)
+        apply(substitution, *substitutions)
 
     fun <T> accept(visitor: TermVisitor<T>): T =
-            visitor.visit(this)
+        visitor.visit(this)
 
 }

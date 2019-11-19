@@ -19,21 +19,21 @@ internal object ConjunctionUtils {
     internal val twoMatchesDB = prolog { theory({ "f"("a") }, { "f"("b") }) }
     internal val myRequestToSolutions = prolog {
         ktListOf(
-                ("f"("A") and "f"("B")).hasSolutions(
-                        { yes("A" to "a", "B" to "a") },
-                        { yes("A" to "a", "B" to "b") },
-                        { yes("A" to "b", "B" to "a") },
-                        { yes("A" to "b", "B" to "b") }
-                )
+            ("f"("A") and "f"("B")).hasSolutions(
+                { yes("A" to "a", "B" to "a") },
+                { yes("A" to "a", "B" to "b") },
+                { yes("A" to "b", "B" to "a") },
+                { yes("A" to "b", "B" to "b") }
+            )
         )
     }
 
     /** Requests that should fail */
     internal val failedRequests = prolog {
         ktListOf(
-                "true" and "fail",
-                "fail" and "true",
-                "true" and "true" and "fail"
+            "true" and "fail",
+            "fail" and "true",
+            "true" and "true" and "fail"
         ).map { createSolveRequest(it) }
     }
 

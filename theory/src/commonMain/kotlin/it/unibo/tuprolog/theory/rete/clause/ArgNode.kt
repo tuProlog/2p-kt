@@ -7,8 +7,11 @@ import it.unibo.tuprolog.theory.rete.ReteNode
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
 /** The arg node indexes Clauses by argument, starting from first to all the others */
-internal data class ArgNode(private val index: Int, private val term: Term, override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf())
-    : AbstractIntermediateReteNode<Term?, Rule>(children) {
+internal data class ArgNode(
+    private val index: Int,
+    private val term: Term,
+    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
+) : AbstractIntermediateReteNode<Term?, Rule>(children) {
 
     init {
         require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
@@ -22,7 +25,7 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
 
             val child = children.getOrElse(nextArg) {
                 children.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
-                        .singleOrNull()
+                    .singleOrNull()
             }
 
             child ?: ArgNode(index + 1, nextArg).also { children[nextArg] = it }
@@ -41,22 +44,22 @@ internal data class ArgNode(private val index: Int, private val term: Term, over
     }
 
     override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
-            selectChildren(element)
-                    .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
-                        yetRemoved.also {
-                            it += currentChild?.remove(element, limit - it.count())
-                                    ?: emptySequence()
-                        }
-                    }.asSequence()
+        selectChildren(element)
+            .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
+                yetRemoved.also {
+                    it += currentChild?.remove(element, limit - it.count())
+                        ?: emptySequence()
+                }
+            }.asSequence()
 
     // removeAll optimized implementation w.r.t. super class
     override fun removeAll(element: Rule): Sequence<Rule> =
-            selectChildren(element)
-                    .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
-                        yetRemoved.also {
-                            it += currentChild?.removeAll(element) ?: emptySequence()
-                        }
-                    }.asSequence()
+        selectChildren(element)
+            .fold(mutableListOf<Rule>()) { yetRemoved, currentChild ->
+                yetRemoved.also {
+                    it += currentChild?.removeAll(element) ?: emptySequence()
+                }
+            }.asSequence()
 
     override fun deepCopy(): ArgNode = ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
 }

@@ -88,51 +88,53 @@ interface Struct : Term {
         val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         fun of(functor: String, args: KtList<Term>): Struct =
-                when {
-                    args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                    args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct -> Rule.of(args.first() as Struct, args.last())
-                    args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
-                    args.size == 2 && Indicator.FUNCTOR == functor -> Indicator.of(args.first(), args.last())
-                    args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
-                    args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
-                    args.isEmpty() -> Atom.of(functor)
-                    else -> StructImpl(functor, args.toTypedArray())
-                }
+            when {
+                args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
+                args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct ->
+                    Rule.of(args.first() as Struct, args.last())
+                args.size == 2 && Tuple.FUNCTOR == functor -> Tuple.of(args)
+                args.size == 2 && Indicator.FUNCTOR == functor -> Indicator.of(args.first(), args.last())
+                args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
+                args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
+                args.isEmpty() -> Atom.of(functor)
+                else -> StructImpl(functor, args.toTypedArray())
+            }
 
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
         fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
-                when {
-                    operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
-                    operator == Cons.FUNCTOR && terminal === null -> List.from(terms.slice(0 until terms.lastIndex), terms.last())
-                    operator == Tuple.FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
-                    terminal === null -> {
-                        require(terms.size >= 2) { "Struct requires at least two terms to fold" }
-                        terms.slice(0 until terms.lastIndex - 1)
-                                .foldRight(of(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
-                                    of(operator, a, b)
-                                }
-                    }
-                    else -> {
-                        require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
-                        terms.slice(0 until terms.lastIndex)
-                                .foldRight(of(operator, terms[terms.lastIndex], terminal)) { a, b ->
-                                    of(operator, a, b)
-                                }
-                    }
+            when {
+                operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
+                operator == Cons.FUNCTOR && terminal === null ->
+                    List.from(terms.slice(0 until terms.lastIndex), terms.last())
+                operator == Tuple.FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
+                terminal === null -> {
+                    require(terms.size >= 2) { "Struct requires at least two terms to fold" }
+                    terms.slice(0 until terms.lastIndex - 1)
+                        .foldRight(of(operator, terms[terms.lastIndex - 1], terms[terms.lastIndex])) { a, b ->
+                            of(operator, a, b)
+                        }
                 }
+                else -> {
+                    require(terms.isNotEmpty()) { "Struct requires at least two terms to fold" }
+                    terms.slice(0 until terms.lastIndex)
+                        .foldRight(of(operator, terms[terms.lastIndex], terminal)) { a, b ->
+                            of(operator, a, b)
+                        }
+                }
+            }
 
 
         fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
-                fold(operator, terms.toList(), terminal)
+            fold(operator, terms.toList(), terminal)
 
         fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct =
-                fold(operator, terms.toList(), terminal)
+            fold(operator, terms.toList(), terminal)
 
         fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
-                fold(operator, terms.toList(), terminal)
+            fold(operator, terms.toList(), terminal)
 
     }
 }

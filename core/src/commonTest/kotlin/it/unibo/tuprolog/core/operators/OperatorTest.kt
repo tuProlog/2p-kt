@@ -84,26 +84,34 @@ internal class OperatorTest {
     @Test
     fun templateCorrect() {
         assertStructurallyEquals(
-                Operator.TEMPLATE,
-                Struct.of(Operator.FUNCTOR, Var.anonymous(), Var.anonymous(), Var.anonymous())
+            Operator.TEMPLATE,
+            Struct.of(Operator.FUNCTOR, Var.anonymous(), Var.anonymous(), Var.anonymous())
         )
     }
 
     @Test
     fun fromTermParsesCorrectOperator() {
-        val toBeTested = Operator.fromTerm(Struct.of(Operator.FUNCTOR, plusPriority.toTerm(), plusSpecifier.toTerm(), plusFunctor.toTerm()))
+        val toBeTested = Operator.fromTerm(
+            Struct.of(
+                Operator.FUNCTOR,
+                plusPriority.toTerm(),
+                plusSpecifier.toTerm(),
+                plusFunctor.toTerm()
+            )
+        )
 
         assertEquals(plusOperator, toBeTested)
         toBeTested?.run { assertTrue(plusOperator.compareTo(toBeTested) == 0) }
-                ?: fail("Should not be null")
+            ?: fail("Should not be null")
     }
 
     @Test
     fun fromTermReturnsNullIfNotCorrectOperator() {
         /** Utility function to help testing fromTerm method */
-        fun testFromTerm(functor: String = Operator.FUNCTOR, priority: Term = plusPriority.toTerm(),
-                         specifier: Term = plusSpecifier.toTerm(), opFunctor: Term = plusFunctor.toTerm()) =
-                Operator.fromTerm(Struct.of(functor, priority, specifier, opFunctor))
+        fun testFromTerm(
+            functor: String = Operator.FUNCTOR, priority: Term = plusPriority.toTerm(),
+            specifier: Term = plusSpecifier.toTerm(), opFunctor: Term = plusFunctor.toTerm()
+        ) = Operator.fromTerm(Struct.of(functor, priority, specifier, opFunctor))
 
         assertEquals(plusOperator, testFromTerm())
 

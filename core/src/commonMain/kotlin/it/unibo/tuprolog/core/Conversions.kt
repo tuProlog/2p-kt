@@ -22,10 +22,10 @@ fun Byte.toTerm(): Integer = Numeric.of(this)
 fun Number.toTerm(): Numeric = Numeric.of(this)
 
 fun String.toTerm(): Term =
-        when {
-            this matches Var.VAR_REGEX_PATTERN -> this.toVar()
-            else -> this.toAtom()
-        }
+    when {
+        this matches Var.VAR_REGEX_PATTERN -> this.toVar()
+        else -> this.toAtom()
+    }
 
 fun String.toAtom(): Atom = Atom.of(this)
 

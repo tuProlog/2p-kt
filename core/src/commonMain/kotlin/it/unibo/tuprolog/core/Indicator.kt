@@ -55,10 +55,10 @@ interface Indicator : Struct {
     override fun freshCopy(): Indicator = super.freshCopy() as Indicator
 
     override fun freshCopy(scope: Scope): Indicator =
-            when {
-                isGround -> this
-                else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
-            }
+        when {
+            isGround -> this
+            else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
+        }
 
     companion object {
 

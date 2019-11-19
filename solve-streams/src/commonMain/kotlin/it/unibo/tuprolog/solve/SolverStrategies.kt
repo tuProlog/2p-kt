@@ -25,12 +25,16 @@ interface SolverStrategies {
         val prologStandard = object : SolverStrategies {
 
             /** The default implementation, following the Prolog Standard, selects the first predication found */
-            override fun <P : Term> predicationChoiceStrategy(predicationSequence: Sequence<P>, context: ExecutionContext): P =
-                    predicationSequence.first()
+            override fun <P : Term> predicationChoiceStrategy(
+                predicationSequence: Sequence<P>,
+                context: ExecutionContext
+            ): P = predicationSequence.first()
 
             /** The default implementation, following the Prolog Standard, selects the first clause found */
-            override fun <C : Clause> clauseChoiceStrategy(unifiableClauses: Sequence<C>, context: ExecutionContext): C =
-                    unifiableClauses.first()
+            override fun <C : Clause> clauseChoiceStrategy(
+                unifiableClauses: Sequence<C>,
+                context: ExecutionContext
+            ): C = unifiableClauses.first()
 
             override fun successCheckStrategy(term: Term, context: ExecutionContext): Boolean = term.isTrue
         }

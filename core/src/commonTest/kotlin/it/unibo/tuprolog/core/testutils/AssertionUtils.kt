@@ -20,26 +20,26 @@ internal object AssertionUtils {
 
     /** Asserts all boolean provided are `true` */
     fun assertTrue(vararg boolean: Boolean) =
-            assertTrue("Element at index ${boolean.indexOf(false)} expected to be `true`") { boolean.all { it } }
+        assertTrue("Element at index ${boolean.indexOf(false)} expected to be `true`") { boolean.all { it } }
 
     /** Asserts all boolean provided are `false` */
     fun assertFalse(vararg boolean: Boolean) =
-            assertTrue("Element at index ${boolean.indexOf(true)} expected to be `false`") { boolean.none { it } }
+        assertTrue("Element at index ${boolean.indexOf(true)} expected to be `false`") { boolean.none { it } }
 
     /** Asserts mutual structural equality for two [Term]s */
     fun assertStructurallyEquals(expected: Term, actual: Term) =
-            assertTrue(
-                    expected structurallyEquals actual,
-                    actual structurallyEquals expected
-            )
+        assertTrue(
+            expected structurallyEquals actual,
+            actual structurallyEquals expected
+        )
 
 
     /** Asserts mutual not structural equality for two [Term]s */
     fun assertNotStructurallyEquals(expected: Term, actual: Term) =
-            assertFalse(
-                    expected structurallyEquals actual,
-                    actual structurallyEquals expected
-            )
+        assertFalse(
+            expected structurallyEquals actual,
+            actual structurallyEquals expected
+        )
 
 
     /** Asserts all types of equalities (normal, strict and structural) for two [Term]s */
@@ -56,7 +56,7 @@ internal object AssertionUtils {
 
     /** Executes the [function] with corresponding items in order */
     fun <A, B> onCorrespondingItems(expected: Iterable<A>, actual: Iterable<B>, function: (A, B) -> Unit) =
-            expected.zip(actual).forEach { (expected, actual) -> function(expected, actual) }
+        expected.zip(actual).forEach { (expected, actual) -> function(expected, actual) }
 
     /** Asserts the [assertion] for each [E] versus all the [E]s (itself included). */
     fun <E : Any> assertAllVsAll(toBeTested: Iterable<E>, assertion: (E, E) -> Unit) {
@@ -65,7 +65,7 @@ internal object AssertionUtils {
             generateSequence { underTestItem }.take(toTestItems).asIterable()
         }
         val repeatedSequenceOfElements = generateSequence { toBeTested }
-                .take(toTestItems).flatten().asIterable()
+            .take(toTestItems).flatten().asIterable()
 
         onCorrespondingItems(repeatedElementsSequence, repeatedSequenceOfElements, assertion)
     }
