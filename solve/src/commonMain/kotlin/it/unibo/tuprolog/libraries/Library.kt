@@ -31,8 +31,8 @@ interface Library {
      * The default implementation, checks for signature presence among primitives and theory clauses by indicator-like search
      */
     operator fun contains(signature: Signature): Boolean =
-            primitives.containsKey(signature) ||
-                    signature.toIndicator()?.let { theory.contains(it) } ?: false
+        primitives.containsKey(signature) ||
+                signature.toIndicator()?.let { theory.contains(it) } ?: false
 
     /** Checks whether this library contains the definition of provided operator */
     operator fun contains(operator: Operator): Boolean = operator in operators
@@ -47,23 +47,23 @@ interface Library {
 
         /** Creates an instance of [Library] with given parameters */
         fun of(
-                operatorSet: OperatorSet = OperatorSet(),
-                theory: ClauseDatabase = ClauseDatabase.empty(),
-                primitives: Map<Signature, Primitive> = emptyMap(),
-                functions: Map<Signature, PrologFunction> = emptyMap()
+            operatorSet: OperatorSet = OperatorSet(),
+            theory: ClauseDatabase = ClauseDatabase.empty(),
+            primitives: Map<Signature, Primitive> = emptyMap(),
+            functions: Map<Signature, PrologFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [LibraryAliased] with given parameters */
         fun of(
-                operatorSet: OperatorSet = OperatorSet(),
-                theory: ClauseDatabase = ClauseDatabase.empty(),
-                primitives: Map<Signature, Primitive> = emptyMap(),
-                functions: Map<Signature, PrologFunction> = emptyMap(),
-                alias: String
+            operatorSet: OperatorSet = OperatorSet(),
+            theory: ClauseDatabase = ClauseDatabase.empty(),
+            primitives: Map<Signature, Primitive> = emptyMap(),
+            functions: Map<Signature, PrologFunction> = emptyMap(),
+            alias: String
         ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
         /** Creates an instance of [LibraryAliased] starting from [Library] and an alias */
         fun of(library: Library, alias: String): LibraryAliased =
-                LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
+            LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }
 }

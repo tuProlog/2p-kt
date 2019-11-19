@@ -23,32 +23,32 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isVariable)
 
         assertFalse(
-                any.isBound,
-                any.isGround,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isStruct,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isConstant,
-                any.isIndicator,
-                any is Numeric,
-                any is Struct,
-                any is Clause,
-                any is Cons,
-                any is Constant
+            any.isBound,
+            any.isGround,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isStruct,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isConstant,
+            any.isIndicator,
+            any is Numeric,
+            any is Struct,
+            any is Clause,
+            any is Cons,
+            any is Constant
         )
     }
 
@@ -59,33 +59,33 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Numeric)
 
         assertTrue(
-                any.isConstant,
-                any.isNumber,
-                any.isGround
+            any.isConstant,
+            any.isNumber,
+            any.isGround
         )
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isStruct,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isIndicator,
-                any is Var,
-                any is Struct,
-                any is Clause,
-                any is Cons
+            any.isVariable,
+            any.isBound,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isStruct,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isIndicator,
+            any is Var,
+            any is Struct,
+            any is Clause,
+            any is Cons
         )
     }
 
@@ -119,33 +119,33 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isStruct)
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isConstant,
-                any.isIndicator,
-                any is Numeric,
-                any is Var,
-                any is Clause,
-                any is Cons,
-                any is Tuple,
-                any is Constant,
-                any is Indicator
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isConstant,
+            any.isIndicator,
+            any is Numeric,
+            any is Var,
+            any is Clause,
+            any is Cons,
+            any is Tuple,
+            any is Constant,
+            any is Indicator
         )
     }
 
@@ -157,29 +157,29 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Atom)
 
         assertTrue(
-                any.isStruct,
-                any.isConstant,
-                any.isAtom,
-                any.isGround
+            any.isStruct,
+            any.isConstant,
+            any.isAtom,
+            any.isGround
         )
 
         assertFalse(
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isVariable,
-                any.isBound,
-                any.isTuple,
-                any.isIndicator,
-                any is Numeric,
-                any is Clause,
-                any is Var,
-                any is Cons
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isVariable,
+            any.isBound,
+            any.isTuple,
+            any.isIndicator,
+            any is Numeric,
+            any is Clause,
+            any is Var,
+            any is Cons
         )
     }
 
@@ -190,16 +190,16 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Atom) // to enable smart casts in kotlin
 
         assertFalse(
-                any.isTrue,
-                any.isFail,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any is LogicList,
-                any is LogicSet,
-                any is Empty,
-                any is Truth
+            any.isTrue,
+            any.isFail,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any is LogicList,
+            any is LogicSet,
+            any is Empty,
+            any is Truth
         )
     }
 
@@ -212,16 +212,16 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isTrue || any.isFail)
 
         assertFalse(
-                any.isTrue && any.isFail,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any is LogicSet,
-                any is LogicList,
-                any is Empty,
-                any is EmptySet,
-                any is EmptyList
+            any.isTrue && any.isFail,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any is LogicSet,
+            any is LogicList,
+            any is Empty,
+            any is EmptySet,
+            any is EmptyList
         )
     }
 
@@ -232,37 +232,37 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Tuple)
 
         assertTrue(
-                any.isStruct,
-                any.isTuple
+            any.isStruct,
+            any.isTuple
         )
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isConstant,
-                any.isIndicator,
-                any is Numeric,
-                any is Atom,
-                any is Clause,
-                any is Cons,
-                any is Var,
-                any is Constant,
-                any is Indicator
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isConstant,
+            any.isIndicator,
+            any is Numeric,
+            any is Atom,
+            any is Clause,
+            any is Cons,
+            any is Var,
+            any is Constant,
+            any is Indicator
         )
     }
 
@@ -274,37 +274,37 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Indicator)
 
         assertTrue(
-                any.isStruct,
-                any.isIndicator
+            any.isStruct,
+            any.isIndicator
         )
 
         assertFalse(
-                any.isTuple,
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isConstant,
-                any is Numeric,
-                any is Atom,
-                any is Clause,
-                any is Cons,
-                any is Var,
-                any is Constant,
-                any is Tuple
+            any.isTuple,
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isConstant,
+            any is Numeric,
+            any is Atom,
+            any is Clause,
+            any is Cons,
+            any is Var,
+            any is Constant,
+            any is Tuple
         )
     }
 
@@ -316,35 +316,35 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Cons)
 
         assertTrue(
-                any.isStruct,
-                any.isList,
-                any.isCons
+            any.isStruct,
+            any.isList,
+            any.isCons
         )
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isAtom,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isConstant,
-                any.isIndicator,
-                any is Numeric,
-                any is Atom,
-                any is Clause,
-                any is Var,
-                any is Constant
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isAtom,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isConstant,
+            any.isIndicator,
+            any is Numeric,
+            any is Atom,
+            any is Clause,
+            any is Var,
+            any is Constant
         )
     }
 
@@ -355,36 +355,36 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is LogicSet)
 
         assertTrue(
-                any.isStruct,
-                any.isSet
+            any.isStruct,
+            any.isSet
         )
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isClause,
-                any.isDirective,
-                any.isFact,
-                any.isRule,
-                any.isCons,
-                any.isAtom,
-                any.isList,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isConstant,
-                any.isIndicator,
-                any is Numeric,
-                any is LogicList,
-                any is Clause,
-                any is Cons,
-                any is Var,
-                any is Constant
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isClause,
+            any.isDirective,
+            any.isFact,
+            any.isRule,
+            any.isCons,
+            any.isAtom,
+            any.isList,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isConstant,
+            any.isIndicator,
+            any is Numeric,
+            any is LogicList,
+            any is Clause,
+            any is Cons,
+            any is Var,
+            any is Constant
         )
     }
 
@@ -395,9 +395,9 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Empty)
 
         assertFalse(
-                any.isTrue,
-                any.isFail,
-                any is Truth
+            any.isTrue,
+            any.isFail,
+            any is Truth
         )
     }
 
@@ -409,15 +409,15 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is EmptyList)
 
         assertTrue(
-                any.isList,
-                any.isEmptyList
+            any.isList,
+            any.isEmptyList
         )
 
         assertFalse(
-                any.isEmptySet,
-                any.isSet,
-                any is LogicSet,
-                any is EmptySet
+            any.isEmptySet,
+            any.isSet,
+            any is LogicSet,
+            any is EmptySet
         )
     }
 
@@ -429,15 +429,15 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is EmptySet)
 
         assertTrue(
-                any.isEmptySet,
-                any.isSet
+            any.isEmptySet,
+            any.isSet
         )
 
         assertFalse(
-                any.isList,
-                any.isEmptyList,
-                any is LogicList,
-                any is EmptyList
+            any.isList,
+            any.isEmptyList,
+            any is LogicList,
+            any is EmptyList
         )
     }
 
@@ -448,35 +448,35 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Clause)
 
         assertTrue(
-                any.isStruct,
-                any.isClause
+            any.isStruct,
+            any.isClause
         )
 
         assertFalse(
-                any.isVariable,
-                any.isBound,
-                any.isNumber,
-                any.isReal,
-                any.isInt,
-                any.isCons,
-                any.isAtom,
-                any.isList,
-                any.isSet,
-                any.isEmptyList,
-                any.isEmptySet,
-                any.isTrue,
-                any.isFail,
-                any.isTuple,
-                any.isConstant,
-                any.isIndicator,
-                any is Var,
-                any is Numeric,
-                any is Cons,
-                any is LogicSet,
-                any is LogicList,
-                any is Atom,
-                any is Constant,
-                any is Indicator
+            any.isVariable,
+            any.isBound,
+            any.isNumber,
+            any.isReal,
+            any.isInt,
+            any.isCons,
+            any.isAtom,
+            any.isList,
+            any.isSet,
+            any.isEmptyList,
+            any.isEmptySet,
+            any.isTrue,
+            any.isFail,
+            any.isTuple,
+            any.isConstant,
+            any.isIndicator,
+            any is Var,
+            any is Numeric,
+            any is Cons,
+            any is LogicSet,
+            any is LogicList,
+            any is Atom,
+            any is Constant,
+            any is Indicator
         )
     }
 
@@ -488,8 +488,8 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isRule)
 
         assertFalse(
-                any.isDirective,
-                any is Directive
+            any.isDirective,
+            any is Directive
         )
     }
 
@@ -501,10 +501,10 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isDirective)
 
         assertFalse(
-                any.isRule,
-                any.isFact,
-                any is Rule,
-                any is Fact
+            any.isRule,
+            any.isFact,
+            any is Rule,
+            any is Fact
         )
     }
 
@@ -516,13 +516,13 @@ internal object TermTypeAssertionUtils {
         assertTrue(any is Fact)
 
         assertTrue(
-                any.isRule,
-                any.isFact
+            any.isRule,
+            any.isFact
         )
 
         assertFalse(
-                any.isDirective,
-                any is Directive
+            any.isDirective,
+            any is Directive
         )
     }
 }

@@ -19,13 +19,16 @@ sealed class Solution {
 
     /** A class representing the successful solution */
     data class Yes(
-            override val query: Struct,
-            /** The successful substitution applied finding the solution */
-            override val substitution: Substitution.Unifier = Substitution.empty()
+        override val query: Struct,
+        /** The successful substitution applied finding the solution */
+        override val substitution: Substitution.Unifier = Substitution.empty()
     ) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>, substitution: Substitution.Unifier = Substitution.empty())
-                : this(signature withArgs arguments, substitution) {
+        constructor(
+            signature: Signature,
+            arguments: List<Term>,
+            substitution: Substitution.Unifier = Substitution.empty()
+        ) : this(signature withArgs arguments, substitution) {
 
             // a solution always refers to a fully instantiated Struct, that cannot have a vararg Signature
             noVarargSignatureCheck(signature)
@@ -45,9 +48,9 @@ sealed class Solution {
 
     /** A class representing a failed (halted) solution because of an exception */
     data class Halt(
-            override val query: Struct,
-            /** The exception that made the resolution to halt */
-            val exception: TuPrologRuntimeException
+        override val query: Struct,
+        /** The exception that made the resolution to halt */
+        val exception: TuPrologRuntimeException
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
@@ -61,8 +64,8 @@ sealed class Solution {
         /** Internal function to check signature validity in constructing Solution instances */
         @JvmStatic
         protected fun noVarargSignatureCheck(signature: Signature) =
-                require(!signature.vararg) {
-                    "The signature should be a well-formed indicator, not vararg `$signature`"
-                }
+            require(!signature.vararg) {
+                "The signature should be a well-formed indicator, not vararg `$signature`"
+            }
     }
 }

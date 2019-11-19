@@ -30,48 +30,55 @@ internal object StateGoalEvaluationUtils {
 
     /** Creates a request launching exactly given primitive behaviour */
     internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive) =
-            object : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
-                override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> = primitiveBehaviour(request)
-            }.run {
-                createSolveRequest(
-                        signature withArgs emptyList(),
-                        primitives = mapOf(descriptionPair, Throw.descriptionPair)
-                )
-            }
+        object : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
+            override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> =
+                primitiveBehaviour(request)
+        }.run {
+            createSolveRequest(
+                signature withArgs emptyList(),
+                primitives = mapOf(descriptionPair, Throw.descriptionPair)
+            )
+        }
 
     /** Test data in the form (primitive, list of state types in which it should go) */
     internal val primitiveRequestToNextStateList by lazy {
         mapOf(
-                createRequestForPrimitiveResponding { sequenceOf(it.replySuccess(it.context.substitution)) }
-                        to listOf(StateEnd.True::class),
-                createRequestForPrimitiveResponding { sequenceOf(it.replyFail()) }
-                        to listOf(StateEnd.False::class),
-                createRequestForPrimitiveResponding { sequenceOf(it.replyWith(true), it.replyWith(false)) }
-                        to listOf(StateEnd.True::class, StateEnd.False::class),
-                createRequestForPrimitiveResponding { sequenceOf(it.replyException(HaltException(context = it.context))) }
-                        to listOf(StateEnd.Halt::class),
-                createRequestForPrimitiveResponding { throw HaltException(context = it.context) }
-                        to listOf(StateEnd.Halt::class),
-                createRequestForPrimitiveResponding {
-                    sequence {
-                        yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
-                    }
-                } to listOf(StateEnd.Halt::class),
-                createRequestForPrimitiveResponding {
-                    sequence {
-                        yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
-                        yield(it.replyFail())
-                    }
-                } to listOf(StateEnd.Halt::class)
+            createRequestForPrimitiveResponding { sequenceOf(it.replySuccess(it.context.substitution)) }
+                    to listOf(StateEnd.True::class),
+            createRequestForPrimitiveResponding { sequenceOf(it.replyFail()) }
+                    to listOf(StateEnd.False::class),
+            createRequestForPrimitiveResponding { sequenceOf(it.replyWith(true), it.replyWith(false)) }
+                    to listOf(StateEnd.True::class, StateEnd.False::class),
+            createRequestForPrimitiveResponding { sequenceOf(it.replyException(HaltException(context = it.context))) }
+                    to listOf(StateEnd.Halt::class),
+            createRequestForPrimitiveResponding { throw HaltException(context = it.context) }
+                    to listOf(StateEnd.Halt::class),
+            createRequestForPrimitiveResponding {
+                sequence {
+                    yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                }
+            } to listOf(StateEnd.Halt::class),
+            createRequestForPrimitiveResponding {
+                sequence {
+                    yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yield(it.replyFail())
+                }
+            } to listOf(StateEnd.Halt::class)
         )
     }
 
     /** Map containing primitive requests that throw [PrologError] instances */
     internal val primitiveRequestThrowingPrologError by lazy {
         listOf(
-                createRequestForPrimitiveResponding { throw InstantiationError(context = it.context) },
-                createRequestForPrimitiveResponding { throw SystemError(context = it.context) },
-                createRequestForPrimitiveResponding { throw TypeError(context = it.context, expectedType = TypeError.Expected.CALLABLE, actualValue = Var.of("X")) }
+            createRequestForPrimitiveResponding { throw InstantiationError(context = it.context) },
+            createRequestForPrimitiveResponding { throw SystemError(context = it.context) },
+            createRequestForPrimitiveResponding {
+                throw TypeError(
+                    context = it.context,
+                    expectedType = TypeError.Expected.CALLABLE,
+                    actualValue = Var.of("X")
+                )
+            }
         )
     }
 

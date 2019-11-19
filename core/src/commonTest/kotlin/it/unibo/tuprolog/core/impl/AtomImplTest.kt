@@ -20,9 +20,10 @@ internal class AtomImplTest {
 
     @Test
     fun functorCorrectness() {
-        onCorrespondingItems(AtomUtils.mixedAtoms, mixedAtomInstances.map { it.functor }) { atomString, atomInstanceFunctor ->
-            assertEquals(atomString, atomInstanceFunctor)
-        }
+        onCorrespondingItems(
+            AtomUtils.mixedAtoms,
+            mixedAtomInstances.map { it.functor }
+        ) { atomString, atomInstanceFunctor -> assertEquals(atomString, atomInstanceFunctor) }
     }
 
     @Test
@@ -48,7 +49,7 @@ internal class AtomImplTest {
     @Test
     fun testIsPropertiesAndTypesForNonSpecialAtom() {
         AtomUtils.nonSpecialAtoms.map(::AtomImpl)
-                .forEach(TermTypeAssertionUtils::assertIsAtom)
+            .forEach(TermTypeAssertionUtils::assertIsAtom)
     }
 
     @Test

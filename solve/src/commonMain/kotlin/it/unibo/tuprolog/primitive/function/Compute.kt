@@ -10,16 +10,16 @@ sealed class Compute {
 
     /** Class representing a Request to be full-filled by the Expression evaluator */
     data class Request<out C : ExecutionContext>(
-            /** Signature of the function to be executed in this [Request] */
-            val signature: Signature,
-            /** Arguments with which the function is invoked in this [Request] */
-            val arguments: List<Term>,
-            /** The context that's current at Request making */
-            val context: C,
-            /** The time instant when the request was submitted for evaluation */
-            val requestIssuingInstant: TimeInstant = currentTimeInstant(),
-            /** The execution max duration after which the computation should end, because no more useful */
-            val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE
+        /** Signature of the function to be executed in this [Request] */
+        val signature: Signature,
+        /** Arguments with which the function is invoked in this [Request] */
+        val arguments: List<Term>,
+        /** The context that's current at Request making */
+        val context: C,
+        /** The time instant when the request was submitted for evaluation */
+        val requestIssuingInstant: TimeInstant = currentTimeInstant(),
+        /** The execution max duration after which the computation should end, because no more useful */
+        val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE
     ) : Compute() {
         init {
             when {
@@ -44,7 +44,7 @@ sealed class Compute {
 
     /** Class representing a Response, from the Expression evaluator, to a [Solve.Request] */
     data class Response(
-            /** The result of evaluation process */
-            val result: Term
+        /** The result of evaluation process */
+        val result: Term
     ) : Compute()
 }

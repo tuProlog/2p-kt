@@ -13,13 +13,13 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  * @author Enrico
  */
 internal open class LibraryAliasedImpl(
-        override val operators: OperatorSet,
-        override val theory: ClauseDatabase,
-        override val primitives: Map<Signature, Primitive>,
-        override val functions: Map<Signature, PrologFunction>,
-        override val alias: String
+    override val operators: OperatorSet,
+    override val theory: ClauseDatabase,
+    override val primitives: Map<Signature, Primitive>,
+    override val functions: Map<Signature, PrologFunction>,
+    override val alias: String
 ) : LibraryImpl(operators, theory, primitives, functions), LibraryAliased {
 
     override fun toString(): String =
-            "Library(alias='$alias', operators=$operators, theory=$theory, primitives=$primitives, functions=$functions)"
+        "Library(alias='$alias', operators=$operators, theory=$theory, primitives=$primitives, functions=$functions)"
 }

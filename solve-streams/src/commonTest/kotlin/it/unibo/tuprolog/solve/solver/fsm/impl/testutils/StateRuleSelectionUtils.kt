@@ -24,8 +24,8 @@ internal object StateRuleSelectionUtils {
     internal val queryToNoMatchesDatabaseMap by lazy {
         prolog {
             mapOf(
-                    atomOf("a") to theoryOf(),
-                    atomOf("a") to theory({ "b" })
+                atomOf("a") to theoryOf(),
+                atomOf("a") to theory({ "b" })
             )
         }
     }
@@ -34,17 +34,17 @@ internal object StateRuleSelectionUtils {
     internal val queryToOneMatchFactDatabaseAndSubstitution by lazy {
         prolog {
             ktListOf(
-                    Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
-                    Triple(atomOf("a"), theory({ "a" }, { "b" }), emptyUnifier),
-                    Triple("f"("Var"), theory({ "f"("a") }), "Var" to "a"),
-                    Triple(
-                            "f"("Var"),
-                            theory(
-                                    { "f"("a") },
-                                    { "f"("a", "b") }
-                            ),
-                            "Var" to "a"
-                    )
+                Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
+                Triple(atomOf("a"), theory({ "a" }, { "b" }), emptyUnifier),
+                Triple("f"("Var"), theory({ "f"("a") }), "Var" to "a"),
+                Triple(
+                    "f"("Var"),
+                    theory(
+                        { "f"("a") },
+                        { "f"("a", "b") }
+                    ),
+                    "Var" to "a"
+                )
             )
         }
     }
@@ -53,16 +53,16 @@ internal object StateRuleSelectionUtils {
     internal val queryToOneMatchRuleDatabaseAndSubstitution by lazy {
         prolog {
             ktListOf(
-                    Triple(atomOf("a"), theory({ "a" impliedBy "b" }), Substitution.failed()),
-                    Triple(atomOf("a"), theory({ "a" impliedBy "b" }, { "b" }), emptyUnifier),
-                    Triple(
-                            "f"("Var"),
-                            theory(
-                                    { "f"("Var") impliedBy "g"("Var") },
-                                    { "g"("a") }
-                            ),
-                            "Var" to "a"
-                    )
+                Triple(atomOf("a"), theory({ "a" impliedBy "b" }), Substitution.failed()),
+                Triple(atomOf("a"), theory({ "a" impliedBy "b" }, { "b" }), emptyUnifier),
+                Triple(
+                    "f"("Var"),
+                    theory(
+                        { "f"("Var") impliedBy "g"("Var") },
+                        { "g"("a") }
+                    ),
+                    "Var" to "a"
+                )
             )
         }
     }
@@ -71,50 +71,51 @@ internal object StateRuleSelectionUtils {
     internal val queryToMultipleMatchesDatabaseAndSubstitution by lazy {
         prolog {
             ktListOf(
-                    Triple(
-                            atomOf("a"),
-                            theory(
-                                    { "a" },
-                                    { "a" impliedBy "b" }
-                            ),
-                            ktListOf(emptyUnifier, Substitution.failed())
+                Triple(
+                    atomOf("a"),
+                    theory(
+                        { "a" },
+                        { "a" impliedBy "b" }
                     ),
-                    Triple(
-                            atomOf("a"),
-                            theory(
-                                    { "a" impliedBy "b" },
-                                    { "a" }
-                            ),
-                            ktListOf(emptyUnifier)
+                    ktListOf(emptyUnifier, Substitution.failed())
+                ),
+                Triple(
+                    atomOf("a"),
+                    theory(
+                        { "a" impliedBy "b" },
+                        { "a" }
                     ),
-                    Triple(
-                            "f"("Var"),
-                            theory(
-                                    { "f"("Var") impliedBy "g"("Var") },
-                                    { "g"("a") },
-                                    { "g"("b") }
-                            ),
-                            ktListOf(
-                                    "Var" to "a",
-                                    "Var" to "b"
-                            )
+                    ktListOf(emptyUnifier)
+                ),
+                Triple(
+                    "f"("Var"),
+                    theory(
+                        { "f"("Var") impliedBy "g"("Var") },
+                        { "g"("a") },
+                        { "g"("b") }
                     ),
-                    Triple(
-                            structOf("f", varOf("V")),
-                            theory(
-                                    { "f"("B") impliedBy "g"("B") },
-                                    { "f"("B") impliedBy "h"("B") },
-                                    { "g"("c1") },
-                                    { "g"("c2") },
-                                    { "h"("d1") },
-                                    { "h"("d2") }
-                            ),
-                            ktListOf(
-                                    "V" to "c1",
-                                    "V" to "c2",
-                                    "V" to "d1",
-                                    "V" to "d2")
+                    ktListOf(
+                        "Var" to "a",
+                        "Var" to "b"
                     )
+                ),
+                Triple(
+                    structOf("f", varOf("V")),
+                    theory(
+                        { "f"("B") impliedBy "g"("B") },
+                        { "f"("B") impliedBy "h"("B") },
+                        { "g"("c1") },
+                        { "g"("c2") },
+                        { "h"("d1") },
+                        { "h"("d2") }
+                    ),
+                    ktListOf(
+                        "V" to "c1",
+                        "V" to "c2",
+                        "V" to "d1",
+                        "V" to "d2"
+                    )
+                )
             )
         }
     }

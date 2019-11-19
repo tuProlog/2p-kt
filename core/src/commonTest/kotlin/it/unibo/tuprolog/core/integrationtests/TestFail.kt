@@ -16,10 +16,11 @@ class TestFail {
     private val notCorrectAtom = "false"
 
     private val heterogeneousCreatedInstances = listOf(
-            Truth.fail(),
-            Truth.of(false),
-            Atom.of(correctAtom),
-            Struct.of(correctAtom))
+        Truth.fail(),
+        Truth.of(false),
+        Atom.of(correctAtom),
+        Struct.of(correctAtom)
+    )
 
     @Test
     fun variousCreationMethodsCreateCorrectlyFail() {

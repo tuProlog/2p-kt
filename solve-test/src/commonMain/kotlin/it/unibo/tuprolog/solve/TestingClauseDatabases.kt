@@ -32,12 +32,12 @@ object TestingClauseDatabases {
     val simpleFactDatabase by lazy {
         prolog {
             theory(
-                    { "f"("a") },
-                    { "g"("a") },
-                    { "g"("b") },
-                    { "h"("a") },
-                    { "h"("b") },
-                    { "h"("c") }
+                { "f"("a") },
+                { "g"("a") },
+                { "g"("b") },
+                { "h"("a") },
+                { "h"("b") },
+                { "h"("c") }
             )
         }
     }
@@ -53,18 +53,18 @@ object TestingClauseDatabases {
     val simpleFactDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A").hasSolutions(
-                            { yes("A" to "a") }
-                    ),
-                    "g"("A").hasSolutions(
-                            { yes("A" to "a") },
-                            { yes("A" to "b") }
-                    ),
-                    "h"("A").hasSolutions(
-                            { yes("A" to "a") },
-                            { yes("A" to "b") },
-                            { yes("A" to "c") }
-                    )
+                "f"("A").hasSolutions(
+                    { yes("A" to "a") }
+                ),
+                "g"("A").hasSolutions(
+                    { yes("A" to "a") },
+                    { yes("A" to "b") }
+                ),
+                "h"("A").hasSolutions(
+                    { yes("A" to "a") },
+                    { yes("A" to "b") },
+                    { yes("A" to "c") }
+                )
             )
         }
     }
@@ -89,19 +89,19 @@ object TestingClauseDatabases {
      */
     val simpleCutDatabase = prolog {
         theory(
-                { "f"("only") `if` "!" },
-                { "f"("a") },
+            { "f"("only") `if` "!" },
+            { "f"("a") },
 
-                { "g"("a") },
-                { "g"("only") `if` "!" },
-                { "g"("b") },
+            { "g"("a") },
+            { "g"("only") `if` "!" },
+            { "g"("b") },
 
-                { "h"("A") `if` "e"("A") },
-                { "h"("A") `if` "d"("A") },
-                { "e"("a") `if` "!" },
-                { "e"("b") },
-                { "d"("c") },
-                { "d"("d") }
+            { "h"("A") `if` "e"("A") },
+            { "h"("A") `if` "d"("A") },
+            { "e"("a") `if` "!" },
+            { "e"("b") },
+            { "d"("c") },
+            { "d"("d") }
         )
     }
 
@@ -116,18 +116,18 @@ object TestingClauseDatabases {
     val simpleCutDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A").hasSolutions(
-                            { yes("A" to "only") }
-                    ),
-                    "g"("A").hasSolutions(
-                            { yes("A" to "a") },
-                            { yes("A" to "only") }
-                    ),
-                    "h"("A").hasSolutions(
-                            { yes("A" to "a") },
-                            { yes("A" to "c") },
-                            { yes("A" to "d") }
-                    )
+                "f"("A").hasSolutions(
+                    { yes("A" to "only") }
+                ),
+                "g"("A").hasSolutions(
+                    { yes("A" to "a") },
+                    { yes("A" to "only") }
+                ),
+                "h"("A").hasSolutions(
+                    { yes("A" to "a") },
+                    { yes("A" to "c") },
+                    { yes("A" to "d") }
+                )
             )
         }
     }
@@ -145,12 +145,12 @@ object TestingClauseDatabases {
      */
     val simpleCutAndConjunctionDatabase = prolog {
         theory(
-                { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
-                { "f"("X", "Y") `if` "r"("X") },
-                { "q"("a") },
-                { "q"("b") },
-                { "r"("a1") },
-                { "r"("b1") }
+            { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
+            { "f"("X", "Y") `if` "r"("X") },
+            { "q"("a") },
+            { "q"("b") },
+            { "r"("a1") },
+            { "r"("b1") }
         )
     }
 
@@ -163,10 +163,10 @@ object TestingClauseDatabases {
     val simpleCutAndConjunctionDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "f"("A", "B").hasSolutions(
-                            { yes("A" to "a", "B" to "a1") },
-                            { yes("A" to "a", "B" to "b1") }
-                    )
+                "f"("A", "B").hasSolutions(
+                    { yes("A" to "a", "B" to "a1") },
+                    { yes("A" to "a", "B" to "b1") }
+                )
             )
         }
     }
@@ -188,16 +188,16 @@ object TestingClauseDatabases {
      */
     val cutConjunctionAndBacktrackingDatabase = prolog {
         theory(
-                { "a"("X") `if` "b"("X") },
-                { "a"(6) },
-                { "b"("X") `if` ("c"("X") and "d"("X")) },
-                { "b"(4) `if` "!" },
-                { "b"(5) },
-                { "c"(1) },
-                { "c"(2) `if` "!" },
-                { "c"(3) },
-                { "d"(2) },
-                { "d"(3) }
+            { "a"("X") `if` "b"("X") },
+            { "a"(6) },
+            { "b"("X") `if` ("c"("X") and "d"("X")) },
+            { "b"(4) `if` "!" },
+            { "b"(5) },
+            { "c"(1) },
+            { "c"(2) `if` "!" },
+            { "c"(3) },
+            { "d"(2) },
+            { "d"(3) }
         )
     }
 
@@ -210,11 +210,11 @@ object TestingClauseDatabases {
     val cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
-                    "a"("X").hasSolutions(
-                            { yes("X" to 2) },
-                            { yes("X" to 4) },
-                            { yes("X" to 6) }
-                    )
+                "a"("X").hasSolutions(
+                    { yes("X" to 2) },
+                    { yes("X" to 4) },
+                    { yes("X" to 6) }
+                )
             )
         }
     }
@@ -228,8 +228,8 @@ object TestingClauseDatabases {
      */
     val infiniteComputationDatabase = prolog {
         theory(
-                { "a" `if` "b" },
-                { "b" `if` "a" }
+            { "a" `if` "b" },
+            { "b" `if` "a" }
         )
     }
 
@@ -242,7 +242,7 @@ object TestingClauseDatabases {
     val infiniteComputationDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    atomOf("a").hasSolutions({ halt(timeOutException) })
+                atomOf("a").hasSolutions({ halt(timeOutException) })
             )
         }
     }
@@ -260,12 +260,12 @@ object TestingClauseDatabases {
     val customReverseListDatabase by lazy {
         prolog {
             theory(
-                    { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
-                    { "my_rev"(List.empty(), "L2", "L2") `if` "!" },
-                    {
-                        "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
-                                "my_rev"("Xs", "L2", consOf("X", "Acc"))
-                    }
+                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
+                { "my_rev"(List.empty(), "L2", "L2") `if` "!" },
+                {
+                    "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
+                            "my_rev"("Xs", "L2", consOf("X", "Acc"))
+                }
             )
         }
     }
@@ -279,9 +279,9 @@ object TestingClauseDatabases {
     val customReverseListDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                    "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
-                            { yes("L" to listOf(4, 3, 2, 1)) }
-                    )
+                "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
+                    { yes("L" to listOf(4, 3, 2, 1)) }
+                )
             )
         }
     }
@@ -303,13 +303,13 @@ object TestingClauseDatabases {
     val callTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                    "call"(true).hasSolutions({ yes() }),
-                    "call"(false).hasSolutions({ no() }),
-                    "call"("halt").hasSolutions({ halt(haltException) }),
-                    "call"("true" and "true").hasSolutions({ yes() }),
-                    "call"("!").hasSolutions({ yes() }),
-                    "call"("X").hasSolutions({ halt(haltException) }),
-                    "call"("true" and 1).hasSolutions({ halt(haltException) })
+                "call"(true).hasSolutions({ yes() }),
+                "call"(false).hasSolutions({ no() }),
+                "call"("halt").hasSolutions({ halt(haltException) }),
+                "call"("true" and "true").hasSolutions({ yes() }),
+                "call"("!").hasSolutions({ yes() }),
+                "call"("X").hasSolutions({ halt(haltException) }),
+                "call"("true" and 1).hasSolutions({ halt(haltException) })
             )
         }
     }
@@ -327,13 +327,12 @@ object TestingClauseDatabases {
     val catchTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                    "catch"(true, `_`, false).hasSolutions({ yes() }),
-                    "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true).hasSolutions(
-                            { yes("E" to "deepBall") }
-                    ),
-                    "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
-                            { halt(haltException) }
-                    )
+                "catch"(true, `_`, false).hasSolutions({ yes() }),
+                "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
+                    .hasSolutions({ yes("E" to "deepBall") }),
+                "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
+                    { halt(haltException) }
+                )
             )
         }
     }
@@ -351,9 +350,9 @@ object TestingClauseDatabases {
     val haltTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                    atomOf("halt").hasSolutions({ halt(haltException) }),
-                    "catch"("halt", `_`, true).hasSolutions({ halt(haltException) }),
-                    "catch"("catch"("throw"("something"), `_`, "halt"), `_`, true).hasSolutions({ halt(haltException) })
+                atomOf("halt").hasSolutions({ halt(haltException) }),
+                "catch"("halt", `_`, true).hasSolutions({ halt(haltException) }),
+                "catch"("catch"("throw"("something"), `_`, "halt"), `_`, true).hasSolutions({ halt(haltException) })
             )
         }
     }
@@ -361,14 +360,14 @@ object TestingClauseDatabases {
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
     val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
-                simpleFactDatabase to simpleFactDatabaseNotableGoalToSolutions,
-                simpleCutDatabase to simpleCutDatabaseNotableGoalToSolutions,
-                simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
-                cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
-                customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
-                ClauseDatabase.empty() to callTestingGoalsToSolutions,
-                ClauseDatabase.empty() to catchTestingGoalsToSolutions,
-                ClauseDatabase.empty() to haltTestingGoalsToSolutions
+            simpleFactDatabase to simpleFactDatabaseNotableGoalToSolutions,
+            simpleCutDatabase to simpleCutDatabaseNotableGoalToSolutions,
+            simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
+            cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
+            customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
+            ClauseDatabase.empty() to callTestingGoalsToSolutions,
+            ClauseDatabase.empty() to catchTestingGoalsToSolutions,
+            ClauseDatabase.empty() to haltTestingGoalsToSolutions
         ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
     }
 }

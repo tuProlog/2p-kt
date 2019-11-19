@@ -29,10 +29,10 @@ interface Set : Struct {
     override fun freshCopy(): Set = super.freshCopy() as Set
 
     override fun freshCopy(scope: Scope): Set =
-            when {
-                isGround -> this
-                else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
-            }
+        when {
+            isGround -> this
+            else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+        }
 
     companion object {
         const val FUNCTOR = "{}"
@@ -42,11 +42,11 @@ interface Set : Struct {
         fun of(vararg terms: Term): Set = of(terms.toList())
 
         fun of(terms: KtList<Term>): Set =
-                when {
-                    terms.isEmpty() -> empty()
-                    terms.size == 1 -> SetImpl(terms.single())
-                    else -> SetImpl(Tuple.of(terms))
-                }
+            when {
+                terms.isEmpty() -> empty()
+                terms.size == 1 -> SetImpl(terms.single())
+                else -> SetImpl(Tuple.of(terms))
+            }
 
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
 

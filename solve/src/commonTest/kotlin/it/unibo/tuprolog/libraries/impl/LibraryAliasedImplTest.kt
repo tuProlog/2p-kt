@@ -27,8 +27,8 @@ internal class LibraryAliasedImplTest {
     fun aliasNotConsideredInEqualityTesting() {
         LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
             assertEquals(
-                    LibraryAliasedImpl(opSet, theory, primitives, functions, alias),
-                    LibraryAliasedImpl(opSet, theory, primitives, functions, alias + "x")
+                LibraryAliasedImpl(opSet, theory, primitives, functions, alias),
+                LibraryAliasedImpl(opSet, theory, primitives, functions, alias + "x")
             )
         }
     }

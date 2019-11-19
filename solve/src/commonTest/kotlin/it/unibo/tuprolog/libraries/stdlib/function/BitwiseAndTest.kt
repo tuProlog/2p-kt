@@ -22,11 +22,11 @@ internal class BitwiseAndTest {
     @Test
     fun computationCorrect() {
         assertEquals(
-                Integer.of(125),
-                BitwiseAnd.computeOf(
-                        Integer.of(17 * 256 + 125),
-                        Integer.of(255)
-                )
+            Integer.of(125),
+            BitwiseAnd.computeOf(
+                Integer.of(17 * 256 + 125),
+                Integer.of(255)
+            )
         )
     }
 

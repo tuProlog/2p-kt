@@ -15,13 +15,13 @@ import org.gciatto.kt.math.RoundingMode
 object Round : UnaryMathFunction("round") {
 
     override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(integer.decimalValue)
+        commonBehaviour(integer.decimalValue)
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(real.value)
+        commonBehaviour(real.value)
 
     /** Implements common behaviour for Integer and Real */
     private fun commonBehaviour(decimal: BigDecimal): Integer =
-            // TODO: 25/10/2019 "int_overflow" check missing (see the standard)
-            Numeric.of(decimal.setScale(0, RoundingMode.HALF_UP).toBigInteger())
+        // TODO: 25/10/2019 "int_overflow" check missing (see the standard)
+        Numeric.of(decimal.setScale(0, RoundingMode.HALF_UP).toBigInteger())
 }

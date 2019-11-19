@@ -71,7 +71,10 @@ internal class FunctorNodeTest {
     fun putClauseInsertsRelativelyBeforeAllIfSpecified() {
         filledAFunctorNode.put(aRule, true)
 
-        assertCorrectAndPartialOrderRespected(filledAFunctorNode, ReteNodeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) })
+        assertCorrectAndPartialOrderRespected(
+            filledAFunctorNode,
+            ReteNodeUtils.aFunctorRules.toMutableList().apply { add(0, aRule) }
+        )
     }
 
     @Test
@@ -99,7 +102,9 @@ internal class FunctorNodeTest {
             ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
                 init() // because removal of side-effects is needed
 
-                assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching, limit) { remove(query, limit) }
+                assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching, limit) {
+                    remove(query, limit)
+                }
             }
         }
     }
@@ -110,7 +115,9 @@ internal class FunctorNodeTest {
         ReteNodeUtils.aFunctorRulesQueryResultsMap.forEach { (query, allMatching) ->
             init() // because removal of side-effects is needed
 
-            assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) { remove(query, negativeLimit) }
+            assertRemovedFromReteNodeRespectingPartialOrder(filledAFunctorNode, allMatching) {
+                remove(query, negativeLimit)
+            }
         }
     }
 

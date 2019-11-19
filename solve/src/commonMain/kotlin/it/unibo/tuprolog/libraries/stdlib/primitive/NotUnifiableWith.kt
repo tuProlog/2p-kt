@@ -7,5 +7,5 @@ import it.unibo.tuprolog.unify.Unification.Companion.matches
 /** Implementation of '\='/2 predicate */
 object NotUnifiableWith : TermRelation.WithoutSideEffects<ExecutionContext>("\\=") {
     override fun relationWithoutSideEffects(x: Term, y: Term): Boolean =
-            (x matches y).not()
+        (x matches y).not()
 }

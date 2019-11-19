@@ -24,14 +24,14 @@ internal object TuPrologRuntimeExceptionUtils {
 
     /** Different instance from [aContext] with same behaviour */
     internal val aDifferentContext = object : ExecutionContext by aContext {}
-            .also { assertNotEquals(it, aContext) }
+        .also { assertNotEquals(it, aContext) }
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertSameMessageCauseContext(
-            expectedMessage: String?,
-            expectedCause: Throwable?,
-            expectedContext: ExecutionContext,
-            actualException: TuPrologRuntimeException
+        expectedMessage: String?,
+        expectedCause: Throwable?,
+        expectedContext: ExecutionContext,
+        actualException: TuPrologRuntimeException
     ) {
         assertSame(expectedMessage, actualException.message)
         assertSame(expectedCause, actualException.cause)

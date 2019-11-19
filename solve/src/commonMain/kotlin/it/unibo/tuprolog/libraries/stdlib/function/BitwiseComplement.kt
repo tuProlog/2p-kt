@@ -13,8 +13,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 object BitwiseComplement : UnaryMathFunction("\\") {
 
     override fun mathFunction(integer: Integer, context: ExecutionContext): Numeric =
-            Numeric.of(integer.value.not())
+        Numeric.of(integer.value.not())
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
-            throwTypeErrorBecauseOnlyIntegersAccepted(functor, real, context)
+        throwTypeErrorBecauseOnlyIntegersAccepted(functor, real, context)
 }

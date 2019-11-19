@@ -20,7 +20,7 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
 
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-            ClauseDatabaseImpl(clauses + checkClausesCorrect(clauseDatabase.clauses))
+        ClauseDatabaseImpl(clauses + checkClausesCorrect(clauseDatabase.clauses))
 
     override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
 
@@ -39,18 +39,20 @@ internal class ClauseDatabaseImpl private constructor(private val reteTree: Rete
     override fun get(indicator: Indicator): Sequence<Rule> {
         require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
 
-        return get(Rule.of(
+        return get(
+            Rule.of(
                 Struct.of(indicator.indicatedName!!, (1..indicator.indicatedArity!!).map { Var.anonymous() }),
-                Var.anonymous())
+                Var.anonymous()
+            )
         ).map { it as Rule }
     }
 
 
     override fun assertA(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = true) })
+        ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = true) })
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-            ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = false) })
+        ClauseDatabaseImpl(reteTree.deepCopy().apply { put(checkClauseCorrect(clause), beforeOthers = false) })
 
     override fun retract(clause: Clause): RetractResult {
         val newTheory = reteTree.deepCopy()

@@ -30,7 +30,11 @@ internal class DirectiveImplTest {
 
     @Test
     fun bodyCorrect() {
-        onCorrespondingItems(DirectiveUtils.mixedDirectives, mixedDirectivesInstances.map { it.body }, ::assertEqualities)
+        onCorrespondingItems(
+            DirectiveUtils.mixedDirectives,
+            mixedDirectivesInstances.map { it.body },
+            ::assertEqualities
+        )
     }
 
     @Test

@@ -23,7 +23,7 @@ internal class CutTest {
     private val cutPrimitiveSignature = Signature("!", 0)
 
     private fun cutRequest(context: ExecutionContext = ExecutionContextImpl()) =
-            Solve.Request(cutPrimitiveSignature, emptyList(), context)
+        Solve.Request(cutPrimitiveSignature, emptyList(), context)
 
     @Test
     fun cutPrimitiveReturnsAlwaysYesResponseWithRequestSubstitution() {

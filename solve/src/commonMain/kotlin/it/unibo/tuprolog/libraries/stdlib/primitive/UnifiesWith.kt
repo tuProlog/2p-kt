@@ -8,5 +8,5 @@ import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 /** Implementation of '='/2 predicate */
 object UnifiesWith : TermRelation.WithSideEffects<ExecutionContext>("=") {
     override fun relationWithSideEffects(x: Term, y: Term): Substitution =
-            x mguWith y
+        x mguWith y
 }

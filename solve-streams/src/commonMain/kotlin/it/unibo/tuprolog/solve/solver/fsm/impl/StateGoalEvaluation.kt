@@ -20,8 +20,8 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class StateGoalEvaluation(
-        override val solve: Solve.Request<ExecutionContextImpl>,
-        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    override val solve: Solve.Request<ExecutionContextImpl>,
+    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
@@ -57,9 +57,9 @@ internal class StateGoalEvaluation(
 
         /** Utility function to create "throw/1" solve requests */
         private fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError) =
-                newSolveRequest(
-                        Struct.of(Throw.functor, error.errorStruct),
-                        baseSideEffectManager = error.context.getSideEffectManager()
-                )
+            newSolveRequest(
+                Struct.of(Throw.functor, error.errorStruct),
+                baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager
+            )
     }
 }

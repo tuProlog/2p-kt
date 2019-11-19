@@ -17,7 +17,8 @@ import kotlin.test.assertNull
  */
 internal class SolveResponseTest {
 
-    private val aResponse = Solve.Response(aSolution, someLibraries, someFlags, aStaticKB, aDynamicKB, aSideEffectManager)
+    private val aResponse =
+        Solve.Response(aSolution, someLibraries, someFlags, aStaticKB, aDynamicKB, aSideEffectManager)
 
     @Test
     fun responseInsertedDataCorrect() {

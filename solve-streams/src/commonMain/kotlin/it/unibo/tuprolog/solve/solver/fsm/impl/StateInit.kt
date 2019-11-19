@@ -15,8 +15,8 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class StateInit(
-        override val solve: Solve.Request<ExecutionContextImpl>,
-        override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    override val solve: Solve.Request<ExecutionContextImpl>,
+    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) : AbstractTimedState(solve, executionStrategy) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
@@ -32,12 +32,12 @@ internal class StateInit(
                 currentGoal.isWellFormed() -> currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->
                     // a primitive call or well-formed goal
                     yield(StateGoalEvaluation(
-                            solve.copy(
-                                    signature = preparedGoal.extractSignature(),
-                                    arguments = preparedGoal.argsList,
-                                    context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
-                            ),
-                            executionStrategy
+                        solve.copy(
+                            signature = preparedGoal.extractSignature(),
+                            arguments = preparedGoal.argsList,
+                            context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
+                        ),
+                        executionStrategy
                     ))
                 }
 

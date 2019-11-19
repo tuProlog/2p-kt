@@ -18,21 +18,21 @@ abstract class AbstractUnificationStrategy(override val context: Substitution = 
 
     /** Implements the so called occur-check; checks if the [variable] is present in [term] */
     private fun occurrenceCheck(variable: Var, term: Term): Boolean =
-            when (term) {
-                is Var -> checkTermsEquality(variable, term)
-                is Struct -> term.args.any { occurrenceCheck(variable, it) }
-                else -> false
-            }
+        when (term) {
+            is Var -> checkTermsEquality(variable, term)
+            is Struct -> term.args.any { occurrenceCheck(variable, it) }
+            else -> false
+        }
 
     /** Returns the sequence of equations resulting from the comparison of given [Term]s */
     private fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> =
-            Equation.allOf(term1, term2, this::checkTermsEquality)
+        Equation.allOf(term1, term2, this::checkTermsEquality)
 
     /** A function to apply given [substitution] to [equations], skipping the equation at given [exceptIndex] */
     private fun applySubstitutionToEquations(
-            substitution: Substitution,
-            equations: MutableList<Equation<Term, Term>>,
-            exceptIndex: Int
+        substitution: Substitution,
+        equations: MutableList<Equation<Term, Term>>,
+        exceptIndex: Int
     ): Boolean {
 
         var changed = false
@@ -75,7 +75,11 @@ abstract class AbstractUnificationStrategy(override val context: Substitution = 
                             if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs))
                                 return failed()
                             else
-                                changed = applySubstitutionToEquations(Substitution.of(eq.lhs as Var, eq.rhs), equations, eqIterator.previousIndex())
+                                changed = applySubstitutionToEquations(
+                                    Substitution.of(eq.lhs as Var, eq.rhs),
+                                    equations,
+                                    eqIterator.previousIndex()
+                                )
                         }
                         is Comparison -> {
                             eqIterator.remove()

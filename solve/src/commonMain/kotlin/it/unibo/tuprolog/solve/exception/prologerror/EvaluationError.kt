@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.exception.prologerror
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 
@@ -18,14 +19,14 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @author Enrico
  */
 class EvaluationError(
-        message: String? = null,
-        cause: Throwable? = null,
-        context: ExecutionContext,
-        val errorType: Type,
-        extraData: Term? = null
+    message: String? = null,
+    cause: Throwable? = null,
+    context: ExecutionContext,
+    val errorType: Type,
+    extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, errorType.toAtom()) }
+    override val type: Struct by lazy { Struct.of(super.type.functor, errorType.toTerm()) }
 
     companion object {
 
@@ -38,11 +39,11 @@ class EvaluationError(
      *
      * @author Enrico
      */
-    enum class Type {
+    enum class Type : ToTermConvertible {
         INT_OVERFLOW, FLOAT_OVERFLOW, UNDERFLOW, ZERO_DIVISOR, UNDEFINED;
 
         /** A function to transform the type to corresponding [Atom] representation */
-        fun toAtom(): Atom = Atom.of(toString())
+        override fun toTerm(): Atom = Atom.of(toString())
 
         override fun toString(): String = super.toString().toLowerCase()
 

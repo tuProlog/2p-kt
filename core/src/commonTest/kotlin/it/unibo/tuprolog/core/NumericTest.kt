@@ -19,14 +19,14 @@ internal class NumericTest {
     /** This map contains a mapping between real numbers and their version with some trailing zeros (i.e. 10.0 to 10.00) */
     private val realToRealWithTrailingZerosMap by lazy {
         RealUtils.decimalsAsFloats
-                .map { BigDecimal.of(it) }
-                .map {
-                    BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
-                            BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
-                } +
+            .map { BigDecimal.of(it) }
+            .map {
+                BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
+                        BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
+            } +
                 RealUtils.stringNumbers
-                        .filterNot { "E" in it }
-                        .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
+                    .filterNot { "E" in it }
+                    .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
     }
 
     @Test
@@ -123,8 +123,8 @@ internal class NumericTest {
     fun integerNotEqualToRealEvenIfSameValue() {
         IntegerUtils.bigIntegers.map { it to it.toDouble() }.forEach { (integer, sameValueToDouble) ->
             assertNotEquals<Numeric>(
-                    Numeric.of(integer),
-                    Numeric.of(sameValueToDouble)
+                Numeric.of(integer),
+                Numeric.of(sameValueToDouble)
             )
         }
     }
@@ -133,8 +133,8 @@ internal class NumericTest {
     fun realComparisonDoesNotTakeTrailingZerosIntoAccount() {
         realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
             assertEquals(
-                    Real.of(real),
-                    Real.of(realWithTrailingZeros)
+                Real.of(real),
+                Real.of(realWithTrailingZeros)
             )
         }
     }
@@ -143,8 +143,8 @@ internal class NumericTest {
     fun realHashCodeIsConsistentWithEquals() {
         realToRealWithTrailingZerosMap.forEach { (real, realWithTrailingZeros) ->
             assertEquals(
-                    Real.of(real).hashCode(),
-                    Real.of(realWithTrailingZeros).hashCode()
+                Real.of(real).hashCode(),
+                Real.of(realWithTrailingZeros).hashCode()
             )
         }
     }

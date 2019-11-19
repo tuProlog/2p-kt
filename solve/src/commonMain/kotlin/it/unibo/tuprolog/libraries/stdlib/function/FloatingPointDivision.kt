@@ -15,23 +15,23 @@ import org.gciatto.kt.math.MathContext
 object FloatingPointDivision : BinaryMathFunction("/") {
 
     override fun mathFunction(integer1: Integer, integer2: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(integer1.decimalValue, integer2.decimalValue, context)
+        commonBehaviour(integer1.decimalValue, integer2.decimalValue, context)
 
     override fun mathFunction(real: Real, integer: Integer, context: ExecutionContext): Numeric =
-            commonBehaviour(real.value, integer.decimalValue, context)
+        commonBehaviour(real.value, integer.decimalValue, context)
 
     override fun mathFunction(integer: Integer, real: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(integer.decimalValue, real.value, context)
+        commonBehaviour(integer.decimalValue, real.value, context)
 
     override fun mathFunction(real1: Real, real2: Real, context: ExecutionContext): Numeric =
-            commonBehaviour(real1.value, real2.value, context)
+        commonBehaviour(real1.value, real2.value, context)
 
     /** Implements common behaviour for Integer and Real */
     private fun commonBehaviour(dividend: BigDecimal, divisor: BigDecimal, context: ExecutionContext): Real =
-            // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
-            when (divisor) {
-                BigDecimal.ZERO -> throwZeroDivisorError(context)
-                else -> Numeric.of(dividend.div(divisor, MathContext())!!)
-            }
+        // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
+        when (divisor) {
+            BigDecimal.ZERO -> throwZeroDivisorError(context)
+            else -> Numeric.of(dividend.div(divisor, MathContext())!!)
+        }
 
 }

@@ -3,8 +3,8 @@ package it.unibo.tuprolog.core
 fun main() {
     val term: Term = Scope.empty {
         ruleOf(
-                structOf("member", varOf("X"), consOf(whatever(), varOf("T"))),
-                structOf("member", varOf("X"), varOf("T"))
+            structOf("member", varOf("X"), consOf(whatever(), varOf("T"))),
+            structOf("member", varOf("X"), varOf("T"))
         )
     }
 

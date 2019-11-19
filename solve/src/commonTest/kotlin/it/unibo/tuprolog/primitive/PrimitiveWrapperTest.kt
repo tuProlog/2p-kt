@@ -26,21 +26,22 @@ internal class PrimitiveWrapperTest {
     @Test
     fun primitiveWorksIfCorrectRequestProvided() {
         wrapperToMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
-                .forEach { (wrapper, acceptedRequests) ->
-                    acceptedRequests.forEach {
-                        if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
-                        assertEquals(defaultPrimitiveResult, wrapper.wrappedImplementation(it))
-                    }
+            .forEach { (wrapper, acceptedRequests) ->
+                acceptedRequests.forEach {
+                    if (wrapper.signature.vararg) return // TODO remove this "if" after solving TODO in "Signature"
+                    assertEquals(defaultPrimitiveResult, wrapper.wrappedImplementation(it))
                 }
+            }
     }
 
     @Test
     fun primitiveComplainsWithWrongRequestSignatureOrArguments() {
-        wrapperToNotMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest).forEach { (wrapper, badRequests) ->
-            badRequests.forEach {
-                assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
+        wrapperToNotMatchingSignatureRequest(::createPrimitiveWrapper, primitive, ::createPrimitiveRequest)
+            .forEach { (wrapper, badRequests) ->
+                badRequests.forEach {
+                    assertFailsWith<IllegalArgumentException> { wrapper.wrappedImplementation(it) }
+                }
             }
-        }
     }
 
     @Test

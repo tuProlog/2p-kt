@@ -13,10 +13,10 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  * @author Enrico
  */
 internal open class LibraryImpl(
-        override val operators: OperatorSet,
-        override val theory: ClauseDatabase,
-        override val primitives: Map<Signature, Primitive>,
-        override val functions: Map<Signature, PrologFunction>
+    override val operators: OperatorSet,
+    override val theory: ClauseDatabase,
+    override val primitives: Map<Signature, Primitive>,
+    override val functions: Map<Signature, PrologFunction>
 ) : Library {
 
     override fun equals(other: Any?): Boolean {
@@ -42,5 +42,5 @@ internal open class LibraryImpl(
     }
 
     override fun toString(): String =
-            "Library(operators=$operators, theory=$theory, primitives=$primitives, functions=$functions)"
+        "Library(operators=$operators, theory=$theory, primitives=$primitives, functions=$functions)"
 }

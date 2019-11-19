@@ -22,34 +22,38 @@ class IntegerImplTest {
 
     @Test
     fun correctValue() {
-        onCorrespondingItems(IntegerUtils.bigIntegers, integerInstances.map { it.value }) { expectedValue, integerValue ->
-            assertEquals(expectedValue, integerValue)
-        }
+        onCorrespondingItems(
+            IntegerUtils.bigIntegers,
+            integerInstances.map { it.value }
+        ) { expectedValue, integerValue -> assertEquals(expectedValue, integerValue) }
     }
 
     @Test
     fun correctIntValue() {
-        onCorrespondingItems(IntegerUtils.bigIntegers, integerInstances.map { it.intValue }) { expectedValue, integerIntValue ->
-            assertEquals(expectedValue, integerIntValue)
-        }
+        onCorrespondingItems(
+            IntegerUtils.bigIntegers,
+            integerInstances.map { it.intValue }
+        ) { expectedValue, integerIntValue -> assertEquals(expectedValue, integerIntValue) }
     }
 
     @Test
     fun correctDecimalValue() {
         val expectedDecimals = IntegerUtils.bigIntegers.map { BigDecimal.of(it) }
 
-        onCorrespondingItems(expectedDecimals, integerInstances.map { it.decimalValue }) { expectedValue, integerDecimalValue ->
-            assertEquals(expectedValue, integerDecimalValue)
-        }
+        onCorrespondingItems(
+            expectedDecimals,
+            integerInstances.map { it.decimalValue }
+        ) { expectedValue, integerDecimalValue -> assertEquals(expectedValue, integerDecimalValue) }
     }
 
     @Test
     fun correctToString() {
         val expectedToString = IntegerUtils.bigIntegers.map { it.toString() }
 
-        onCorrespondingItems(expectedToString, integerInstances.map { it.toString() }) { expectedString, integerToString ->
-            assertEquals(expectedString, integerToString)
-        }
+        onCorrespondingItems(
+            expectedToString,
+            integerInstances.map { it.toString() }
+        ) { expectedString, integerToString -> assertEquals(expectedString, integerToString) }
     }
 
     @Suppress("LocalVariableName")

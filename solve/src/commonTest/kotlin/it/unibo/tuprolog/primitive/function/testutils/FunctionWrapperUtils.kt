@@ -26,30 +26,33 @@ internal object FunctionWrapperUtils {
 
     /** A function to create a Compute.Request with provided [signature] and [argList] */
     internal fun createFunctionRequest(signature: Signature, argList: List<Term>) =
-            Compute.Request(signature, argList, DummyInstances.executionContext)
+        Compute.Request(signature, argList, DummyInstances.executionContext)
 
     /** Utility function to create a function wrapper */
-    internal inline fun createFunctionWrapper(signature: Signature, crossinline uncheckedImplementation: PrologFunction): FunctionWrapper<ExecutionContext> =
-            object : FunctionWrapper<ExecutionContext>(signature) {
-                override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
-                        uncheckedImplementation(request)
-            }
+    internal inline fun createFunctionWrapper(
+        signature: Signature,
+        crossinline uncheckedImplementation: PrologFunction
+    ): FunctionWrapper<ExecutionContext> =
+        object : FunctionWrapper<ExecutionContext>(signature) {
+            override fun uncheckedImplementation(request: Compute.Request<ExecutionContext>): Compute.Response =
+                uncheckedImplementation(request)
+        }
 
     /** All under test requests */
     private val allRequests by lazy {
         (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
-                .map { createFunctionRequest(it.extractSignature(), it.argsList) }
+            .map { createFunctionRequest(it.extractSignature(), it.argsList) }
     }
 
     /** All ground requests */
     internal val allGroundRequests by lazy {
         allRequests.filter { it.query.isGround }
-                .also { assertTrue("Test data empty") { it.isNotEmpty() } }
+            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
     }
 
     /** All non-ground requests */
     internal val nonAllGroundRequests by lazy {
         allRequests.filterNot { it.query.isGround }
-                .also { assertTrue("Test data empty") { it.isNotEmpty() } }
+            .also { assertTrue("Test data empty") { it.isNotEmpty() } }
     }
 }

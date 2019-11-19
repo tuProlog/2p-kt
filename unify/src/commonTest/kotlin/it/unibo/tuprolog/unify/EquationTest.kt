@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.testutils.EquationUtils
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyAssignment
@@ -25,10 +22,10 @@ internal class EquationTest {
 
     /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
     private val correctShallowEquationsInstances =
-            EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
-                    EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) } +
-                    EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
-                    EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
+        EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
+                EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) } +
+                EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
+                EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
 
     @Test
     fun identityLhsAndRhsCorrect() {
@@ -74,8 +71,10 @@ internal class EquationTest {
 
     @Test
     fun equationOfShouldReturnCorrectNumberOfEquations() {
-        assertEquals(EquationUtils.mixedAllEquations.count(),
-                EquationUtils.mixedAllEquations.map { Equation.of(it) }.count())
+        assertEquals(
+            EquationUtils.mixedAllEquations.count(),
+            EquationUtils.mixedAllEquations.map { Equation.of(it) }.count()
+        )
     }
 
     @Test
@@ -136,15 +135,17 @@ internal class EquationTest {
         val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
                 EquationUtils.assignmentEquations.map { Equation.allOf(it).toList() }
 
-        val toBeTested = EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
-                EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it).toList() }
+        val toBeTested =
+            EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
+                    EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it).toList() }
 
         assertEquals(correct, toBeTested)
     }
 
     @Test
     fun equationAllOfShouldNeverReturnComparisonAsItAlwaysInspectsTermsInDeep() {
-        EquationUtils.mixedShuffledAllEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs) }.forEach(::assertNoComparisons)
+        EquationUtils.mixedShuffledAllEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs) }
+            .forEach(::assertNoComparisons)
         EquationUtils.mixedShuffledAllEquations.map { Equation.allOf(it) }.forEach(::assertNoComparisons)
     }
 
@@ -153,6 +154,13 @@ internal class EquationTest {
         val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toPair)
 
         assertEquals(EquationUtils.mixedAllEquations, toBeTested)
+    }
+
+    @Test
+    fun toTermWorksAsExpected() {
+        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toTerm)
+
+        assertEquals(EquationUtils.mixedAllEquations.map { (lhs, rhs) -> Struct.of("=", lhs, rhs) }, toBeTested)
     }
 
     @Test
@@ -169,7 +177,8 @@ internal class EquationTest {
 
     @Test
     fun swapCannotInvertAssignments() {
-        val nonVarToVarAssignments = EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVariable && rhs.isVariable }
+        val nonVarToVarAssignments =
+            EquationUtils.assignmentEquations.filterNot { (lhs, rhs) -> lhs.isVariable && rhs.isVariable }
 
         val correct = nonVarToVarAssignments.map { Equation.of(it) }
         val toBeTested = nonVarToVarAssignments.map { Equation.of(it) }.map(Equation<*, *>::swap)
@@ -237,8 +246,8 @@ internal class EquationTest {
 
         @Suppress("UNCHECKED_CAST")
         val toBeTested = EquationUtils.assignmentEquations
-                .map { Equation.of(it) as Equation<Var, Term> }
-                .map { it.toSubstitution() }
+            .map { Equation.of(it) as Equation<Var, Term> }
+            .map { it.toSubstitution() }
 
         assertEquals(correct, toBeTested)
     }
@@ -249,8 +258,8 @@ internal class EquationTest {
 
         @Suppress("UNCHECKED_CAST")
         val toBeTested = EquationUtils.assignmentEquations
-                .map { Equation.of(it) as Equation<Var, Term> }
-                .toSubstitution()
+            .map { Equation.of(it) as Equation<Var, Term> }
+            .toSubstitution()
 
         assertEquals(correct, toBeTested)
     }

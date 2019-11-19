@@ -54,7 +54,9 @@ internal class SolutionTest {
     @Test
     fun yesSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
         assertFailsWith<IllegalArgumentException> { Solution.Yes(querySignature, emptyList(), Substitution.empty()) }
-        assertFailsWith<IllegalArgumentException> { Solution.Yes(querySignature, listOf(Truth.`true`(), Truth.`true`()), Substitution.empty()) }
+        assertFailsWith<IllegalArgumentException> {
+            Solution.Yes(querySignature, listOf(Truth.`true`(), Truth.`true`()), Substitution.empty())
+        }
     }
 
     @Test
@@ -89,7 +91,9 @@ internal class SolutionTest {
     @Test
     fun noSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
         assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, emptyList()) }
-        assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, listOf(Truth.`true`(), Truth.`true`())) }
+        assertFailsWith<IllegalArgumentException> {
+            Solution.No(querySignature, listOf(Truth.`true`(), Truth.`true`()))
+        }
     }
 
     @Test
@@ -127,7 +131,9 @@ internal class SolutionTest {
     @Test
     fun haltSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
         assertFailsWith<IllegalArgumentException> { Solution.Halt(querySignature, emptyList(), anException) }
-        assertFailsWith<IllegalArgumentException> { Solution.Halt(querySignature, listOf(Truth.`true`(), Truth.`true`()), anException) }
+        assertFailsWith<IllegalArgumentException> {
+            Solution.Halt(querySignature, listOf(Truth.`true`(), Truth.`true`()), anException)
+        }
     }
 
     @Test

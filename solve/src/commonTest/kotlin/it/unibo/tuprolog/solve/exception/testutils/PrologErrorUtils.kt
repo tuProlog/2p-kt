@@ -30,23 +30,28 @@ internal object PrologErrorUtils {
     /** Contains PrologErrors subclasses that will be recognized by type parameter */
     internal val recognizedSubTypes by lazy {
         mapOf(
-                Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
-                Atom.of(SystemError.typeFunctor) to SystemError::class,
-                Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class,
-                Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class
+            Atom.of(InstantiationError.typeFunctor) to InstantiationError::class,
+            Atom.of(SystemError.typeFunctor) to SystemError::class,
+            Struct.of(TypeError.typeFunctor, Atom.of("callable"), Atom.of("someActualValue")) to TypeError::class,
+            Struct.of(EvaluationError.typeFunctor, Atom.of("zero_divisor")) to EvaluationError::class
         )
     }
 
     /** Utility function to check if exception contains same expected values */
     internal fun assertEqualPrologErrorData(
-            expectedMessage: String?,
-            expectedCause: Throwable?,
-            expectedContext: ExecutionContext,
-            expectedType: Struct,
-            expectedExtraData: Term?,
-            actualException: PrologError
+        expectedMessage: String?,
+        expectedCause: Throwable?,
+        expectedContext: ExecutionContext,
+        expectedType: Struct,
+        expectedExtraData: Term?,
+        actualException: PrologError
     ) {
-        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(expectedMessage, expectedCause, expectedContext, actualException)
+        TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(
+            expectedMessage,
+            expectedCause,
+            expectedContext,
+            actualException
+        )
         assertEquals(expectedType, actualException.type)
         assertEquals(expectedExtraData, actualException.extraData)
     }
@@ -54,10 +59,10 @@ internal object PrologErrorUtils {
     /** Asserts that [PrologError.errorStruct] returns correctly constructed structure */
     internal fun assertErrorStructCorrect(prologError: PrologError) {
         assertEquals(
-                prologError.extraData
-                        ?.let { errorStructOf(prologError.type, it) }
-                        ?: errorStructOf(prologError.type),
-                prologError.errorStruct
+            prologError.extraData
+                ?.let { errorStructOf(prologError.type, it) }
+                ?: errorStructOf(prologError.type),
+            prologError.errorStruct
         )
     }
 

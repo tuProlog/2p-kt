@@ -22,41 +22,41 @@ import it.unibo.tuprolog.unify.Unification.Companion.mguWith
 internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
-            request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
-                val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
+        request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
+            val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
 
-                when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
+            when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
 
-                    // no catch found that can handle thrown exception
-                    null, is Substitution.Fail -> {
-                        val errorCause = throwArgument.extractErrorCauseChain(request.context)
-                        when {
-                            throwArgument.isSystemErrorStruct() -> throw HaltException(
-                                    "Unhandled system_error, halting inferential machine",
-                                    errorCause,
-                                    request.context
-                            )
-                            // current unhandled exception is some other error
-                            else -> throw SystemError(
-                                    "Exception thrown, but no compatible catch/3 found",
-                                    errorCause,
-                                    request.context,
-                                    throwArgument
-                            )
-                        }
-                    }
-
-                    // matching catch found, it will handle exception
-                    is Substitution.Unifier -> sequenceOf(with(request) {
-                        val newSubstitution = (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
-
-                        replySuccess(
-                                newSubstitution,
-                                sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                // no catch found that can handle thrown exception
+                null, is Substitution.Fail -> {
+                    val errorCause = throwArgument.extractErrorCauseChain(request.context)
+                    when {
+                        throwArgument.isSystemErrorStruct() -> throw HaltException(
+                            "Unhandled system_error, halting inferential machine",
+                            errorCause,
+                            request.context
                         )
-                    })
+                        // current unhandled exception is some other error
+                        else -> throw SystemError(
+                            "Exception thrown, but no compatible catch/3 found",
+                            errorCause,
+                            request.context,
+                            throwArgument
+                        )
+                    }
                 }
+
+                // matching catch found, it will handle exception
+                is Substitution.Unifier -> sequenceOf(with(request) {
+                    val newSubstitution = (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
+
+                    replySuccess(
+                        newSubstitution,
+                        sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                    )
+                })
             }
+        }
 
     /** Utility function to check if throwArgument is an `error(system_error, ...)` */
     private fun Term.isSystemErrorStruct() = with(this as? Struct) {
@@ -76,13 +76,13 @@ internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
 
     /** Utility function to extract error, with filled cause field, till the error root */
     private fun Term.extractErrorCauseChain(withContext: ExecutionContext): PrologError? =
-            extractErrorTypeAndExtra()?.let { (type, extra) ->
-                PrologError.of(
-                        context = withContext,
-                        type = type,
-                        extraData = extra,
-                        cause = extra.extractErrorCauseChain(withContext)
-                )
-            }
+        extractErrorTypeAndExtra()?.let { (type, extra) ->
+            PrologError.of(
+                context = withContext,
+                type = type,
+                extraData = extra,
+                cause = extra.extractErrorCauseChain(withContext)
+            )
+        }
 
 }

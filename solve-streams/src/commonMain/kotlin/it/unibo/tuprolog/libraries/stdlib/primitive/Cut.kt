@@ -11,12 +11,13 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
  */
 internal object Cut : PrimitiveWrapper<ExecutionContextImpl>("!", 0) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> = with(request) {
-        sequenceOf(
+    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+        with(request) {
+            sequenceOf(
                 replySuccess(
-                        context.substitution,
-                        sideEffectManager = context.sideEffectManager.cut()
+                    context.substitution,
+                    sideEffectManager = context.sideEffectManager.cut()
                 )
-        )
-    }
+            )
+        }
 }

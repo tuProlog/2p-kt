@@ -8,8 +8,8 @@ import org.gciatto.kt.math.BigInteger
 internal abstract class NumericImpl : TermImpl(), Numeric {
 
     override fun structurallyEquals(other: Term): Boolean =
-            other is NumericImpl
-                    && decimalValue.compareTo(other.decimalValue) == 0
+        other is NumericImpl
+                && decimalValue.compareTo(other.decimalValue) == 0
 
     abstract override val decimalValue: BigDecimal
 

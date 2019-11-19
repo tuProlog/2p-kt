@@ -12,9 +12,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
  * @param context The current context at exception creation
  */
 open class TuPrologRuntimeException(
-        message: String? = null,
-        cause: Throwable? = null,
-        val context: ExecutionContext
+    message: String? = null,
+    cause: Throwable? = null,
+    val context: ExecutionContext
 ) : TuPrologException(message, cause) {
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
@@ -28,5 +28,5 @@ open class TuPrologRuntimeException(
      * Subclasses should override this method and return the correct instance.
      */
     open fun updateContext(newContext: ExecutionContext): TuPrologRuntimeException =
-            TuPrologRuntimeException(message, cause, newContext)
+        TuPrologRuntimeException(message, cause, newContext)
 }

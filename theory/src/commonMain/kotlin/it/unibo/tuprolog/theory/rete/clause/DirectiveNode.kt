@@ -5,8 +5,8 @@ import it.unibo.tuprolog.theory.rete.AbstractLeafReteNode
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
 /** A leaf node containing [Directive]s */
-internal data class DirectiveNode(override val leafElements: MutableList<Directive> = mutableListOf())
-    : AbstractLeafReteNode<Directive>() {
+internal data class DirectiveNode(override val leafElements: MutableList<Directive> = mutableListOf()) :
+    AbstractLeafReteNode<Directive>() {
 
     override val header = "Directives"
 

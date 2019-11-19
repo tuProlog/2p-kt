@@ -28,14 +28,20 @@ internal class ComputeRequestTest {
 
     @Test
     fun requestInsertedDataCorrect() {
-        val toBeTested = Compute.Request(aSignature, anArgumentList, anExecutionContext, aRequestIssuingInstant, anExecutionMaxDuration)
+        val toBeTested = Compute.Request(
+            aSignature,
+            anArgumentList,
+            anExecutionContext,
+            aRequestIssuingInstant,
+            anExecutionMaxDuration
+        )
 
         toBeTested.assertContainsCorrectData(
-                aSignature,
-                anArgumentList,
-                anExecutionContext,
-                aRequestIssuingInstant,
-                anExecutionMaxDuration
+            aSignature,
+            anArgumentList,
+            anExecutionContext,
+            aRequestIssuingInstant,
+            anExecutionMaxDuration
         )
     }
 
@@ -44,11 +50,11 @@ internal class ComputeRequestTest {
         val toBeTested = Compute.Request(aSignature, anArgumentList, anExecutionContext)
 
         toBeTested.assertContainsCorrectData(
-                aSignature,
-                anArgumentList,
-                anExecutionContext,
-                currentTimeInstant(),
-                TimeDuration.MAX_VALUE
+            aSignature,
+            anArgumentList,
+            anExecutionContext,
+            currentTimeInstant(),
+            TimeDuration.MAX_VALUE
         )
     }
 
@@ -83,7 +89,10 @@ internal class ComputeRequestTest {
     @Test
     fun requestComputesCorrectlyQueryStruct() {
         assertEquals(Struct.of(aSignature.name, anArgumentList), createRequest(aSignature, anArgumentList).query)
-        assertEquals(Struct.of(aVarargSignature.name, varargArgumentList), createRequest(aVarargSignature, varargArgumentList).query)
+        assertEquals(
+            Struct.of(aVarargSignature.name, varargArgumentList),
+            createRequest(aVarargSignature, varargArgumentList).query
+        )
     }
 
     @Test

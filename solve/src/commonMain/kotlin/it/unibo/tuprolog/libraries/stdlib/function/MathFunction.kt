@@ -23,37 +23,41 @@ abstract class MathFunction : FunctionWrapper<ExecutionContext> {
         /** Utility function to throw int overflow math error */
         @JvmStatic
         protected fun throwIntOverflowError(context: ExecutionContext): Nothing =
-                throw EvaluationError(context = context, errorType = EvaluationError.Type.INT_OVERFLOW)
+            throw EvaluationError(context = context, errorType = EvaluationError.Type.INT_OVERFLOW)
 
         /** Utility function to throw float overflow math error */
         @JvmStatic
         protected fun throwFloatOverflowError(context: ExecutionContext): Nothing =
-                throw EvaluationError(context = context, errorType = EvaluationError.Type.FLOAT_OVERFLOW)
+            throw EvaluationError(context = context, errorType = EvaluationError.Type.FLOAT_OVERFLOW)
 
         /** Utility function to throw underflow math error */
         @JvmStatic
         protected fun throwUnderflowError(context: ExecutionContext): Nothing =
-                throw EvaluationError(context = context, errorType = EvaluationError.Type.UNDERFLOW)
+            throw EvaluationError(context = context, errorType = EvaluationError.Type.UNDERFLOW)
 
         /** Utility function to throw zero division math error */
         @JvmStatic
         protected fun throwZeroDivisorError(context: ExecutionContext): Nothing =
-                throw EvaluationError(context = context, errorType = EvaluationError.Type.ZERO_DIVISOR)
+            throw EvaluationError(context = context, errorType = EvaluationError.Type.ZERO_DIVISOR)
 
         /** Utility function to throw undefined math error */
         @JvmStatic
         protected fun throwUndefinedError(context: ExecutionContext): Nothing =
-                throw EvaluationError(context = context, errorType = EvaluationError.Type.UNDEFINED)
+            throw EvaluationError(context = context, errorType = EvaluationError.Type.UNDEFINED)
 
         /** Utility function to throw a TypeError for operators requiring only integers as parameters */
         @JvmStatic
-        protected fun throwTypeErrorBecauseOnlyIntegersAccepted(opName: String, actualValue: Term, context: ExecutionContext): Nothing =
-                throw TypeError(
-                        "Operator `$opName` accepts only integers!",
-                        context = context,
-                        expectedType = TypeError.Expected.INTEGER,
-                        actualValue = actualValue
-                )
+        protected fun throwTypeErrorBecauseOnlyIntegersAccepted(
+            opName: String,
+            actualValue: Term,
+            context: ExecutionContext
+        ): Nothing =
+            throw TypeError(
+                "Operator `$opName` accepts only integers!",
+                context = context,
+                expectedType = TypeError.Expected.INTEGER,
+                actualValue = actualValue
+            )
     }
 
 }

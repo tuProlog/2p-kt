@@ -66,8 +66,14 @@ internal class OperatorSetTest {
     @Test
     fun sameContentsOperatorSetsAreEquals() {
         assertEquals(OperatorSet(), OperatorSet())
-        assertEquals(operatorSet, OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator))
-        assertEquals(operatorSet, OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator))
+        assertEquals(
+            operatorSet,
+            OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator)
+        )
+        assertEquals(
+            operatorSet,
+            OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator)
+        )
 
         assertNotEquals(operatorSet, OperatorSet())
     }
@@ -80,11 +86,21 @@ internal class OperatorSetTest {
             val (expectedFunctor, expectedSpecifier, expectedPriority) = expectedTriple
 
             // expectedOperator should be present in OperatorSet
-            val actualOperator = OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedSpecifier, expectedPriority) }
+            val actualOperator =
+                OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedSpecifier, expectedPriority) }
 
-            assertEquals(expectedFunctor, actualOperator.functor, "$actualOperator functor expected to be: $expectedFunctor")
-            assertEquals(expectedSpecifier, actualOperator.specifier, "$actualOperator specifier expected to be: $expectedSpecifier")
-            assertEquals(expectedPriority, actualOperator.priority, "$actualOperator priority expected to be: $expectedPriority")
+            assertEquals(
+                expectedFunctor, actualOperator.functor,
+                "$actualOperator functor expected to be: $expectedFunctor"
+            )
+            assertEquals(
+                expectedSpecifier, actualOperator.specifier,
+                "$actualOperator specifier expected to be: $expectedSpecifier"
+            )
+            assertEquals(
+                expectedPriority, actualOperator.priority,
+                "$actualOperator priority expected to be: $expectedPriority"
+            )
         }
     }
 }
