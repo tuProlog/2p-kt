@@ -44,7 +44,6 @@ internal object SolveUtils {
     internal val aSolution = Solution.No(Truth.fail())
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
-        override fun shouldCutExecuteInPrimitive() = throw NotImplementedError()
     }
 
     /** The success response to default values request */

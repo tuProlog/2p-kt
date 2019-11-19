@@ -59,7 +59,7 @@ internal class StateGoalEvaluation(
         private fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError) =
                 newSolveRequest(
                         Struct.of(Throw.functor, error.errorStruct),
-                        baseSideEffectManager = error.context.getSideEffectManager()
+                        baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager
                 )
     }
 }

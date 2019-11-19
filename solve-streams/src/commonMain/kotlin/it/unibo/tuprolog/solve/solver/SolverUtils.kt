@@ -61,23 +61,19 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
  * @param baseSideEffectManager The base side effect manager to be injected in the new solve request, if different from physical parent request one
  * @param currentTime The current time instant on new request creation, if different from method invocation time instant
  * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
- * @param logicalParentRequest The Solve Request to be considered the "logical parent" of new request, if different from receiver request
  */
 internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
         newGoal: Struct,
         toAddSubstitutions: Substitution = Substitution.empty(),
-        baseSideEffectManager: SideEffectManagerImpl? = context.sideEffectManager,
+        baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
         currentTime: TimeInstant = currentTimeInstant(),
-        isChoicePointChild: Boolean = false,
-        logicalParentRequest: Solve.Request<ExecutionContextImpl> = this
+        isChoicePointChild: Boolean = false
 ): Solve.Request<ExecutionContextImpl> = copy(
         newGoal.extractSignature(),
         newGoal.argsList,
         context.copy(
                 substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
-                sideEffectManager = baseSideEffectManager
-                        ?.creatingNewRequest(context, isChoicePointChild, logicalParentRequest)
-                        ?: context.sideEffectManager
+                sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
         ),
         requestIssuingInstant = currentTime,
         executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
