@@ -42,6 +42,8 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
      * @param accumulatedSubstitutions This is a substitution accumulator, that maintains the diff from the [mainRequest] substitution
      * @param previousResponseSideEffectManager This is the previous response side effect manager, needed to propagate information during execution
      * @param previousGoalsHadAlternatives This signals if previous conjunction goals had unexplored alternatives
+     *
+     * @return The boolean value signaling if the following goals executed the cut or not
      */
     private suspend fun SequenceScope<Solve.Response>.solveConjunctionGoals(
         mainRequest: Solve.Request<ExecutionContextImpl>,
