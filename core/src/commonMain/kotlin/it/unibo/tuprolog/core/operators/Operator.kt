@@ -3,7 +3,8 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.*
 
 /** Class representing a Prolog Operator */
-class Operator(val functor: String, val specifier: Specifier, val priority: Int) : Comparable<Operator> {
+class Operator(val functor: String, val specifier: Specifier, val priority: Int) :
+    Comparable<Operator>, ToTermConvertible {
 
     override fun compareTo(other: Operator): Int =
         when {
@@ -17,8 +18,7 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
             }
         }
 
-    /** Creates a Term from this operator */
-    fun toTerm(): Struct =
+    override fun toTerm(): Struct =
         Struct.of(FUNCTOR, priority.toTerm(), specifier.toTerm(), functor.toAtom())
 
     override fun equals(other: Any?): Boolean {

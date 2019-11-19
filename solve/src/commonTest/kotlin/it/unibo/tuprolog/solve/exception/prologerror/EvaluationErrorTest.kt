@@ -33,7 +33,7 @@ internal class EvaluationErrorTest {
     @Test
     fun evaluationErrorTypeCorrect() {
         assertEquals(
-            Struct.of(correctTypeFunctor, testErrorType.toAtom()),
+            Struct.of(correctTypeFunctor, testErrorType.toTerm()),
             aCallableTypeError.type
         )
     }

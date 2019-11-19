@@ -16,7 +16,7 @@ internal class TypeErrorExpectedTest {
     @Test
     fun typeErrorExpectedToAtomWorksAsExpected() {
         TypeErrorExpectedUtils.allNamesToInstances.forEach { (name, instance) ->
-            assertEquals(Atom.of(name), instance.toAtom())
+            assertEquals(Atom.of(name), instance.toTerm())
         }
     }
 
@@ -46,7 +46,7 @@ internal class TypeErrorExpectedTest {
         TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
             assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name))!!)
             assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name.toUpperCase()))!!)
-            assertSame(instance, TypeError.Expected.fromTerm(instance.toAtom())!!)
+            assertSame(instance, TypeError.Expected.fromTerm(instance.toTerm())!!)
         }
     }
 

@@ -14,7 +14,7 @@ sealed class Equation<out A : Term, out B : Term>(
     open val lhs: A,
     /** The right-hand side of the equation */
     open val rhs: B
-) {
+) : ToTermConvertible {
 
 
     /** An equation of identical [Term]s */
@@ -31,6 +31,8 @@ sealed class Equation<out A : Term, out B : Term>(
     /** A contradicting equation, trying to equate non equal [Term]s */
     data class Contradiction<out A : Term, out B : Term>(override val lhs: A, override val rhs: B) :
         Equation<A, B>(lhs, rhs)
+
+    override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
     fun toPair(): Pair<A, B> = Pair(lhs, rhs)
 
@@ -53,8 +55,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates an Equation with provided left-hand and right-hand sides */
         fun <A : Term, B : Term> of(
-            lhs: A,
-            rhs: B,
+            lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Equation<Term, Term> =
             when {
@@ -114,5 +115,7 @@ fun <A : Var, B : Term> Iterable<Equation<A, B>>.toSubstitution(): Substitution 
 fun Substitution.toEquations(): KtList<Equation<Var, Term>> =
     this.entries.map { (variable, term) -> Equation.Assignment(variable, term) }
 
+/** Creates an equation with [this] and [that] terms */
+@Suppress("unused", "FunctionName")
 @JsName("termEq")
 infix fun Term.`=`(that: Term): Equation<Term, Term> = Equation.of(this, that)

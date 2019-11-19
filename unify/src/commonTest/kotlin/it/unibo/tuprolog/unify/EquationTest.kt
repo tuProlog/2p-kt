@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.testutils.EquationUtils
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyAssignment
@@ -74,7 +71,8 @@ internal class EquationTest {
 
     @Test
     fun equationOfShouldReturnCorrectNumberOfEquations() {
-        assertEquals(EquationUtils.mixedAllEquations.count(),
+        assertEquals(
+            EquationUtils.mixedAllEquations.count(),
             EquationUtils.mixedAllEquations.map { Equation.of(it) }.count()
         )
     }
@@ -156,6 +154,13 @@ internal class EquationTest {
         val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toPair)
 
         assertEquals(EquationUtils.mixedAllEquations, toBeTested)
+    }
+
+    @Test
+    fun toTermWorksAsExpected() {
+        val toBeTested = EquationUtils.mixedAllEquations.map { Equation.of(it) }.map(Equation<*, *>::toTerm)
+
+        assertEquals(EquationUtils.mixedAllEquations.map { (lhs, rhs) -> Struct.of("=", lhs, rhs) }, toBeTested)
     }
 
     @Test
