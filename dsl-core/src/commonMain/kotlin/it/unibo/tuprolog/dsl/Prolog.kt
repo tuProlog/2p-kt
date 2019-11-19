@@ -11,6 +11,7 @@ interface Prolog : Scope {
 
     fun Any.toTerm(): Term = when (this) {
         is Term -> this
+        is ToTermConvertible -> this.toTerm()
         is BigDecimal -> numOf(this)
         is Double -> numOf(this)
         is Float -> numOf(this)
