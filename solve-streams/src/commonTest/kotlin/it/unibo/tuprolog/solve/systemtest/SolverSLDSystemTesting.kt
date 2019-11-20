@@ -100,8 +100,13 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
-    fun testNotRule() {
-        prototype.testNotRule()
+    fun testNotPrimitive() {
+        prototype.testNotPrimitive()
+    }
+
+    @Test
+    fun testNotModularity() {
+        prototype.testNotModularity()
     }
 
     @Test

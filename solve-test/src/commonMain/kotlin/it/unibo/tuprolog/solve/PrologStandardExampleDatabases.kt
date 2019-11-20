@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
+import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
 import kotlin.collections.listOf as ktListOf
 
@@ -294,17 +292,6 @@ object PrologStandardExampleDatabases {
      */
     val notStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
-            val notSynonymReplacer = object : TermVisitor<Term> {
-                override fun defaultValue(term: Term): Term = term
-                override fun visit(term: Struct): Term = when (term.functor) {
-                    "\\+" -> "not"(term.args.single().accept(this))
-                    else -> term.args.map { it.accept(this) }.let {
-                        if (it.none()) term
-                        else term.functor(it.first(), *it.drop(1).toTypedArray())
-                    }
-                }
-            }
-
             ktListOf(
                 (("X" `=` 3) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ yes("X" to 3) }),
                 "\\+"("fail").hasSolutions({ yes() }),
@@ -325,7 +312,7 @@ object PrologStandardExampleDatabases {
             ).flatMap { (goal, solutions) ->
                 ktListOf(
                     goal to solutions,
-                    (goal.accept(notSynonymReplacer) as Struct).let { it to solutions.changeQueriesTo(it) }
+                    goal.replaceAllFunctors("\\+", "not").let { it to solutions.changeQueriesTo(it) }
                 )
             }
         }

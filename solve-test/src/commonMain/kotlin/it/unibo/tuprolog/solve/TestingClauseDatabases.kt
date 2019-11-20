@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -17,6 +20,23 @@ object TestingClauseDatabases {
 
     internal val haltException = HaltException(context = DummyInstances.executionContext)
     internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
+
+    /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
+    internal fun Struct.replaceAllFunctors(oldFunctor: String, withFunctor: String): Struct =
+        prolog {
+            val synonymReplacer = object : TermVisitor<Term> {
+                override fun defaultValue(term: Term): Term = term
+                override fun visit(term: Struct): Term = when (term.functor) {
+                    oldFunctor -> withFunctor(term.args.single().accept(this))
+                    else -> term.args.map { it.accept(this) }.let {
+                        if (it.none()) term
+                        else term.functor(it.first(), *it.drop(1).toTypedArray())
+                    }
+                }
+            }
+
+            this@replaceAllFunctors.accept(synonymReplacer) as Struct
+        }
 
     /**
      * A database containing the following facts:

@@ -26,6 +26,7 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrack
 import it.unibo.tuprolog.solve.TestingClauseDatabases.haltTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
@@ -45,7 +46,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     private fun assertSolverSolutionsCorrect(
         solver: Solver,
         goalToSolutions: List<Pair<Struct, List<Solution>>>,
-        maxDuration: TimeDuration = 1000L
+        maxDuration: TimeDuration = 500L
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
             val solutions = solver.solve(goal, maxDuration).toList()
@@ -182,9 +183,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                             (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
 
                             (goal and false).run {
-                                if (expectedSolutions.any { it is Solution.Halt })
-                                    to(expectedSolutions.changeQueriesTo(this))
-                                else hasSolutions({ no() })
+                                when {
+                                    expectedSolutions.any { it is Solution.Halt } ->
+                                        to(expectedSolutions.changeQueriesTo(this))
+                                    else -> hasSolutions({ no() })
+                                }
                             },
 
                             (false and goal).hasSolutions({ no() })
@@ -257,9 +260,12 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
                         "catch"(goal, `_`, false).run {
-                            if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException })
-                                hasSolutions({ no() })
-                            else to(expectedSolutions.changeQueriesTo(this))
+                            when {
+                                expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException } ->
+                                    hasSolutions({ no() })
+                                else ->
+                                    to(expectedSolutions.changeQueriesTo(this))
+                            }
                         },
                         "catch"(goal, "notUnifyingCatcher", false).run {
                             to(expectedSolutions.changeQueriesTo(this))
@@ -284,11 +290,43 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     }
 
     /** Not rule testing with [notStandardExampleDatabase] and [notStandardExampleDatabaseNotableGoalToSolution] */
-    fun testNotRule() {
+    fun testNotPrimitive() {
         assertSolverSolutionsCorrect(
             solverOf(staticKB = notStandardExampleDatabase),
             notStandardExampleDatabaseNotableGoalToSolution
         )
+    }
+
+    /** A test in which all testing goals are called through the Not rule */
+    fun testNotModularity() {
+        prolog {
+            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+                listOfGoalToSolutions
+                    .flatMap { (goal, expectedSolutions) ->
+                        ktListOf(
+                            "\\+"(goal).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
+                            }
+                        )
+                    }
+                    .flatMap { (goal, expectedSolutions) ->
+                        ktListOf(
+                            goal to expectedSolutions,
+                            goal.replaceAllFunctors("\\+", "not")
+                                .let { it to expectedSolutions.changeQueriesTo(it) }
+                        )
+                    }
+            }.forEach { (database, goalToSolutions) ->
+                assertSolverSolutionsCorrect(
+                    solverOf(staticKB = database),
+                    goalToSolutions
+                )
+            }
+        }
     }
 
     fun testFailure() {
