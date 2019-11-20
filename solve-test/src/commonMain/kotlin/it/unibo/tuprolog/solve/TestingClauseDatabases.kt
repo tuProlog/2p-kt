@@ -16,7 +16,7 @@ import kotlin.collections.listOf as ktListOf
 object TestingClauseDatabases {
 
     internal val haltException = HaltException(context = DummyInstances.executionContext)
-    private val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
+    internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
 
     /**
      * A database containing the following facts:
@@ -322,6 +322,8 @@ object TestingClauseDatabases {
      * ?- catch(true, _, fail).
      * ?- catch(catch(throw(external(deepBall)), internal(I), fail), external(E), true).
      * ?- catch(throw(first), X, throw(second)).
+     * ?- catch(throw(hello), X, true).
+     * ?- catch((throw(hello), fail), X, true).
      * ```
      */
     val catchTestingGoalsToSolutions by lazy {
@@ -332,7 +334,9 @@ object TestingClauseDatabases {
                     .hasSolutions({ yes("E" to "deepBall") }),
                 "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
                     { halt(haltException) }
-                )
+                ),
+                "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
+                "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
             )
         }
     }

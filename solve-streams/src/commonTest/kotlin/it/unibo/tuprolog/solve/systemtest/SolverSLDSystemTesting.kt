@@ -100,6 +100,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testNotRule() {
+        prototype.testNotRule()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

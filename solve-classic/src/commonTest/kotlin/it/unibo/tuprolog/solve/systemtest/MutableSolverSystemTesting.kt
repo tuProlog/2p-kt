@@ -114,6 +114,12 @@ class MutableSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    @Ignore // TODO (issue #53)
+    fun testNotRule() {
+        prototype.testNotRule()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

@@ -10,6 +10,8 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStand
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
@@ -30,6 +32,7 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.exception.TimeOutException
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -39,9 +42,13 @@ import kotlin.collections.listOf as ktListOf
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
     /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
-    private fun assertSolverSolutionsCorrect(solver: Solver, goalToSolutions: List<Pair<Struct, List<Solution>>>) {
+    private fun assertSolverSolutionsCorrect(
+        solver: Solver,
+        goalToSolutions: List<Pair<Struct, List<Solution>>>,
+        maxDuration: TimeDuration = 1000L
+    ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            val solutions = solver.solve(goal).toList()
+            val solutions = solver.solve(goal, maxDuration).toList()
 
             assertSolutionEquals(solutionList, solutions)
         }
@@ -125,13 +132,11 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
     /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
     fun testMaxDurationParameterAndTimeOutException() {
-        val solver = solverOf(staticKB = infiniteComputationDatabase)
-
-        infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
-            val solutions = solver.solve(goal, maxDuration = 100L).toList()
-
-            assertSolutionEquals(solutionList, solutions)
-        }
+        assertSolverSolutionsCorrect(
+            solverOf(staticKB = infiniteComputationDatabase),
+            infiniteComputationDatabaseNotableGoalToSolution,
+            100L
+        )
     }
 
     /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
@@ -252,7 +257,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
                         "catch"(goal, `_`, false).run {
-                            if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() })
+                            if (expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException })
                                 hasSolutions({ no() })
                             else to(expectedSolutions.changeQueriesTo(this))
                         },
@@ -275,6 +280,14 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         assertSolverSolutionsCorrect(
             solverOf(),
             haltTestingGoalsToSolutions
+        )
+    }
+
+    /** Not rule testing with [notStandardExampleDatabase] and [notStandardExampleDatabaseNotableGoalToSolution] */
+    fun testNotRule() {
+        assertSolverSolutionsCorrect(
+            solverOf(staticKB = notStandardExampleDatabase),
+            notStandardExampleDatabaseNotableGoalToSolution
         )
     }
 
