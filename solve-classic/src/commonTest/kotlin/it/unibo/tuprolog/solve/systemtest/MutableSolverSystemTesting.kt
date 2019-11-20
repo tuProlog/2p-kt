@@ -127,6 +127,12 @@ class MutableSolverSystemTesting : SolverFactory {
 
     @Test
     @Ignore // TODO (issue #52)
+    fun testIfThenRule() {
+        prototype.testIfThenRule()
+    }
+
+    @Test
+    @Ignore // TODO (issue #52)
     fun testIfTheElseRule() {
         prototype.testIfThenElseRule()
     }

@@ -320,6 +320,46 @@ object PrologStandardExampleDatabases {
     }
 
     /**
+     * The database used in Prolog standard while writing examples for If-Then
+     * ```prolog
+     * legs(A, 6) :- insect(A).
+     * legs(horse, 4).
+     * insect(bee).
+     * insect(ant).
+     * ```
+     */
+    val ifThenStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                { "legs"("A", 6) `if` "insect"("A") },
+                { "legs"("horse", 4) },
+                { "insect"("bee") },
+                { "insect"("ant") }
+            )
+        }
+    }
+
+    /**
+     * Notable [ifThenStandardExampleDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- X = 0 -> true.
+     * ?- legs(A, 6) -> true.
+     * ?- X \= 0 -> true.
+     * ?- fail -> (true ; true).
+     * ```
+     */
+    val ifThenStandardExampleDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                ("->"("X" `=` 0, true)).hasSolutions({ yes("X" to 0) }),
+                ("->"("legs"("A", 6), true)).hasSolutions({ yes("A" to "bee") }),
+                ("->"("\\="("X", 0), true)).hasSolutions({ no() }),
+                ("->"(false, ";"(true, true))).hasSolutions({ no() })
+            )
+        }
+    }
+
+    /**
      * Notable Prolog Standard example request goals and respective expected [Solution]s for If-Then-Else
      * ```prolog
      * ?- (X = 0 -> true ; fail).
@@ -353,6 +393,7 @@ object PrologStandardExampleDatabases {
             callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution,
             catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
             notStandardExampleDatabase to notStandardExampleDatabaseNotableGoalToSolution,
+            ifThenStandardExampleDatabase to ifThenStandardExampleDatabaseNotableGoalToSolution,
             ClauseDatabase.empty() to ifThenElseStandardExampleNotableGoalToSolution
         )
     }
