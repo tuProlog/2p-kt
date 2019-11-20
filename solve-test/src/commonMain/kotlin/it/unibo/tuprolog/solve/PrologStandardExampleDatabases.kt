@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
@@ -291,15 +294,26 @@ object PrologStandardExampleDatabases {
      */
     val notStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
+            val notSynonymReplacer = object : TermVisitor<Term> {
+                override fun defaultValue(term: Term): Term = term
+                override fun visit(term: Struct): Term = when (term.functor) {
+                    "\\+" -> "not"(term.args.single().accept(this))
+                    else -> term.args.map { it.accept(this) }.let {
+                        if (it.none()) term
+                        else term.functor(it.first(), *it.drop(1).toTypedArray())
+                    }
+                }
+            }
+
             ktListOf(
                 (("X" `=` 3) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ yes("X" to 3) }),
                 "\\+"("fail").hasSolutions({ yes() }),
                 ("\\+"("!") or ("X" `=` 1)).hasSolutions({ yes("X" to 1) }),
-//                ("\\+"(("X" `=` 1) or ("X" `=` 2)) and ("X" `=` 3)).hasSolutions({ no() }), TODO these are not possible because the rule implementing the `not` finish with "fail" and a Solution.No cannot hold any substitution! Hence a primitive implementation is needed to implement full correct behaviour
-//                (("X" `=` 1) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ no() }),
+                ("\\+"(("X" `=` 1) or ("X" `=` 2)) and ("X" `=` 3)).hasSolutions({ no() }),
+                (("X" `=` 1) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ no() }),
                 "\\+"("fail" and 1).hasSolutions({ halt(haltException) }),
 
-                "shave"("barber", "'Donald'").hasSolutions({ yes()}),
+                "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
 
                 "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "a")).hasSolutions({ yes() }),
@@ -308,7 +322,12 @@ object PrologStandardExampleDatabases {
 
                 atomOf("p1").hasSolutions({ no() }),
                 atomOf("p2").hasSolutions({ yes() })
-            )
+            ).flatMap { (goal, solutions) ->
+                ktListOf(
+                    goal to solutions,
+                    (goal.accept(notSynonymReplacer) as Struct).let { it to solutions.changeQueriesTo(it) }
+                )
+            }
         }
     }
 

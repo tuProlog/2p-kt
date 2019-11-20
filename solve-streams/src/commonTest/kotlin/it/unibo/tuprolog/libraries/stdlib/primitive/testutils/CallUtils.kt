@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Call
 import it.unibo.tuprolog.libraries.stdlib.primitive.Conjunction
@@ -91,7 +88,7 @@ internal object CallUtils {
                             TypeError(
                                 context = aContext,
                                 expectedType = TypeError.Expected.CALLABLE,
-                                actualValue = Tuple.of(Truth.`true`(), Integer.of(1))
+                                actualValue = true and 1
                             )
                         ) {
                             SystemError(context = aContext, cause = this, extraData = this.errorStruct)
