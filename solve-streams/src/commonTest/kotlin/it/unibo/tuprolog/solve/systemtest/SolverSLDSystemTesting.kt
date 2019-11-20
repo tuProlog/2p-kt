@@ -110,6 +110,11 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testIfTheElseRule() {
+        prototype.testIfThenElseRule()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

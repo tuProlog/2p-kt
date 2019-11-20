@@ -10,7 +10,7 @@ object CommonRules : ClauseDatabase by ClauseDatabase.of(
     { ruleOf(structOf("not", varOf("X")), structOf("\\+", varOf("X"))) },
     { ruleOf(structOf(";", varOf("A"), whatever()), varOf("A")) },
     { ruleOf(structOf(";", whatever(), varOf("B")), varOf("B")) },
-    { ruleOf(structOf("->", varOf("A"), varOf("B")), structOf(";", structOf("\\+", varOf("A")), varOf("B"))) },
+    { ruleOf(structOf("->", varOf("Cond"), varOf("Then")), varOf("Cond"), atomOf("!"), varOf("Then")) },
     { factOf(structOf("member", varOf("H"), consOf(varOf("H"), whatever()))) },
     {
         ruleOf(

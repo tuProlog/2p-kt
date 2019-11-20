@@ -120,9 +120,15 @@ class MutableSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO (issue #53)
+    @Ignore // TODO (issue #53, #52)
     fun testNotModularity() {
         prototype.testNotModularity()
+    }
+
+    @Test
+    @Ignore // TODO (issue #52)
+    fun testIfTheElseRule() {
+        prototype.testIfThenElseRule()
     }
 
     @Test

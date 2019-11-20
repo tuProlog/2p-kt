@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExam
 import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
 import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
+import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -318,6 +319,31 @@ object PrologStandardExampleDatabases {
         }
     }
 
+    /**
+     * Notable Prolog Standard example request goals and respective expected [Solution]s for If-Then-Else
+     * ```prolog
+     * ?- (X = 0 -> true ; fail).
+     * ?- (X = 1, (X = 0 -> fail ; true)).
+     * ?- (((!, X = 1, fail) -> true ; fail) ; X = 2).
+     * ?- fail -> true ; true.
+     * ?- ((!, X = 1, fail) -> true ; fail).
+     * ```
+     */
+    val ifThenElseStandardExampleNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                ("->"("X" `=` 0, true) or false).hasSolutions(
+                    { yes("X" to 0) },
+                    { no() }
+                ),
+                ("X" `=` 1 and ("->"("X" `=` 0, false) or true)).hasSolutions({ yes("X" to 1) }),
+                (("->"("!" and ("X" `=` 1) and false, true) or false) or ("X" `=` 2)).hasSolutions({ yes("X" to 2) }),
+                ("->"(false, true) or true).hasSolutions({ yes() }),
+                ("->"("!" and ("X" `=` 1) and false, true) or false).hasSolutions({ no() })
+            )
+        }
+    }
+
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
     val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
@@ -326,7 +352,8 @@ object PrologStandardExampleDatabases {
             conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution,
             callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution,
             catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
-            notStandardExampleDatabase to notStandardExampleDatabaseNotableGoalToSolution
+            notStandardExampleDatabase to notStandardExampleDatabaseNotableGoalToSolution,
+            ClauseDatabase.empty() to ifThenElseStandardExampleNotableGoalToSolution
         )
     }
 }
