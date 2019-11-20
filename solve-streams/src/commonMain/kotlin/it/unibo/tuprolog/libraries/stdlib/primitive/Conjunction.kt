@@ -66,7 +66,9 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                 cutExecuted = true
 
             when {
-                goalResponse.solution is Solution.Yes && moreThanOne(goals.asSequence()) ->
+                goalResponse.sideEffectManager?.shouldExecuteThrowCut() == false &&
+                        goalResponse.solution is Solution.Yes &&
+                        moreThanOne(goals.asSequence()) ->
                     if (
                         solveConjunctionGoals(
                             mainRequest,
@@ -82,7 +84,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                         yield(mainRequest.replyWith(goalResponse))
 
             }
-            if (cutExecuted) return true // cut other alternatives of current and previous goals
+            if (cutExecuted || goalResponse.solution is Solution.Halt) return true // cut other alternatives of current and previous goals
         }
         return cutExecuted
     }

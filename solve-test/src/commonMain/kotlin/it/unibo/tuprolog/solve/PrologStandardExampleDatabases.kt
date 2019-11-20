@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
+import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
+import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -129,6 +131,11 @@ object PrologStandardExampleDatabases {
                     { yes("X" to "bee") },
                     { yes("X" to "bee") },
                     { no() }
+                ),
+                (("insect"("X") and "fly"("X")) or ("legs"("X", 6) and "fly"("X"))).hasSolutions(
+                    { yes("X" to "bee") },
+                    { yes("X" to "bee") },
+                    { no() }
                 )
             )
         }
@@ -230,6 +237,87 @@ object PrologStandardExampleDatabases {
         }
     }
 
+    /**
+     * The database used in Prolog standard while writing examples for Not
+     * ```prolog
+     * shave(barber, X) :- \+ shave(X, X).
+     *
+     * test_Prolog_unifiable(X, Y) :- \+ \+ X = Y.
+     *
+     * p1 :- \+ q1.
+     * q1 :- fail.
+     * q1 :- true.
+     * p2 :- \+ q2.
+     * q2 :- !, fail.
+     * q2 :- true.
+     * ```
+     */
+    val notStandardExampleDatabase by lazy {
+        prolog {
+            theory(
+                { "shave"("barber", "X") `if` "not"("shave"("X", "X")) },
+
+                { "test_Prolog_unifiable"("X", "Y") `if` "not"("not"("X" `=` "Y")) },
+
+                { "p1" `if` "not"("q1") },
+                { "q1" `if` false },
+                { "q1" `if` true },
+                { "p2" `if` "not"("q2") },
+                { "q2" `if` ("!" and false) },
+                { "q2" `if` true }
+            )
+        }
+    }
+
+    /**
+     * Notable [notStandardExampleDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- X = 3, \+((X = 1 ; X = 2)).
+     * ?- \+(fail).
+     * ?- \+(!) ; X = 1.
+     * ?- \+((X = 1 ; X = 2)), X = 3.
+     * ?- X = 1, \+((X = 1 ; X = 2)).
+     * ?- \+((fail, 1)).
+     *
+     * ?- shave(barber, 'Donald').
+     * ?- shave(barber, barber).
+     *
+     * ?- test_Prolog_unifiable(f(a, X), f(X, a)).
+     * ?- test_Prolog_unifiable(f(a, X), f(X, b)).
+     * ?- test_Prolog_unifiable(X, f(X)).
+     *
+     * ?- p1.
+     * ?- p2.
+     * ```
+     */
+    val notStandardExampleDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                (("X" `=` 3) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ yes("X" to 3) }),
+                "\\+"("fail").hasSolutions({ yes() }),
+                ("\\+"("!") or ("X" `=` 1)).hasSolutions({ yes("X" to 1) }),
+                ("\\+"(("X" `=` 1) or ("X" `=` 2)) and ("X" `=` 3)).hasSolutions({ no() }),
+                (("X" `=` 1) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ no() }),
+                "\\+"("fail" and 1).hasSolutions({ halt(haltException) }),
+
+                "shave"("barber", "'Donald'").hasSolutions({ yes() }),
+                "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
+
+                "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "a")).hasSolutions({ yes() }),
+                "test_Prolog_unifiable"("f"("a", "X"), "f"("X", "b")).hasSolutions({ no() }),
+                "test_Prolog_unifiable"("X", "f"("X")).hasSolutions({ no() }),
+
+                atomOf("p1").hasSolutions({ no() }),
+                atomOf("p2").hasSolutions({ yes() })
+            ).flatMap { (goal, solutions) ->
+                ktListOf(
+                    goal to solutions,
+                    goal.replaceAllFunctors("\\+", "not").let { it to solutions.changeQueriesTo(it) }
+                )
+            }
+        }
+    }
+
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
     val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
@@ -237,7 +325,8 @@ object PrologStandardExampleDatabases {
             prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution,
             conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution,
             callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution,
-            catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution
+            catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
+            notStandardExampleDatabase to notStandardExampleDatabaseNotableGoalToSolution
         )
     }
 }

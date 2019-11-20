@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
@@ -36,7 +37,7 @@ internal class StateRuleSelection(
 
             else -> with(solve.context) {
                 matchingRules.orderWithStrategy(this, solverStrategies::clauseChoiceStrategy)
-            }.map { it.freshCopy() }
+            }.map { it.prepareForExecution().freshCopy() as Rule }
                 .forEachWithLookahead { refreshedRule, hasAlternatives ->
                     val unifyingSubstitution = currentGoal mguWith refreshedRule.head
 

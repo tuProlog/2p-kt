@@ -32,6 +32,8 @@ internal object CatchUtils {
      * - `catch(true, _, fail).` **will result in** `Yes()`
      * - `catch(catch(throw(external(deepBall)), internal(I), fail), external(E), true).` **will result in** `Yes(E -> deepBall)`
      * - `catch(throw(first), X, throw(second)).` **will result in** `Halt()`
+     * - `catch(throw(hello), X, true).` **will result in** `Yes(X -> hello)`
+     * - `catch((throw(hello), fail), X, true).`  **will result in** `Yes(X -> hello)`
      * - Plus all [CallUtils.requestSolutionMap] in the form `catch(callGoal, _, fail).` with same result as `callGoal`
      * - Plus all [CallUtils.requestSolutionMap] in the form `catch(callGoalArgument, _, fail).` with same result as `callArgumentGoal`
      * - Plus all [CallUtils.requestToErrorSolutionMap] in the form `catch(callGoal, X, true)` resulting in `X` to be bound to the error struct thrown
@@ -41,7 +43,7 @@ internal object CatchUtils {
             *catchTestingGoalsToSolutions.map { (goal, solutionList) ->
                 createSolveRequest(
                     goal,
-                    primitives = mapOf(*ktListOf(Call, Catch, Throw).map { it.descriptionPair }.toTypedArray())
+                    primitives = mapOf(*ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray())
                 ) to solutionList
             }.toTypedArray(),
 

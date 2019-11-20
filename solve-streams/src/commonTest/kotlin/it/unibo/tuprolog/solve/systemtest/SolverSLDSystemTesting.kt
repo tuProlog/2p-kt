@@ -100,6 +100,16 @@ class SolverSLDSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testNotPrimitive() {
+        prototype.testNotPrimitive()
+    }
+
+    @Test
+    fun testNotModularity() {
+        prototype.testNotModularity()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }
