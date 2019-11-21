@@ -10,6 +10,9 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStand
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenElseStandardExampleNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenStandardExampleDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
@@ -289,7 +292,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         )
     }
 
-    /** Not rule testing with [notStandardExampleDatabase] and [notStandardExampleDatabaseNotableGoalToSolution] */
+    /** Not rule testing with [notStandardExampleDatabaseNotableGoalToSolution] */
     fun testNotPrimitive() {
         assertSolverSolutionsCorrect(
             solverOf(staticKB = notStandardExampleDatabase),
@@ -334,6 +337,22 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 )
             }
         }
+    }
+
+    /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
+    fun testIfThenRule(){
+        assertSolverSolutionsCorrect(
+            solverOf(staticKB = ifThenStandardExampleDatabase),
+            ifThenStandardExampleDatabaseNotableGoalToSolution
+        )
+    }
+
+    /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
+    fun testIfThenElseRule(){
+        assertSolverSolutionsCorrect(
+            solverOf(),
+            ifThenElseStandardExampleNotableGoalToSolution
+        )
     }
 
     fun testFailure() {
