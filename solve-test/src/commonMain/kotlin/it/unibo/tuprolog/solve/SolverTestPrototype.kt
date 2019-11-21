@@ -310,6 +310,13 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                                     expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
                                     else -> to(expectedSolutions.changeQueriesTo(this))
                                 }
+                            },
+                            "\\+"("\\+"(goal)).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
                             }
                         )
                     }
