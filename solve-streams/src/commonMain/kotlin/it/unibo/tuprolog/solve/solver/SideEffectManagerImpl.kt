@@ -6,11 +6,11 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Catch
 import it.unibo.tuprolog.libraries.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.unify.Unification.Companion.matches
 
 /**
- * Specific implementation of [SideEffectManager] for [SolverSLD]
+ * Specific implementation of [SideEffectManager] for [StreamsSolver]
  *
  * @author Enrico
  */
