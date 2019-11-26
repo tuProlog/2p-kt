@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.*
 
@@ -61,7 +61,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
         )
 
         var cutExecuted = false
-        SolverSLD.solve(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
+        StreamsSolver.solve(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
             if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -40,7 +40,7 @@ internal class StateGoalEvaluation(
             } catch (prologError: PrologError) {
                 // if primitive throws PrologError try to solve corresponding throw/1 request
 
-                responses = SolverSLD.solve(solve.newThrowSolveRequest(prologError))
+                responses = StreamsSolver.solve(solve.newThrowSolveRequest(prologError))
             }
 
             responses?.forEach {

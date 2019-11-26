@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
-class SolverSLDSystemTesting : SolverFactory {
+class StreamsSolverSystemTesting : SolverFactory {
 
     private val prototype = SolverTestPrototype(this)
 
@@ -17,7 +17,7 @@ class SolverSLDSystemTesting : SolverFactory {
         flags: PrologFlags,
         staticKB: ClauseDatabase,
         dynamicKB: ClauseDatabase
-    ): Solver = SolverSLD(libraries, flags, staticKB, dynamicKB)
+    ): Solver = StreamsSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
     fun testTrue() {

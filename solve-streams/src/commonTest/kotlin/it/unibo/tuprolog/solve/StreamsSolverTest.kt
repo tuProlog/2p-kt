@@ -6,15 +6,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [SolverSLD]
+ * Test class for [StreamsSolver]
  *
  * @author Enrico
  */
-internal class SolverSLDTest {
+internal class StreamsSolverTest {
 
     @Test
     fun defaultConstructorParameters() {
-        val toBeTested = SolverSLD()
+        val toBeTested = StreamsSolver()
 
         assertEquals(Libraries(), toBeTested.libraries)
         assertEquals(emptyMap(), toBeTested.flags)

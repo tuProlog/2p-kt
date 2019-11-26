@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.solver.*
 
 /**
@@ -18,7 +18,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
         sequence {
             val goalArgument = request.arguments.first()
 
-            SolverSLD.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
+            StreamsSolver.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
                 when {
                     // if i'm the catch selected by throw/1 primitive
                     goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
@@ -33,7 +33,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
                             )
                             .ensureNoMoreSelectableCatch(request.context)
 
-                        yieldAll(SolverSLD.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
+                        yieldAll(StreamsSolver.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
                     }
                     else -> yield(request.replyWith(goalResponse))
                 }

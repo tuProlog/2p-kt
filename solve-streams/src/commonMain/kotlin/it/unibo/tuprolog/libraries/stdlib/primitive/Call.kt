@@ -2,7 +2,7 @@ package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.solve.solver.*
 
@@ -17,7 +17,7 @@ internal object Call : PrimitiveWrapper<ExecutionContextImpl>("call", 1) {
         request.ensuringAllArgumentsAreInstantiated().arguments.single().let { toBeCalledGoal ->
             when {
                 toBeCalledGoal.isWellFormed() ->
-                    SolverSLD.solve(request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal())).map {
+                    StreamsSolver.solve(request.newSolveRequest(toBeCalledGoal.prepareForExecutionAsGoal())).map {
                         request.replyWith(
                             it.copy(
                                 sideEffectManager = it.sideEffectManager

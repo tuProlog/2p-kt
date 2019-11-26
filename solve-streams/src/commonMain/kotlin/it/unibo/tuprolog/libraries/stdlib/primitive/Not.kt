@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.newSolveRequest
 import it.unibo.tuprolog.solve.solver.replyWith
@@ -20,7 +20,7 @@ internal object Not : PrimitiveWrapper<ExecutionContextImpl>("\\+", 1) {
         sequence {
             val goalArgument = request.arguments.single()
 
-            SolverSLD.solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
+            StreamsSolver.solve(request.newSolveRequest(Struct.of(Call.functor, goalArgument))).forEach { goalResponse ->
                 when (goalResponse.solution) {
                     is Solution.Yes -> {
                         yield(request.replyFail())

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
@@ -55,12 +55,12 @@ internal object StateGoalEvaluationUtils {
                     to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(StreamsSolver.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
                 }
             } to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(SolverSLD.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(StreamsSolver.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
                     yield(it.replyFail())
                 }
             } to listOf(StateEnd.Halt::class)

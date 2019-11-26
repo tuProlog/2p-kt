@@ -5,12 +5,12 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.PrologFlags
-import it.unibo.tuprolog.solve.SolverSLD
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.SolverStrategies
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
- * The execution context implementation for [SolverSLD]
+ * The execution context implementation for [StreamsSolver]
  *
  * @author Enrico
  */
