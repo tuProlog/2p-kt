@@ -12,9 +12,9 @@ fun Solver.Companion.mutable(
     flags: PrologFlags = emptyMap(),
     staticKB: ClauseDatabase = ClauseDatabase.empty(),
     dynamicKB: ClauseDatabase = ClauseDatabase.empty()
-) = MutableSolver(libraries, flags, staticKB, dynamicKB)
+) = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
-data class MutableSolver(
+data class ClassicSolver(
     override val libraries: Libraries = Libraries(),
     /** Enabled flags */
     override val flags: PrologFlags = emptyMap(),
@@ -45,6 +45,5 @@ data class MutableSolver(
             }
         }
     }
-
 
 }

@@ -7,7 +7,7 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class MutableSolverSystemTesting : SolverFactory {
+class ClassicSolverSystemTesting : SolverFactory {
 
     private val prototype = SolverTestPrototype(this)
 
@@ -18,7 +18,7 @@ class MutableSolverSystemTesting : SolverFactory {
         flags: PrologFlags,
         staticKB: ClauseDatabase,
         dynamicKB: ClauseDatabase
-    ): Solver = MutableSolver(libraries, flags, staticKB, dynamicKB)
+    ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
     fun testTrue() {
