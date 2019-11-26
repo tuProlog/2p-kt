@@ -15,13 +15,13 @@ fun Solver.Companion.mutable(
 ) = MutableSolver(libraries, flags, staticKB, dynamicKB)
 
 data class MutableSolver(
-    override var libraries: Libraries = Libraries(),
+    override val libraries: Libraries = Libraries(),
     /** Enabled flags */
-    override var flags: PrologFlags = emptyMap(),
+    override val flags: PrologFlags = emptyMap(),
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
-    override var staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
-    override var dynamicKB: ClauseDatabase = ClauseDatabase.empty()
+    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty()
 ) : Solver {
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
@@ -37,13 +37,6 @@ data class MutableSolver(
 
         while (true) {
             state = state.next()
-
-            state.context.let { ctx ->
-                libraries = ctx.libraries
-                flags = ctx.flags
-                staticKB = ctx.staticKB
-                dynamicKB = ctx.dynamicKB
-            }
 
             if (state is EndState) {
                 yield(state.solution)
