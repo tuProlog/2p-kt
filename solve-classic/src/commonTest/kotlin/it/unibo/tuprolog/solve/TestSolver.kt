@@ -39,7 +39,7 @@ val staticKb = ClauseDatabase.of(
 )
 
 fun main(args: Array<String>) {
-    val solver: MutableSolver = MutableSolver(libraries = libraries, staticKB = staticKb)
+    val solver: ClassicSolver = ClassicSolver(libraries = libraries, staticKB = staticKb)
 
     println(libraries.theory)
     println(staticKb)
