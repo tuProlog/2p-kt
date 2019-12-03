@@ -27,9 +27,6 @@ fun ExecutionContextImpl.toRequest(
     Solve.Request(
         signature,
         arguments,
-        ExecutionContextImpl(
-            libraries, flags, staticKB, dynamicKB, substitution, query
-        ),
-        requestIssuingInstant = startTime, // TODO how to assign those field in this implementation?? is still needed?
+        copy(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, substitution = substitution),
         executionMaxDuration = maxDuration
     )

@@ -55,7 +55,6 @@ data class StateInit(override val context: ExecutionContextImpl) : AbstractState
                 goals = context.query.toGoals(),
                 rules = Cursor.empty(),
                 primitives = Cursor.empty(),
-                startTime = executionTime,
                 substitution = Substitution.empty(),
                 parent = null,
                 choicePoints = null,
@@ -413,11 +412,12 @@ sealed class AbstractEndState(override val solution: Solution, override val cont
 }
 
 data class StateEnd(override val solution: Solution, override val context: ExecutionContextImpl) :
-    AbstractEndState(solution, context) {
+AbstractEndState(solution, context) {
+
     override fun computeNext(): State {
         return if (context.hasOpenAlternatives) {
             StateBacktracking(
-                context.copy(step = nextStep())
+                context.copy(step = nextStep(), startTime = executionTime)
             )
         } else {
             super.computeNext()

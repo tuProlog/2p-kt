@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-fun Solver.Companion.mutable(
+fun Solver.Companion.classic(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
     staticKB: ClauseDatabase = ClauseDatabase.empty(),
@@ -30,7 +30,9 @@ data class ClassicSolver(
             libraries = libraries,
             flags = flags,
             staticKB = staticKB,
-            dynamicKB = dynamicKB
+            dynamicKB = dynamicKB,
+            startTime = currentTimeInstant(),
+            maxDuration = maxDuration
         )
 
         var state: State = StateInit(initialContext)

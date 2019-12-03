@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.systemtest
 
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
@@ -19,6 +20,22 @@ class ClassicSolverSystemTesting : SolverFactory {
         staticKB: ClauseDatabase,
         dynamicKB: ClauseDatabase
     ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
+
+    @Test
+    @Ignore
+    fun entryPointForManualTests() {
+        prolog {
+            val solver = Solver.classic(
+                staticKB = theoryOf(
+                    rule { "f"("X") impliedBy "f"("X") }
+                )
+            )
+
+            solver.solve("f"("X"), 1000).forEach {
+                println(it)
+            }
+        }
+    }
 
     @Test
     fun testTrue() {
