@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
-import it.unibo.tuprolog.unify.Unification.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * Implementation of primitive handling `throw/1` behaviour
