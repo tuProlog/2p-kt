@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.rete.AbstractLeafReteNode
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Rule]s */
 internal data class RuleNode(override val leafElements: MutableList<Rule> = mutableListOf()) :

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.function.ArithmeticEvaluator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.unify.Unification.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * Implementation of 'is'/2 predicate

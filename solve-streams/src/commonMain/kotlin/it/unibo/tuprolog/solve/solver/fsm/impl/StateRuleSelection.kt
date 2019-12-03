@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.*
 import it.unibo.tuprolog.solve.solver.fsm.*
-import it.unibo.tuprolog.unify.Unification.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 

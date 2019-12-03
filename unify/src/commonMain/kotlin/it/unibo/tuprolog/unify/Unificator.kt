@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 
-interface Unification {
+interface Unificator {
 
     /** The context (in terms of already present bindings) in which the unification is performed */
     val context: Substitution
@@ -39,7 +39,7 @@ interface Unification {
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
-        fun naive(context: Substitution = Substitution.empty()): Unification =
+        fun naive(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
                     when {
@@ -51,7 +51,7 @@ interface Unification {
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
-        fun strict(context: Substitution = Substitution.empty()): Unification =
+        fun strict(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
             }

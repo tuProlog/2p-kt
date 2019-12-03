@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory.rete.clause
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.theory.rete.AbstractLeafReteNode
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Directive]s */
 internal data class DirectiveNode(override val leafElements: MutableList<Directive> = mutableListOf()) :

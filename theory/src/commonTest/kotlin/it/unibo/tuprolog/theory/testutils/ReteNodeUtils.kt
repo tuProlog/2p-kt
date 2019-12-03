@@ -2,7 +2,7 @@ package it.unibo.tuprolog.theory.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.rete.ReteNode
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.math.min
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

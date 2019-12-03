@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
 import it.unibo.tuprolog.theory.rete.ReteNode
-import it.unibo.tuprolog.unify.Unification.Companion.matches
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** An intermediate node indexing by Rules head's arity */
 internal data class ArityNode(

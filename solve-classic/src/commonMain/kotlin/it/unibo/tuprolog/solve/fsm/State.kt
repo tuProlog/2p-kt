@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.unify.Unification.Companion.mguWith
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 

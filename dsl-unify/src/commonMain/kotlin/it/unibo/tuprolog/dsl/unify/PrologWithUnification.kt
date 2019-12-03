@@ -2,9 +2,9 @@ package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.dsl.Prolog
-import it.unibo.tuprolog.unify.Unification
+import it.unibo.tuprolog.unify.Unificator
 
-interface PrologWithUnification : Prolog, Unification {
+interface PrologWithUnification : Prolog, Unificator {
 
     infix fun Any.mguWith(other: Any): Substitution =
         this@PrologWithUnification.mgu(this.toTerm(), other.toTerm())
@@ -27,7 +27,7 @@ interface PrologWithUnification : Prolog, Unification {
     companion object {
         fun empty(): PrologWithUnification = PrologWithUnificationImpl()
 
-        fun of(unification: Unification): PrologWithUnification = PrologWithUnificationImpl(unification)
+        fun of(unificator: Unificator): PrologWithUnification = PrologWithUnificationImpl(unificator)
     }
 }
 

@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.dsl.Prolog
-import it.unibo.tuprolog.unify.Unification
+import it.unibo.tuprolog.unify.Unificator
 
-class PrologWithUnificationImpl(unification: Unification) :
-    PrologWithUnification, Prolog by Prolog.empty(), Unification by unification {
+class PrologWithUnificationImpl(unificator: Unificator) :
+    PrologWithUnification, Prolog by Prolog.empty(), Unificator by unificator {
 
-    constructor() : this(Unification.default)
+    constructor() : this(Unificator.default)
 }

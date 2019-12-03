@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 
-abstract class AbstractUnificationStrategy(override val context: Substitution = empty()) : Unification {
+abstract class AbstractUnificationStrategy(override val context: Substitution = empty()) : Unificator {
 
     /** The context converted to equivalent equations */
     private val contextEquations: Iterable<Equation<Var, Term>> by lazy { context.toEquations() }

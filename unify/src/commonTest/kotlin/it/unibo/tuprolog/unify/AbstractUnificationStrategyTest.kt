@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.unify.testutils.UnificationUtils
-import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMatchCorrect
-import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertMguCorrect
-import it.unibo.tuprolog.unify.testutils.UnificationUtils.assertUnifiedTermCorrect
-import it.unibo.tuprolog.unify.testutils.UnificationUtils.forEquationSequence
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMatchCorrect
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMguCorrect
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertUnifiedTermCorrect
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.forEquationSequence
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 internal class AbstractUnificationStrategyTest {
 
     /** A concrete strategy constructor */
-    private val myStrategyConstructor: (Substitution) -> Unification = {
+    private val myStrategyConstructor: (Substitution) -> Unificator = {
         object : AbstractUnificationStrategy(it) {
             override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
         }
@@ -35,73 +35,73 @@ internal class AbstractUnificationStrategyTest {
 
     @Test
     fun mguWorksAsExpectedWithPositiveExamples() {
-        assertMguCorrect(UnificationUtils.successfulUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
-        assertMguCorrect(UnificationUtils.successfulUnifications) { term1, term2 ->
+        assertMguCorrect(UnificatorUtils.successfulUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
+        assertMguCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
             myStrategy.mgu(term1, term2, false)
         }
     }
 
     @Test
     fun matchWorksAsExpectedWithPositiveExamples() {
-        assertMatchCorrect(UnificationUtils.successfulUnifications) { term1, term2 ->
+        assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
             myStrategy.match(term1, term2, true)
         }
-        assertMatchCorrect(UnificationUtils.successfulUnifications) { term1, term2 ->
+        assertMatchCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
             myStrategy.match(term1, term2, false)
         }
     }
 
     @Test
     fun unifyWorksAsExpectedWithPositiveExamples() {
-        assertUnifiedTermCorrect(UnificationUtils.successfulUnifications) { term1, term2 ->
+        assertUnifiedTermCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
             myStrategy.unify(term1, term2, true)
         }
-        assertUnifiedTermCorrect(UnificationUtils.successfulUnifications) { term1, term2 ->
+        assertUnifiedTermCorrect(UnificatorUtils.successfulUnifications) { term1, term2 ->
             myStrategy.unify(term1, term2, false)
         }
     }
 
     @Test
     fun mguWorksAsExpectedWithNegativeExamples() {
-        assertMguCorrect(UnificationUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
-        assertMguCorrect(UnificationUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
+        assertMguCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, true) }
+        assertMguCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
     }
 
     @Test
     fun matchWorksAsExpectedWithNegativeExamples() {
-        assertMatchCorrect(UnificationUtils.failedUnifications) { term1, term2 -> myStrategy.match(term1, term2, true) }
-        assertMatchCorrect(UnificationUtils.failedUnifications) { term1, term2 ->
+        assertMatchCorrect(UnificatorUtils.failedUnifications) { term1, term2 -> myStrategy.match(term1, term2, true) }
+        assertMatchCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
             myStrategy.match(term1, term2, false)
         }
     }
 
     @Test
     fun unifyWorksAsExpectedWithNegativeExamples() {
-        assertUnifiedTermCorrect(UnificationUtils.failedUnifications) { term1, term2 ->
+        assertUnifiedTermCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
             myStrategy.unify(term1, term2, true)
         }
-        assertUnifiedTermCorrect(UnificationUtils.failedUnifications) { term1, term2 ->
+        assertUnifiedTermCorrect(UnificatorUtils.failedUnifications) { term1, term2 ->
             myStrategy.unify(term1, term2, false)
         }
     }
 
     @Test
     fun mguWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertMguCorrect(UnificationUtils.occurCheckFailedUnifications) { term1, term2 ->
+        assertMguCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
             myStrategy.mgu(term1, term2, true)
         }
     }
 
     @Test
     fun matchWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertMatchCorrect(UnificationUtils.occurCheckFailedUnifications) { term1, term2 ->
+        assertMatchCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
             myStrategy.match(term1, term2, true)
         }
     }
 
     @Test
     fun unifyWithOccurCheckEnabledStopsExecutingWithFailureOnBadEquation() {
-        assertUnifiedTermCorrect(UnificationUtils.occurCheckFailedUnifications) { term1, term2 ->
+        assertUnifiedTermCorrect(UnificatorUtils.occurCheckFailedUnifications) { term1, term2 ->
             myStrategy.unify(term1, term2, true)
         }
     }
@@ -123,58 +123,58 @@ internal class AbstractUnificationStrategyTest {
 
     @Test
     fun sequenceOfEquationsSuccessUnification() {
-        forEquationSequence(::assertMguCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
-        forEquationSequence(::assertMguCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
 
-        forEquationSequence(::assertMatchCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
-        forEquationSequence(::assertMatchCorrect, UnificationUtils.successSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
-            UnificationUtils.successSequenceOfUnification,
+            UnificatorUtils.successSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
-            UnificationUtils.successSequenceOfUnification,
+            UnificatorUtils.successSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
     }
 
     @Test
     fun sequenceOfEquationsFailedUnification() {
-        forEquationSequence(::assertMguCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
-        forEquationSequence(::assertMguCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
 
-        forEquationSequence(::assertMatchCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
-        forEquationSequence(::assertMatchCorrect, UnificationUtils.failSequenceOfUnification, myStrategyConstructor)
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
         { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
-            UnificationUtils.failSequenceOfUnification,
+            UnificatorUtils.failSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
-            UnificationUtils.failSequenceOfUnification,
+            UnificatorUtils.failSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
     }

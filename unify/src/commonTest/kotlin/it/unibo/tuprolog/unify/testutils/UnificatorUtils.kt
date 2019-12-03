@@ -2,7 +2,7 @@ package it.unibo.tuprolog.unify.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Equation
-import it.unibo.tuprolog.unify.Unification
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.unify.`=`
 import kotlin.test.assertEquals
 import it.unibo.tuprolog.core.List.Companion as LogicList
@@ -23,11 +23,11 @@ private typealias CorrectnessMap<T1, T2> = Map<Equation<T1, T2>, Triple<Substitu
 
 
 /**
- * Utils singleton for testing [Unification]
+ * Utils singleton for testing [Unificator]
  *
  * @author Enrico
  */
-internal object UnificationUtils {
+internal object UnificatorUtils {
 
     private val aAtom = Atom.of("a")
     private val bAtom = Atom.of("b")
@@ -219,7 +219,7 @@ internal object UnificationUtils {
     /** Utility function to calculate the unifier for more than one equation, passing created context through different unification */
     private inline fun <T1 : Term, T2 : Term> multipleEquationMgu(
         equations: KtList<Equation<T1, T2>>,
-        unificationStrategyConstructor: (Substitution) -> Unification
+        unificationStrategyConstructor: (Substitution) -> Unificator
     ): Substitution {
         var context: Substitution = Substitution.empty()
 
@@ -241,7 +241,7 @@ internal object UnificationUtils {
     internal inline fun <T1 : Term, T2 : Term, O> forEquationSequence(
         lastEquationAssertion: (CorrectnessMap<T1, T2>, (T1, T2) -> O) -> Unit,
         correctnessMap: Map<KtList<Equation<T1, T2>>, Triple<Substitution, Boolean, Term?>>,
-        unificationStrategyConstructor: (Substitution) -> Unification,
+        unificationStrategyConstructor: (Substitution) -> Unificator,
         crossinline unificationStrategyUse: (Substitution, T1, T2) -> O
     ) {
         correctnessMap.forEach { (equations, correctTriple) ->
