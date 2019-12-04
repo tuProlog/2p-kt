@@ -133,6 +133,29 @@ internal class SubstitutionUnifierTest {
     }
 
     @Test
+    fun plusComplianceWithCompositionDefinedInStandardProlog() {
+        val first = Substitution.Unifier(mapOf(bVar to Struct.of("f", aVar)))
+        val second = Substitution.Unifier(mapOf(aVar to xAtom))
+
+        val firstComposedSecondExpected = Substitution.Unifier(
+            mapOf(
+                bVar to Struct.of("f", xAtom),
+                aVar to xAtom
+            )
+        )
+
+        val secondComposedFirstExpected = Substitution.Unifier(
+            mapOf(
+                aVar to xAtom,
+                bVar to Struct.of("f", aVar)
+            )
+        )
+
+        assertEquals(firstComposedSecondExpected, first + second)
+        assertEquals(secondComposedFirstExpected, second + first)
+    }
+
+    @Test
     fun minusVariablesIterableRemovesCorrectBindings() {
         val correct = aVarToXAtomSubstitution
         val toBeTested = (aVarToXAtomSubstitution + bVarToXAtomSubstitution) - listOf(bVar)
