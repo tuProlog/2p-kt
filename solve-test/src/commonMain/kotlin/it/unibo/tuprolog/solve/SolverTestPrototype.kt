@@ -22,6 +22,8 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExam
 import it.unibo.tuprolog.solve.TestingClauseDatabases.allPrologTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.catchTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customRangeListGeneratorDatabase
+import it.unibo.tuprolog.solve.TestingClauseDatabases.customRangeListGeneratorDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
@@ -340,7 +342,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     }
 
     /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
-    fun testIfThenRule(){
+    fun testIfThenRule() {
         assertSolverSolutionsCorrect(
             solverOf(staticKB = ifThenStandardExampleDatabase),
             ifThenStandardExampleDatabaseNotableGoalToSolution
@@ -348,10 +350,18 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     }
 
     /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
-    fun testIfThenElseRule(){
+    fun testIfThenElseRule() {
         assertSolverSolutionsCorrect(
             solverOf(),
             ifThenElseStandardExampleNotableGoalToSolution
+        )
+    }
+
+    /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
+    fun testNumbersRangeListGeneration() {
+        assertSolverSolutionsCorrect(
+            solverOf(staticKB = customRangeListGeneratorDatabase),
+            customRangeListGeneratorDatabaseNotableGoalToSolution
         )
     }
 
