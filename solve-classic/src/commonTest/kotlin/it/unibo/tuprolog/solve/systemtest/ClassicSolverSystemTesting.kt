@@ -66,7 +66,6 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO: 08/11/2019 maxDuration parameter not honored, implement correctly that feature (issue #53)
     fun testMaxDurationParameterAndTimeOutException() {
         prototype.testMaxDurationParameterAndTimeOutException()
     }
@@ -131,13 +130,13 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO (issue #53)
+    @Ignore // TODO (issue #52)
     fun testNotPrimitive() {
         prototype.testNotPrimitive()
     }
 
     @Test
-    @Ignore // TODO (issue #53, #52)
+    @Ignore // TODO (issue #52)
     fun testNotModularity() {
         prototype.testNotModularity()
     }
