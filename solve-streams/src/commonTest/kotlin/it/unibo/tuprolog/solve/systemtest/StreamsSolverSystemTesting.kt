@@ -120,6 +120,11 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testNumbersRangeListGeneration() {
+        prototype.testNumbersRangeListGeneration()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }

@@ -138,6 +138,12 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    @Ignore // TODO (issue #52)
+    fun testNumbersRangeListGeneration() {
+        prototype.testNumbersRangeListGeneration()
+    }
+
+    @Test
     fun testConjunction() {
         prototype.testConjunction()
     }
