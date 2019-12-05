@@ -101,5 +101,6 @@ internal class ClassicSolverBenchmark : SolverFactory {
         }
 
         println("\n8-Queens: ${timeList.sum() / timeList.size} ms to solve in an average of $numberOfExecutions executions")
+        println(timeList)
     }
 }
