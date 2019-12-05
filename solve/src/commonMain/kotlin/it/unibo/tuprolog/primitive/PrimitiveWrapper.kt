@@ -1,9 +1,12 @@
 package it.unibo.tuprolog.primitive
 
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -74,5 +77,29 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     )
                 } ?: this
             }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsNumeric(index: Int): Solve.Request<C> {
+            return when (val arg = arguments[index]) {
+                !is Numeric -> throw TypeError(
+                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.NUMBER}",
+                    context = context,
+                    expectedType = TypeError.Expected.NUMBER,
+                    actualValue = arg
+                )
+                else -> this
+            }
+        }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsInteger(index: Int): Solve.Request<C> {
+            return when (val arg = arguments[index]) {
+                !is Integer -> throw TypeError(
+                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.INTEGER}",
+                    context = context,
+                    expectedType = TypeError.Expected.INTEGER,
+                    actualValue = arg
+                )
+                else -> this
+            }
+        }
     }
 }

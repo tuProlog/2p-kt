@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
@@ -36,6 +38,12 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -102,6 +110,54 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    /** Test with [lessThan500MsGoalToSolution] */
+    fun testTimeout1() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                    staticKB = timeRelatedDatabase,
+                    libraries = defaultLibraries + timeLibrary
+                ),
+            goalToSolutions = lessThan500MsGoalToSolution,
+            maxDuration = 400L
+        )
+    }
+
+    /** Test with [slightlyMoreThan500MsGoalToSolution] */
+    fun testTimeout2() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan500MsGoalToSolution,
+            maxDuration = 1000L
+        )
+    }
+
+    /** Test with [slightlyMoreThan1100MsGoalToSolution] */
+    fun testTimeout3() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
+            maxDuration = 1700L
+        )
+    }
+
+    /** Test with [slightlyMoreThan1800MsGoalToSolution] */
+    fun testTimeout4() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
+            maxDuration = 2000L
+        )
+    }
+
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     fun testUnification() {
         assertSolverSolutionsCorrect(
@@ -109,6 +165,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             simpleFactDatabaseNotableGoalToSolutions
         )
     }
+
+
 
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     fun testSimpleCutAlternatives() {
