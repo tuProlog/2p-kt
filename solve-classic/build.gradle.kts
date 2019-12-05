@@ -14,5 +14,14 @@ kotlin {
             }
         }
 
+        // Default source set for JVM-specific sources and dependencies:
+        jvm {
+            compilations["test"].defaultSourceSet {
+                dependencies {
+                    implementation("it.unibo.alice.tuprolog:tuprolog:3.3.0")
+                }
+            }
+        }
+
     }
 }
