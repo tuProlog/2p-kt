@@ -19,30 +19,30 @@ internal data class SideEffectManagerImpl(
     // CUT side effect fields
 
     /** The sequence of parent execution contexts before this, limited to a "clause scope" */
-    private val clauseScopedParents: Lazy<Sequence<ExecutionContextImpl>> = lazyOf(emptySequence()),
+    private val clauseScopedParents: Sequence<ExecutionContextImpl> = emptySequence(),
     /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
     private val isChoicePointChild: Boolean = false,
     /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
-    private val toCutContextsParent: Lazy<Sequence<ExecutionContextImpl>> = lazyOf(emptySequence()),
+    private val toCutContextsParent: Sequence<ExecutionContextImpl> = emptySequence(),
 
     // Catch / Throw side effects fields
 
     /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
-    internal val logicalParentRequests: Lazy<Sequence<Solve.Request<ExecutionContextImpl>>> = lazyOf(emptySequence()),
+    internal val logicalParentRequests: Sequence<Solve.Request<ExecutionContextImpl>> = emptySequence(),
     /** The sequence of no more selectable parent requests, because already used */
-    private val throwNonSelectableParentContexts: Lazy<Sequence<ExecutionContextImpl>> = lazyOf(emptySequence()),
+    private val throwNonSelectableParentContexts: Sequence<ExecutionContextImpl> = emptySequence(),
     /** The execution context where a `catch` was found and till which other unexplored sub-trees should be cut */
     private val throwRelatedToCutContextsParent: ExecutionContextImpl? = null
 
 ) : SideEffectManager {
 
     override fun cut(): SideEffectManager = copy(
-        toCutContextsParent = lazy { toCutContextsParent.value + getFirstChoicePointContext() } // only second value could be enough, but more testing needed
+        toCutContextsParent = toCutContextsParent + getFirstChoicePointContext() // only second value could be enough, but more testing needed
     )
 
     /** Initializes isChoicePointChild to `false` whatever it was, and adds given [currentContext] to clauseScopedParents */
     internal fun stateInitInitialize(currentContext: ExecutionContextImpl): SideEffectManagerImpl = copy(
-        clauseScopedParents = lazy { sequenceOf(currentContext) + clauseScopedParents.value },
+        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
         isChoicePointChild = false
     )
 
@@ -58,22 +58,25 @@ internal data class SideEffectManagerImpl(
         isChoicePointChild: Boolean,
         logicalParentRequest: Solve.Request<ExecutionContextImpl>
     ) = copy(
-        clauseScopedParents = lazy { sequenceOf(currentContext) + clauseScopedParents.value },
+        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
         isChoicePointChild = isChoicePointChild,
         logicalParentRequests = when (logicalParentRequest) {
-            in logicalParentRequests.value -> lazy { logicalParentRequests.value.dropWhile { it != logicalParentRequest } }
-            else -> lazy { sequenceOf(logicalParentRequest) + logicalParentRequests.value }
+            in logicalParentRequests -> logicalParentRequests.dropWhile { it != logicalParentRequest }.toList().asSequence()
+            else -> logicalParentRequests.toMutableList().apply { add(0, logicalParentRequest) }.asSequence()
         }
     )
 
     /** Method that updates sideEffects manager to not consider parents older than current first, because entering new "rule-scope" */
     internal fun enterRuleSubScope() = copy(
-        clauseScopedParents = lazy { sequenceOf(clauseScopedParents.value.first()) }
+        clauseScopedParents = sequenceOf(clauseScopedParents.first())
     )
 
     /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
     internal fun extendParentScopeWith(upperScopeSideEffectsManager: SideEffectManagerImpl) = copy(
-        clauseScopedParents = lazy { clauseScopedParents.value + upperScopeSideEffectsManager.clauseScopedParents.value }
+        clauseScopedParents = clauseScopedParents
+            .toMutableList()
+            .apply { addAll(upperScopeSideEffectsManager.clauseScopedParents) }
+            .asSequence()
     )
 
     /**
@@ -84,13 +87,13 @@ internal data class SideEffectManagerImpl(
      * - if cut was called, and the first "scoped" choice point context is to be cut
      */
     internal fun shouldCutExecuteInRuleSelection() =
-        clauseScopedParents.value.lastOrNull() in toCutContextsParent.value
+        clauseScopedParents.lastOrNull() in toCutContextsParent
                 || shouldExecuteThrowCut()
 
     /** A method to retrieve the first ancestor catch request that has its second argument that unifies with [toUnifyArgument] */
     internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<ExecutionContextImpl>? {
-        val ancestorCatchesRequests = logicalParentRequests.value.filter { it.signature == Catch.signature }
-            .filterNot { it.context in throwNonSelectableParentContexts.value } // exclude already used catch requests
+        val ancestorCatchesRequests = logicalParentRequests.filter { it.signature == Catch.signature }
+            .filterNot { it.context in throwNonSelectableParentContexts } // exclude already used catch requests
 
         return ancestorCatchesRequests.find { it.arguments[1].matches(toUnifyArgument) }
     }
@@ -106,7 +109,7 @@ internal data class SideEffectManagerImpl(
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
     internal fun ensureNoMoreSelectableCatch(contextImpl: ExecutionContextImpl) = copy(
-        throwNonSelectableParentContexts = lazy { throwNonSelectableParentContexts.value + contextImpl }
+        throwNonSelectableParentContexts = throwNonSelectableParentContexts + contextImpl
     )
 
     /**
@@ -123,39 +126,12 @@ internal data class SideEffectManagerImpl(
      * Method to query if the throw Cut should execute; the throw cut can exit clause Scope, so it uses different data structures
      */
     internal fun shouldExecuteThrowCut() =
-        logicalParentRequests.value.any { it.context == throwRelatedToCutContextsParent }
+        logicalParentRequests.any { it.context == throwRelatedToCutContextsParent }
 
     /** Internal function to retrieve the first choice point to be Cut, if present */
-    private fun getFirstChoicePointContext() = clauseScopedParents.value
+    private fun getFirstChoicePointContext() = clauseScopedParents
         .filter { it.sideEffectManager.isChoicePointChild }
-        .mapNotNull { it.sideEffectManager.clauseScopedParents.value.firstOrNull() }
-
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as SideEffectManagerImpl
-
-        if (clauseScopedParents.value != other.clauseScopedParents.value) return false
-        if (isChoicePointChild != other.isChoicePointChild) return false
-        if (toCutContextsParent.value != other.toCutContextsParent.value) return false
-        if (logicalParentRequests.value != other.logicalParentRequests.value) return false
-        if (throwNonSelectableParentContexts.value != other.throwNonSelectableParentContexts.value) return false
-        if (throwRelatedToCutContextsParent != other.throwRelatedToCutContextsParent) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = clauseScopedParents.value.hashCode()
-        result = 31 * result + isChoicePointChild.hashCode()
-        result = 31 * result + toCutContextsParent.value.hashCode()
-        result = 31 * result + logicalParentRequests.value.hashCode()
-        result = 31 * result + throwNonSelectableParentContexts.value.hashCode()
-        result = 31 * result + (throwRelatedToCutContextsParent?.hashCode() ?: 0)
-        return result
-    }
+        .mapNotNull { it.sideEffectManager.clauseScopedParents.firstOrNull() }
 }
 
 /** Bridge method to reach [SideEffectManagerImpl.shouldCutExecuteInRuleSelection] homonym method from a [SideEffectManager] */
