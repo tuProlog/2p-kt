@@ -38,6 +38,26 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testTimeout1() {
+        prototype.testTimeout1()
+    }
+
+    @Test
+    fun testTimeout2() {
+        prototype.testTimeout2()
+    }
+
+    @Test
+    fun testTimeout3() {
+        prototype.testTimeout3()
+    }
+
+    @Test
+    fun testTimeout4() {
+        prototype.testTimeout4()
+    }
+
+    @Test
     fun testTrue() {
         prototype.testTrue()
     }
