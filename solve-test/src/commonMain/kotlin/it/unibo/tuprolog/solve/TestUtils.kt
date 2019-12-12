@@ -61,7 +61,7 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
  */
 fun assertSolutionEquals(expected: Solution, actual: Solution) {
 
-    fun reportMsg(expected: Any, actual: Any) = "Expected: `$expected` Actual: `$actual`"
+    fun reportMsg(expected: Any, actual: Any) = "Expected: `$expected`\nActual: `$actual`"
     fun assertSameClass(expected: Solution, actual: Solution) =
         assertEquals(expected::class, actual::class, reportMsg(expected, actual))
 
@@ -110,7 +110,7 @@ inline fun assertSolutionEquals(
     actual: Iterable<Solution>,
     equalityAssertion: (Solution, Solution) -> Unit = ::assertSolutionEquals
 ) {
-    assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}` Actual: `${actual.toList()}`")
+        assertEquals(expected.count(), actual.count(), "Expected: `${expected.toList()}`\nActual: `${actual.toList()}`")
 
-    expected.zip(actual).forEach { (expected, actual) -> equalityAssertion(expected, actual) }
+        expected.zip(actual).forEach { (expected, actual) -> equalityAssertion(expected, actual) }
 }

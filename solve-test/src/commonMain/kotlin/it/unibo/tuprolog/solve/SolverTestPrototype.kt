@@ -3,8 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
@@ -60,9 +58,33 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration = 500L
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            val solutions = solver.solve(goal, maxDuration).toList()
-
-            assertSolutionEquals(solutionList, solutions)
+            with(solver) {
+                println(if (staticKB.clauses.any()) staticKB.clauses.joinToString(".\n", "", ".") else "")
+                println(if (dynamicKB.clauses.any()) dynamicKB.clauses.joinToString(".\n", "", ".") else "")
+                println("?- ${goal}.")
+            }
+//            try {
+                val solutions = solver.solve(goal, maxDuration).toList()
+                assertSolutionEquals(solutionList, solutions)
+//            } finally {
+                solutions.forEach {
+                    when (it) {
+                        is Solution.Yes -> {
+                            println("yes.\n\t${it.solvedQuery}")
+                            it.substitution.forEach { vt ->
+                                println("\t${vt.key} / ${vt.value}")
+                            }
+                        }
+                        is Solution.Halt -> {
+                            println("halt.\n\t${it.exception}")
+                        }
+                        is Solution.No -> {
+                            println("no.")
+                        }
+                    }
+                }
+                println("".padEnd(80, '-'))
+//            }
         }
     }
 

@@ -116,7 +116,7 @@ data class StatePrimitiveSelection(override val context: ExecutionContextImpl) :
 
 
                             val tempExecutionContext = copy(
-                                goals = sequenceOf(goal).ensureStructs(),
+                                goals = goal.toGoals(),
                                 parent = context,
                                 depth = nextDepth(),
                                 step = nextStep()
@@ -214,7 +214,7 @@ data class StateException(
                         when (catcher) {
                             is Substitution.Unifier -> {
                                 val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
-                                val subGoals = catchGoal[2][newSubstitution] as Struct
+                                val subGoals = catchGoal[2][newSubstitution]
 
                                 StateGoalSelection(
                                     context.copy(
@@ -295,7 +295,7 @@ data class StateRuleSelection(override val context: ExecutionContextImpl) : Abst
                             .ensureRules()
 
                         val tempExecutionContext = context.copy(
-                            goals = sequenceOf(currentGoal).ensureStructs(),
+                            goals = currentGoal.toGoals(),
                             parent = context,
                             depth = nextDepth(),
                             step = nextStep()
@@ -330,7 +330,7 @@ data class StateRuleExecution(override val context: ExecutionContextImpl) : Abst
             when (val unifier = goals.current!! mguWith rules.current!!.head) {
                 is Substitution.Unifier -> {
                     val newSubstitution = (substitution + unifier) as Substitution.Unifier
-                    val subGoals = rules.current!!.body[newSubstitution] as Struct
+                    val subGoals = rules.current!!.body[newSubstitution]
 
                     StateGoalSelection(
                         copy(

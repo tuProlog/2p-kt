@@ -13,10 +13,18 @@ fun Sequence<Term>.ensureStructs(): Cursor<out Struct> =
 fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
     map { require(it is Rule); it as Rule }.cursor()
 
-fun Struct.toGoals(): Cursor<out Struct> =
+fun Term.unfoldGoals(): Sequence<Term> =
     when (this) {
-        is Tuple -> toSequence()
+        is Tuple -> toSequence().flatMap { it.unfoldGoals() }
         else -> sequenceOf(this)
+    }
+
+fun Term.toGoals(): Cursor<out Struct> =
+    unfoldGoals().map {
+        when (it) {
+            is Struct -> it
+            else -> Struct.of("call", it)
+        }
     }.ensureStructs()
 
 // TODO Giovanni's review needed!! with Git > Show History
@@ -27,6 +35,12 @@ fun ExecutionContextImpl.toRequest(
     Solve.Request(
         signature,
         arguments,
-        copy(libraries = libraries, flags = flags, staticKB = staticKB, dynamicKB = dynamicKB, substitution = substitution),
+        copy(
+            libraries = libraries,
+            flags = flags,
+            staticKB = staticKB,
+            dynamicKB = dynamicKB,
+            substitution = substitution
+        ),
         executionMaxDuration = maxDuration
     )
