@@ -82,7 +82,7 @@ data class StateGoalSelection(override val context: ExecutionContextImpl) : Abst
                             flags = context.flags,
                             dynamicKB = context.dynamicKB,
                             staticKB = context.staticKB,
-                            substitution = context.substitution,
+                            substitution = context.substitution.filter(interestingVariables),
                             goals = goals.next, // go on with parent's goals
                             step = nextStep()
                         )

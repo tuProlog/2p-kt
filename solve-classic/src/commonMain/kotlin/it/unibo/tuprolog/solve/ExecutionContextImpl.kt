@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
@@ -43,6 +44,13 @@ data class ExecutionContextImpl(
             yield(current!!)
             current = current.parent
         }
+    }
+
+    val interestingVariables: Set<Var> by lazy {
+        val baseInterestingVars: Set<Var> = parent?.interestingVariables ?: query.variables.toSet()
+        val currInterestingVars: Set<Var> = if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
+
+        baseInterestingVars + currInterestingVars
     }
 
     override val prologStackTrace: Sequence<Struct> by lazy {

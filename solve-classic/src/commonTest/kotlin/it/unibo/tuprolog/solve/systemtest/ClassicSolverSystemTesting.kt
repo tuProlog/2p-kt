@@ -68,19 +68,19 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
+//    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testSimpleCutAlternatives() {
         prototype.testSimpleCutAlternatives()
     }
 
     @Test
-    @Ignore // TODO: (issue #52)
+//    @Ignore // TODO: (issue #52)
     fun testCutAndConjunction() {
         prototype.testCutAndConjunction()
     }
 
     @Test
-    @Ignore // TODO: (issue #52)
+//    @Ignore // TODO: (issue #52)
     fun testCutConjunctionAndBacktracking() {
         prototype.testCutConjunctionAndBacktracking()
     }
@@ -90,56 +90,56 @@ class ClassicSolverSystemTesting : SolverFactory {
         prototype.testMaxDurationParameterAndTimeOutException()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testPrologStandardSearchTreeExample() {
         prototype.testPrologStandardSearchTreeExample()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testPrologStandardSearchTreeWithCutExample() {
         prototype.testPrologStandardSearchTreeWithCutExample()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testBacktrackingWithCustomReverseListImplementation() {
         prototype.testBacktrackingWithCustomReverseListImplementation()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testWithPrologStandardConjunctionExamples() {
         prototype.testWithPrologStandardConjunctionExamples()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testCallPrimitive() {
         prototype.testCallPrimitive()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testCallPrimitiveTransparency() {
         prototype.testCallPrimitiveTransparency()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testCatchPrimitive() {
         prototype.testCatchPrimitive()
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
+//    @Ignore // TODO (issue #52)
     fun testCatchPrimitiveTransparency() {
         prototype.testCatchPrimitiveTransparency()
     }
@@ -150,25 +150,25 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO (issue #52)
+//    @Ignore // TODO (issue #52)
     fun testNotPrimitive() {
         prototype.testNotPrimitive()
     }
 
     @Test
-    @Ignore // TODO (issue #52)
+//    @Ignore // TODO (issue #52)
     fun testNotModularity() {
         prototype.testNotModularity()
     }
 
     @Test
-    @Ignore // TODO (issue #52)
+//    @Ignore // TODO (issue #52)
     fun testIfThenRule() {
         prototype.testIfThenRule()
     }
 
     @Test
-    @Ignore // TODO (issue #52)
+//    @Ignore // TODO (issue #52)
     fun testIfTheElseRule() {
         prototype.testIfThenElseRule()
     }

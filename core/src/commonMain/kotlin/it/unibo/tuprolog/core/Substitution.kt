@@ -54,6 +54,14 @@ sealed class Substitution : Map<Var, Term> {
     }
 
     /**
+     * Returns a new substitution containing all key-value pairs whose key is in [variables].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    open fun filter(variables: Collection<Var>): Substitution =
+        filter { k, _ -> k in variables }
+
+    /**
      * Returns a new substitution containing all key-value pairs matching the given [predicate].
      *
      * The returned map preserves the entry iteration order of the original map.
@@ -76,6 +84,7 @@ sealed class Substitution : Map<Var, Term> {
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier = super.filter(predicate) as Unifier
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier = super.filter(predicate) as Unifier
+        override fun filter(variables: Collection<Var>): Unifier = super.filter(variables) as Unifier
 
         /** The mappings used to implement [equals], [hashCode] and [toString] */
         // this should be kept in sync with class "by" right expression
