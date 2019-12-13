@@ -6,7 +6,7 @@ plugins {
     kotlin("multiplatform") version "1.3.60" // keep this value aligned with the one in gradle.properties
     id("maven-publish")
     signing
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.0"
     id("com.jfrog.bintray") version "1.8.4"
     id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
 }
@@ -152,38 +152,40 @@ subprojects {
     val docDir = "$buildDir/doc"
 
     tasks.withType<DokkaTask> {
-
         outputDirectory = docDir
-        jdkVersion = 8
-        reportUndocumented = false
-//    outputFormat = "javadoc"
+        outputFormat = "html"
 
-        kotlinTasks {
-            listOf()
-        }
-
-        sourceRoot {
-            // assuming there is only a single source dir...
-            kotlin.sourceSets.commonMain {
-                this@sourceRoot.path = kotlin.srcDirs.first().absolutePath
+        multiplatform {
+            register("jvm") {
+                targets = listOf("JVM")
+                platform = "jvm"
+//                sourceRoot {
+//                    path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
+//                }
+//                sourceRoot {
+//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
+//                }
+                includeNonPublic = true
+                reportUndocumented = false
+                collectInheritedExtensionsFromLibraries = true
+                skipEmptyPackages = true
+                jdkVersion = 6
             }
-            platforms = listOf("Common")
-        }
 
-        sourceRoot {
-            // assuming there is only a single source dir...
-            with(kotlin.sourceSets.get("jvmMain")) {
-                this@sourceRoot.path = kotlin.srcDirs.first().absolutePath
+            register("js") {
+                targets = listOf("JS")
+                platform = "js"
+//                sourceRoot {
+//                    path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
+//                }
+//                sourceRoot {
+//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
+//                }
+                includeNonPublic = true
+                reportUndocumented = false
+                collectInheritedExtensionsFromLibraries = true
+                skipEmptyPackages = true
             }
-            platforms = listOf("JVM")
-        }
-
-        sourceRoot {
-            // assuming there is only a single source dir...
-            with(kotlin.sourceSets.get("jsMain")) {
-                this@sourceRoot.path = kotlin.srcDirs.first().absolutePath
-            }
-            platforms = listOf("JS")
         }
     }
 
@@ -196,16 +198,6 @@ subprojects {
     task<DefaultTask>("packAllDokka") {
         group = "documentation"
     }
-
-    //task<Copy>("populateNodeModules") {
-    //    dependsOn("compileKotlin2Js")
-    //
-    //    from(tasks.getByName<KotlinJsCompile>("compileKotlinJs").kotlinOptions.outputFile)
-    //
-    //    configurations.getByName("test")
-    //}
-
-    //tasks.getByName("signArchives").dependsOn("packAllDokka")
 
     jarPlatform.forEach {
         val packDokkaForPlatform = "packDokka${capitalize(it)}"
@@ -314,10 +306,6 @@ subprojects {
         useInMemoryPgpKeys(signingKey, signingPassword)
 
         sign(publishing.publications)
-
-//        println("Configuring signing for the following publications: ${
-//            publishing.publications.names.map { project.name + "-" + it }.joinToString(", ")
-//        }")
     }
 
     publishing {
