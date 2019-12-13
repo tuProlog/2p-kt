@@ -5,7 +5,6 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class ClassicSolverSystemTesting : SolverFactory {
@@ -22,16 +21,17 @@ class ClassicSolverSystemTesting : SolverFactory {
     ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
-    @Ignore
+//    @Ignore
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
                 staticKB = theoryOf(
-                    rule { "f"("X") impliedBy "f"("X") }
+                    fact { "a"(1) },
+                    fact { "a"(2) }
                 )
             )
 
-            solver.solve("f"("X"), 1000).forEach {
+            solver.solve("call"("="("Z", "!") and "a"("X") and "Z") and true, 1000).forEach {
                 println(it)
             }
         }

@@ -12,6 +12,7 @@ internal data class StateException(
     override val exception: TuPrologRuntimeException,
     override val context: ExecutionContextImpl
 ) : ExceptionalState, AbstractState(context) {
+
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
@@ -19,9 +20,8 @@ internal data class StateException(
 
                 when {
                     catchGoal.let { it.arity == 3 && it.functor == "catch" } -> {
-                        val catcher = catchGoal[1].mguWith(exception.errorStruct)
 
-                        when (catcher) {
+                        when (val catcher = catchGoal[1].mguWith(exception.errorStruct)) {
                             is Substitution.Unifier -> {
                                 val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
                                 val subGoals = catchGoal[2][newSubstitution]

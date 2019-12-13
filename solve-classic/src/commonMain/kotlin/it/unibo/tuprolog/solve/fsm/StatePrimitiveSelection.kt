@@ -17,6 +17,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                         val req = toRequest(signature, goal.argsList)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
+
                         try {
                             val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
@@ -39,9 +40,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                             )
                         } catch (exception: TuPrologRuntimeException) {
                             StateException(
-                                exception.updateContext(
-                                    context
-                                ), copy(step = nextStep())
+                                exception.updateContext(context), copy(step = nextStep())
                             )
                         }
                     } else {

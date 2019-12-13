@@ -17,10 +17,10 @@ internal data class StatePrimitiveExecution(override val context: ExecutionConte
                             copy(
                                 goals = goals.next,
                                 primitives = Cursor.empty(),
-                                libraries = primitives.current!!.libraries ?: libraries,
-                                staticKB = primitives.current!!.staticKB ?: staticKB,
-                                dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                                flags = primitives.current!!.flags ?: flags,
+                                libraries = primitives.current?.libraries ?: libraries,
+                                staticKB = primitives.current?.staticKB ?: staticKB,
+                                dynamicKB = primitives.current?.dynamicKB ?: dynamicKB,
+                                flags = primitives.current?.flags ?: flags,
                                 substitution = (substitution + sol.substitution) as Substitution.Unifier,
                                 step = nextStep()
                             )
@@ -30,10 +30,10 @@ internal data class StatePrimitiveExecution(override val context: ExecutionConte
                         StateBacktracking(
                             copy(
                                 primitives = Cursor.empty(),
-                                libraries = primitives.current!!.libraries ?: libraries,
-                                staticKB = primitives.current!!.staticKB ?: staticKB,
-                                dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                                flags = primitives.current!!.flags ?: flags,
+                                libraries = primitives.current?.libraries ?: libraries,
+                                staticKB = primitives.current?.staticKB ?: staticKB,
+                                dynamicKB = primitives.current?.dynamicKB ?: dynamicKB,
+                                flags = primitives.current?.flags ?: flags,
                                 step = nextStep()
                             )
                         )
@@ -42,10 +42,10 @@ internal data class StatePrimitiveExecution(override val context: ExecutionConte
                         sol.exception.updateContext(context),
                         copy(
                             primitives = Cursor.empty(),
-                            libraries = primitives.current!!.libraries ?: libraries,
-                            staticKB = primitives.current!!.staticKB ?: staticKB,
-                            dynamicKB = primitives.current!!.dynamicKB ?: dynamicKB,
-                            flags = primitives.current!!.flags ?: flags,
+                            libraries = primitives.current?.libraries ?: libraries,
+                            staticKB = primitives.current?.staticKB ?: staticKB,
+                            dynamicKB = primitives.current?.dynamicKB ?: dynamicKB,
+                            flags = primitives.current?.flags ?: flags,
                             step = nextStep()
                         )
                     )

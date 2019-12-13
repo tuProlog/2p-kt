@@ -3,10 +3,22 @@ package it.unibo.tuprolog.solve.fsm
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.appendRules
 
 internal data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
+
+    companion object {
+        val transparentToCut: Set<Signature> = setOf(
+            Signature("call", 1),
+            Signature(",", 2),
+            Signature(";", 2),
+            Signature("->", 2)
+        )
+    }
+
     private val failureState: StateBacktracking by lazy {
         StateBacktracking(
             context.copy(step = nextStep())
@@ -21,6 +33,12 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
+    private val ExecutionContextImpl.minDepthToCut: Int
+        get() = this.pathToRoot
+            .filter { it.goals.current !== null }
+            .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
+            ?.depth ?: -1
+
     override fun computeNext(): State {
         return context.goals.current!!.let { currentGoal ->
             with(context) {
@@ -31,13 +49,15 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                         if (currentGoal.isTrue) ignoreState else failureState
                     }
                     currentGoal.isCut() -> {
+                        val depthToCut = this.minDepthToCut
+
                         with(ignoreState) {
                             copy(
                                 context = this.context.copy(
                                     choicePoints = this.context
                                         .choicePoints
                                         ?.pathToRoot
-                                        ?.firstOrNull { it.executionContext!!.depth < depth }
+                                        ?.firstOrNull { it.executionContext!!.depth < depthToCut }
                                 )
                             )
                         }

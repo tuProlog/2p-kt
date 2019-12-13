@@ -9,9 +9,7 @@ internal data class StateBacktracking(override val context: ExecutionContextImpl
         return with(context) {
             if (choicePoints === null || !choicePoints.hasOpenAlternatives) {
                 StateEnd(
-                    solution = Solution.No(
-                        query
-                    ), context = copy(step = nextStep())
+                    solution = Solution.No(query), context = copy(step = nextStep())
                 )
             } else {
                 when (val choicePointContext = choicePoints.pathToRoot.first { it.alternatives.hasNext }) {
@@ -30,6 +28,7 @@ internal data class StateBacktracking(override val context: ExecutionContextImpl
 
                         StateRuleExecution(nextContext)
                     }
+
                     is ChoicePointContext.Primitives -> {
                         val tempContext = choicePointContext.executionContext!!.copy(
                             primitives = choicePointContext.alternatives,
