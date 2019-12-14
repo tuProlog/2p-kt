@@ -25,13 +25,25 @@ class ClassicSolverSystemTesting : SolverFactory {
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
+                libraries = defaultLibraries,
                 staticKB = theoryOf(
                     fact { "a"(1) },
                     fact { "a"(2) }
+//                    clause { "a"("X") `if` "b"("X") },
+//                    clause { "a"(6) },
+//                    clause { "b"("X") `if` ("c"("X") and "d"("X")) },
+//                    clause { "b"(4) `if` "!" },
+//                    clause { "b"(5) },
+//                    clause { "c"(1) },
+//                    clause { "c"(2) `if` "!" },
+//                    clause { "c"(3) },
+//                    clause { "d"(2) },
+//                    clause { "d"(3) }
                 )
             )
 
-            solver.solve("call"("="("Z", "!") and "a"("X") and "Z") and true, 1000).forEach {
+            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
+//            solver.solve("a"("X")).forEach {
                 println(it)
             }
         }

@@ -35,6 +35,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private val ExecutionContextImpl.minDepthToCut: Int
         get() = this.pathToRoot
+            .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
             .filter { it.goals.current !== null }
             .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
             ?.depth ?: -1
@@ -48,20 +49,26 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                     currentGoal is Truth -> {
                         if (currentGoal.isTrue) ignoreState else failureState
                     }
+
                     currentGoal.isCut() -> {
                         val depthToCut = this.minDepthToCut
 
-                        with(ignoreState) {
-                            copy(
-                                context = this.context.copy(
-                                    choicePoints = this.context
-                                        .choicePoints
-                                        ?.pathToRoot
-                                        ?.firstOrNull { it.executionContext!!.depth < depthToCut }
+                        if (depthToCut < 0) {
+                            ignoreState
+                        } else {
+                            with(ignoreState) {
+                                copy(
+                                    context = this.context.copy(
+                                        choicePoints = this.context
+                                            .choicePoints
+                                            ?.pathToRoot
+                                            ?.firstOrNull { it.executionContext!!.depth <= depthToCut }
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
+
                     ruleSources.any { currentGoal in it } -> {
                         val rules = ruleSources
                             .flatMap { it[currentGoal] }
@@ -84,6 +91,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                             )
                         )
                     }
+
                     else -> failureState
                 }
             }
