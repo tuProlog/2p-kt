@@ -27,6 +27,7 @@ data class ClassicSolver(
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
         val initialContext = ExecutionContextImpl(
             query = goal,
+            procedure = null,
             libraries = libraries,
             flags = flags,
             staticKB = staticKB,

@@ -23,15 +23,19 @@ internal data class StateGoalSelection(override val context: ExecutionContextImp
                             staticKB = context.staticKB,
                             substitution = context.substitution.filter(interestingVariables),
                             goals = goals.next, // go on with parent's goals
+                            procedure = procedure,
                             step = nextStep()
                         )
                     }
                 )
             }
         } else {
+            val goalsWithSubstitution = context.goals.map { it[context.substitution] as Struct }
+
             StatePrimitiveSelection(
                 context.copy(
-                    goals = context.goals.map { it[context.substitution] as Struct },
+//                    procedure = goalsWithSubstitution.current,
+                    goals = goalsWithSubstitution,
                     step = nextStep()
                 )
             )

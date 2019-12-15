@@ -15,6 +15,7 @@ data class ExecutionContextImpl(
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct,
+    val procedure: Struct?,
     val goals: Cursor<out Struct> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
@@ -46,6 +47,9 @@ data class ExecutionContextImpl(
         }
     }
 
+    val currentGoal: Struct?
+        get() = goals.current
+
     val interestingVariables: Set<Var> by lazy {
         val baseInterestingVars: Set<Var> = parent?.interestingVariables ?: query.variables.toSet()
         val currInterestingVars: Set<Var> = if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
@@ -58,4 +62,6 @@ data class ExecutionContextImpl(
             .filter { it.goals.hasNext }
             .map { it.goals.current!! }
     }
+
+
 }

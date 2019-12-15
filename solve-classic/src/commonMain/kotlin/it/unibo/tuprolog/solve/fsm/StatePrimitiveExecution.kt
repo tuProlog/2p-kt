@@ -16,6 +16,7 @@ internal data class StatePrimitiveExecution(override val context: ExecutionConte
                         StateGoalSelection(
                             copy(
                                 goals = goals.next,
+                                procedure = parent?.procedure,
                                 primitives = Cursor.empty(),
                                 libraries = primitives.current?.libraries ?: libraries,
                                 staticKB = primitives.current?.staticKB ?: staticKB,

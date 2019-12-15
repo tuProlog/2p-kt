@@ -21,9 +21,9 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                         try {
                             val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
-
                             val tempExecutionContext = copy(
                                 goals = goal.toGoals(),
+                                procedure = goal,
                                 parent = context,
                                 depth = nextDepth(),
                                 step = nextStep()

@@ -35,6 +35,8 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private val ExecutionContextImpl.minDepthToCut: Int
         get() = this.pathToRoot
+//            .filter { it.procedure != null }
+//            .firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
             .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
             .filter { it.goals.current !== null }
             .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
@@ -77,6 +79,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
                         val tempExecutionContext = context.copy(
                             goals = currentGoal.toGoals(),
+                            procedure = currentGoal,
                             parent = context,
                             depth = nextDepth(),
                             step = nextStep()
