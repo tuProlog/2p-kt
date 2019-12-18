@@ -12,7 +12,6 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     companion object {
         val transparentToCut: Set<Signature> = setOf(
-            Signature("call", 1),
             Signature(",", 2),
             Signature(";", 2),
             Signature("->", 2)
