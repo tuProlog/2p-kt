@@ -36,10 +36,10 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
     private val ExecutionContextImpl.minDepthToCut: Int
         get() = this.pathToRoot
 //            .filter { it.procedure != null }
-//            .firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
-            .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
-            .filter { it.goals.current !== null }
-            .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
+            .firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+//            .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
+//            .filter { it.goals.current !== null }
+//            .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
             ?.depth ?: -1
 
     override fun computeNext(): State {
@@ -64,7 +64,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                                         choicePoints = this.context
                                             .choicePoints
                                             ?.pathToRoot
-                                            ?.firstOrNull { it.executionContext!!.depth <= depthToCut }
+                                            ?.firstOrNull { it.executionContext!!.depth < depthToCut }
                                     )
                                 )
                             }
