@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
@@ -16,7 +13,7 @@ data class ExecutionContextImpl(
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct,
     val procedure: Struct?,
-    val goals: Cursor<out Struct> = Cursor.empty(),
+    val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
     val startTime: TimeInstant = 0,
@@ -47,7 +44,7 @@ data class ExecutionContextImpl(
         }
     }
 
-    val currentGoal: Struct?
+    val currentGoal: Term?
         get() = goals.current
 
     val interestingVariables: Set<Var> by lazy {
@@ -59,8 +56,8 @@ data class ExecutionContextImpl(
 
     override val prologStackTrace: Sequence<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
-            .filter { it.goals.hasNext }
-            .map { it.goals.current!! }
+            .filter { it.currentGoal !== null }
+            .map { it.currentGoal as Struct }
     }
 
 

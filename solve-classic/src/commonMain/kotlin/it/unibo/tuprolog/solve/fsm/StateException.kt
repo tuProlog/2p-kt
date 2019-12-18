@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.fsm
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -16,7 +17,7 @@ internal data class StateException(
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
-                val catchGoal = context.goals.current!!
+                val catchGoal = context.goals.current!! as Struct
 
                 when {
                     catchGoal.let { it.arity == 3 && it.functor == "catch" } -> {

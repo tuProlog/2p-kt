@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.appendRules
+import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.utils.cached
 
 internal data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
 
@@ -20,6 +21,13 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private val failureState: StateBacktracking by lazy {
         StateBacktracking(
+            context.copy(step = nextStep())
+        )
+    }
+
+    private val exceptionalState = cached { exception: TuPrologRuntimeException ->
+        StateException(
+            exception,
             context.copy(step = nextStep())
         )
     }
@@ -42,59 +50,70 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             ?.depth ?: -1
 
     override fun computeNext(): State {
-        val currentGoal = context.goals.current!!
 
-        return with(context) {
-            val ruleSources = sequenceOf(libraries.theory, staticKB, dynamicKB)
+        return when (val currentGoal = context.currentGoal!!) {
+            is Var -> {
+                exceptionalState(
+                    InstantiationError.forGoal(
+                        context = context,
+                        procedure = context.procedure!!.extractSignature(),
+                        variable = currentGoal
+                    )
+                )
+            }
+            is Struct -> with(context) {
+                val ruleSources = sequenceOf(libraries.theory, staticKB, dynamicKB)
 
-            when {
-                currentGoal is Truth -> {
-                    if (currentGoal.isTrue) ignoreState else failureState
-                }
+                when {
+                    currentGoal is Truth -> {
+                        if (currentGoal.isTrue) ignoreState else failureState
+                    }
 
-                currentGoal.isCut() -> {
-                    val depthToCut = this.minDepthToCut
+                    currentGoal.isCut() -> {
+                        val depthToCut = this.minDepthToCut
 
-                    if (depthToCut < 0) {
-                        ignoreState
-                    } else {
-                        ignoreState.copy(
-                            context = ignoreState.context.copy(
-                                choicePoints = ignoreState.context
-                                    .choicePoints
-                                    ?.pathToRoot
-                                    ?.firstOrNull { it.executionContext!!.depth < depthToCut }
+                        if (depthToCut < 0) {
+                            ignoreState
+                        } else {
+                            ignoreState.copy(
+                                context = ignoreState.context.copy(
+                                    choicePoints = ignoreState.context
+                                        .choicePoints
+                                        ?.pathToRoot
+                                        ?.firstOrNull { it.executionContext!!.depth < depthToCut }
+                                )
+                            )
+                        }
+                    }
+
+                    ruleSources.any { currentGoal in it } -> {
+                        val rules = ruleSources
+                            .flatMap { it[currentGoal] }
+                            .map { it.freshCopy() }
+                            .ensureRules()
+
+                        val tempExecutionContext = context.copy(
+                            goals = currentGoal.toGoals(),
+                            procedure = currentGoal,
+                            parent = context,
+                            depth = nextDepth(),
+                            step = nextStep()
+                        )
+
+                        val newChoicePointContext = context.choicePoints.appendRules(rules.next, tempExecutionContext)
+
+                        StateRuleExecution(
+                            tempExecutionContext.copy(
+                                rules = rules,
+                                choicePoints = newChoicePointContext
                             )
                         )
                     }
+
+                    else -> failureState
                 }
-
-                ruleSources.any { currentGoal in it } -> {
-                    val rules = ruleSources
-                        .flatMap { it[currentGoal] }
-                        .map { it.freshCopy() }
-                        .ensureRules()
-
-                    val tempExecutionContext = context.copy(
-                        goals = currentGoal.toGoals(),
-                        procedure = currentGoal,
-                        parent = context,
-                        depth = nextDepth(),
-                        step = nextStep()
-                    )
-
-                    val newChoicePointContext = context.choicePoints.appendRules(rules.next, tempExecutionContext)
-
-                    StateRuleExecution(
-                        tempExecutionContext.copy(
-                            rules = rules,
-                            choicePoints = newChoicePointContext
-                        )
-                    )
-                }
-
-                else -> failureState
             }
+            else -> TODO("handle type error here")
         }
     }
 
