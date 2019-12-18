@@ -10,45 +10,44 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
 
     override fun computeNext(): State {
         return with(context) {
-            goals.current!!.let { goal ->
-                goal.extractSignature().let { signature ->
-                    if (libraries.hasPrimitive(signature)) {
+            val goal = goals.current!!
+            val signature = goal.extractSignature()
 
-                        val req = toRequest(signature, goal.argsList)
-                        val primitive = libraries.primitives[signature]
-                            ?: error("Inconsistent behaviour of Library.contains and Library.get")
+            if (libraries.hasPrimitive(signature)) {
 
-                        try {
-                            val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
+                val req = toRequest(signature, goal.argsList)
+                val primitive = libraries.primitives[signature]
+                    ?: error("Inconsistent behaviour of Library.contains and Library.get")
 
-                            val tempExecutionContext = copy(
-                                goals = goal.toGoals(),
-                                procedure = goal,
-                                parent = context,
-                                depth = nextDepth(),
-                                step = nextStep()
-                            )
+                try {
+                    val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
-                            val newChoicePointContext =
-                                choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
+                    val tempExecutionContext = copy(
+                        goals = goal.toGoals(),
+                        procedure = goal,
+                        parent = context,
+                        depth = nextDepth(),
+                        step = nextStep()
+                    )
 
-                            StatePrimitiveExecution(
-                                tempExecutionContext.copy(
-                                    primitives = primitiveExecutions,
-                                    choicePoints = newChoicePointContext
-                                )
-                            )
-                        } catch (exception: TuPrologRuntimeException) {
-                            StateException(
-                                exception.updateContext(context), copy(step = nextStep())
-                            )
-                        }
-                    } else {
-                        StateRuleSelection(
-                            context.copy(step = nextStep())
+                    val newChoicePointContext =
+                        choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
+
+                    StatePrimitiveExecution(
+                        tempExecutionContext.copy(
+                            primitives = primitiveExecutions,
+                            choicePoints = newChoicePointContext
                         )
-                    }
+                    )
+                } catch (exception: TuPrologRuntimeException) {
+                    StateException(
+                        exception.updateContext(context), copy(step = nextStep())
+                    )
                 }
+            } else {
+                StateRuleSelection(
+                    context.copy(step = nextStep())
+                )
             }
         }
     }

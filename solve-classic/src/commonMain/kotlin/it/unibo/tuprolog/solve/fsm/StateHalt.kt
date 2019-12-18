@@ -10,5 +10,4 @@ internal data class StateHalt(
 ) :
     ExceptionalState, AbstractEndState(
     Solution.Halt(context.query, exception), context
-) {
-}
+)

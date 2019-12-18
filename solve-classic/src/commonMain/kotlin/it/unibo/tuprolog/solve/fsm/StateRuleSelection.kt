@@ -42,60 +42,58 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             ?.depth ?: -1
 
     override fun computeNext(): State {
-        return context.goals.current!!.let { currentGoal ->
-            with(context) {
-                val ruleSources = sequenceOf(libraries.theory, staticKB, dynamicKB)
+        val currentGoal = context.goals.current!!
 
-                when {
-                    currentGoal is Truth -> {
-                        if (currentGoal.isTrue) ignoreState else failureState
-                    }
+        return with(context) {
+            val ruleSources = sequenceOf(libraries.theory, staticKB, dynamicKB)
 
-                    currentGoal.isCut() -> {
-                        val depthToCut = this.minDepthToCut
+            when {
+                currentGoal is Truth -> {
+                    if (currentGoal.isTrue) ignoreState else failureState
+                }
 
-                        if (depthToCut < 0) {
-                            ignoreState
-                        } else {
-                            with(ignoreState) {
-                                copy(
-                                    context = this.context.copy(
-                                        choicePoints = this.context
-                                            .choicePoints
-                                            ?.pathToRoot
-                                            ?.firstOrNull { it.executionContext!!.depth < depthToCut }
-                                    )
-                                )
-                            }
-                        }
-                    }
+                currentGoal.isCut() -> {
+                    val depthToCut = this.minDepthToCut
 
-                    ruleSources.any { currentGoal in it } -> {
-                        val rules = ruleSources
-                            .flatMap { it[currentGoal] }
-                            .map { it.freshCopy() }
-                            .ensureRules()
-
-                        val tempExecutionContext = context.copy(
-                            goals = currentGoal.toGoals(),
-                            procedure = currentGoal,
-                            parent = context,
-                            depth = nextDepth(),
-                            step = nextStep()
-                        )
-
-                        val newChoicePointContext = context.choicePoints.appendRules(rules.next, tempExecutionContext)
-
-                        StateRuleExecution(
-                            tempExecutionContext.copy(
-                                rules = rules,
-                                choicePoints = newChoicePointContext
+                    if (depthToCut < 0) {
+                        ignoreState
+                    } else {
+                        ignoreState.copy(
+                            context = ignoreState.context.copy(
+                                choicePoints = ignoreState.context
+                                    .choicePoints
+                                    ?.pathToRoot
+                                    ?.firstOrNull { it.executionContext!!.depth < depthToCut }
                             )
                         )
                     }
-
-                    else -> failureState
                 }
+
+                ruleSources.any { currentGoal in it } -> {
+                    val rules = ruleSources
+                        .flatMap { it[currentGoal] }
+                        .map { it.freshCopy() }
+                        .ensureRules()
+
+                    val tempExecutionContext = context.copy(
+                        goals = currentGoal.toGoals(),
+                        procedure = currentGoal,
+                        parent = context,
+                        depth = nextDepth(),
+                        step = nextStep()
+                    )
+
+                    val newChoicePointContext = context.choicePoints.appendRules(rules.next, tempExecutionContext)
+
+                    StateRuleExecution(
+                        tempExecutionContext.copy(
+                            rules = rules,
+                            choicePoints = newChoicePointContext
+                        )
+                    )
+                }
+
+                else -> failureState
             }
         }
     }
