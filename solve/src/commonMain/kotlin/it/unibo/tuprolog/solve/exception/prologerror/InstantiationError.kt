@@ -25,6 +25,7 @@ class InstantiationError(
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     /** This constructor automatically fills [message] field with provided information */
+    @Deprecated("Prefer InstantiationError.Companion.forArgument instead")
     constructor(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) : this(
         message = "Argument ${index ?: ""} `${variable
             ?: ""}` of $procedure is unexpectedly not instantiated",
@@ -36,5 +37,19 @@ class InstantiationError(
 
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
+
+        fun forArgument(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) =
+            InstantiationError(
+                message = "Argument ${index ?: ""} `${variable ?: ""}` of $procedure is unexpectedly not instantiated",
+                context = context,
+                extraData = variable
+            )
+
+        fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
+            InstantiationError(
+                message = "Uninstantiated subgoal ${variable} in procedure ${procedure}",
+                context = context,
+                extraData = variable
+            )
     }
 }

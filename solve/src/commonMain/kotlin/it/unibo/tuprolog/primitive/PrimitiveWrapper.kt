@@ -69,7 +69,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
             arguments.withIndex().firstOrNull { it.value is Var }.let { notInstantiated ->
                 notInstantiated?.run {
-                    throw InstantiationError(
+                    throw InstantiationError.forArgument(
                         context,
                         signature,
                         notInstantiated.index,
