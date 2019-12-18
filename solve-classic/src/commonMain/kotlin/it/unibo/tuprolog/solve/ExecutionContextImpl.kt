@@ -5,6 +5,8 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
 
+import kotlin.collections.Set as KtSet
+
 data class ExecutionContextImpl(
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
@@ -47,9 +49,9 @@ data class ExecutionContextImpl(
     val currentGoal: Term?
         get() = goals.current
 
-    val interestingVariables: Set<Var> by lazy {
-        val baseInterestingVars: Set<Var> = parent?.interestingVariables ?: query.variables.toSet()
-        val currInterestingVars: Set<Var> = if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
+    val interestingVariables: KtSet<Var> by lazy {
+        val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
+        val currInterestingVars: KtSet<Var> = if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
 
         baseInterestingVars + currInterestingVars
     }

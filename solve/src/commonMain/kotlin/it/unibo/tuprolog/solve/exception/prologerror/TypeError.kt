@@ -31,6 +31,7 @@ class TypeError(
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
     /** This constructor automatically fills [message] field with provided information */
+    @Deprecated("Prefer TypeError.Companion.forArgument")
     constructor(
         context: ExecutionContext,
         procedure: Signature,
@@ -49,6 +50,34 @@ class TypeError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
 
     companion object {
+
+        fun forArgument(
+            context: ExecutionContext,
+            procedure: Signature,
+            expectedType: Expected,
+            actualValue: Term,
+            index: Int? = null
+        ) = TypeError(
+                message = "Argument ${index
+                    ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
+                context = context,
+                expectedType = expectedType,
+                actualValue = actualValue,
+                extraData = actualValue
+            )
+
+        fun forGoal(
+            context: ExecutionContext,
+            procedure: Signature,
+            expectedType: Expected,
+            actualValue: Term
+        ) = TypeError(
+            message = "Goal `$actualValue` of `$procedure` should be a `$expectedType` term",
+            context = context,
+            expectedType = expectedType,
+            actualValue = actualValue,
+            extraData = actualValue
+        )
 
         /** The type error Struct functor */
         const val typeFunctor = "type_error"

@@ -7,36 +7,34 @@ import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.appendRules
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.utils.cached
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 internal data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
 
     companion object {
-        val transparentToCut: Set<Signature> = setOf(
+        val transparentToCut= setOf(
             Signature(",", 2),
             Signature(";", 2),
             Signature("->", 2)
         )
     }
 
-    private val failureState: StateBacktracking by lazy {
-        StateBacktracking(
+    private val failureState: StateBacktracking
+        get() = StateBacktracking(
             context.copy(step = nextStep())
         )
-    }
 
-    private val exceptionalState = cached { exception: TuPrologRuntimeException ->
-        StateException(
+    private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
+        return StateException(
             exception,
             context.copy(step = nextStep())
         )
     }
 
-    private val ignoreState: StateGoalSelection by lazy {
-        StateGoalSelection(
+    private val ignoreState: StateGoalSelection
+        get() = StateGoalSelection(
             context.copy(goals = context.goals.next, step = nextStep())
         )
-    }
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
@@ -113,7 +111,16 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                     else -> failureState
                 }
             }
-            else -> TODO("handle type error here")
+            else -> {
+                exceptionalState(
+                    TypeError.forGoal(
+                        context = context,
+                        procedure = context.procedure!!.extractSignature(),
+                        expectedType = TypeError.Expected.CALLABLE,
+                        actualValue = currentGoal
+                    )
+                )
+            }
         }
     }
 
