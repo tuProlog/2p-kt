@@ -6,6 +6,7 @@ import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.appendPrimitives
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.utils.cursor
 
@@ -22,7 +23,13 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
         return with(context) {
             when (val goal = currentGoal) {
                 is Var -> {
-                    TODO()
+                    exceptionalState(
+                        InstantiationError.forGoal(
+                            context = context,
+                            procedure = context.procedure!!.extractSignature(),
+                            variable = goal
+                        )
+                    )
                 }
                 is Struct -> {
                     val signature = goal.extractSignature()
