@@ -19,13 +19,13 @@ fun Term.unfoldGoals(): Sequence<Term> =
         else -> sequenceOf(this)
     }
 
-fun Term.toGoals(): Cursor<out Struct> =
+fun Term.toGoals(): Cursor<out Term> =
     unfoldGoals().map {
         when (it) {
-            is Struct -> it
-            else -> Struct.of("call", it)
+            is Var -> Struct.of("call", it)
+            else -> it
         }
-    }.ensureStructs()
+    }.cursor()
 
 // TODO Giovanni's review needed!! with Git > Show History
 fun ExecutionContextImpl.toRequest(

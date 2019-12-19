@@ -21,7 +21,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
 
     override fun computeNext(): State {
         return with(context) {
-            when (val goal = currentGoal) {
+            when (val goal = currentGoal!!/*[substitution]*/) {
                 is Var -> {
                     exceptionalState(
                         InstantiationError.forGoal(
@@ -73,7 +73,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                             context = context,
                             procedure = context.procedure!!.extractSignature(),
                             expectedType = TypeError.Expected.CALLABLE,
-                            actualValue = goal!!
+                            actualValue = goal
                         )
                     )
                 }

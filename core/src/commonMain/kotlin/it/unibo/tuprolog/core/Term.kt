@@ -61,6 +61,7 @@ interface Term {
      */
     fun freshCopy(scope: Scope): Term = this
 
+    // TODO what if the substitution is failed
     fun apply(substitution: Substitution): Term = when {
         substitution.isEmpty() || this.isGround -> this
         this is Var -> substitution[this] ?: this

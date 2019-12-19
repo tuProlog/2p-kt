@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Clause.Companion.defaultPreparationForExecutionVisitor
+import it.unibo.tuprolog.core.Clause.Companion.preparationForExecutionVisitor
 
 interface Clause : Struct {
 
@@ -71,27 +72,34 @@ interface Clause : Struct {
             }
         }
 
+
+        internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
+            object : TermVisitor<Term> {
+                override fun defaultValue(term: Term) = term
+
+                override fun visit(term: Struct): Term = when {
+                    term is Clause -> visit(term)
+                    term.functor in notableFunctors && term.arity == 2 ->
+                        Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
+
+                    else -> term
+                }
+
+                override fun visit(term: Clause): Term = of(term.head, visit(term.body))
+
+                override fun visit(term: Var): Term = when (term) {
+                    in unifier -> visit(unifier[term]!!)
+                    else -> Struct.of("call", term)
+                }
+            }
+
         /**
          * A visitor to prepare Clauses for execution
          *
          * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
          * as the Term: `product(A) :- call(A), call(A)`
          */
-        internal val defaultPreparationForExecutionVisitor = object : TermVisitor<Term> {
-            override fun defaultValue(term: Term) = term
-
-            override fun visit(term: Struct): Term = when {
-                term is Clause -> visit(term)
-                term.functor in notableFunctors && term.arity == 2 ->
-                    Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-
-                else -> term
-            }
-
-            override fun visit(term: Clause): Term = of(term.head, visit(term.body))
-
-            override fun visit(term: Var): Term = Struct.of("call", term)
-        }
+        internal val defaultPreparationForExecutionVisitor = preparationForExecutionVisitor()
     }
 
 }
@@ -103,3 +111,5 @@ interface Clause : Struct {
  * as the Term: `product(A) :- call(A), call(A)`
  */
 fun Clause.prepareForExecution(): Clause = accept(defaultPreparationForExecutionVisitor) as Clause
+
+fun Clause.prepareForExecution(unifier: Substitution.Unifier): Clause = accept(preparationForExecutionVisitor(unifier)) as Clause

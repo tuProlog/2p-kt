@@ -42,11 +42,17 @@ class ClassicSolverSystemTesting : SolverFactory {
                 )
             )
 
-//            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
-            solver.solve("a"("X")).forEach {
-                println(it)
-            }
-            solver.solve("!" and false or true).forEach {
+////            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
+//            solver.solve("a"("X")).forEach {
+//                println(it)
+//            }
+//            solver.solve("!" and false or true).forEach {
+//                println(it)
+//            }
+//            solver.solve("call"("!") and false or true).forEach {
+//                println(it)
+//            }
+            solver.solve("call"("Z" `=` "!" and "a"("X") and "Z")).forEach {
                 println(it)
             }
         }

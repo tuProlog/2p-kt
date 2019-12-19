@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
@@ -17,7 +18,7 @@ internal data class StateRuleExecution(override val context: ExecutionContextImp
             when (val unifier = goals.current!! mguWith rules.current!!.head) {
                 is Substitution.Unifier -> {
                     val newSubstitution = (substitution + unifier) as Substitution.Unifier
-                    val subGoals = rules.current!!.body[newSubstitution]
+                    val subGoals = rules.current!!.prepareForExecution(newSubstitution).body[newSubstitution]
 
                     StateGoalSelection(
                         copy(
