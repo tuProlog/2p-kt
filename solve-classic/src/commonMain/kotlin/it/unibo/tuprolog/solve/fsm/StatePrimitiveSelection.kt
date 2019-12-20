@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContextImpl
-import it.unibo.tuprolog.solve.appendPrimitives
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
@@ -43,22 +42,8 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                         try {
                             val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
 
-                            val tempExecutionContext = copy(
-                                goals = goal.toGoals(),
-                                procedure = goal,
-                                parent = context,
-                                depth = nextDepth(),
-                                step = nextStep()
-                            )
-
-                            val newChoicePointContext =
-                                choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
-
                             StatePrimitiveExecution(
-                                tempExecutionContext.copy(
-                                    primitives = primitiveExecutions,
-                                    choicePoints = newChoicePointContext
-                                )
+                                context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions)
                             )
                         } catch (exception: TuPrologRuntimeException) {
                             exceptionalState(exception.updateContext(context))

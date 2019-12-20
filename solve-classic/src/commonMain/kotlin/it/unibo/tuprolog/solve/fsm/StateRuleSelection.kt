@@ -5,7 +5,6 @@ import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ExecutionContextImpl
-import it.unibo.tuprolog.solve.appendRules
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
@@ -18,6 +17,18 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             Signature(";", 2),
             Signature("->", 2)
         )
+
+        sealed class CutLimit {
+            abstract val depthToCut: Int
+            abstract val procedure: Struct?
+
+            object None : CutLimit() {
+                override val depthToCut: Int = -1
+                override val procedure: Struct? = null
+            }
+
+            class Actual(override val depthToCut: Int, override val procedure: Struct?) : CutLimit()
+        }
     }
 
     private val failureState: StateBacktracking
@@ -39,30 +50,33 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
-    private val ExecutionContextImpl.cutLimit: Pair<Int, Struct?>
+    private val ExecutionContextImpl.cutLimit: CutLimit
         get() {
             val cutLimit = this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
             return if (cutLimit == null) {
-                -1 to null
+                CutLimit.None
             } else {
-                cutLimit.depth to cutLimit.procedure
+                CutLimit.Actual(cutLimit.depth, cutLimit.procedure)
             }
-
-//            .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
-//            .filter { it.goals.current !== null }
-//            .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
-            //?.depth ?: -1
         }
 
-    private fun ChoicePointContext?.performCut(cutLimit: Pair<Int, Struct?>): ChoicePointContext? {
+    private fun ChoicePointContext?.performCut(cutLimit: CutLimit): ChoicePointContext? {
         return when {
             this === null -> null
-            cutLimit.first < 0 -> this
-            cutLimit.first > executionContext!!.depth -> this
-            cutLimit.first == executionContext!!.depth && cutLimit.second != executionContext!!.procedure -> this
-            else -> pathToRoot.firstOrNull {
-                with(it.executionContext!!) {
-                    depth <= cutLimit.first && procedure == cutLimit.second
+            cutLimit is CutLimit.None -> this
+            cutLimit.depthToCut > executionContext!!.depth -> this
+            cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> this
+            else -> {
+                val cutCandidates = pathToRoot.filter {
+                    it.executionContext!!.procedure == cutLimit.procedure
+                }
+
+                if (cutCandidates.any()) {
+                    cutCandidates.firstOrNull {
+                        it.executionContext!!.depth <= cutLimit.depthToCut
+                    }?.parent
+                } else {
+                    this
                 }
             }
         }
@@ -102,21 +116,8 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                             .map { it.freshCopy() }
                             .ensureRules()
 
-                        val tempExecutionContext = context.copy(
-                            goals = currentGoal.toGoals(),
-                            procedure = currentGoal,
-                            parent = context,
-                            depth = nextDepth(),
-                            step = nextStep()
-                        )
-
-                        val newChoicePointContext = context.choicePoints.appendRules(rules.next, tempExecutionContext)
-
                         StateRuleExecution(
-                            tempExecutionContext.copy(
-                                rules = rules,
-                                choicePoints = newChoicePointContext
-                            )
+                            context.createChildAppendingRulesAndChoicePoints(rules)
                         )
                     }
 

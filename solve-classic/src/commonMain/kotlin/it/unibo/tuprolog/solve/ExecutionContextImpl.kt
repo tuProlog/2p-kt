@@ -62,5 +62,21 @@ data class ExecutionContextImpl(
             .map { it.currentGoal as Struct }
     }
 
+    override fun toString(): String {
+        return "ExecutionContextImpl(" +
+                "query=$query, " +
+                "procedure=$procedure, " +
+                "substitution=$substitution, " +
+                "goals=$goals, " +
+                "rules=$rules, " +
+                "primitives=$primitives, " +
+                "startTime=$startTime, " +
+                "maxDuration=$maxDuration, " +
+                "choicePoints=$choicePoints, " +
+                "depth=$depth, " +
+                "step=$step" +
+                ")"
+    }
+
 
 }

@@ -17,7 +17,7 @@ internal data class StateInit(override val context: ExecutionContextImpl) : Abst
                 choicePoints = null,
                 depth = 0,
                 step = 0
-            )
+            ).createChildAppendingRulesAndChoicePoints(Cursor.empty(), inferProcedureFromGoals = false)
         )
     }
 }
