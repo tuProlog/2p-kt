@@ -35,16 +35,6 @@ sealed class ChoicePointContext(
     val executionContextProcedure: Struct?
         get() = executionContext?.procedure
 
-    fun clone(
-        alternatives: Cursor<out Any> = this.alternatives,
-        executionContext: ExecutionContextImpl? = this.executionContext,
-        parent: ChoicePointContext? = this.parent,
-        depth: Int = this.depth
-    ): ChoicePointContext = when (this) {
-        is Primitives -> Primitives(alternatives as Cursor<out Solve.Response>, executionContext, parent, depth)
-        is Rules -> Rules(alternatives as Cursor<out Rule>, executionContext, parent, depth)
-    }
-
     override fun toString(): String = "$typeName(" +
             "alternatives=$alternatives, " +
             if (executionContext === null) {
@@ -58,18 +48,35 @@ sealed class ChoicePointContext(
 
     protected abstract val typeName: String
 
+    abstract fun backtrack(): ExecutionContextImpl
+
     data class Primitives(
         override val alternatives: Cursor<out Solve.Response>,
         override val executionContext: ExecutionContextImpl?,
         override val parent: ChoicePointContext?,
         override val depth: Int
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
+
         override fun toString(): String {
             return super.toString()
         }
 
         override val typeName: String
             get() = "Primitives"
+
+        override fun backtrack(): ExecutionContextImpl {
+            val tempContext = executionContext!!.copy(
+                primitives = alternatives,
+                step = executionContext.step + 1
+            )
+
+            val nextChoicePointContext = copy(
+                alternatives = alternatives.next,
+                executionContext = tempContext
+            )
+
+            return tempContext.copy(choicePoints = nextChoicePointContext)
+        }
     }
 
     data class Rules(
@@ -78,12 +85,27 @@ sealed class ChoicePointContext(
         override val parent: ChoicePointContext?,
         override val depth: Int
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
+
         override fun toString(): String {
             return super.toString()
         }
 
         override val typeName: String
             get() = "Rules"
+
+        override fun backtrack(): ExecutionContextImpl {
+            val tempContext = executionContext!!.copy(
+                rules = alternatives,
+                step = executionContext.step + 1
+            )
+
+            val nextChoicePointContext = copy(
+                alternatives = alternatives.next,
+                executionContext = tempContext
+            )
+
+            return tempContext.copy(choicePoints = nextChoicePointContext)
+        }
     }
 }
 
@@ -92,17 +114,9 @@ fun ChoicePointContext?.nextDepth(): Int = if (this == null) 0 else this.depth +
 fun ChoicePointContext?.appendPrimitives(
     alternatives: Cursor<out Solve.Response>,
     executionContext: ExecutionContextImpl? = null
-): ChoicePointContext? =
-//    if (alternatives.isOver)
-//        this
-//    else
-    ChoicePointContext.Primitives(alternatives, executionContext, this, nextDepth())
+): ChoicePointContext? = ChoicePointContext.Primitives(alternatives, executionContext, this, nextDepth())
 
 fun ChoicePointContext?.appendRules(
     alternatives: Cursor<out Rule>,
     executionContext: ExecutionContextImpl? = null
-): ChoicePointContext? =
-//    if (alternatives.isOver)
-//        this
-//    else
-    ChoicePointContext.Rules(alternatives, executionContext, this, nextDepth())
+): ChoicePointContext? = ChoicePointContext.Rules(alternatives, executionContext, this, nextDepth())
