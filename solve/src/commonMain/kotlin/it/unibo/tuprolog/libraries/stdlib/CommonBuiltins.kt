@@ -23,7 +23,17 @@ object CommonBuiltins : LibraryAliased by Library.of(
         TermNotIdentical,
         Natural,
         Is,
-        Halt
+        Halt,
+        Var,
+        NonVar,
+        Number,
+        Integer,
+        Ground,
+        Float,
+        Compound,
+        Callable,
+        Atomic,
+        Atom
     ).map { it.descriptionPair }.toMap(),
     functions = sequenceOf(
         AbsoluteValue,
