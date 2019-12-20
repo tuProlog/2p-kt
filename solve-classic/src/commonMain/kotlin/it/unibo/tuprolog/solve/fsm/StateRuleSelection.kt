@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.fsm
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.appendRules
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -12,7 +13,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 internal data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
 
     companion object {
-        val transparentToCut= setOf(
+        val transparentToCut = setOf(
             Signature(",", 2),
             Signature(";", 2),
             Signature("->", 2)
@@ -38,14 +39,34 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
-    private val ExecutionContextImpl.minDepthToCut: Int
-        get() = this.pathToRoot
-//            .filter { it.procedure != null }
-            .firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+    private val ExecutionContextImpl.cutLimit: Pair<Int, Struct?>
+        get() {
+            val cutLimit = this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+            return if (cutLimit == null) {
+                -1 to null
+            } else {
+                cutLimit.depth to cutLimit.procedure
+            }
+
 //            .drop(if (goals.current.let { it != null && it.isCut() }) 1 else 0)
 //            .filter { it.goals.current !== null }
 //            .firstOrNull { it.goals.current!!.extractSignature() !in transparentToCut }
-            ?.depth ?: -1
+            //?.depth ?: -1
+        }
+
+    private fun ChoicePointContext?.performCut(cutLimit: Pair<Int, Struct?>): ChoicePointContext? {
+        return when {
+            this === null -> null
+            cutLimit.first < 0 -> this
+            cutLimit.first > executionContext!!.depth -> this
+            cutLimit.first == executionContext!!.depth && cutLimit.second != executionContext!!.procedure -> this
+            else -> pathToRoot.firstOrNull {
+                with(it.executionContext!!) {
+                    depth <= cutLimit.first && procedure == cutLimit.second
+                }
+            }
+        }
+    }
 
     override fun computeNext(): State {
 
@@ -68,20 +89,11 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                     }
 
                     currentGoal.isCut() -> {
-                        val depthToCut = this.minDepthToCut
-
-                        if (depthToCut < 0) {
-                            ignoreState
-                        } else {
-                            ignoreState.copy(
-                                context = ignoreState.context.copy(
-                                    choicePoints = ignoreState.context
-                                        .choicePoints
-                                        ?.pathToRoot
-                                        ?.firstOrNull { it.executionContext!!.depth < depthToCut }
-                                )
+                        ignoreState.copy(
+                            context = ignoreState.context.copy(
+                                choicePoints = ignoreState.context.choicePoints.performCut(cutLimit)
                             )
-                        }
+                        )
                     }
 
                     ruleSources.any { currentGoal in it } -> {
@@ -123,5 +135,4 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             }
         }
     }
-
 }
