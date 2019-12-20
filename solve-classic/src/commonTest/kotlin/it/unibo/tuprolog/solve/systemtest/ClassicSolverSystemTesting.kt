@@ -42,27 +42,31 @@ class ClassicSolverSystemTesting : SolverFactory {
                 )
             )
 
-            solver.solve("a"("X")).forEach {
+            solver.solve(tupleOf(true, "X"), 200).forEach {
                 println(it)
             }
-            solver.solve("!" and false or true).forEach {
-                println(it)
-            }
-            solver.solve("call"("!") and false or true).forEach {
-                println(it)
-            }
-            solver.solve("a"("X") and "!").forEach {
-                println(it)
-            }
-            solver.solve("a"("X") and "call"("!")).forEach {
-                println(it)
-            }
-            solver.solve("call"("Z" `=` "!" and "a"("X") and "Z")).forEach {
-                println(it)
-            }
-            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
-                println(it)
-            }
+
+//            solver.solve("a"("X")).forEach {
+//                println(it)
+//            }
+//            solver.solve("!" and false or true).forEach {
+//                println(it)
+//            }
+//            solver.solve("call"("!") and false or true).forEach {
+//                println(it)
+//            }
+//            solver.solve("a"("X") and "!").forEach {
+//                println(it)
+//            }
+//            solver.solve("a"("X") and "call"("!")).forEach {
+//                println(it)
+//            }
+//            solver.solve("call"("Z" `=` "!" and "a"("X") and "Z")).forEach {
+//                println(it)
+//            }
+//            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
+//                println(it)
+//            }
         }
     }
 
