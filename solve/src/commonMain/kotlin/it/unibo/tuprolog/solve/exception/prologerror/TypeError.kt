@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.toIndicator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
@@ -71,13 +72,15 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             actualValue: Term
-        ) = TypeError(
-            message = "Goal `$actualValue` of `$procedure` should be a `$expectedType` term",
-            context = context,
-            expectedType = expectedType,
-            actualValue = actualValue,
-            extraData = actualValue
-        )
+        ) = "Goal `$actualValue` of ${procedure.toIndicator()} should be a $expectedType term".let {
+            TypeError(
+                message = it,
+                context = context,
+                expectedType = expectedType,
+                actualValue = actualValue,
+                extraData = Atom.of(it)
+            )
+        }
 
         /** The type error Struct functor */
         const val typeFunctor = "type_error"

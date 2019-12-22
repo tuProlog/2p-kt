@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.toIndicator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 
@@ -46,10 +47,13 @@ class InstantiationError(
             )
 
         fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
-            InstantiationError(
-                message = "Uninstantiated subgoal ${variable} in procedure ${procedure}",
-                context = context,
-                extraData = variable
-            )
+            "Uninstantiated subgoal $variable in procedure ${procedure.toIndicator()}".let {
+                InstantiationError(
+                    message = it,
+                    context = context,
+                    extraData = Atom.of(it)
+                )
+            }
+
     }
 }
