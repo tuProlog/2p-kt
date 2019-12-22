@@ -16,6 +16,14 @@ sealed class Substitution : Map<Var, Term> {
     /** Applies the Substitution to the given Term */
     fun applyTo(term: Term): Term = term[this]
 
+    /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
+     *
+     * Consider for instance the substitution { X -> Y, Y -> Z },
+     * then the invocation of `getOriginal(Z)` should retrieve `X`
+     * */
+    // TODO test this method
+    abstract fun getOriginal(variable: Var): Var?
+
     /**
      * Creates a new substitution that's the *composition* of this and [other]
      *
@@ -77,6 +85,22 @@ sealed class Substitution : Map<Var, Term> {
         // because a map cannot have a mapping from same key to more than one
         // different value, by definition of map type
 
+        private fun reverseLookUp(variable: Var): Var? {
+            return entries
+                .filter { it.value == variable }
+                .map { it.key }
+                .firstOrNull()
+        }
+
+        override fun getOriginal(variable: Var): Var? =
+            sequence<Var> {
+                var current: Var? = reverseLookUp(variable)
+                while (current != null) {
+                    yield(current)
+                    current = reverseLookUp(current)
+                }
+            }.lastOrNull()
+
         override val isSuccess: Boolean = true
 
         override fun minus(keys: Iterable<Var>): Unifier = super.minus(keys) as Unifier
@@ -115,6 +139,7 @@ sealed class Substitution : Map<Var, Term> {
     /** The Failed Substitution instance */
     object Fail : Substitution(), Map<Var, Term> by emptyMap() {
         override val isFailed: Boolean = true
+        override fun getOriginal(variable: Var): Var? = null
         override fun minus(other: Substitution): Fail = Fail
         override fun minus(keys: Iterable<Var>): Fail = Fail
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
