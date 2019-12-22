@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.PrologFlags
-import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.SolverStrategies
+import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -25,6 +25,9 @@ internal data class ExecutionContextImpl(
     /** The side effects manager to be used during resolution process */
     val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
 ) : ExecutionContext {
+
+    override val procedure: Struct?
+        get() = sideEffectManager.logicalParentRequests.value.map { it.query }.firstOrNull()
 
     override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.value.map { it.query } }
 }

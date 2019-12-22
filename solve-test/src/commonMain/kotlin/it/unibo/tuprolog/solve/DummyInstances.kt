@@ -9,6 +9,7 @@ object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
     val executionContext = object : ExecutionContext {
+        override val procedure: Nothing by lazy { throw NotImplementedError() }
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKB: Nothing by lazy { throw NotImplementedError() }

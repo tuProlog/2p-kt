@@ -8,13 +8,13 @@ import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.Set as KtSet
 
 data class ExecutionContextImpl(
+    override val procedure: Struct?,
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct,
-    val procedure: Struct?,
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
@@ -41,6 +41,7 @@ data class ExecutionContextImpl(
     val pathToRoot: Sequence<ExecutionContextImpl> = sequence {
         var current: ExecutionContextImpl? = this@ExecutionContextImpl
         while (current != null) {
+            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             yield(current!!)
             current = current.parent
         }
