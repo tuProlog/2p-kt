@@ -12,6 +12,7 @@ import it.unibo.tuprolog.utils.cursor
 
 
 fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
+    @Suppress("USELESS_CAST")
     map { require(it is Rule); it as Rule }.cursor()
 
 fun Term.unfoldGoals(): Sequence<Term> =

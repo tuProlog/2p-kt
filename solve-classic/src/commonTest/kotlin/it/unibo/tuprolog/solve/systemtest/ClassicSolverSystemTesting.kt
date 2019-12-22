@@ -42,13 +42,28 @@ class ClassicSolverSystemTesting : SolverFactory {
                 )
             )
 
-            solver.solve(tupleOf(true, "X"), 200).forEach {
+            solver.solve(tupleOf(true, "X"), 200).forEach { sol ->
+                println(sol)
+                if (sol is Solution.Halt) {
+                    sol.exception.prologStackTrace.forEach {
+                        println("\t$it")
+                    }
+                }
+            }
+            solver.solve(tupleOf(true, 1), 200).forEach {sol ->
+                println(sol)
+//                if (sol is Solution.Halt) {
+//                    sol.exception.prologStackTrace.forEach {
+//                        println("\t$it")
+//                    }
+//                }
+            }
+            solver.solve("call"("a"("X"))).forEach {
                 println(it)
             }
-
-//            solver.solve("a"("X")).forEach {
-//                println(it)
-//            }
+            solver.solve("call"("X")).forEach {
+                println(it)
+            }
 //            solver.solve("!" and false or true).forEach {
 //                println(it)
 //            }

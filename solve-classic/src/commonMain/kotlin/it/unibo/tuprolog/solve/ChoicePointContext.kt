@@ -24,6 +24,7 @@ sealed class ChoicePointContext(
         get() = sequence {
             var curr: ChoicePointContext? = this@ChoicePointContext
             while (curr != null) {
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 yield(curr!!)
                 curr = curr.parent
             }
