@@ -5,12 +5,13 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.libraries.stdlib.function.*
 import it.unibo.tuprolog.libraries.stdlib.primitive.*
+import it.unibo.tuprolog.primitive.PrimitiveWrapper
 
 object CommonBuiltins : LibraryAliased by Library.of(
     alias = "prolog.lang",
     operatorSet = OperatorSet.DEFAULT,
     theory = CommonRules,
-    primitives = sequenceOf(
+    primitives = sequenceOf<PrimitiveWrapper<*>>(
         ArithmeticEqual,
         ArithmeticNotEqual,
         ArithmeticGreaterThan,
@@ -29,11 +30,12 @@ object CommonBuiltins : LibraryAliased by Library.of(
         Number,
         Integer,
         Ground,
-        Float,
+        it.unibo.tuprolog.libraries.stdlib.primitive.Float,
         Compound,
         Callable,
         Atomic,
-        Atom
+        Atom,
+        EnsureExecutable
     ).map { it.descriptionPair }.toMap(),
     functions = sequenceOf(
         AbsoluteValue,
