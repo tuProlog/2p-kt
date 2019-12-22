@@ -17,9 +17,12 @@ internal data class StateException(
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
-                val catchGoal = context.goals.current!! as Struct
+                val catchGoal = context.goals.current!!
 
                 when {
+                    catchGoal !is Struct -> {
+                        StateHalt(exception, context.copy(step = nextStep()))
+                    }
                     catchGoal.let { it.arity == 3 && it.functor == "catch" } -> {
 
                         when (val catcher = catchGoal[1].mguWith(exception.errorStruct)) {

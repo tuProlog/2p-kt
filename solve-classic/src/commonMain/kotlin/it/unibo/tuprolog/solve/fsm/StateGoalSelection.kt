@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.Solution
 
@@ -30,7 +29,7 @@ internal data class StateGoalSelection(override val context: ExecutionContextImp
                 )
             }
         } else {
-            val goalsWithSubstitution = context.goals.map { it[context.substitution] as Struct }
+            val goalsWithSubstitution = context.goals.map { it[context.substitution] }
 
             StatePrimitiveSelection(
                 context.copy(

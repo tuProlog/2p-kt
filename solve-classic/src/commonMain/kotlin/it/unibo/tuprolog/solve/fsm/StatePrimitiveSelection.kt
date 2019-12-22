@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -56,7 +57,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                     exceptionalState(
                         TypeError.forGoal(
                             context = context,
-                            procedure = context.procedure!!.extractSignature(),
+                            procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
                             expectedType = TypeError.Expected.CALLABLE,
                             actualValue = goal
                         )
