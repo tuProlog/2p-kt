@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.primitive
 
+import it.unibo.tuprolog.AbstractWrapper
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Var
@@ -14,7 +15,8 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
  * @author Enrico
  * @author Giovanni
  */
-abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
+abstract class PrimitiveWrapper<C : ExecutionContext> :
+    AbstractWrapper<Primitive> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)

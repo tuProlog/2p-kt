@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.primitive
 
+import it.unibo.tuprolog.AbstractWrapper
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
