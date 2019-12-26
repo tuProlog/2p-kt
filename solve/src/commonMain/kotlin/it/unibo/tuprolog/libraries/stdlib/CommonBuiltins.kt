@@ -10,7 +10,7 @@ import it.unibo.tuprolog.primitive.PrimitiveWrapper
 object CommonBuiltins : LibraryAliased by Library.of(
     alias = "prolog.lang",
     operatorSet = OperatorSet.DEFAULT,
-    theory = CommonRules,
+    theory = CommonRules.clauseDb,
     primitives = sequenceOf<PrimitiveWrapper<*>>(
         ArithmeticEqual,
         ArithmeticNotEqual,
