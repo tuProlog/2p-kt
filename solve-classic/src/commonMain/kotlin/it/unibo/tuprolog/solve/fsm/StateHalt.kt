@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 internal data class StateHalt(
     override val exception: TuPrologRuntimeException,
     override val context: ExecutionContextImpl
-) :
-    ExceptionalState, AbstractEndState(
+) : ExceptionalState, AbstractEndState(
     Solution.Halt(context.query, exception), context
 )

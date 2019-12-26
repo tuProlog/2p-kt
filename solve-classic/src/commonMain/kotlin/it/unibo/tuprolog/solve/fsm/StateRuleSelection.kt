@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.libraries.stdlib.magic.MagicCut
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.ChoicePointContext
@@ -50,9 +51,12 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
-    private val ExecutionContextImpl.cutLimit: CutLimit
-        get() {
-            val cutLimit = this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+    private fun ExecutionContextImpl.computeCutLimit(magicCut: Boolean = false): CutLimit {
+            val cutLimit = if (magicCut) {
+                this.pathToRoot.firstOrNull()
+            } else {
+                this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
+            }
             return if (cutLimit == null) {
                 CutLimit.None
             } else {
@@ -103,6 +107,8 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
                     }
 
                     currentGoal.isCut() -> {
+                        val cutLimit = computeCutLimit(currentGoal is MagicCut)
+
                         ignoreState.copy(
                             context = ignoreState.context.copy(
                                 choicePoints = ignoreState.context.choicePoints.performCut(cutLimit)
