@@ -21,7 +21,7 @@ sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
         object Then : If() {
             override val Scope.body: Term
-                get() = tupleOf(varOf("Cond"), MagicCut, varOf("Then"))
+                get() = tupleOf(structOf("call", varOf("Cond")), MagicCut, varOf("Then"))
         }
 
         object Else : If() {

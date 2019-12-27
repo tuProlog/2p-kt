@@ -27,43 +27,49 @@ class ClassicSolverSystemTesting : SolverFactory {
             val solver = Solver.classic(
                 libraries = defaultLibraries,
                 staticKB = theoryOf(
-//                    fact { "a"(1) },
-//                    fact { "a"(2) }
-                    clause { "a"("X") `if` "b"("X") },
-                    clause { "a"(6) },
-                    clause { "b"("X") `if` ("c"("X") and "d"("X")) },
-                    clause { "b"(4) `if` "!" },
-                    clause { "b"(5) },
-                    clause { "c"(1) },
-                    clause { "c"(2) `if` "!" },
-                    clause { "c"(3) },
-                    clause { "d"(2) },
-                    clause { "d"(3) }
+                    fact { "a"(2) },
+                    fact { "a"(1) },
+                    fact { "b"(1) },
+                    fact { "c"(2) }
+//                    clause { "a"("X") `if` "b"("X") },
+//                    clause { "a"(6) },
+//                    clause { "b"("X") `if` ("c"("X") and "d"("X")) },
+//                    clause { "b"(4) `if` "!" },
+//                    clause { "b"(5) },
+//                    clause { "c"(1) },
+//                    clause { "c"(2) `if` "!" },
+//                    clause { "c"(3) },
+//                    clause { "d"(2) },
+//                    clause { "d"(3) }
                 )
             )
 
-            solver.solve(tupleOf(true, "X"), 200).forEach { sol ->
+            solver.solve("a"("X") then "b"("X") or "c"("X"), 200).forEach { sol ->
                 println(sol)
-                if (sol is Solution.Halt) {
-                    sol.exception.prologStackTrace.forEach {
-                        println("\t$it")
-                    }
-                }
             }
-            solver.solve(tupleOf(true, 1), 200).forEach {sol ->
+            solver.solve("a"("X") and ("X" lowerThan 2) then "b"("X") or "c"("X"), 200).forEach { sol ->
                 println(sol)
+            }
+            solver.solve("a"("X") and "!" and ("X" lowerThan 2) then "b"("X") or "c"("X"), 200).forEach { sol ->
+                println(sol)
+            }
+//            solver.solve(tupleOf(true, "X"), 200).forEach { sol ->
+//                println(sol)
 //                if (sol is Solution.Halt) {
 //                    sol.exception.prologStackTrace.forEach {
 //                        println("\t$it")
 //                    }
 //                }
-            }
-            solver.solve("call"("a"("X"))).forEach {
-                println(it)
-            }
-            solver.solve("call"("X")).forEach {
-                println(it)
-            }
+//            }
+//            solver.solve(tupleOf(true, 1), 200).forEach {sol ->
+//                println(sol)
+//            }
+//            solver.solve("call"("a"("X"))).forEach {
+//                println(it)
+//            }
+//            solver.solve("call"("X")).forEach {
+//                println(it)
+//            }
 //            solver.solve("!" and false or true).forEach {
 //                println(it)
 //            }

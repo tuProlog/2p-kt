@@ -14,7 +14,7 @@ object Arrow : RuleWrapper<ExecutionContext>("->", 2) {
         get() = ktListOf(varOf("Cond"), varOf("Then"))
 
     override val Scope.body: Term get() = tupleOf(
-        varOf("Cond"),
+        structOf("call", varOf("Cond")),
         MagicCut,
         varOf("Then")
     )
