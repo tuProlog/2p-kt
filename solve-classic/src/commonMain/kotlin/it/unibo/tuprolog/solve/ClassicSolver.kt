@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
@@ -24,6 +26,14 @@ data class ClassicSolver(
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty()
 ) : Solver {
 
+    private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
+        return filter { _, term -> term !is Var }
+    }
+
+    private fun Solution.Yes.cleanUp(): Solution.Yes {
+        return copy(substitution = substitution.cleanUp())
+    }
+
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
         val initialContext = ExecutionContextImpl(
             query = goal,
@@ -42,7 +52,12 @@ data class ClassicSolver(
             state = state.next()
 //            println(state)
             if (state is EndState) {
-                yield(state.solution)
+                yield(
+                    when(val sol = state.solution) {
+                        is Solution.Yes -> sol.cleanUp()
+                        else -> sol
+                    }
+                )
 
                 if (!state.hasOpenAlternatives) break
             }

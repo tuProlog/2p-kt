@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.prologerror.MessageError
 
 object Throw : UnaryPredicate<ExecutionContext>("throw") {
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
@@ -24,6 +25,6 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
                     extraData = if (error.arity > 1) error[1] else null
                 )
             }
-            else -> PrologError.of(context = context, type = error)
+            else -> MessageError(context = context, content = error)
         }
 }

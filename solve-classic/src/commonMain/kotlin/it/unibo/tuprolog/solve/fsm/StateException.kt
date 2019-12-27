@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.prologerror.MessageError
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
@@ -14,20 +15,32 @@ internal data class StateException(
     override val context: ExecutionContextImpl
 ) : ExceptionalState, AbstractState(context) {
 
+    private fun Struct.isCatch(): Boolean =
+        arity == 3 && functor == "catch"
+
+    private fun PrologError.getExceptionContent(): Struct {
+        return when (this) {
+            is MessageError -> content
+            else -> errorStruct
+        }
+    }
+
+
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
-                val catchGoal = context.goals.current!!
+                val catchGoal = context.currentGoal!!
 
                 when {
                     catchGoal !is Struct -> {
                         StateHalt(exception, context.copy(step = nextStep()))
                     }
-                    catchGoal.let { it.arity == 3 && it.functor == "catch" } -> {
+                    catchGoal.isCatch() -> {
+                        val catcher = catchGoal[1].mguWith(exception.getExceptionContent())
 
-                        when (val catcher = catchGoal[1].mguWith(exception.errorStruct)) {
-                            is Substitution.Unifier -> {
-                                val newSubstitution = (context.substitution + catcher) as Substitution.Unifier
+                        when {
+                            catcher is Substitution.Unifier -> {
+                                val newSubstitution = (context.substitution + catcher).filter(context.interestingVariables) as Substitution.Unifier
                                 val subGoals = catchGoal[2][newSubstitution]
 
                                 StateGoalSelection(
@@ -38,6 +51,12 @@ internal data class StateException(
                                         substitution = newSubstitution,
                                         step = nextStep()
                                     )
+                                )
+                            }
+                            context.isRoot -> {
+                                StateHalt(
+                                    exception,
+                                    context.copy(step = nextStep())
                                 )
                             }
                             else -> {
@@ -62,11 +81,15 @@ internal data class StateException(
                     }
                 }
             }
-            is TimeOutException -> StateHalt(
-                exception,
-                context.copy(step = nextStep())
-            )
-            else -> StateHalt(exception, context.copy(step = nextStep()))
+            is TimeOutException -> {
+                StateHalt(
+                    exception,
+                    context.copy(step = nextStep())
+                )
+            }
+            else -> {
+                StateHalt(exception, context.copy(step = nextStep()))
+            }
         }
     }
 
