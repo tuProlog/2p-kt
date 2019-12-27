@@ -4,6 +4,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase2
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse1ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse2ToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabase
@@ -177,6 +183,38 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             ),
             goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
             maxDuration = 2000L
+        )
+    }
+
+    /** Test with [ifThen1ToSolution] */
+    fun testIfThen1() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase1),
+            goalToSolutions = ifThen1ToSolution
+        )
+    }
+
+    /** Test with [ifThenElse1ToSolution] */
+    fun testIfThenElse1() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase1),
+            goalToSolutions = ifThenElse1ToSolution
+        )
+    }
+
+    /** Test with [ifThenElse2ToSolution] */
+    fun testIfThenElse2() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase2),
+            goalToSolutions = ifThenElse2ToSolution
+        )
+    }
+
+    /** Test with [ifThen2ToSolution] */
+    fun testIfThen2() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase2),
+            goalToSolutions = ifThen2ToSolution
         )
     }
 

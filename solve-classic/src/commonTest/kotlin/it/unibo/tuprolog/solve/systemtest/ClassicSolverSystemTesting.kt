@@ -92,6 +92,26 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testIfThen2() {
+        prototype.testIfThen2()
+    }
+
+    @Test
+    fun testIfThen1() {
+        prototype.testIfThen1()
+    }
+
+    @Test
+    fun testIfThenElse1() {
+        prototype.testIfThenElse1()
+    }
+
+    @Test
+    fun testIfThenElse2() {
+        prototype.testIfThenElse1()
+    }
+
+    @Test
     fun testTimeout1() {
         prototype.testTimeout1()
     }
