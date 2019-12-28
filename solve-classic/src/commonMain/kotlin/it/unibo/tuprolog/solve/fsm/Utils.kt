@@ -41,22 +41,39 @@ fun ExecutionContextImpl.createTempChild(inferProcedureFromGoals: Boolean = true
     )
 }
 
+fun ExecutionContextImpl.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ExecutionContextImpl {
+    val newChoicePointContext = if (rules.hasNext) {
+        choicePoints.appendRules(rules.next, this)
+    } else {
+        choicePoints.appendRules(EmptyCursor, this)
+    }
+
+    return copy(
+        rules = rules,
+        choicePoints = newChoicePointContext
+    )
+}
+
+fun ExecutionContextImpl.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ExecutionContextImpl {
+    val newChoicePointContext = if (primitiveExecutions.hasNext) {
+        choicePoints.appendPrimitives(primitiveExecutions.next, this)
+    } else {
+        choicePoints.appendPrimitives(EmptyCursor, this)
+    }
+
+    return copy(
+        primitives = primitiveExecutions,
+        choicePoints = newChoicePointContext
+    )
+}
+
 fun ExecutionContextImpl.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true
 ): ExecutionContextImpl {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
-    val newChoicePointContext = if (rules.hasNext) {
-        choicePoints.appendRules(rules.next, tempExecutionContext)
-    } else {
-        choicePoints.appendRules(EmptyCursor, tempExecutionContext)
-    }
-
-    return tempExecutionContext.copy(
-        rules = rules,
-        choicePoints = newChoicePointContext
-    )
+    return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
 
 fun ExecutionContextImpl.createChildAppendingPrimitivesAndChoicePoints(
@@ -65,16 +82,7 @@ fun ExecutionContextImpl.createChildAppendingPrimitivesAndChoicePoints(
 ): ExecutionContextImpl {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
-    val newChoicePointContext = if (primitiveExecutions.hasNext) {
-        choicePoints.appendPrimitives(primitiveExecutions.next, tempExecutionContext)
-    } else {
-        choicePoints.appendPrimitives(EmptyCursor, tempExecutionContext)
-    }
-
-    return tempExecutionContext.copy(
-        primitives = primitiveExecutions,
-        choicePoints = newChoicePointContext
-    )
+    return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
 // TODO Giovanni's review needed!! with Git > Show History

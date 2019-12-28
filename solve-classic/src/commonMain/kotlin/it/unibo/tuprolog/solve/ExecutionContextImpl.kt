@@ -48,7 +48,7 @@ data class ExecutionContextImpl(
     }
 
     val currentGoal: Term?
-        get() = goals.current
+        get() = if (goals.isOver) null else goals.current
 
     val interestingVariables: KtSet<Var> by lazy {
         val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
@@ -59,8 +59,7 @@ data class ExecutionContextImpl(
 
     override val prologStackTrace: Sequence<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
-            .filter { it.currentGoal !== null }
-            .map { it.currentGoal as Struct }
+            .map { it.procedure ?: Struct.of("?-", query) }
     }
 
     override fun toString(): String {

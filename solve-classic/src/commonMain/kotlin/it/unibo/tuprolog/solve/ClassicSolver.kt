@@ -47,10 +47,10 @@ data class ClassicSolver(
         )
 
         var state: State = StateInit(initialContext)
-//        println(state)
+
         while (true) {
             state = state.next()
-//            println(state)
+            
             if (state is EndState) {
                 yield(
                     when(val sol = state.solution) {
