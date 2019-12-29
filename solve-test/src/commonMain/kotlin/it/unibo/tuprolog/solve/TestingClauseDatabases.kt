@@ -307,6 +307,62 @@ object TestingClauseDatabases {
     }
 
     /**
+     * A database that implements custom "range" to generate lists; it should test backtracking functionality along with arithmetic
+     *
+     * ```prolog
+     * range(N, N, [N]) :- !.
+     * range(M, N, [M | Ns]) :-
+     *       M < N,
+     *       M1 is M + 1,
+     *       range(M1, N, Ns).
+     * ```
+     */
+    val customRangeListGeneratorDatabase by lazy {
+        prolog {
+            theory(
+                { ("range"("N", "N", listOf("N")) `if` "!") },
+                {
+                    ("range"("M", "N", listFrom(ktListOf(varOf("M")), varOf("Ns"))) `if` (
+                            "<"("M", "N") and
+                                    ("M1" `is` (varOf("M") + 1)) and
+                                    "range"("M1", "N", "Ns")
+                            ))
+                }
+            )
+        }
+    }
+
+    /**
+     * Notable [customRangeListGeneratorDatabase] request goals and respective expected [Solution]s
+     * ```prolog
+     * ?- range(1, 4, [1, 2, 3, 4]).
+     * ?- range(1, 4, [1, 2, 3, 4, 5]).
+     * ?- range(1, 4, L).
+     * ?- range(1, 1, L).
+     * ?- range(2, 1, L).
+     * ?- range(A, 4, [2, 3, 4]).
+     * ?- range(2, A, [2, 3, 4]).
+     * ```
+     */
+    val customRangeListGeneratorDatabaseNotableGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
+                "range"(1, 4, listOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
+                "range"(1, 4, "L").hasSolutions(
+                    { yes("L" to listOf(1, 2, 3, 4)) }
+                ),
+                "range"(1, 1, "L").hasSolutions(
+                    { yes("L" to listOf(1)) }
+                ),
+                "range"(2, 1, "L").hasSolutions({ no() }),
+                "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
+                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(haltException) })
+            )
+        }
+    }
+
+    /**
      * Call primitive request goals and respective expected [Solution]s
      *
      * Contained requests:

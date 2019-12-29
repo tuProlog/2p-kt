@@ -18,11 +18,9 @@ internal class ExecutionContextImplTest {
     @Test
     fun prologStackTraceCorrectlyComputed() {
         val sideEffectManagerWithLogicalParents = SideEffectManagerImpl(
-            logicalParentRequests = lazyOf(
-                sequenceOf(
-                    createSolveRequest(Atom.of("ciao")),
-                    createSolveRequest(Atom.of("ciao2"))
-                )
+            logicalParentRequests = sequenceOf(
+                createSolveRequest(Atom.of("ciao")),
+                createSolveRequest(Atom.of("ciao2"))
             )
         )
         val toBeTested = ExecutionContextImpl(sideEffectManager = sideEffectManagerWithLogicalParents)

@@ -27,9 +27,10 @@ internal data class ExecutionContextImpl(
 ) : ExecutionContext {
 
     override val procedure: Struct?
-        get() = sideEffectManager.logicalParentRequests.value.map { it.query }.firstOrNull()
+        get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 
-    override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.value.map { it.query } }
+    override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.map { it.query } }
+
 }
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/

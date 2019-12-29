@@ -33,7 +33,7 @@ sealed class Substitution : Map<Var, Term> {
      */
     operator fun plus(other: Substitution): Substitution = when {
         anyFailed(this, other) || anyContradiction(this, other) -> Fail
-        else -> (this as Map<Var, Term> + other).asUnifier()
+        else -> (this.mapValues { (_, value) -> value.apply(other) } + other).asUnifier()
     }
 
     /**
@@ -177,7 +177,7 @@ sealed class Substitution : Map<Var, Term> {
             else -> substitutionPairs.toMap().asUnifier()
         }
 
-        /** Creates a new Substitution from given substitutions; if any failure or contradiction is found, the result will be [Substitution.Fail] */
+        /** Creates a new Substitution *composing* given substitutions in order; if any failure or contradiction is found, the result will be [Substitution.Fail] */
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
             substitutions.fold(substitution, Substitution::plus)
 
