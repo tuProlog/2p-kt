@@ -28,7 +28,7 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     object Success : NegationAsFailure() {
         override val Scope.body: Term
-            get() = whatever()
+            get() = truthOf(true)
     }
 
     companion object {
