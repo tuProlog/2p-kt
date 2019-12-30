@@ -1,5 +1,6 @@
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
@@ -52,6 +53,33 @@ val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
 val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 // env ORG_GRADLE_PROJECT_ossrhPassword
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
+
+val Project.docDir: String
+    get() = "$buildDir/doc"
+
+fun capitalize(s: String): String {
+    return s[0].toUpperCase() + s.substring(1)
+}
+
+fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
+    platform: String, configuration: Action<in GradlePassConfigurationImpl>) {
+
+    val low = platform.toLowerCase()
+    val up = platform.toUpperCase()
+
+    register(low) {
+        targets = listOf(up)
+        this@register.platform = low
+        includeNonPublic = false
+        reportUndocumented = false
+        collectInheritedExtensionsFromLibraries = true
+        skipEmptyPackages = true
+        configuration(this@register)
+    }
+}
+
+fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(platform: String) =
+    registerPlatform(platform) { }
 
 // apply next commands to all subprojects
 subprojects {
@@ -149,48 +177,17 @@ subprojects {
         }))
     }
 
-    val docDir = "$buildDir/doc"
-
     tasks.withType<DokkaTask> {
         outputDirectory = docDir
         outputFormat = "html"
 
         multiplatform {
-            register("jvm") {
-                targets = listOf("JVM")
-                platform = "jvm"
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                }
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                }
-                includeNonPublic = true
-                reportUndocumented = false
-                collectInheritedExtensionsFromLibraries = true
-                skipEmptyPackages = true
+            registerPlatform("jvm") {
                 jdkVersion = 6
             }
 
-            register("js") {
-                targets = listOf("JS")
-                platform = "js"
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                }
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                }
-                includeNonPublic = true
-                reportUndocumented = false
-                collectInheritedExtensionsFromLibraries = true
-                skipEmptyPackages = true
-            }
+            registerPlatform("js")
         }
-    }
-
-    fun capitalize(s: String): String {
-        return s[0].toUpperCase() + s.substring(1)
     }
 
     val jarPlatform = tasks.withType<Jar>().map { it.name.replace("Jar", "") }
@@ -313,6 +310,30 @@ subprojects {
 
         task<Sign>("signAllPublications") {
             dependsOn(*pubs.toTypedArray())
+        }
+    }
+}
+
+tasks.withType<DokkaTask> {
+    outputDirectory = docDir
+    outputFormat = "html"
+
+    multiplatform {
+        listOf("jvm", "js").forEach { platform ->
+            registerPlatform(platform) {
+                rootProject.subprojects.forEach { subproject ->
+                    listOf("${platform}Main", "commonMain").forEach { sourceSet ->
+                        subproject.kotlin.sourceSets.getByName(sourceSet).kotlin.srcDirs
+                            .filter { it.exists() }
+                            .map { it.toString() }
+                            .forEach {
+                                this@registerPlatform.sourceRoot {
+                                    path = it
+                                }
+                            }
+                    }
+                }
+            }
         }
     }
 }
