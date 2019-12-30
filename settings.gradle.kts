@@ -1,5 +1,7 @@
 rootProject.name = "2p"
 
+include("documentation")
+
 include("core")
 include("unify")
 include("theory")
