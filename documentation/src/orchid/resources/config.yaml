@@ -1,0 +1,8 @@
+site:
+  about:
+    siteName: 2P in Kotlin
+    siteDescription: A Kotlin Multiplatform-based ecosystem for logic programming
+Editorial:
+  primaryColor: '#DE9149'
+  social:
+    github: 'tuProlog/2p-kt'
