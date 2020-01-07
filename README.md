@@ -1,6 +1,6 @@
 # 2P in Kotlin
 
-![The 2P logo](./logo.svg)
+![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.svg)
 
 tuProlog (2P henceforth) is a Kotlin multi-platform ecosystem for Symbolic Artificial Intelligence (AI).
 It consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.
@@ -78,11 +78,9 @@ Notice that dependencies of `2P_MODULE` should be automatically imported.
 ## Developers
 
 Working with the 2P codebase requires a number of tools to be installed and properly configured on your system:
-- JDK 8+
-    + Ensure the `JAVA_HOME` environment variable is properly configured
+- JDK 8+ (please ensure the `JAVA_HOME` environment variable is properly) configured
 - Kotlin 1.3.60+
-- Gradle 6.0+
-    + Ensure the `GRADLE_HOME` environment variable is properly configured
+- Gradle 6.0+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 
 ### Develop 2P with IntelliJ Idea
