@@ -10,7 +10,7 @@ variables:
   TEST_TASK: "check"
   BINTRAY_TASK: "publishAllToBintray"
   PAGES_TASK: "orchidBuild"
-  ORCHID_BASE_URL: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
+  ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
 
 before_script:
   - chmod +x gradlew
