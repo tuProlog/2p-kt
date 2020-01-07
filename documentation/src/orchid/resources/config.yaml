@@ -43,9 +43,9 @@ kotlindoc:
         moduleType: 'kotlindoc'
         itemTitleType: 'SIGNATURE'
         includeItems: true
-services:
-  publications:
-    stages:
-      - type: 'gitlabPages'
-        username: 'gciatto-unibo' # the username which created the personal access token
-        repo: 'pika-lab/tuprolog/2p-in-kotlin' # the repo to publish to
+#services:
+#  publications:
+#    stages:
+#      - type: 'gitlabPages'
+#        username: 'gciatto-unibo' # the username which created the personal access token
+#        repo: 'pika-lab/tuprolog/2p-in-kotlin' # the repo to publish to
