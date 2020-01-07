@@ -57,9 +57,11 @@ Manually publish to Bintray:
 
 pages:
   script:
+    - mkdir public
     - $GCMD $BEFORE_TASK $PAGES_TASK $AFTER_TASK $GOPTS
+    - cp -r documentation/build/docs/orchid/* public
   artifacts:
     paths:
-      - documentation/build/docs/orchid
+      - public
   only:
     - feature/doc
