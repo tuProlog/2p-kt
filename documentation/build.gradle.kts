@@ -14,20 +14,20 @@ repositories {
     maven("https://kotlin.bintray.com/kotlinx/")
 }
 
-//fun getPropertyOrWarnForAbsence(key: String): String? {
-//    val value = property(key)?.toString()
-//    if (value.isNullOrBlank()) {
-//        System.err.println("WARNING: $key is not set")
-//    }
-//    return value
-//}
-//
-//// env ORG_GRADLE_PROJECT_signingKey
-//val gitlabApiKey = getPropertyOrWarnForAbsence("signingKey")
+fun getPropertyOrWarnForAbsence(key: String): String? {
+    val value = property(key)?.toString()
+    if (value.isNullOrBlank()) {
+        System.err.println("WARNING: $key is not set")
+    }
+    return value
+}
+
+// env ORG_GRADLE_PROJECT_orchidBaseUrl
+val orchidBaseUrl = getPropertyOrWarnForAbsence("orchidBaseUrl")
 
 orchid {
     theme = "Editorial"
-//    baseUrl = "http://username.github.io/project"
+    baseUrl = orchidBaseUrl
     version = rootProject.version.toString()
     args = listOf("--experimentalSourceDoc")
 //    gitlabToken = gitlabApiKey
