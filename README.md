@@ -52,4 +52,115 @@ dependencies {
     implementation("it.unibo.tuprolog", "2P_MODULE", "2P_VERSION")
 }
  ``` 
-Notice that dependencies of `2P_MODULE` should be automatically imported 
+Notice that dependencies of `2P_MODULE` should be automatically imported. 
+
+### Maven
+
+To import the 2P module named `2P_MODULE` (version `2P_VERSION`) into your Maven-based project, you must setup your Maven repositories first:
+```xml
+<repositories>
+    <repository>
+        <id>bintray-2p-repo</id>
+        <url>https://bintray.com/pika-lab/tuprolog</url>
+    </repository>
+</repositories>
+``` 
+and then declare the desired dependency:
+ ```xml
+<dependency>
+    <groupId>it.unibo.tuprolog</groupId>
+    <artifactId>2P_MODULE</artifactId>
+    <version>2P_VERSION</version>
+</dependency>
+ ``` 
+Notice that dependencies of `2P_MODULE` should be automatically imported. 
+
+## Developers
+
+Working with the 2P codebase requires a number of tools to be installed and properly configured on your system:
+- JDK 8+
+    + Ensure the `JAVA_HOME` environment variable is properly configured
+- Kotlin 1.3.60+
+- Gradle 6.0+
+    + Ensure the `GRADLE_HOME` environment variable is properly configured
+- Git 2.20+
+
+### Develop 2P with IntelliJ Idea
+
+To participate in the development of 2P, we suggest the [IntelliJ Idea](https://www.jetbrains.com/idea/download/) IDE. 
+The free, _Community_ version will be fine. 
+
+#### Recommended configuration
+You will need the __Kotlin__ plugin for IntelliJ Idea. 
+This is usually installed upon Idea's very first setup wizard.
+However, one may easily late-install such plugin through the IDE's Plugins settings dialog.
+To open such dialog, use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, then search for "Plugins"
+
+#### Importing the project
+
+1. Clone this repository in a folder of your preference using `git clone` appropriately
+
+0. Open IntellJ Idea. 
+If a project opens automatically, select "Close project". 
+You should be on the welcome screen of IntelliJ idea, with an aspect similar to this image: 
+![IntelliJ Welcome Screen](https://www.jetbrains.com/help/img/idea/2018.2/ideaWelcomeScreen.png)
+
+0. Select "Import Project"
+
+0. Navigate your file system and find the folder where you cloned the repository. 
+**Do not select it**. 
+Open the folder, and you should find a lowercase `2p-in-kotlin` folder. 
+That is the correct project folder, created by `git` in case you cloned without specifying a different folder name. 
+Once the correct folder has been selected, click <kbd>Ok</kbd>
+
+0. Select "Import Project from external model"
+
+0. Make sure "Gradle" is selected as external model tool
+
+0. Click <kbd>Finish</kbd>
+
+0. If prompted to override any `.idea` file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>
+
+0. A dialog stating that "IntelliJ IDEA found a Gradle build script" may appear, in such case answer <kbd>Import Gradle Project</kbd>
+
+0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly:
+
+0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended
+
+### Developing the project
+Contributions to this project are welcome. Just some rules:
+
+* We use [git flow](https://github.com/nvie/gitflow), so if you write new features, please do so in a separate `feature/` branch
+
+* We recommend forking the project, developing your stuff, then contributing back via pull request directly from the Web interface
+
+* Commit often. Do not throw pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often
+
+* Stay in sync with the `develop` branch: pull often from `develop` (if the build passes), so that you don't diverge too much from the main development line
+
+* Do not introduce low quality or untested code. Merge requests will be reviewed before merge.
+
+
+#### Building the project
+While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.
+If you want to generate the artifacts, you can rely on Gradle. Just point a terminal on the project's root and issue
+
+```bash
+./gradlew build
+```
+
+This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of the project reports.
+
+#### Versioning
+
+The 2P project leverages on [Semantic Versioning](https://semver.org/) (SemVer, henceforth).
+
+In particular, SemVer is enforced by the current Gradle configuration, which features [DanySK](https://github.com/DanySK)'s [Git sensitive SemVer Gradle Plugin](https://github.com/DanySK/git-sensitive-semantic-versioning-gradle-plugin).
+This implies it is strictly forbidden in this project to create tags whose label is not a valid SemVar string.
+
+Notice that the 2P project is still in its initial development stage---as proven by the major number equal to `0` in its version string.
+According to SemVer, this implies anything _may_ change at any time, as the public API _should not_ be considered stable.
+
+#### Issue tracking
+
+If you meet some problem in using or developing 2P, you are encouraged to signal it through the project ["Issues" section](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/issues) on GitLab.
