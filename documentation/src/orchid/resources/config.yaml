@@ -6,3 +6,46 @@ Editorial:
   primaryColor: '#DE9149'
   social:
     github: 'tuProlog/2p-kt'
+  metaComponents:
+    - type: 'orchidSearch'
+  legacySearch: false
+  menu:
+    - type: link
+      title: Home
+      url: '/'
+    - type: 'wiki'
+    - type: 'separator'
+      title: 'API Docs'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'classes'
+      asSubmenu: true
+      submenuTitle: 'Classes'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'packages'
+      asSubmenu: true
+      submenuTitle: 'Packages'
+kotlindoc:
+  sourceDirs:
+    - '../../../../core/src/commonMain/kotlin'
+    - '../../../../unify/src/commonMain/kotlin'
+    - '../../../../theory/src/commonMain/kotlin'
+    - '../../../../solve/src/commonMain/kotlin'
+    - '../../../../solve-classic/src/commonMain/kotlin'
+    - '../../../../solve-streams/src/commonMain/kotlin'
+    - '../../../../dsl-core/src/commonMain/kotlin'
+    - '../../../../dsl-unify/src/commonMain/kotlin'
+    - '../../../../dsl-theory/src/commonMain/kotlin'
+  sourcePages:
+    menu:
+      - type: 'sourcedocPageLinks'
+        moduleType: 'kotlindoc'
+        itemTitleType: 'SIGNATURE'
+        includeItems: true
+services:
+  publications:
+    stages:
+      - type: 'gitlabPages'
+        username: 'gciatto-unibo' # the username which created the personal access token
+        repo: 'pika-lab/tuprolog/2p-in-kotlin' # the repo to publish to

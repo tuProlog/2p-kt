@@ -1,6 +1,6 @@
 # 2P in Kotlin
 
-![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.svg)
+![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.png)
 
 tuProlog (2P henceforth) is a Kotlin multi-platform ecosystem for Symbolic Artificial Intelligence (AI).
 It consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.

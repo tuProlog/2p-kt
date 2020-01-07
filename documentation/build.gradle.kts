@@ -6,6 +6,7 @@ dependencies {
     orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:0.18.1")
     orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:0.18.1")
     orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:0.18.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGitlab:0.18.1")
 }
 
 repositories {
@@ -13,8 +14,21 @@ repositories {
     maven("https://kotlin.bintray.com/kotlinx/")
 }
 
+fun getPropertyOrWarnForAbsence(key: String): String? {
+    val value = property(key)?.toString()
+    if (value.isNullOrBlank()) {
+        System.err.println("WARNING: $key is not set")
+    }
+    return value
+}
+
+// env ORG_GRADLE_PROJECT_signingKey
+val gitlabApiKey = getPropertyOrWarnForAbsence("signingKey")
+
 orchid {
     theme = "Editorial"
 //    baseUrl = "http://username.github.io/project"
-    version = "1.0.0"
+    version = rootProject.version.toString()
+    args = listOf("--experimentalSourceDoc")
+    gitlabToken = gitlabApiKey
 }
