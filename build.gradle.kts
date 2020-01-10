@@ -28,6 +28,9 @@ gitSemVer {
 
 println("2p-Kt version: $version")
 
+val javaVersion: String by project
+val ktFreeCompilerArgs: String by project
+
 // env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 // env ORG_GRADLE_PROJECT_signingPassword
@@ -42,7 +45,7 @@ val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
 val allSubprojects = subprojects.map { it.name  }.toSet()
-val jvmSubprojects = setOf<String>()
+val jvmSubprojects = setOf<String>("parser-jvm")
 val jsSubprojects = setOf<String>()
 val docSubprojects = setOf<String>()
 
