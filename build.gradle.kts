@@ -119,6 +119,8 @@ ktSubprojects.forEachProject {
             }
 
             js {
+//                nodejs()
+//                browser()
                 sequenceOf("", "Test").forEach {
                     tasks.getByName<KotlinJsCompile>("compile${it}KotlinJs") {
                         kotlinOptions {

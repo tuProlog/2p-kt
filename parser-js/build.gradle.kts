@@ -8,11 +8,32 @@ plugins {
 //    antlr
 }
 
+buildscript {
+    dependencies {
+        classpath("org.antlr", "antlr4", "4.7.2")
+    }
+}
+
 val javaVersion: String by project
 val antlrVersion: String by project
 val ktFreeCompilerArgs: String by project
 
+val generatedSrcDir = "$buildDir/generated-src/antlr/main"
+
+kotlin {
+    target {
+        nodejs()
+    }
+
+    with(sourceSets["main"]) {
+        dependencies {
+            api(npm("antlr4", "^$antlrVersion"))
+        }
+    }
+}
+
 dependencies {
+
 //    antlr("org.antlr", "antlr4", antlrVersion)
 
 //    api("org.antlr", "antlr4-runtime", antlrVersion)
