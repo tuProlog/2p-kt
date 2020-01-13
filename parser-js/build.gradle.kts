@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import java.io.File
+
 plugins {
     kotlin("js")
 //    id("maven-publish")
@@ -5,13 +8,15 @@ plugins {
 //    id("org.jetbrains.dokka")
 //    id("com.jfrog.bintray")
 //    `java-library`
-//    antlr
 }
 
-buildscript {
-    dependencies {
-        classpath("org.antlr", "antlr4", "4.7.2")
-    }
+val antlr by configurations.creating {
+    setTransitive(true)
+}
+
+repositories {
+    mavenCentral()
+    maven("https://dl.bintray.com/kotlin/dokka")
 }
 
 val javaVersion: String by project
@@ -20,49 +25,88 @@ val ktFreeCompilerArgs: String by project
 
 val generatedSrcDir = "$buildDir/generated-src/antlr/main"
 
+dependencies {
+    antlr("org.antlr", "antlr4", antlrVersion)
+}
+
 kotlin {
     target {
         nodejs()
     }
 
     with(sourceSets["main"]) {
+        with(kotlin) {
+            srcDir("src/main/js")
+            srcDir("src/main/antlr")
+        }
         dependencies {
+            implementation(kotlin("stdlib-js"))
             api(npm("antlr4", "^$antlrVersion"))
+        }
+    }
+
+    with(sourceSets["test"]) {
+        dependencies {
+            implementation(kotlin("test-js"))
         }
     }
 }
 
-dependencies {
-
-//    antlr("org.antlr", "antlr4", antlrVersion)
-
-//    api("org.antlr", "antlr4-runtime", antlrVersion)
-
-//    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
-//    implementation(kotlin("stdlib-jdk8"))
+val generateGrammarSource = tasks.create<DefaultTask>("generateGrammarSource") {
+    group = "antlr"
 }
 
+with(fileTree("src/main/antlr")) {
+    include("**/*.g4")
 
-//configure<JavaPluginConvention> {
-//    targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
-//    sourceCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
-//}
+    val outputDir = "$generatedSrcDir/js"
 
-//tasks.withType<KotlinCompile> {
-//    kotlinOptions {
-//        jvmTarget = "1.$javaVersion"
-//        freeCompilerArgs = ktFreeCompilerArgs.split(";").toList()
-//    }
-//}
+    with(generateGrammarSource) {
+        inputs.dir("src/main/antlr")
+        outputs.dir(outputDir)
+    }
 
-//configurations {
-//    compile {
-//        setExtendsFrom(emptyList())
-//    }
-//}
+    files.forEach { antlrFile ->
+        val antlrFileName = antlrFile.name.replace(".g4", "")
+        tasks.create<JavaExec>("generateGrammarSource$antlrFileName") {
+            group = "antlr"
+            generateGrammarSource.dependsOn(this)
 
-//tasks.generateGrammarSource {
-//    maxHeapSize = "64m"
-//    arguments = arguments + listOf("-visitor", "-long-messages")
-//    outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
-//}
+            inputs.dir("src/main/antlr")
+            outputs.dir(outputDir)
+
+            main = "org.antlr.v4.Tool"
+            classpath = antlr
+            standardOutput = System.out
+
+            doFirst {
+                println("java -cp ${classpath.joinToString(File.pathSeparator)} $main ${args?.joinToString(" ") ?: ""}")
+            }
+
+            args(
+                "-Dlanguage=JavaScript",
+                "-o", outputDir,
+                "-message-format", "antlr",
+                "-long-messages",
+                "-no-listener",
+                "-visitor",
+                "-package", "${rootProject.group}.parsing",
+                antlrFile.absolutePath
+            )
+        }
+    }
+}
+
+tasks.withType<KotlinJsCompile> {
+    dependsOn(generateGrammarSource)
+    val compilationDir = File(kotlinOptions.outputFile!!).parentFile
+
+    val copyJsFilesTask = tasks.create<Copy>(name.replace("Kotlin", "")) {
+        from("src/main/js")
+        from("$generatedSrcDir/js")
+        include("**/*")
+        into(compilationDir)
+    }
+
+    this.finalizedBy(copyJsFilesTask)
+}
