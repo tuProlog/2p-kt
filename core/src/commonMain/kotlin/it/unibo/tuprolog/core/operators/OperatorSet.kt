@@ -43,6 +43,8 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
     companion object {
 
+        val EMPTY = OperatorSet(emptySequence())
+
         /** Arithmetic Operator's OperatorSet */
         val ARITHMETIC = OperatorSet(
             sequenceOf("+", "-", "\\")

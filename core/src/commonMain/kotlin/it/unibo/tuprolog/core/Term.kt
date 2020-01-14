@@ -6,6 +6,11 @@ package it.unibo.tuprolog.core
  */
 interface Term {
 
+    /**
+     * Empty companion aimed at letting extentions be injected through extention methods
+     */
+    companion object
+
     /** Alias for [castTo]
      * Helper method aimed at down-casting [Term]s using a fluent style.
      *
