@@ -47,6 +47,7 @@ The base type for logic terms in 2P-Kt is [`Term`](/kotlindoc/it/unibo/tuprolog/
 
 As shown in the following diagram, the `Term` interface is the root of an articulate hierarchy of term types: 
 
+<div style="width: 100%; overflow: auto; background-color:LightGray" >
 {% filter compileAs('uml') %}
 interface Term {
   + isGround: Boolean
@@ -218,4 +219,5 @@ package clauses <<Rectangle>> {
 
 }
 {% endfilter %}
+</div>
 
