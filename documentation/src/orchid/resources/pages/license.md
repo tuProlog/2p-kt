@@ -1,4 +1,4 @@
 ---
 components:
   - type: "license"
----
+--- 

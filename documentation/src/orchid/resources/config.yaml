@@ -13,6 +13,9 @@ Editorial:
     - type: link
       title: Home
       url: '/'
+    - type: 'pages'
+    - type: 'separator'
+      title: 'Wiki'
     - type: 'wiki'
     - type: 'separator'
       title: 'API Docs'
@@ -26,6 +29,13 @@ Editorial:
       node: 'packages'
       asSubmenu: true
       submenuTitle: 'Packages'
+wiki:
+  sections:
+    - 'Rationale and Architecture'
+    - 'Developers Guide'
+    - 'Users Guide'
+  defaultConfig:
+    createPdf: true
 kotlindoc:
   sourceDirs:
     - '../../../../core/src/commonMain/kotlin'
