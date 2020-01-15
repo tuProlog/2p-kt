@@ -8,6 +8,8 @@ Editorial:
     github: 'tuProlog/2p-kt'
   metaComponents:
     - type: 'orchidSearch'
+    - type: mermaid
+      selector: '.mermaid' # optional
   legacySearch: false
   menu:
     - type: link

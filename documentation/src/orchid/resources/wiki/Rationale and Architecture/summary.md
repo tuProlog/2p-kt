@@ -1,5 +1,6 @@
 - [Term Hierarchy](./term-hierarchy.md)
-- [Logic variables, Substitutions, and Unification](./variables-unification-substitutions.md)
+- [Logic variables and Scopes](./variables-and-scopes.md)
+- [Substitutions and Unification](./substitutions-and-unification.md)
 - [Clause databases, Theories and RETE](./clausedb-theories-and-RETE.md)
 - [Solvers and Solutions](./solvers-and-solutions.md)
 - [Primitives and Functions](./primitives-and-functions.md)

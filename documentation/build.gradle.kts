@@ -7,6 +7,7 @@ dependencies {
     orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:0.18.1")
     orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:0.18.1")
 //    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGitlab:0.18.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDiagrams:0.18.1")
 }
 
 repositories {
