@@ -54,6 +54,7 @@ interface Tuple : Struct {
 
         fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
 
+        // TODO rename left -> first, right -> second
         fun of(left: Term, right: Term, others: Term): Tuple = of(listOf(left, right, others))
 
         fun of(terms: Iterable<Term>): Tuple = of(terms.toList())
