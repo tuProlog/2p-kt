@@ -8,6 +8,9 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.MessageError
+import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 
@@ -18,8 +21,14 @@ import kotlin.collections.listOf as ktListOf
  */
 object TestingClauseDatabases {
 
-    internal val haltException = HaltException(context = DummyInstances.executionContext)
-    internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
+    internal val aContext = DummyInstances.executionContext
+
+    internal val haltException = HaltException(context = aContext)
+    internal val instantiationError = InstantiationError(context = aContext)
+    internal val typeError =
+        TypeError(context = aContext, expectedType = TypeError.Expected.ATOM, actualValue = prolog { numOf(1) })
+    internal val messageError = MessageError.of(prolog { atomOf("a") }, aContext)
+    internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
     internal fun Struct.replaceAllFunctors(oldFunctor: String, withFunctor: String): Struct =
@@ -357,7 +366,7 @@ object TestingClauseDatabases {
                 ),
                 "range"(2, 1, "L").hasSolutions({ no() }),
                 "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
-                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(haltException) })
+                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(instantiationError) })
             )
         }
     }
@@ -384,8 +393,8 @@ object TestingClauseDatabases {
                 "call"("halt").hasSolutions({ halt(haltException) }),
                 "call"("true" and "true").hasSolutions({ yes() }),
                 "call"("!").hasSolutions({ yes() }),
-                "call"("X").hasSolutions({ halt(haltException) }),
-                "call"("true" and 1).hasSolutions({ halt(haltException) })
+                "call"("X").hasSolutions({ halt(instantiationError) }),
+                "call"("true" and 1).hasSolutions({ halt(typeError) })
             )
         }
     }
@@ -409,7 +418,7 @@ object TestingClauseDatabases {
                 "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
                 "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
-                    { halt(haltException) }
+                    { halt(messageError) }
                 ),
                 "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
                 "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
