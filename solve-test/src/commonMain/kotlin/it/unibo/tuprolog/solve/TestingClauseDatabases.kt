@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardT
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.MessageError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
@@ -27,7 +27,7 @@ object TestingClauseDatabases {
     internal val instantiationError = InstantiationError(context = aContext)
     internal val typeError =
         TypeError(context = aContext, expectedType = TypeError.Expected.ATOM, actualValue = prolog { numOf(1) })
-    internal val messageError = MessageError.of(prolog { atomOf("a") }, aContext)
+    internal val systemError = SystemError(context = aContext)
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
@@ -418,7 +418,7 @@ object TestingClauseDatabases {
                 "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
                 "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
-                    { halt(messageError) }
+                    { halt(systemError) }
                 ),
                 "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
                 "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })

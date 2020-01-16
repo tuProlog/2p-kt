@@ -2,10 +2,9 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
 import it.unibo.tuprolog.solve.TestingClauseDatabases.instantiationError
-import it.unibo.tuprolog.solve.TestingClauseDatabases.messageError
 import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
+import it.unibo.tuprolog.solve.TestingClauseDatabases.systemError
 import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
 import it.unibo.tuprolog.solve.TestingClauseDatabases.typeError
 import it.unibo.tuprolog.theory.ClauseDatabase
@@ -234,9 +233,9 @@ object PrologStandardExampleDatabases {
                 "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
-                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(messageError) }),
+                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
                 "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError) }),
-                "catch"("throw"(false), true, "G").hasSolutions({ halt(messageError) })
+                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
             )
         }
     }
