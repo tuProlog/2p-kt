@@ -25,6 +25,6 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
                     extraData = if (error.arity > 1) error[1] else null
                 )
             }
-            else -> MessageError(context = context, content = error)
+            else -> MessageError.of(error, context)
         }
 }

@@ -1,16 +1,14 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.exception.prologerror.MessageError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
@@ -31,17 +29,15 @@ internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
                 null, is Substitution.Fail -> {
                     val errorCause = throwArgument.extractErrorCauseChain(request.context)
                     when {
-                        throwArgument.isSystemErrorStruct() -> throw HaltException(
-                            "Unhandled system_error, halting inferential machine",
-                            errorCause,
-                            request.context
-                        )
-                        // current unhandled exception is some other error
-                        else -> throw SystemError(
-                            "Exception thrown, but no compatible catch/3 found",
-                            errorCause,
+
+                        // if unhandled error is a PrologError, rethrow outside
+                        errorCause != null -> throw errorCause
+
+                        // if current unhandled exception is some other error, launch it as message
+                        else -> throw MessageError.of(
+                            throwArgument,
                             request.context,
-                            throwArgument
+                            errorCause
                         )
                     }
                 }
@@ -57,13 +53,6 @@ internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
                 })
             }
         }
-
-    /** Utility function to check if throwArgument is an `error(system_error, ...)` */
-    private fun Term.isSystemErrorStruct() = with(this as? Struct) {
-        this?.functor == ErrorUtils.errorWrapperFunctor
-                && this.arity == 2
-                && (this.args.firstOrNull() as? Atom)?.value == SystemError.typeFunctor
-    }
 
     /** Utility function to extract error type from a term that should be `error(TYPE_STRUCT, ...)` */
     private fun Term.extractErrorTypeAndExtra() = with(this as? Struct) {

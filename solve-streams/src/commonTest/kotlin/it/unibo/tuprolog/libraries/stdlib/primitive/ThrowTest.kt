@@ -30,11 +30,4 @@ internal class ThrowTest {
             }
         }
     }
-
-    @Test
-    fun errorCauseChainComputedCorrectly() {
-        ThrowUtils.requestSolutionMap.forEach { (request, solutions) ->
-            assertErrorCauseChainComputedCorrectly(request, solutions.single())
-        }
-    }
 }

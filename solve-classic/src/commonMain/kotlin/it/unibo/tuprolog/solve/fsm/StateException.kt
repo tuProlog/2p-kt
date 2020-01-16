@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -18,7 +19,7 @@ internal data class StateException(
     private fun Struct.isCatch(): Boolean =
         arity == 3 && functor == "catch"
 
-    private fun PrologError.getExceptionContent(): Struct {
+    private fun PrologError.getExceptionContent(): Term {
         return when (this) {
             is MessageError -> content
             else -> errorStruct

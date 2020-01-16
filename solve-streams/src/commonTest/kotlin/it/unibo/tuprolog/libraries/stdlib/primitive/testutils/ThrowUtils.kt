@@ -4,9 +4,9 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.prologerror.MessageError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.hasSolutions
@@ -26,50 +26,9 @@ internal object ThrowUtils {
         prolog {
             mapOf(
                 Throw.functor("A").run { to(InstantiationError::class) },
-                Throw.functor(1).run { to(SystemError::class) },
-                Throw.functor("ciao").run { to(SystemError::class) },
-                Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).run { to(HaltException::class) }
-            ).mapKeys { (query, _) -> createSolveRequest(query, primitives = mapOf(Throw.descriptionPair)) }
-        }
-    }
-
-    /** Throw primitive working examples (when solved in normal resolution process) */
-    internal val requestSolutionMap by lazy {
-        prolog {
-            mapOf(
-                Throw.functor(1).hasSolutions({
-                    halt(
-                        HaltException(
-                            context = aContext,
-                            cause = SystemError(context = aContext, extraData = numOf(1))
-                        )
-                    )
-                }),
-                Throw.functor("X").hasSolutions({
-                    halt(HaltException(context = aContext,
-                        cause = with(
-                            InstantiationError(context = aContext, extraData = varOf("X"))
-                        ) {
-                            SystemError(context = aContext, cause = this, extraData = this.errorStruct)
-                        }
-                    ))
-                }),
-                Throw.functor("ciao").hasSolutions({
-                    halt(
-                        HaltException(
-                            context = aContext,
-                            cause = SystemError(context = aContext, extraData = Atom.of("ciao"))
-                        )
-                    )
-                }),
-                Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).hasSolutions({
-                    halt(
-                        HaltException(
-                            context = aContext,
-                            cause = SystemError(context = aContext)
-                        )
-                    )
-                })
+                Throw.functor(1).run { to(MessageError::class) },
+                Throw.functor("ciao").run { to(MessageError::class) },
+                Throw.functor(ErrorUtils.errorStructOf(atomOf(SystemError.typeFunctor))).run { to(SystemError::class) }
             ).mapKeys { (query, _) -> createSolveRequest(query, primitives = mapOf(Throw.descriptionPair)) }
         }
     }
