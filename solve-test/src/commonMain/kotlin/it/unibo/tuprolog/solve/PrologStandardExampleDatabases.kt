@@ -59,7 +59,7 @@ object PrologStandardExampleDatabases {
                 "p"("U", "V").hasSolutions(
                     { yes("U" to "b", "V" to "b1") },
                     { yes("U" to "c", "V" to "c1") },
-                    { yes("U" to "d", "V" to "Y") }
+                    { yes("U" to "d") }
                 )
             )
         }
