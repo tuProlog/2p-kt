@@ -375,10 +375,7 @@ object PrologStandardExampleDatabases {
     val ifThenElseStandardExampleNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                ("->"("X" `=` 0, true) or false).hasSolutions(
-                    { yes("X" to 0) },
-                    { no() }
-                ),
+                ("->"("X" `=` 0, true) or false).hasSolutions({ yes("X" to 0) }),
                 ("X" `=` 1 and ("->"("X" `=` 0, false) or true)).hasSolutions({ yes("X" to 1) }),
                 (("->"("!" and ("X" `=` 1) and false, true) or false) or ("X" `=` 2)).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),
