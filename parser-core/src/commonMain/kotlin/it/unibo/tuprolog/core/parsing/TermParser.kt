@@ -56,18 +56,7 @@ interface TermParser {
         Real.parse(this, operators)
 
     companion object {
-
-//
-//        expect fun withNoOperator() : TermParser {}
-//
-//        val withStandardOperators: TermParser =
-//            TODO("Use OperatorSet.DEFAULT")
-//
-//        fun withOperators(operators: OperatorSet): TermParser =
-//            TODO("Use operators")
-//
-//        fun withOperators(vararg operators: Operator): TermParser =
-//            withOperators(OperatorSet(operators.asSequence()))
+        
     }
 
 
