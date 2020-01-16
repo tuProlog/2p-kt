@@ -283,8 +283,8 @@ fun Project.configureMavenPublications(docArtifact: String) {
                     }
                     developer {
                         name.set("Enrico Siboni")
-                        email.set("siboxd@gmail.com")
-                        url.set("https://github.com/siboXD")
+                        email.set("enrico.siboni3@studio.unibo.it")
+                        url.set("https://www.linkedin.com/in/enrico-siboni/")
                     }
                 }
 
