@@ -20,38 +20,43 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
-        request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
-            val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
+        try {
+            request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
+                val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
 
-            when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
+                when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
 
-                // no catch found that can handle thrown exception
-                null, is Substitution.Fail -> {
-                    val errorCause = throwArgument.extractErrorCauseChain(request.context)
-                    when {
+                    // no catch found that can handle thrown exception
+                    null, is Substitution.Fail -> {
+                        val errorCause = throwArgument.extractErrorCauseChain(request.context)
+                        when {
 
-                        // if unhandled error is a PrologError, rethrow outside
-                        errorCause != null -> throw errorCause
+                            // if unhandled error is a PrologError, rethrow outside
+                            errorCause != null -> throw errorCause
 
-                        // if current unhandled exception is some other error, launch it as message
-                        else -> throw MessageError.of(
-                            throwArgument,
-                            request.context,
-                            errorCause
-                        )
+                            // if current unhandled exception is some other error, launch it as message
+                            else -> throw MessageError.of(
+                                throwArgument,
+                                request.context,
+                                errorCause
+                            )
+                        }
                     }
+
+                    // matching catch found, it will handle exception
+                    is Substitution.Unifier -> sequenceOf(with(request) {
+                        val newSubstitution =
+                            (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
+
+                        replySuccess(
+                            newSubstitution,
+                            sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                        )
+                    })
                 }
-
-                // matching catch found, it will handle exception
-                is Substitution.Unifier -> sequenceOf(with(request) {
-                    val newSubstitution = (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
-
-                    replySuccess(
-                        newSubstitution,
-                        sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
-                    )
-                })
             }
+        } catch (prologError: PrologError) {
+            sequenceOf(request.replyException(prologError))
         }
 
     /** Utility function to extract error type from a term that should be `error(TYPE_STRUCT, ...)` */

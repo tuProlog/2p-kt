@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -37,6 +38,10 @@ internal object PrimitiveUtils {
 
         return exceptionCause
     }
+
+    /** Utility function to assert the [PrologError] type correctness of [Solution.Halt] */
+    internal fun assertPrologError(expected: KClass<out PrologError>, actualSolution: Solution) =
+        assertEquals(expected, (actualSolution as Solution.Halt).exception::class)
 
     /**
      * Utility function to test whether the cause of errors generated is correctly filled
