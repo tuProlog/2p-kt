@@ -31,7 +31,7 @@ class MessageError internal constructor( // TODO: 16/01/2020 test this class
     companion object {
 
         /** The message error Struct functor */
-        const val typeFunctor = "''"
+        const val typeFunctor = ""
 
         /** Factory method to create a [MessageError] */
         fun of(content: Term, context: ExecutionContext, cause: Throwable? = null) =

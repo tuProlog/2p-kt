@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
 import it.unibo.tuprolog.solve.exception.prologerror.MessageError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
@@ -35,10 +36,11 @@ internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
                             errorCause != null -> throw errorCause
 
                             // if current unhandled exception is some other error, launch it as message
-                            else -> throw MessageError.of(
-                                throwArgument,
+                            else -> throw SystemError(
+                                "Exception thrown, but no compatible catch/3 found",
+                                errorCause,
                                 request.context,
-                                errorCause
+                                throwArgument
                             )
                         }
                     }
