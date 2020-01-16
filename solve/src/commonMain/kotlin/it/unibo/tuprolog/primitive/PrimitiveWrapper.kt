@@ -33,6 +33,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
 
     companion object {
 
+        // TODO: 16/01/2020 test the three "wrap" functions
+
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function
          */
@@ -79,6 +81,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
                     )
                 } ?: this
             }
+
+        // TODO: 16/01/2020 test those below ensure methods
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsNumeric(index: Int): Solve.Request<C> {
             return when (val arg = arguments[index]) {

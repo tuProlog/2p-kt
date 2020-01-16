@@ -31,6 +31,10 @@ class TypeError(
     extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
+
+    // TODO: 16/01/2020 in this early stage of the project consider not using deprecation,
+    // TODO             but instead advance the version number and change what should be changed (her: private constructor and only public factory)
+
     /** This constructor automatically fills [message] field with provided information */
     @Deprecated("Prefer TypeError.Companion.forArgument")
     constructor(
@@ -51,6 +55,8 @@ class TypeError(
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
 
     companion object {
+
+        // TODO: 16/01/2020 test factories
 
         fun forArgument(
             context: ExecutionContext,

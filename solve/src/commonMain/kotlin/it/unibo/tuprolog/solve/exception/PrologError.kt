@@ -33,9 +33,7 @@ abstract class PrologError(
             : this(cause?.toString(), cause, context, type, extraData)
 
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
-    val errorStruct: Struct by lazy {
-        generateErrorStruct()
-    }
+    val errorStruct: Struct by lazy { generateErrorStruct() }
 
     private fun generateErrorStruct() =
         extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
