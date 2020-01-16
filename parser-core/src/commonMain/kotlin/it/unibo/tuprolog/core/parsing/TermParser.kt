@@ -75,3 +75,5 @@ interface TermParser {
 }
 expect fun TermParser.Companion.withNoOperator() : TermParser
 expect fun TermParser.Companion.withStandardOperators(): TermParser
+expect fun TermParser.Companion.withOperators(operators: OperatorSet): TermParser
+expect fun TermParser.Companion.withOperators(vararg operators: Operator): TermParser
