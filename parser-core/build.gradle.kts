@@ -20,6 +20,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
+                    api(project(":parser-js"))
                 }
             }
         }

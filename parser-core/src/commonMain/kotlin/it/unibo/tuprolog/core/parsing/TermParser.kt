@@ -8,9 +8,7 @@ interface TermParser {
     
     val defaultOperatorSet: OperatorSet
 
-    fun Term.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Term {
-        TODO("this is platform-specific")
-    }
+    fun Term.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Term
     
     fun String.parseAsTerm(operators: OperatorSet = defaultOperatorSet): Term = 
         Term.parse(this, operators)
@@ -58,16 +56,22 @@ interface TermParser {
         Real.parse(this, operators)
 
     companion object {
-        val withNoOperator: TermParser =
-            TODO("Use OperatorSet.EMPTY")
 
-        val withStandardOperators: TermParser =
-            TODO("Use OperatorSet.DEFAULT")
-
-        fun withOperators(operators: OperatorSet): TermParser =
-            TODO("Use operators")
-
-        fun withOperators(vararg operators: Operator): TermParser =
-            withOperators(OperatorSet(operators.asSequence()))
+//
+//        expect fun withNoOperator() : TermParser {}
+//
+//        val withStandardOperators: TermParser =
+//            TODO("Use OperatorSet.DEFAULT")
+//
+//        fun withOperators(operators: OperatorSet): TermParser =
+//            TODO("Use operators")
+//
+//        fun withOperators(vararg operators: Operator): TermParser =
+//            withOperators(OperatorSet(operators.asSequence()))
     }
+
+
+
 }
+expect fun TermParser.Companion.withNoOperator() : TermParser
+expect fun TermParser.Companion.withStandardOperators(): TermParser
