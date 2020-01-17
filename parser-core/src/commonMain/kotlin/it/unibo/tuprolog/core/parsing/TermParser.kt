@@ -55,11 +55,7 @@ interface TermParser {
     fun String.parseAsReal(operators: OperatorSet = defaultOperatorSet): Real =
         Real.parse(this, operators)
 
-    companion object {
-        
-    }
-
-
+    companion object
 
 }
 expect fun TermParser.Companion.withNoOperator() : TermParser

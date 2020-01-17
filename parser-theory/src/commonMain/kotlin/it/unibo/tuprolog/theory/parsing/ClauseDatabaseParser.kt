@@ -9,9 +9,7 @@ interface ClauseDatabaseParser {
 
     fun ClauseDatabase.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): ClauseDatabase
 
-    companion object {
-
-    }
+    companion object
 }
 
 expect fun ClauseDatabaseParser.Companion.withNoOperator(): ClauseDatabaseParser
