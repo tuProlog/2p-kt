@@ -1,14 +1,15 @@
 package it.unibo.tuprolog.libraries.stdlib.rule
 
-import it.unibo.tuprolog.rule.RuleWrapper
-import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 object SpecificRules {
-    val wrappers: Sequence<RuleWrapper<ExecutionContextImpl>> = sequenceOf(
+    val wrappers = sequenceOf(
         Catch,
         Call,
-        Comma
+        Comma,
+        Cut,
+        NegationAsFailure.Fail,
+        NegationAsFailure.Success
     )
 
     val clauseDb: ClauseDatabase = ClauseDatabase.of(
