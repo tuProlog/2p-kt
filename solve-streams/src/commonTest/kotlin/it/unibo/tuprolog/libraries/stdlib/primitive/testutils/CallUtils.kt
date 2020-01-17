@@ -8,11 +8,16 @@ import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
+import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -67,33 +72,23 @@ internal object CallUtils {
      *
      * Contained requests:
      *
-     * - `call(X)` **will result in** `Halt()`
-     * - `call((true, 1))`  **will result in** `Halt()`
+     * - `call(X)` **will result in** `InstantiationError()`
+     * - `call((true, 1))`  **will result in** `TypeError()`
      */
     internal val requestToErrorSolutionMap by lazy {
         prolog {
             mapOf(
                 Call.functor("X").hasSolutions({
-                    halt(HaltException(context = aContext,
-                        cause = with(
-                            InstantiationError(context = aContext, extraData = varOf("X"))
-                        ) {
-                            SystemError(context = aContext, cause = this, extraData = this.errorStruct)
-                        }
-                    ))
+                    halt(InstantiationError(context = aContext, extraData = varOf("X")))
                 }),
                 Call.functor(true and 1).hasSolutions({
-                    halt(HaltException(context = aContext,
-                        cause = with(
-                            TypeError(
-                                context = aContext,
-                                expectedType = TypeError.Expected.CALLABLE,
-                                actualValue = true and 1
-                            )
-                        ) {
-                            SystemError(context = aContext, cause = this, extraData = this.errorStruct)
-                        }
-                    ))
+                    halt(
+                        TypeError(
+                            context = aContext,
+                            expectedType = TypeError.Expected.CALLABLE,
+                            actualValue = true and 1
+                        )
+                    )
                 })
             ).mapKeys { (query, _) ->
                 createSolveRequest(
@@ -126,6 +121,40 @@ internal object CallUtils {
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }
+        }
+    }
+
+    /**
+     * Utility function to test whether the cause of errors generated is correctly filled
+     *
+     * It passes request to StateGoalEvaluation, then it executes the primitive exercising the error situation;
+     * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
+     */
+    internal fun assertErrorCauseChainComputedCorrectly(
+        request: Solve.Request<ExecutionContextImpl>,
+        expectedErrorSolution: Solution.Halt
+    ) {
+        val nextState = StateGoalEvaluation(request).behave().toList().single()
+
+        assertEquals(StateEnd.Halt::class, nextState::class)
+        assertEquals(expectedErrorSolution.exception::class, (nextState as StateEnd.Halt).exception::class)
+
+        var expectedCause = expectedErrorSolution.exception.cause
+        var actualCause = nextState.exception.cause
+
+        while (expectedCause != null) {
+            val expectedCauseStruct = (expectedCause as? PrologError)?.errorStruct
+            val actualCauseStruct = (actualCause as? PrologError)?.errorStruct
+
+            assertNotNull(expectedCauseStruct)
+            assertNotNull(actualCauseStruct)
+
+            assertTrue("Expected `$expectedCauseStruct` not structurally equals to actual `$actualCauseStruct`") {
+                expectedCauseStruct.structurallyEquals(actualCauseStruct)
+            }
+
+            expectedCause = expectedCause.cause
+            actualCause = actualCause?.cause
         }
     }
 }

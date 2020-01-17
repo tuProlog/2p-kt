@@ -2,9 +2,11 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
+import it.unibo.tuprolog.solve.TestingClauseDatabases.instantiationError
 import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
+import it.unibo.tuprolog.solve.TestingClauseDatabases.systemError
 import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
+import it.unibo.tuprolog.solve.TestingClauseDatabases.typeError
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf
 
@@ -56,7 +58,7 @@ object PrologStandardExampleDatabases {
                 "p"("U", "V").hasSolutions(
                     { yes("U" to "b", "V" to "b1") },
                     { yes("U" to "c", "V" to "c1") },
-                    { yes("U" to "d", "V" to "Y") }
+                    { yes("U" to "d") }
                 )
             )
         }
@@ -181,8 +183,8 @@ object PrologStandardExampleDatabases {
                     { yes("X" to 2, "Z" to "!") }
                 ),
                 "call"(false).hasSolutions({ no() }),
-                "call"(true and "X").hasSolutions({ halt(haltException) }),
-                "call"("true" and "false" and 1).hasSolutions({ halt(haltException) })
+                "call"(true and "X").hasSolutions({ halt(instantiationError) }),
+                "call"("true" and "false" and 1).hasSolutions({ halt(typeError) })
             )
         }
     }
@@ -231,9 +233,9 @@ object PrologStandardExampleDatabases {
                 "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
-                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(haltException) }),
-                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(haltException) }),
-                "catch"("throw"(false), true, "G").hasSolutions({ halt(haltException) })
+                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
+                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError) }),
+                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
             )
         }
     }
@@ -299,7 +301,7 @@ object PrologStandardExampleDatabases {
                 ("\\+"("!") or ("X" `=` 1)).hasSolutions({ yes("X" to 1) }),
                 ("\\+"(("X" `=` 1) or ("X" `=` 2)) and ("X" `=` 3)).hasSolutions({ no() }),
                 (("X" `=` 1) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ no() }),
-                "\\+"("fail" and 1).hasSolutions({ halt(haltException) }),
+                "\\+"("fail" and 1).hasSolutions({ halt(typeError) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
@@ -372,10 +374,7 @@ object PrologStandardExampleDatabases {
     val ifThenElseStandardExampleNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                ("->"("X" `=` 0, true) or false).hasSolutions(
-                    { yes("X" to 0) },
-                    { no() }
-                ),
+                ("->"("X" `=` 0, true) or false).hasSolutions({ yes("X" to 0) }),
                 ("X" `=` 1 and ("->"("X" `=` 0, false) or true)).hasSolutions({ yes("X" to 1) }),
                 (("->"("!" and ("X" `=` 1) and false, true) or false) or ("X" `=` 2)).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),

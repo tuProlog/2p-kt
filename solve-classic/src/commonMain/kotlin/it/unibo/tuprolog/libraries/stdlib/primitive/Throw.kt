@@ -18,13 +18,13 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
 
     private fun handleError(context: ExecutionContext, error: Struct): TuPrologRuntimeException =
         when {
-            error.functor == "error" && error.arity <= 2 -> {
+            error.functor == "error" && error.arity in 1..2 -> {
                 PrologError.of(
                     context = context,
                     type = error[0] as Struct,
                     extraData = if (error.arity > 1) error[1] else null
                 )
             }
-            else -> MessageError(context = context, content = error)
+            else -> MessageError.of(error, context)
         }
 }

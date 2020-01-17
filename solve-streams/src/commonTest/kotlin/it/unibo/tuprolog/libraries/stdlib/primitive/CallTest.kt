@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
+import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestSolutionMap
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestToErrorSolutionMap
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CallUtils.requestToSolutionOfCallWithCut
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.deepCause
 import it.unibo.tuprolog.solve.assertOverFailure
 import it.unibo.tuprolog.solve.assertSolutionEquals
