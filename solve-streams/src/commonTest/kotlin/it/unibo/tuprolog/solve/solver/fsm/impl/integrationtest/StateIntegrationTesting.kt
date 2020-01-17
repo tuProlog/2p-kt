@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl.integrationtest
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
@@ -61,7 +62,12 @@ internal class StateIntegrationTesting {
                 nextStates,
                 { it.solve.solution.query == goal }
             ) { index, finalState ->
-                assertSolutionEquals(solutionList[index], finalState.solve.solution)
+                assertSolutionEquals(
+                    solutionList[index],
+                    finalState.solve.solution.let {
+                        // cleanUp as in StreamsSolver
+                        (it as? Solution.Yes)?.copy(substitution = it.substitution.filter { _, t -> t !is Var }) ?: it
+                    })
             }
         }
     }

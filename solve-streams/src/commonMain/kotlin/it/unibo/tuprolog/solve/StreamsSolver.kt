@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
@@ -34,7 +35,7 @@ data class StreamsSolver(
                 executionMaxDuration = maxDuration
             ),
             executionStrategy
-        ).map { it.solution }
+        ).map { it.solution.cleanUp() }
 
 
     internal companion object {
@@ -48,5 +49,11 @@ data class StreamsSolver(
                 .filterIsInstance<FinalState>()
                 .filter { it.solve.solution.query == goalRequest.query }
                 .map { it.solve }
+
+        /** Utility function to clean up unassigned variables from final result */
+        private fun Solution.cleanUp(): Solution = when (this) {
+            is Solution.Yes -> copy(substitution = substitution.filter { _, term -> term !is Var })
+            else -> this
+        }
     }
 }
