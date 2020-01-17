@@ -12,7 +12,7 @@ internal data class StateBacktracking(override val context: ExecutionContextImpl
                 )
             } else {
                 val choicePointContext = choicePoints.pathToRoot.first { it.alternatives.hasNext }
-                StateRuleExecution(choicePointContext.backtrack())
+                StateRuleExecution(choicePointContext.backtrack(nextStep()))
             }
         }
     }

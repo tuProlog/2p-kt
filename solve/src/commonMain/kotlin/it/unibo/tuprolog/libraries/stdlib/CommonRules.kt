@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.libraries.stdlib
 
-import it.unibo.tuprolog.libraries.stdlib.rule.*
+import it.unibo.tuprolog.libraries.stdlib.rule.Arrow
+import it.unibo.tuprolog.libraries.stdlib.rule.Member
+import it.unibo.tuprolog.libraries.stdlib.rule.Not
+import it.unibo.tuprolog.libraries.stdlib.rule.Semicolon
 import it.unibo.tuprolog.rule.RuleWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 object CommonRules {
     val wrappers: Sequence<RuleWrapper<ExecutionContext>> = sequenceOf(
-        Cut,
-        NegationAsFailure.Fail,
-        NegationAsFailure.Success,
         Not,
         Arrow,
         Semicolon.If.Then,

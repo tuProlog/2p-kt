@@ -13,5 +13,5 @@ object Not : RuleWrapper<ExecutionContext>("not", 1) {
         get() = ktListOf(varOf("G"))
 
     override val Scope.body: Term
-        get() = structOf(NegationAsFailure.FUNCTOR, varOf("G"))
+        get() = structOf("\\+", varOf("G"))
 }
