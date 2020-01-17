@@ -59,8 +59,7 @@ interface Term {
      */
     // TODO remove this method
     @Deprecated("This sort of check is useless given the current architecture of terms and substitutions")
-    val isBound: Boolean
-        get() = false
+    val isBound: Boolean get() = false
 
     /**
      * Checks whether the current term is ground.

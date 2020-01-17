@@ -1,5 +1,5 @@
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
@@ -28,18 +28,6 @@ gitSemVer {
 
 println("2p-Kt version: $version")
 
-val publishAllToBintrayTask = tasks.create<DefaultTask>("publishAllToBintray") {
-    group = "publishing"
-}
-
-fun getPropertyOrWarnForAbsence(key: String): String? {
-    val value = property(key)?.toString()
-    if (value.isNullOrBlank()) {
-        System.err.println("WARNING: $key is not set")
-    }
-    return value
-}
-
 // env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 // env ORG_GRADLE_PROJECT_signingPassword
@@ -53,34 +41,51 @@ val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 // env ORG_GRADLE_PROJECT_ossrhPassword
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
-// apply next commands to all subprojects
-subprojects {
+val allSubprojects = subprojects.map { it.name  }.toSet()
+val jvmSubprojects = setOf<String>()
+val jsSubprojects = setOf<String>()
+val docSubprojects = setOf("documentation")
 
+val ktSubprojects = allSubprojects - jvmSubprojects - jsSubprojects - docSubprojects
+val codeSubprojects = allSubprojects - docSubprojects
+
+val publishAllToBintrayTask = tasks.create<DefaultTask>("publishAllToBintray") {
+    group = "publishing"
+}
+
+allSubprojects.forEachProject {
     group = rootProject.group
     version = rootProject.version
 
-    // ** NOTE ** legacy plugin application, because the new "plugins" block is not available inside "subprojects" scope yet
-    // when it will be available it should be moved here
+    repositories {
+        mavenCentral()
+        maven("https://dl.bintray.com/kotlin/dokka")
+    }
+
+    // Test Results printing
+    tasks.withType<AbstractTestTask> {
+        afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
+            if (desc.parent == null) { // will match the outermost suite
+                println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
+            }
+        }))
+    }
+}
+
+ktSubprojects.forEachProject {
+
     apply(plugin = "org.jetbrains.kotlin.multiplatform")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
 
-    // projects dependencies repositories
-    repositories {
-        mavenCentral()
-        maven("https://dl.bintray.com/kotlin/dokka")
-    }
-
-    // Common kotlin multiplatform configuration for sub-projects
     kotlin {
 
         sourceSets {
             val commonMain by getting {
                 dependencies {
                     implementation(kotlin("stdlib-common"))
-//                    implementation(kotlin("reflect"))
                 }
             }
             val commonTest by getting {
@@ -140,57 +145,33 @@ subprojects {
         }
     }
 
-    // Test Results printing
-    tasks.withType<AbstractTestTask> {
-        afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
-            if (desc.parent == null) { // will match the outermost suite
-                println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
-            }
-        }))
-    }
+    configureDokka()
 
-    val docDir = "$buildDir/doc"
+    configureMavenPublications("packDokka${capitalize(name)}")
 
+    configureUploadToMavenCentral(
+        if (version.toString().contains("SNAPSHOT")) {
+            "https://oss.sonatype.org/content/repositories/snapshots/"
+        } else {
+            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        }
+    )
+
+    configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
+
+    configureSigning()
+}
+
+
+fun Project.configureDokka() {
     tasks.withType<DokkaTask> {
         outputDirectory = docDir
         outputFormat = "html"
 
         multiplatform {
-            register("jvm") {
-                targets = listOf("JVM")
-                platform = "jvm"
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                }
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                }
-                includeNonPublic = true
-                reportUndocumented = false
-                collectInheritedExtensionsFromLibraries = true
-                skipEmptyPackages = true
-                jdkVersion = 6
-            }
-
-            register("js") {
-                targets = listOf("JS")
-                platform = "js"
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                }
-//                sourceRoot {
-//                    path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                }
-                includeNonPublic = true
-                reportUndocumented = false
-                collectInheritedExtensionsFromLibraries = true
-                skipEmptyPackages = true
-            }
+            registerPlatform("jvm")
+            registerPlatform("js")
         }
-    }
-
-    fun capitalize(s: String): String {
-        return s[0].toUpperCase() + s.substring(1)
     }
 
     val jarPlatform = tasks.withType<Jar>().map { it.name.replace("Jar", "") }
@@ -215,15 +196,65 @@ subprojects {
         tasks.getByName("${it}Jar").dependsOn(packDokkaForPlatform)
         tasks.getByName("packAllDokka").dependsOn(packDokkaForPlatform)
     }
+}
 
-    // https://central.sonatype.org/pages/requirements.html
-    // https://docs.gradle.org/current/userguide/signing_plugin.html
+fun Project.configureSigning() {
+    signing {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+
+        sign(publishing.publications)
+    }
+
+    publishing {
+        val pubs = publications.withType<MavenPublication>().map { "sign${capitalize(it.name)}Publication" }
+
+        task<Sign>("signAllPublications") {
+            dependsOn(*pubs.toTypedArray())
+        }
+    }
+}
+
+fun Project.configureUploadToBintray(vararg publicationNames: String) {
+    publishing {
+        bintray {
+            user = bintrayUser
+            key = bintrayKey
+            setPublications(*publicationNames)
+            override = true
+            with(pkg) {
+                repo = "tuprolog"
+                name = project.name
+                userOrg = "pika-lab"
+                vcsUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin"
+                setLicenses("Apache-2.0")
+                with(version) {
+                    name = project.version.toString()
+                }
+            }
+        }
+    }
+}
+
+fun Project.configureUploadToMavenCentral(mavenRepoUrl: String) {
+    if (ossrhUsername != null && ossrhPassword != null) {
+        publishing {
+            repositories {
+                maven(mavenRepoUrl) {
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun Project.configureMavenPublications(docArtifact: String) {
     publishing {
         publications.withType<MavenPublication> {
             groupId = project.group.toString()
             version = project.version.toString()
-
-            val docArtifact = "packDokka${capitalize(name)}"
 
             if (docArtifact in tasks.names) {
                 artifact(tasks.getByName(docArtifact)) {
@@ -232,7 +263,7 @@ subprojects {
             }
 
             pom {
-                name.set("2P in Kotlin -- Module `${this@subprojects.name}`")
+                name.set("2P in Kotlin -- Module `${this@configureMavenPublications.name}`")
                 description.set("Multi-platform Prolog environment, in Kotlin")
                 url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
                 licenses {
@@ -264,55 +295,42 @@ subprojects {
             }
 
         }
-
-//        repositories {
-//            val mavenRepoUrl = if (version.toString().contains("SNAPSHOT")) {
-//                "https://oss.sonatype.org/content/repositories/snapshots/"
-//            } else {
-//                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-//            }
-//
-//            maven(mavenRepoUrl) {
-//                credentials {
-//                    username = project.property("ossrhUsername").toString()
-//                    password = project.property("ossrhPassword").toString()
-//                }
-//            }
-//        }
-
-        bintray {
-            user = bintrayUser
-            key = bintrayKey
-            setPublications("kotlinMultiplatform", "js", "jvm", "metadata")
-            override = true
-            with(pkg) {
-                repo = "tuprolog"
-                name = project.name
-                userOrg = "pika-lab"
-                vcsUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin"
-                setLicenses("Apache-2.0")
-                with(version) {
-                    name = project.version.toString()
-                }
-            }
-        }
-
-        tasks.withType<BintrayUploadTask> {
-            publishAllToBintrayTask.dependsOn(this)
-        }
-    }
-
-    signing {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-
-        sign(publishing.publications)
-    }
-
-    publishing {
-        val pubs = publications.withType<MavenPublication>().map { "sign${capitalize(it.name)}Publication" }
-
-        task<Sign>("signAllPublications") {
-            dependsOn(*pubs.toTypedArray())
-        }
     }
 }
+
+fun getPropertyOrWarnForAbsence(key: String): String? {
+    val value = property(key)?.toString()
+    if (value.isNullOrBlank()) {
+        System.err.println("WARNING: $key is not set")
+    }
+    return value
+}
+
+fun capitalize(s: String) = s[0].toUpperCase() + s.substring(1)
+
+fun Set<String>.forEachProject(f: Project.() -> Unit) = subprojects.filter { it.name in this }.forEach(f)
+
+val Project.docDir: String
+    get() = "$buildDir/doc"
+
+fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
+    platform: String, configuration: Action<in GradlePassConfigurationImpl>
+) {
+
+    val low = platform.toLowerCase()
+    val up = platform.toUpperCase()
+
+    register(low) {
+        targets = listOf(up)
+        this@register.platform = low
+        includeNonPublic = false
+        reportUndocumented = false
+        collectInheritedExtensionsFromLibraries = true
+        skipEmptyPackages = true
+        configuration(this@register)
+    }
+}
+
+fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(platform: String) =
+    registerPlatform(platform) { }
+
