@@ -26,6 +26,8 @@ object MagicCut : Atom by MAGIC_CUT_DELEGATE {
 
     override fun apply(substitution: Substitution): Term = this
 
+    override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
+
     override fun apply(substitution: Substitution, vararg substitutions: Substitution): Term = this
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
