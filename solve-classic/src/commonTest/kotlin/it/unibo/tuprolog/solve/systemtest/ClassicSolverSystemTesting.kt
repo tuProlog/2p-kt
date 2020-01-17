@@ -32,26 +32,14 @@ class ClassicSolverSystemTesting : SolverFactory {
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
-                libraries = defaultLibraries,
-                staticKB = theoryOf(
-                    fact { "a"(2) },
-                    fact { "a"(1) },
-                    fact { "b"(1) },
-                    fact { "c"(2) }
-//                    clause { "a"("X") `if` "b"("X") },
-//                    clause { "a"(6) },
-//                    clause { "b"("X") `if` ("c"("X") and "d"("X")) },
-//                    clause { "b"(4) `if` "!" },
-//                    clause { "b"(5) },
-//                    clause { "c"(1) },
-//                    clause { "c"(2) `if` "!" },
-//                    clause { "c"(3) },
-//                    clause { "d"(2) },
-//                    clause { "d"(3) }
-                )
+                libraries = defaultLibraries
             )
 
-            solver.solve("\\+"("\\+"("c"("X")))).forEach { sol ->
+//            val query = ("->"("!" and ("X" `=` 1) and false, true) or false) or ("X" `=` 2)
+//            val query = (/*"!" and */("X" `=` 1) and false) then true or false or true
+            val query = false then true or false or true
+
+            solver.solve(query).forEach { sol ->
                 println(sol)
                 if (sol is Solution.Halt) {
                     sol.exception.prologStackTrace.forEach {
@@ -59,41 +47,6 @@ class ClassicSolverSystemTesting : SolverFactory {
                     }
                 }
             }
-//            solver.solve(tupleOf(true, "X"), 200).forEach { sol ->
-//                println(sol)
-//                if (sol is Solution.Halt) {
-//                    sol.exception.prologStackTrace.forEach {
-//                        println("\t$it")
-//                    }
-//                }
-//            }
-//            solver.solve(tupleOf(true, 1), 200).forEach {sol ->
-//                println(sol)
-//            }
-//            solver.solve("call"("a"("X"))).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("X")).forEach {
-//                println(it)
-//            }
-//            solver.solve("!" and false or true).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("!") and false or true).forEach {
-//                println(it)
-//            }
-//            solver.solve("a"("X") and "!").forEach {
-//                println(it)
-//            }
-//            solver.solve("a"("X") and "call"("!")).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("Z" `=` "!" and "a"("X") and "Z")).forEach {
-//                println(it)
-//            }
-//            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
-//                println(it)
-//            }
         }
     }
 
