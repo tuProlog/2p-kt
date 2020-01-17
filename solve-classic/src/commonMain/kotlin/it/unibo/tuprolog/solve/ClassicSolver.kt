@@ -47,13 +47,16 @@ data class ClassicSolver(
         )
 
         var state: State = StateInit(initialContext)
+        var step: Long = 0
 
         while (true) {
+            require(state.context.step == step)
             state = state.next()
-            
+            step += 1
+
             if (state is EndState) {
                 yield(
-                    when(val sol = state.solution) {
+                    when (val sol = state.solution) {
                         is Solution.Yes -> sol.cleanUp()
                         else -> sol
                     }
