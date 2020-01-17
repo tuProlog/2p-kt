@@ -17,16 +17,16 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || this::class != other::class) return false
+        if (other == null || other !is Integer) return false
 
-        return value.compareTo((other as IntegerImpl).value) == 0
+        return value.compareTo(other.value) == 0
     }
 
     override fun hashCode(): Int = value.hashCode()
 
     override fun compareTo(other: Numeric): Int =
         when (other) {
-            is IntegerImpl -> value.compareTo(other.value)
+            is Integer -> value.compareTo(other.value)
             else -> super<NumericImpl>.compareTo(other)
         }
 }

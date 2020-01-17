@@ -2,22 +2,15 @@ package it.unibo.tuprolog.libraries.stdlib.magic
 
 import it.unibo.tuprolog.core.*
 
-private val MAGIC_CUT_DELEGATE = Atom.of("!")
+object MagicCut : Atom by Atom.of("!") {
 
-object MagicCut : Atom by MAGIC_CUT_DELEGATE {
+    const val FUNCTOR: String = "!MagicCut!"
+
     override val isConstant: Boolean
         get() = super<Atom>.isConstant
 
-    override fun equals(other: Any?): Boolean {
-        return MAGIC_CUT_DELEGATE == other
-    }
-
-    override fun hashCode(): Int {
-        return MAGIC_CUT_DELEGATE.hashCode()
-    }
-
     override fun toString(): String {
-        return "¡" // different symbol for debugging purposes
+        return FUNCTOR // different symbol for debugging purposes
     }
 
     override fun freshCopy(): Atom = this
