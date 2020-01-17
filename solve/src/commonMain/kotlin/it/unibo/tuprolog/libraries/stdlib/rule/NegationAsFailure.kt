@@ -3,6 +3,7 @@ package it.unibo.tuprolog.libraries.stdlib.rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.stdlib.magic.MagicCut
+import it.unibo.tuprolog.libraries.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.rule.RuleWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import kotlin.collections.List as KtList
@@ -20,6 +21,7 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     object Fail : NegationAsFailure() {
         override val Scope.body: Term
             get() = tupleOf(
+                structOf(EnsureExecutable.functor, varOf("X")),
                 varOf("X"),
                 MagicCut,
                 truthOf(false)

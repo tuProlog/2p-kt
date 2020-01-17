@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.libraries.stdlib.rule
 
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.rule.RuleWrapper
@@ -16,7 +15,7 @@ object Call : RuleWrapper<ExecutionContextImpl>("call", 1) {
 
     override val Scope.body: Term
         get() = tupleOf(
-            Struct.of(EnsureExecutable.functor, varOf("G")),
+            structOf(EnsureExecutable.functor, varOf("G")),
             varOf("G")
         )
 }
