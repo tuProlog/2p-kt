@@ -34,14 +34,6 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     override fun visitSingletonExpression(ctx: PrologParser.SingletonExpressionContext): Term =
         visitExpression(ctx.expression())
 
-    override fun visitTheory(ctx: PrologParser.TheoryContext): Term {
-        return super.visitTheory(ctx)
-    }
-
-    override fun visitOptClause(ctx: PrologParser.OptClauseContext): Term {
-        return super.visitOptClause(ctx)
-    }
-
     override fun visitClause(ctx: PrologParser.ClauseContext): Term =
         ctx.expression().accept(this)
 
@@ -75,9 +67,8 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return super.visitReal(ctx)
     }
 
-    override fun visitVariable(ctx: PrologParser.VariableContext): Term {
-        return super.visitVariable(ctx)
-    }
+    override fun visitVariable(ctx: PrologParser.VariableContext): Term =
+        getVarByName(ctx.value.text)
 
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
         return super.visitStructure(ctx)
@@ -223,7 +214,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     private fun visitInfixLeftAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
         infixLeft(streamOfOperands(ctx),streamOfOperators(ctx))
 
-    private fun getVarByName(name: String): Var? {
+    private fun getVarByName(name: String): Var {
         return if ("_" == name) {
             Var.of(name)
         } else {
