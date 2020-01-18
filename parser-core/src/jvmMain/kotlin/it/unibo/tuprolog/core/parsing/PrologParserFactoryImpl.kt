@@ -278,7 +278,6 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
     private fun parseClauses(parser: PrologParser, source: Any):  Stream<PrologParser.ClauseContext> {
         TODO()
-
     }
 
 }

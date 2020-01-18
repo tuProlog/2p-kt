@@ -34,9 +34,8 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return super.visitOptClause(ctx)
     }
 
-    override fun visitClause(ctx: PrologParser.ClauseContext): Term {
-        return super.visitClause(ctx)
-    }
+    override fun visitClause(ctx: PrologParser.ClauseContext): Term =
+        ctx.expression().accept(this)
 
     override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
         return super.visitExpression(ctx)
@@ -50,9 +49,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return super.visitOp(ctx)
     }
 
-    override fun visitTerm(ctx: PrologParser.TermContext): Term {
-        return super.visitTerm(ctx)
-    }
+    override fun visitTerm(ctx: PrologParser.TermContext): Term =
+        if(ctx.isExpr) visitExpression(ctx.expression()) else ctx.children.get(0).accept(this)
+
 
     override fun visitNumber(ctx: PrologParser.NumberContext): Term {
         return super.visitNumber(ctx)
@@ -83,7 +82,11 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun handleOuters(expression: Term, outers : Stream<PrologParser.OuterContext>): Term {
-       TODO()
+        val result: Term = expression
+        outers.forEach{
+
+        }
+        TODO()
     }
 
 }
