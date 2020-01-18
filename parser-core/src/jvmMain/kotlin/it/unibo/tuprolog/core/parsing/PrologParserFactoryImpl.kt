@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
+import java.util.function.IntUnaryOperator
+import java.util.function.UnaryOperator
 import java.util.stream.IntStream
 import java.util.stream.Stream
 
