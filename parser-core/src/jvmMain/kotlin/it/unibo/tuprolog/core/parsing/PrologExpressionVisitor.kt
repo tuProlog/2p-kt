@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.PrologParser
+import it.unibo.tuprolog.parser.dynamic.Associativity.*
 import java.util.stream.Stream
 
 class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Term>() {
@@ -80,13 +81,31 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     override fun visitSet(ctx: PrologParser.SetContext): Term {
         return super.visitSet(ctx)
     }
+    private fun wtf() = println("ciao")
 
     private fun handleOuters(expression: Term, outers : Stream<PrologParser.OuterContext>): Term {
-        val result: Term = expression
+        val result = expression
         outers.forEach{
-
+            val operands = Stream.concat(
+                Stream.of(result),
+                it.right.stream().map {
+                    it -> it.accept(this)
+                }
+            )
+            val operators = it.operators.stream().map{
+                op -> op.symbol.text
+            }
+            result =  when(it.associativity){
+                XFY -> TODO()
+                XF -> TODO()
+                YF -> TODO()
+                XFX -> TODO()
+                YFX -> TODO()
+                FX -> TODO()
+                FY -> TODO()
+           }
         }
-        TODO()
+        return result
     }
 
 }
