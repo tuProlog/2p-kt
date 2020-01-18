@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -12,13 +13,13 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
         sequenceOf(
             request.ensuringAllArgumentsAreInstantiated()
                 .replyException(
-                    handleError(request.context, request.arguments[0] as Struct)
+                    handleError(request.context, request.arguments[0])
                 )
         )
 
-    private fun handleError(context: ExecutionContext, error: Struct): TuPrologRuntimeException =
+    private fun handleError(context: ExecutionContext, error: Term): TuPrologRuntimeException =
         when {
-            error.functor == "error" && error.arity in 1..2 -> {
+            error is Struct && error.functor == "error" && error.arity in 1..2 -> {
                 PrologError.of(
                     context = context,
                     type = error[0] as Struct,

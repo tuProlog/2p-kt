@@ -31,7 +31,7 @@ class SystemError(
         const val typeFunctor = "system_error"
 
         fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =
-            "Uncaught exception $exception".let {
+            "Uncaught exception `$exception`".let {
                 SystemError(
                     message = it,
                     context = context,
