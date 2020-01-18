@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
 
-
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
@@ -102,7 +101,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
                 parser.tokenStream.seek(0)
                 parser.interpreter.predictionMode = PredictionMode.LL
                 parser.errorHandler = DefaultErrorStrategy()
-                parser.addErrorListener(PrologParserFactoryImpl.newErrorListener(source))
+                parser.addErrorListener(newErrorListener(source))
                 parseExpression(parser, source)
             } else if (ex.cause is RecognitionException) {
                 throw (ex.cause as RecognitionException?)!!
@@ -147,55 +146,49 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         return parseTerm(parser,string)
     }
 
-    override fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.DEFAULT)
 
-    override fun parseTermWithStandardOperators(string: Reader): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTermWithStandardOperators(string: Reader): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.DEFAULT)
 
-    override fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.DEFAULT)
 
 
     //CLAUSES
     override fun parseClauses(source: String, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(source,withOperators)
+        return parseClauses(parser,source)
     }
 
     override fun parseClauses(source: Reader, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(source,withOperators)
+        return parseClauses(parser,source)
     }
 
     override fun parseClauses(source: InputStream, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(source,withOperators)
+        return parseClauses(parser,source)
     }
 
-    override fun parseClauses(source: String): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClauses(source: String): Stream<PrologParser.ClauseContext> =
+        parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClauses(source: Reader): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClauses(source: Reader): Stream<PrologParser.ClauseContext> =
+        parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClauses(source: InputStream): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClauses(source: InputStream): Stream<PrologParser.ClauseContext>  =
+        parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClausesWithStandardOperators(source: String): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClausesWithStandardOperators(source: String): Stream<PrologParser.ClauseContext>  =
+        parseClauses(source,OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: Reader): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClausesWithStandardOperators(source: Reader): Stream<PrologParser.ClauseContext>  =
+        parseClauses(source,OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: InputStream): Stream<PrologParser.ClauseContext> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseClausesWithStandardOperators(source: InputStream): Stream<PrologParser.ClauseContext>  =
+        parseClauses(source,OperatorSet.DEFAULT)
 
 
     //CREATE PARSER
@@ -256,6 +249,34 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
                 throw ex
             }
         }
+    }
+
+    private fun parseClause(parser: PrologParser, input: Any): PrologParser.OptClauseContext {
+        var mark = -1
+        var index = -1
+        return try {
+            mark = parser.tokenStream.mark()
+            index = parser.tokenStream.index().coerceAtLeast(0)
+            parser.optClause()
+        } catch (ex: ParseCancellationException) {
+            if (parser.interpreter.predictionMode === PredictionMode.SLL) {
+                parser.tokenStream.seek(index)
+                parser.interpreter.predictionMode = PredictionMode.LL
+                parser.errorHandler = DefaultErrorStrategy()
+                parser.addErrorListener(newErrorListener(input))
+                parser.optClause()
+            } else if (ex.cause is RecognitionException) {
+                throw (ex.cause as RecognitionException?)!!
+            } else {
+                throw ex
+            }
+        } finally {
+            parser.tokenStream.release(mark)
+        }
+    }
+
+    private fun parseClauses(parser: PrologParser, source: Any):  Stream<PrologParser.ClauseContext> {
+        TODO()
     }
 
 }
