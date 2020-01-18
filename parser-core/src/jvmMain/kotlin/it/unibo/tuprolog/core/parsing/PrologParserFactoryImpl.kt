@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
+import java.util.stream.IntStream
 import java.util.stream.Stream
 
 class PrologParserFactoryImpl private constructor(): PrologParserFactory {
@@ -277,6 +278,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
     private fun parseClauses(parser: PrologParser, source: Any):  Stream<PrologParser.ClauseContext> {
         TODO()
+
     }
 
 }
