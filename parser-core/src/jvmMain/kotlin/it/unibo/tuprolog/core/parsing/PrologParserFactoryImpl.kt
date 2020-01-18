@@ -123,28 +123,28 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
 
     // TERM
-    override fun parseTerm(string: String): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTerm(string: String): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.EMPTY)
 
     override fun parseTerm(string: String, withOperators: OperatorSet): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(string,withOperators)
+        return parseTerm(parser,string)
     }
 
-    override fun parseTerm(string: Reader): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTerm(string: Reader): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.EMPTY)
 
     override fun parseTerm(string: Reader, withOperators: OperatorSet): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(string,withOperators)
+        return parseTerm(parser,string)
     }
 
-    override fun parseTerm(string: InputStream): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun parseTerm(string: InputStream): PrologParser.SingletonTermContext =
+        parseTerm(string,OperatorSet.EMPTY)
 
     override fun parseTerm(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonTermContext {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val parser = createParser(string,withOperators)
+        return parseTerm(parser,string)
     }
 
     override fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext {
@@ -238,6 +238,24 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         parser.errorHandler = BailErrorStrategy()
         parser.interpreter.predictionMode = PredictionMode.SLL
         return parser
+    }
+
+    private fun parseTerm(parser: PrologParser, source: Any): PrologParser.SingletonTermContext {
+        return try {
+            parser.singletonTerm()
+        } catch (ex: ParseCancellationException) {
+            if (parser.interpreter.predictionMode === PredictionMode.SLL) {
+                parser.tokenStream.seek(0)
+                parser.interpreter.predictionMode = PredictionMode.LL
+                parser.errorHandler = DefaultErrorStrategy()
+                parser.addErrorListener(newErrorListener(source))
+                parseTerm(parser, source)
+            } else if (ex.cause is RecognitionException) {
+                throw (ex.cause as RecognitionException?)!!
+            } else {
+                throw ex
+            }
+        }
     }
 
 }
