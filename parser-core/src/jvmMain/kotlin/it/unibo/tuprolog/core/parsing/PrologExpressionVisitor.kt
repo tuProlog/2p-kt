@@ -217,7 +217,6 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return Struct.of(operators[0], operands[0], operands[1])
     }
 
-
     private fun handleOuters(expression: Term, outers : Stream<PrologParser.OuterContext>): Term {
         val result = expression
         outers.forEach{
@@ -301,6 +300,4 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             return variable
         }
     }
-
-
 }
