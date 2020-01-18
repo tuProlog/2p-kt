@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -83,14 +86,29 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     override fun visitList(ctx: PrologParser.ListContext): Term {
-        return super.visitList(ctx)
+        val terms: Stream<Term> = ctx.items.stream().map(this::visitExpression)
+        return if(ctx.hasTail) createListExact(Stream.concat(terms,Stream.of(this.visitExpression(ctx.tail)))) else it.unibo.tuprolog.core.List.from(terms.asSequence())
     }
+
+
 
     override fun visitSet(ctx: PrologParser.SetContext): Term {
         return if(ctx.length==1)
             it.unibo.tuprolog.core.Set.of(ctx.items[0].accept(this))
         else
             it.unibo.tuprolog.core.Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
+    }
+
+    private fun createListExact(terms: Stream<Term>): Struct {
+        val termsList: List<Term> = terms.collect(Collectors.toList<Term>())
+        var i = termsList.size - 1
+        var result: Struct = Cons.of(termsList[i - 1], termsList[i])
+        i -= 2
+        while (i >= 0) {
+            result = Cons.of(termsList[i], result)
+            i--
+        }
+        return result
     }
 
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
