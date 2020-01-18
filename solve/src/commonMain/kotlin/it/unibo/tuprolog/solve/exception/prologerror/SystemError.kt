@@ -26,5 +26,14 @@ class SystemError(
 
         /** The system error Struct functor */
         const val typeFunctor = "system_error"
+
+        fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =
+            "Uncaught exception $exception".let {
+                SystemError(
+                    message = it,
+                    context = context,
+                    extraData = Atom.of(it)
+                )
+            }
     }
 }
