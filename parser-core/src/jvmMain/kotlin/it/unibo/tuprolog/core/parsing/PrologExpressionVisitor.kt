@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -60,11 +57,20 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         super.visitNumber(ctx)
 
     override fun visitInteger(ctx: PrologParser.IntegerContext): Term {
-        return super.visitInteger(ctx)
+        val value = parseInteger(ctx)
+        return Numeric.of(value)
     }
 
     override fun visitReal(ctx: PrologParser.RealContext): Term {
-        return super.visitReal(ctx)
+        var raw = ctx.value.text
+        if (ctx.sign != null) {
+            raw = ctx.sign.text.toString() + raw
+        }
+        return try {
+            Real.of(raw.toDouble())
+        } catch (notAFloating: NumberFormatException) {
+            throw ParseException(ctx.value, notAFloating)
+        }
     }
 
     override fun visitVariable(ctx: PrologParser.VariableContext): Term =
@@ -97,6 +103,50 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             it.unibo.tuprolog.core.Set.of(ctx.items[0].accept(this))
         else
             it.unibo.tuprolog.core.Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
+    }
+
+    private fun parseInteger(ctx: PrologParser.IntegerContext): Number{
+        val str = ctx.value.text
+        val base: Int
+        var clean: String
+        if (ctx.isBin) {
+            base = 2
+            clean = str.substring(2)
+        } else if (ctx.isOct) {
+            base = 8
+            clean = str.substring(2)
+        } else if (ctx.isHex) {
+            base = 16
+            clean = str.substring(2)
+        } else if (ctx.isChar) {
+            clean = str.substring(2)
+            if (clean.length != 1) {
+                throw ParseException(
+                    null,
+                    ctx.text,
+                    ctx.value.line,
+                    ctx.value.charPositionInLine,
+                    "Invalid character literal: " + ctx.text,
+                    null
+                )
+            }
+            return clean[0].toInt()
+        } else {
+            base = 10
+            clean = str
+        }
+        if (ctx.sign != null) {
+            clean = ctx.sign.text.toString() + clean
+        }
+        return try {
+            clean.toInt(base)
+        } catch (mayBeLong: NumberFormatException) {
+            try {
+                clean.toLong(base)
+            } catch (notEvenLong: NumberFormatException) {
+                throw ParseException(ctx.value, notEvenLong)
+            }
+        }
     }
 
     private fun createListExact(terms: Stream<Term>): Struct {
