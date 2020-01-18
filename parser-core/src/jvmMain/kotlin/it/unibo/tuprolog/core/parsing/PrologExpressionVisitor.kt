@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Set
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -70,8 +67,19 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     override fun visitVariable(ctx: PrologParser.VariableContext): Term =
         getVarByName(ctx.value.text)
 
-    override fun visitStructure(ctx: PrologParser.StructureContext): Term {
-        return super.visitStructure(ctx)
+    override fun visitStructure(ctx: PrologParser.StructureContext): Term{
+        if (ctx.isList)
+            return it.unibo.tuprolog.core.List.empty()
+        else if (ctx.isSet)
+            return it.unibo.tuprolog.core.Set.empty()
+        if (ctx.arity === 0) {
+            return it.unibo.tuprolog.core.Atom.of(ctx.functor.text)
+        } else {
+            return Struct.of(
+                ctx.functor.text,
+                ctx.args.stream().map(this::visitExpression).asSequence()
+            )
+        }
     }
 
     override fun visitList(ctx: PrologParser.ListContext): Term {
@@ -80,9 +88,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
 
     override fun visitSet(ctx: PrologParser.SetContext): Term {
         return if(ctx.length==1)
-            Set.of(ctx.items[0].accept(this))
+            it.unibo.tuprolog.core.Set.of(ctx.items[0].accept(this))
         else
-            Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
+            it.unibo.tuprolog.core.Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
     }
 
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
