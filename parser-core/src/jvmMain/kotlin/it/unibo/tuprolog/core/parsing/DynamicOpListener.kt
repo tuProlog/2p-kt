@@ -27,9 +27,9 @@ internal class DynamicOpListener private constructor(
         }
         if (expr.op != null && ":-" == expr.op.symbol.text && Associativity.PREFIX.contains(expr.associativity)) {
             val directive = ctx.accept(PrologExpressionVisitor.instance) as Struct
-            if (directive.arity === 1 && directive.getArgAt(0) is Struct) {
+            if (directive.arity == 1 && directive.getArgAt(0) is Struct) {
                 val op: Struct = directive.getArgAt(0) as Struct
-                if ("op" == op.functor && op.arity === 3 && op.getArgAt(0) is Number && op.getArgAt(1).isAtom && op.getArgAt(
+                if ("op" == op.functor && op.arity == 3 && op.getArgAt(0) is Number && op.getArgAt(1).isAtom && op.getArgAt(
                         2
                     ).isAtom
                 ) {
@@ -38,7 +38,7 @@ internal class DynamicOpListener private constructor(
                         PrologParser.TOP,
                         kotlin.math.max(
                             PrologParser.BOTTOM,
-                            number.intValue as Int
+                            number.intValue.toInt()
                         )
                     )
                     val struct1 = op.getArgAt(1) as Struct
