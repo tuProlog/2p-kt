@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -25,6 +26,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         }
     }
 
+    private val variables: MutableMap<String,Var> = HashMap<String,Var>()
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
         visitTerm(ctx.term())
@@ -91,7 +93,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         else
             Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
     }
-    
+
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
         postfix(ctx.left.accept(this), ctx.operators.stream().map{
             it->it.symbol.text
@@ -221,7 +223,17 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     private fun visitInfixLeftAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
         infixLeft(streamOfOperands(ctx),streamOfOperators(ctx))
 
-
+    private fun getVarByName(name: String): Var? {
+        return if ("_" == name) {
+            Var.of(name)
+        } else {
+            var variable: Var = variables.getValue(name)
+            if (variable == null) {
+                variables[name] = Var.of(name).also { variable = it }
+            }
+            return variable
+        }
+    }
 
 
 }
