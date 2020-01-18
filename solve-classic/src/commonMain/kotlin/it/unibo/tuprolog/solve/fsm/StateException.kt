@@ -3,11 +3,13 @@ package it.unibo.tuprolog.solve.fsm
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.libraries.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.prologerror.MessageError
+import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
@@ -17,7 +19,7 @@ internal data class StateException(
 ) : ExceptionalState, AbstractState(context) {
 
     private fun Struct.isCatch(): Boolean =
-        arity == 3 && functor == "catch"
+        arity == 3 && functor == Catch.functor
 
     private fun PrologError.getExceptionContent(): Term {
         return when (this) {
@@ -26,6 +28,11 @@ internal data class StateException(
         }
     }
 
+    private fun PrologError.toPublicException(): PrologError =
+        when (this) {
+            is MessageError -> SystemError.forUncaughtException(this@StateException.context, this)
+            else -> this
+        }
 
     override fun computeNext(): State {
         return when (exception) {
@@ -37,7 +44,7 @@ internal data class StateException(
                         StateHalt(exception, context.copy(step = nextStep()))
                     }
                     catchGoal.isCatch() -> {
-                        val catcher = catchGoal[1].mguWith(exception.getExceptionContent())
+                        val catcher = catchGoal[1].freshCopy() mguWith exception.getExceptionContent()
 
                         when {
                             catcher is Substitution.Unifier -> {
@@ -56,7 +63,7 @@ internal data class StateException(
                             }
                             context.isRoot -> {
                                 StateHalt(
-                                    exception,
+                                    exception.toPublicException(),
                                     context.copy(step = nextStep())
                                 )
                             }

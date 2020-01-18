@@ -78,7 +78,7 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             actualValue: Term
-        ) = "Goal `$actualValue` of ${procedure.toIndicator()} should be a $expectedType term".let {
+        ) = "Subgoal `$actualValue` of ${procedure.toIndicator()} is not a $expectedType term".let {
             TypeError(
                 message = it,
                 context = context,
