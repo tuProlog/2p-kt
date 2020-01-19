@@ -7,10 +7,6 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.*
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.INFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.POSTFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.PREFIX
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Term>() {
 
@@ -37,22 +33,19 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         ctx.expression().accept(this)
 
     override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
-        return when{
+        return handleOuters( when{
             ctx.isTerm -> visitTerm(ctx.left)
             INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
             POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
             PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
             ctx.exception != null -> throw ctx.exception
             else -> throw java.lang.IllegalArgumentException()
-        }
+        }, flatten(ctx.outers.asSequence()))
     }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
         if(ctx.isExpr) visitExpression(ctx.expression()) else ctx.children.get(0).accept(this)
 
-
-    override fun visitNumber(ctx: PrologParser.NumberContext): Term =
-        super.visitNumber(ctx)
 
     override fun visitInteger(ctx: PrologParser.IntegerContext): Term {
         val value = parseInteger(ctx)
@@ -80,18 +73,18 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         else if (ctx.isSet)
             return it.unibo.tuprolog.core.Set.empty()
         if (ctx.arity === 0) {
-            return it.unibo.tuprolog.core.Atom.of(ctx.functor.text)
+            return Atom.of(ctx.functor.text)
         } else {
             return Struct.of(
                 ctx.functor.text,
-                ctx.args.stream().map(this::visitExpression).asSequence()
+                ctx.args.asSequence().map(this::visitExpression)
             )
         }
     }
 
     override fun visitList(ctx: PrologParser.ListContext): Term {
-        val terms: Stream<Term> = ctx.items.stream().map(this::visitExpression)
-        return if(ctx.hasTail) createListExact(Stream.concat(terms,Stream.of(this.visitExpression(ctx.tail)))) else it.unibo.tuprolog.core.List.from(terms.asSequence())
+        val terms = ctx.items.asSequence().map(this::visitExpression)
+        return if(ctx.hasTail) createListExact(terms.plus(this.visitExpression(ctx.tail))) else it.unibo.tuprolog.core.List.from(terms)
     }
 
 
@@ -100,7 +93,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return if(ctx.length==1)
             it.unibo.tuprolog.core.Set.of(ctx.items[0].accept(this))
         else
-            it.unibo.tuprolog.core.Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
+            it.unibo.tuprolog.core.Set.of(ctx.items.asSequence().map(this::visitExpression))
     }
 
 
@@ -149,8 +142,8 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         }
     }
 
-    private fun createListExact(terms: Stream<Term>): Struct {
-        val termsList: List<Term> = terms.collect(Collectors.toList<Term>())
+    private fun createListExact(terms: Sequence<Term>): Struct {
+        val termsList: List<Term> = terms.toList()
         var i = termsList.size - 1
         var result: Struct = Cons.of(termsList[i - 1], termsList[i])
         i -= 2
@@ -162,9 +155,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
-        postfix(ctx.left.accept(this), ctx.operators.stream().map{
-            it->it.symbol.text
-        }.asSequence())
+        postfix(ctx.left.accept(this), ctx.operators.asSequence().map{
+            it.symbol.text
+        })
 
     private fun postfix(term: Term,ops: Sequence<String>) :Term {
         val operator = ops.iterator()
@@ -176,9 +169,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitPrefixExpression(ctx: PrologParser.ExpressionContext): Term =
-        prefix(ctx.right[0].accept(this),ctx.operators.stream().map{
-            it -> it.symbol.text
-        }.asSequence())
+        prefix(ctx.right[0].accept(this),ctx.operators.asSequence().map{
+            it.symbol.text
+        })
 
     private fun prefix(term: Term, ops: Sequence<String>): Term{
         val operators = ops.toList()
@@ -201,12 +194,12 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitInfixNonAssociativeExpression(ctx: PrologParser.ExpressionContext): Term{
-        val operands= Stream.concat(Stream.of(ctx.left),ctx.right.stream()).map{
-            it -> it.accept(this)
-        }.asSequence()
-        val operators = ctx.operators.stream().map{
-            op -> op.symbol.text
-        }.asSequence()
+        val operands = listOf(ctx.left).asSequence().plus(ctx.right.asSequence()).map{
+            it.accept(this)
+        }
+        val operators = ctx.operators.asSequence().map{
+            it.symbol.text
+        }
         return infixNonAssociative(operands,operators)
     }
 
@@ -216,18 +209,17 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return Struct.of(operators[0], operands[0], operands[1])
     }
 
-    private fun handleOuters(expression: Term, outers : Stream<PrologParser.OuterContext>): Term {
+    private fun handleOuters(expression: Term, outers : Sequence<PrologParser.OuterContext>): Term {
         var result = expression
-        outers.forEach{
-            val operands = Stream.concat(
-                Stream.of(result),
-                it.right.stream().map {
-                    it -> it.accept(this)
+        outers.forEach{ it ->
+            val operands = listOf(result).asSequence().plus(
+                it.right.asSequence().map{
+                    it.accept(this)
                 }
-            ).asSequence()
-            val operators = it.operators.stream().map{
+            )
+            val operators = it.operators.asSequence().map{
                 op -> op.symbol.text
-            }.asSequence()
+            }
             result =  when(it.associativity){
                 XFY -> infixRight(operands,operators)
                 XF,YF -> postfix(result,operators)
@@ -268,14 +260,14 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun sequenceOfOperands(ctx: PrologParser.ExpressionContext ): Sequence<Term> =
-        Stream.concat(Stream.of(ctx.left),ctx.right.stream().map{
-            it -> it.accept(this)
-        }).asSequence() as Sequence<Term>
+        listOf(ctx.left).asSequence().plus(ctx.right.asSequence().map{
+            it.accept(this)
+        }) as Sequence<Term>
 
     private fun sequenceOfOperators(ctx : PrologParser.ExpressionContext) : Sequence<String> =
-        ctx.operators.stream().map{
+        ctx.operators.asSequence().map{
             op -> op.symbol.text
-        }.asSequence()
+        }
 
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
@@ -295,4 +287,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             return variable
         }
     }
+
+    private fun flatten(outers: Sequence<PrologParser.OuterContext>): Sequence<PrologParser.OuterContext> =
+        outers.flatMap{
+            o -> listOf(o).asSequence().plus(flatten(o.outers.asSequence()))
+        }
 }
