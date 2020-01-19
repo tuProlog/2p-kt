@@ -13,16 +13,17 @@ import kotlin.streams.asSequence
 
 class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Term>() {
 
+    //SINGLETON
     private object GetInstance{
         val INSTANCE = PrologExpressionVisitor()
     }
-
     companion object {
         val instance: PrologExpressionVisitor by lazy {
             GetInstance.INSTANCE
         }
     }
 
+    //VARIABLES
     private val variables: MutableMap<String,Var> = HashMap<String,Var>()
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
@@ -35,18 +36,14 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         ctx.expression().accept(this)
 
     override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
-        return if(ctx.isTerm)
-            this.visitTerm(ctx.left)
-        else if(INFIX.contains(ctx.associativity))
-            visitInfixExpression(ctx)
-        else if(POSTFIX.contains(ctx.associativity))
-            visitPostfixExpression(ctx)
-        else if(PREFIX.contains(ctx.associativity))
-            visitPrefixExpression(ctx)
-        else if(ctx.exception!=null)
-            throw ctx.exception
-        else
-            throw IllegalArgumentException()
+        return when{
+            ctx.isTerm -> visitTerm(ctx.left)
+            INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
+            POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
+            PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
+            ctx.exception != null -> throw ctx.exception
+            else -> throw java.lang.IllegalArgumentException()
+        }
     }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
@@ -105,6 +102,8 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             it.unibo.tuprolog.core.Set.of(ctx.items.stream().map(this::visitExpression).asSequence())
     }
 
+
+    //PRIVATE METHODS
     private fun parseInteger(ctx: PrologParser.IntegerContext): Number{
         val str = ctx.value.text
         val base: Int
@@ -245,6 +244,21 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         val operators = ops.collect(
             Collectors.toList()
         )
+        var i = operands.size - 1
+        var j = operators.size - 1
+        var result: Term = Struct.of(operators[j--], operands[i - 1], operands[i])
+        i -= 2
+        while (i >= 0) {
+            result = Struct.of(operators[j--], operands[i], result)
+            i--
+        }
+        return result
+    }
+
+    //Prova refactoring sequence Kotlin
+    private fun infixRight(terms: Sequence<Term>, ops: Sequence<String>): Term {
+        val operands = terms.toList()
+        val operators = ops.toList()
         var i = operands.size - 1
         var j = operators.size - 1
         var result: Term = Struct.of(operators[j--], operands[i - 1], operands[i])
