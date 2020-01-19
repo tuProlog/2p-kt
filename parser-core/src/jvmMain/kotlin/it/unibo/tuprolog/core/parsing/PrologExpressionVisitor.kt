@@ -218,7 +218,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun handleOuters(expression: Term, outers : Stream<PrologParser.OuterContext>): Term {
-        val result = expression
+        var result = expression
         outers.forEach{
             val operands = Stream.concat(
                 Stream.of(result),
@@ -230,13 +230,11 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
                 op -> op.symbol.text
             }
             result =  when(it.associativity){
-                XFY -> TODO()
-                XF -> TODO()
-                YF -> TODO()
-                XFX -> TODO()
-                YFX -> TODO()
-                FX -> TODO()
-                FY -> TODO()
+                XFY -> infixRight(operands,operators)
+                XF,YF -> postfix(result,operators)
+                XFX -> infixNonAssociative(operands,operators)
+                YFX -> infixLeft(operands,operators)
+                FX, FY -> prefix(result,operators)
            }
         }
         return result
