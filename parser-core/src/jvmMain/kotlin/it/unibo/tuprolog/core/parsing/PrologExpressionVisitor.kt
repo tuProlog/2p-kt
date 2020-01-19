@@ -40,7 +40,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
             ctx.exception != null -> throw ctx.exception
             else -> throw java.lang.IllegalArgumentException()
-        }, flatten(ctx.outers.asSequence()))
+        }, flatten(ctx.outers))
     }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
@@ -77,13 +77,13 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         } else {
             return Struct.of(
                 ctx.functor.text,
-                ctx.args.asSequence().map(this::visitExpression)
+                ctx.args.map(this::visitExpression)
             )
         }
     }
 
     override fun visitList(ctx: PrologParser.ListContext): Term {
-        val terms = ctx.items.asSequence().map(this::visitExpression)
+        val terms = ctx.items.map(this::visitExpression)
         return if(ctx.hasTail) createListExact(terms.plus(this.visitExpression(ctx.tail))) else it.unibo.tuprolog.core.List.from(terms)
     }
 
@@ -93,7 +93,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return if(ctx.length==1)
             it.unibo.tuprolog.core.Set.of(ctx.items[0].accept(this))
         else
-            it.unibo.tuprolog.core.Set.of(ctx.items.asSequence().map(this::visitExpression))
+            it.unibo.tuprolog.core.Set.of(ctx.items.map(this::visitExpression))
     }
 
 
@@ -142,24 +142,23 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         }
     }
 
-    private fun createListExact(terms: Sequence<Term>): Struct {
-        val termsList: List<Term> = terms.toList()
-        var i = termsList.size - 1
-        var result: Struct = Cons.of(termsList[i - 1], termsList[i])
+    private fun createListExact(terms: List<Term>): Struct {
+        var i = terms.size - 1
+        var result: Struct = Cons.of(terms[i - 1], terms[i])
         i -= 2
         while (i >= 0) {
-            result = Cons.of(termsList[i], result)
+            result = Cons.of(terms[i], result)
             i--
         }
         return result
     }
 
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
-        postfix(ctx.left.accept(this), ctx.operators.asSequence().map{
+        postfix(ctx.left.accept(this), ctx.operators.map{
             it.symbol.text
         })
 
-    private fun postfix(term: Term,ops: Sequence<String>) :Term {
+    private fun postfix(term: Term,ops: List<String>) :Term {
         val operator = ops.iterator()
         var result: Term = Struct.of(operator.next(), term)
         while (operator.hasNext()) {
@@ -169,16 +168,15 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitPrefixExpression(ctx: PrologParser.ExpressionContext): Term =
-        prefix(ctx.right[0].accept(this),ctx.operators.asSequence().map{
+        prefix(ctx.right[0].accept(this),ctx.operators.map{
             it.symbol.text
         })
 
-    private fun prefix(term: Term, ops: Sequence<String>): Term{
-        val operators = ops.toList()
-        var i = operators.size - 1
-        var result: Term = Struct.of(operators[i--], term)
+    private fun prefix(term: Term, ops: List<String>): Term{
+        var i = ops.size - 1
+        var result: Term = Struct.of(ops[i--], term)
         while (i >= 0) {
-            result = Struct.of(operators[i], result)
+            result = Struct.of(ops[i], result)
             i--
         }
         return result
@@ -194,30 +192,28 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitInfixNonAssociativeExpression(ctx: PrologParser.ExpressionContext): Term{
-        val operands = listOf(ctx.left).asSequence().plus(ctx.right.asSequence()).map{
+        val operands = listOf(ctx.left).plus(ctx.right).map{
             it.accept(this)
         }
-        val operators = ctx.operators.asSequence().map{
+        val operators = ctx.operators.map{
             it.symbol.text
         }
         return infixNonAssociative(operands,operators)
     }
 
-    private fun infixNonAssociative(terms: Sequence<Term>,ops: Sequence<String>) : Term{
-        val operands: List<Term> = terms.toList()
-        val operators: List<String> = ops.toList()
-        return Struct.of(operators[0], operands[0], operands[1])
+    private fun infixNonAssociative(terms: List<Term>,ops: List<String>) : Term{
+        return Struct.of(ops[0], terms[0], terms[1])
     }
 
-    private fun handleOuters(expression: Term, outers : Sequence<PrologParser.OuterContext>): Term {
+    private fun handleOuters(expression: Term, outers : List<PrologParser.OuterContext>): Term {
         var result = expression
         outers.forEach{ it ->
-            val operands = listOf(result).asSequence().plus(
-                it.right.asSequence().map{
+            val operands = listOf(result).plus(
+                it.right.map{
                     it.accept(this)
                 }
             )
-            val operators = it.operators.asSequence().map{
+            val operators = it.operators.map{
                 op -> op.symbol.text
             }
             result =  when(it.associativity){
@@ -231,50 +227,46 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return result
     }
 
-    //Prova refactoring sequence Kotlin
-    private fun infixRight(terms: Sequence<Term>, ops: Sequence<String>): Term {
-        val operands = terms.toList()
-        val operators = ops.toList()
-        var i = operands.size - 1
-        var j = operators.size - 1
-        var result: Term = Struct.of(operators[j--], operands[i - 1], operands[i])
+    //Prova refactoring List Kotlin
+    private fun infixRight(terms: List<Term>, ops: List<String>): Term {
+        var i = terms.size - 1
+        var j = ops.size - 1
+        var result: Term = Struct.of(ops[j--], terms[i - 1], terms[i])
         i -= 2
         while (i >= 0) {
-            result = Struct.of(operators[j--], operands[i], result)
+            result = Struct.of(ops[j--], terms[i], result)
             i--
         }
         return result
     }
 
-    private fun infixLeft(terms: Sequence<Term>, ops: Sequence<String>): Term {
-        val operands: List<Term> = terms.toList()
-        val operators = ops.toList()
+    private fun infixLeft(terms: List<Term>, ops: List<String>): Term {
         var i = 0
         var j = 0
-        var result: Term = Struct.of(operators[j++], operands[i++], operands[i++])
-        while (i < operands.size) {
-            result = Struct.of(operators[j++], result, operands[i])
+        var result: Term = Struct.of(ops[j++], terms[i++], terms[i++])
+        while (i < terms.size) {
+            result = Struct.of(ops[j++], result, terms[i])
             i++
         }
         return result
     }
 
-    private fun sequenceOfOperands(ctx: PrologParser.ExpressionContext ): Sequence<Term> =
-        listOf(ctx.left).asSequence().plus(ctx.right.asSequence().map{
+    private fun ListOfOperands(ctx: PrologParser.ExpressionContext ): List<Term> =
+        listOf(ctx.left).plus(ctx.right.map{
             it.accept(this)
-        }) as Sequence<Term>
+        }) as List<Term>
 
-    private fun sequenceOfOperators(ctx : PrologParser.ExpressionContext) : Sequence<String> =
-        ctx.operators.asSequence().map{
+    private fun ListOfOperators(ctx : PrologParser.ExpressionContext) : List<String> =
+        ctx.operators.map{
             op -> op.symbol.text
         }
 
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixRight(sequenceOfOperands(ctx),sequenceOfOperators(ctx))
+        infixRight(ListOfOperands(ctx),ListOfOperators(ctx))
 
     private fun visitInfixLeftAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixLeft(sequenceOfOperands(ctx),sequenceOfOperators(ctx))
+        infixLeft(ListOfOperands(ctx),ListOfOperators(ctx))
 
     private fun getVarByName(name: String): Var {
         return if ("_" == name) {
@@ -288,8 +280,8 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         }
     }
 
-    private fun flatten(outers: Sequence<PrologParser.OuterContext>): Sequence<PrologParser.OuterContext> =
+    private fun flatten(outers: List<PrologParser.OuterContext>): List<PrologParser.OuterContext> =
         outers.flatMap{
-            o -> listOf(o).asSequence().plus(flatten(o.outers.asSequence()))
+            o -> listOf(o).plus(flatten(o.outers))
         }
 }
