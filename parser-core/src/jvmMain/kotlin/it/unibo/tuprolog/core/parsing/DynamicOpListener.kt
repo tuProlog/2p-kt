@@ -13,11 +13,7 @@ import it.unibo.tuprolog.parser.dynamic.Associativity
 import java.lang.ref.WeakReference
 
 
-internal class DynamicOpListener private constructor(
-    parser: PrologParser,
-    private val operatorDefinedCallback: ((Operator) -> OperatorSet)?
-) :
-    PrologParserBaseListener() {
+internal class DynamicOpListener private constructor(parser: PrologParser, private val operatorDefinedCallback: ((Operator) -> OperatorSet)?) : PrologParserBaseListener() {
     private val parser: WeakReference<PrologParser> = WeakReference(parser)
 
     override fun exitClause(ctx: PrologParser.ClauseContext) {
@@ -63,10 +59,7 @@ internal class DynamicOpListener private constructor(
             return DynamicOpListener(parser, null)
         }
 
-        fun of(
-            parser: PrologParser,
-            operatorDefinedCallback: (Operator) -> OperatorSet
-        ): DynamicOpListener {
+        fun of(parser: PrologParser, operatorDefinedCallback: (Operator) -> OperatorSet): DynamicOpListener {
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }
