@@ -21,7 +21,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     //VARIABLES
-    private val variables: MutableMap<String,Var> = HashMap<String,Var>()
+    private val variables: MutableMap<String,Var> = HashMap()
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
         visitTerm(ctx.term())
@@ -44,7 +44,7 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
-        if(ctx.isExpr) visitExpression(ctx.expression()) else ctx.children.get(0).accept(this)
+        if(ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this)
 
 
     override fun visitInteger(ctx: PrologParser.IntegerContext): Term {
@@ -72,10 +72,10 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
             return it.unibo.tuprolog.core.List.empty()
         else if (ctx.isSet)
             return it.unibo.tuprolog.core.Set.empty()
-        if (ctx.arity === 0) {
-            return Atom.of(ctx.functor.text)
+        return if (ctx.arity == 0) {
+            Atom.of(ctx.functor.text)
         } else {
-            return Struct.of(
+            Struct.of(
                 ctx.functor.text,
                 ctx.args.map(this::visitExpression)
             )
@@ -102,31 +102,37 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         val str = ctx.value.text
         val base: Int
         var clean: String
-        if (ctx.isBin) {
-            base = 2
-            clean = str.substring(2)
-        } else if (ctx.isOct) {
-            base = 8
-            clean = str.substring(2)
-        } else if (ctx.isHex) {
-            base = 16
-            clean = str.substring(2)
-        } else if (ctx.isChar) {
-            clean = str.substring(2)
-            if (clean.length != 1) {
-                throw ParseException(
-                    null,
-                    ctx.text,
-                    ctx.value.line,
-                    ctx.value.charPositionInLine,
-                    "Invalid character literal: " + ctx.text,
-                    null
-                )
+        when {
+            ctx.isBin -> {
+                base = 2
+                clean = str.substring(2)
             }
-            return clean[0].toInt()
-        } else {
-            base = 10
-            clean = str
+            ctx.isOct -> {
+                base = 8
+                clean = str.substring(2)
+            }
+            ctx.isHex -> {
+                base = 16
+                clean = str.substring(2)
+            }
+            ctx.isChar -> {
+                clean = str.substring(2)
+                if (clean.length != 1) {
+                    throw ParseException(
+                        null,
+                        ctx.text,
+                        ctx.value.line,
+                        ctx.value.charPositionInLine,
+                        "Invalid character literal: " + ctx.text,
+                        null
+                    )
+                }
+                return clean[0].toInt()
+            }
+            else -> {
+                base = 10
+                clean = str
+            }
         }
         if (ctx.sign != null) {
             clean = ctx.sign.text.toString() + clean
@@ -251,32 +257,34 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return result
     }
 
-    private fun ListOfOperands(ctx: PrologParser.ExpressionContext ): List<Term> =
+    private fun listOfOperands(ctx: PrologParser.ExpressionContext ): List<Term> =
         listOf(ctx.left).plus(ctx.right.map{
             it.accept(this)
         }) as List<Term>
 
-    private fun ListOfOperators(ctx : PrologParser.ExpressionContext) : List<String> =
+    private fun listOfOperators(ctx : PrologParser.ExpressionContext) : List<String> =
         ctx.operators.map{
             op -> op.symbol.text
         }
 
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixRight(ListOfOperands(ctx),ListOfOperators(ctx))
+        infixRight(listOfOperands(ctx),listOfOperators(ctx))
 
     private fun visitInfixLeftAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixLeft(ListOfOperands(ctx),ListOfOperators(ctx))
+        infixLeft(listOfOperands(ctx),listOfOperators(ctx))
 
     private fun getVarByName(name: String): Var {
         return if ("_" == name) {
             Var.of(name)
         } else {
-            var variable: Var = variables.getValue(name)
+            var variable: Var? = variables[name]
             if (variable == null) {
                 variables[name] = Var.of(name).also { variable = it }
+                variables.getValue(name)
             }
-            return variable
+            else
+                variables.getValue(name)
         }
     }
 
