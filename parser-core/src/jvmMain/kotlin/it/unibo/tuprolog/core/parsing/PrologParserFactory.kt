@@ -62,38 +62,29 @@ interface  PrologParserFactory  {
     @Throws(IOException::class)
     fun parseTermWithStandardOperators(string: InputStream): SingletonTermContext
 
-    fun parseClauses(
-        source: String,
-        withOperators: OperatorSet
-    ): Stream<ClauseContext>
+    fun parseClauses(source: String, withOperators: OperatorSet): List<ClauseContext>
 
     @Throws(IOException::class)
-    fun parseClauses(
-        source: Reader,
-        withOperators: OperatorSet
-    ): Stream<ClauseContext>
+    fun parseClauses(source: Reader, withOperators: OperatorSet): List<ClauseContext>
 
     @Throws(IOException::class)
-    fun parseClauses(
-        source: InputStream,
-        withOperators: OperatorSet
-    ): Stream<ClauseContext>
+    fun parseClauses(source: InputStream, withOperators: OperatorSet): List<ClauseContext>
 
-    fun parseClauses(source: String): Stream<ClauseContext>
+    fun parseClauses(source: String): List<ClauseContext>
 
     @Throws(IOException::class)
-    fun parseClauses(source: Reader): Stream<ClauseContext>
+    fun parseClauses(source: Reader): List<ClauseContext>
 
     @Throws(IOException::class)
-    fun parseClauses(source: InputStream): Stream<ClauseContext>
+    fun parseClauses(source: InputStream): List<ClauseContext>
 
-    fun parseClausesWithStandardOperators(source: String): Stream<ClauseContext>
-
-    @Throws(IOException::class)
-    fun parseClausesWithStandardOperators(source: Reader): Stream<ClauseContext>
+    fun parseClausesWithStandardOperators(source: String): List<ClauseContext>
 
     @Throws(IOException::class)
-    fun parseClausesWithStandardOperators(source: InputStream): Stream<ClauseContext>
+    fun parseClausesWithStandardOperators(source: Reader): List<ClauseContext>
+
+    @Throws(IOException::class)
+    fun parseClausesWithStandardOperators(source: InputStream): List<ClauseContext>
 
     fun createParser(string: String): PrologParser
 

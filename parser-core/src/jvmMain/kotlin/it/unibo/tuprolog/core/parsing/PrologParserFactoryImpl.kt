@@ -1,19 +1,24 @@
 package it.unibo.tuprolog.core.parsing
 
 
+import com.sun.javafx.collections.ObservableListWrapper
+import com.sun.xml.internal.ws.util.StreamUtils
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.dynamic.Associativity
+import javafx.collections.ObservableList
+import javafx.collections.ObservableListBase
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
-import java.util.function.IntUnaryOperator
-import java.util.function.UnaryOperator
+import java.util.*
 import java.util.stream.IntStream
 import java.util.stream.Stream
+import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
@@ -66,10 +71,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
     override fun parseExpression(string: String): PrologParser.SingletonExpressionContext =
         parseExpression(string,OperatorSet.EMPTY)
 
-    override fun parseExpression(
-        string: String,
-        withOperators: OperatorSet
-    ): PrologParser.SingletonExpressionContext {
+    override fun parseExpression(string: String, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string,withOperators)
         return parseExpression(parser,string)
     }
@@ -77,10 +79,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
     override fun parseExpression(string: Reader): PrologParser.SingletonExpressionContext =
         parseExpression(string,OperatorSet.EMPTY)
 
-    override fun parseExpression(
-        string: Reader,
-        withOperators: OperatorSet
-    ): PrologParser.SingletonExpressionContext {
+    override fun parseExpression(string: Reader, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string,withOperators)
         return parseExpression(parser,string)
     }
@@ -88,10 +87,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
     override fun parseExpression(string: InputStream): PrologParser.SingletonExpressionContext =
         parseExpression(string,OperatorSet.EMPTY)
 
-    override fun parseExpression(
-        string: InputStream,
-        withOperators: OperatorSet
-    ): PrologParser.SingletonExpressionContext {
+    override fun parseExpression(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string,withOperators)
         return parseExpression(parser,string)
     }
@@ -100,16 +96,20 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         return try {
             parser.singletonExpression()
         } catch (ex: ParseCancellationException) {
-            if (parser.interpreter.predictionMode === PredictionMode.SLL) {
-                parser.tokenStream.seek(0)
-                parser.interpreter.predictionMode = PredictionMode.LL
-                parser.errorHandler = DefaultErrorStrategy()
-                parser.addErrorListener(newErrorListener(source))
-                parseExpression(parser, source)
-            } else if (ex.cause is RecognitionException) {
-                throw (ex.cause as RecognitionException?)!!
-            } else {
-                throw ex
+            when {
+                parser.interpreter.predictionMode === PredictionMode.SLL -> {
+                    parser.tokenStream.seek(0)
+                    parser.interpreter.predictionMode = PredictionMode.LL
+                    parser.errorHandler = DefaultErrorStrategy()
+                    parser.addErrorListener(newErrorListener(source))
+                    parseExpression(parser, source)
+                }
+                ex.cause is RecognitionException -> {
+                    throw (ex.cause as RecognitionException?)!!
+                }
+                else -> {
+                    throw ex
+                }
             }
         }
     }
@@ -160,37 +160,37 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
 
     //CLAUSES
-    override fun parseClauses(source: String, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
+    override fun parseClauses(source: String, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source,withOperators)
         return parseClauses(parser,source)
     }
 
-    override fun parseClauses(source: Reader, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
+    override fun parseClauses(source: Reader, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source,withOperators)
         return parseClauses(parser,source)
     }
 
-    override fun parseClauses(source: InputStream, withOperators: OperatorSet): Stream<PrologParser.ClauseContext> {
+    override fun parseClauses(source: InputStream, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source,withOperators)
         return parseClauses(parser,source)
     }
 
-    override fun parseClauses(source: String): Stream<PrologParser.ClauseContext> =
+    override fun parseClauses(source: String): List<PrologParser.ClauseContext> =
         parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClauses(source: Reader): Stream<PrologParser.ClauseContext> =
+    override fun parseClauses(source: Reader): List<PrologParser.ClauseContext> =
         parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClauses(source: InputStream): Stream<PrologParser.ClauseContext>  =
+    override fun parseClauses(source: InputStream): List<PrologParser.ClauseContext>  =
         parseClauses(source,OperatorSet.EMPTY)
 
-    override fun parseClausesWithStandardOperators(source: String): Stream<PrologParser.ClauseContext>  =
+    override fun parseClausesWithStandardOperators(source: String): List<PrologParser.ClauseContext>  =
         parseClauses(source,OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: Reader): Stream<PrologParser.ClauseContext>  =
+    override fun parseClausesWithStandardOperators(source: Reader): List<PrologParser.ClauseContext>  =
         parseClauses(source,OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: InputStream): Stream<PrologParser.ClauseContext>  =
+    override fun parseClausesWithStandardOperators(source: InputStream): List<PrologParser.ClauseContext>  =
         parseClauses(source,OperatorSet.DEFAULT)
 
 
@@ -224,12 +224,12 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         return prologParser
     }
 
-    private fun <T> createParser(source: T, charStreamGenerator : (T) -> CharStream): PrologParser{
-        val stream: CharStream = charStreamGenerator(source)
+    private fun <T> createParser(source: T, charListGenerator : (T) -> CharStream): PrologParser{
+        val stream: CharStream = charListGenerator(source)
         val lexer = PrologLexer(stream)
         lexer.removeErrorListeners()
-        val tokenStream: TokenStream = BufferedTokenStream(lexer)
-        val parser = PrologParser(tokenStream)
+        val tokenList: TokenStream = BufferedTokenStream(lexer)
+        val parser = PrologParser(tokenList)
         parser.removeErrorListeners()
         parser.errorHandler = BailErrorStrategy()
         parser.interpreter.predictionMode = PredictionMode.SLL
@@ -278,8 +278,19 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         }
     }
 
-    private fun parseClauses(parser: PrologParser, source: Any):  Stream<PrologParser.ClauseContext> {
-        TODO()
+    private fun parseClauses(parser: PrologParser, source: Any):  List<PrologParser.ClauseContext> {
+        var optClauses: MutableList<PrologParser.OptClauseContext> = listOf<PrologParser.OptClauseContext>().toMutableList()
+        generateSequence(0 ){it+1}.forEach{
+            try{
+                optClauses.add(parseClause(parser,source))
+            }catch (e: ParseException){
+                e.clauseIndex = it
+                throw e
+            }
+        }
+        return ObservableListWrapper(optClauses).takeWhile{
+            it -> !it.isOver
+        }.map(PrologParser.OptClauseContext::clause)
     }
 
 }
