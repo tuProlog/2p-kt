@@ -2,23 +2,15 @@ package it.unibo.tuprolog.core.parsing
 
 
 import com.sun.javafx.collections.ObservableListWrapper
-import com.sun.xml.internal.ws.util.StreamUtils
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.dynamic.Associativity
-import javafx.collections.ObservableList
-import javafx.collections.ObservableListBase
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
-import java.util.*
-import java.util.stream.IntStream
-import java.util.stream.Stream
-import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
@@ -240,16 +232,20 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
         return try {
             parser.singletonTerm()
         } catch (ex: ParseCancellationException) {
-            if (parser.interpreter.predictionMode === PredictionMode.SLL) {
-                parser.tokenStream.seek(0)
-                parser.interpreter.predictionMode = PredictionMode.LL
-                parser.errorHandler = DefaultErrorStrategy()
-                parser.addErrorListener(newErrorListener(source))
-                parseTerm(parser, source)
-            } else if (ex.cause is RecognitionException) {
-                throw (ex.cause as RecognitionException?)!!
-            } else {
-                throw ex
+            when {
+                parser.interpreter.predictionMode === PredictionMode.SLL -> {
+                    parser.tokenStream.seek(0)
+                    parser.interpreter.predictionMode = PredictionMode.LL
+                    parser.errorHandler = DefaultErrorStrategy()
+                    parser.addErrorListener(newErrorListener(source))
+                    parseTerm(parser, source)
+                }
+                ex.cause is RecognitionException -> {
+                    throw (ex.cause as RecognitionException?)!!
+                }
+                else -> {
+                    throw ex
+                }
             }
         }
     }
@@ -262,16 +258,20 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
             index = parser.tokenStream.index().coerceAtLeast(0)
             parser.optClause()
         } catch (ex: ParseCancellationException) {
-            if (parser.interpreter.predictionMode === PredictionMode.SLL) {
-                parser.tokenStream.seek(index)
-                parser.interpreter.predictionMode = PredictionMode.LL
-                parser.errorHandler = DefaultErrorStrategy()
-                parser.addErrorListener(newErrorListener(input))
-                parser.optClause()
-            } else if (ex.cause is RecognitionException) {
-                throw (ex.cause as RecognitionException?)!!
-            } else {
-                throw ex
+            when {
+                parser.interpreter.predictionMode === PredictionMode.SLL -> {
+                    parser.tokenStream.seek(index)
+                    parser.interpreter.predictionMode = PredictionMode.LL
+                    parser.errorHandler = DefaultErrorStrategy()
+                    parser.addErrorListener(newErrorListener(input))
+                    parser.optClause()
+                }
+                ex.cause is RecognitionException -> {
+                    throw (ex.cause as RecognitionException?)!!
+                }
+                else -> {
+                    throw ex
+                }
             }
         } finally {
             parser.tokenStream.release(mark)
@@ -279,7 +279,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
     }
 
     private fun parseClauses(parser: PrologParser, source: Any):  List<PrologParser.ClauseContext> {
-        var optClauses: MutableList<PrologParser.OptClauseContext> = listOf<PrologParser.OptClauseContext>().toMutableList()
+        val optClauses: MutableList<PrologParser.OptClauseContext> = listOf<PrologParser.OptClauseContext>().toMutableList()
         generateSequence(0 ){it+1}.forEach{
             try{
                 optClauses.add(parseClause(parser,source))
@@ -289,7 +289,7 @@ class PrologParserFactoryImpl private constructor(): PrologParserFactory {
             }
         }
         return ObservableListWrapper(optClauses).takeWhile{
-            it -> !it.isOver
+            !it.isOver
         }.map(PrologParser.OptClauseContext::clause)
     }
 
