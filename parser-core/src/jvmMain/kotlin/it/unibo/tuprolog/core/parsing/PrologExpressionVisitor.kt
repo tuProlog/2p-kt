@@ -10,6 +10,7 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.PREFIX
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Term>() {
 
@@ -163,9 +164,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
         postfix(ctx.left.accept(this), ctx.operators.stream().map{
             it->it.symbol.text
-        })
+        }.asSequence())
 
-    private fun postfix(term: Term,ops: Stream<String>) :Term {
+    private fun postfix(term: Term,ops: Sequence<String>) :Term {
         val operator = ops.iterator()
         var result: Term = Struct.of(operator.next(), term)
         while (operator.hasNext()) {
@@ -177,11 +178,10 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     private fun visitPrefixExpression(ctx: PrologParser.ExpressionContext): Term =
         prefix(ctx.right[0].accept(this),ctx.operators.stream().map{
             it -> it.symbol.text
-        })
+        }.asSequence())
 
-    private fun prefix(term: Term, ops: Stream<String>): Term{
-        val operators =
-            ops.collect(Collectors.toList())
+    private fun prefix(term: Term, ops: Sequence<String>): Term{
+        val operators = ops.toList()
         var i = operators.size - 1
         var result: Term = Struct.of(operators[i--], term)
         while (i >= 0) {
@@ -201,18 +201,18 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
     }
 
     private fun visitInfixNonAssociativeExpression(ctx: PrologParser.ExpressionContext): Term{
-        val operands:Stream<Term> = Stream.concat(Stream.of(ctx.left),ctx.right.stream()).map{
+        val operands= Stream.concat(Stream.of(ctx.left),ctx.right.stream()).map{
             it -> it.accept(this)
-        }
-        val operators: Stream<String> = ctx.operators.stream().map{
+        }.asSequence()
+        val operators = ctx.operators.stream().map{
             op -> op.symbol.text
-        }
+        }.asSequence()
         return infixNonAssociative(operands,operators)
     }
 
-    private fun infixNonAssociative(terms: Stream<Term>,ops: Stream<String>) : Term{
-        val operands: List<Term> = terms.collect(Collectors.toList())
-        val operators: List<String> = ops.collect(Collectors.toList())
+    private fun infixNonAssociative(terms: Sequence<Term>,ops: Sequence<String>) : Term{
+        val operands: List<Term> = terms.toList()
+        val operators: List<String> = ops.toList()
         return Struct.of(operators[0], operands[0], operands[1])
     }
 
@@ -224,10 +224,10 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
                 it.right.stream().map {
                     it -> it.accept(this)
                 }
-            )
+            ).asSequence()
             val operators = it.operators.stream().map{
                 op -> op.symbol.text
-            }
+            }.asSequence()
             result =  when(it.associativity){
                 XFY -> infixRight(operands,operators)
                 XF,YF -> postfix(result,operators)
@@ -235,22 +235,6 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
                 YFX -> infixLeft(operands,operators)
                 FX, FY -> prefix(result,operators)
            }
-        }
-        return result
-    }
-
-    private fun infixRight(terms: Stream<Term>, ops: Stream<String>): Term {
-        val operands: List<Term> = terms.collect(Collectors.toList<Term>())
-        val operators = ops.collect(
-            Collectors.toList()
-        )
-        var i = operands.size - 1
-        var j = operators.size - 1
-        var result: Term = Struct.of(operators[j--], operands[i - 1], operands[i])
-        i -= 2
-        while (i >= 0) {
-            result = Struct.of(operators[j--], operands[i], result)
-            i--
         }
         return result
     }
@@ -270,10 +254,9 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return result
     }
 
-    private fun infixLeft(terms: Stream<Term>, ops: Stream<String>): Term {
-        val operands: List<Term> = terms.collect(Collectors.toList<Term>())
-        val operators =
-            ops.collect(Collectors.toList())
+    private fun infixLeft(terms: Sequence<Term>, ops: Sequence<String>): Term {
+        val operands: List<Term> = terms.toList()
+        val operators = ops.toList()
         var i = 0
         var j = 0
         var result: Term = Struct.of(operators[j++], operands[i++], operands[i++])
@@ -284,22 +267,22 @@ class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Ter
         return result
     }
 
-    private fun streamOfOperands(ctx: PrologParser.ExpressionContext ): Stream<Term> =
+    private fun sequenceOfOperands(ctx: PrologParser.ExpressionContext ): Sequence<Term> =
         Stream.concat(Stream.of(ctx.left),ctx.right.stream().map{
             it -> it.accept(this)
-        })as Stream<Term>
+        }).asSequence() as Sequence<Term>
 
-    private fun streamOfOperators(ctx : PrologParser.ExpressionContext) : Stream<String> =
+    private fun sequenceOfOperators(ctx : PrologParser.ExpressionContext) : Sequence<String> =
         ctx.operators.stream().map{
             op -> op.symbol.text
-        }
+        }.asSequence()
 
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixRight(streamOfOperands(ctx),streamOfOperators(ctx))
+        infixRight(sequenceOfOperands(ctx),sequenceOfOperators(ctx))
 
     private fun visitInfixLeftAssociativeExpression(ctx: PrologParser.ExpressionContext) : Term =
-        infixLeft(streamOfOperands(ctx),streamOfOperators(ctx))
+        infixLeft(sequenceOfOperands(ctx),sequenceOfOperators(ctx))
 
     private fun getVarByName(name: String): Var {
         return if ("_" == name) {
