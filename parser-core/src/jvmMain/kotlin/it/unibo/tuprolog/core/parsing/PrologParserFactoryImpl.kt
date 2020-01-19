@@ -15,7 +15,7 @@ import java.io.Reader
 class PrologParserFactoryImpl private constructor(): PrologParserFactory {
 
     private object GetInstance{
-        val INSTANCE = PrologParserFactoryImpl()
+        val INSTANCE: PrologParserFactoryImpl = PrologParserFactoryImpl()
     }
 
     companion object {
