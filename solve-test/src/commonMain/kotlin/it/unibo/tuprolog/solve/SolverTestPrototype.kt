@@ -4,6 +4,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase2
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse1ToSolution
+import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse2ToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabase
@@ -38,6 +44,12 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -54,9 +66,33 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            val solutions = solver.solve(goal, maxDuration).toList()
-
-            assertSolutionEquals(solutionList, solutions)
+            with(solver) {
+                println(if (staticKB.clauses.any()) staticKB.clauses.joinToString(".\n", "", ".") else "")
+                println(if (dynamicKB.clauses.any()) dynamicKB.clauses.joinToString(".\n", "", ".") else "")
+                println("?- ${goal}.")
+            }
+//            try {
+                val solutions = solver.solve(goal, maxDuration).toList()
+                assertSolutionEquals(solutionList, solutions)
+//            } finally {
+                solutions.forEach {
+                    when (it) {
+                        is Solution.Yes -> {
+                            println("yes.\n\t${it.solvedQuery}")
+                            it.substitution.forEach { vt ->
+                                println("\t${vt.key} / ${vt.value}")
+                            }
+                        }
+                        is Solution.Halt -> {
+                            println("halt.\n\t${it.exception}")
+                        }
+                        is Solution.No -> {
+                            println("no.")
+                        }
+                    }
+                }
+                println("".padEnd(80, '-'))
+//            }
         }
     }
 
@@ -104,6 +140,90 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    /** Test with [lessThan500MsGoalToSolution] */
+    fun testTimeout1() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                    staticKB = timeRelatedDatabase,
+                    libraries = defaultLibraries + timeLibrary
+                ),
+            goalToSolutions = lessThan500MsGoalToSolution,
+            maxDuration = 400L
+        )
+    }
+
+    /** Test with [slightlyMoreThan500MsGoalToSolution] */
+    fun testTimeout2() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan500MsGoalToSolution,
+            maxDuration = 1000L
+        )
+    }
+
+    /** Test with [slightlyMoreThan1100MsGoalToSolution] */
+    fun testTimeout3() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
+            maxDuration = 1700L
+        )
+    }
+
+    /** Test with [slightlyMoreThan1800MsGoalToSolution] */
+    fun testTimeout4() {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
+            goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
+            maxDuration = 2000L
+        )
+    }
+
+    /** Test with [ifThen1ToSolution] */
+    fun testIfThen1(maxDuration: TimeDuration = 500L) {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase1),
+            goalToSolutions = ifThen1ToSolution,
+            maxDuration = maxDuration
+        )
+    }
+
+    /** Test with [ifThenElse1ToSolution] */
+    fun testIfThenElse1(maxDuration: TimeDuration = 500L) {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase1),
+            goalToSolutions = ifThenElse1ToSolution,
+            maxDuration = maxDuration
+        )
+    }
+
+    /** Test with [ifThenElse2ToSolution] */
+    fun testIfThenElse2(maxDuration: TimeDuration = 500L) {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase2),
+            goalToSolutions = ifThenElse2ToSolution,
+            maxDuration = maxDuration
+        )
+    }
+
+    /** Test with [ifThen2ToSolution] */
+    fun testIfThen2(maxDuration: TimeDuration = 500L) {
+        assertSolverSolutionsCorrect(
+            solver = solverOf(staticKB = ifThenDatabase2),
+            goalToSolutions = ifThen2ToSolution,
+            maxDuration = maxDuration
+        )
+    }
+
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     fun testUnification(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
@@ -112,6 +232,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             maxDuration
         )
     }
+
+
 
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     fun testSimpleCutAlternatives(maxDuration: TimeDuration = 500L) {

@@ -49,17 +49,17 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
         }.toMap()
     }
 
-    override fun plus(library: LibraryAliased): LibraryGroup<LibraryAliased> =
+    override fun plus(library: LibraryAliased): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
             ?.let { alreadyLoadedError(library) }
             ?: Libraries(libraries.asSequence() + sequenceOf(library))
 
-    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): LibraryGroup<LibraryAliased> =
+    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): Libraries =
         libraryGroup.libraries.find { it.alias in libraryAliases }
             ?.let { alreadyLoadedError(it) }
             ?: Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
 
-    override fun update(library: LibraryAliased): LibraryGroup<LibraryAliased> =
+    override fun update(library: LibraryAliased): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
             ?.let { Libraries(libraries.asSequence() + sequenceOf(library)) }
             ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")

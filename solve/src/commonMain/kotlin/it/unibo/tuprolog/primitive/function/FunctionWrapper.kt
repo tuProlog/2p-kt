@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.primitive.function
 
-import it.unibo.tuprolog.primitive.AbstractWrapper
+import it.unibo.tuprolog.AbstractWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 
@@ -9,7 +9,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @author Enrico
  */
-abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFunction> {
+abstract class FunctionWrapper<C : ExecutionContext> :
+    AbstractWrapper<PrologFunction> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)

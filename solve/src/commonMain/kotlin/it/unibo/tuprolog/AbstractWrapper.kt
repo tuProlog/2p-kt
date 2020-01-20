@@ -1,4 +1,6 @@
-package it.unibo.tuprolog.primitive
+package it.unibo.tuprolog
+
+import it.unibo.tuprolog.primitive.Signature
 
 /**
  * Signature to [Wrapped] type, abstract wrapper class
@@ -9,7 +11,13 @@ package it.unibo.tuprolog.primitive
  */
 abstract class AbstractWrapper<out Wrapped>(val signature: Signature) {
 
-    constructor(name: String, arity: Int, vararg: Boolean = false) : this(Signature(name, arity, vararg))
+    constructor(name: String, arity: Int, vararg: Boolean = false) : this(
+        Signature(
+            name,
+            arity,
+            vararg
+        )
+    )
 
     /** A shorthand to get the signature functor name */
     val functor: String by lazy { signature.name }

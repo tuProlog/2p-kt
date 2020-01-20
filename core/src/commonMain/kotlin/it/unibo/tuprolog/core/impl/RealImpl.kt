@@ -16,9 +16,9 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || this::class != other::class) return false
+        if (other == null || other !is Real) return false
 
-        return value.compareTo((other as RealImpl).value) == 0
+        return value.compareTo(other.value) == 0
     }
 
     override fun hashCode(): Int = value.stripTrailingZeros().hashCode()

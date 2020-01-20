@@ -79,6 +79,8 @@ interface Prolog : Scope {
 
     infix fun Any.`is`(other: Any): Struct = structOf("is", this.toTerm(), other.toTerm())
 
+    infix fun Any.then(other: Any): Struct = structOf("->", this.toTerm(), other.toTerm())
+
     infix fun Any.impliedBy(other: Any): Rule {
         when (val t = this.toTerm()) {
             is Struct -> return ruleOf(t, other.toTerm())

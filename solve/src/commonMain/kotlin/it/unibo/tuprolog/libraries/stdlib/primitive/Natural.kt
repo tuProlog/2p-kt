@@ -17,6 +17,7 @@ object Natural : UnaryPredicate<ExecutionContext>("natural") {
             else -> sequenceOf(request.replyFail())
         }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun generateValues(variable: Var): Sequence<Term> = sequence {
         var i = BigInteger.ZERO
 

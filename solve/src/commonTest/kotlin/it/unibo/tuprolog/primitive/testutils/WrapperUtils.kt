@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.primitive.testutils
 
+import it.unibo.tuprolog.AbstractWrapper
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.primitive.AbstractWrapper
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
 import kotlin.collections.List as KtList

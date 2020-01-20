@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.systemtest
 
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
@@ -28,6 +29,67 @@ class ClassicSolverSystemTesting : SolverFactory {
     ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
+    @Ignore
+    fun entryPointForManualTests() {
+        prolog {
+            val solver = Solver.classic(
+                libraries = defaultLibraries
+            )
+
+            val query = "catch"("catch"("throw"(1), "X", false or "X"), `_`, false)
+
+            solver.solve(query).forEach { sol ->
+                println(sol)
+                if (sol is Solution.Halt) {
+                    sol.exception.prologStackTrace.forEach {
+                        println("\t$it")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testIfThen2() {
+        prototype.testIfThen2()
+    }
+
+    @Test
+    fun testIfThen1() {
+        prototype.testIfThen1()
+    }
+
+    @Test
+    fun testIfThenElse1() {
+        prototype.testIfThenElse1()
+    }
+
+    @Test
+    fun testIfThenElse2() {
+        prototype.testIfThenElse1()
+    }
+
+    @Test
+    fun testTimeout1() {
+        prototype.testTimeout1()
+    }
+
+    @Test
+    fun testTimeout2() {
+        prototype.testTimeout2()
+    }
+
+    @Test
+    fun testTimeout3() {
+        prototype.testTimeout3()
+    }
+
+    @Test
+    fun testTimeout4() {
+        prototype.testTimeout4()
+    }
+
+    @Test
     fun testTrue() {
         prototype.testTrue()
     }
@@ -38,79 +100,66 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testSimpleCutAlternatives() {
         prototype.testSimpleCutAlternatives(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO: (issue #52)
     fun testCutAndConjunction() {
         prototype.testCutAndConjunction(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO: (issue #52)
     fun testCutConjunctionAndBacktracking() {
         prototype.testCutConjunctionAndBacktracking(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO: 08/11/2019 maxDuration parameter not honored, implement correctly that feature (issue #53)
     fun testMaxDurationParameterAndTimeOutException() {
         prototype.testMaxDurationParameterAndTimeOutException(shortDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testPrologStandardSearchTreeExample() {
         prototype.testPrologStandardSearchTreeExample(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testPrologStandardSearchTreeWithCutExample() {
         prototype.testPrologStandardSearchTreeWithCutExample(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testBacktrackingWithCustomReverseListImplementation() {
         prototype.testBacktrackingWithCustomReverseListImplementation(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testWithPrologStandardConjunctionExamples() {
         prototype.testWithPrologStandardConjunctionExamples(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testCallPrimitive() {
         prototype.testCallPrimitive(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testCallPrimitiveTransparency() {
         prototype.testCallPrimitiveTransparency(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testCatchPrimitive() {
         prototype.testCatchPrimitive(mediumDuration)
     }
 
-    @Test // TODO (issue #52)
-    @Ignore
+    @Test
     fun testCatchPrimitiveTransparency() {
         prototype.testCatchPrimitiveTransparency(mediumDuration)
     }
@@ -121,31 +170,26 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore // TODO (issue #53)
     fun testNotPrimitive() {
         prototype.testNotPrimitive(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO (issue #53, #52)
     fun testNotModularity() {
         prototype.testNotModularity(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO (issue #52)
     fun testIfThenRule() {
         prototype.testIfThenRule(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO (issue #52)
     fun testIfTheElseRule() {
         prototype.testIfThenElseRule(mediumDuration)
     }
 
     @Test
-    @Ignore // TODO (issue #52)
     fun testNumbersRangeListGeneration() {
         prototype.testNumbersRangeListGeneration(mediumDuration)
     }
