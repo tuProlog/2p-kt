@@ -15,7 +15,7 @@ import org.gciatto.kt.math.BigInteger
 class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
 
     //VARIABLES
-//    private val variables: MutableMap<String, Var> = HashMap()
+    // private val variables: MutableMap<String, Var> = HashMap()
     // use a Scope to instantiate terms: it takes care the scoped variables automatically
     private val scope: Scope = Scope.empty()
 
