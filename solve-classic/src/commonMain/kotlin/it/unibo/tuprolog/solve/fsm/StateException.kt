@@ -62,10 +62,11 @@ internal data class StateException(
                             catcher is Substitution.Unifier -> {
                                 val newSubstitution = (context.substitution + catcher).filter(context.interestingVariables) as Substitution.Unifier
                                 val subGoals = catchGoal[2][newSubstitution]
+                                val newGoals = subGoals.toGoals() + context.goals.next
 
                                 StateGoalSelection(
                                     context.copy(
-                                        goals = subGoals.toGoals() + context.goals,
+                                        goals = newGoals,
                                         rules = Cursor.empty(),
                                         primitives = Cursor.empty(),
                                         substitution = newSubstitution,

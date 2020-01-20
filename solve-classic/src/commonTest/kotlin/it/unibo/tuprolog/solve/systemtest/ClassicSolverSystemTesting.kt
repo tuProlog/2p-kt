@@ -41,7 +41,7 @@ class ClassicSolverSystemTesting : SolverFactory {
                 )
             )
 
-            val query = "catch"("throw"("first"), "X", "throw"("second"))
+            val query = "catch"("p", "X", true) and false
 
             solver.solve(query).forEach { sol ->
                 println(sol)
