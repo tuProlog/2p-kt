@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.MessageError
 import it.unibo.tuprolog.solve.exception.prologerror.SystemError
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
+import it.unibo.tuprolog.utils.plus
 
 internal data class StateException(
     override val exception: TuPrologRuntimeException,
@@ -64,7 +65,7 @@ internal data class StateException(
 
                                 StateGoalSelection(
                                     context.copy(
-                                        goals = subGoals.toGoals(),
+                                        goals = subGoals.toGoals() + context.goals,
                                         rules = Cursor.empty(),
                                         primitives = Cursor.empty(),
                                         substitution = newSubstitution,

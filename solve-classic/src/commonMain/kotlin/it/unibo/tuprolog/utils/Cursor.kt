@@ -29,6 +29,10 @@ interface Cursor<T> {
     }
 }
 
+operator fun <T> Cursor<out T>.plus(other: Cursor<out T>): Cursor<out T> {
+    return ConjunctionCursor(this, other)
+}
+
 sealed class AbstractCursor<T> : Cursor<T> {
     override fun toString(): String {
         return when {
