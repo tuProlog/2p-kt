@@ -46,7 +46,8 @@ Accordingly, they must NOT depend on any other module in 2P-Kt.
 
 ##Work
 
-Added "expect fun TermParser.Companion.withX() : TermParser" in TermParser.kt in `parser-core`
-Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
-Added "expect fun ClauseDatabaseParser.Companion.withX() : ClauseDatabaseParser" in ClauseDatabaseParser.kt in `parser-theory`
-Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+- Added "expect fun TermParser.Companion.withX() : TermParser" in TermParser.kt in `parser-core`
+- Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+- Added "expect fun ClauseDatabaseParser.Companion.withX() : ClauseDatabaseParser" in ClauseDatabaseParser.kt in `parser-theory`
+- Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+
