@@ -265,7 +265,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
                     parser.optClause()
                 }
                 ex.cause is RecognitionException -> {
-                    throw (ex.cause as RecognitionException?)!!
+                    throw ex.cause as RecognitionException
                 }
                 else -> {
                     throw ex
