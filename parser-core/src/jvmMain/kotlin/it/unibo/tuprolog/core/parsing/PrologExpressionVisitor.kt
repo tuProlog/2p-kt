@@ -8,20 +8,21 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.INFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.POSTFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.PREFIX
 
-class PrologExpressionVisitor private constructor(): PrologParserBaseVisitor<Term>() {
+// Singletons in Kotlin are implemented through the "object" keyword
+object PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
 
     //SINGLETON
-    private object GetInstance{
-        val INSTANCE = PrologExpressionVisitor()
-    }
-    companion object {
-        val instance: PrologExpressionVisitor by lazy {
-            GetInstance.INSTANCE
-        }
-    }
+//    private object GetInstance{
+//        val INSTANCE = PrologExpressionVisitor()
+//    }
+//    companion object {
+//        val instance: PrologExpressionVisitor by lazy {
+//            GetInstance.INSTANCE
+//        }
+//    }
 
     //VARIABLES
-    private val variables: MutableMap<String,Var> = HashMap()
+    private val variables: MutableMap<String, Var> = HashMap()
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
         visitTerm(ctx.term())
