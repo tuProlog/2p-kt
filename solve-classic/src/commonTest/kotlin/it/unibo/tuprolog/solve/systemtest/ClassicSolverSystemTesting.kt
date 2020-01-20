@@ -32,16 +32,10 @@ class ClassicSolverSystemTesting : SolverFactory {
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
-                libraries = defaultLibraries,
-                staticKB = theory(
-                    { "p" },
-                    { "p" `if` "throw"("b") },
-                    { "r"("X") `if` "throw"("X") },
-                    { "q" `if` ("catch"("p", "B", true) and "r"("c")) }
-                )
+                libraries = defaultLibraries
             )
 
-            val query = "catch"("p", "X", true) and false
+            val query = "catch"("catch"("throw"(1), "X", false or "X"), `_`, false)
 
             solver.solve(query).forEach { sol ->
                 println(sol)
