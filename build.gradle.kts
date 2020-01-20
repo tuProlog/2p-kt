@@ -1,3 +1,4 @@
+import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
@@ -149,13 +150,13 @@ ktSubprojects.forEachProject {
 
     configureMavenPublications("packDokka${capitalize(name)}")
 
-    configureUploadToMavenCentral(
-        if (version.toString().contains("SNAPSHOT")) {
-            "https://oss.sonatype.org/content/repositories/snapshots/"
-        } else {
-            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        }
-    )
+//    configureUploadToMavenCentral(
+//        if (version.toString().contains("SNAPSHOT")) {
+//            "https://oss.sonatype.org/content/repositories/snapshots/"
+//        } else {
+//            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//        }
+//    )
 
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
 
@@ -232,6 +233,9 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
                 }
             }
         }
+    }
+    this.tasks.withType<BintrayUploadTask> {
+        publishAllToBintrayTask.dependsOn(this)
     }
 }
 
