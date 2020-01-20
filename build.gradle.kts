@@ -4,13 +4,30 @@ import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.61" // keep this value aligned with the one in gradle.properties
+    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin // keep this value aligned with the one in gradle.properties
     id("maven-publish")
     signing
-    id("org.jetbrains.dokka") version "0.10.0"
-    id("com.jfrog.bintray") version "1.8.4"
-    id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
+    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
+    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
 }
+
+//buildSrcVersions {
+//    // See configuration options at https://github.com/jmfayard/buildSrcVersions/issues/53
+//
+//    rejectVersionIf {
+//        isNonStable(candidate.version)
+//    }
+//    //alwaysUpdateVersions()
+//    orderBy = de.fayard.OrderBy.GROUP_AND_LENGTH
+//    versionsOnlyMode = de.fayard.VersionsOnlyMode.KOTLIN_OBJECT
+////    versionsOnlyFile = versionsOnlyMode?.suggestedFilename()
+////    indent = null
+////    renameLibs = "Libs"
+////    renameVersions = "Versions"
+//
+//}
 
 repositories {
     mavenCentral()
