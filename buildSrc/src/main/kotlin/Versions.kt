@@ -12,7 +12,7 @@ import org.gradle.plugin.use.PluginDependencySpec
  */
 object Versions {
     const val org_jetbrains_kotlinx_kotlinx_coroutines: String = "1.3.0-RC2"
-    // available: "1.3.3"
+             // available: "1.3.3"
 
     const val io_github_javaeden_orchid: String = "0.18.1"
 
@@ -33,7 +33,7 @@ object Versions {
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"
 
     /**
-     * Current version: "6.0.1"
+     * Current version: "6.1"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
