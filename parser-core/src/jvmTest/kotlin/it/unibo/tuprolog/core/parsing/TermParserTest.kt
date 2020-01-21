@@ -54,7 +54,7 @@ class TermParserTest: PrologParserTest {
             val withSpaces = IntRange(0,toBeParsed.length).map{
                 i -> toBeParsed[i] +""
             }.filter{
-                it -> it.isNotEmpty()
+                it.isNotEmpty()
             }.stream().collect(Collectors.joining("    ", "    ", "    "))
             println("Parsing $withSpaces equals $expected ?")
             assertEquals(expected,parseTerm(withSpaces))
