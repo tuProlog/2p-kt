@@ -199,5 +199,108 @@ class PrologParserTest {
         }
     }
 
+    @Test
+    fun testTrue(){
+        assertionOnBool(
+            parseTerm("true"),
+            PrologParser.SingletonTermContext::term
+        ) {
+                it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
+        }.andThenAssertBool(
+            PrologParser.TermContext::structure
+        ){
+                s -> s.arity == s.args.count() &&
+                    s.isTruth && !s.isList && !s.isString &&
+                    s.functor.text == "true" &&
+                    s.functor.type == PrologLexer.BOOL
+        }
+    }
+
+    @Test
+    fun testFalse(){
+        assertionOnBool(
+            parseTerm("fail"),
+            PrologParser.SingletonTermContext::term
+        ) {
+            it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
+        }.andThenAssertBool(
+            PrologParser.TermContext::structure
+        ){
+                s -> s.arity == s.args.count() &&
+                s.isTruth && !s.isList && !s.isString &&
+                s.functor.text == "fail" &&
+                s.functor.type == PrologLexer.BOOL
+        }
+    }
+
+    @Test
+    fun testEmptyList(){
+        sequenceOf("[]","[ ]","[   ]").forEach{
+            assertionOnBool(
+                parseTerm(it),
+                PrologParser.SingletonTermContext::term
+            ){
+                t -> t.isStruct && ! t.isNum && !t.isExpr && !t.isList && !t.isVar
+            }.andThenAssertBool(
+                    PrologParser.TermContext::structure){
+                    s -> s.arity == s.args.count() &&
+                    s.arity == 0 &&
+                    s.isList  && !s.isTruth && !s.isString &&
+                    s.functor.type == PrologLexer.EMPTY_LIST
+            }
+        }
+    }
+
+    @Test
+    fun testVar(){
+        sequenceOf("A","_A","_1A","A_").forEach {
+            assertionOnBool(
+                parseTerm(it),
+                PrologParser.SingletonTermContext::term
+            ){
+                t -> t.isVar && !t.isList && !t.isStruct && !t.isNum && !t.isExpr
+            }.andThenAssertBool(
+                PrologParser.TermContext::variable
+            ){
+                v -> !v.isAnonymous &&
+                    v.value.text.contains("A") &&
+                    v.value.type == PrologLexer.VARIABLE
+            }
+        }
+    }
+
+    @Test
+    fun testSingletonList(){
+        sequenceOf("[1]", "[1 ]","[ 1]", "[ 1 ]").forEach {
+            assertionOnBool(
+                parseTerm(it),
+                PrologParser.SingletonTermContext::term
+            ){
+                l -> l.isList && !l.isStruct && !l.isNum && !l.isExpr && !l.isVar
+            }.andThenAssertBool(
+                PrologParser.TermContext::list
+            ){
+                l -> l.length == l.items.count() &&
+                    l.length == 1 &&
+                    !l.hasTail && l.tail == null
+            }.andThenAssertBool(
+                { list-> list.items[0]}
+            ){
+                expr -> expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0
+            }.andThenAssertBool(
+                { e -> e.left}
+            ){
+                t -> t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr
+            }.andThenAssertBool(
+                PrologParser.TermContext::number
+            ){
+                n -> n.isInt && !n.isReal
+            }.andThenAssertBool(
+                PrologParser.NumberContext::integer
+            ){
+                i -> i.value.text.toInt() == 1
+            }
+        }
+    }
 
 }
