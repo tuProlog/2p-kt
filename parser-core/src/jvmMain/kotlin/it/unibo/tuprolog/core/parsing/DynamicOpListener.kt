@@ -4,6 +4,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseListener
@@ -15,7 +16,7 @@ import kotlin.math.min
 
 internal class DynamicOpListener private constructor(
     parser: PrologParser,
-    private val operatorDefinedCallback: (Operator) -> Unit
+    private val operatorDefinedCallback: (Operator) -> OperatorSet
 ) : PrologParserBaseListener() {
 
     private val parser: WeakReference<PrologParser> = WeakReference(parser)
@@ -60,10 +61,10 @@ internal class DynamicOpListener private constructor(
 
     companion object {
         fun of(parser: PrologParser): DynamicOpListener {
-            return DynamicOpListener(parser) { }
+            return DynamicOpListener(parser) { OperatorSet.EMPTY }
         }
 
-        fun of(parser: PrologParser, operatorDefinedCallback: (Operator) -> Unit): DynamicOpListener {
+        fun of(parser: PrologParser, operatorDefinedCallback: (Operator) -> OperatorSet): DynamicOpListener {
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }
