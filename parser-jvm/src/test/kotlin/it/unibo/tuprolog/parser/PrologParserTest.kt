@@ -9,7 +9,6 @@ import org.junit.Test
 import java.util.*
 
 
-
 class PrologParserTest {
 
     class AssertionOn<T>(private val `object`: T) {
