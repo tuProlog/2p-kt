@@ -46,7 +46,12 @@ Accordingly, they must NOT depend on any other module in 2P-Kt.
 
 ##Work
 
-Added "expect fun TermParser.Companion.withX() : TermParser" in TermParser.kt in `parser-core`
-Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
-Added "expect fun ClauseDatabaseParser.Companion.withX() : ClauseDatabaseParser" in ClauseDatabaseParser.kt in `parser-theory`
-Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+- Added "expect fun TermParser.Companion.withX() : TermParser" in TermParser.kt in `parser-core`
+- Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+- Added "expect fun ClauseDatabaseParser.Companion.withX() : ClauseDatabaseParser" in ClauseDatabaseParser.kt in `parser-theory`
+- Added the "actual" functions in the correspondents `jvmMain` and `jsMain`
+- Implemented TermParser in `jvmMain` TermParserImpl and developed parse method
+- Added PrologParserFactory interface in `jvmMain` with parse methods and Singleton Pattern
+- Implemented PrologParserFactory with a Singleton Impl and with Kotlin's methods and structures
+- Implemented DynamicOpListener: PrologParserBaseListener
+- Implemented PrologExpressionVisitor: PrologParserBaseVisitor with new structures of the core project, like List or Scope

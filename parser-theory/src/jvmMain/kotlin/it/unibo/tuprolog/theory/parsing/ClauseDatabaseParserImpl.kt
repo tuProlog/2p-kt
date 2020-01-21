@@ -8,9 +8,9 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 class ClauseDatabaseParserImpl(override val defaultOperatorSet: OperatorSet) : ClauseDatabaseParser {
 
     override fun ClauseDatabase.Companion.parse(input: String, operators: OperatorSet): ClauseDatabase {
-        val clauseDatabase = ClauseDatabase.empty()
+        val clauseDatabase = empty()
         PrologParserFactory.instance.parseClauses(input, operators).forEach {
-            clauseDatabase.plus(it.accept(PrologExpressionVisitor.instance))
+            clauseDatabase.plus(it.accept(PrologExpressionVisitor()))
         }
         return clauseDatabase
     }

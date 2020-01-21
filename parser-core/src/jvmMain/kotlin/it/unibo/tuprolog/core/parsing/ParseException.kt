@@ -9,8 +9,8 @@ class ParseException(
     var column: Int,
     message: String?,
     throwable: Throwable?
-) :
-    RuntimeException(message, throwable) {
+) : RuntimeException(message, throwable) {
+
     var clauseIndex = -1
 
     constructor(
@@ -18,8 +18,7 @@ class ParseException(
         token: Token,
         message: String?,
         throwable: Throwable?
-    ) : this(input, token.text, token.line, token.charPositionInLine, message, throwable) {
-    }
+    ) : this(input, token.text, token.line, token.charPositionInLine, message, throwable)
 
     constructor(token: Token, message: String?, throwable: Throwable?) : this(
         null,
@@ -28,8 +27,7 @@ class ParseException(
         token.charPositionInLine,
         message,
         throwable
-    ) {
-    }
+    )
 
     constructor(token: Token, message: String?) : this(
         null,
@@ -38,8 +36,7 @@ class ParseException(
         token.charPositionInLine,
         message,
         null
-    ) {
-    }
+    )
 
     constructor(token: Token, throwable: Throwable?) : this(
         null,
@@ -48,8 +45,7 @@ class ParseException(
         token.charPositionInLine,
         "",
         throwable
-    ) {
-    }
+    )
 
     override fun toString(): String {
         return "ParseException{" +

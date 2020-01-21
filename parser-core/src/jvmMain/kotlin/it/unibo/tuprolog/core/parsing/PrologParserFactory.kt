@@ -6,12 +6,14 @@ import it.unibo.tuprolog.parser.PrologParser.*
 import java.io.IOException
 import java.io.InputStream
 import java.io.Reader
-import java.util.stream.Stream
 
-interface  PrologParserFactory  {
-    //Singleton
+interface PrologParserFactory {
+
     companion object {
-        val instance = PrologParserFactoryImpl.instance
+        val instance: PrologParserFactory = PrologParserFactoryImpl
+
+        // this operator method allows developers to create a new PrologParserFactory by simply writing `PrologParserFactory()`
+        operator fun invoke(): PrologParserFactory = PrologParserFactoryImpl
     }
 
     fun parseExpression(string: String): SingletonExpressionContext

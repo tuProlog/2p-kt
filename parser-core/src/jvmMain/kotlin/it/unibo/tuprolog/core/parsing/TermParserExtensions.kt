@@ -12,5 +12,6 @@ actual fun TermParser.Companion.withStandardOperators(): TermParser =
 actual fun TermParser.Companion.withOperators(operators: OperatorSet): TermParser =
     TermParserImpl(operators)
 
-actual fun TermParser.Companion.withOperators(vararg operators: Operator): TermParser =
-    TermParserImpl(OperatorSet(operators.asSequence()))
+// this can be implemented in common
+//actual fun TermParser.Companion.withOperators(vararg operators: Operator): TermParser =
+//    TermParserImpl(OperatorSet(operators.asSequence()))

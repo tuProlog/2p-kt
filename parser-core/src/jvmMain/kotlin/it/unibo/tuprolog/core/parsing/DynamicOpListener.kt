@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
 
-
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
@@ -11,9 +10,15 @@ import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseListener
 import it.unibo.tuprolog.parser.dynamic.Associativity
 import java.lang.ref.WeakReference
+import kotlin.math.max
+import kotlin.math.min
 
 
-internal class DynamicOpListener private constructor(parser: PrologParser, private val operatorDefinedCallback: ((Operator) -> OperatorSet)?) : PrologParserBaseListener() {
+internal class DynamicOpListener private constructor(
+    parser: PrologParser,
+    private val operatorDefinedCallback: (Operator) -> OperatorSet
+) : PrologParserBaseListener() {
+
     private val parser: WeakReference<PrologParser> = WeakReference(parser)
 
     override fun exitClause(ctx: PrologParser.ClauseContext) {
@@ -22,7 +27,7 @@ internal class DynamicOpListener private constructor(parser: PrologParser, priva
             return
         }
         if (expr.op != null && ":-" == expr.op.symbol.text && Associativity.PREFIX.contains(expr.associativity)) {
-            val directive = ctx.accept(PrologExpressionVisitor.instance) as Struct
+            val directive = ctx.accept(PrologExpressionVisitor()) as Struct
             if (directive.arity == 1 && directive.getArgAt(0) is Struct) {
                 val op: Struct = directive.getArgAt(0) as Struct
                 if ("op" == op.functor && op.arity == 3 && op.getArgAt(0) is Number && op.getArgAt(1).isAtom && op.getArgAt(
@@ -30,9 +35,9 @@ internal class DynamicOpListener private constructor(parser: PrologParser, priva
                     ).isAtom
                 ) {
                     val number = op.getArgAt(0) as Numeric
-                    val priority: Int = kotlin.math.min(
+                    val priority: Int = min(
                         PrologParser.TOP,
-                        kotlin.math.max(
+                        max(
                             PrologParser.BOTTOM,
                             number.intValue.toInt()
                         )
@@ -51,12 +56,12 @@ internal class DynamicOpListener private constructor(parser: PrologParser, priva
     }
 
     private fun onOperatorDefined(operator: Operator) {
-        operatorDefinedCallback?.invoke(operator)
+        operatorDefinedCallback.invoke(operator)
     }
 
     companion object {
         fun of(parser: PrologParser): DynamicOpListener {
-            return DynamicOpListener(parser, null)
+            return DynamicOpListener(parser) { OperatorSet.EMPTY }
         }
 
         fun of(parser: PrologParser, operatorDefinedCallback: (Operator) -> OperatorSet): DynamicOpListener {
