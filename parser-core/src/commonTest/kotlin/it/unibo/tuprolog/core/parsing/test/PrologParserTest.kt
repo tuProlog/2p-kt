@@ -3,19 +3,21 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
-import org.junit.Assert
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 interface PrologParserTest {
 
-    val scope: Scope
-        get() = Scope.empty()
-
+    companion object {
+        val scope: Scope
+            get() = Scope.empty()
+    }
     fun assertEquals(x: Term, y: Term){
-        Assert.assertTrue("Failing assertion: <$x> == <$y>",x.structurallyEquals(y))
+        assertTrue(x.structurallyEquals(y),"Failing assertion: <$x> == <$y>")
     }
 
     fun <T> assertEquals(x: T, y: T){
-        Assert.assertEquals("Failing assertion: <$x> == <$y>",x,y)
+        assertEquals(x,y,"Failing assertion: <$x> == <$y>")
     }
 
     fun getOperatorSet() = OperatorSet.EMPTY
@@ -25,9 +27,9 @@ interface PrologParserTest {
         return if(ops!=null)
             with(TermParser.withNoOperator()){
                 Term.parse(string,this.defaultOperatorSet)
-        } else
-            with(TermParserImpl(ops)){
+            } else
+            with(TermParser.withOperators(ops)){
                 Term.parse(string,this.defaultOperatorSet)
-        }
+            }
     }
 }
