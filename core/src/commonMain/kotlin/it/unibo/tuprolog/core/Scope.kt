@@ -34,6 +34,10 @@ interface Scope {
 
     fun listOf(vararg terms: Term): LogicList
 
+    fun emptyList(): EmptyList
+
+    fun emptySet(): EmptySet
+
     fun listOf(terms: Iterable<Term>): LogicList
 
     fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
