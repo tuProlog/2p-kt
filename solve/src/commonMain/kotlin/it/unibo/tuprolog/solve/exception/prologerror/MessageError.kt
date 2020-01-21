@@ -25,7 +25,7 @@ class MessageError internal constructor( // TODO: 16/01/2020 test this class
     /** The content of this message error */
     val content: Term by lazy { extraData ?: errorStruct }
 
-    override fun updateContext(newContext: ExecutionContext): PrologError =
+    override fun updateContext(newContext: ExecutionContext): PrologError = // TODO: 21/01/2020 since PrologError already correctly implements updateContext for all of its subtypes, this is not needed
         MessageError(message, cause, newContext, extraData)
 
     companion object {
