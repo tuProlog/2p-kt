@@ -19,7 +19,7 @@ dependencies {
 
     api("org.antlr", "antlr4-runtime", antlrVersion)
 
-//    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
+    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
     implementation(kotlin("stdlib-jdk8"))
 }
 

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.core.parsing.test
+package it.unibo.tuprolog.parser
 
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.*
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
+
+
 
 class PrologParserTest {
 
@@ -132,7 +134,7 @@ class PrologParserTest {
             }
         ).andThenAssertBool(
             PrologParser.TermContext::number)
-         {
+        {
             it.isInt && !it.isReal
         }.andThenAssertBool(
             PrologParser.NumberContext::integer
@@ -186,14 +188,14 @@ class PrologParserTest {
         sequenceOf("'a'","\"a\"").forEach {
             assertionOnBool(
                 parseTerm(it),PrologParser.SingletonTermContext::term)
-                {
-                   t -> t.isStruct && !t.isNum && !t.isExpr && !t.isList && !t.isVar
-                }.andThenAssertBool(
+            {
+                    t -> t.isStruct && !t.isNum && !t.isExpr && !t.isList && !t.isVar
+            }.andThenAssertBool(
                 PrologParser.TermContext::structure){
-                      s -> s.arity == s.args.count() &&
-                        s.arity == 0 &&
-                        s.isSet && !s.isList && !s.isTruth &&
-                        s.functor.text == "a" &&
+                    s -> s.arity == s.args.count() &&
+                    s.arity == 0 &&
+                    s.isSet && !s.isList && !s.isTruth &&
+                    s.functor.text == "a" &&
                     (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING)
             }
         }
@@ -205,14 +207,14 @@ class PrologParserTest {
             parseTerm("true"),
             PrologParser.SingletonTermContext::term
         ) {
-                it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
+            it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
         }.andThenAssertBool(
             PrologParser.TermContext::structure
         ){
                 s -> s.arity == s.args.count() &&
-                    s.isTruth && !s.isList && !s.isString &&
-                    s.functor.text == "true" &&
-                    s.functor.type == PrologLexer.BOOL
+                s.isTruth && !s.isList && !s.isString &&
+                s.functor.text == "true" &&
+                s.functor.type == PrologLexer.BOOL
         }
     }
 
@@ -240,9 +242,9 @@ class PrologParserTest {
                 parseTerm(it),
                 PrologParser.SingletonTermContext::term
             ){
-                t -> t.isStruct && ! t.isNum && !t.isExpr && !t.isList && !t.isVar
+                    t -> t.isStruct && ! t.isNum && !t.isExpr && !t.isList && !t.isVar
             }.andThenAssertBool(
-                    PrologParser.TermContext::structure){
+                PrologParser.TermContext::structure){
                     s -> s.arity == s.args.count() &&
                     s.arity == 0 &&
                     s.isList  && !s.isTruth && !s.isString &&
@@ -258,11 +260,11 @@ class PrologParserTest {
                 parseTerm(it),
                 PrologParser.SingletonTermContext::term
             ){
-                t -> t.isVar && !t.isList && !t.isStruct && !t.isNum && !t.isExpr
+                    t -> t.isVar && !t.isList && !t.isStruct && !t.isNum && !t.isExpr
             }.andThenAssertBool(
                 PrologParser.TermContext::variable
             ){
-                v -> !v.isAnonymous &&
+                    v -> !v.isAnonymous &&
                     v.value.text.contains("A") &&
                     v.value.type == PrologLexer.VARIABLE
             }
@@ -276,29 +278,29 @@ class PrologParserTest {
                 parseTerm(it),
                 PrologParser.SingletonTermContext::term
             ){
-                l -> l.isList && !l.isStruct && !l.isNum && !l.isExpr && !l.isVar
+                    l -> l.isList && !l.isStruct && !l.isNum && !l.isExpr && !l.isVar
             }.andThenAssertBool(
                 PrologParser.TermContext::list
             ){
-                l -> l.length == l.items.count() &&
+                    l -> l.length == l.items.count() &&
                     l.length == 1 &&
                     !l.hasTail && l.tail == null
             }.andThenAssertBool(
                 { list-> list.items[0]}
             ){
-                expr -> expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0
+                    expr -> expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0
             }.andThenAssertBool(
                 { e -> e.left}
             ){
-                t -> t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr
+                    t -> t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr
             }.andThenAssertBool(
                 PrologParser.TermContext::number
             ){
-                n -> n.isInt && !n.isReal
+                    n -> n.isInt && !n.isReal
             }.andThenAssertBool(
                 PrologParser.NumberContext::integer
             ){
-                i -> i.value.text.toInt() == 1
+                    i -> i.value.text.toInt() == 1
             }
         }
     }
