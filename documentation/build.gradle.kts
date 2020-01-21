@@ -1,13 +1,13 @@
 plugins {
-    id("com.eden.orchidPlugin") version "0.18.1"
+    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
 }
 
 dependencies {
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:0.18.1")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:0.18.1")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:0.18.1")
-//    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGitlab:0.18.1")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDiagrams:0.18.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDocs", Versions.com_eden_orchidplugin_gradle_plugin)
+    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidKotlindoc", Versions.com_eden_orchidplugin_gradle_plugin)
+    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidPluginDocs", Versions.com_eden_orchidplugin_gradle_plugin)
+//    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidGitlab", Versions.com_eden_orchidplugin_gradle_plugin)
+    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDiagrams", Versions.com_eden_orchidplugin_gradle_plugin)
 }
 
 repositories {

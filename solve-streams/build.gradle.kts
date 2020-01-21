@@ -5,7 +5,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.0-RC2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
             }
         }
 
@@ -15,11 +15,11 @@ kotlin {
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
+        // Default source set for JVM-specific sources and dependencies", "
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
 
@@ -28,7 +28,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0-RC2")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
         }
