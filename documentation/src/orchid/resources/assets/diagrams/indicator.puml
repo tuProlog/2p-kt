@@ -1,0 +1,17 @@
+left to right direction
+
+interface Term
+interface Struct
+interface Indicator {
+  + nameTerm: Term
+  + indicatedName: String?
+  + arityTerm: Term
+  + indicatedArity: Int?
+  + isWellFormed: Boolean
+  + {static} of(name: String, arity: Int): Indicator
+  + {static} of(name: Term, arity: Term): Indicator
+}
+
+Term <|-- Struct
+
+Struct <|-- Indicator

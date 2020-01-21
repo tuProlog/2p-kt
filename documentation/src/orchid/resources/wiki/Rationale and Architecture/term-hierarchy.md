@@ -47,177 +47,76 @@ The base type for logic terms in 2P-Kt is [`Term`](/kotlindoc/it/unibo/tuprolog/
 
 As shown in the following diagram, the `Term` interface is the root of an articulate hierarchy of term types: 
 
-<div style="width: 100%; overflow: auto; background-color:LightGray" >
-{% filter compileAs('uml') %}
-interface Term {
-  + isGround: Boolean
-  + variables: Sequence<Var>
-  + equals(other: Any): Boolean
-  + structurallyEquals(other: Term): Boolean
-  + freshCopy(): Term
-  + toString(): String
-}
-interface Constant {
-  + value: Any
-}
-interface Var {
-  + name: String
-  + complete: Name
-  + {static} of(name: String): Var
-}
-interface Struct {
-  + functor: String
-  + arity: Int
-  + args: Array<Term>
-  + indicator: Indicator
-  + get(index: Int): Term
-  + {static} of(functor: String, **varargs** args: Term): Struct
-}
-interface Numeric {
-  + intValue: BigInteger
-  + decimalValue: BigDecimal
-  + {static} of(value: Number): Numeric
-  + {static} of(number: String): Numeric
-  + {static} of(integer: BigInteger): Integer
-  + {static} of(decimal: BigDecimal): Real
-}
-interface Integer {
-  + value: BigInteger
-  + {static} of(integer: Int): Integer
-  + {static} of(integer: Long): Integer
-  + {static} of(integer: Byte): Integer
-  + {static} of(integer: Short): Integer
-  + {static} of(integer: BigInteger): Integer
-  + {static} of(integer: BigDecimal): Integer
-  + {static} of(integer: String): Integer
-  + {static} of(integer: String, radix: Int): Integer
-}
-interface Real {
-  + value: BigDecimal
-  + {static} of(real: BigDecimal): Real
-  + {static} of(real: Float): Real
-  + {static} of(real: Double): Real
-  + {static} of(real: String): Real
-}
-interface Atom {
-  + value: String
-  + {static} of(value: String): Atom
-}
-interface Truth {
-  + isTrue: Boolean
-  + isFail: Boolean
-  + {static} of(value: Boolean): Truth
-}
-interface Indicator {
-  + nameTerm: Term
-  + indicatedName: String?
-  + arityTerm: Term
-  + indicatedArity: Int?
-  + isWellFormed: Boolean
-  + {static} of(name: String, arity: Int): Indicator
-  + {static} of(name: Term, arity: Term): Indicator
-}
-interface Empty {
-  + {static} list(): EmptyList
-  + {static} set(): EmptySet
-}
-interface EmptySet {
-  + {static} invoke(): EmptySet
-}
-interface EmptyList {
-  + {static} invoke(): EmptyList
-}
-interface List {
-  + size: Int
-  + unfoldedArray: Array<Term>
-  + unfoldedList: List<Term>
-  + unfoldedSequence: Sequence<Term>
-  + toArray(): Array<Term>
-  + toList(): List<Term>
-  + toSequence(): Sequence<Term>
-  + {static} empty(): List
-  + {static} of(**varargs** items: Term): List
-  + {static} of(items: Iterable<Term>): List
-  + {static} from(iterable: Iterable<Term>, last: Term? **= null**): List
-}
-interface Cons {
-  + head: Term
-  + tail: Term
-  + {static} of(head: Term, tail: Term): Cons
-  + {static} singleton(head: Term): Cons
-}
-interface Set {
-  + unfoldedArray: Array<Term>
-  + unfoldedList: List<Term>
-  + unfoldedSequence: Sequence<Term>
-  + toArray(): Array<Term>
-  + toList(): List<Term>
-  + toSequence(): Sequence<Term>
-  + {static} empty(): Set
-  + {static} of(**varargs** items: Term): Set
-  + {static} of(items: Iterable<Term>): Set
-}
-interface Tuple {
-  + left: Term
-  + right: Term
-  + {static} of(left: Term, right: Term): Tuple
-  + {static} of(**varargs** items: Term): Tuple
-  + {static} of(items: Iterable<Term>): Tuple
-}
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/terms-nofields.puml') | raw }}
+<!--div-->
 
-Term <|-down- Struct
-Term <|-down- Constant
-Term <|-down- Var 
+### Terms 
 
-Constant <|-down- Numeric
-Constant <|-down- Atom
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/term.puml') | raw }}
+<!--div-->
 
-Numeric <|-down- Real
-Numeric <|-down- Integer
+### Numbers 
 
-Struct <|-down- Atom
-Struct <|-down- List
-Struct <|-down- Tuple 
-Struct <|-down- Set
-Struct <|-down- Indicator
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/numeric.puml') | raw }}
+<!--div-->
 
-Atom <|-down- Truth
-Atom <|-down- Empty
+### Variables 
 
-Empty <|-up- EmptyList
-Empty <|-up- EmptySet
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/var.puml') | raw }}
+<!--div-->
 
-List <|-down- EmptyList
-List <|-down- Cons
-Set <|-down- EmptySet
+### Structures 
 
-package clauses <<Rectangle>> {
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/struct.puml') | raw }}
+<!--div-->
 
-    interface Clause {
-      + head: Struct?
-      + body: Term
-      + isWellFormed: Boolean
-      + {static} of(head: Struct?, **varargs** body: Term): Clause
-    }
-    interface Rule {
-      + head: Struct
-      + body: Term
-      + {static} of(head: Struct, **varargs** body: Term): Rule
-    }
-    interface Directive {
-      + head: Struct? **= null**
-      + {static} of(**varargs** body: Term): Directive
-    }
-    interface Fact {
-      + body: Term **= Truth.of(true)**
-      + {static} of(head: Struct): Fact
-    }
-    Struct <|-down- Clause
-    Clause <|-down- Rule
-    Clause <|-down- Directive
-    Rule <|-down- Fact
+### Atoms 
 
-}
-{% endfilter %}
-</div>
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/atom.puml') | raw }}
+<!--div-->
 
+### Booleans
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/truth.puml') | raw }}
+<!--div-->
+
+### Indicators
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/indicator.puml') | raw }}
+<!--div-->
+
+### Collections
+
+#### Lists
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/list.puml') | raw }}
+<!--div-->
+
+#### Tuples
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/tuple.puml') | raw }}
+<!--div-->
+
+#### Sets
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/set.puml') | raw }}
+<!--div-->
+
+### Clauses
+
+#### Rules
+
+#### Facts
+
+#### Directives

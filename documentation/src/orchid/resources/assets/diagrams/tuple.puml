@@ -1,0 +1,13 @@
+left to right direction
+
+interface Struct
+
+interface Tuple {
+  + left: Term
+  + right: Term
+  + {static} of(left: Term, right: Term): Tuple
+  + {static} of(**varargs** items: Term): Tuple
+  + {static} of(items: Iterable<Term>): Tuple
+}
+
+Struct <|-- Tuple

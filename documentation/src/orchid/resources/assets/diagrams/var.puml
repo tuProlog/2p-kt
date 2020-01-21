@@ -1,0 +1,15 @@
+left to right direction
+interface Term {
+  + isGround: Boolean
+  + variables: Sequence<Var>
+  + equals(other: Any): Boolean
+  + structurallyEquals(other: Term): Boolean
+  + freshCopy(): Term
+  + toString(): String
+}
+interface Var {
+  + name: String
+  + complete: Name
+  + {static} of(name: String): Var
+}
+Term <|-- Var
