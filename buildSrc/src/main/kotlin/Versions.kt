@@ -19,6 +19,8 @@ object Versions {
 
     const val io_github_gciatto: String = "0.0.6"
 
+    const val org_antlr: String = "4.8-1"
+
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.61"

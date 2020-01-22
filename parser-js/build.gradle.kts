@@ -20,13 +20,12 @@ repositories {
 }
 
 val javaVersion: String by project
-val antlrVersion: String by project
 val ktFreeCompilerArgs: String by project
 
 val generatedSrcDir = "$buildDir/generated-src/antlr/main"
 
 dependencies {
-    antlr("org.antlr", "antlr4", antlrVersion)
+    antlr("org.antlr", "antlr4", Versions.org_antlr)
 }
 
 kotlin {
@@ -41,7 +40,7 @@ kotlin {
         }
         dependencies {
             implementation(kotlin("stdlib-js"))
-            api(npm("antlr4", "^$antlrVersion"))
+            api(npm("antlr4", "^${Versions.org_antlr.replace("-1", ".0")}"))
         }
     }
 

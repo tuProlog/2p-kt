@@ -11,16 +11,18 @@ plugins {
 }
 
 val javaVersion: String by project
-val antlrVersion: String by project
 val ktFreeCompilerArgs: String by project
 
 dependencies {
-    antlr("org.antlr", "antlr4", antlrVersion)
+    antlr("org.antlr", "antlr4", Versions.org_antlr)
 
-    api("org.antlr", "antlr4-runtime", antlrVersion)
+    api("org.antlr", "antlr4-runtime", Versions.org_antlr)
 
-    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
     implementation(kotlin("stdlib-jdk8"))
+
+//    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
+//    testImplementation("junit", "junit", "4.13")
+    testImplementation(kotlin("test-junit"))
 }
 
 
