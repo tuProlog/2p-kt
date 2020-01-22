@@ -1,10 +1,7 @@
 package it.unibo.tuprolog.rule
 
 import it.unibo.tuprolog.AbstractWrapper
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.toIndicator
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -22,7 +19,7 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
         Rule.of(Struct.of(functor, headArgs), body)
     }
 
-    open val Scope.head: KtList<Term> get() = emptyList()
+    open val Scope.head: KtList<Term> get() = kotlin.collections.emptyList()
 
     open val Scope.body: Term get() = truthOf(true)
 

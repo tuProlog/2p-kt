@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.parser
 
-import it.unibo.tuprolog.parser.PrologLexer
-import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.dynamic.DynamicLexer
 import org.antlr.v4.runtime.*
 import org.junit.Assert
