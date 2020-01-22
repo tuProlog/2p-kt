@@ -1,12 +1,9 @@
-val ktMathVersion: String by project
-
-// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("io.github.gciatto:kt-math-metadata:$ktMathVersion")
+                api("io.github.gciatto:kt-math-metadata:${Versions.io_github_gciatto}")
             }
         }
 
@@ -14,7 +11,7 @@ kotlin {
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("io.github.gciatto:kt-math-jvm:$ktMathVersion")
+                    api("io.github.gciatto:kt-math-jvm:${Versions.io_github_gciatto}")
                 }
             }
         }
@@ -22,7 +19,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api("io.github.gciatto:kt-math-js:$ktMathVersion")
+                    api("io.github.gciatto:kt-math-js:${Versions.io_github_gciatto}")
                 }
             }
         }
