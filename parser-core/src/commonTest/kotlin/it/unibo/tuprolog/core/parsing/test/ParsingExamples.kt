@@ -135,7 +135,7 @@ object ParsingExamples {
         "Y < YMsgs -> write(' ') ; display_offset(XOff, YOff), XMap is X + XOff, YMap is Y + YOff, get_character(XMap, YMap, C), format('~s', [C])" to prolog {
             (("Y" lowerThan "YMsgs") then "write"(" ")) or
                     ( "display_offset"("XOff","YOff") and ( ("XMap" `is` ("X".toTerm() + "XOff")) and ( ("YMap" `is` ("Y".toTerm() + "YOff")) and
-                    ( "get_character"("XMap","YMap","C")  and ( "format"("~s",listOf("C")) )))))
+                            ( "get_character"("XMap","YMap","C")  and ( "format"("~s",listOf("C")) )))))
         },
         "display_offset(X, Y) :- player(XPos, YPos), tty_size(YSize, XSize), message_lines(YMsgs), X is XPos - floor(XSize / 2), Y is YPos - floor((YSize - YMsgs) / 2)" to prolog {
             "display_offset"("X","Y") impliedBy
