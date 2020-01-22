@@ -75,7 +75,7 @@ Given a `Term` it is possible to:
 
 - clone it, in order to _refresh_ its variables, through the `freshCopy(): Term` method
 
-- check if it is _equal_ to another term, through the `equals(other: Any): Boolean` method
+- check if it is _identical_ to another term, through the `equals(other: Any): Boolean` method
     + of course, the semantics of `hashCode(): Int` is consistent w.r.t. `equals`
 
 - check if it is **structurally** _equal_ to another term, through the `structurallyEquals(other: Term): Boolean` method
@@ -107,14 +107,10 @@ More details about the actual string representations of subtypes are provided in
 
 The takeaway here is that the `Term.toString()` is __not__ aimed at presenting terms to teh users.
 
-#### About fresh copies of terms
+#### About terms identity
 
-
-
-#### About terms equality
-
-Terms equality is recursively defined.
-Roughly speaking the equivalence among two terms holds if and only if:
+Terms identity is recursively defined.
+Roughly speaking the identity among two terms holds if and only if:
 
 1. the type of the two terms is equal, and
 
@@ -126,9 +122,37 @@ Roughly speaking the equivalence among two terms holds if and only if:
 
 0. they are both structures, and they have the same functor and arity, and their arguments are recursively equal.
 
-More details are provided in the following sections.
+So, for instance, the terms `f(x)` and `f(x)` are identical, whereas the terms `f(X_1)` and `f(X_2)` are different.
+Similarly, the terms `f(1)` and `f(1.0)` are different as well.
+
+However, more details are provided in the following sections.
 
 #### About terms _structural_ equality
+
+Terms _structural_ equality is recursively defined.
+Roughly speaking the _structural_ equality among two terms holds if and only if:
+
+1. they are both variables, or
+
+0. they are both numbers and their numeric value is equal, or
+
+0. they are both structures, and they have the same functor and arity, and their arguments are recursively _structurally_ equal.
+
+So, for instance, the terms `f(x)` and `f(x)` are _structurally_ equal, as well as the terms `f(X_1)` and `f(X_2)`.
+Similarly, the terms `f(1)` and `f(1.0)` are _structurally_ equal as well.
+
+More details are provided in the following sections.
+
+#### About fresh copies of terms
+
+A common use case in 2P-Kt is to produce a fresh copy of a term.
+
+Let `t` be a `Term`, then a fresh copy of `t` is another term `t'` which is structurally equal to `t` but differs in the variables it contains.
+In particular, the two terms differ because each variable `V` possibly occurring in `t` is replaced in `t'` by another variable `V'` whose name is equal to `V` but whose _complete_ name is different than `V`'s.
+Notice that if variable `V` occurs several times in `t`, than variable `V'` occurs as many times in `t'`.
+Of course, if `t` is ground, then `t'` is identical to `t`.
+
+So, for instance, by refreshing the term `f(X_1, g(X_1), Y_1)` one may obtain the a term like `f(X_2, g(X_2), Y_2)`.
 
 ### Instantiation of terms
 
@@ -149,16 +173,24 @@ Details about such factory methods are provided below.
 Static factories are not the only means to instantiate terms. 
 The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a similar -- yet more articulated -- use case.
 
-### Numbers 
-
-<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
-{{ load('assets/diagrams/numeric.puml') | raw }}
-<!--div-->
-
 ### Variables 
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/var.puml') | raw }}
+<!--div-->
+
+[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var) are [Term]s characterised by a `name` and a `completeName`.
+
+### Numbers 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/constant.puml') | raw }}
+<!--div-->
+
+### Numbers 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/numeric.puml') | raw }}
 <!--div-->
 
 ### Structures 
