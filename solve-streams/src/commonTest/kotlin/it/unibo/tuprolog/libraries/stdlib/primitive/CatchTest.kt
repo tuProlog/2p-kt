@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
 import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.CatchUtils
-import it.unibo.tuprolog.libraries.stdlib.primitive.testutils.PrimitiveUtils.assertErrorCauseChainComputedCorrectly
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import kotlin.test.Test
 
@@ -27,13 +26,6 @@ internal class CatchTest {
             val toBeTested = Catch.wrappedImplementation(request).toList()
 
             assertSolutionEquals(solutionList, toBeTested.map { it.solution })
-        }
-    }
-
-    @Test
-    fun catchErrorChainComputedCorrectly() {
-        CatchUtils.prologStandardThrowExamplesWithError.forEach { (request, solutionList) ->
-            assertErrorCauseChainComputedCorrectly(request, solutionList.single())
         }
     }
 }

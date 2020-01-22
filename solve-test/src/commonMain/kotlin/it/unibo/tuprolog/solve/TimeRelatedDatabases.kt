@@ -1,10 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.haltException
-import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
-import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.collections.listOf as ktListOf

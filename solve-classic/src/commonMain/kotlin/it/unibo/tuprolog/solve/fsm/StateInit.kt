@@ -16,7 +16,7 @@ internal data class StateInit(override val context: ExecutionContextImpl) : Abst
                 parent = null,
                 choicePoints = null,
                 depth = 0,
-                step = 0
+                step = 1
             ).appendRulesAndChoicePoints(Cursor.empty())
         )
     }

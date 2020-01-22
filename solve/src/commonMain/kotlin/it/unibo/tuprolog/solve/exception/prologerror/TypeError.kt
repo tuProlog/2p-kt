@@ -31,6 +31,10 @@ class TypeError(
     extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
+
+    // TODO: 16/01/2020 in this early stage of the project consider not using deprecation,
+    // TODO             but instead advance the version number and change what should be changed (her: private constructor and only public factory)
+
     /** This constructor automatically fills [message] field with provided information */
     @Deprecated("Prefer TypeError.Companion.forArgument")
     constructor(
@@ -52,6 +56,8 @@ class TypeError(
 
     companion object {
 
+        // TODO: 16/01/2020 test factories
+
         fun forArgument(
             context: ExecutionContext,
             procedure: Signature,
@@ -72,7 +78,7 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             actualValue: Term
-        ) = "Goal `$actualValue` of ${procedure.toIndicator()} should be a $expectedType term".let {
+        ) = "Subgoal `$actualValue` of ${procedure.toIndicator()} is not a $expectedType term".let {
             TypeError(
                 message = it,
                 context = context,

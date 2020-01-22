@@ -29,6 +29,16 @@ interface Cursor<T> {
     }
 }
 
+operator fun <T> Cursor<out T>.plus(other: Cursor<out T>): Cursor<out T> {
+    if (other.hasNext) {
+        return ConjunctionCursor(this, other)
+    } else if (hasNext) {
+        return this;
+    } else {
+        return EmptyCursor
+    }
+}
+
 sealed class AbstractCursor<T> : Cursor<T> {
     override fun toString(): String {
         return when {

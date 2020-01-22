@@ -1,0 +1,31 @@
+left to right direction
+
+interface Struct
+interface Atom
+interface Empty {
+  + {static} list(): EmptyList
+  + {static} set(): EmptySet
+}
+interface EmptySet {
+  + {static} invoke(): EmptySet
+}
+interface Set {
+  + unfoldedArray: Array<Term>
+  + unfoldedList: List<Term>
+  + unfoldedSequence: Sequence<Term>
+  + toArray(): Array<Term>
+  + toList(): List<Term>
+  + toSequence(): Sequence<Term>
+  + {static} empty(): Set
+  + {static} of(**varargs** items: Term): Set
+  + {static} of(items: Iterable<Term>): Set
+}
+
+Struct <|-- Atom
+Struct <|-- Set
+
+Atom <|-- Empty
+
+Empty <|-- EmptySet
+
+Set <|-- EmptySet

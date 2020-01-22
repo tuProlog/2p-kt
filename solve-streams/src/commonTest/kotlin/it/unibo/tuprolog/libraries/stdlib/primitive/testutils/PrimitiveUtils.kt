@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -38,37 +39,7 @@ internal object PrimitiveUtils {
         return exceptionCause
     }
 
-    /**
-     * Utility function to test whether the cause of errors generated is correctly filled
-     *
-     * It passes request to StateGoalEvaluation, then it executes the primitive exercising the error situation;
-     * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
-     */
-    internal fun assertErrorCauseChainComputedCorrectly(
-        request: Solve.Request<ExecutionContextImpl>,
-        expectedErrorSolution: Solution.Halt
-    ) {
-        val nextState = StateGoalEvaluation(request).behave().toList().single()
-
-        assertEquals(StateEnd.Halt::class, nextState::class)
-        assertEquals(expectedErrorSolution.exception::class, (nextState as StateEnd.Halt).exception::class)
-
-        var expectedCause = expectedErrorSolution.exception.cause
-        var actualCause = nextState.exception.cause
-
-        while (expectedCause != null) {
-            val expectedCauseStruct = (expectedCause as? PrologError)?.errorStruct
-            val actualCauseStruct = (actualCause as? PrologError)?.errorStruct
-
-            assertNotNull(expectedCauseStruct)
-            assertNotNull(actualCauseStruct)
-
-            assertTrue("Expected `$expectedCauseStruct` not structurally equals to actual `$actualCauseStruct`") {
-                expectedCauseStruct.structurallyEquals(actualCauseStruct)
-            }
-
-            expectedCause = expectedCause.cause
-            actualCause = actualCause?.cause
-        }
-    }
+    /** Utility function to assert the [PrologError] type correctness of [Solution.Halt] */
+    internal fun assertPrologError(expected: KClass<out PrologError>, actualSolution: Solution) =
+        assertEquals(expected, (actualSolution as Solution.Halt).exception::class)
 }

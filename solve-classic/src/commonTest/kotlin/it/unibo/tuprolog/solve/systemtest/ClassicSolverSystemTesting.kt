@@ -5,6 +5,7 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class ClassicSolverSystemTesting : SolverFactory {
@@ -28,30 +29,16 @@ class ClassicSolverSystemTesting : SolverFactory {
     ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
-//    @Ignore
+    @Ignore
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
-                libraries = defaultLibraries,
-                staticKB = theoryOf(
-                    fact { "a"(2) },
-                    fact { "a"(1) },
-                    fact { "b"(1) },
-                    fact { "c"(2) }
-//                    clause { "a"("X") `if` "b"("X") },
-//                    clause { "a"(6) },
-//                    clause { "b"("X") `if` ("c"("X") and "d"("X")) },
-//                    clause { "b"(4) `if` "!" },
-//                    clause { "b"(5) },
-//                    clause { "c"(1) },
-//                    clause { "c"(2) `if` "!" },
-//                    clause { "c"(3) },
-//                    clause { "d"(2) },
-//                    clause { "d"(3) }
-                )
+                libraries = defaultLibraries
             )
 
-            solver.solve("\\+"("\\+"("c"("X")))).forEach { sol ->
+            val query = "catch"("catch"("throw"(1), "X", false or "X"), `_`, false)
+
+            solver.solve(query).forEach { sol ->
                 println(sol)
                 if (sol is Solution.Halt) {
                     sol.exception.prologStackTrace.forEach {
@@ -59,41 +46,6 @@ class ClassicSolverSystemTesting : SolverFactory {
                     }
                 }
             }
-//            solver.solve(tupleOf(true, "X"), 200).forEach { sol ->
-//                println(sol)
-//                if (sol is Solution.Halt) {
-//                    sol.exception.prologStackTrace.forEach {
-//                        println("\t$it")
-//                    }
-//                }
-//            }
-//            solver.solve(tupleOf(true, 1), 200).forEach {sol ->
-//                println(sol)
-//            }
-//            solver.solve("call"("a"("X"))).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("X")).forEach {
-//                println(it)
-//            }
-//            solver.solve("!" and false or true).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("!") and false or true).forEach {
-//                println(it)
-//            }
-//            solver.solve("a"("X") and "!").forEach {
-//                println(it)
-//            }
-//            solver.solve("a"("X") and "call"("!")).forEach {
-//                println(it)
-//            }
-//            solver.solve("call"("Z" `=` "!" and "a"("X") and "Z")).forEach {
-//                println(it)
-//            }
-//            solver.solve("Z" `=` "!" and "call"("Z" `=` "!" and ("a"("X") and "Z"))).forEach {
-//                println(it)
-//            }
         }
     }
 
@@ -148,19 +100,16 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-//    @Ignore // TODO: 07/11/2019 Substitution unused variable cleaning needed to pass this test (issue #52)
     fun testSimpleCutAlternatives() {
         prototype.testSimpleCutAlternatives(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO: (issue #52)
     fun testCutAndConjunction() {
         prototype.testCutAndConjunction(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO: (issue #52)
     fun testCutConjunctionAndBacktracking() {
         prototype.testCutConjunctionAndBacktracking(mediumDuration)
     }
@@ -171,55 +120,46 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testPrologStandardSearchTreeExample() {
         prototype.testPrologStandardSearchTreeExample(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testPrologStandardSearchTreeWithCutExample() {
         prototype.testPrologStandardSearchTreeWithCutExample(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testBacktrackingWithCustomReverseListImplementation() {
         prototype.testBacktrackingWithCustomReverseListImplementation(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testWithPrologStandardConjunctionExamples() {
         prototype.testWithPrologStandardConjunctionExamples(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testCallPrimitive() {
         prototype.testCallPrimitive(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testCallPrimitiveTransparency() {
         prototype.testCallPrimitiveTransparency(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testCatchPrimitive() {
         prototype.testCatchPrimitive(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testCatchPrimitiveTransparency() {
         prototype.testCatchPrimitiveTransparency(mediumDuration)
     }
@@ -230,31 +170,26 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testNotPrimitive() {
         prototype.testNotPrimitive(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testNotModularity() {
         prototype.testNotModularity(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testIfThenRule() {
         prototype.testIfThenRule(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testIfTheElseRule() {
         prototype.testIfThenElseRule(mediumDuration)
     }
 
     @Test
-//    @Ignore // TODO (issue #52)
     fun testNumbersRangeListGeneration() {
         prototype.testNumbersRangeListGeneration(mediumDuration)
     }

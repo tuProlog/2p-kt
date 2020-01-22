@@ -25,6 +25,9 @@ class InstantiationError(
     extraData: Term? = null
 ) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
 
+    // TODO: 16/01/2020 in this early stage of the project consider not using deprecation,
+    // TODO             but instead advance the version number and change what should be changed (her: private constructor and only public factory)
+
     /** This constructor automatically fills [message] field with provided information */
     @Deprecated("Prefer InstantiationError.Companion.forArgument instead")
     constructor(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) : this(
@@ -38,6 +41,8 @@ class InstantiationError(
 
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
+
+        // TODO: 16/01/2020 test factories
 
         fun forArgument(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) =
             InstantiationError(

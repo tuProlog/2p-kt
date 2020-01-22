@@ -66,7 +66,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
-    open fun filter(variables: Collection<Var>): Substitution =
+    open fun filter(variables: Collection<Var>): Substitution = // TODO: 16/01/2020 add tests for this specific method
         filter { k, _ -> k in variables }
 
     /**
@@ -144,6 +144,7 @@ sealed class Substitution : Map<Var, Term> {
         override fun minus(keys: Iterable<Var>): Fail = Fail
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
+        override fun filter(variables: Collection<Var>): Fail = Fail
     }
 
 

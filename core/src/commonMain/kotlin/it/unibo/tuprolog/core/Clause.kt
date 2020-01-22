@@ -72,7 +72,7 @@ interface Clause : Struct {
             }
         }
 
-
+        // TODO: 16/01/2020 test this method
         internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
