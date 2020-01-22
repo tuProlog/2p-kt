@@ -63,11 +63,12 @@ From these activities I learned a lot of Kotlin's features:
 - I could appreciate the non-verbose Kotlin syntax, for example function with an expression body and inferred return type could be: `fun add(a: Int, b: Int) = a + b`
 - Everything is an expression: it simplify every methods based on if/else statement: `fun max(a: Int,b: Int) if(a>b) a else b`
 - "when" Control flow: it is a substitution of the old-style "switch" and simplifies it: for example, a 21 lines Java if/else method has become in Kotlin only 6 lines
-- Kotlin Multiplatform: awareness of use "expect/actual" multiplatform keywords. 
+- Kotlin Multi-platform: awareness of use "expect/actual" multi-platform keywords. 
 - Use of "Scope" interface to optimize stateful features
 
 Then I started implementing tests
-- Implemented Term/ExpressionParserTest
+- Implemented PrologParserTest in `parser-jvm/test`
+- Implemented Term/ExpressionParserTest in `parser-core/commonTest`
 - Using of Prolog dsl: learned how to use it, for example ( "PrologActualString" to prolog { "expected" })
 - "a" and "B" are automatically translated in Atom and Var
 - `"a :- b"` can be translated as `"a" impliedBy "b"`
