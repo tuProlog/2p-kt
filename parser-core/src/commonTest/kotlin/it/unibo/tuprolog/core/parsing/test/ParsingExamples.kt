@@ -61,7 +61,7 @@ object ParsingExamples {
         },
         "element_at(X,[_|L],K) :- K > 1, K1 is K - 1, element_at(X,L,K1)" to prolog {
             "element_at"("X",consOf(`_`,"L"),"K") impliedBy
-                    (  ("K" greaterThan 1) and  (("K1" `is` ("K" - 1)) and  ("element_at"("X","L","K1"))))
+                    ( ("K" greaterThan 1) and  (("K1" `is` ("K" - 1)) and  ("element_at"("X","L","K1"))))
         },
         "my_length([],0)" to prolog {
             "my_length"(emptyList(),0)
@@ -118,7 +118,7 @@ object ParsingExamples {
         },
         "map_upper_bound(XMax, YMax) :- map_size(XSize, YSize), XMax is XSize - 1, YMax is YSize - 1" to prolog {
             "map_upper_bound"("XMax","YMax") impliedBy
-                    ( "map_size"("XSize","YSize") and (("XMax" `is` ("XSize".minus(1))) and ("YMax" `is` ("YSize".minus(1)))))
+                    ( "map_size"("XSize","YSize") and (("XMax" `is` ("XSize" - 1)) and ("YMax" `is` ("YSize" - 1))))
         },
         "in_map(X, Y) :- X >= 0, Y >= 0, map_size(XSize, YSize), X < XSize, Y < YSize" to prolog {
             "in_map"("X","Y") impliedBy
@@ -140,9 +140,7 @@ object ParsingExamples {
         "display_offset(X, Y) :- player(XPos, YPos), tty_size(YSize, XSize), message_lines(YMsgs), X is XPos - floor(XSize / 2), Y is YPos - floor((YSize - YMsgs) / 2)" to prolog {
             "display_offset"("X","Y") impliedBy
                     ( "player"("XPos","YPos") and ( "tty_size"("YSize","XSize")and ( "message_lines"("YMsgs")  and (
-                            ( "X" `is` ("XPos".toTerm() - "floor"("XSize" / 2)))  and ( ("Y" `is` ("YPos".toTerm() - "floor"(
-                                ("YSize" - "YMsgs") / 2
-                            ))))))))
+                            ( "X" `is` ("XPos" - "floor"("XSize" / 2)))  and ( ("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))))))
         }
     )
 
