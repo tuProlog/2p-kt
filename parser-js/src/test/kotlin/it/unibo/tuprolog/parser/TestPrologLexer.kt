@@ -6,13 +6,17 @@ import kotlin.test.assertEquals
 class TestPrologLexer {
     @Test
     fun testInitialisation() {
-        //println("Start test")
         val lexer = PrologLexer(null)
         assertEquals("PrologLexer.g4", lexer.grammarFileName)
-        //println(" ArrayOf: ${arrayOf("DEFAULT_MODE")}") //  modeNames: ${lexer.modeNames}")
-        //assertEquals(arrayOf("DEFAULT_MODE"),lexer.modeNames)
-        //assertEquals(arrayOf("DEFAULT_TOKEN_CHANNEL", "HIDDEN"),lexer.channelNames)
-        /*assertEquals(arrayOf("INTEGER", "HEX", "OCT", "BINARY", "SIGN",
+        val modeNames = arrayOf("DEFAULT_MODE")
+        lexer.modeNames.forEachIndexed{
+            index,mode -> assertEquals(modeNames[index],mode)
+        }
+        val channelNames = arrayOf("DEFAULT_TOKEN_CHANNEL", "HIDDEN")
+        lexer.channelNames.forEachIndexed{
+            index,channel -> assertEquals(channelNames[index],channel)
+        }
+        val ruleNames = arrayOf("INTEGER", "HEX", "OCT", "BINARY", "SIGN",
             "FLOAT", "CHAR", "BOOL", "LPAR", "RPAR",
             "LSQUARE", "RSQUARE", "EMPTY_LIST",
             "LBRACE", "RBRACE", "EMPTY_SET", "VARIABLE",
@@ -22,8 +26,10 @@ class TestPrologLexer {
             "OPERATOR", "ATOM", "Symbols", "Escapable",
             "DoubleSQ", "DoubleDQ", "OpSymbol",
             "Atom", "Ws", "OctDigit", "BinDigit",
-            "HexDigit", "Digit", "Zero"),lexer.ruleNames)
-        */
+            "HexDigit", "Digit", "Zero")
+        lexer.ruleNames.forEachIndexed{
+            index, rule -> assertEquals(ruleNames[index],rule)
+        }
     }
 
 }
