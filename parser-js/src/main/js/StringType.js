@@ -1,0 +1,5 @@
+const STRINGTYPE = { SINGLE_QUOTED: 1, DOUBLE_QUOTED: 2}
+
+module.exports = {
+    STRINGTYPE: STRINGTYPE
+};

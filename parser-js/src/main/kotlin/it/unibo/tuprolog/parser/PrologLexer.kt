@@ -5,4 +5,9 @@ package it.unibo.tuprolog.parser
 
 external class PrologLexer(input: dynamic) {
     val grammarFileName: String
+    val ruleNames: Array<String>
+    val symbolicNames: Array<String>
+    val literalNames: Array<String>
+    val channelNames: Array<String>
+    val modeNames: Array<String>
 }
