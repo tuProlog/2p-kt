@@ -2,7 +2,7 @@ lexer grammar PrologLexer;
 
 @header {
 var DynamicLexer = require("./DynamicLexer").DynamicLexer
-// TODO import SINGLE_QUOTED & DOUBLE_QUOTED
+var StringType = require("./StringType").STRINGTYPE
 }
 
 @members {
