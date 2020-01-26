@@ -25,3 +25,4 @@ assert(!lexer.isOperator("violet"))
 assert(lexer.isOperator(":-"))
 escaped = "test\\nsec\\rvisible"
 assert(JSON.stringify("test\nsec\rvisible") === lexer.escape(JSON.stringify(escaped),StringType.SINGLE_QUOTED))
+console.log(lexer.getAllTokens())
