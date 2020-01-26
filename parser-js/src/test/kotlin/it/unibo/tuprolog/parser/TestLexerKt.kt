@@ -57,25 +57,46 @@ class TestLexerKt {
         val lexer = PrologLexer(inputStream)
         val tokens = lexer.getAllTokens()
 
-        assertEquals(tokens[0].text,"1")
-        assertEquals(tokens[1].text,"+")
-        assertEquals(tokens[2].text,"a")
-        assertEquals(tokens[3].text,"+")
-        assertEquals(tokens[4].text,"b")
-        assertEquals(tokens[5].text,"+")
-        assertEquals(tokens[6].text,"c")
-        assertEquals(tokens[7].text, "-")
-        assertEquals(tokens[8].text,"d")
+        assertEquals(9,tokens.size)
 
-        assertEquals(tokens[0].type,2)
-        assertEquals(tokens[1].type,6)
-        assertEquals(tokens[2].type,28)
-        assertEquals(tokens[3].type,6)
-        assertEquals(tokens[4].type,19)
-        assertEquals(tokens[5].type,6)
-        assertEquals(tokens[6].type,18)
-        assertEquals(tokens[7].type,6)
-        assertEquals(tokens[8].type,19)
+        tokens[0].let {
+            assertEquals("1",it.text)
+            assertEquals(PrologLexer.INTEGER,it.type)
+        }
+
+        tokens[1].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[2].let {
+            assertEquals("a",it.text)
+            assertEquals(PrologLexer.ATOM,it.type)
+        }
+        tokens[3].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[4].let {
+            assertEquals("b",it.text)
+            assertEquals(PrologLexer.DQ_STRING,it.type)
+        }
+        tokens[5].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[6].let {
+            assertEquals("c",it.text)
+            assertEquals(PrologLexer.SQ_STRING,it.type)
+        }
+        tokens[7].let {
+            assertEquals("-",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[8].let {
+            assertEquals("d",it.text)
+            assertEquals(PrologLexer.DQ_STRING,it.type)
+        }
+
     }
 
     @Test
@@ -86,31 +107,57 @@ class TestLexerKt {
         lexer.addOperators("+","is")
         val tokens = lexer.getAllTokens()
 
-        assertEquals(tokens[0].text,"_")
-        assertEquals(tokens[1].text,"+")
-        assertEquals(tokens[2].text,"A")
-        assertEquals(tokens[3].text,"+")
-        assertEquals(tokens[4].text,"_B")
-        assertEquals(tokens[5].text,"is")
-        assertEquals(tokens[6].text,"_1")
-        assertEquals(tokens[7].text, "+")
-        assertEquals(tokens[8].text,"_a")
-        assertEquals(tokens[9].text,"+")
-        assertEquals(tokens[10].text,"_")
-        assertEquals(tokens[11].text,"+")
+        assertEquals(12,tokens.size)
 
-        assertEquals(tokens[0].type,1)
-        assertEquals(tokens[1].type,6)
-        assertEquals(tokens[2].type,1)
-        assertEquals(tokens[3].type,6)
-        assertEquals(tokens[4].type,1)
-        assertEquals(tokens[5].type,27)
-        assertEquals(tokens[6].type,1)
-        assertEquals(tokens[7].type,6)
-        assertEquals(tokens[8].type,1)
-        assertEquals(tokens[9].type,6)
-        assertEquals(tokens[10].type,1)
-        assertEquals(tokens[11].type,6)
+        tokens[0].let {
+            assertEquals("_",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+
+        tokens[1].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[2].let {
+            assertEquals("A",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+        tokens[3].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[4].let {
+            assertEquals("_B",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+        tokens[5].let {
+            assertEquals("is",it.text)
+            assertEquals(PrologLexer.OPERATOR,it.type)
+        }
+        tokens[6].let {
+            assertEquals("_1",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+        tokens[7].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[8].let {
+            assertEquals("_a",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+        tokens[9].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
+        tokens[10].let {
+            assertEquals("_",it.text)
+            assertEquals(PrologLexer.VARIABLE,it.type)
+        }
+        tokens[11].let {
+            assertEquals("+",it.text)
+            assertEquals(PrologLexer.SIGN,it.type)
+        }
     }
 
     @Test
@@ -121,20 +168,36 @@ class TestLexerKt {
         lexer.addOperators("?","is", ":-")
         val tokens = lexer.getAllTokens()
 
-        assertEquals(tokens[0].text,"1")
-        assertEquals(tokens[1].text,"?")
-        assertEquals(tokens[2].text,"a")
-        assertEquals(tokens[3].text,"is")
-        assertEquals(tokens[4].text,"c")
-        assertEquals(tokens[5].text,":-")
-        assertEquals(tokens[6].text,"d")
+        assertEquals(7,tokens.size)
 
-        assertEquals(tokens[0].type,2)
-        assertEquals(tokens[1].type,27)
-        assertEquals(tokens[2].type,28)
-        assertEquals(tokens[3].type,27)
-        assertEquals(tokens[4].type,28)
-        assertEquals(tokens[5].type,27)
-        assertEquals(tokens[6].type,28)
+        tokens[0].let {
+            assertEquals("1",it.text)
+            assertEquals(PrologLexer.INTEGER,it.type)
+        }
+
+        tokens[1].let {
+            assertEquals("?",it.text)
+            assertEquals(PrologLexer.OPERATOR,it.type)
+        }
+        tokens[2].let {
+            assertEquals("a",it.text)
+            assertEquals(PrologLexer.ATOM,it.type)
+        }
+        tokens[3].let {
+            assertEquals("is",it.text)
+            assertEquals(PrologLexer.OPERATOR,it.type)
+        }
+        tokens[4].let {
+            assertEquals("c",it.text)
+            assertEquals(PrologLexer.ATOM,it.type)
+        }
+        tokens[5].let {
+            assertEquals(":-",it.text)
+            assertEquals(PrologLexer.OPERATOR,it.type)
+        }
+        tokens[6].let {
+            assertEquals("d",it.text)
+            assertEquals(PrologLexer.ATOM,it.type)
+        }
     }
 }
