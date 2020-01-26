@@ -1,7 +1,7 @@
 const antlr4 = require("antlr4");
 const Lexer = require("./PrologLexer").PrologLexer;
 const assert = require('assert');
-const StringType = require("./StringType").STRINGTYPE
+const StringType = require("./StringType").StringType
 
 function testVariables(){
     let input = "_ + A + _B is _1 + _a + _+"
@@ -29,6 +29,19 @@ function testVariables(){
     assert(tokens[9] === "+")
     assert(tokens[10] === "_")
     assert(tokens[11] === "+")
+
+    assert(types[0] === 1)
+    assert(types[1] === 6)
+    assert(types[2] === 1)
+    assert(types[3] === 6)
+    assert(types[4] === 1)
+    assert(types[5] === 27)
+    assert(types[6] === 1)
+    assert(types[7] === 6)
+    assert(types[8] === 1)
+    assert(types[9] === 6)
+    assert(types[10] === 1)
+    assert(types[11] === 6)
 
 }
 
