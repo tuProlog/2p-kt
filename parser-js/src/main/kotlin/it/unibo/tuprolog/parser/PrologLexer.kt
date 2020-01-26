@@ -14,7 +14,7 @@ external class PrologLexer(input: dynamic) {
     fun getOperators(): Array<String>
     fun isOperator(string: String): Boolean
     fun unquote(string: String): String
-    fun escape(string: String, stringType: Int): String
+    fun escape(string: String, stringType: StringType): String
     fun getAllTokens(): Array<Token>
     
     companion object {

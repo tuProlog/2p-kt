@@ -11,8 +11,6 @@ function testVariables(){
     let tokens = new Array()
     let types = new Array()
     lexer.getAllTokens().forEach(function (it) {
-        console.log(it.text);
-        console.log(it._text);
         tokens.push(it.text)
         types.push(it.type)
     });
@@ -64,8 +62,6 @@ function testOperators(){
     let tokens = new Array()
     let types = new Array()
     lexer.getAllTokens().forEach(function (it) {
-        console.log(it.text);
-        console.log(it._text);
         tokens.push(it.text)
         types.push(it.type)
     });
@@ -98,8 +94,6 @@ function testAtoms(){
     let tokens = new Array()
     let types = new Array()
     lexer.getAllTokens().forEach(function (it) {
-        console.log(it.text);
-        console.log(it._text);
         tokens.push(it.text)
         types.push(it.type)
     });

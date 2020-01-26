@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.parser
 
-import it.unibo.tuprolog.parser.util.StringType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -61,7 +60,7 @@ class TestPrologLexer {
     @Test
     fun testLexerEscape(){
         val lexer = PrologLexer(null)
-        lexer.escape("first\\nsec\\rthird",StringType.SINGLE_QUOTED)
+        lexer.escape("first\\nsec\\rthird", StringType.SINGLE_QUOTED)
         assertEquals("first\nsec\rthird",lexer.escape("first\\nsec\\rthird", StringType.SINGLE_QUOTED))
     }
 

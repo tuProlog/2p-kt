@@ -200,4 +200,38 @@ class TestLexerKt {
             assertEquals(PrologLexer.ATOM,it.type)
         }
     }
+
+
+//    @Test
+//    fun testHex(){
+//        val input = "x29 + 3 + x58"
+//        val inputStream = InputStream(input)
+//        val lexer = PrologLexer(inputStream)
+//        val tokens = lexer.getAllTokens()
+//
+//        assertEquals(5,tokens.size)
+//
+//        tokens[0].let{
+//            assertEquals("x29",it.text)
+//            assertEquals(PrologLexer.HEX,it.type)
+//        }
+//        tokens[1].let{
+//            assertEquals("+",it.text)
+//            assertEquals(PrologLexer.SIGN,it.type)
+//        }
+//        tokens[2].let{
+//            assertEquals("3",it.text)
+//            assertEquals(PrologLexer.INTEGER,it.type)
+//        }
+//        tokens[3].let{
+//            assertEquals("+",it.text)
+//            assertEquals(PrologLexer.SIGN,it.type)
+//        }
+//        tokens[4].let{
+//            assertEquals("x58",it.text)
+//            assertEquals(PrologLexer.HEX,it.type)
+//        }
+//
+//    }
+
 }
