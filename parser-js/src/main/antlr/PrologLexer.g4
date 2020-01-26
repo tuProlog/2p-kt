@@ -6,7 +6,7 @@ var StringType = require("./StringType").StringType
 }
 
 @members {
-DynamicLexer.call(this,input);
+DynamicLexer.call(this);
 
 }
 
