@@ -1,7 +1,7 @@
 const antlr4 = require("antlr4");
 const Lexer = require("./PrologLexer").PrologLexer;
 const assert = require('assert');
-
+const StringType = require("./StringType").STRINGTYPE
 
 //Operators
 var input = "1 + a :- b"
@@ -20,9 +20,8 @@ let tokens = new antlr4.CommonTokenStream(lexer);
 //Tokens, for now empty
 console.log(tokens)
 //Unquote
-assert("String",lexer.unquote("'String'"))
+assert("String"===lexer.unquote("'String'"))
 assert(!lexer.isOperator("violet"))
 assert(lexer.isOperator(":-"))
-escaped = "test\\ninvisible\\rvisible"
-console.log("escaped: " + escaped + " lexered: " + lexer.escape(escaped))
-assert("test\nvisible",lexer.escape(escaped))
+escaped = "test\\nsec\\rvisible"
+assert(JSON.stringify("test\nsec\rvisible") === lexer.escape(JSON.stringify(escaped),StringType.SINGLE_QUOTED))

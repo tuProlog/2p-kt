@@ -46,9 +46,9 @@ function DynamicLexer(input) {
     };
 
     this.escape = function(string,stringType){
-        let res = String("");
+        let res = "";
         const last = string.length - 1;
-        for (let i = 0; i <= last; i++) {
+        for (var i = 0; i <= last; i++) {
             let curChar = string[i];
             let lookahead = i < last ? string[i + 1] : -1;
             if (curChar === '\\') {
@@ -59,7 +59,7 @@ function DynamicLexer(input) {
                 else if (lookahead === 'x' || lookahead === 'X') {
                     let nextSlashPos = string.indexOf('\\', i + 2);
                     if (nextSlashPos > i && nextSlashPos <= last) {
-                        const hexStr = string.substring(o + 2, nextSlashPos);
+                        const hexStr = string.substring(i + 2, nextSlashPos);
                         const hex = parseInt(hexStr, 16);
                         if (isNaN(hex))
                             res += curChar;
@@ -70,7 +70,7 @@ function DynamicLexer(input) {
                     } else
                         res += curChar
                 } else if (!isNaN(parseInt(lookahead)) || !isNaN(parseFloat(lookahead))) {
-                    nextSlashPos = string.indexOf('\\', i + 1);
+                    let nextSlashPos = string.indexOf('\\', i + 1);
                     if (nextSlashPos > i && nextSlashPos <= last) {
                         const octStr = string.substring(i + 1, nextSlashPos);
                         const oct = parseInt(octStr, 8);
@@ -78,7 +78,7 @@ function DynamicLexer(input) {
                             res += curChar;
                         else {
                             res += oct;
-                            i += octStr.length + 2;
+                            i += octStr.length + 1;
                         }
                     } else
                         res += curChar
@@ -95,7 +95,7 @@ function DynamicLexer(input) {
                 i += 1;
             } else
                 res += curChar;
-            console.log("Escape, String=" + string + " StringType=" + stringType + "Iteration: " + i + " actual res=" + res )
+            console.log("Escape: String=" + string + " StringType=" + stringType + " Iteration: " + i + " curChar=" + curChar + " lookahead: " + lookahead + " actual res=" + res )
         }
         return res
     };
