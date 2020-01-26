@@ -1,7 +1,6 @@
 @file:JsModule("./PrologLexer")
 @file:JsNonModule
 
-
 package it.unibo.tuprolog.parser
 
 external class PrologLexer(input: dynamic) {
@@ -15,5 +14,6 @@ external class PrologLexer(input: dynamic) {
     fun getOperators(): Array<String>
     fun isOperator(string: String): Boolean
     fun unquote(string: String):String
-    fun escape(string:String,stringType: Int): String
+    fun escape(string:String, stringType: Int): String
+    fun getAllTokens(): Array<Token>
 }

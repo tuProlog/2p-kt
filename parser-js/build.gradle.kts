@@ -106,7 +106,9 @@ tasks.withType<KotlinJsCompile> {
 
     val copyJsFilesTask = tasks.create<Copy>(name.replace("Kotlin", "")) {
         from("src/main/js")
-        from("src/test/js")
+        if ("test" in name.toLowerCase()) {
+            from("src/test/js")
+        }
         from("$generatedSrcDir/js")
         include("**/*")
         into(compilationDir)

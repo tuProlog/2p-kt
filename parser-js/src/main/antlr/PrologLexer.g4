@@ -2,7 +2,7 @@ lexer grammar PrologLexer;
 
 @header {
 var DynamicLexer = require("./DynamicLexer").DynamicLexer
-var StringType = require("./StringType").STRINGTYPE
+var StringType = require("./StringType").StringType
 }
 
 @members {
