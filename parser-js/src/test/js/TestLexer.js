@@ -1,6 +1,6 @@
-var antlr4 = require("antlr4");
-var Lexer = require("./PrologLexer").PrologLexer
-var assert = require('assert')
+const antlr4 = require("antlr4");
+const Lexer = require("./PrologLexer").PrologLexer;
+const assert = require('assert');
 
 
 //Operators
@@ -10,13 +10,13 @@ lexer = new Lexer(chars);
 //Must be empty
 console.log("Operators: " + lexer.getOperators())
 //Must by false
-console.log("Is red an operator? " + lexer.isOperator("miao"))
+console.log("Is 'red' an operator? " + lexer.isOperator("red"))
 lexer.addOperators("+",":-")
 //Must be + and :-
 console.log("Operators: " + lexer.getOperators())
 //Must be true
-console.log("Is + an operator? " + lexer.isOperator("+"))
-var tokens  = new antlr4.CommonTokenStream(lexer);
+console.log("Is '+' an operator? " + lexer.isOperator("+"))
+let tokens = new antlr4.CommonTokenStream(lexer);
 //Tokens, for now empty
 console.log(tokens)
 //Unquote
