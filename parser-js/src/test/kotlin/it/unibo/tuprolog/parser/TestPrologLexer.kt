@@ -2,6 +2,9 @@ package it.unibo.tuprolog.parser
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
 
 class TestPrologLexer {
     @Test
@@ -10,11 +13,11 @@ class TestPrologLexer {
         assertEquals("PrologLexer.g4", lexer.grammarFileName)
         val modeNames = arrayOf("DEFAULT_MODE")
         lexer.modeNames.forEachIndexed{
-            index,mode -> assertEquals(modeNames[index],mode)
+                index,mode -> assertEquals(modeNames[index],mode)
         }
         val channelNames = arrayOf("DEFAULT_TOKEN_CHANNEL", "HIDDEN")
         lexer.channelNames.forEachIndexed{
-            index,channel -> assertEquals(channelNames[index],channel)
+                index,channel -> assertEquals(channelNames[index],channel)
         }
         val ruleNames = arrayOf("INTEGER", "HEX", "OCT", "BINARY", "SIGN",
             "FLOAT", "CHAR", "BOOL", "LPAR", "RPAR",
@@ -28,8 +31,30 @@ class TestPrologLexer {
             "Atom", "Ws", "OctDigit", "BinDigit",
             "HexDigit", "Digit", "Zero")
         lexer.ruleNames.forEachIndexed{
-            index, rule -> assertEquals(ruleNames[index],rule)
+                index, rule -> assertEquals(ruleNames[index],rule)
         }
+    }
+
+    @Test
+    fun testLexerRecognizeOperators(){
+        val lexer = PrologLexer("a ; b :- c")
+        val ops = listOf(";",":-","+")
+        lexer.addOperators(";",":-","+")
+        lexer.getOperators().forEachIndexed{
+            index,op -> assertEquals(ops[index],op)
+        }
+        assertTrue(lexer.isOperator(";"))
+        assertFalse(lexer.isOperator("jj"))
+        assertTrue(lexer.isOperator(":-"))
+        assertFalse(lexer.isOperator("+a"))
+    }
+
+
+    @Test
+    fun testLexerUnquote(){
+        val lexer = PrologLexer(null)
+        assertEquals("String",lexer.unquote("'String'"))
+        assertEquals("sec''sds",lexer.unquote("'sec''sds'"))
     }
 
 }

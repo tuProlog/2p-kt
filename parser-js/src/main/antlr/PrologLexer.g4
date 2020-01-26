@@ -6,27 +6,12 @@ var StringType = require("./StringType").STRINGTYPE
 }
 
 @members {
-Object.defineProperty(PrologLexer.prototype, "dynamicLexer", {
-        get : function() {
-                if (this._dynamicLexer === undefined) {
-                    this._dynamicLexer = new DynamicLexer();
-                }
-                return this._dynamicLexer;
-        }
-});
+DynamicLexer.call(this,input);
 
-PrologLexer.prototype.escape = function() {
-	return this.dynamicLexer.escape.apply(this.dynamicLexer, arguments);
-};
-
-PrologLexer.prototype.unquote = function() {
-	return this.dynamicLexer.unquote.apply(this.dynamicLexer, arguments);
-};
-
-PrologLexer.prototype.isOperator = function() {
-	return this.dynamicLexer.isOperator.apply(this.dynamicLexer, arguments);
-};
 }
+
+
+
 
 tokens { VARIABLE }
 
@@ -55,7 +40,7 @@ FLOAT
     ;
 
 CHAR
-    : Zero '\'' ((~[\n\t\r\f]) | Escapable | DoubleDQ | DoubleSQ) { setText(escape(getText(), SINGLE_QUOTED)); }
+    : Zero '\'' ((~[\n\t\r\f]) | Escapable | DoubleDQ | DoubleSQ) { setText(escape(getText(), StringType.SINGLE_QUOTED)); }
     ;
 
 BOOL
@@ -104,11 +89,11 @@ VARIABLE
     ;
 
 SQ_STRING
-    : '\'' ((~[\\\n']) | Escapable | DoubleSQ)* '\'' { setText(escape(unquote(getText()), SINGLE_QUOTED)); }
+    : '\'' ((~[\\\n']) | Escapable | DoubleSQ)* '\'' { setText(escape(unquote(getText()), StringType.SINGLE_QUOTED)); }
     ;
 
 DQ_STRING
-    : '"' ((~[\\\n"]) | Escapable | DoubleDQ)* '"' { setText(escape(unquote(getText()), DOUBLE_QUOTED)); }
+    : '"' ((~[\\\n"]) | Escapable | DoubleDQ)* '"' { setText(escape(unquote(getText()), StringType.DOUBLE_QUOTED)); }
     ;
 
 COMMA

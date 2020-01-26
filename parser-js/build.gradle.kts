@@ -45,6 +45,10 @@ kotlin {
     }
 
     with(sourceSets["test"]) {
+        with(kotlin){
+            srcDir("src/test/js")
+            srcDir("src/test/kotlin")
+        }
         dependencies {
             implementation(kotlin("test-js"))
         }
@@ -102,6 +106,7 @@ tasks.withType<KotlinJsCompile> {
 
     val copyJsFilesTask = tasks.create<Copy>(name.replace("Kotlin", "")) {
         from("src/main/js")
+        from("src/test/js")
         from("$generatedSrcDir/js")
         include("**/*")
         into(compilationDir)
