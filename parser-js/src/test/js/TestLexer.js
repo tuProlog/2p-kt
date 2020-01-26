@@ -6,17 +6,17 @@ const StringType = require("./StringType").STRINGTYPE
 //Operators
 var input = "1 + a :- b"
 var chars = new antlr4.InputStream(input);
-lexer = new Lexer(chars);
+var lexer = new Lexer(chars);
 //Must be empty
 console.log("Operators: " + lexer.getOperators())
-//Must by false
+//Must be false
 console.log("Is 'red' an operator? " + lexer.isOperator("red"))
 lexer.addOperators("+",":-")
 //Must be + and :-
 console.log("Operators: " + lexer.getOperators())
 //Must be true
 console.log("Is '+' an operator? " + lexer.isOperator("+"))
-let tokens = new antlr4.CommonTokenStream(lexer);
+var tokens = antlr4.CommonTokenStream(lexer).tokens
 //Tokens, for now empty
 console.log(tokens)
 //Unquote

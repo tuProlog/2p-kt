@@ -40,7 +40,7 @@ FLOAT
     ;
 
 CHAR
-    : Zero '\'' ((~[\n\t\r\f]) | Escapable | DoubleDQ | DoubleSQ) { setText(escape(getText(), StringType.SINGLE_QUOTED)); }
+    : Zero '\'' ((~[\n\t\r\f]) | Escapable | DoubleDQ | DoubleSQ) { this.text = this.escape(this.text, StringType.SINGLE_QUOTED); }
     ;
 
 BOOL
@@ -89,11 +89,11 @@ VARIABLE
     ;
 
 SQ_STRING
-    : '\'' ((~[\\\n']) | Escapable | DoubleSQ)* '\'' { setText(escape(unquote(getText()), StringType.SINGLE_QUOTED)); }
+    : '\'' ((~[\\\n']) | Escapable | DoubleSQ)* '\'' { this.text = this.escape(this.unquote(this.text), StringType.SINGLE_QUOTED); }
     ;
 
 DQ_STRING
-    : '"' ((~[\\\n"]) | Escapable | DoubleDQ)* '"' { setText(escape(unquote(getText()), StringType.DOUBLE_QUOTED)); }
+    : '"' ((~[\\\n"]) | Escapable | DoubleDQ)* '"' { this.text = this.escape(this.unquote(this.text), StringType.DOUBLE_QUOTED); }
     ;
 
 COMMA
@@ -129,15 +129,15 @@ LINE_COMMENT
     ;
 
 OPERATOR
-    : (Symbols | Atom) { isOperator(getText()) }?
+    : (Symbols | Atom) { this.isOperator(this.text) }?
     ;
 
 ATOM
-    : (Symbols | Atom) { !isOperator(getText()) }?
+    : (Symbols | Atom) { !this.isOperator(this.text) }?
     ;
 
 fragment Symbols
-    : OpSymbol+ { !getText().startsWith("/*") }?
+    : OpSymbol+ { !this.text.startsWith("/*") }?
     | '!'
     | ';'
     ;
