@@ -1,10 +1,10 @@
 const antlr4 = require("antlr4");
 const Lexer = require("./PrologLexer").PrologLexer;
 const assert = require('assert');
-const StringType = require("./StringType").STRINGTYPE
+const StringType = require("./StringType").StringType
 
 //Operators
-var input = "1 + a :- b"
+var input = "1 + a :- b";
 var chars = new antlr4.InputStream(input);
 var lexer = new Lexer(chars);
 //Must be empty

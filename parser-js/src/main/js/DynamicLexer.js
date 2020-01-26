@@ -1,8 +1,8 @@
-const StringType = require("./StringType").STRINGTYPE;
+const StringType = require("./StringType").StringType;
 
 function DynamicLexer(input) {
 
-    const operators = new Array()
+    const operators = [];
 
     this.isOperator = function isOperator(string){
         return operators.includes(string)

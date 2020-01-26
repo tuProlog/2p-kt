@@ -1,4 +1,6 @@
-const STRINGTYPE = Object.freeze({
-    SINGLE_QUOTED: 0, DOUBLE_QUOTED: 1
-})
-exports.STRINGTYPE = STRINGTYPE
+const StringType = Object.freeze({
+    SINGLE_QUOTED: 0,
+    DOUBLE_QUOTED: 1
+});
+
+exports.StringType = StringType
