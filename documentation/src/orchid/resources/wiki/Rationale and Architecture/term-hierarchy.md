@@ -179,19 +179,108 @@ The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a simi
 {{ load('assets/diagrams/var.puml') | raw }}
 <!--div-->
 
-[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var) are [Term]s characterised by a `name` and a `completeName`.
+[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s identified by a _complete_ name, that is, a string in the form:
+```
+<Name>_<Suffix> 
+``` 
+(with no angular parenthesis).
+The first section the variable (simple) name, whereas the last section is the variable suffix.
+The suffix is guaranteed to make the variable complete name unique.
+Furthermore, the suffix is guaranteed to be a string matching the `[_A-Z](_A-Za-z0-9)*` regex.
+Accordingly, two variables may have the same `name`, but they are considered identical only if their suffixes are equal as well.
 
-### Numbers 
+If a variable simple name is `"_"`, then the variable is said to be _anonymous_.
+Furthermore, if a variable simple name matches the `[_A-Z](_A-Za-z0-9)*` regex, then the variable is said to be _well-formed_.
+
+Non-well-formed variables can be instantiated in 2P-Kt.
+However, they are graphically represented as strings through the ad-hoc notation exemplified below:
+```
+`<Non-well-formed Name>_<Suffix>`
+```
+
+### Main functionalities of variables
+
+Given a `Var`iable it is possible to:
+
+- retrieve its unique, _complete_ name through the `completeName: String` property
+
+- retrieve its simple name through the `name: String` property
+
+- check if it is _anonymous_, through the `isAnonymous: Boolean` property
+
+- check if its name is _well-formed_, through the `isWellFormed: Boolean` property  
+
+### Instantiation of variables
+
+Variables can only be instantiated through two static factory methods, namely `Var.of` and `Var.anonymous`.
+In both cases, the instantiating code has no way to setup the suffix of the to-be-created variable.
+In other words, the aforementioned factory methods are guaranteed to produce a fresh variable which is different (w.r.t. `Term.equals`)
+than any other variable which was created before it.
+
+In particular:
+- `Var.of(name: String)` creates a new instance of `Var` whose name is `name` and whose suffix is non-deterministically chosen by 2P-Kt
+- `Var.anonymous()` creates a new instance of `Var` whose name is `"_"` and whose suffix is non-deterministically chosen by 2P-Kt
+
+In some cases, developers may be in need of re-using previously instantiated variables.
+In such situation, they may either store `Var` instances through Kotlin variables or use [`Scope`s](/kotlindoc/it/unibo/tuprolog/core/scope/) instead.
+
+### Constants 
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/constant.puml') | raw }}
 <!--div-->
+
+[`Constant`s](/kotlindoc/it/unibo/tuprolog/core/constant/) are ground, non-compound terms characterised by a _value_.
+Such value can be retrieved by users through the `value: Any` property.
+
+Constants can be either numbers or atoms (i.e. strings).
+They cannot be instantiated directly, as they must be instantiated through their specific interfaces.
 
 ### Numbers 
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/numeric.puml') | raw }}
 <!--div-->
+
+Instances of the [`Numeric`](/kotlindoc/it/unibo/tuprolog/core/numeric/) interface are a particular sorts of constant
+whose value is either an [`Integer`](/kotlindoc/it/unibo/tuprolog/core/integer/) or a [`Real`](/kotlindoc/it/unibo/tuprolog/core/real/) number.
+
+Behind the scenes, 2P-Kt employs `BigInteger`s and `BigDecimal`s to reify numbers.
+Briefly speaking, this means:
+- integers are virtually unlimited in length, thus no over- or under-flow exception may ever arise
+- decimal computations may be performed with arbitrary (and configurable) precision
+
+Of course, both the `BigInteger` and `BigDecimal` classes expose conversion methods to explicitly convert their instances into
+ordinary Kotlin numeric types such as `Int`, `Long`, `Short`, `Byte`, `Float`, or `Double`.
+Inverse conversion methods are available as well, usually as static factory methods such as `BigInteger.of` or `BigDecimal.of`. 
+
+### Main functionalities of numbers
+
+Given a `Numeric` object it is possible to:
+- retrieve the corresponding integer value, through the `intValue: BigInteger`
+- retrieve the corresponding real value, through the `decimalValue: BigDecimal`
+
+Of course, the most adequate type is used behind the scenes.
+In fact, the `value: Any` property always returns a value having the most adequate type for representing the current number.
+
+Finally, given a couple of `Numeric` objects, it is possible to compare them by value through the `compareTo(other: Numeric): Int` method.
+As a side note, it is worth to be mentioned that -- thanks to [Kotlin's Operator Overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) feature -- `Numeric` objects can be
+compared in Kotlin through ordinary comparison operators such as `>=`, `>`, `<`, `=<`.
+
+### Instantiation of numbers
+
+`Numeric` terms can be created through the many static, factory methods in the form `Numeric.of`, other than the static factories in 
+`Real` and `Integer`.
+
+In particular:
+- `Numeric.of(value: TYPE): Integer` where `TYPE` ∈ `{Int, Long, Short, Byte, BigInteger}` creates a novel instance of `Integer`
+    + notice that these are just aliases for `Integer.of(value: TYPE): Integer`
+- `Numeric.of(value: TYPE): Real` where `TYPE` ∈ `{Float, Double, BigDecimal}` creates a novel instance of `Real`
+    + notice that these are just aliases for `Real.of(value: TYPE): Real`
+- `Numeric.of(value: String): Numeric` creates a novel instance of `Numeric` by parsing the provided string and by instantiating the most appropriate specific type
+    + notice that this method just tries to parse a string through `Integer.of(value: String): Integer` and falls back on
+    `Real.of(value: String): Real` in case of failure
+- `Integer.of(value: String, radix: Int): Integer` creates a novel instance of `Integer` by parsing the provided string as a number whose base is `radix`
 
 ### Structures 
 

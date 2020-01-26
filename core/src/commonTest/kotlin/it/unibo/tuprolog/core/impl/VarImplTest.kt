@@ -137,7 +137,7 @@ internal class VarImplTest {
         }
 
         onCorrespondingItems(incorrectNamedVarsToString, VarUtils.incorrectlyNamedVars) { underTestToString, varName ->
-            assertTrue { underTestToString.matches("¿${varName}_[0-9]*\\?".toRegex()) }
+            assertTrue { underTestToString.matches("`${varName}_[0-9]*`".toRegex()) }
         }
     }
 
