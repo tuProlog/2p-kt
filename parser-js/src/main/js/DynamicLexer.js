@@ -1,22 +1,32 @@
 const StringType = require("./StringType").StringType;
 
-function DynamicLexer(input) {
+const enableLogging = true;
 
-    const operators = [];
+function log(...args) {
+    if (enableLogging) {
+        console.log(...args)
+    }
+}
 
-    this.isOperator = function isOperator(string){
-        return operators.includes(string)
+function DynamicLexer() {
+
+    this.operators = [];
+
+    this.isOperator = function isOperator(string) {
+        log("check if operator " + string + " is in " + JSON.stringify(this.operators));
+        return this.operators.includes(string)
     };
 
-    this.getOperators = function getOperators(){
-        return operators;
+    this.getOperators = function getOperators() {
+        return [...this.operators];
     };
 
-    this.unquote = function(string){
-        return string.substring(1,string.length -1);
+    this.unquote = function (string) {
+        log("unquoting string " + string);
+        return string.substring(1, string.length - 1);
     };
 
-    this.escapeChar = function(repr){
+    this.escapeChar = function (repr) {
         switch (repr) {
             case 'a':
                 return "\u0007";
@@ -45,65 +55,73 @@ function DynamicLexer(input) {
         }
     };
 
-    this.escape = function(string,stringType){
+    this.escape = function (string, stringType) {
         let res = "";
         const last = string.length - 1;
-        for (var i = 0; i <= last; i++) {
+        for (let i = 0; i <= last; i++) {
             let curChar = string[i];
             let lookahead = i < last ? string[i + 1] : -1;
             if (curChar === '\\') {
-                if (i === last)
+                if (i === last) {
                     res += '\\';
-                else if (lookahead === '\n')
+                } else if (lookahead === '\n') {
                     i += 1;
-                else if (lookahead === 'x' || lookahead === 'X') {
+                } else if (lookahead === 'x' || lookahead === 'X') {
                     let nextSlashPos = string.indexOf('\\', i + 2);
                     if (nextSlashPos > i && nextSlashPos <= last) {
                         const hexStr = string.substring(i + 2, nextSlashPos);
                         const hex = parseInt(hexStr, 16);
-                        if (isNaN(hex))
+                        if (isNaN(hex)) {
                             res += curChar;
-                        else {
+                        } else {
                             res += hex;
                             i += hexStr.length + 2;
                         }
-                    } else
+                    } else {
                         res += curChar
+                    }
                 } else if (!isNaN(parseInt(lookahead)) || !isNaN(parseFloat(lookahead))) {
                     let nextSlashPos = string.indexOf('\\', i + 1);
                     if (nextSlashPos > i && nextSlashPos <= last) {
                         const octStr = string.substring(i + 1, nextSlashPos);
                         const oct = parseInt(octStr, 8);
-                        if (isNaN(oct))
+                        if (isNaN(oct)) {
                             res += curChar;
-                        else {
+                        } else {
                             res += oct;
                             i += octStr.length + 1;
                         }
-                    } else
+                    } else {
                         res += curChar
-                } else if (i < last - 1 && lookahead === '\r' && string[i + 2] === '\n')
+                    }
+                } else if (i < last - 1 && lookahead === '\r' && string[i + 2] === '\n') {
                     i += 2;
-                else {
+                } else {
                     const escaped = this.escapeChar(lookahead);
-                    res+=escaped;
+                    res += escaped;
                     i += 1;
                 }
             } else if ((stringType === StringType.DOUBLE_QUOTED && curChar === '"' && lookahead === '"')
                 || (stringType === StringType.SINGLE_QUOTED && curChar === '\'' && lookahead === '\'')) {
                 res += curChar;
                 i += 1;
-            } else
+            } else {
                 res += curChar;
-            console.log("Escape: String=" + string + " StringType=" + stringType + " Iteration: " + i + " curChar=" + curChar + " lookahead: " + lookahead + " actual res=" + res )
+            }
+            log("Escape: String=" + string + " StringType=" + stringType + " Iteration: " + i + " curChar=" + curChar + " lookahead: " + lookahead + " actual res=" + res)
         }
         return res
     };
 
-    this.addOperators = function addOperators(...args){
+    this.addOperators = function addOperators(...args) {
+        const thiz = this;
         args.forEach(
-            op => { operators.push(op) }
-        )
+            op => {
+                log("add operator: " + op);
+                thiz.operators.push(op)
+            }
+        );
+        log("new operator set: " + JSON.stringify(this.operators))
     }
 
 }
