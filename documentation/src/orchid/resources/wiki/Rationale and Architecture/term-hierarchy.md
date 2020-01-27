@@ -179,7 +179,8 @@ The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a simi
 {{ load('assets/diagrams/var.puml') | raw }}
 <!--div-->
 
-[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s identified by a _complete_ name, that is, a string in the form:
+[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s acting as placeholders of other `Term`s.
+They are identified by a _complete_ name, that is, a string in the form:
 ```
 <Name>_<Suffix> 
 ``` 
@@ -287,6 +288,9 @@ In particular:
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/struct.puml') | raw }}
 <!--div-->
+
+[`Struct`ures](/kotlindoc/it/unibo/tuprolog/core/struct/) are `Term`s _composed_ by other `Term`s.
+They are characterised by a _functor_ -- which states thir name -- and an _arity_---which states how many (sub-)terms (or arguments) compose them.
 
 ### Atoms 
 
