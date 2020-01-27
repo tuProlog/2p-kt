@@ -18,6 +18,17 @@ function DynamicParser(input, lexer){
         set: function(value){_lexer = value}
     })
 
+    this.P0 = 1201
+    this.TOP = 1200
+    this.BOTTOM = 0
+    this.WITH_COMMA = []
+    this.NO_COMMA = [","]
+    this.NO_COMMA_PIPE = [",","|"]
+
+    this.isAnonymous = function(token){
+        return ((token.length == 1) && (token[0] == '_')) || ((token.text.length==1) && (token.text[0] == '_'))
+    }
+
     this.getOperatorPriority = function(operator,associativity){
         _operators.forEach(
             op => {
@@ -151,3 +162,5 @@ function DynamicParser(input, lexer){
     }
 
 }
+
+exports.DynamicParser = DynamicParser
