@@ -8,7 +8,8 @@ const Associativity = Object.freeze({
     FY: 6,
     PREFIX: [this.FX, this.FY],
     NON_PREFIX: [this.XF,this.YF,this.XFY,this.YFX,this.XFX],
-    INFIX: [this.XFX,this.XFY,this.YFX]
+    INFIX: [this.XFX,this.XFY,this.YFX],
+    POSTFIX: [this.XF,this.YF]
 });
 
 
