@@ -10,7 +10,7 @@ import it.unibo.tuprolog.parser.Associativity.Companion.PREFIX
 import it.unibo.tuprolog.parser.Associativity.*
 
 
-class PrologVisitor : PrologParserVisitor(){
+class PrologVisitor : PrologParserVisitor<Term>(){
     private val scope: Scope = Scope.empty()
 
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term =
@@ -43,7 +43,7 @@ class PrologVisitor : PrologParserVisitor(){
         return scope.numOf(value)
     }
 
-    override fun visitReal(ctx: RealContext): Term? {
+    override fun visitReal(ctx: RealContext): Term {
         var raw = ctx.value.text
         if (ctx.sign != null) {
             raw = ctx.sign.text + raw
@@ -51,7 +51,7 @@ class PrologVisitor : PrologParserVisitor(){
         return try {
             scope.numOf(raw.toDouble())
         } catch (notAFloating: NumberFormatException) {
-            return null
+            TODO("throw a parse exception here")
         }
     }
 
