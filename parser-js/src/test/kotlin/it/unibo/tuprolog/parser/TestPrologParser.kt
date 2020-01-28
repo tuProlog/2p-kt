@@ -17,7 +17,8 @@ class TestPrologParser {
     @Test
     fun testInteger(){
         val parser = PrologParser(BufferedTokenStream(PrologLexer("1")))
-        val tc = parser.singletonTerm().term()
+        val stc = parser.singletonTerm()
+        val tc = stc.term()
         assertTrue(tc.isNum && !tc.isExpr && !tc.isList && !tc.isStruct && !tc.isVar)
         val nc = tc.number()
         assertTrue(nc.isInt && !nc.isReal)
