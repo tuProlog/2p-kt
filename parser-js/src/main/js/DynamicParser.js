@@ -7,7 +7,6 @@ const PRIORITY = 1;
 
 function DynamicParser(input, lexer) {
     const _operators = Array(Array());
-    antlr4.Parser.call(this, input);
     let _lexer = lexer === 'undefined' ? input.getTokenSource() : lexer;
 
     Object.defineProperty(this, "lexer", {
