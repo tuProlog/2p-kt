@@ -51,7 +51,13 @@ class PrologVisitor : PrologParserVisitor<Term>(){
         return try {
             scope.numOf(raw.toDouble())
         } catch (notAFloating: NumberFormatException) {
-            TODO("throw a parse exception here")
+            throw ParseException(
+                null,
+                ctx.value.text,
+                ctx.value.line,
+                "Invalid real number format: " + ctx.value.text,
+                null
+            )
         }
     }
 
