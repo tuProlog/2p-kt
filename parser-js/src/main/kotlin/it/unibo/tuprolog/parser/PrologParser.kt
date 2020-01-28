@@ -55,6 +55,8 @@ external class PrologParser(input: TokenStream){
     }
 
 
+    fun getTokenStream(): CommonTokenStream
+    fun addOperator(functor: String,associativity: Associativity,priority: Int): Unit
     fun singletonTerm(): SingletonTermContext
     fun singletonExpression(): SingletonExpressionContext
     fun theory(): TheoryContext
@@ -86,6 +88,8 @@ external class TheoryContext: ParserRuleContext{
 }
 
 external class OptClauseContext: ParserRuleContext{
+    val isOver: Boolean = definedExternally
+
     fun clause(): ClauseContext
 }
 
