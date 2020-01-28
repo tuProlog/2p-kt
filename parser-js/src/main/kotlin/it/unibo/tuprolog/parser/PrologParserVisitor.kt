@@ -5,20 +5,20 @@ package it.unibo.tuprolog.parser
 
 open external class PrologParserVisitor {
 
-    fun <T>visitSingletonTerm(ctx: SingletonTermContext): T
-    fun <T>visitSingletonExpression(ctx: SingletonTermContext): T
-    fun <T>visitTheory(ctx: TheoryContext): T
-    fun <T>visitOptClause(ctx: OptClauseContext): T
-    fun <T>visitClause(ctx: ClauseContext): T
-    fun <T>visitExpression(ctx: ExpressionContext): T
-    fun <T>visitOuter(ctx: OuterContext): T
-    fun <T>visitOp(ctx: OpContext): T
-    fun <T>visitTerm(ctx: TermContext): T
-    fun <T>visitNumber(ctx: NumberContext): T
-    fun <T>visitInteger(ctx: IntegerContext): T
-    fun <T>visitReal(ctx: RealContext): T
-    fun <T>visitVariable(ctx: VariableContext): T
-    fun <T>visitStructure(ctx: StructureContext): T
-    fun <T>visitList(ctx: ListContext): T
-    fun <T>visitSet(ctx: SetContext): T
+    open fun visitSingletonTerm(ctx: SingletonTermContext): dynamic
+    open fun visitSingletonExpression(ctx: SingletonExpressionContext): dynamic
+    open fun visitTheory(ctx: TheoryContext): dynamic
+    open fun visitOptClause(ctx: OptClauseContext): dynamic
+    open fun visitClause(ctx: ClauseContext): dynamic
+    open fun visitExpression(ctx: ExpressionContext): dynamic
+    open fun visitOuter(ctx: OuterContext): dynamic
+    open fun visitOp(ctx: OpContext): dynamic
+    open fun visitTerm(ctx: TermContext): dynamic
+    open fun visitNumber(ctx: NumberContext): dynamic
+    open fun visitInteger(ctx: IntegerContext): dynamic
+    open fun visitReal(ctx: RealContext): dynamic
+    open fun visitVariable(ctx: VariableContext): dynamic
+    open fun visitStructure(ctx: StructureContext): dynamic
+    open fun visitList(ctx: ListContext): dynamic
+    open fun visitSet(ctx: SetContext): dynamic
 }

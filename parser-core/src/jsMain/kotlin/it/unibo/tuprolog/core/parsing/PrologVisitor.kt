@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Term as Term
 import it.unibo.tuprolog.parser.*
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.parser.Associativity.Companion.INFIX
@@ -10,7 +10,7 @@ import it.unibo.tuprolog.parser.Associativity.Companion.PREFIX
 import it.unibo.tuprolog.parser.Associativity.*
 
 
-class PrologExpressionVisitor : PrologParserVisitor(){
+class PrologVisitor : PrologParserVisitor(){
     private val scope: Scope = Scope.empty()
 
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term =
@@ -35,7 +35,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     }
 
     override fun visitTerm(ctx: TermContext): Term =
-        if (ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this)
+        if (ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this) as Term
 
 
     override fun visitInteger(ctx: IntegerContext): Term {
@@ -114,14 +114,13 @@ class PrologExpressionVisitor : PrologParserVisitor(){
             ctx.isChar -> {
                 clean = str.substring(2)
                 if (clean.length != 1) {
-                   // throw ParseException(
-                        //null,
-                       // ctx.text,
-                       // ctx.value.line,
-                       // ctx.value.charPositionInLine,
-                       // "Invalid character literal: " + ctx.text,
-                       // null
-                    //)
+                    throw ParseException(
+                        null,
+                       ctx.value.text,
+                       ctx.value.line,
+                       "Invalid character literal: " + ctx.value.text,
+                       null
+                    )
                 }
                 return BigInteger.of(clean[0].toInt())
             }
@@ -225,7 +224,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     }
 
     private fun listOfOperands(ctx: ExpressionContext): List<Term> =
-        (listOf(ctx.left) + ctx.right).map { it.accept(this) }
+        (listOf(ctx.left) + ctx.right.toList()).map { it!!.accept<Term>(this) }
 
     private fun listOfOperators(ctx: ExpressionContext): List<String> =
         ctx.operators.map { it.symbol.text }
