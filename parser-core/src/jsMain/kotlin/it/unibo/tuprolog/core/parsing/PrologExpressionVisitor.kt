@@ -25,7 +25,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     override fun visitExpression(ctx: ExpressionContext): Term {
         return handleOuters(
             when {
-                ctx.isTerm -> visitTerm(ctx.left)
+                ctx.isTerm -> visitTerm(ctx.left!!)
                 INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
                 POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
@@ -80,7 +80,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     override fun visitList(ctx: ListContext): Term {
         val terms = ctx.items.map(this::visitExpression)
         return if (ctx.hasTail) {
-            scope.listFrom(terms, ctx.tail.accept(this))
+            scope.listFrom(terms, ctx.tail?.accept(this))
         } else {
             scope.listOf(terms)
         }
@@ -88,7 +88,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
 
     override fun visitSet(ctx: SetContext): Term {
         return if (ctx.length == 1)
-            scope.setOf(ctx.items[0].accept(this))
+            scope.setOf(ctx.items[0].accept<Term>(this))
         else
             scope.setOf(ctx.items.map(this::visitExpression))
     }
@@ -114,14 +114,14 @@ class PrologExpressionVisitor : PrologParserVisitor(){
             ctx.isChar -> {
                 clean = str.substring(2)
                 if (clean.length != 1) {
-                    throw ParseException(
-                        null,
-                        ctx.text,
-                        ctx.value.line,
-                        ctx.value.charPositionInLine,
-                        "Invalid character literal: " + ctx.text,
-                        null
-                    )
+                   // throw ParseException(
+                        //null,
+                       // ctx.text,
+                       // ctx.value.line,
+                       // ctx.value.charPositionInLine,
+                       // "Invalid character literal: " + ctx.text,
+                       // null
+                    //)
                 }
                 return BigInteger.of(clean[0].toInt())
             }
@@ -137,7 +137,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     }
 
     private fun visitPostfixExpression(ctx: ExpressionContext): Term =
-        postfix(ctx.left.accept(this), ctx.operators.map {
+        postfix(ctx.left?.accept(this)!!, ctx.operators.map {
             it.symbol.text
         })
 
@@ -175,7 +175,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     }
 
     private fun visitInfixNonAssociativeExpression(ctx: ExpressionContext): Term {
-        val operands = (listOf(ctx.left) + ctx.right).map { it.accept(this) }
+        val operands: List<Term> = (listOf(ctx.left!!) + ctx.right.asList()).map { it.accept<Term>(this) }
         val operators = ctx.operators.map { it.symbol.text }
         return infixNonAssociative(operands, operators)
     }
@@ -187,7 +187,7 @@ class PrologExpressionVisitor : PrologParserVisitor(){
     private fun handleOuters(expression: Term, outers: List<OuterContext>): Term {
         var result = expression
         for (o in outers) {
-            val operands = listOf(result) + o.right.map { it.accept(this) }
+            val operands = listOf(result) + o.right.map { it.accept<Term>(this) }
             val operators = o.operators.map { it.symbol.text }
             result = when (o.associativity!!) {
                 XFY -> infixRight(operands, operators)

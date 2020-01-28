@@ -54,6 +54,7 @@ external class PrologParser(input: TokenStream){
         val RULE_set: Int
     }
 
+
     fun singletonTerm(): SingletonTermContext
     fun singletonExpression(): SingletonExpressionContext
     fun theory(): TheoryContext
@@ -72,28 +73,27 @@ external class PrologParser(input: TokenStream){
     fun set(): SetContext
 }
 
-external class SingletonTermContext{
+external class SingletonTermContext: ParserRuleContext{
     fun term(): TermContext
 }
 
-external class SingletonExpressionContext{
-    fun expression(): ExpressionContext
-
-}
-
-external class TheoryContext{
-    fun clause(): ClauseContext
-}
-
-external class OptClauseContext{
-    fun clause(): ClauseContext
-}
-
-external class ClauseContext{
+external class SingletonExpressionContext: ParserRuleContext{
     fun expression(): ExpressionContext
 }
 
-external class ExpressionContext{
+external class TheoryContext: ParserRuleContext{
+    fun clause(): ClauseContext
+}
+
+external class OptClauseContext: ParserRuleContext{
+    fun clause(): ClauseContext
+}
+
+external class ClauseContext: ParserRuleContext{
+    fun expression(): ExpressionContext
+}
+
+external class ExpressionContext: ParserRuleContext{
     val priority: Int = definedExternally
     val disabled: Boolean = definedExternally
     val isTerm: Boolean = definedExternally
@@ -113,7 +113,7 @@ external class ExpressionContext{
     fun outer(): OuterContext
 }
 
-external class OuterContext{
+external class OuterContext: ParserRuleContext{
     val top: Int
     val bottom: Int
     val priority: Int
@@ -131,21 +131,21 @@ external class OuterContext{
     fun outer(): OuterContext
 }
 
-external class OpContext{
+external class OpContext: ParserRuleContext{
     val priority: Int
     val associativity: Associativity
     val symbol: Token = definedExternally
 
-
 }
 
-external class TermContext{
+external class TermContext: ParserRuleContext{
     val isNum: Boolean
     val isVar: Boolean
     val isList: Boolean
     val isStruct: Boolean
     val isExpr: Boolean
     val isSet: Boolean
+
     fun variable(): VariableContext
     fun structure(): StructureContext
     fun list(): ListContext
@@ -154,33 +154,40 @@ external class TermContext{
     fun expression(): ExpressionContext
 }
 
-external class NumberContext{
+external class NumberContext: ParserRuleContext{
     val isInt: Boolean
     val isReal: Boolean
     fun integer(): IntegerContext
     fun real(): RealContext
+
 }
 
-external class IntegerContext{
+external class IntegerContext: ParserRuleContext{
     val isHex: Boolean
     val isOct: Boolean
     val isBin: Boolean
     val isChar: Boolean
     val value: Token
     val sign: Token
+
+
 }
 
-external class RealContext{
+external class RealContext: ParserRuleContext{
     val value: Token
     val sign: Token
+
+
 }
 
-external class VariableContext{
+external class VariableContext: ParserRuleContext{
     val isAnonymous: Boolean
     val value: Token
+
+
 }
 
-external class StructureContext{
+external class StructureContext: ParserRuleContext{
     val arity: Int
     val isTruth: Boolean
     val isList: Boolean
@@ -194,20 +201,23 @@ external class StructureContext{
     fun expression(): ExpressionContext
 }
 
-external class ListContext{
+external class ListContext: ParserRuleContext{
     val length: Int= definedExternally
     val hasTail: Boolean
     val _expression: ExpressionContext = definedExternally
     val items: Array<ExpressionContext>
     val tail: ExpressionContext? = definedExternally
 
+
     fun expression(): ExpressionContext
 }
 
-external class SetContext{
+external class SetContext: ParserRuleContext{
     val length: Int = definedExternally
     val _expression: ExpressionContext = definedExternally
     val items: Array<ExpressionContext>
+
+
     fun expression(): ExpressionContext
 }
 
