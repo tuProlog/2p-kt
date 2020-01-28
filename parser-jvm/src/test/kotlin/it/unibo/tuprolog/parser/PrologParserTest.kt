@@ -191,7 +191,7 @@ class PrologParserTest {
                 PrologParser.TermContext::structure){
                     s -> s.arity == s.args.count() &&
                     s.arity == 0 &&
-                    s.isSet && !s.isList && !s.isTruth &&
+                    s.isString && !s.isList && !s.isTruth &&
                     s.functor.text == "a" &&
                     (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING)
             }

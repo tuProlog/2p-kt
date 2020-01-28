@@ -4,7 +4,7 @@
 package it.unibo.tuprolog.parser
 
 
-external class PrologParser(input: dynamic){
+external class PrologParser(input: TokenStream){
     companion object {
         val EOF: Int
         val VARIABLE: Int
@@ -94,17 +94,17 @@ external class ClauseContext{
 }
 
 external class ExpressionContext{
-    val priority: Int
-    val disabled: Boolean
-    val isTerm: Boolean
-    val associativity: Associativity
-    val bottom: Int
-    val left: TermContext
-    val _op: OpContext
+    val priority: Int = definedExternally
+    val disabled: Boolean = definedExternally
+    val isTerm: Boolean = definedExternally
+    val associativity: Associativity = definedExternally
+    val bottom: Int = definedExternally
+    val left: TermContext? = definedExternally
+    val _op: OpContext = definedExternally
     val operators: Array<OpContext>
-    val _expression: ExpressionContext
+    val _expression: ExpressionContext? = definedExternally
     val right: Array<ExpressionContext>
-    val _outer: OuterContext
+    val _outer: OuterContext? = definedExternally
     val outers: Array<OuterContext>
 
     fun term(): TermContext
@@ -119,6 +119,12 @@ external class OuterContext{
     val priority: Int
     val isTerm: Boolean
     val associativity: Associativity
+    val _op: OpContext = definedExternally
+    val operators: Array<OpContext>
+    val _expression: ExpressionContext? = definedExternally
+    val right: Array<ExpressionContext>
+    val _outer: OuterContext? = definedExternally
+    val outers: Array<OuterContext>
 
     fun op(): OpContext
     fun expression(): ExpressionContext
@@ -128,7 +134,7 @@ external class OuterContext{
 external class OpContext{
     val priority: Int
     val associativity: Associativity
-    val symbol: Token
+    val symbol: Token = definedExternally
 
 
 }
@@ -181,26 +187,26 @@ external class StructureContext{
     val isSet: Boolean
     val isString: Boolean
     val isCut: Boolean
-    val functor: Token
-    val _expression: ExpressionContext
+    val functor: Token = definedExternally
+    val _expression: ExpressionContext? = definedExternally
     val args: Array<ExpressionContext>
 
     fun expression(): ExpressionContext
 }
 
 external class ListContext{
-    val length: Int
+    val length: Int= definedExternally
     val hasTail: Boolean
-    val _expression: ExpressionContext
+    val _expression: ExpressionContext = definedExternally
     val items: Array<ExpressionContext>
-    val tail: ExpressionContext
+    val tail: ExpressionContext? = definedExternally
 
     fun expression(): ExpressionContext
 }
 
 external class SetContext{
-    val length: Int
-    val _expression: ExpressionContext
+    val length: Int = definedExternally
+    val _expression: ExpressionContext = definedExternally
     val items: Array<ExpressionContext>
     fun expression(): ExpressionContext
 }
