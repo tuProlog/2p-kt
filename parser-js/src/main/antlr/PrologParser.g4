@@ -5,8 +5,27 @@ options {
 }
 
 @header {
-var DynamicParser = require("./DynamicParser").DynamicParser
+var DynamicParserModule = require("./DynamicParser")
+var DynamicParser = DynamicParserModule.DynamicParser
 var Associativity = require("./Associativity").Associativity
+
+var P0 = 1201;
+var TOP = 1200;
+var BOTTOM = 0;
+var WITH_COMMA = [];
+var NO_COMMA = [","];
+var NO_COMMA_PIPE = [",", "|"];
+
+var XF = Associativity.XF;
+var YF = Associativity.YF;
+var XFX = Associativity.XFX;
+var XFY = Associativity.XFY;
+var YFX = Associativity.YFX;
+var FX = Associativity.FX;
+var FY = Associativity.FY;
+var PREFIX = Associativity.PREFIX;
+var NON_PREFIX = Associativity.NON_PREFIX;
+var INFIX = Associativity.INFIX;
 }
 
 @members {
@@ -39,51 +58,51 @@ expression[priority, disabled]
 locals[isTerm, associativity, bottom]
     : ( left=term { $isTerm = true; }
         (
-            ( { this.lookaheadLeq(YFX, $priority, $disabled) }? operators+=op[Associativity.YFX]
+            ( { this.lookaheadLeq(YFX, $priority, $disabled) }? operators+=op[YFX]
                 right+=expression[$op.priority - 1, $disabled]
-                { $associativity = Associativity.YFX;; $bottom = $op.priority + 1; }
+                { $associativity = YFX;; $bottom = $op.priority + 1; }
                 (
-                    { this.lookaheadEq(Associativity.YFX, $op.priority, $disabled) }? operators+=op[YFX]
+                    { this.lookaheadEq(YFX, $op.priority, $disabled) }? operators+=op[YFX]
                         right+=expression[$op.priority - 1, $disabled]
                 )*
 
-            | { this.lookaheadLeq(Associativity.XFY, $priority, $disabled) }? operators+=op[Associativity.XFY]
+            | { this.lookaheadLeq(XFY, $priority, $disabled) }? operators+=op[XFY]
                 right+=expression[$op.priority, $disabled]
-                { $associativity = Associativity.XFY ;; $bottom = $op.priority; }
+                { $associativity = XFY ;; $bottom = $op.priority; }
                 (
-                    { this.lookaheadEq(Associativity.XFY, $op.priority, $disabled) }? operators+=op[Associativity.XFY]
+                    { this.lookaheadEq(XFY, $op.priority, $disabled) }? operators+=op[XFY]
                         right+=expression[$op.priority, $disabled]
                 )*
 
-            | { this.lookaheadLeq(Associativity.XFX, $priority, $disabled) }? operators+=op[Associativity.XFX]
+            | { this.lookaheadLeq(XFX, $priority, $disabled) }? operators+=op[XFX]
                 right+=expression[$op.priority - 1, $disabled]
-                { $associativity = Associativity.XFX ;; $bottom = $op.priority + 1; }
+                { $associativity = XFX ;; $bottom = $op.priority + 1; }
 
-            | { this.lookaheadLeq(Associativity.YF, $priority, $disabled) }? operators+=op[Associativity.YF]
-                { $associativity = Associativity.YF ;; $bottom = $op.priority; }
+            | { this.lookaheadLeq(YF, $priority, $disabled) }? operators+=op[YF]
+                { $associativity = YF ;; $bottom = $op.priority; }
                 (
-                    { this.lookaheadEq(Associativity.YF, $op.priority, $disabled) }? operators+=op[Associativity.YF]
+                    { this.lookaheadEq(YF, $op.priority, $disabled) }? operators+=op[YF]
                 )*
 
-            | { this.lookaheadLeq(Associativity.XF, $priority, $disabled) }? operators+=op[Associativity.XF]
-                { $associativity = Associativity.XF ;; $bottom = $op.priority + 1; }
+            | { this.lookaheadLeq(XF, $priority, $disabled) }? operators+=op[XF]
+                { $associativity = XF ;; $bottom = $op.priority + 1; }
 
 
             ) { $isTerm = false; }
         )?
 
-    | { this.lookaheadLeq(Associativity.FX, $priority, $disabled) }? operators+=op[Associativity.FX]
+    | { this.lookaheadLeq(FX, $priority, $disabled) }? operators+=op[FX]
         { $isTerm = false;
-        $associativity = Associativity.FX ;; $bottom = $op.priority + 1;; }
+        $associativity = FX ;; $bottom = $op.priority + 1;; }
         right+=expression[$op.priority - 1, $disabled]
 
-    | { this.lookaheadLeq(Associativity.FY, $priority, $disabled) }? operators+=op[Associativity.FY]
-        { $isTerm = false;; $associativity = Associativity.FY ;; $bottom = $op.priority;; }
-        ({ this.lookaheadEq(Associativity.FY, $op.priority, $disabled) }? operators+=op[Associativity.FY])*
-        right+=expression[$op.priority, $disabled] { $associativity = Associativity.FY ; }
+    | { this.lookaheadLeq(FY, $priority, $disabled) }? operators+=op[FY]
+        { $isTerm = false;; $associativity = FY ;; $bottom = $op.priority;; }
+        ({ this.lookaheadEq(FY, $op.priority, $disabled) }? operators+=op[FY])*
+        right+=expression[$op.priority, $disabled] { $associativity = FY ; }
 
     ) (
-          { this.lookahead(Associativity.NON_PREFIX, $priority, $bottom, $disabled) }?
+          { this.lookahead(NON_PREFIX, $priority, $bottom, $disabled) }?
               outers+=outer[$priority, $bottom, disabled]
               { $bottom = $outer.priority; }
       )*
@@ -93,37 +112,37 @@ outer[top, bottom, disabled = Array()]
 returns[priority]
 locals[isTerm, associativity, newBottom]
     : (
-        { this.lookahead(Associativity.YFX, $top, $bottom, $disabled) }? operators+=op[Associativity.YFX]
-            { $associativity = Associativity.YFX ;;$priority = $op.priority;;$newBottom = $op.priority + 1; }
+        { this.lookahead(YFX, $top, $bottom, $disabled) }? operators+=op[YFX]
+            { $associativity = YFX ;;$priority = $op.priority;;$newBottom = $op.priority + 1; }
             right+=expression[$op.priority - 1, $disabled]
             (
-                { this.lookaheadEq(Associativity.YFX, $op.priority, $disabled) }? operators+=op[Associativity.YFX]
+                { this.lookaheadEq(YFX, $op.priority, $disabled) }? operators+=op[YFX]
                     right+=expression[$op.priority - 1, $disabled]
             )*
 
-        | { this.lookahead(Associativity.XFY, $top, $bottom, $disabled) }? operators+=op[Associativity.XFY]
-            { $associativity = Associativity.XFY ;;$priority = $op.priority;;$newBottom = $op.priority; }
+        | { this.lookahead(XFY, $top, $bottom, $disabled) }? operators+=op[XFY]
+            { $associativity = XFY ;;$priority = $op.priority;;$newBottom = $op.priority; }
             right+=expression[$op.priority, $disabled]
             (
-                { lookaheadEq(Associativity.XFY, $op.priority, $disabled) }? operators+=op[Associativity.XFY]
+                { lookaheadEq(XFY, $op.priority, $disabled) }? operators+=op[XFY]
                     right+=expression[$op.priority, $disabled]
             )*
 
-        | { this.lookahead(Associativity.XFX, $top, $bottom, $disabled) }? operators+=op[Associativity.XFX]
-            { $associativity = Associativity.XFX ;; $priority = $op.priority;;$newBottom = $op.priority + 1; }
+        | { this.lookahead(XFX, $top, $bottom, $disabled) }? operators+=op[XFX]
+            { $associativity = XFX ;; $priority = $op.priority;;$newBottom = $op.priority + 1; }
             right+=expression[$op.priority - 1, $disabled]
 
-        | { this.lookahead(Associativity.YF, $top, $bottom, $disabled) }? operators+=op[Associativity.YF]
-            { $associativity = Associativity.YF ;; $priority = $op.priority;;$newBottom = $op.priority; }
+        | { this.lookahead(YF, $top, $bottom, $disabled) }? operators+=op[YF]
+            { $associativity = YF ;; $priority = $op.priority;;$newBottom = $op.priority; }
             (
-                { this.lookaheadEq(Associativity.YF, $op.priority, $disabled) }? operators+=op[Associativity.YF]
+                { this.lookaheadEq(YF, $op.priority, $disabled) }? operators+=op[YF]
             )*
 
-        | { this.lookahead(Associativity.XF, $top, $bottom, $disabled) }? operators+=op[Associativity.XF]
-            { $associativity = Associativity.XF ;;$priority = $op.priority;;$newBottom = $op.priority + 1; }
+        | { this.lookahead(XF, $top, $bottom, $disabled) }? operators+=op[XF]
+            { $associativity = XF ;;$priority = $op.priority;;$newBottom = $op.priority + 1; }
 
     ) (
-        { this.lookahead(Associativity.NON_PREFIX, $top, $newBottom, $disabled) }?
+        { this.lookahead(NON_PREFIX, $top, $newBottom, $disabled) }?
             outers+=outer[$top, $newBottom, disabled]
             { $priority = $outer.priority; }
     )?
@@ -182,7 +201,7 @@ locals[arity = 0, isTruth, isList, isSet, isString, isCut]
     | LPAR functor=(OPERATOR|COMMA|PIPE|SIGN) RPAR
     | functor=SQ_STRING { $isString = true; } (LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR)?
     | functor=(ATOM|EMPTY_SET) (LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR)?
-    | { !this.lookaheadIs(Associativity.PREFIX) }? functor=(OPERATOR|COMMA|PIPE|SIGN) LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR?
+    | { !this.lookaheadIs(PREFIX) }? functor=(OPERATOR|COMMA|PIPE|SIGN) LPAR args+=expression[P0, NO_COMMA] { $arity++; } (COMMA args+=expression[P0, NO_COMMA] { $arity++; })* RPAR?
     ;
 
 list

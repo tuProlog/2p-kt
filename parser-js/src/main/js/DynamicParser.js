@@ -1,166 +1,146 @@
-const Associativity = require("./Associativity").Associativity
+const Associativity = require("./Associativity").Associativity;
 const antlr4 = require("antlr4");
 
-let OP = 0
-let ASSOCIATIVITY = 1
-let PRIORITY = 1
+const OP = 0;
+const ASSOCIATIVITY = 1;
+const PRIORITY = 1;
 
-function DynamicParser(input, lexer){
-    var _operators = Array(Array())
-    antlr4.Parser.call(this,input)
-    if(lexer === 'undefined')
-        var _lexer = input.getTokenSource()
-    else
-        var _lexer=lexer
+function DynamicParser(input, lexer) {
+    const _operators = Array(Array());
+    antlr4.Parser.call(this, input);
+    let _lexer = lexer === 'undefined' ? input.getTokenSource() : lexer;
 
-    Object.defineProperty(this,"lexer",{
-        get: function(){return _lexer},
-        set: function(value){_lexer = value}
-    })
-
-    this.P0 = 1201
-    this.TOP = 1200
-    this.BOTTOM = 0
-    this.WITH_COMMA = []
-    this.NO_COMMA = [","]
-    this.NO_COMMA_PIPE = [",","|"]
-
-    this.isAnonymous = function(token){
-        return ((token.length == 1) && (token[0] == '_')) || ((token.text.length==1) && (token.text[0] == '_'))
-    }
-
-    this.getOperatorPriority = function(operator,associativity){
-        _operators.forEach(
-            op => {
-                if((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY]))
-                    return op[PRIORITY]
-            }
-        )
-    }
-
-    this.isOperator = function(operator){
-        return _lexer.isOperator(operator)
-    }
-
-    this.addOperator = function(functor,associativity,priority){
-        lexer.addOperators(functor)
-        _operators.push([functor,associativity,priority])
-    }
-
-    this.isOperatorAssociativity = function(operator,associativity){
-        _operators.forEach(
-            op => {
-                if ( (op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
-                    return true
-            }
-        )
-        return false
-    }
-
-    this.lookaheadFunc = function(f,associativity,priority, ...except){
-        var lookahead = this.getTokenStream().LT(1)
-        for(var exc in except){
-            if(this.isOperator(exc) && lookahead.text === exc)
-                return null
-            if(!this.isOperator(lookahead))
-                return null
-            if(!this.isOperatorAssociativity(lookahead,associativity))
-                return null
-            return f(this.getOperatorPriority(lookahead,associativity),priority)
+    Object.defineProperty(this, "lexer", {
+        get: function () {
+            return _lexer
+        },
+        set: function (value) {
+            _lexer = value
         }
-    }
+    });
 
-    this.lookaheadIs = function(associativities,...except){
-        var lookahead = this.getTokenStream().LT(1)
-        var exc = true
-        except.forEach(
-            e => {
-                if(this.isOperator(e) && e === lookahead.text)
-                    exc = false
-            }
-        )
-        var ass = false
-        associativities.forEach(
-            a => {
-                if(this.isOperatorAssociativity(lookahead,a))
-                    ass = true
-            }
-        )
-        return exc && ass
-    }
+    this.isAnonymous = function (token) {
+        return ((token.length == 1) && (token[0] == '_')) || ((token.text.length == 1) && (token.text[0] == '_'))
+    };
 
-    var _compare = function(x,y){
-        return (x<y) ? -1 : ((x===y) ? 0 : 1)
-    }
+    this.getOperatorPriority = function (operator, associativity) {
+        for (const op of _operators) {
+            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY]))
+                return op[PRIORITY];
+        }
+    };
 
-    this.lookaheadGt = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = -1
-        return res>0
-    }
+    this.isOperator = function (operator) {
+        return _lexer.isOperator(operator)
+    };
 
-    this.lookaheadEq = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = -1
-        return res===0
-    }
+    this.addOperator = function (functor, associativity, priority) {
+        lexer.addOperators(functor);
+        _operators.push([functor, associativity, priority])
+    };
 
-    this.lookaheadNeq = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = 0
-        return res!=0
-    }
+    this.isOperatorAssociativity = function (operator, associativity) {
+        for (const op of _operators) {
+            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
+                return true;
+        }
+        return false
+    };
 
-    this.lookaheadGeq = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = -1
-        return res>=0
-    }
+    this.lookaheadFunc = function (f, associativity, priority, ...except) {
+        const lookahead = this.getTokenStream().LT(1);
+        for (const exc in except) {
+            if (this.isOperator(exc) && lookahead.text === exc)
+                return null;
+            if (!this.isOperator(lookahead))
+                return null;
+            if (!this.isOperatorAssociativity(lookahead, associativity))
+                return null;
+            return f(this.getOperatorPriority(lookahead, associativity), priority)
+        }
+    };
 
-    this.lookaheadLeq = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = 1
-        return res<=0
-    }
+    this.lookaheadIs = function (associativities, ...except) {
+        const lookahead = this.getTokenStream().LT(1);
+        for (const e of except) {
+            if (this.isOperator(e) && e === lookahead.text)
+                return false;
+        }
+        for (const a of associativities) {
+            if (this.isOperatorAssociativity(lookahead, a))
+                return true;
+        }
+        return false;
+    };
 
-    this.lookaheadLt = function(associativity,priority,...except){
-        var res = this.lookaheadFunc(_compare,associativity,priority,except)
-        if(res===null)
-            res = 1
-        return res<0
-    }
+    const _compare = function (x, y) {
+        return (x < y) ? -1 : ((x === y) ? 0 : 1)
+    };
 
-    this.lookahead = function(associativity,top,bottom,...except){
-        var associativities = Array()
-        if(associativity.__proto__ != Array.prototype)
-            associativities.push(associativity)
+    this.lookaheadGt = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = -1;
+        return res > 0
+    };
+
+    this.lookaheadEq = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = -1;
+        return res === 0
+    };
+
+    this.lookaheadNeq = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = 0;
+        return res !== 0
+    };
+
+    this.lookaheadGeq = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = -1;
+        return res >= 0
+    };
+
+    this.lookaheadLeq = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = 1;
+        return res <= 0
+    };
+
+    this.lookaheadLt = function (associativity, priority, ...except) {
+        let res = this.lookaheadFunc(_compare, associativity, priority, except);
+        if (res === null)
+            res = 1;
+        return res < 0
+    };
+
+    this.lookahead = function (associativity, top, bottom, ...except) {
+        let associativities = Array();
+        if (associativity.__proto__ != Array.prototype)
+            associativities.push(associativity);
         else
-            associativities = associativity
-        var lookahead = this.getTokenStream().LT(1)
-        var exc = true
-        except.forEach(
-            e => {
-                if(this.isOperator(e) && lookahead.text === e)
-                    exc = false
-            }
-        )
-        var ass = false
-        associativities.forEach(
-            a => {
-                if(this.isOperatorAssociativity(lookahead,a)){
-                    priority = this.getOperatorPriority(lookahead,a)
-                    ass = (priority <= top) && (priority >= bottom)
+            associativities = associativity;
+        const lookahead = this.getTokenStream().LT(1);
+        for (const e of except) {
+            if (this.isOperator(e) && lookahead.text === e)
+                return false;
+        }
+        for (const a of associativities) {
+            if (this.isOperatorAssociativity(lookahead, a)) {
+                const priority = this.getOperatorPriority(lookahead, a);
+                if (priority <= top && priority >= bottom) {
+                    return true;
                 }
             }
-        )
-        return exc && ass
+        }
+        return false;
     }
 
 }
 
-exports.DynamicParser = DynamicParser
+exports.DynamicParser = DynamicParser;
