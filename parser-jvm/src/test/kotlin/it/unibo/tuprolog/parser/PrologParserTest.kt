@@ -5,30 +5,12 @@ import org.antlr.v4.runtime.*
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class PrologParserTest {
 
-    class AssertionOn<T>(private val `object`: T) {
-        fun <U> andThenAssertUnit(
-            getter: (T) -> U,
-            asserter: (U) -> Unit
-        ): AssertionOn<U> {
-            val property = getter(`object`)
-            asserter(property)
-            return AssertionOn(property)
-        }
-
-        fun <U> andThenAssertBool(
-            getter: (T) -> U,
-            asserter: (U) -> Boolean
-        ): AssertionOn<U> {
-            val property = getter(`object`)
-            asserter(property)
-            return AssertionOn(property)
-        }
-
-    }
     companion object {
 
         private fun lexerForString(input: String): PrologLexer {
@@ -102,203 +84,121 @@ class PrologParserTest {
                 )
             )
         }
-
-        private fun <T, U> assertionOnUnit(
-            `object`: T,
-            getter: (T) -> U,
-            asserter: (U) -> Unit
-        ): AssertionOn<U> {
-            return AssertionOn(`object`).andThenAssertUnit(getter, asserter)
-        }
-
-        private fun <T, U> assertionOnBool(
-            `object`: T,
-            getter: (T) -> U,
-            asserter: (U) -> Boolean
-        ): AssertionOn<U> {
-            return AssertionOn(`object`).andThenAssertBool(getter, asserter)
-        }
-
     }
 
     @Test
     fun testInteger(){
-        assertionOnBool(
-            parseTerm("1"),
-            PrologParser.SingletonTermContext::term,
-            {
-                it.isNum&&!it.isExpr&&!it.isList&&!it.isStruct&&!it.isVar
-            }
-        ).andThenAssertBool(
-            PrologParser.TermContext::number)
-        {
-            it.isInt && !it.isReal
-        }.andThenAssertBool(
-            PrologParser.NumberContext::integer
-        ) {
-            it.value.text.toInt() == 1
-        }
+        val tc = parseTerm("1").term()
+        assertTrue(tc.isNum && !tc.isExpr && !tc.isList && !tc.isStruct && !tc.isVar)
+        val nc = tc.number()
+        assertTrue(nc.isInt && !nc.isReal)
+        val ic = nc.integer()
+        assertEquals(ic.value.text.toInt(), 1)
     }
 
     @Test
     fun testReal(){
-        assertionOnBool(
-            parseTerm("1.1"),
-            PrologParser.SingletonTermContext::term,
-            {
-                it.isNum && !it.isExpr && !it.isList && !it.isStruct && !it.isVar
-            }
-        ).andThenAssertBool(
-            PrologParser.TermContext::number)
-        {
-            it.isReal && !it.isInt
-        }.andThenAssertBool(
-            PrologParser.NumberContext::real
-        ) {
-            it.value.text.toDouble() == 1.1
-        }
+        val tc = parseTerm("1.1").term()
+        assertTrue(tc.isNum && !tc.isExpr && !tc.isList && !tc.isStruct && !tc.isVar)
+        val nc = tc.number()
+        assertTrue(nc.isReal && !nc.isInt)
+        val rc = nc.real()
+        assertEquals(rc.value.text.toDouble(),1.1)
     }
 
     @Test
     fun testAtom(){
-        assertionOnBool(
-            parseTerm("a"),
-            PrologParser.SingletonTermContext::term,
-            {
-                it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
-            }
-        ).andThenAssertBool(
-            PrologParser.TermContext::structure)
-        {
-            it.arity == it.args.count() &&
-                    it.arity == 0 &&
-                    !it.isList &&
-                    !it.isSet &&
-                    !it.isTruth &&
-                    it.functor.text == "a" &&
-                    it.functor.type == PrologLexer.ATOM
-        }
+        val tc = parseTerm("a").term()
+        assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+        val sc = tc.structure()
+        assertTrue(sc.arity == sc.args.count() &&
+                sc.arity == 0 &&
+                !sc.isList &&
+                !sc.isSet &&
+                !sc.isTruth &&
+                sc.functor.text == "a" &&
+                sc.functor.type == PrologLexer.ATOM)
     }
+
 
     @Test
     fun testString(){
-        sequenceOf("'a'","\"a\"").forEach {
-            assertionOnBool(
-                parseTerm(it),PrologParser.SingletonTermContext::term)
-            {
-                    t -> t.isStruct && !t.isNum && !t.isExpr && !t.isList && !t.isVar
-            }.andThenAssertBool(
-                PrologParser.TermContext::structure){
-                    s -> s.arity == s.args.count() &&
-                    s.arity == 0 &&
-                    s.isString && !s.isList && !s.isTruth &&
+        sequenceOf("'a'","\"a\"").forEach{
+            val tc = parseTerm(it).term()
+            assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+            val s = tc.structure()
+            assertTrue(s.arity == s.args.count() &&
+                    s.arity == 0  && s.isString && !s.isSet &&!s.isList && !s.isTruth &&
                     s.functor.text == "a" &&
                     (s.functor.type == PrologLexer.DQ_STRING || s.functor.type == PrologLexer.SQ_STRING)
-            }
+            )
         }
     }
 
     @Test
     fun testTrue(){
-        assertionOnBool(
-            parseTerm("true"),
-            PrologParser.SingletonTermContext::term
-        ) {
-            it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
-        }.andThenAssertBool(
-            PrologParser.TermContext::structure
-        ){
-                s -> s.arity == s.args.count() &&
+        val tc = parseTerm("true").term()
+        assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+        val s = tc.structure()
+        assertTrue(s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "true" &&
-                s.functor.type == PrologLexer.BOOL
-        }
+                s.functor.type == PrologLexer.BOOL)
     }
 
     @Test
     fun testFalse(){
-        assertionOnBool(
-            parseTerm("fail"),
-            PrologParser.SingletonTermContext::term
-        ) {
-            it.isStruct && !it.isNum && !it.isExpr && !it.isList && !it.isVar
-        }.andThenAssertBool(
-            PrologParser.TermContext::structure
-        ){
-                s -> s.arity == s.args.count() &&
+        val tc = parseTerm("fail").term()
+        assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+        val s = tc.structure()
+        assertTrue(s.arity == s.args.count() &&
                 s.isTruth && !s.isList && !s.isString &&
                 s.functor.text == "fail" &&
-                s.functor.type == PrologLexer.BOOL
-        }
+                s.functor.type == PrologLexer.BOOL)
     }
 
     @Test
     fun testEmptyList(){
         sequenceOf("[]","[ ]","[   ]").forEach{
-            assertionOnBool(
-                parseTerm(it),
-                PrologParser.SingletonTermContext::term
-            ){
-                    t -> t.isStruct && ! t.isNum && !t.isExpr && !t.isList && !t.isVar
-            }.andThenAssertBool(
-                PrologParser.TermContext::structure){
-                    s -> s.arity == s.args.count() &&
+            val tc = parseTerm(it).term()
+            assertTrue(tc.isStruct && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isVar)
+            val s = tc.structure()
+            assertTrue(s.arity == s.args.count() &&
                     s.arity == 0 &&
                     s.isList  && !s.isTruth && !s.isString &&
-                    s.functor.type == PrologLexer.EMPTY_LIST
-            }
+                    s.functor.type == PrologLexer.EMPTY_LIST )
         }
     }
 
     @Test
     fun testVar(){
         sequenceOf("A","_A","_1A","A_").forEach {
-            assertionOnBool(
-                parseTerm(it),
-                PrologParser.SingletonTermContext::term
-            ){
-                    t -> t.isVar && !t.isList && !t.isStruct && !t.isNum && !t.isExpr
-            }.andThenAssertBool(
-                PrologParser.TermContext::variable
-            ){
-                    v -> !v.isAnonymous &&
+            val tc = parseTerm(it).term()
+            assertTrue(tc.isVar && !tc.isExpr && !tc.isList && !tc.isNum && !tc.isStruct)
+            val v = tc.variable()
+            assertTrue(!v.isAnonymous &&
                     v.value.text.contains("A") &&
-                    v.value.type == PrologLexer.VARIABLE
-            }
+                    v.value.type == PrologLexer.VARIABLE)
         }
     }
 
     @Test
     fun testSingletonList(){
         sequenceOf("[1]", "[1 ]","[ 1]", "[ 1 ]").forEach {
-            assertionOnBool(
-                parseTerm(it),
-                PrologParser.SingletonTermContext::term
-            ){
-                    l -> l.isList && !l.isStruct && !l.isNum && !l.isExpr && !l.isVar
-            }.andThenAssertBool(
-                PrologParser.TermContext::list
-            ){
-                    l -> l.length == l.items.count() &&
+            val tc = parseTerm(it).term()
+            assertTrue(tc.isList && !tc.isExpr && !tc.isVar && !tc.isNum && !tc.isStruct)
+            val l = tc.list()
+            assertTrue(l.length == l.items.count() &&
                     l.length == 1 &&
-                    !l.hasTail && l.tail == null
-            }.andThenAssertBool(
-                { list-> list.items[0]}
-            ){
-                    expr -> expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0
-            }.andThenAssertBool(
-                { e -> e.left}
-            ){
-                    t -> t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr
-            }.andThenAssertBool(
-                PrologParser.TermContext::number
-            ){
-                    n -> n.isInt && !n.isReal
-            }.andThenAssertBool(
-                PrologParser.NumberContext::integer
-            ){
-                    i -> i.value.text.toInt() == 1
-            }
+                    !l.hasTail && l.tail==null)
+            val expr = l.items[0]
+            assertTrue(expr.isTerm && expr.left != null && expr.operators.count() == 0 && expr.right.count() == 0)
+            val t = expr.left!!
+            assertTrue(t.isNum && !t.isVar && !t.isList && !t.isStruct && !t.isExpr)
+            val n = t.number()
+            assertTrue(n.isInt && !n.isReal)
+            val i = n.integer()
+            assertEquals(i.value.text.toInt(),1)
         }
     }
 

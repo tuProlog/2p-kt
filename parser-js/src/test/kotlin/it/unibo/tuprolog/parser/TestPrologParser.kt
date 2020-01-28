@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class TestPrologParser {
 
     private fun sequenceOfInputStreamFromStrings(vararg strings: String): Sequence<InputStream> {
-        var res = mutableListOf<InputStream>()
+        val res = mutableListOf<InputStream>()
         strings.forEach{
             res.add(InputStream(it))
         }
@@ -17,7 +17,7 @@ class TestPrologParser {
     @Test
     fun testInitialisation() {
         val lexer = PrologLexer(InputStream("1"))
-        val parser = PrologParser(CommonTokenStream(lexer))
+        PrologParser(CommonTokenStream(lexer))
         assertEquals(PrologParser.VARIABLE, 1)
         assertEquals(PrologParser.RULE_singletonTerm,0)
     }
