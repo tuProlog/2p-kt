@@ -5,7 +5,8 @@ package it.unibo.tuprolog.parser
 
 external enum class Associativity {
     XF, YF, XFX, XFY, YFX, FX, FY;
-    companion object{
+
+    companion object {
         val PREFIX: Array<Associativity>
         val NON_PREFIX: Array<Associativity>
         val INFIX: Array<Associativity>

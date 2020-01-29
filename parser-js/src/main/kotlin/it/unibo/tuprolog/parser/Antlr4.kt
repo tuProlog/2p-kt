@@ -93,7 +93,6 @@ open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
 }
 
 
-
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/CommonTokenStream.js
  */
@@ -111,8 +110,8 @@ external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenSt
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/RuleContext.js
  * */
 
-open external class RuleContext(parent:dynamic, invokingStateNumber: Int){
-    fun <T>accept(visitor: dynamic): T
+open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
+    fun <T> accept(visitor: dynamic): T
 }
 
 
@@ -120,6 +119,6 @@ open external class RuleContext(parent:dynamic, invokingStateNumber: Int){
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/ParserRuleContext.js
  * */
 
-open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int): RuleContext{
+open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int) : RuleContext {
     val children: Array<dynamic> = definedExternally
 }
