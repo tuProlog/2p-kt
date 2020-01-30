@@ -46,7 +46,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
     override fun visitReal(ctx: RealContext): Term {
         var raw = ctx.value.text
         if (ctx.sign != null) {
-            raw = ctx.sign.text + raw
+            raw = ctx!!.sign?.text + raw
         }
         return try {
             scope.numOf(raw.toDouble())
@@ -136,7 +136,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             }
         }
         if (ctx.sign != null) {
-            clean = ctx.sign.text + clean
+            clean = ctx.sign?.text + clean
         }
         return BigInteger.of(clean, base)
     }
@@ -194,7 +194,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
         for (o in outers) {
             val operands = listOf(result) + o.right.map { it.accept<Term>(this) }
             val operators = o.operators.map { it.symbol.text }
-            result = when (o.associativity!!) {
+            result = when (o.associativity) {
                 XFY -> infixRight(operands, operators)
                 XF, YF -> postfix(result, operators)
                 XFX -> infixNonAssociative(operands, operators)

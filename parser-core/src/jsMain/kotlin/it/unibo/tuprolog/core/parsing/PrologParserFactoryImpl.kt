@@ -42,7 +42,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     //CLAUSES
     override fun parseClauses(source: String, withOperators: OperatorSet): List<ClauseContext> {
         val parser = createParser(source, withOperators)
-        return parseClauses(parser, source)
+        return parseClauses(parser)
     }
 
 
@@ -76,7 +76,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         return parser.singletonTerm()
     }
 
-    private fun parseClause(parser: PrologParser, input: Any): OptClauseContext {
+    private fun parseClause(parser: PrologParser): OptClauseContext {
         var mark = -1
         var index = -1
         mark = parser.getTokenStream().mark()
@@ -84,11 +84,11 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         return parser.optClause()
     }
 
-    private fun parseClauses(parser: PrologParser, source: Any): List<ClauseContext> {
+    private fun parseClauses(parser: PrologParser): List<ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
-                    parseClause(parser, source)
+                    parseClause(parser)
                 } catch (e: ParseException) {
                     e.clauseIndex = it
                     throw e

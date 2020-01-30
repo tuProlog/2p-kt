@@ -172,14 +172,14 @@ external class IntegerContext: ParserRuleContext{
     val isBin: Boolean
     val isChar: Boolean
     val value: Token
-    val sign: Token
+    val sign: Token?
 
 
 }
 
 external class RealContext: ParserRuleContext{
     val value: Token
-    val sign: Token
+    val sign: Token?
 
 
 }
