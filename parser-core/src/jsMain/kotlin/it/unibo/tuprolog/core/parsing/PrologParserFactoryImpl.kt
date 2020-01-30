@@ -82,10 +82,6 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     }
 
     private fun parseClause(parser: PrologParser): OptClauseContext {
-        var mark = -1
-        var index = -1
-        mark = parser.getTokenStream().mark()
-        index = parser.getTokenStream().index.coerceAtLeast(0)
         return parser.optClause()
     }
 
