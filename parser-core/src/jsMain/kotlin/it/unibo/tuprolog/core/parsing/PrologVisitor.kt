@@ -35,7 +35,13 @@ class PrologVisitor : PrologParserVisitor<Term>(){
     }
 
     override fun visitTerm(ctx: TermContext): Term =
-        if (ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this) as Term
+        if (ctx.isExpr) visitExpression(ctx.expression()) else {
+            val r = ctx.children[0].accept(this)
+            print(r.toString())
+            print(r)
+            error("accept To string: " + r.toString() +  " normale: " + r + "\nchildren: " + ctx.children[0].toString())
+            r as Term
+        }
 
 
     override fun visitInteger(ctx: IntegerContext): Term {
@@ -46,7 +52,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
     override fun visitReal(ctx: RealContext): Term {
         var raw = ctx.value.text
         if (ctx.sign != null) {
-            raw = ctx!!.sign?.text + raw
+            raw = ctx.sign?.text + raw
         }
         return try {
             scope.numOf(raw.toDouble())

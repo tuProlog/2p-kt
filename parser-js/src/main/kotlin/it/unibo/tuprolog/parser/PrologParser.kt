@@ -88,7 +88,7 @@ external class TheoryContext: ParserRuleContext{
 }
 
 external class OptClauseContext: ParserRuleContext{
-    val isOver: Boolean = definedExternally
+    val isOver: Boolean
 
     fun clause(): ClauseContext
 }
@@ -98,17 +98,17 @@ external class ClauseContext: ParserRuleContext{
 }
 
 external class ExpressionContext: ParserRuleContext{
-    val priority: Int = definedExternally
-    val disabled: Boolean = definedExternally
-    val isTerm: Boolean = definedExternally
-    val associativity: Associativity = definedExternally
-    val bottom: Int = definedExternally
-    val left: TermContext? = definedExternally
-    val _op: OpContext = definedExternally
+    val priority: Int
+    val disabled: Boolean
+    val isTerm: Boolean
+    val associativity: Associativity
+    val bottom: Int
+    val left: TermContext?
+    val _op: OpContext
     val operators: Array<OpContext>
-    val _expression: ExpressionContext? = definedExternally
+    val _expression: ExpressionContext?
     val right: Array<ExpressionContext>
-    val _outer: OuterContext? = definedExternally
+    val _outer: OuterContext?
     val outers: Array<OuterContext>
 
     fun term(): TermContext
@@ -123,11 +123,11 @@ external class OuterContext: ParserRuleContext{
     val priority: Int
     val isTerm: Boolean
     val associativity: Associativity
-    val _op: OpContext = definedExternally
+    val _op: OpContext
     val operators: Array<OpContext>
-    val _expression: ExpressionContext? = definedExternally
+    val _expression: ExpressionContext?
     val right: Array<ExpressionContext>
-    val _outer: OuterContext? = definedExternally
+    val _outer: OuterContext?
     val outers: Array<OuterContext>
 
     fun op(): OpContext
@@ -138,7 +138,7 @@ external class OuterContext: ParserRuleContext{
 external class OpContext: ParserRuleContext{
     val priority: Int
     val associativity: Associativity
-    val symbol: Token = definedExternally
+    val symbol: Token
 
 }
 
@@ -198,27 +198,27 @@ external class StructureContext: ParserRuleContext{
     val isSet: Boolean
     val isString: Boolean
     val isCut: Boolean
-    val functor: Token = definedExternally
-    val _expression: ExpressionContext? = definedExternally
+    val functor: Token
+    val _expression: ExpressionContext?
     val args: Array<ExpressionContext>
 
     fun expression(): ExpressionContext
 }
 
 external class ListContext: ParserRuleContext{
-    val length: Int= definedExternally
+    val length: Int
     val hasTail: Boolean
-    val _expression: ExpressionContext = definedExternally
+    val _expression: ExpressionContext
     val items: Array<ExpressionContext>
-    val tail: ExpressionContext? = definedExternally
+    val tail: ExpressionContext?
 
 
     fun expression(): ExpressionContext
 }
 
 external class SetContext: ParserRuleContext{
-    val length: Int = definedExternally
-    val _expression: ExpressionContext = definedExternally
+    val length: Int
+    val _expression: ExpressionContext
     val items: Array<ExpressionContext>
 
 

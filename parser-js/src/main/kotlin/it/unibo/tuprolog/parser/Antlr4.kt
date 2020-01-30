@@ -111,7 +111,7 @@ external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenSt
  * */
 
 open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
-    fun <T> accept(visitor: dynamic): T
+    fun <T>accept(visitor: dynamic): T
 }
 
 
@@ -120,5 +120,5 @@ open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
  * */
 
 open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int) : RuleContext {
-    val children: Array<dynamic> = definedExternally
+    val children: Array<dynamic>
 }
