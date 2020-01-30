@@ -5,36 +5,28 @@ const OP = 0;
 const ASSOCIATIVITY = 1;
 const PRIORITY = 1;
 
-function DynamicParser(input, lexer) {
+function DynamicParser(input) {
     const _operators = Array(Array());
-    let _lexer = lexer === 'undefined' ? input.getTokenSource() : lexer;
-
-    Object.defineProperty(this, "lexer", {
-        get: function () {
-            return _lexer
-        },
-        set: function (value) {
-            _lexer = value
-        }
-    });
+    let _input = input;
+    let _lexer = input.tokenSource;
 
     this.isAnonymous = function (token) {
-        return ((token.length == 1) && (token[0] == '_')) || ((token.text.length == 1) && (token.text[0] == '_'))
+        return ((token.length === 1) && (token[0] === '_')) || ((token.text.length === 1) && (token.text[0] === '_'))
     };
 
     this.getOperatorPriority = function (operator, associativity) {
         for (const op of _operators) {
-            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY]))
+            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
                 return op[PRIORITY];
         }
     };
 
     this.isOperator = function (operator) {
-        return _lexer.isOperator(operator)
+        _lexer.isOperator(operator)
     };
 
     this.addOperator = function (functor, associativity, priority) {
-        lexer.addOperators(functor);
+        _lexer.addOperators(functor);
         _operators.push([functor, associativity, priority])
     };
 
@@ -47,7 +39,7 @@ function DynamicParser(input, lexer) {
     };
 
     this.lookaheadFunc = function (f, associativity, priority, ...except) {
-        const lookahead = this.getTokenStream().LT(1);
+        const lookahead = _input.LT(1);
         for (const exc in except) {
             if (this.isOperator(exc) && lookahead.text === exc)
                 return null;
@@ -60,7 +52,7 @@ function DynamicParser(input, lexer) {
     };
 
     this.lookaheadIs = function (associativities, ...except) {
-        const lookahead = this.getTokenStream().LT(1);
+        const lookahead = _input.LT(1);
         for (const e of except) {
             if (this.isOperator(e) && e === lookahead.text)
                 return false;
@@ -124,7 +116,7 @@ function DynamicParser(input, lexer) {
             associativities.push(associativity);
         else
             associativities = associativity;
-        const lookahead = this.getTokenStream().LT(1);
+        const lookahead = _input.LT(1);
         for (const e of except) {
             if (this.isOperator(e) && lookahead.text === e)
                 return false;

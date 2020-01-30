@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.TermParser
 import it.unibo.tuprolog.core.parsing.withNoOperator
 import it.unibo.tuprolog.core.parsing.withStandardOperators
+import it.unibo.tuprolog.core.toTerm
 import kotlin.test.Test
 
 class TermParserTest {
@@ -23,6 +25,13 @@ class TermParserTest {
         ParsingExamples.expressions.forEach {
             parser.assertTermIsCorrectlyParsed(it.first, it.second)
         }
+    }
+
+    @Test fun testProva(){
+        val parser = TermParser.withNoOperator()
+        parser.assertTermIsCorrectlyParsed("a", "a".toTerm())
+        parser.assertTermIsCorrectlyParsed("A","A".toTerm())
+        parser.assertTermIsCorrectlyParsed("_","_".toTerm())
     }
 
 }

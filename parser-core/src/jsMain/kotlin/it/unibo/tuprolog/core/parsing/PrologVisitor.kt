@@ -39,7 +39,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             val r = ctx.children[0].accept(this)
             print(r.toString())
             print(r)
-            error("accept To string: " + r.toString() +  " normale: " + r + "\nchildren: " + ctx.children[0].toString())
+            //error("accept To string: " + r.toString() +  " normale: " + r + "\nchildren: " + ctx.children[0].toString())
             r as Term
         }
 
@@ -47,6 +47,10 @@ class PrologVisitor : PrologParserVisitor<Term>(){
     override fun visitInteger(ctx: IntegerContext): Term {
         val value = parseInteger(ctx)
         return scope.numOf(value)
+    }
+
+    override fun visitNumber(ctx: NumberContext): Term {
+        return ctx.children[0].accept(this) as Term
     }
 
     override fun visitReal(ctx: RealContext): Term {

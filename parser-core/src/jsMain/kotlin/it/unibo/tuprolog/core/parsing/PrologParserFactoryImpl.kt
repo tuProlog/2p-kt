@@ -71,7 +71,17 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     //PRIVATE FUNCTIONS
     private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         operators.forEach {
-            prologParser.addOperator(it.functor, Associativity.valueOf(it.specifier.name), it.priority)
+            val op = when(it.specifier.name.toUpperCase()){
+                "FX" -> Associativity.FX
+                "FY" -> Associativity.FY
+                "YF" -> Associativity.YF
+                "YFX" -> Associativity.YFX
+                "XFY" -> Associativity.XFY
+                "XF" -> Associativity.XF
+                "XFX" -> Associativity.XFX
+                else -> Associativity.YFX
+            }
+            prologParser.addOperator(it.functor, op, it.priority)
         }
         return prologParser
     }

@@ -56,7 +56,7 @@ external class PrologParser(input: TokenStream){
 
 
     fun getTokenStream(): CommonTokenStream
-    fun addOperator(functor: String,associativity: Associativity,priority: Int): Unit
+    fun addOperator(functor: String,associativity: Associativity,priority: Int)
     fun singletonTerm(): SingletonTermContext
     fun singletonExpression(): SingletonExpressionContext
     fun theory(): TheoryContext
