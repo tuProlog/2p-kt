@@ -59,8 +59,13 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         createParser(string, OperatorSet.DEFAULT)
 
 
-    override fun createParser(source: String, operators: OperatorSet): PrologParser =
-        addOperators(createParser(source), operators)
+    override fun createParser(source: String, operators: OperatorSet): PrologParser {
+        val stream = InputStream(source)
+        val lexer = PrologLexer(stream)
+        val tokenStream = CommonTokenStream(lexer)
+        return addOperators(PrologParser(tokenStream),operators)
+    }
+
 
 
     //PRIVATE FUNCTIONS
