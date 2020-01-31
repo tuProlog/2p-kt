@@ -27,11 +27,4 @@ class TermParserTest {
         }
     }
 
-    @Test fun testProva(){
-        val parser = TermParser.withNoOperator()
-        parser.assertTermIsCorrectlyParsed("a", "a".toTerm())
-        parser.assertTermIsCorrectlyParsed("A","A".toTerm())
-        parser.assertTermIsCorrectlyParsed("_","_".toTerm())
-    }
-
 }

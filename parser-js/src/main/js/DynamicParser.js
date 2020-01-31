@@ -26,7 +26,6 @@ function DynamicParser(input) {
     this.getOperatorPriority = function (operator, associativity) {
         log("getOperatorPriority with parameters operator=" + operator + " associativity="+ associativity);
         for (const op of _operators) {
-            log((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity));
             if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
                 return op[PRIORITY];
         }
@@ -34,16 +33,8 @@ function DynamicParser(input) {
 
     this.isOperator = function (operator) {
         log("check if operator " + operator + " is in " + JSON.stringify(_operators));
-        //_operators.forEach(
-        //    op => {
-        //        log("checking if operator " + operator + " is equal to " + op[OP]);
-        //        if(op[OP] === operator || op[OP].toString() === operator || op[OP] == operator)
-        //            return true;
-        //    }
-   // );
         return _lexer.isOperator(operator)
-        //log("FALSE, operator " + operator + " is NOT in" + JSON.stringify(_operators));
-        //return false;
+
     };
 
     this.addOperator = function (functor, associativity, priority) {
@@ -59,7 +50,6 @@ function DynamicParser(input) {
     this.isOperatorAssociativity = function (operator, associativity) {
         log("check if operator " + operator + " (or operator " + operator.text + ") and associativity: " + associativity + " are in: " + JSON.stringify(_operators));
         for (const op of _operators) {
-            log(op[OP]===operator.text);
             if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
                 return true;
         }
