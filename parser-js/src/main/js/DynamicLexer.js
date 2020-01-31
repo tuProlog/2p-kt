@@ -14,8 +14,8 @@ function DynamicLexer() {
 
     this.isOperator = function isOperator(string) {
         log("check if operator " + string + " is in " + JSON.stringify(this.operators));
-        log(this.operators.includes(string))
-        return this.operators.includes(string)
+        log(this.operators.includes(string));
+        return this.operators.includes(string);
     };
 
     this.getOperators = function getOperators() {
