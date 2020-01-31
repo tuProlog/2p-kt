@@ -70,6 +70,8 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
 
     //PRIVATE FUNCTIONS
     private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
+        var ops = mutableListOf<String>()
+        var err = mutableListOf<Boolean>()
         operators.forEach {
             val op = when(it.specifier.name.toUpperCase()){
                 "FX" -> Associativity.FX
@@ -81,8 +83,13 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
                 "XFX" -> Associativity.XFX
                 else -> Associativity.YFX
             }
+            ops.add(it.functor)
             prologParser.addOperator(it.functor, op, it.priority)
         }
+        ops.forEach{
+            err.add(prologParser.isOperator(it))
+        }
+        //error(err.toString())
         return prologParser
     }
 

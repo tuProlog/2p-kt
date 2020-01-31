@@ -3,10 +3,19 @@ const antlr4 = require("antlr4");
 
 const OP = 0;
 const ASSOCIATIVITY = 1;
-const PRIORITY = 1;
+const PRIORITY = 2;
+
+
+const enableLogging = true;
+
+function log(...args) {
+    if (enableLogging) {
+        console.log("Parser: ", ...args)
+    }
+}
 
 function DynamicParser(input) {
-    const _operators = Array(Array());
+    const _operators = [];
     let _input = input;
     let _lexer = input.tokenSource;
 
@@ -22,12 +31,27 @@ function DynamicParser(input) {
     };
 
     this.isOperator = function (operator) {
-        _lexer.isOperator(operator)
+        log("check if operator " + operator + " is in " + JSON.stringify(_operators));
+        //_operators.forEach(
+        //    op => {
+        //        log("checking if operator " + operator + " is equal to " + op[OP]);
+        //        if(op[OP] === operator || op[OP].toString() === operator || op[OP] == operator)
+        //            return true;
+        //    }
+   // );
+        return _lexer.isOperator(operator)
+        //log("FALSE, operator " + operator + " is NOT in" + JSON.stringify(_operators));
+        //return false;
     };
 
     this.addOperator = function (functor, associativity, priority) {
         _lexer.addOperators(functor);
-        _operators.push([functor, associativity, priority])
+        var ops = new Array(3);
+        log("add operator: " + functor);
+        ops[OP] = functor; ops[ASSOCIATIVITY] = associativity; ops[PRIORITY] = priority;
+        log("added operator: " + ops[OP] + " " + ops[ASSOCIATIVITY] + " " + ops[PRIORITY]);
+        _operators.push(ops);
+        log("new operator set: " + JSON.stringify(_operators))
     };
 
     this.isOperatorAssociativity = function (operator, associativity) {

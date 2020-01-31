@@ -4,7 +4,7 @@ const enableLogging = true;
 
 function log(...args) {
     if (enableLogging) {
-        console.log(...args)
+        console.log("Lexer: ", ...args)
     }
 }
 
