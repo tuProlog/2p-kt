@@ -29,7 +29,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
                 INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
                 POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
-                else -> throw IllegalArgumentException() // use kotlin's IllegalArgumentException
+                else -> throw IllegalArgumentException("Associativity unknown: ${ctx.associativity} INFIX=${INFIX} PREFIX=${PREFIX} POSTFIX=${POSTFIX}") // use kotlin's IllegalArgumentException
             }, flatten(ctx.outers.asList())
         )
     }

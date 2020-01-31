@@ -24,7 +24,9 @@ function DynamicParser(input) {
     };
 
     this.getOperatorPriority = function (operator, associativity) {
+        log("getOperatorPriority with parameters operator=" + operator + " associativity="+ associativity);
         for (const op of _operators) {
+            log((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity));
             if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
                 return op[PRIORITY];
         }
@@ -55,24 +57,29 @@ function DynamicParser(input) {
     };
 
     this.isOperatorAssociativity = function (operator, associativity) {
+        log("check if operator " + operator + " (or operator " + operator.text + ") and associativity: " + associativity + " are in: " + JSON.stringify(_operators));
         for (const op of _operators) {
+            log(op[OP]===operator.text);
             if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
                 return true;
         }
+        log("check operator associativity failed");
         return false
     };
 
     this.lookaheadFunc = function (f, associativity, priority, ...except) {
+        log("lookaheadFunc with parameters: f=" + f + " ass=" + associativity + " priority="+ priority+ " exc=" + except);
         const lookahead = _input.LT(1);
+        log("lookahead: " + lookahead);
         for (const exc in except) {
             if (this.isOperator(exc) && lookahead.text === exc)
                 return null;
-            if (!this.isOperator(lookahead))
-                return null;
-            if (!this.isOperatorAssociativity(lookahead, associativity))
-                return null;
-            return f(this.getOperatorPriority(lookahead, associativity), priority)
         }
+        if (!this.isOperator(lookahead.text))
+            return null;
+        if (!this.isOperatorAssociativity(lookahead, associativity))
+            return null;
+        return f(this.getOperatorPriority(lookahead, associativity), priority)
     };
 
     this.lookaheadIs = function (associativities, ...except) {

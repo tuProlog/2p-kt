@@ -1,15 +1,15 @@
 const Associativity = Object.freeze({
-    XF: 0,
-    YF: 1,
-    XFX: 2,
-    XFY: 3,
-    YFX: 4,
-    FX: 5,
-    FY: 6,
-    PREFIX: [this.FX, this.FY],
-    NON_PREFIX: [this.XF,this.YF,this.XFY,this.YFX,this.XFX],
-    INFIX: [this.XFX,this.XFY,this.YFX],
-    POSTFIX: [this.XF,this.YF]
+    XF: "XF",
+    YF: "YF",
+    XFX: "XFX",
+    XFY: "XFY",
+    YFX: "YFX",
+    FX: "FX",
+    FY: "FY",
+    PREFIX: ["FX", "FY"],
+    NON_PREFIX: ["XF","YF","XFY","YFX","XFX"],
+    INFIX: ["XFX","XFY","YFX"],
+    POSTFIX: ["XF","YF"]
 });
 
 
