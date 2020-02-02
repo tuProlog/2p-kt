@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import org.gciatto.kt.math.BigDecimal
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 /**
@@ -15,6 +14,18 @@ import kotlin.test.assertNotEquals
  * @author Enrico
  */
 internal class NumericTest {
+
+    fun <T> assertEquals(expected: T, actual: T, message: String? = "Failed assertion $expected == $actual") {
+        println("Object\n\t$actual\nis expected to be equal to\n\t$expected")
+        try {
+            kotlin.test.assertEquals(expected, actual, message)
+        } catch (e: Exception) {
+            println(e.message)
+            throw e
+        } finally {
+            println("".padEnd(80, '-'))
+        }
+    }
 
     /** This map contains a mapping between real numbers and their version with some trailing zeros (i.e. 10.0 to 10.00) */
     private val realToRealWithTrailingZerosMap by lazy {
@@ -25,7 +36,7 @@ internal class NumericTest {
                         BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
             } +
                 RealUtils.stringNumbers
-                    .filterNot { "E" in it }
+                    .filterNot { "E" in it || "e" in it }
                     .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
     }
 

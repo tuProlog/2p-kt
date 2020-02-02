@@ -337,6 +337,8 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
         reportUndocumented = false
         collectInheritedExtensionsFromLibraries = true
         skipEmptyPackages = true
+        noStdlibLink = true
+        noJdkLink = true
         configuration(this@register)
     }
 }

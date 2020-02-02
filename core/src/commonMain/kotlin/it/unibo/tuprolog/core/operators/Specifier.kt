@@ -34,18 +34,22 @@ enum class Specifier : ToTermConvertible {
     YFX;
 
     /** Whether this specifier is a prefix one */
-    val isPrefix: Boolean by lazy { PREFIX.contains(this) }
+    val isPrefix: Boolean
+        get() = PREFIX.contains(this)
 
     /** Whether this specifier is an infix one */
-    val isInfix: Boolean by lazy { INFIX.contains(this) }
+    val isInfix: Boolean
+        get() = INFIX.contains(this)
 
     /** Whether this specifier is a postfix one */
-    val isPostfix: Boolean by lazy { POSTFIX.contains(this) }
+    val isPostfix: Boolean
+        get() = POSTFIX.contains(this)
 
     /** Creates an atom containing the specifier symbolic name */
     override fun toTerm(): Atom = atomRepresentation
 
-    private val atomRepresentation by lazy { Atom.of(name.toLowerCase()) }
+    private val atomRepresentation
+        get() = Atom.of(name.toLowerCase())
 
     companion object {
         /** Set of prefix specifiers */
