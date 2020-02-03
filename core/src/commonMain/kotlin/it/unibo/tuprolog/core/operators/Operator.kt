@@ -63,6 +63,8 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
 
                 } catch (ex: IllegalArgumentException) {
                     null
+                } catch (ex: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+                    null
                 }
 
                 else -> null

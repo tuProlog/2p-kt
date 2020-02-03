@@ -66,7 +66,13 @@ enum class Specifier : ToTermConvertible {
          *
          * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
          */
-        fun fromTerm(atom: Atom): Specifier = valueOf(atom.value.toUpperCase())
+        fun fromTerm(atom: Atom): Specifier {
+            try {
+                return valueOf(atom.value.toUpperCase())
+            } catch (e: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+                throw IllegalArgumentException(e.message, e.cause)
+            }
+        }
 
         /**
          * Retrieves the specifier from an Atom value, throwing exception if not found
