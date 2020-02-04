@@ -5,10 +5,16 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.*
-import it.unibo.tuprolog.parser.Associativity.*
-import it.unibo.tuprolog.parser.Associativity.Companion.INFIX
-import it.unibo.tuprolog.parser.Associativity.Companion.POSTFIX
-import it.unibo.tuprolog.parser.Associativity.Companion.PREFIX
+import it.unibo.tuprolog.parser.Associativity.FX
+import it.unibo.tuprolog.parser.Associativity.FY
+import it.unibo.tuprolog.parser.Associativity.INFIX
+import it.unibo.tuprolog.parser.Associativity.POSTFIX
+import it.unibo.tuprolog.parser.Associativity.PREFIX
+import it.unibo.tuprolog.parser.Associativity.XF
+import it.unibo.tuprolog.parser.Associativity.XFX
+import it.unibo.tuprolog.parser.Associativity.XFY
+import it.unibo.tuprolog.parser.Associativity.YF
+import it.unibo.tuprolog.parser.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
 
@@ -210,6 +216,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
                 XFX -> infixNonAssociative(operands, operators)
                 YFX -> infixLeft(operands, operators)
                 FX, FY -> prefix(result, operators)
+                else -> throw IllegalStateException()
             }
         }
         return result

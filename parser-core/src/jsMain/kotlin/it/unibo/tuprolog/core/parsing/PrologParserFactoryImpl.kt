@@ -7,7 +7,6 @@ import it.unibo.tuprolog.parser.*
 
 internal object PrologParserFactoryImpl : PrologParserFactory {
 
-
     //EXPRESSION
     override fun parseExpression(string: String): SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
@@ -16,7 +15,6 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         val parser = createParser(string, withOperators)
         return parseExpression(parser)
     }
-
 
     private fun parseExpression(parser: PrologParser): SingletonExpressionContext =
         parser.singletonExpression()
@@ -70,9 +68,9 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
 
     //PRIVATE FUNCTIONS
     private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
-        var ops = mutableListOf<String>()
-        var err = mutableListOf<Boolean>()
-        operators.forEach {
+        val ops = mutableListOf<String>()
+//        val err = mutableListOf<Boolean>()
+        for (it in operators) {
             val op = when(it.specifier.name.toUpperCase()){
                 "FX" -> Associativity.FX
                 "FY" -> Associativity.FY
@@ -86,9 +84,9 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
             ops.add(it.functor)
             prologParser.addOperator(it.functor, op, it.priority)
         }
-        ops.forEach{
-            err.add(prologParser.isOperator(it))
-        }
+//        ops.forEach{
+//            err.add(prologParser.isOperator(it))
+//        }
         //error(err.toString())
         return prologParser
     }
