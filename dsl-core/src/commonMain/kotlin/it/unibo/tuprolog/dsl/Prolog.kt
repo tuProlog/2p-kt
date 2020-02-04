@@ -13,14 +13,14 @@ interface Prolog : Scope {
     fun Any.toTerm(): Term = when (this) {
         is Term -> this
         is ToTermConvertible -> this.toTerm()
-        is BigDecimal -> numOf(this)
+        is Byte -> numOf(this)
+        is Short -> numOf(this)
+        is Int -> numOf(this)
+        is Long -> numOf(this)
         is Double -> numOf(this)
         is Float -> numOf(this)
         is BigInteger -> numOf(this)
-        is Long -> numOf(this)
-        is Int -> numOf(this)
-        is Short -> numOf(this)
-        is Byte -> numOf(this)
+        is BigDecimal -> numOf(this)
         is Boolean -> truthOf(this)
         is String -> when {
             this matches Var.VAR_REGEX_PATTERN -> varOf(this)

@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.core.parsing
 
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term as Term
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.*
-import org.gciatto.kt.math.BigInteger
+import it.unibo.tuprolog.parser.Associativity.*
 import it.unibo.tuprolog.parser.Associativity.Companion.INFIX
 import it.unibo.tuprolog.parser.Associativity.Companion.POSTFIX
 import it.unibo.tuprolog.parser.Associativity.Companion.PREFIX
-import it.unibo.tuprolog.parser.Associativity.*
+import org.gciatto.kt.math.BigInteger
 
 
 class PrologVisitor : PrologParserVisitor<Term>(){
@@ -35,18 +37,16 @@ class PrologVisitor : PrologParserVisitor<Term>(){
     }
 
     override fun visitTerm(ctx: TermContext): Term =
-        if (ctx.isExpr) visitExpression(ctx.expression()) else {
-            val r = ctx.children[0].accept(this)
-            print(r.toString())
-            print(r)
-            //error("accept To string: " + r.toString() +  " normale: " + r + "\nchildren: " + ctx.children[0].toString())
-            r as Term
+        if (ctx.isExpr) {
+            visitExpression(ctx.expression())
+        } else {
+            ctx.children[0].accept(this) as Term
         }
 
 
     override fun visitInteger(ctx: IntegerContext): Term {
         val value = parseInteger(ctx)
-        return scope.numOf(value)
+        return Integer.of(value)
     }
 
     override fun visitNumber(ctx: NumberContext): Term {
@@ -59,7 +59,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             raw = ctx.sign?.text + raw
         }
         return try {
-            scope.numOf(raw.toDouble())
+            Real.of(raw)
         } catch (notAFloating: NumberFormatException) {
             throw ParseException(
                 null,

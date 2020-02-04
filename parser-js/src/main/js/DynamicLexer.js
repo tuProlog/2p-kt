@@ -1,6 +1,6 @@
 const StringType = require("./StringType").StringType;
 
-const enableLogging = true;
+const enableLogging = false;
 
 function log(...args) {
     if (enableLogging) {

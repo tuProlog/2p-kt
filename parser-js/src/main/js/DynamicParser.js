@@ -5,7 +5,7 @@ const ASSOCIATIVITY = 1;
 const PRIORITY = 2;
 
 
-const enableLogging = true;
+const enableLogging = false;
 
 function log(...args) {
     if (enableLogging) {

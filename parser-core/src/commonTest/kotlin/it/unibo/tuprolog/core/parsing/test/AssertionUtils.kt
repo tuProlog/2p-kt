@@ -12,14 +12,21 @@ import kotlin.test.assertEquals
 fun assertTermsAreEqual(expected: Term, actual: Term) {
     assertEquals(expected.isGround, actual.isGround)
     if (expected.isGround) {
-        assertEquals(expected, actual)
+        assertEquals(
+            expected, actual, message = """Comparing:
+            |   actual: $actual
+            |     type: ${actual::class}
+            | expected: $expected
+            |     type: ${expected::class}
+        """.trimMargin()
+        )
     } else {
         when {
             expected is Var && actual is Var -> {
                 assertEquals(expected.name, actual.name)
             }
             expected is Constant && actual is Constant -> {
-                assertEquals(expected.value, actual.value)
+                assertEquals(expected, actual)
             }
             expected is Struct && actual is Struct -> {
                 assertEquals(expected.functor, actual.functor)
@@ -51,3 +58,7 @@ fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: T
     assertTermsAreEqual(actual, expected)
     println("".padEnd(80, '-'))
 }
+
+expect fun internalsOf(x: () -> Any): String
+
+expect fun log(x: () -> Any): Unit
