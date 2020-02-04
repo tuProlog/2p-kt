@@ -100,19 +100,25 @@ with(fileTree("src/main/antlr")) {
     }
 }
 
-tasks.withType<KotlinJsCompile> {
-    dependsOn(generateGrammarSource)
-    val compilationDir = File(kotlinOptions.outputFile!!).parentFile
+val thisProject = project
 
-    val copyJsFilesTask = tasks.create<Copy>(name.replace("Kotlin", "")) {
-        from("src/main/js")
-        if ("test" in name.toLowerCase()) {
-            from("src/test/js")
+listOf(thisProject, rootProject.subprojects.first { it.name == "parser-core" }).forEach {
+    with(it) {
+        tasks.withType<KotlinJsCompile> {
+            dependsOn(generateGrammarSource)
+            val compilationDir = File(kotlinOptions.outputFile!!).parentFile
+
+            val copyJsFilesTask = tasks.create<Copy>(name.replace("Kotlin", "")) {
+                from("${thisProject.projectDir}/src/main/js")
+                if ("test" in name.toLowerCase()) {
+                    from("${thisProject.projectDir}/src/test/js")
+                }
+                from("$generatedSrcDir/js")
+                include("**/*")
+                into(compilationDir)
+            }
+
+            this.finalizedBy(copyJsFilesTask)
         }
-        from("$generatedSrcDir/js")
-        include("**/*")
-        into(compilationDir)
     }
-
-    this.finalizedBy(copyJsFilesTask)
 }
