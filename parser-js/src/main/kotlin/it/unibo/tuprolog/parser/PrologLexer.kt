@@ -16,7 +16,10 @@ external class PrologLexer(input: dynamic) {
     fun unquote(string: String): String
     fun escape(string: String, stringType: StringType): String
     fun getAllTokens(): Array<Token>
-    
+
+    fun addErrorListener(listener: dynamic)
+    fun removeErrorListeners()
+
     companion object {
         val EOF: Int
         val VARIABLE: Int 

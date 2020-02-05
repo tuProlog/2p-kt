@@ -38,7 +38,7 @@ function DynamicParser(input) {
 
     this.addOperator = function (functor, associativity, priority) {
         _lexer.addOperators(functor);
-        var ops = new Array(3);
+        const ops = new Array(3);
         log("add operator: " + functor);
         ops[OP] = functor; ops[ASSOCIATIVITY] = associativity; ops[PRIORITY] = priority;
         log("added operator: " + ops[OP] + " " + ops[ASSOCIATIVITY] + " " + ops[PRIORITY]);

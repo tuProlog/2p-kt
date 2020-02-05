@@ -60,10 +60,14 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     override fun createParser(source: String, operators: OperatorSet): PrologParser {
         val stream = InputStream(source)
         val lexer = PrologLexer(stream)
+        lexer.removeErrorListeners()
         val tokenStream = CommonTokenStream(lexer)
-        return addOperators(PrologParser(tokenStream),operators)
+        val parser = PrologParser(tokenStream)
+        parser.removeErrorListeners()
+//        parser.errorHandler = BailErrorStrategy()
+        parser._interp.predictionMode = PredictionMode.SLL
+        return addOperators(parser, operators)
     }
-
 
 
     //PRIVATE FUNCTIONS
@@ -71,7 +75,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         val ops = mutableListOf<String>()
 //        val err = mutableListOf<Boolean>()
         for (it in operators) {
-            val op = when(it.specifier.name.toUpperCase()){
+            val op = when (it.specifier.name.toUpperCase()) {
                 "FX" -> Associativity.FX
                 "FY" -> Associativity.FY
                 "YF" -> Associativity.YF

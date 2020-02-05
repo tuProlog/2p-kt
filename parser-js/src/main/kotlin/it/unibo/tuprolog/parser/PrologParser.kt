@@ -54,9 +54,12 @@ external class PrologParser(input: TokenStream) {
         val RULE_set: Int
     }
 
-    val interpreter: dynamic
+    val _interp: dynamic
     val tokenStream: dynamic
     val errorHandler: dynamic
+
+    fun addErrorListener(listener: dynamic)
+    fun removeErrorListeners()
 
     fun isOperator(operator: String): Boolean
     fun getTokenStream(): CommonTokenStream
