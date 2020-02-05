@@ -25,7 +25,7 @@ object ParsingExamples {
         "a :- 1; '2'" to prolog{
             "a" impliedBy (1 or "2")
         },
-        " a; B :- 1, 3.1; '2'" to prolog {
+        "a; B :- 1, 3.1; '2'" to prolog {
             "a" or "B" impliedBy
                     (1 and 3.1 or "2")
         },

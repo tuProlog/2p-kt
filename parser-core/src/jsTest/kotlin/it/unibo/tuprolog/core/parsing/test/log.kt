@@ -5,5 +5,5 @@ actual fun internalsOf(x: () -> Any): String {
 }
 
 actual fun log(x: () -> Any) {
-    console.warn(x())
+    console.log(x())
 }

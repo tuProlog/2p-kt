@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.parsing.test
 
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.prolog
 import org.gciatto.kt.math.BigInteger
@@ -15,6 +16,11 @@ class DoubleChecksOnEqualities {
         assertEquals(Integer.of(1), prolog {
             1.toTerm()
         })
+    }
+
+    @Test
+    fun testRealsInitialization() {
+        assertEquals(Real.of(3.1), Real.of("3.1"))
     }
 
     @Test

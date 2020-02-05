@@ -52,6 +52,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
 
     override fun visitInteger(ctx: IntegerContext): Term {
         val value = parseInteger(ctx)
+        println("Integer: $value")
         return Integer.of(value)
     }
 
@@ -65,6 +66,7 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             raw = ctx.sign?.text + raw
         }
         return try {
+            println("Real: $raw")
             Real.of(raw)
         } catch (notAFloating: NumberFormatException) {
             throw ParseException(

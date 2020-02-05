@@ -21,17 +21,7 @@ class TermParserTest {
         val parser = TermParser.withStandardOperators()
 
         ParsingExamples.expressions.forEach {
-            log {
-                """Parsing:
-                    |   ${it.first}
-                    |should produce:
-                    |   ${it.second}
-                """.trimMargin()
-            }
             parser.assertTermIsCorrectlyParsed(it.first, it.second)
-            log {
-                "".padEnd(80, '-')
-            }
         }
     }
 
