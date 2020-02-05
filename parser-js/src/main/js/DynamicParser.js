@@ -57,9 +57,10 @@ function DynamicParser(input) {
     };
 
     this.mustBeExcluded = function (lookahead, except) {
-        for (const e in except) {
-            if (this.isOperator(e) && lookahead.text === true)
+        for (const e of except) {
+            if (this.isOperator(e) && lookahead.text === e) {
                 return true;
+            }
         }
         return false;
     };

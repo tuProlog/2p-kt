@@ -13,8 +13,6 @@ function DynamicLexer() {
     this.operators = [];
 
     this.isOperator = function isOperator(string) {
-        log("check if operator " + string + " is in " + JSON.stringify(this.operators));
-        log(this.operators.includes(string));
         return this.operators.includes(string);
     };
 
@@ -23,7 +21,6 @@ function DynamicLexer() {
     };
 
     this.unquote = function (string) {
-        log("unquoting string " + string);
         return string.substring(1, string.length - 1);
     };
 
@@ -115,14 +112,9 @@ function DynamicLexer() {
     };
 
     this.addOperators = function addOperators(...args) {
-        const thiz = this;
-        args.forEach(
-            op => {
-                log("add operator: " + op);
-                thiz.operators.push(op)
-            }
-        );
-        log("new operator set: " + JSON.stringify(this.operators))
+        for (const op of args) {
+            this.operators.push(op)
+        }
     }
 
 }

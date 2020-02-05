@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.parsing.test
 import it.unibo.tuprolog.core.parsing.TermParser
 import it.unibo.tuprolog.core.parsing.withNoOperator
 import it.unibo.tuprolog.core.parsing.withStandardOperators
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TermParserTest {

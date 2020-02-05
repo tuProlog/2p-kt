@@ -17,6 +17,8 @@ object ParsingExamples {
     )
 
     val expressions: Sequence<Pair<String, Term>> = sequenceOf(
+        "g(X, y, f(3, a))" to prolog { "g"("X", "y", "f"(3, "a")) },
+        "g(X, y, (3, a))" to prolog { "g"("X", "y", 3 and "a") },
         "1 + 2" to prolog {
             1.toTerm() + 2
         },
