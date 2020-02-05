@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.dsl.PlatformSpecificValues.ONE_POINT_ZERO
+import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -36,13 +40,22 @@ class TestProlog {
         assertDSLCreationIsCorrect(Integer.of(1)) {
             numOf("1")
         }
-        assertDSLCreationIsCorrect(Real.of(3.1)) {
+        assertDSLCreationIsCorrect(Real.of("1.0")) {
+            numOf(1.0)
+        }
+        assertDSLCreationIsCorrect(Real.of("1.0")) {
+            numOf(1.0f)
+        }
+        assertDSLCreationIsCorrect(Real.of("1.0")) {
+            numOf("1.0")
+        }
+        assertDSLCreationIsCorrect(Real.of("3.1")) {
             numOf(3.1)
         }
-        assertDSLCreationIsCorrect(Real.of(3.1)) {
+        assertDSLCreationIsCorrect(THREE_POINT_ONE_FLOAT) {
             numOf(3.1f)
         }
-        assertDSLCreationIsCorrect(Real.of(3.1)) {
+        assertDSLCreationIsCorrect(Real.of("3.1")) {
             numOf("3.1")
         }
     }
@@ -61,7 +74,10 @@ class TestProlog {
         assertDSLCreationIsCorrect(Integer.of(1)) {
             1.toTerm()
         }
-        assertDSLCreationIsCorrect(Real.of(3.1)) {
+        assertDSLCreationIsCorrect(ONE_POINT_ZERO) {
+            1.0.toTerm()
+        }
+        assertDSLCreationIsCorrect(Real.of("3.1")) {
             3.1.toTerm()
         }
         assertDSLCreationIsCorrect(Atom.of("a")) {
