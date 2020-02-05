@@ -14,7 +14,7 @@ function log(...args) {
 }
 
 function DynamicParser(input) {
-    const _operators = [];
+    const _operators = {}; // map<string, map<assoc, int>>
     let _input = input;
     let _lexer = input.tokenSource;
 
@@ -23,63 +23,77 @@ function DynamicParser(input) {
     };
 
     this.getOperatorPriority = function (operator, associativity) {
-        log("getOperatorPriority with parameters operator=" + operator + " associativity="+ associativity);
-        for (const op of _operators) {
-            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
-                return op[PRIORITY];
+        const functor = operator.text || operator;
+
+        if (functor in _operators) {
+            const assocPriority = _operators[functor];
+            if (associativity in assocPriority) {
+                return assocPriority[associativity];
+            }
         }
+        return 1201;
     };
 
     this.isOperator = function (operator) {
-        log("check if operator " + operator + " is in " + JSON.stringify(_operators));
         return _lexer.isOperator(operator);
-
     };
 
     this.addOperator = function (functor, associativity, priority) {
         _lexer.addOperators(functor);
-        const ops = new Array(3);
-        log("add operator: " + functor);
-        ops[OP] = functor; ops[ASSOCIATIVITY] = associativity; ops[PRIORITY] = priority;
-        log("added operator: " + ops[OP] + " " + ops[ASSOCIATIVITY] + " " + ops[PRIORITY]);
-        _operators.push(ops);
-        log("new operator set: " + JSON.stringify(_operators))
+        if (!(functor in _operators)) {
+            _operators[functor] = {}
+        }
+        const assocPriority = _operators[functor];
+        assocPriority[associativity] = priority;
     };
 
     this.isOperatorAssociativity = function (operator, associativity) {
-        log("check if operator " + operator + " (or operator " + operator.text + ") and associativity: " + associativity + " are in: " + JSON.stringify(_operators));
-        for (const op of _operators) {
-            if ((op[OP] === operator || op[OP] === operator.text) && (op[ASSOCIATIVITY] === associativity))
-                return true;
+        const functor = operator.text || operator;
+
+        if (functor in _operators) {
+            return associativity in _operators[functor];
         }
-        log("check operator associativity failed");
         return false
     };
 
+    this.mustBeExcluded = function (lookahead, except) {
+        for (const e in except) {
+            if (this.isOperator(e) && lookahead.text === true)
+                return true;
+        }
+        return false;
+    };
+
     this.lookaheadFunc = function (f, associativity, priority, except) {
-        log("lookaheadFunc with parameters: f=" + f + " ass=" + associativity + " priority="+ priority+ " exc=" + except);
         const lookahead = _input.LT(1);
         log("lookahead: " + lookahead);
-        for (const exc in except) {
-            if (this.isOperator(exc) && lookahead.text === exc)
-                return null;
+        if (!this.isOperator(lookahead.text)) {
+            return null;
         }
-        if (!this.isOperator(lookahead.text))
+        if (this.mustBeExcluded(lookahead, except)) {
             return null;
-        if (!this.isOperatorAssociativity(lookahead, associativity))
+        }
+        if (!this.isOperatorAssociativity(lookahead, associativity)) {
             return null;
+        }
         return f(this.getOperatorPriority(lookahead, associativity), priority);
     };
 
-    this.lookaheadIs = function (associativities, except) {
+    this.lookaheadIs = function (associativity, except) {
+        let associativities;
+        if (associativity.__proto__ !== Array.prototype) {
+            associativities = [associativity];
+        } else {
+            associativities = associativity;
+        }
         const lookahead = _input.LT(1);
-        for (const e of except) {
-            if (this.isOperator(e) && e === lookahead.text)
-                return false;
+        if (this.mustBeExcluded(lookahead, except)) {
+            return false;
         }
         for (const a of associativities) {
-            if (this.isOperatorAssociativity(lookahead, a))
+            if (this.isOperatorAssociativity(lookahead, a)) {
                 return true;
+            }
         }
         return false;
     };
@@ -131,15 +145,15 @@ function DynamicParser(input) {
     };
 
     this.lookahead = function (associativity, top, bottom, except) {
-        var associativities = Array();
-        if (associativity.__proto__ !== Array.prototype)
-            associativities.push(associativity);
-        else
+        let associativities;
+        if (associativity.__proto__ !== Array.prototype) {
+            associativities = [associativity];
+        } else {
             associativities = associativity;
+        }
         const lookahead = _input.LT(1);
-        for (const e of except) {
-            if (this.isOperator(e) && lookahead.text === e)
-                return false;
+        if (this.mustBeExcluded(lookahead, except)) {
+            return false;
         }
         for (const a of associativities) {
             if (this.isOperatorAssociativity(lookahead, a)) {
