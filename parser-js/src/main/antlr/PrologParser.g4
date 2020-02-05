@@ -103,12 +103,12 @@ locals[isTerm, associativity, bottom]
 
     ) (
           { this.lookahead(NON_PREFIX, $priority, $bottom, $disabled) }?
-              outers+=outer[$priority, $bottom, disabled]
+              outers+=outer[$priority, $bottom, $disabled]
               { $bottom = $outer.priority; }
       )*
     ;
 
-outer[top, bottom, disabled = Array()]
+outer[top, bottom, disabled]
 returns[priority]
 locals[isTerm, associativity, newBottom]
     : (
@@ -124,7 +124,7 @@ locals[isTerm, associativity, newBottom]
             { $associativity = XFY ;;$priority = $op.priority;;$newBottom = $op.priority; }
             right+=expression[$op.priority, $disabled]
             (
-                { lookaheadEq(XFY, $op.priority, $disabled) }? operators+=op[XFY]
+                { this.lookaheadEq(XFY, $op.priority, $disabled) }? operators+=op[XFY]
                     right+=expression[$op.priority, $disabled]
             )*
 
@@ -143,7 +143,7 @@ locals[isTerm, associativity, newBottom]
 
     ) (
         { this.lookahead(NON_PREFIX, $top, $newBottom, $disabled) }?
-            outers+=outer[$top, $newBottom, disabled]
+            outers+=outer[$top, $newBottom, $disabled]
             { $priority = $outer.priority; }
     )?
     ;

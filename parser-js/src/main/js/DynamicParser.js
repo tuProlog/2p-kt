@@ -56,7 +56,7 @@ function DynamicParser(input) {
         return false
     };
 
-    this.lookaheadFunc = function (f, associativity, priority, ...except) {
+    this.lookaheadFunc = function (f, associativity, priority, except) {
         log("lookaheadFunc with parameters: f=" + f + " ass=" + associativity + " priority="+ priority+ " exc=" + except);
         const lookahead = _input.LT(1);
         log("lookahead: " + lookahead);
@@ -71,7 +71,7 @@ function DynamicParser(input) {
         return f(this.getOperatorPriority(lookahead, associativity), priority);
     };
 
-    this.lookaheadIs = function (associativities, ...except) {
+    this.lookaheadIs = function (associativities, except) {
         const lookahead = _input.LT(1);
         for (const e of except) {
             if (this.isOperator(e) && e === lookahead.text)
@@ -88,49 +88,49 @@ function DynamicParser(input) {
         return (x < y) ? -1 : ((x === y) ? 0 : 1);
     };
 
-    this.lookaheadGt = function (associativity, priority, ...except) {
+    this.lookaheadGt = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = -1;
         return res > 0;
     };
 
-    this.lookaheadEq = function (associativity, priority, ...except) {
+    this.lookaheadEq = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = -1;
         return res === 0;
     };
 
-    this.lookaheadNeq = function (associativity, priority, ...except) {
+    this.lookaheadNeq = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = 0;
         return res !== 0;
     };
 
-    this.lookaheadGeq = function (associativity, priority, ...except) {
+    this.lookaheadGeq = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = -1;
         return res >= 0;
     };
 
-    this.lookaheadLeq = function (associativity, priority, ...except) {
+    this.lookaheadLeq = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = 1;
         return res <= 0;
     };
 
-    this.lookaheadLt = function (associativity, priority, ...except) {
+    this.lookaheadLt = function (associativity, priority, except) {
         let res = this.lookaheadFunc(_compare, associativity, priority, except);
         if (res === null)
             res = 1;
         return res < 0;
     };
 
-    this.lookahead = function (associativity, top, bottom, ...except) {
+    this.lookahead = function (associativity, top, bottom, except) {
         var associativities = Array();
         if (associativity.__proto__ !== Array.prototype)
             associativities.push(associativity);

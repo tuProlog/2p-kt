@@ -6,10 +6,14 @@ import it.unibo.tuprolog.dsl.unify.prolog
 object ParsingExamples {
     val canonicalTerms: Sequence<Pair<String, Term>> = sequenceOf(
         "f(X)" to prolog { "f"("X") },
+        "f(X, y)" to prolog { "f"("X", "y") },
+        "g(X, y, 3)" to prolog { "g"("X", "y", 3) },
         "[]" to prolog { emptyList() },
         "[ ]" to prolog { emptyList() },
         "[1]" to prolog { listOf(1) },
-        "[a]" to prolog { listOf("a") }
+        "[1 | X]" to prolog { consOf(1, "X") },
+        "[1, a | X]" to prolog { consOf(1, consOf("a", "X")) },
+        "[a, 2, X]" to prolog { listOf("a", 2, "X") }
     )
 
     val expressions: Sequence<Pair<String, Term>> = sequenceOf(
