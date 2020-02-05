@@ -162,11 +162,11 @@ interface Prolog : Scope {
 
     companion object {
         fun empty(): Prolog = PrologImpl()
-
-        /** Utility method to launch conversion failed errors */
-        private fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
-            throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }
 
 fun <R> prolog(function: Prolog.() -> R): R = Prolog.empty().function()
+
+/** Utility method to launch conversion failed errors */
+internal fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
+    throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
