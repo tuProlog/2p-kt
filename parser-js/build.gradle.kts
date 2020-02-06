@@ -122,3 +122,7 @@ listOf(thisProject, rootProject.subprojects.first { it.name == "parser-core" }).
         }
     }
 }
+
+tasks.create("jsTest") {
+    dependsOn("test")
+}

@@ -49,3 +49,7 @@ tasks.generateGrammarSource {
     arguments = arguments + listOf("-visitor", "-long-messages")
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
 }
+
+tasks.create("jvmTest") {
+    dependsOn("test")
+}
