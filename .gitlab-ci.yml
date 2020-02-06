@@ -7,7 +7,9 @@ variables:
   AFTER_TASK: ""
   GCMD: "gradle"
   BUILD_TASK: "assemble"
-  TEST_TASK: "check"
+  TEST_TASK: "check -x dokka"
+  TEST_JVM_TASK: "jvmTest -x dokka"
+  TEST_JS_TASK: "clean jsTest -x dokka"
   BINTRAY_TASK: "publishAllToBintray"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
@@ -26,11 +28,15 @@ Compile:
   stage: build
   script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
 
-Test:
+Test JVM:
   stage: test
-  script: $GCMD $BEFORE_TASK $TEST_TASK $AFTER_TASK $GOPTS
+  script: $GCMD $BEFORE_TASK $TEST_JVM_TASK $AFTER_TASK $GOPTS
 
-Automatically publish to Bintray (dev):
+Test JS:
+  stage: test
+  script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
+
+Publish to Bintray (dev):
   stage: deploy
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
@@ -39,7 +45,7 @@ Automatically publish to Bintray (dev):
   only:
     - /^develop$/
 
-Automatically publish Releases to Bintray:
+Publish Releases to Bintray:
   stage: deploy
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
@@ -47,14 +53,6 @@ Automatically publish Releases to Bintray:
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
     - /^(master)|(release)$/
-
-Manually publish to Bintray:
-  stage: deploy
-  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
-  environment:
-    name: Bintray
-    url: "https://bintray.com/pika-lab/tuprolog"
-  when: manual
 
 pages:
   script:
