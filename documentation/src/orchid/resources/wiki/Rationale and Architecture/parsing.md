@@ -20,13 +20,14 @@ Let's start with main existing modules:
     does not include specifics features logic (such as parser or theories), but only the main logic representation (like Term and all
     extension classes, Operator and exception). This module does not depend on any other module.
 - **parser-jvm**: this module is like `parser` module in 2P-Java. It includes only specific JVM features, implementations and libraries.
-    It contains ANTLR lexer and parser grammar, all dynamic features for those and it depends only on jdk implementation library.
+    It contains ANTLR lexer and parser grammar, all dynamic features for those and it depends only on jdk implementation library. It depends only on
+    jdk libraries and antlr features.
 - **parser-js**: this module is like `parser-jvm` module, but specific for JavaScript. This is a 2P-Kotlin news, introduced 
-    for interoperate with three different paradigms: declarative, functional and imperative.
+    for interoperate with three different paradigms: declarative, functional and imperative. It depends only on antlr and js features.
 - **parser-core**: this module is like a bridge between platform specific world and common world. Consists of three main submodules:
     a JVM specific module, a JS specific module and a common module (written in bare Kotlin). The JVM submodule depends on `parser-jvm`,
-    ths JS submodule depends on `parser-js` and the common module depends on `core`. The mapping established between the various worlds
-    takes place through the concept of expect/actual Kotlin multi-platform feature.
+    ths JS submodule depends on `parser-js`, the common module depends on `core` and the test submodule depends on `solve-test`. The mapping established between the various worlds
+    takes place through the concept of expect/actual Kotlin multi-platform feature. 
 - **dsl-x**: this modules creates a Kotlin dsl to simplify interaction between Prolog world and the others. For example,
     to test parsing in `parser-core`, we used Prolog dsl (to parse "a :- b" we can simply use this notation "a" impliedBy "b")
 

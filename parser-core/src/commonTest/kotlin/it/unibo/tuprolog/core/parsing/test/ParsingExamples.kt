@@ -22,6 +22,9 @@ object ParsingExamples {
         "1 + 2" to prolog {
             1.toTerm() + 2
         },
+        "3 + 4 * 5 - 1" to prolog {
+            (3.toTerm() + ( 4.toTerm() * 5)).toTerm() - 1
+        },
         "A; _" to prolog {
             "A" or `_`
         },
