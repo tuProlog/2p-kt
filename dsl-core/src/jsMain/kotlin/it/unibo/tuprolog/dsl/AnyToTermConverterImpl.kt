@@ -17,9 +17,6 @@ actual class AnyToTermConverterImpl actual constructor(override val prolog: Prol
             return INT_REGEX.matches(numberCache)
         }
 
-    override val Any.isBoolean: Boolean
-        get() = this is Boolean
-
     override fun Number.toInteger(): Integer {
         return Integer.of(numberCache)
     }

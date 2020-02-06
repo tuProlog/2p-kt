@@ -7,9 +7,6 @@ actual class AnyToTermConverterImpl actual constructor(override val prolog: Prol
     override val Number.isInteger: Boolean
         get() = this is Int || this is Long
 
-    override val Any.isBoolean: Boolean
-        get() = this is Boolean
-
     override fun Number.toInteger(): Integer {
         return prolog.numOf(this.toLong())
     }

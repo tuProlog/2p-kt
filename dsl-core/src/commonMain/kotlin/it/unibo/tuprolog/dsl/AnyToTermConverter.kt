@@ -24,14 +24,14 @@ internal interface AnyToTermConverter {
             any.isVariable -> prolog.varOf(any)
             else -> prolog.atomOf(any)
         }
+        is Boolean -> any.toTruth()
         is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
         is Sequence<*> -> any.map { toTerm(it!!) }.extToTerm()
         is Iterable<*> -> any.map { toTerm(it!!) }.extToTerm()
-        else -> raiseErrorConvertingTo(Term::class)
+        else -> any.raiseErrorConvertingTo(Term::class)
     }
 
     val Number.isInteger: Boolean
-    val Any.isBoolean: Boolean
     val String.isVariable: Boolean
         get() = this matches Var.VAR_REGEX_PATTERN
 
@@ -39,7 +39,7 @@ internal interface AnyToTermConverter {
     fun Number.toReal(): Real
     fun String.toVariable(): Var = prolog.varOf(this)
     fun String.toAtom(): Atom = prolog.atomOf(this)
-    fun Any.toTruth(): Truth = prolog.truthOf(this as Boolean)
+    fun Boolean.toTruth(): Truth = prolog.truthOf(this)
 
     companion object {
         fun of(prolog: Prolog): AnyToTermConverter {
