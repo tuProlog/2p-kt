@@ -14,7 +14,7 @@ class PrologParserTest {
     companion object {
 
         private fun lexerForString(input: String): PrologLexer {
-            return PrologLexer(ANTLRInputStream(input))
+            return PrologLexer(CharStreams.fromString(input))
         }
 
         private fun tokenStreamFromLexer(lexer: DynamicLexer): TokenStream {
