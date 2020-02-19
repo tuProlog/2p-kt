@@ -88,7 +88,7 @@ function DynamicParser(input) {
             associativities = associativity;
         }
         const lookahead = _input.LT(1);
-        if (this.mustBeExcluded(lookahead, except)) {
+        if (this.mustBeExcluded(lookahead, except || [])) {
             return false;
         }
         for (const a of associativities) {
