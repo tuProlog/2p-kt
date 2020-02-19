@@ -20,7 +20,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
 //            GetInstance.INSTANCE
 //        }
 
-    private fun newErrorListener(whileParsing: Any): ANTLRErrorListener? {
+    private fun newErrorListener(whileParsing: Any): ANTLRErrorListener {
         return object : BaseErrorListener() {
             private fun symbolToString(obj: Any): String {
                 return if (obj is Token) {
@@ -52,9 +52,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
             }
         }
     }
-//    }
 
-    //EXPRESSION
     override fun parseExpression(string: String): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
 
@@ -95,7 +93,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
                     parseExpression(parser, source)
                 }
                 ex.cause is RecognitionException -> {
-                    throw (ex.cause as RecognitionException?)!!
+                    throw ex.cause as RecognitionException
                 }
                 else -> {
                     throw ex

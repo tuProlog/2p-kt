@@ -18,7 +18,7 @@ import it.unibo.tuprolog.parser.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
 
-class PrologVisitor : PrologParserVisitor<Term>(){
+class PrologVisitor : PrologParserVisitor<Term>() {
     private val scope: Scope = Scope.empty()
 
     override fun visitSingletonTerm(ctx: SingletonTermContext): Term =
@@ -52,7 +52,6 @@ class PrologVisitor : PrologParserVisitor<Term>(){
 
     override fun visitInteger(ctx: IntegerContext): Term {
         val value = parseInteger(ctx)
-        println("Integer: $value")
         return Integer.of(value)
     }
 
@@ -69,12 +68,9 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             println("Real: $raw")
             Real.of(raw)
         } catch (notAFloating: NumberFormatException) {
-            throw ParseException(
-                null,
-                ctx.value.text,
-                ctx.value.line,
-                "Invalid real number format: " + ctx.value.text,
-                null
+            throw parseException(
+                ctx.value,
+                "Invalid real number format: " + ctx.value.text
             )
         }
     }
@@ -138,12 +134,9 @@ class PrologVisitor : PrologParserVisitor<Term>(){
             ctx.isChar -> {
                 clean = str.substring(2)
                 if (clean.length != 1) {
-                    throw ParseException(
-                        null,
-                       ctx.value.text,
-                       ctx.value.line,
-                       "Invalid character literal: " + ctx.value.text,
-                       null
+                    throw parseException(
+                        ctx.value,
+                        "Invalid character literal: " + ctx.value.text
                     )
                 }
                 return BigInteger.of(clean[0].toInt())

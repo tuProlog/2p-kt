@@ -10,8 +10,6 @@ import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.POSTFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.PREFIX
 import org.gciatto.kt.math.BigInteger
 
-// This cannot be a singleton, since it's stateful
-// (in fact, if you carefully look at 2p-java's PrologExpressionVisitor, it is not a singleton)
 class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
 
     //VARIABLES
@@ -58,7 +56,7 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         return try {
             scope.numOf(raw.toDouble())
         } catch (notAFloating: NumberFormatException) {
-            throw ParseException(ctx.value, notAFloating)
+            throw parseException(ctx.value, notAFloating)
         }
     }
 

@@ -7,17 +7,69 @@ import it.unibo.tuprolog.parser.*
 
 internal object PrologParserFactoryImpl : PrologParserFactory {
 
+    private fun newErrorListener(whileParsing: Any): ErrorListener {
+        return object : ErrorListener() {
+            private fun symbolToString(obj: dynamic): String {
+                return if (obj is Token) {
+                    obj.text
+                } else {
+                    obj.toString()
+                }
+            }
+
+            override fun syntaxError(
+                recognizer: dynamic,
+                offendingSymbol: dynamic,
+                line: Int,
+                column: Int,
+                msg: String,
+                e: RecognitionException
+            ) {
+                if (recognizer is PrologParser) {
+                    recognizer.removeParseListeners()
+                }
+                throw ParseException(
+                    whileParsing,
+                    symbolToString(offendingSymbol),
+                    line,
+                    column + 1,
+                    msg,
+                    e
+                )
+            }
+        }
+    }
+
     //EXPRESSION
     override fun parseExpression(string: String): SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
 
     override fun parseExpression(string: String, withOperators: OperatorSet): SingletonExpressionContext {
         val parser = createParser(string, withOperators)
-        return parseExpression(parser)
+        return parseExpression(parser, string)
     }
 
-    private fun parseExpression(parser: PrologParser): SingletonExpressionContext =
-        parser.singletonExpression()
+    private fun parseExpression(parser: PrologParser, source: String): SingletonExpressionContext {
+        return try {
+            parser.singletonExpression()
+        } catch (ex: ParseCancellationException) {
+            when {
+                parser._interp.predictionMode === PredictionMode.SLL -> {
+                    parser.tokenStream.seek(0)
+                    parser._interp.predictionMode = PredictionMode.LL
+                    parser._errHandler = DefaultErrorStrategy()
+                    parser.addErrorListener(newErrorListener(source))
+                    parseExpression(parser, source)
+                }
+                ex.cause is RecognitionException -> {
+                    throw ex.cause as RecognitionException
+                }
+                else -> {
+                    throw ex
+                }
+            }
+        }
+    }
 
 
     override fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
@@ -36,13 +88,10 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     override fun parseTermWithStandardOperators(string: String): SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-
-    //CLAUSES
     override fun parseClauses(source: String, withOperators: OperatorSet): List<ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser)
     }
-
 
     override fun parseClauses(source: String): List<ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
@@ -51,11 +100,8 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
     override fun parseClausesWithStandardOperators(source: String): List<ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-
-    //CREATE PARSER
     override fun createParser(string: String): PrologParser =
         createParser(string, OperatorSet.DEFAULT)
-
 
     override fun createParser(source: String, operators: OperatorSet): PrologParser {
         val stream = InputStream(source)
@@ -64,16 +110,13 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         val tokenStream = CommonTokenStream(lexer)
         val parser = PrologParser(tokenStream)
         parser.removeErrorListeners()
-//        parser.errorHandler = BailErrorStrategy()
+        parser._errHandler = BailErrorStrategy()
         parser._interp.predictionMode = PredictionMode.SLL
         return addOperators(parser, operators)
     }
 
-
-    //PRIVATE FUNCTIONS
     private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         val ops = mutableListOf<String>()
-//        val err = mutableListOf<Boolean>()
         for (it in operators) {
             val op = when (it.specifier.name.toUpperCase()) {
                 "FX" -> Associativity.FX
@@ -88,10 +131,6 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
             ops.add(it.functor)
             prologParser.addOperator(it.functor, op, it.priority)
         }
-//        ops.forEach{
-//            err.add(prologParser.isOperator(it))
-//        }
-        //error(err.toString())
         return prologParser
     }
 

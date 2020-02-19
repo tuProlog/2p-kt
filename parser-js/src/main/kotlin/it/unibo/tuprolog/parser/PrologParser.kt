@@ -55,8 +55,8 @@ external class PrologParser(input: TokenStream) {
     }
 
     val _interp: dynamic
+    var _errHandler: ErrorStrategy
     val tokenStream: dynamic
-    val errorHandler: dynamic
 
     fun addErrorListener(listener: dynamic)
     fun removeErrorListeners()
