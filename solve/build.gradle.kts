@@ -12,9 +12,9 @@ kotlin {
 
         val commonTest by getting {
             dependsOn(commonMain)
-            dependencies {
-                implementation(project(":solve-test"))
-            }
+//            dependencies {
+//                implementation(project(":solve-test"))
+//            }
         }
 
         // Default source set for JVM-specific sources and dependencies:
@@ -25,9 +25,7 @@ kotlin {
             main.defaultSourceSet {
                 dependsOn(commonMain)
                 dependencies {
-                    //                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
+
                 }
             }
             test.defaultSourceSet {

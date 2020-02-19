@@ -4,7 +4,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":solve"))
+                api(project(":solve"))
                 api(project(":dsl-theory"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
