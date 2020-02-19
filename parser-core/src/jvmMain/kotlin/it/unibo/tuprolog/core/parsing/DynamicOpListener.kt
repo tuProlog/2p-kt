@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core.parsing
 
-
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
@@ -12,7 +11,6 @@ import it.unibo.tuprolog.parser.dynamic.Associativity
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
-
 
 internal class DynamicOpListener private constructor(
     parser: PrologParser,

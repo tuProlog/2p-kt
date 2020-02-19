@@ -17,7 +17,6 @@ import it.unibo.tuprolog.parser.Associativity.YF
 import it.unibo.tuprolog.parser.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
-
 class PrologVisitor : PrologParserVisitor<Term>() {
     private val scope: Scope = Scope.empty()
 
@@ -37,7 +36,7 @@ class PrologVisitor : PrologParserVisitor<Term>() {
                 INFIX.contains(ctx.associativity) -> visitInfixExpression(ctx)
                 POSTFIX.contains(ctx.associativity) -> visitPostfixExpression(ctx)
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
-                else -> throw IllegalArgumentException("Associativity unknown: ${ctx.associativity} INFIX=${INFIX} PREFIX=${PREFIX} POSTFIX=${POSTFIX}") // use kotlin's IllegalArgumentException
+                else -> throw IllegalArgumentException("Associativity unknown: ${ctx.associativity} INFIX=${INFIX} PREFIX=${PREFIX} POSTFIX=${POSTFIX}")
             }, flatten(ctx.outers.asList())
         )
     }
@@ -65,7 +64,6 @@ class PrologVisitor : PrologParserVisitor<Term>() {
             raw = ctx.sign?.text + raw
         }
         return try {
-            println("Real: $raw")
             Real.of(raw)
         } catch (notAFloating: NumberFormatException) {
             throw parseException(
@@ -113,7 +111,6 @@ class PrologVisitor : PrologParserVisitor<Term>() {
             scope.setOf(ctx.items.map(this::visitExpression))
     }
 
-    //PRIVATE METHODS
     private fun parseInteger(ctx: IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int

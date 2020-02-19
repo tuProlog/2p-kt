@@ -12,9 +12,6 @@ import org.gciatto.kt.math.BigInteger
 
 class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
 
-    //VARIABLES
-    // private val variables: MutableMap<String, Var> = HashMap()
-    // use a Scope to instantiate terms: it takes care the scoped variables automatically
     private val scope: Scope = Scope.empty()
 
     override fun visitSingletonTerm(ctx: PrologParser.SingletonTermContext): Term =
@@ -98,7 +95,6 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
             scope.setOf(ctx.items.map(this::visitExpression))
     }
 
-    //PRIVATE METHODS
     private fun parseInteger(ctx: PrologParser.IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int
@@ -205,7 +201,6 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         return result
     }
 
-    //Prova refactoring List Kotlin
     private fun infixRight(terms: List<Term>, ops: List<String>): Term {
         var i = terms.size - 1
         var j = ops.size - 1

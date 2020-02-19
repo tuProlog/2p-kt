@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core.parsing
 
+import it.unibo.tuprolog.core.exception.TuPrologException
+
 class ParseException(
     var input: Any?,
     var offendingSymbol: String,
@@ -7,7 +9,7 @@ class ParseException(
     var column: Int,
     message: String?,
     throwable: Throwable?
-) : RuntimeException(message, throwable) {
+) : TuPrologException(message, throwable) {
 
     var clauseIndex = -1
 

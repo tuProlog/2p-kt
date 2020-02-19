@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core.parsing
 
-//import com.sun.javafx.collections.ObservableListWrapper
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
@@ -11,14 +10,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
 
-// Singletons in Kotlin are implemented through the "object" keyword
-internal object PrologParserFactoryImpl : PrologParserFactory {
-
-    // objects cannot have a companion object
-//    companion object {
-//        val instance: PrologParserFactoryImpl by lazy{
-//            GetInstance.INSTANCE
-//        }
+internal object PrologParserFactory {
 
     private fun newErrorListener(whileParsing: Any): ANTLRErrorListener {
         return object : BaseErrorListener() {
@@ -53,26 +45,26 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         }
     }
 
-    override fun parseExpression(string: String): PrologParser.SingletonExpressionContext =
+    fun parseExpression(string: String): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
 
-    override fun parseExpression(string: String, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
+    fun parseExpression(string: String, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string, withOperators)
         return parseExpression(parser, string)
     }
 
-    override fun parseExpression(string: Reader): PrologParser.SingletonExpressionContext =
+    fun parseExpression(string: Reader): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
 
-    override fun parseExpression(string: Reader, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
+    fun parseExpression(string: Reader, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string, withOperators)
         return parseExpression(parser, string)
     }
 
-    override fun parseExpression(string: InputStream): PrologParser.SingletonExpressionContext =
+    fun parseExpression(string: InputStream): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.EMPTY)
 
-    override fun parseExpression(
+    fun parseExpression(
         string: InputStream,
         withOperators: OperatorSet
     ): PrologParser.SingletonExpressionContext {
@@ -102,109 +94,100 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         }
     }
 
-    override fun parseExpressionWithStandardOperators(string: String): PrologParser.SingletonExpressionContext =
+    fun parseExpressionWithStandardOperators(string: String): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.DEFAULT)
 
-    override fun parseExpressionWithStandardOperators(string: Reader): PrologParser.SingletonExpressionContext =
+    fun parseExpressionWithStandardOperators(string: Reader): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.DEFAULT)
 
-    override fun parseExpressionWithStandardOperators(string: InputStream): PrologParser.SingletonExpressionContext =
+    fun parseExpressionWithStandardOperators(string: InputStream): PrologParser.SingletonExpressionContext =
         parseExpression(string, OperatorSet.DEFAULT)
 
-
-    // TERM
-    override fun parseTerm(string: String): PrologParser.SingletonTermContext =
+    fun parseTerm(string: String): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.EMPTY)
 
-    override fun parseTerm(string: String, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseTerm(string: String, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
         return parseTerm(parser, string)
     }
 
-    override fun parseTerm(string: Reader): PrologParser.SingletonTermContext =
+    fun parseTerm(string: Reader): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.EMPTY)
 
-    override fun parseTerm(string: Reader, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseTerm(string: Reader, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
         return parseTerm(parser, string)
     }
 
-    override fun parseTerm(string: InputStream): PrologParser.SingletonTermContext =
+    fun parseTerm(string: InputStream): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.EMPTY)
 
-    override fun parseTerm(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseTerm(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
         return parseTerm(parser, string)
     }
 
-    override fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext =
+    fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-    override fun parseTermWithStandardOperators(string: Reader): PrologParser.SingletonTermContext =
+    fun parseTermWithStandardOperators(string: Reader): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-    override fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext =
+    fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-
-    //CLAUSES
-    override fun parseClauses(source: String, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: String, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    override fun parseClauses(source: Reader, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: Reader, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    override fun parseClauses(source: InputStream, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: InputStream, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    override fun parseClauses(source: String): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: String): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    override fun parseClauses(source: Reader): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: Reader): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    override fun parseClauses(source: InputStream): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: InputStream): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    override fun parseClausesWithStandardOperators(source: String): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: String): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: Reader): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: Reader): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-    override fun parseClausesWithStandardOperators(source: InputStream): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: InputStream): List<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-
-    //CREATE PARSER
-    override fun createParser(string: String): PrologParser =
+    fun createParser(string: String): PrologParser =
         createParser(string, CharStreams::fromString)
 
-    override fun createParser(source: Reader): PrologParser =
+    fun createParser(source: Reader): PrologParser =
         createParser(source, CharStreams::fromReader)
 
-    override fun createParser(source: InputStream): PrologParser =
+    fun createParser(source: InputStream): PrologParser =
         createParser(source, CharStreams::fromStream)
 
-
-    override fun createParser(source: String, operators: OperatorSet): PrologParser =
+    fun createParser(source: String, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    override fun createParser(source: Reader, operators: OperatorSet): PrologParser =
+    fun createParser(source: Reader, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    override fun createParser(source: InputStream, operators: OperatorSet): PrologParser =
+    fun createParser(source: InputStream, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-
-    //PRIVATE FUNCTIONS
-    private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
+    fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         operators.forEach {
             prologParser.addOperator(it.functor, Associativity.valueOf(it.specifier.name), it.priority)
         }
@@ -274,22 +257,7 @@ internal object PrologParserFactoryImpl : PrologParserFactory {
         }
     }
 
-    // this is very techy and leverages on ObservableListWrapper which is JDK-implementation-specific
-    // you can attain the same result easily through Kotlin Sequences
     private fun parseClauses(parser: PrologParser, source: Any): List<PrologParser.ClauseContext> {
-//        val optClauses: MutableList<PrologParser.OptClauseContext> =
-//            listOf<PrologParser.OptClauseContext>().toMutableList()
-//        generateSequence(0) { it + 1 }.forEach {
-//            try {
-//                optClauses.add(parseClause(parser, source))
-//            } catch (e: ParseException) {
-//                e.clauseIndex = it
-//                throw e
-//            }
-//        }
-//        return ObservableListWrapper(optClauses).takeWhile {
-//            !it.isOver
-//        }.map(PrologParser.OptClauseContext::clause)
         return generateSequence(0) { it + 1 }
             .map {
                 try {
