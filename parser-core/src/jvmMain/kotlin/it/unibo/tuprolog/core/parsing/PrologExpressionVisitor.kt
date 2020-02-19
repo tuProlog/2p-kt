@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.PrologParser
@@ -51,7 +52,7 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
             raw = ctx.sign.text + raw
         }
         return try {
-            scope.numOf(raw.toDouble())
+            Real.of(raw)
         } catch (notAFloating: NumberFormatException) {
             throw parseException(ctx.value, notAFloating)
         }
@@ -124,7 +125,13 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
                         null
                     )
                 }
-                return BigInteger.of(clean[0].toInt())
+                return with(BigInteger.of(clean[0].toInt())) {
+                    if (ctx?.sign?.text?.contains("-") ?: false) {
+                        -this
+                    } else {
+                        this
+                    }
+                }
             }
             else -> {
                 base = 10

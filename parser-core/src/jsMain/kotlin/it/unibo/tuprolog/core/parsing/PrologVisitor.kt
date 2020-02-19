@@ -136,7 +136,13 @@ class PrologVisitor : PrologParserVisitor<Term>() {
                         "Invalid character literal: " + ctx.value.text
                     )
                 }
-                return BigInteger.of(clean[0].toInt())
+                return with(BigInteger.of(clean[0].toInt())) {
+                    if (ctx.sign?.text?.contains("-") ?: false) {
+                        -this
+                    } else {
+                        this
+                    }
+                }
             }
             else -> {
                 base = 10

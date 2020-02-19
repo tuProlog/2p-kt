@@ -2,6 +2,8 @@ package it.unibo.tuprolog.core.parsing.test
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.unify.prolog
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 object ParsingExamples {
     val canonicalTerms: Sequence<Pair<String, Term>> = sequenceOf(
@@ -13,7 +15,61 @@ object ParsingExamples {
         "[1]" to prolog { listOf(1) },
         "[1 | X]" to prolog { consOf(1, "X") },
         "[1, a | X]" to prolog { consOf(1, consOf("a", "X")) },
-        "[a, 2, X]" to prolog { listOf("a", 2, "X") }
+        "[a, 2, X]" to prolog { listOf("a", 2, "X") },
+        "{}" to prolog { emptySet() },
+        "{ }" to prolog { emptySet() },
+        "{ 1 }" to prolog { setOf(1) },
+        "{ 1, a }" to prolog { setOf(1, "a") },
+        "{ 1, a, X }" to prolog { setOf(1, "a", "X") },
+        "abc" to prolog { atomOf("abc") },
+        "Abc" to prolog { varOf("Abc") },
+        "'abc'" to prolog { atomOf("abc") },
+        "'Abc'" to prolog { atomOf("Abc") },
+        "'Abc d'" to prolog { atomOf("Abc d") },
+        "'1'" to prolog { atomOf("1") },
+        "'1.2'" to prolog { atomOf("1.2") },
+        "\"abc\"" to prolog { atomOf("abc") },
+        "\"Abc\"" to prolog { atomOf("Abc") },
+        "\"Abc d\"" to prolog { atomOf("Abc d") },
+        "\"1\"" to prolog { atomOf("1") },
+        "\"1.2\"" to prolog { atomOf("1.2") },
+        "1" to prolog { numOf(1) },
+        "1.2" to prolog { numOf(1.2) },
+        "-1" to prolog { numOf(-1) },
+        "-1.2" to prolog { numOf(-1.2) },
+        "${BigInteger.of("".padEnd(17, 'F'), 16)}" to prolog { numOf(BigInteger.of("295147905179352825855")) },
+        "0xFF" to prolog { numOf(255) },
+        "0XFF" to prolog { numOf(255) },
+        "-0xFF" to prolog { numOf(-255) },
+        "-0XFF" to prolog { numOf(-255) },
+        "0b111" to prolog { numOf(7) },
+        "0B111" to prolog { numOf(7) },
+        "-0b111" to prolog { numOf(-7) },
+        "-0B111" to prolog { numOf(-7) },
+        "0o11" to prolog { numOf(9) },
+        "0O11" to prolog { numOf(9) },
+        "-0o11" to prolog { numOf(-9) },
+        "-0O11" to prolog { numOf(-9) },
+        "0O11" to prolog { numOf(9) },
+        "0'a" to prolog { numOf(97) },
+        "-0'a" to prolog { numOf(-97) },
+        "${BigDecimal.PI}" to prolog { numOf(BigDecimal.PI) },
+        "(+)" to prolog { atomOf("+") },
+        "(-)" to prolog { atomOf("-") },
+        "$" to prolog { atomOf("$") },
+        "+(1)" to prolog { structOf("+", 1) },
+        "-(1)" to prolog { structOf("-", 1) },
+        "$(1)" to prolog { structOf("$", 1) },
+        "+(1, 2)" to prolog { structOf("+", 1, 2) },
+        "-(1, 2)" to prolog { structOf("-", 1, 2) },
+        "$(1, 2)" to prolog { structOf("$", 1, 2) },
+        "'+'(1)" to prolog { structOf("+", 1) },
+        "'-'(1)" to prolog { structOf("-", 1) },
+        "'$'(1)" to prolog { structOf("$", 1) },
+        "'+'(1, 2)" to prolog { structOf("+", 1, 2) },
+        "'-'(1, 2)" to prolog { structOf("-", 1, 2) },
+        "'$'(1, 2)" to prolog { structOf("$", 1, 2) },
+        "'F'(1, 2)" to prolog { structOf("F", 1, 2) }
     )
 
     val expressions: Sequence<Pair<String, Term>> = sequenceOf(
