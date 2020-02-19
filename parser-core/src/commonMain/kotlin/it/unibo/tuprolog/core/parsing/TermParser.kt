@@ -31,7 +31,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Constant
 
     fun Constant.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Constant =
-        parseConstant(input, operators) as Constant
+        parseConstant(input, operators)
     
     fun String.parseAsConstant(operators: OperatorSet = defaultOperatorSet): Constant =
         parseConstant(this, operators)
@@ -41,7 +41,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Var
 
     fun Var.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Var =
-        parseVar(input, operators) as Var
+        parseVar(input, operators)
 
     fun String.parseAsVar(operators: OperatorSet = defaultOperatorSet): Var =
         parseVar(this, operators)
@@ -51,7 +51,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Atom
 
     fun Atom.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Atom =
-        parseAtom(input, operators) as Atom
+        parseAtom(input, operators)
 
     fun String.parseAsAtom(operators: OperatorSet = defaultOperatorSet): Atom =
         parseAtom(this, operators)
@@ -61,7 +61,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Numeric
 
     fun Numeric.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Numeric =
-        parseNumeric(input, operators) as Numeric
+        parseNumeric(input, operators)
 
     fun String.parseAsNumeric(operators: OperatorSet = defaultOperatorSet): Numeric =
         parseNumeric(this, operators)
@@ -71,7 +71,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Integer
 
     fun Integer.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Integer =
-        parseInteger(input, operators) as Integer
+        parseInteger(input, operators)
 
     fun String.parseAsInteger(operators: OperatorSet = defaultOperatorSet): Integer =
         parseInteger(this, operators)
@@ -81,7 +81,7 @@ interface TermParser {
         input.parseAsTerm(operators) as Real
 
     fun Real.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): Real =
-        parseReal(input, operators) as Real
+        parseReal(input, operators)
 
     fun String.parseAsReal(operators: OperatorSet = defaultOperatorSet): Real =
         parseReal(this, operators)
