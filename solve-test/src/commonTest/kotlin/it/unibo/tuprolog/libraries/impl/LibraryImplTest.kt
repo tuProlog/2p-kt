@@ -10,6 +10,7 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.primitive.extractSignature
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals

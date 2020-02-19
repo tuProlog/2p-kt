@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
  *
  * @author Enrico
  */
-internal object Halt : PrimitiveWrapper<ExecutionContext>("halt", 0) {
+object Halt : PrimitiveWrapper<ExecutionContext>("halt", 0) {
 
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
         throw HaltException(context = request.context)
