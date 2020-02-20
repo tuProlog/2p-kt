@@ -43,8 +43,6 @@ Manually publish to Bintray:
   stage: test
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   when: manual
-  dependencies:
-    - Test JVM
 
 Publish to Bintray (dev):
   stage: deploy
