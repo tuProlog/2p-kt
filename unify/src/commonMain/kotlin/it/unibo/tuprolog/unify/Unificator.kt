@@ -4,6 +4,8 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 interface Unificator {
 
@@ -26,19 +28,24 @@ interface Unificator {
     companion object {
 
         /** The default unification strategy that uses plain equals to determine [Term]s identity */
+        @JvmStatic
         val default by lazy { strict() }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
+        @JvmStatic
         infix fun Term.mguWith(other: Term): Substitution = default.mgu(this, other)
 
         /** Computes whether the two terms match, using [default] unification strategy */
+        @JvmStatic
         infix fun Term.matches(other: Term): Boolean = default.match(this, other)
 
         /** Computes the unified term, using [default] unification strategy */
+        @JvmStatic
         infix fun Term.unifyWith(other: Term): Term? = default.unify(this, other)
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
+        @JvmStatic
         fun naive(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
@@ -51,6 +58,7 @@ interface Unificator {
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
+        @JvmStatic
         fun strict(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
