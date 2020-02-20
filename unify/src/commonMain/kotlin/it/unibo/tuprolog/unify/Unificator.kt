@@ -4,8 +4,6 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Unificator {
@@ -61,7 +59,7 @@ interface Unificator {
          * methods, except in the case of numbers which are compared by value */
         @JvmStatic
         fun naive(context: Substitution): Unificator =
-            object : AbstractUnificationStrategy(context) {
+            object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
                     when {
                         first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
@@ -80,7 +78,7 @@ interface Unificator {
          * methods */
         @JvmStatic
         fun strict(context: Substitution): Unificator =
-            object : AbstractUnificationStrategy(context) {
+            object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
             }
 

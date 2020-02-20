@@ -9,7 +9,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 import kotlin.jvm.JvmOverloads
 
-abstract class AbstractUnificationStrategy
+abstract class AbstractUnificator
     @JvmOverloads constructor(override val context: Substitution = empty())
     : Unificator {
 
