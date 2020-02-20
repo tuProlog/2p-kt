@@ -78,7 +78,6 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore
     fun testConjunctionProperties() {
         prototype.testConjunctionProperties(shortDuration)
     }
@@ -99,7 +98,6 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore
     fun testCatchPrimitiveTransparency() {
         prototype.testCatchPrimitiveTransparency(shortDuration)
     }
@@ -110,13 +108,11 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    @Ignore
     fun testNotPrimitive() {
         prototype.testNotPrimitive(shortDuration)
     }
 
     @Test
-    @Ignore
     fun testNotModularity() {
         prototype.testNotModularity(shortDuration)
     }
