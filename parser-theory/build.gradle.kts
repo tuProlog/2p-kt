@@ -11,7 +11,6 @@ kotlin {
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
@@ -23,6 +22,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
+                    api(project(":parser-js"))
                 }
             }
         }

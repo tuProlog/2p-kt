@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
 import java.io.Reader
 
-internal object PrologParserFactory {
+object PrologParserFactory {
 
     private fun newErrorListener(whileParsing: Any): ANTLRErrorListener {
         return object : BaseErrorListener() {

@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
 
-internal class DynamicOpListener private constructor(
+class DynamicOpListener private constructor(
     parser: PrologParser,
     private val operatorDefinedCallback: (Operator) -> OperatorSet
 ) : PrologParserBaseListener() {

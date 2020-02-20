@@ -7,12 +7,29 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 interface ClauseDatabaseParser {
     val defaultOperatorSet: OperatorSet
 
-    fun ClauseDatabase.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): ClauseDatabase
+    fun parseClauseDatabase(input: String, operators: OperatorSet = defaultOperatorSet): ClauseDatabase
 
-    companion object
+    fun ClauseDatabase.Companion.parse(input: String, operators: OperatorSet = defaultOperatorSet): ClauseDatabase =
+        parseClauseDatabase(input, operators)
+
+    companion object {
+        val withNoOperator = clauseDbParserWithNoOperator()
+
+        val withStandardOperators = clauseDbParserWithStandardOperators()
+
+        fun withOperators(operators: OperatorSet) = clauseDbParserWithOperators(operators)
+
+        fun withOperators(vararg operators: Operator) = clauseDbParserWithOperators(*operators)
+    }
 }
 
-expect fun ClauseDatabaseParser.Companion.withNoOperator(): ClauseDatabaseParser
-expect fun ClauseDatabaseParser.Companion.withStandardOperators() : ClauseDatabaseParser
-expect fun ClauseDatabaseParser.Companion.withOperators(operators: OperatorSet): ClauseDatabaseParser
-expect fun ClauseDatabaseParser.Companion.withOperators(vararg operators: Operator): ClauseDatabaseParser
+fun clauseDbParserWithNoOperator(): ClauseDatabaseParser =
+    clauseDbParserWithOperators(OperatorSet.EMPTY)
+
+fun clauseDbParserWithStandardOperators() : ClauseDatabaseParser =
+    clauseDbParserWithOperators(OperatorSet.DEFAULT)
+
+expect fun clauseDbParserWithOperators(operators: OperatorSet): ClauseDatabaseParser
+
+fun clauseDbParserWithOperators(vararg operators: Operator): ClauseDatabaseParser =
+    clauseDbParserWithOperators(OperatorSet(*operators))

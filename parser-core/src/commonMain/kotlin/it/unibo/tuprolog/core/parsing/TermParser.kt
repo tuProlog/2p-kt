@@ -99,9 +99,11 @@ interface TermParser {
 
 }
 
-expect fun termParserWithNoOperator() : TermParser
+fun termParserWithNoOperator(): TermParser =
+    termParserWithOperators(OperatorSet.EMPTY)
 
-expect fun termParserWithStandardOperators(): TermParser
+fun termParserWithStandardOperators(): TermParser =
+    termParserWithOperators(OperatorSet.DEFAULT)
 
 expect fun termParserWithOperators(operators: OperatorSet): TermParser
 

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.*
 
-internal object PrologParserFactory {
+object PrologParserFactory {
 
     private fun newErrorListener(whileParsing: Any): ErrorListener {
         return object : ErrorListener() {
