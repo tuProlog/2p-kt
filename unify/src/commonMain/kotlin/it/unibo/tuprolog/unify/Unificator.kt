@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Unificator {
@@ -15,15 +16,28 @@ interface Unificator {
     /** Calculates the Most General Unifier of given [Term]s, optionally enabling occur-check */
     fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Substitution
 
+    /** Calculates the Most General Unifier of given [Term]s, enabling occur-check */
+    fun mgu(term1: Term, term2: Term): Substitution =
+        mgu(term1, term2, true)
+
     /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them */
-    fun match(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Boolean =
+    fun match(term1: Term, term2: Term, occurCheckEnabled: Boolean): Boolean =
         mgu(term1, term2, occurCheckEnabled) !== Substitution.failed()
 
+    /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them.
+     * It performs unification with occur check*/
+    fun match(term1: Term, term2: Term): Boolean =
+        match(term1, term2, true)
+
     /** Unifies two [Term]s if possible */
-    fun unify(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Term? {
+    fun unify(term1: Term, term2: Term, occurCheckEnabled: Boolean): Term? {
         val substitution = mgu(term1, term2, occurCheckEnabled)
         return if (substitution.isFailed) null else term1[substitution]
     }
+
+    /** Unifies two [Term]s if possible, with occurs check */
+    fun unify(term1: Term, term2: Term): Term? =
+        unify(term1, term2, true)
 
     companion object {
 
@@ -46,6 +60,7 @@ interface Unificator {
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
         @JvmStatic
+        @JvmOverloads
         fun naive(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
@@ -59,6 +74,7 @@ interface Unificator {
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
         @JvmStatic
+        @JvmOverloads
         fun strict(context: Substitution = Substitution.empty()): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
