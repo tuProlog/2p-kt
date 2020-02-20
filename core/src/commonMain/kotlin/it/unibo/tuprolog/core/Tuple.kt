@@ -48,8 +48,11 @@ interface Tuple : Struct {
         const val FUNCTOR = ","
 
         @JvmStatic
-        @JvmOverloads
-        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::ofTrue): Term =
+        fun wrapIfNeeded(vararg terms: Term): Term =
+            wrapIfNeeded(*terms, default = Truth.Companion::ofTrue)
+
+        @JvmStatic
+        fun wrapIfNeeded(vararg terms: Term, default: () -> Term): Term =
             when {
                 terms.isEmpty() -> default()
                 terms.size == 1 -> terms.single()

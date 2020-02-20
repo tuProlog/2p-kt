@@ -48,7 +48,6 @@ interface Clause : Struct {
         const val FUNCTOR = ":-"
 
         @JvmStatic
-        @JvmOverloads
         fun of(head: Struct? = null, vararg body: Term): Clause =
             when (head) {
                 null -> {
@@ -78,7 +77,6 @@ interface Clause : Struct {
         }
 
         // TODO: 16/01/2020 test this method
-        @JvmOverloads
         internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term

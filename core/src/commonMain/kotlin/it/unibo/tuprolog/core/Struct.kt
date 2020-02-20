@@ -112,8 +112,11 @@ interface Struct : Term {
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
         @JvmStatic
-        @JvmOverloads
-        fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
+        fun fold(operator: String, terms: KtList<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, terms: KtList<Term>, terminal: Term?): Struct =
             when {
                 operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
                 operator == Cons.FUNCTOR && terminal === null ->
@@ -137,19 +140,28 @@ interface Struct : Term {
 
 
         @JvmStatic
-        @JvmOverloads
-        fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
+        fun fold(operator: String, terms: Sequence<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
         @JvmStatic
-        @JvmOverloads
-        fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct =
+        fun fold(operator: String, terms: Sequence<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, terms: Iterable<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
         @JvmStatic
-        @JvmOverloads
-        fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
+        fun fold(operator: String, terms: Iterable<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, vararg terms: Term, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
+
+        @JvmStatic
+        fun fold(operator: String, vararg terms: Term): Struct =
+            fold(operator, listOf(*terms))
 
     }
 }
