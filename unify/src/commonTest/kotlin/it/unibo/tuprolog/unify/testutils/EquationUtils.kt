@@ -17,8 +17,8 @@ internal object EquationUtils {
     /** A list of equations that should immediately be interpreted as Identities, without deeper exploration */
     internal val shallowIdentityEquations by lazy {
         listOf(
-            Truth.`true`() to Truth.`true`(),
-            Truth.fail() to Truth.fail(),
+            Truth.ofTrue() to Truth.ofTrue(),
+            Truth.ofFalse() to Truth.ofFalse(),
             Empty.list() to Empty.list(),
             Empty.set() to Empty.set(),
             Atom.of("a") to Atom.of("a"),
@@ -45,12 +45,12 @@ internal object EquationUtils {
             Scope.empty { structOf("f", varOf("A")) to structOf("f", varOf("A")) },
             Scope.empty { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
             Scope.empty {
-                directiveOf(atomOf("here"), structOf("f", Truth.`true`())) to
-                        directiveOf(atomOf("here"), structOf("f", Truth.`true`()))
+                directiveOf(atomOf("here"), structOf("f", Truth.ofTrue())) to
+                        directiveOf(atomOf("here"), structOf("f", Truth.ofTrue()))
             },
             Scope.empty {
-                ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail()) to
-                        ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.fail())
+                ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.ofFalse()) to
+                        ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.ofFalse())
             },
             Scope.empty {
                 indicatorOf(atomOf("ciao"), varOf("A")) to indicatorOf(atomOf("ciao"), varOf("A"))
@@ -64,8 +64,8 @@ internal object EquationUtils {
     /** A list of equations that should be interpreted as Assignments (left item is a Var always) */
     internal val assignmentEquations by lazy {
         listOf(
-            Var.of("X") to Truth.`true`(),
-            Var.of("X") to Truth.fail(),
+            Var.of("X") to Truth.ofTrue(),
+            Var.of("X") to Truth.ofFalse(),
             Var.of("X") to Empty.list(),
             Var.of("X") to Empty.set(),
             Var.of("X") to Atom.of("a"),
@@ -75,8 +75,8 @@ internal object EquationUtils {
             Var.anonymous() to Integer.of(0),
             Var.anonymous() to Struct.of("f", Var.of("A")),
             Var.anonymous() to Fact.of(Struct.of("aa", Var.of("A"))),
-            Var.anonymous() to Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())),
-            Var.anonymous() to Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail()),
+            Var.anonymous() to Directive.of(Atom.of("here"), Struct.of("f", Truth.ofTrue())),
+            Var.anonymous() to Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.ofFalse()),
             Var.anonymous() to Var.anonymous()
         )
     }
@@ -98,16 +98,16 @@ internal object EquationUtils {
             Fact.of(Struct.of("aa", Var.of("A"))) to Fact.of(Struct.of("aa", Var.of("B"))),
             Directive.of(Atom.of("here"), Struct.of("f", Var.of("A"))) to
                     Directive.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
-            Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail()) to
-                    Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.fail())
+            Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.ofFalse()) to
+                    Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.ofFalse())
         )
     }
 
     /** A list of equations that should immediately be interpreted as Contradictions, without deeper exploration */
     internal val shallowContradictionEquations by lazy {
         listOf(
-            Truth.`true`() to Truth.fail(),
-            Truth.fail() to Truth.`true`(),
+            Truth.ofTrue() to Truth.ofFalse(),
+            Truth.ofFalse() to Truth.ofTrue(),
             Empty.list() to Empty.set(),
             Empty.set() to Empty.list(),
             Atom.of("a") to Atom.of("b"),
@@ -127,10 +127,10 @@ internal object EquationUtils {
             LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Integer.of(1), Var.anonymous()),
             Struct.of("f", Atom.of("A")) to Struct.of("f", Atom.of("B")),
             Fact.of(Struct.of("aa", Atom.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"), Var.of("A"))),
-            Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`())) to
-                    Directive.of(Atom.of("here"), Struct.of("f", Truth.`true`(), Atom.of("extra"))),
-            Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.fail()) to
-                    Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.fail())
+            Directive.of(Atom.of("here"), Struct.of("f", Truth.ofTrue())) to
+                    Directive.of(Atom.of("here"), Struct.of("f", Truth.ofTrue(), Atom.of("extra"))),
+            Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.ofFalse()) to
+                    Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.ofFalse())
         )
     }
 

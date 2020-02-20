@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TupleImpl
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -48,7 +47,7 @@ interface Tuple : Struct {
         const val FUNCTOR = ","
 
         @JvmStatic
-        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::`true`): Term =
+        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::ofTrue): Term =
             when {
                 terms.isEmpty() -> default()
                 terms.size == 1 -> terms.single()

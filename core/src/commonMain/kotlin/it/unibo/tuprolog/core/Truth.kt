@@ -18,18 +18,26 @@ interface Truth : Atom {
 
     companion object {
 
-        const val TRUE_FUNCTOR = "true"
+        @JvmField
+        val TRUE_FUNCTOR = "true"
 
-        const val FAIL_FUNCTOR = "fail"
+        @JvmField
+        val FAIL_FUNCTOR = "fail"
+
+        @JvmField
+        val TRUE = ofTrue()
+
+        @JvmField
+        val FAIL = ofFalse()
 
         @JvmStatic
         fun of(truth: Boolean): Truth =
             if (truth) TruthImpl.True else TruthImpl.Fail
 
         @JvmStatic
-        fun `true`(): Truth = TruthImpl.True
+        fun ofTrue(): Truth = TruthImpl.True
 
         @JvmStatic
-        fun fail(): Truth = TruthImpl.Fail
+        fun ofFalse(): Truth = TruthImpl.Fail
     }
 }

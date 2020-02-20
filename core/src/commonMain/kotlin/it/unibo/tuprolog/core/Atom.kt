@@ -50,8 +50,8 @@ interface Atom : Struct, Constant {
             when (value) {
                 Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
                 Empty.EMPTY_SET_FUNCTOR -> Empty.set()
-                Truth.TRUE_FUNCTOR -> Truth.`true`()
-                Truth.FAIL_FUNCTOR -> Truth.fail()
+                Truth.TRUE_FUNCTOR -> Truth.ofTrue()
+                Truth.FAIL_FUNCTOR -> Truth.ofFalse()
                 else -> AtomImpl(value)
             }
     }

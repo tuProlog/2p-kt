@@ -6,7 +6,7 @@ import kotlin.jvm.JvmStatic
 interface Fact : Rule {
 
     override val body: Term
-        get() = Truth.`true`()
+        get() = Truth.ofTrue()
 
     override val isFact: Boolean
         get() = true

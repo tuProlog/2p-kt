@@ -18,8 +18,8 @@ internal object ReteNodeUtils {
     /** Contains some well-formed rules */
     internal val rules by lazy {
         listOf(
-            Fact.of(Truth.`true`()),
-            Fact.of(Truth.fail()),
+            Fact.of(Truth.ofTrue()),
+            Fact.of(Truth.ofFalse()),
             Fact.of(Atom.of("a")),
             Fact.of(Atom.of("other")),
             Fact.of(Struct.of("a", Atom.of("other"))),
@@ -52,7 +52,7 @@ internal object ReteNodeUtils {
     /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand) */
     internal val rulesQueryResultsMap by lazy {
         mapOf(
-            Fact.of(Truth.`true`()) to listOf(Fact.of(Truth.`true`())),
+            Fact.of(Truth.ofTrue()) to listOf(Fact.of(Truth.ofTrue())),
             Fact.of(Empty.list()) to emptyList(),
             Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to rules.takeLast(5),
             Rule.of(Struct.of("a", Atom.of("other")), Var.anonymous()).run {
@@ -73,8 +73,8 @@ internal object ReteNodeUtils {
     /** Contains some well-formed directives */
     internal val directives by lazy {
         listOf(
-            Directive.of(Truth.`true`()),
-            Directive.of(Truth.fail()),
+            Directive.of(Truth.ofTrue()),
+            Directive.of(Truth.ofFalse()),
             Directive.of(Atom.of("a")),
             Directive.of(Atom.of("other")),
             Directive.of(Struct.of("a", Atom.of("other"))),
@@ -96,7 +96,7 @@ internal object ReteNodeUtils {
     /** Contains a map of queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
     internal val directivesQueryResultsMap by lazy {
         mapOf(
-            Directive.of(Truth.`true`()) to listOf(Directive.of(Truth.`true`())),
+            Directive.of(Truth.ofTrue()) to listOf(Directive.of(Truth.ofTrue())),
             Directive.of(Empty.list()) to emptyList(),
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()) to directives.takeLast(5),
             Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))).run {

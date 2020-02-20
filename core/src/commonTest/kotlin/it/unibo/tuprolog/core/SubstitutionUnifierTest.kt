@@ -117,8 +117,8 @@ internal class SubstitutionUnifierTest {
     @Test
     fun plusOtherSubstitutionContradictingBaseOneReturnsFailedSubstitution() {
         val toBeTested = listOf(
-            Substitution.of(bVar to Truth.`true`()) + bVarToXAtomSubstitution,
-            bVarToXAtomSubstitution + Substitution.of(bVar to Truth.`true`())
+            Substitution.of(bVar to Truth.ofTrue()) + bVarToXAtomSubstitution,
+            bVarToXAtomSubstitution + Substitution.of(bVar to Truth.ofTrue())
         )
 
         toBeTested.forEach { assertEquals(Substitution.Fail, it) }
