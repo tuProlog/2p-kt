@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Clause.Companion.defaultPreparationForExecutionVisitor
-import it.unibo.tuprolog.core.Clause.Companion.preparationForExecutionVisitor
-import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {
@@ -50,6 +48,7 @@ interface Clause : Struct {
         const val FUNCTOR = ":-"
 
         @JvmStatic
+        @JvmOverloads
         fun of(head: Struct? = null, vararg body: Term): Clause =
             when (head) {
                 null -> {
@@ -79,6 +78,7 @@ interface Clause : Struct {
         }
 
         // TODO: 16/01/2020 test this method
+        @JvmOverloads
         internal fun preparationForExecutionVisitor(unifier: Substitution.Unifier = Substitution.empty()) =
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
