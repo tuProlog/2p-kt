@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+
 // Project specific kotlin multiplatform configuration
 kotlin {
 
@@ -15,7 +17,6 @@ kotlin {
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies", "
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {
@@ -33,4 +34,10 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<KotlinJvmTest> {
+    jvmArgs("-Xmx1G", "-Xss256M")
+    println("${name}.jvmArgs: $jvmArgs")
+    println("${name}.allJvmArgs: $allJvmArgs")
 }

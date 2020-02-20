@@ -6,25 +6,43 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                api(kotlin("test-common"))
+                api(kotlin("test-annotations-common"))
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
+        val commonTest by getting {
+            dependsOn(commonMain)
+        }
+
         jvm {
-            compilations["main"].defaultSourceSet {
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation(kotlin("test-junit"))
                 }
             }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
+            }
         }
 
         js {
-            compilations["main"].defaultSourceSet {
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation(kotlin("test-js"))
                 }
+            }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
             }
         }
     }
