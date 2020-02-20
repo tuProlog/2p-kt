@@ -12,27 +12,43 @@ kotlin {
         }
 
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(project(":solve-test"))
             }
         }
 
         jvm {
-            compilations["main"].defaultSourceSet {
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
-
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
+            }
         }
 
         js {
-            compilations["main"].defaultSourceSet {
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
+            }
         }
+
     }
 }
 
