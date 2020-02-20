@@ -45,6 +45,8 @@ Manually publish to Bintray:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
   when: manual
+  dependencies:
+    - Test JVM
 
 Publish to Bintray (dev):
   stage: deploy
@@ -54,6 +56,8 @@ Publish to Bintray (dev):
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
     - /^develop$/
+  dependencies:
+    - Test JVM
 
 Publish Releases to Bintray:
   stage: deploy
