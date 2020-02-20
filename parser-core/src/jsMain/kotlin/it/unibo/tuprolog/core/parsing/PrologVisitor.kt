@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.parser.*
 import it.unibo.tuprolog.parser.Associativity.FX
 import it.unibo.tuprolog.parser.Associativity.FY
@@ -16,6 +13,7 @@ import it.unibo.tuprolog.parser.Associativity.XFY
 import it.unibo.tuprolog.parser.Associativity.YF
 import it.unibo.tuprolog.parser.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
+import kotlin.collections.List
 
 class PrologVisitor : PrologParserVisitor<Term>() {
     private val scope: Scope = Scope.empty()
@@ -27,7 +25,13 @@ class PrologVisitor : PrologParserVisitor<Term>() {
         visitExpression(ctx.expression())
 
     override fun visitClause(ctx: ClauseContext): Term =
-        ctx.expression().accept(this)
+        ctx.expression().accept<Term>(this).let {
+            when (it) {
+                is Clause -> it
+                is Struct -> Fact.of(it)
+                else -> throw throw InvalidTermTypeException(null, it.toString(), Clause::class, ctx.start!!.line, ctx.start!!.column)
+            }
+        }
 
     override fun visitExpression(ctx: ExpressionContext): Term {
         return handleOuters(

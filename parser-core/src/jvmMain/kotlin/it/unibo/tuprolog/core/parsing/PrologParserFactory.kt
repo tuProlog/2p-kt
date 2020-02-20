@@ -220,7 +220,7 @@ object PrologParserFactory {
                     parseTerm(parser, source)
                 }
                 ex.cause is RecognitionException -> {
-                    throw (ex.cause as RecognitionException?)!!
+                    throw ex.cause as RecognitionException
                 }
                 else -> {
                     throw ex

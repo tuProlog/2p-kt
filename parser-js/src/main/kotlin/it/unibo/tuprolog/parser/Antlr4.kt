@@ -121,4 +121,8 @@ open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
 
 open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int) : RuleContext {
     val children: Array<dynamic>
+
+    val start: Token?
+
+    val stop: Token?
 }

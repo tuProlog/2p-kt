@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -22,7 +20,13 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         visitExpression(ctx.expression())
 
     override fun visitClause(ctx: PrologParser.ClauseContext): Term =
-        ctx.expression().accept(this)
+        ctx.expression().accept(this).let {
+            when (it) {
+                is Clause -> it
+                is Struct -> Fact.of(it)
+                else -> throw throw InvalidTermTypeException(null, it.toString(), Clause::class, ctx.start.line, ctx.start.charPositionInLine)
+            }
+        }
 
     override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
         return handleOuters(

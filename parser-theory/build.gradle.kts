@@ -11,6 +11,12 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                api(project(":dsl-theory"))
+            }
+        }
+
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {

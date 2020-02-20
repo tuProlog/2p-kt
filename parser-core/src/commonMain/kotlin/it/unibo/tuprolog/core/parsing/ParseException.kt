@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.exception.TuPrologException
 
-class ParseException(
+open class ParseException(
     var input: Any?,
     var offendingSymbol: String,
     var line: Int,

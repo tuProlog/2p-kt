@@ -15,13 +15,7 @@ class ClauseDatabaseParserImpl(override val defaultOperatorSet: OperatorSet) : C
         return PrologParserFactory.parseClauses(input, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
-            .map {
-                when (it) {
-                    is Clause -> it
-                    is Struct -> Fact.of(it)
-                    else -> throw IllegalStateException("Clause expected, actual: $it")
-                }
-            }
+            .map { it as Clause }
             .let { ClauseDatabase.of(it) }
     }
 }
