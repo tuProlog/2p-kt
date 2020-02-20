@@ -84,16 +84,16 @@ object PrologParserFactory {
     fun parseTermWithStandardOperators(string: String): SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-    fun parseClauses(source: String, withOperators: OperatorSet): List<ClauseContext> {
+    fun parseClauses(source: String, withOperators: OperatorSet): Sequence<ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser)
     }
 
-    fun parseClauses(source: String): List<ClauseContext> =
+    fun parseClauses(source: String): Sequence<ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
 
-    fun parseClausesWithStandardOperators(source: String): List<ClauseContext> =
+    fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
     fun createParser(string: String): PrologParser =
@@ -139,7 +139,7 @@ object PrologParserFactory {
         return parser.optClause()
     }
 
-    private fun parseClauses(parser: PrologParser): List<ClauseContext> {
+    private fun parseClauses(parser: PrologParser): Sequence<ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
@@ -150,7 +150,6 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
-            .toList()
     }
 
 }

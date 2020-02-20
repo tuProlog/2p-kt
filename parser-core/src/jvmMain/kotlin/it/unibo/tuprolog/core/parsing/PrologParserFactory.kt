@@ -136,37 +136,37 @@ object PrologParserFactory {
     fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext =
         parseTerm(string, OperatorSet.DEFAULT)
 
-    fun parseClauses(source: String, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: String, withOperators: OperatorSet): Sequence<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    fun parseClauses(source: Reader, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: Reader, withOperators: OperatorSet): Sequence<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    fun parseClauses(source: InputStream, withOperators: OperatorSet): List<PrologParser.ClauseContext> {
+    fun parseClauses(source: InputStream, withOperators: OperatorSet): Sequence<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
 
-    fun parseClauses(source: String): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: String): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    fun parseClauses(source: Reader): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: Reader): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    fun parseClauses(source: InputStream): List<PrologParser.ClauseContext> =
+    fun parseClauses(source: InputStream): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-    fun parseClausesWithStandardOperators(source: String): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: String): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-    fun parseClausesWithStandardOperators(source: Reader): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: Reader): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-    fun parseClausesWithStandardOperators(source: InputStream): List<PrologParser.ClauseContext> =
+    fun parseClausesWithStandardOperators(source: InputStream): Sequence<PrologParser.ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
     fun createParser(string: String): PrologParser =
@@ -191,7 +191,7 @@ object PrologParserFactory {
         operators.forEach {
             prologParser.addOperator(it.functor, Associativity.valueOf(it.specifier.name), it.priority)
         }
-        prologParser.addParseListener(DynamicOpListener.of(prologParser, OperatorSet()::plus))
+//        prologParser.addParseListener(DynamicOpListener.of(prologParser, OperatorSet()::plus))
         return prologParser
     }
 
@@ -257,7 +257,7 @@ object PrologParserFactory {
         }
     }
 
-    private fun parseClauses(parser: PrologParser, source: Any): List<PrologParser.ClauseContext> {
+    private fun parseClauses(parser: PrologParser, source: Any): Sequence<PrologParser.ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
@@ -268,7 +268,6 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
-            .toList()
     }
 
 }

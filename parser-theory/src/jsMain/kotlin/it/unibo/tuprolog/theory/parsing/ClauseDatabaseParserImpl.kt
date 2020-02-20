@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.theory.parsing
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.PrologParserFactory
@@ -13,7 +15,13 @@ class ClauseDatabaseParserImpl(override val defaultOperatorSet: OperatorSet) : C
         return PrologParserFactory.parseClauses(input, operators)
             .asSequence()
             .map { it.accept<Term>(PrologVisitor()) }
-            .map { it as Clause }
+            .map {
+                when (it) {
+                    is Clause -> it
+                    is Struct -> Fact.of(it)
+                    else -> throw IllegalStateException("Clause expected, actual: $it")
+                }
+            }
             .let { ClauseDatabase.of(it) }
     }
 }
