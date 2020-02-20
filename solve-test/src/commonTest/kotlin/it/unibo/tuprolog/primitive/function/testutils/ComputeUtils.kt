@@ -22,13 +22,13 @@ internal object ComputeUtils {
 
     // Request parameters
     internal val aSignature = Signature("ciao", 2)
-    internal val anArgumentList = listOf(Atom.of("a"), Truth.`true`())
+    internal val anArgumentList = listOf(Atom.of("a"), Truth.ofTrue())
     internal val anExecutionContext = DummyInstances.executionContext
     internal const val aRequestIssuingInstant = 0L
     internal const val anExecutionMaxDuration = 300L
 
     internal val aVarargSignature = Signature("ciao", 2, true)
-    internal val varargArgumentList = anArgumentList + Truth.`true`()
+    internal val varargArgumentList = anArgumentList + Truth.ofTrue()
 
     /** Utility function to assert [Compute.Request] contents are correct */
     internal fun Compute.Request<ExecutionContext>.assertContainsCorrectData(

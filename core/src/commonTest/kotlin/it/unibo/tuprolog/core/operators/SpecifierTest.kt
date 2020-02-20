@@ -84,7 +84,7 @@ internal class SpecifierTest {
     @Test
     fun fromTermThatIsAtomButWithNoCorrespondence() {
         assertFailsWith<IllegalArgumentException> { Specifier.fromTerm(Atom.of("ciao")) }
-        assertFailsWith<IllegalArgumentException> { Specifier.fromTerm(Truth.`true`()) }
+        assertFailsWith<IllegalArgumentException> { Specifier.fromTerm(Truth.ofTrue()) }
     }
 
     @Test

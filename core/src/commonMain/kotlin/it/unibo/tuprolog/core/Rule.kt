@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.RuleImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 interface Rule : Clause {
 
@@ -20,8 +22,10 @@ interface Rule : Clause {
     override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
 
     companion object {
+
         const val FUNCTOR = ":-"
 
+        @JvmStatic
         fun of(head: Struct, vararg body: Term): Rule =
             when {
                 body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)

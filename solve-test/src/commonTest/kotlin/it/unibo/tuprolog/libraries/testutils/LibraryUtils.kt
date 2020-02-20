@@ -99,7 +99,7 @@ internal object LibraryUtils {
 
     /** A duplicated alias library w.r.t. [library] */
     internal val duplicatedAliasLibrary by lazy {
-        RawLibrary("myLibrary", OperatorSet(), ClauseDatabase.of(Fact.of(Truth.fail())), emptyMap(), emptyMap())
+        RawLibrary("myLibrary", OperatorSet(), ClauseDatabase.of(Fact.of(Truth.ofFalse())), emptyMap(), emptyMap())
     }
 
     /** Contains various libraries */

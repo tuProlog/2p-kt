@@ -53,14 +53,14 @@ internal object StructUtils {
     /** For non special Structs are intended all valid Structs that has not a corresponding representation in any Struct subclass */
     internal val nonSpecialStructs by lazy {
         listOf(
-            "ciao" to arrayOf<Term>(Truth.`true`()),
+            "ciao" to arrayOf<Term>(Truth.ofTrue()),
             "myFunctor" to arrayOf<Term>(Atom.of("hello"), Atom.of("world"), Atom.of("!")),
             "varFunctor" to arrayOf<Term>(Var.of("A"), Var.of("B")),
             "{}" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
             "[]" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
             "." to arrayOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
-            "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.`true`()),
-            "/" to arrayOf<Term>(Truth.fail()),
+            "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.ofTrue()),
+            "/" to arrayOf<Term>(Truth.ofFalse()),
             "sameVar" to Scope.empty { arrayOf<Term>(varOf("X"), varOf("X")) }
         )
     }
@@ -73,7 +73,7 @@ internal object StructUtils {
             Tuple.FUNCTOR to arrayOf<Term>(Atom.of("left"), Atom.of("right")),
             Clause.FUNCTOR to arrayOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
             Clause.FUNCTOR to arrayOf<Term>(Atom.of("myDirective")),
-            Clause.FUNCTOR to arrayOf<Term>(Atom.of("myFact"), Truth.`true`()),
+            Clause.FUNCTOR to arrayOf<Term>(Atom.of("myFact"), Truth.ofTrue()),
             "myAtom" to arrayOf(),
             Empty.EMPTY_LIST_FUNCTOR to arrayOf(),
             Empty.EMPTY_SET_FUNCTOR to arrayOf(),

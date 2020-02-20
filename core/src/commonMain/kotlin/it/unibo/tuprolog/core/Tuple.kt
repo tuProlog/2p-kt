@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TupleImpl
+import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface Tuple : Struct {
@@ -45,20 +46,25 @@ interface Tuple : Struct {
 
         const val FUNCTOR = ","
 
-        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::`true`): Term =
+        @JvmStatic
+        fun wrapIfNeeded(vararg terms: Term, default: () -> Term = Truth.Companion::ofTrue): Term =
             when {
                 terms.isEmpty() -> default()
                 terms.size == 1 -> terms.single()
                 else -> of(terms.toList())
             }
 
+        @JvmStatic
         fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
 
         // TODO rename left -> first, right -> second
+        @JvmStatic
         fun of(left: Term, right: Term, others: Term): Tuple = of(listOf(left, right, others))
 
+        @JvmStatic
         fun of(terms: Iterable<Term>): Tuple = of(terms.toList())
 
+        @JvmStatic
         fun of(terms: KtList<Term>): Tuple {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"

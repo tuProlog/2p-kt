@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
+import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 interface EmptyList : Empty, LogicList {
@@ -25,6 +26,10 @@ interface EmptyList : Empty, LogicList {
     override fun freshCopy(scope: Scope): EmptyList = this
 
     companion object {
+        @JvmStatic
         operator fun invoke(): EmptyList = EmptyListImpl
+
+        @JvmStatic
+        val instance: EmptyList = EmptyListImpl
     }
 }

@@ -31,7 +31,7 @@ gitSemVer {
 println("2p-Kt version: $version")
 
 val javaVersion: String by project
-val ktFreeCompilerArgs: String by project
+val ktFreeCompilerArgsJvm: String by project
 
 // env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
@@ -103,6 +103,7 @@ ktSubprojects.forEachProject {
 
             // Default source set for JVM-specific sources and dependencies:
             jvm {
+
                 compilations["main"].defaultSourceSet {
                     dependencies {
                         api(kotlin("stdlib-jdk8"))
@@ -149,6 +150,16 @@ ktSubprojects.forEachProject {
                 mavenPublication {
                     artifactId = project.name + "-js"
                 }
+            }
+        }
+
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            kotlinOptions {
+                jvmTarget = "1.$javaVersion"
+                freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
             }
         }
     }

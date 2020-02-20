@@ -30,13 +30,13 @@ internal object StateInitUtils {
     /** Solve request for some vararg primitive */
     private val varargPrimitiveRequest = createSolveRequest(
         Signature("varargPrimitive", 2, true),
-        listOf(Truth.`true`(), Truth.`true`(), Truth.`true`())
+        listOf(Truth.ofTrue(), Truth.ofTrue(), Truth.ofTrue())
     )
 
     /** Solve request with well-formed goal */
     private val wellFormedGoalRequest = createSolveRequest(
         Signature(";", 2),
-        listOf(Truth.`true`(), Truth.fail())
+        listOf(Truth.ofTrue(), Truth.ofFalse())
     )
 
     /** Solve request with a goal that needs preparation for execution */
@@ -68,7 +68,7 @@ internal object StateInitUtils {
     /** Solve request with non well-formed goal */
     internal val nonWellFormedGoalRequest = createSolveRequest(
         Signature(",", 2),
-        listOf(Truth.`true`(), Integer.of(2))
+        listOf(Truth.ofTrue(), Integer.of(2))
     )
 
     /** All [StateInit] testing requests */

@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
-// Project specific kotlin multiplatform configuration
+val javaVersion: String by project
+val ktFreeCompilerArgsJvm: String by project
+
 kotlin {
 
     sourceSets {

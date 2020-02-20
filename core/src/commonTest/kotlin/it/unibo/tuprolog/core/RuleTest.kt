@@ -27,7 +27,7 @@ internal class RuleTest {
     @Test
     fun ruleOfWithHeadAndTrueBodyProvidedReturnsAFact() {
         val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-        val toBeTested = FactUtils.mixedFacts.map { Rule.of(it, Truth.`true`()) }
+        val toBeTested = FactUtils.mixedFacts.map { Rule.of(it, Truth.ofTrue()) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

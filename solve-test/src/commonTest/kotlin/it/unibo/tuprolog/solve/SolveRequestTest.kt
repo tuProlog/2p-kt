@@ -61,7 +61,7 @@ internal class SolveRequestTest {
     @Test
     fun requestConstructorComplainsWithWrongArityAndArgumentsCount() {
         assertFailsWith<IllegalArgumentException> { createRequest(arguments = emptyList()) }
-        assertFailsWith<IllegalArgumentException> { createRequest(arguments = anArgumentList + Truth.fail()) }
+        assertFailsWith<IllegalArgumentException> { createRequest(arguments = anArgumentList + Truth.ofFalse()) }
     }
 
     @Test
@@ -71,7 +71,7 @@ internal class SolveRequestTest {
 
     @Test
     fun requestConstructorPermitsMoreThanArityArgumentsIfSignatureVararg() {
-        createRequest(aVarargSignature, anArgumentList + Truth.fail())
+        createRequest(aVarargSignature, anArgumentList + Truth.ofFalse())
     }
 
     @Test

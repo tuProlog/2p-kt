@@ -14,7 +14,7 @@ internal object FactUtils {
         listOf(
             Struct.of("parent", Atom.of("jack"), Atom.of("bob")),
             Struct.of("parent", Integer.of(5), Real.of("2.5")),
-            Truth.`true`()
+            Truth.ofTrue()
         )
     }
 

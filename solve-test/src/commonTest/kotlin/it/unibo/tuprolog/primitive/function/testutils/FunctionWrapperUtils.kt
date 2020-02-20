@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 internal object FunctionWrapperUtils {
 
     /** A default function result to be used in tests */
-    internal val defaultFunctionResult = Compute.Response(Truth.`true`())
+    internal val defaultFunctionResult = Compute.Response(Truth.ofTrue())
     /** A test function */
     internal val function: PrologFunction = { defaultFunctionResult }
 

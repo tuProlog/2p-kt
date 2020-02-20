@@ -7,7 +7,7 @@ interface Constant : Term {
     val value: Any
 
     /**
-     * Empty companion aimed at letting extentions be injected through extention methods
+     * Empty companion aimed at letting extensions be injected through extension methods
      */
     companion object
 }
