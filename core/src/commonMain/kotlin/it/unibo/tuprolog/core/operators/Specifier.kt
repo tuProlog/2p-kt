@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
+import kotlin.jvm.JvmStatic
 
 /**
  * Enumeration containing all type of specifiers that can be given to Operators.
@@ -53,12 +54,19 @@ enum class Specifier : ToTermConvertible {
 
     companion object {
         /** Set of prefix specifiers */
+        @JvmStatic
         val PREFIX: Set<Specifier> = setOf(FX, FY)
+
         /** Set of postfix specifiers */
+        @JvmStatic
         val POSTFIX: Set<Specifier> = setOf(YF, XF)
+
         /** Set of infix specifiers */
+        @JvmStatic
         val INFIX: Set<Specifier> = setOf(XFX, YFX, XFY)
+
         /** Set of non-prefix specifiers */
+        @JvmStatic
         val NON_PREFIX: Set<Specifier> = POSTFIX + INFIX
 
         /**
@@ -66,6 +74,7 @@ enum class Specifier : ToTermConvertible {
          *
          * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
          */
+        @JvmStatic
         fun fromTerm(atom: Atom): Specifier {
             try {
                 return valueOf(atom.value.toUpperCase())
@@ -79,6 +88,7 @@ enum class Specifier : ToTermConvertible {
          *
          * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
          */
+        @JvmStatic
         fun fromTerm(term: Term): Specifier =
             when (term) {
                 is Atom -> fromTerm(term)

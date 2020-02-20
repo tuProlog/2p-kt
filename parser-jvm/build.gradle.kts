@@ -11,7 +11,7 @@ plugins {
 }
 
 val javaVersion: String by project
-val ktFreeCompilerArgs: String by project
+val ktFreeCompilerArgsJvm: String by project
 
 dependencies {
     antlr("org.antlr", "antlr4", Versions.org_antlr)
@@ -34,7 +34,7 @@ configure<JavaPluginConvention> {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.$javaVersion"
-        freeCompilerArgs = ktFreeCompilerArgs.split(";").toList()
+        freeCompilerArgs = ktFreeCompilerArgsJvm.split(";").toList()
     }
 }
 

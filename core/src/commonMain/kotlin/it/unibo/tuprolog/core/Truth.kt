@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TruthImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 interface Truth : Atom {
 
@@ -15,14 +17,19 @@ interface Truth : Atom {
     override fun freshCopy(scope: Scope): Truth = this
 
     companion object {
+
         const val TRUE_FUNCTOR = "true"
+
         const val FAIL_FUNCTOR = "fail"
 
+        @JvmStatic
         fun of(truth: Boolean): Truth =
             if (truth) TruthImpl.True else TruthImpl.Fail
 
+        @JvmStatic
         fun `true`(): Truth = TruthImpl.True
 
+        @JvmStatic
         fun fail(): Truth = TruthImpl.Fail
     }
 }

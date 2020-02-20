@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.ConsImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
 interface Cons : LogicList {
@@ -29,10 +31,13 @@ interface Cons : LogicList {
     override fun freshCopy(scope: Scope): Cons = super.freshCopy(scope) as Cons
 
     companion object {
+
         const val FUNCTOR = "."
 
+        @JvmStatic
         fun of(head: Term, tail: Term): Cons = ConsImpl(head, tail)
 
+        @JvmStatic
         fun singleton(head: Term): Cons = of(head, Empty.list())
     }
 }

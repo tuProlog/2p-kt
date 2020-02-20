@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.SetImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface Set : Struct {
@@ -35,12 +37,16 @@ interface Set : Struct {
         }
 
     companion object {
+
         const val FUNCTOR = "{}"
 
+        @JvmStatic
         fun empty(): EmptySet = EmptySet()
 
+        @JvmStatic
         fun of(vararg terms: Term): Set = of(terms.toList())
 
+        @JvmStatic
         fun of(terms: KtList<Term>): Set =
             when {
                 terms.isEmpty() -> empty()
@@ -48,8 +54,10 @@ interface Set : Struct {
                 else -> SetImpl(Tuple.of(terms))
             }
 
+        @JvmStatic
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
 
+        @JvmStatic
         fun of(terms: Sequence<Term>): Set = of(terms.toList())
     }
 }

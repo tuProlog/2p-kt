@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.AtomImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 interface Atom : Struct, Constant {
 
@@ -39,8 +41,11 @@ interface Atom : Struct, Constant {
     override fun freshCopy(scope: Scope): Atom = this
 
     companion object {
+
+        @JvmField
         val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()
 
+        @JvmStatic
         fun of(value: String): Atom =
             when (value) {
                 Empty.EMPTY_LIST_FUNCTOR -> Empty.list()

@@ -31,7 +31,7 @@ gitSemVer {
 println("2p-Kt version: $version")
 
 val javaVersion: String by project
-val ktFreeCompilerArgs: String by project
+val ktFreeCompilerArgsJvm: String by project
 
 // env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
@@ -103,9 +103,18 @@ ktSubprojects.forEachProject {
 
             // Default source set for JVM-specific sources and dependencies:
             jvm {
-                compilations["main"].defaultSourceSet {
-                    dependencies {
-                        api(kotlin("stdlib-jdk8"))
+
+                with(compilations["main"]) {
+
+                    kotlinOptions {
+                        jvmTarget = "1.$javaVersion"
+                        freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
+                    }
+
+                    defaultSourceSet {
+                        dependencies {
+                            api(kotlin("stdlib-jdk8"))
+                        }
                     }
                 }
 
@@ -151,6 +160,7 @@ ktSubprojects.forEachProject {
                 }
             }
         }
+
     }
 
     configureDokka()
