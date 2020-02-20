@@ -40,11 +40,8 @@ Test JS:
   allow_failure: true
 
 Manually publish to Bintray:
-  stage: deploy
+  stage: test
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
-  environment:
-    name: Bintray
-    url: "https://bintray.com/pika-lab/tuprolog"
   when: manual
   dependencies:
     - Test JVM
