@@ -1,9 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 val javaVersion: String by project
 val ktFreeCompilerArgsJvm: String by project
 
-// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
@@ -25,17 +25,10 @@ kotlin {
             val main = compilations["main"]
             val test = compilations["test"]
 
-            with(main) {
-                kotlinOptions {
-                    jvmTarget = "1.6"
-                    freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
-                }
-
-                defaultSourceSet {
-                    dependsOn(commonMain)
-                    dependencies {
-                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
-                    }
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+                dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
             test.defaultSourceSet {

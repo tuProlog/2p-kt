@@ -104,17 +104,9 @@ ktSubprojects.forEachProject {
             // Default source set for JVM-specific sources and dependencies:
             jvm {
 
-                with(compilations["main"]) {
-
-                    kotlinOptions {
-                        jvmTarget = "1.$javaVersion"
-                        freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
-                    }
-
-                    defaultSourceSet {
-                        dependencies {
-                            api(kotlin("stdlib-jdk8"))
-                        }
+                compilations["main"].defaultSourceSet {
+                    dependencies {
+                        api(kotlin("stdlib-jdk8"))
                     }
                 }
 
@@ -161,6 +153,15 @@ ktSubprojects.forEachProject {
             }
         }
 
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            kotlinOptions {
+                jvmTarget = "1.$javaVersion"
+                freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
+            }
+        }
     }
 
     configureDokka()
