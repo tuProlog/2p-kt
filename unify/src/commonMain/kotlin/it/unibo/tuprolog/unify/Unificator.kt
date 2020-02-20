@@ -60,8 +60,7 @@ interface Unificator {
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
         @JvmStatic
-        @JvmOverloads
-        fun naive(context: Substitution = Substitution.empty()): Unificator =
+        fun naive(context: Substitution): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
                     when {
@@ -71,13 +70,24 @@ interface Unificator {
                     }
             }
 
+        /** Creates naive, empty unification strategy, that checks [Term]s identity through their [Term.equals]
+         * methods, except in the case of numbers which are compared by value */
+        @JvmStatic
+        fun naive(): Unificator =
+            naive(Substitution.empty())
+
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
         @JvmStatic
-        @JvmOverloads
-        fun strict(context: Substitution = Substitution.empty()): Unificator =
+        fun strict(context: Substitution): Unificator =
             object : AbstractUnificationStrategy(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
             }
+
+        /** Creates naive unification strategy, that checks [Term]s identity through their [Term.equals]
+         * methods */
+        @JvmStatic
+        fun strict(): Unificator =
+            strict(Substitution.empty())
     }
 }
