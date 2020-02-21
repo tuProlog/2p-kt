@@ -1,4 +1,9 @@
-// Project specific kotlin multiplatform configuration
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+
+val javaVersion: String by project
+val ktFreeCompilerArgsJvm: String by project
+
 kotlin {
 
     sourceSets {
@@ -10,27 +15,48 @@ kotlin {
         }
 
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(project(":solve-test"))
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies", "
         jvm {
-            compilations["main"].defaultSourceSet {
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
-
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
+            }
         }
 
         js {
-            compilations["main"].defaultSourceSet {
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
                 }
             }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
+            }
         }
+
     }
+}
+
+tasks.withType<KotlinJvmTest> {
+    jvmArgs("-Xmx1G", "-Xss256M")
+    println("${name}.jvmArgs: $jvmArgs")
+    println("${name}.allJvmArgs: $allJvmArgs")
 }

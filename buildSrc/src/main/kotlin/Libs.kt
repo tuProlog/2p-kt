@@ -114,6 +114,16 @@ object Libs {
     const val kt_math_metadata: String = "io.github.gciatto:kt-math-metadata:" +
             Versions.io_github_gciatto
 
+    /**
+     * http://www.antlr.org
+     */
+    const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
+
+    /**
+     * http://www.antlr.org
+     */
+    const val antlr4_runtime: String = "org.antlr:antlr4-runtime:" + Versions.org_antlr
+
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
         "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
                 Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin

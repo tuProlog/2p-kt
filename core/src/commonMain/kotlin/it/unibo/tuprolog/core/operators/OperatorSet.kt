@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.core.operators
 
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
+
 /** Class representing a Set of [Operator]s */
 class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.toHashSet() {
 
@@ -43,7 +46,11 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
 
     companion object {
 
+        @JvmField
+        val EMPTY = OperatorSet(emptySequence())
+
         /** Arithmetic Operator's OperatorSet */
+        @JvmField
         val ARITHMETIC = OperatorSet(
             sequenceOf("+", "-", "\\")
                 .map { Operator(it, Specifier.FY, 200) }
@@ -58,12 +65,14 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         )
 
         /** Arithmetic Comparison Operator's OperatorSet */
+        @JvmField
         val ARITHMETIC_COMPARISON = OperatorSet(
             sequenceOf("=:=", "=\\=", "<", "=<", ">", ">=")
                 .map { Operator(it, Specifier.XFX, 700) }
         )
 
         /** Term Comparison Operator's OperatorSet */
+        @JvmField
         val TERM_COMPARISON = OperatorSet(
             sequenceOf("=", "\\=")
                 .map { Operator(it, Specifier.XFX, 700) }
@@ -76,6 +85,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         )
 
         /** Control Flow Operator's OperatorSet */
+        @JvmField
         val CONTROL_FLOW = OperatorSet(
             sequenceOf(",")
                 .map { Operator(it, Specifier.XFY, 1000) }
@@ -88,6 +98,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         )
 
         /** Clauses Operator's OperatorSet */
+        @JvmField
         val CLAUSES = OperatorSet(
             sequenceOf(":-", "?-")
                 .map { Operator(it, Specifier.FX, 1200) }
@@ -96,6 +107,7 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
         )
 
         /** Default OperatorSet */
+        @JvmField
         val DEFAULT = OperatorSet(
             ARITHMETIC.asSequence()
                     + ARITHMETIC_COMPARISON.asSequence()

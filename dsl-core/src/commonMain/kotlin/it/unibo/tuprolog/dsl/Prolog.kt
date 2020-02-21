@@ -10,27 +10,7 @@ import it.unibo.tuprolog.core.toTerm as extToTerm
 
 interface Prolog : Scope {
 
-    fun Any.toTerm(): Term = when (this) {
-        is Term -> this
-        is ToTermConvertible -> this.toTerm()
-        is BigDecimal -> numOf(this)
-        is Double -> numOf(this)
-        is Float -> numOf(this)
-        is BigInteger -> numOf(this)
-        is Long -> numOf(this)
-        is Int -> numOf(this)
-        is Short -> numOf(this)
-        is Byte -> numOf(this)
-        is Boolean -> truthOf(this)
-        is String -> when {
-            this matches Var.VAR_REGEX_PATTERN -> varOf(this)
-            else -> atomOf(this)
-        }
-        is Array<*> -> this.map { it!!.toTerm() }.extToTerm()
-        is Sequence<*> -> this.map { it!!.toTerm() }.extToTerm()
-        is Iterable<*> -> this.map { it!!.toTerm() }.extToTerm()
-        else -> raiseErrorConvertingTo(Term::class)
-    }
+    fun Any.toTerm(): Term
 
     fun structOf(functor: String, vararg args: Any): Struct =
         structOf(functor, *args.map { it.toTerm() }.toTypedArray())
@@ -162,11 +142,11 @@ interface Prolog : Scope {
 
     companion object {
         fun empty(): Prolog = PrologImpl()
-
-        /** Utility method to launch conversion failed errors */
-        private fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
-            throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")
     }
 }
 
 fun <R> prolog(function: Prolog.() -> R): R = Prolog.empty().function()
+
+/** Utility method to launch conversion failed errors */
+internal fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
+    throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")

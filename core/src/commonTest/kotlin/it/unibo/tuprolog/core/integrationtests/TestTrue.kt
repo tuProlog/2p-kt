@@ -16,7 +16,7 @@ class TestTrue {
     private val notCorrectAtom = "true "
 
     private val heterogeneousCreatedInstances = listOf(
-        Truth.`true`(),
+        Truth.ofTrue(),
         Truth.of(true),
         Atom.of(correctAtom),
         Struct.of(correctAtom)

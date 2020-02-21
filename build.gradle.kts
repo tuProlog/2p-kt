@@ -30,6 +30,9 @@ gitSemVer {
 
 println("2p-Kt version: $version")
 
+val javaVersion: String by project
+val ktFreeCompilerArgsJvm: String by project
+
 // env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 // env ORG_GRADLE_PROJECT_signingPassword
@@ -44,8 +47,8 @@ val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
 val allSubprojects = subprojects.map { it.name  }.toSet()
-val jvmSubprojects = setOf<String>()
-val jsSubprojects = setOf<String>()
+val jvmSubprojects = setOf("parser-jvm")
+val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
 
 val ktSubprojects = allSubprojects - jvmSubprojects - jsSubprojects - docSubprojects
@@ -88,6 +91,7 @@ ktSubprojects.forEachProject {
             val commonMain by getting {
                 dependencies {
                     api(kotlin("stdlib-common"))
+                    api(kotlin("reflect"))
                 }
             }
             val commonTest by getting {
@@ -99,6 +103,7 @@ ktSubprojects.forEachProject {
 
             // Default source set for JVM-specific sources and dependencies:
             jvm {
+
                 compilations["main"].defaultSourceSet {
                     dependencies {
                         api(kotlin("stdlib-jdk8"))
@@ -118,6 +123,8 @@ ktSubprojects.forEachProject {
             }
 
             js {
+                nodejs()
+//                browser()
                 sequenceOf("", "Test").forEach {
                     tasks.getByName<KotlinJsCompile>("compile${it}KotlinJs") {
                         kotlinOptions {
@@ -143,6 +150,16 @@ ktSubprojects.forEachProject {
                 mavenPublication {
                     artifactId = project.name + "-js"
                 }
+            }
+        }
+
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+        kotlinOptions {
+            kotlinOptions {
+                jvmTarget = "1.$javaVersion"
+                freeCompilerArgs = ktFreeCompilerArgsJvm.split(';').toList()
             }
         }
     }
@@ -332,6 +349,8 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
         reportUndocumented = false
         collectInheritedExtensionsFromLibraries = true
         skipEmptyPackages = true
+        noStdlibLink = true
+        noJdkLink = true
         configuration(this@register)
     }
 }

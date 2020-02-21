@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.operators
 
 import it.unibo.tuprolog.core.*
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 /** Class representing a Prolog Operator */
 class Operator(val functor: String, val specifier: Specifier, val priority: Int) :
@@ -47,9 +49,11 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
         const val FUNCTOR = "op"
 
         /** An operator template */
+        @JvmField
         val TEMPLATE = Struct.of(FUNCTOR, Var.of("P"), Var.of("A"), Var.of("F"))
 
         /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
+        @JvmStatic
         fun fromTerm(struct: Struct): Operator? = with(struct) {
             when {
                 functor == FUNCTOR && arity == 3 &&
@@ -62,6 +66,8 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
                     )
 
                 } catch (ex: IllegalArgumentException) {
+                    null
+                } catch (ex: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
                     null
                 }
 

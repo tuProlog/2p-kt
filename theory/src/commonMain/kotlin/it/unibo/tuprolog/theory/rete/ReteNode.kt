@@ -10,17 +10,26 @@ internal interface ReteNode<Key, Element> {
     val indexedElements: Sequence<Element>
 
     /** Indexes a new element under this node */
-    fun put(element: Element, beforeOthers: Boolean = false)
+    fun put(element: Element, beforeOthers: Boolean)
+
+    /** Indexes a new element under this node, after the others */
+    fun put(element: Element) =
+        put(element, false)
 
     /** Gets a sequence of matching elements starting from give one */
     fun get(element: @UnsafeVariance Element): Sequence<Element>
 
     /**
-     * Removes elements matching given [element], respecting provided [limit], and returns them;
-     *
+     * Removes elements matching given [element], respecting provided [limit], and returns them.
      * A negative limit will be considered as if there's no limit, i.e. all matching elements will be removed
      */
-    fun remove(element: @UnsafeVariance Element, limit: Int = 1): Sequence<Element>
+    fun remove(element: @UnsafeVariance Element, limit: Int): Sequence<Element>
+
+    /**
+     * Removes one element matching given [element], and returns it;
+     */
+    fun remove(element: @UnsafeVariance Element): Sequence<Element> =
+        remove(element, 1)
 
     /** Removes all elements matching given one */
     fun removeAll(element: @UnsafeVariance Element): Sequence<Element>
@@ -29,5 +38,7 @@ internal interface ReteNode<Key, Element> {
     fun deepCopy(): ReteNode<Key, Element>
 
     /** An enhanced toString that can print nodes in Tree fashion */
-    fun toString(treefy: Boolean = false): String
+    fun toString(treefy: Boolean): String
+
+    override fun toString(): String
 }

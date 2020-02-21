@@ -7,3 +7,4 @@
 - [Continous Integration](./ci.md)
 - [Continous Delivery](./continous-delivery.md)
 - [Documentation with Orchid and GitLab Pages](./meta-doc.md)
+* [Parsing Prolog with ANTLR](./parsing.md)

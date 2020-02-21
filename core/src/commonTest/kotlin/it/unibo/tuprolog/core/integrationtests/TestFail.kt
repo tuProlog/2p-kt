@@ -16,7 +16,7 @@ class TestFail {
     private val notCorrectAtom = "false"
 
     private val heterogeneousCreatedInstances = listOf(
-        Truth.fail(),
+        Truth.ofFalse(),
         Truth.of(false),
         Atom.of(correctAtom),
         Struct.of(correctAtom)

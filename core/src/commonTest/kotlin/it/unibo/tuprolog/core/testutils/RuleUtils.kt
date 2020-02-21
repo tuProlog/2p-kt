@@ -39,8 +39,8 @@ internal object RuleUtils {
             Atom.of("a") to Tuple.wrapIfNeeded(Real.of(2.1)),
             Atom.of("a") to Tuple.wrapIfNeeded(Atom.of("b"), Integer.of(2)),
             Atom.of("b") to Tuple.wrapIfNeeded(Real.of(0.5), Real.of(0.6), Real.of(0.7)),
-            Atom.of("a") to Struct.fold(";", Truth.`true`(), Empty.list(), Real.of("2.4")),
-            Atom.of("a") to Struct.fold("->", Truth.`true`(), Empty.list(), Numeric.of(2.8))
+            Atom.of("a") to Struct.fold(";", Truth.ofTrue(), Empty.list(), Real.of("2.4")),
+            Atom.of("a") to Struct.fold("->", Truth.ofTrue(), Empty.list(), Numeric.of(2.8))
         )
     }
 
@@ -48,8 +48,8 @@ internal object RuleUtils {
     val nonGroundNonWellFormedRules by lazy {
         listOf(
             Struct.of("A", Var.anonymous()) to Struct.of(",", Var.of("B"), Integer.of(1)),
-            Atom.of("a") to Struct.fold(";", Truth.`true`(), Var.of("A"), Real.of("2.4")),
-            Atom.of("a") to Struct.fold("->", Truth.`true`(), Var.anonymous(), Var.anonymous(), Numeric.of(2.8))
+            Atom.of("a") to Struct.fold(";", Truth.ofTrue(), Var.of("A"), Real.of("2.4")),
+            Atom.of("a") to Struct.fold("->", Truth.ofTrue(), Var.anonymous(), Var.anonymous(), Numeric.of(2.8))
         )
     }
 

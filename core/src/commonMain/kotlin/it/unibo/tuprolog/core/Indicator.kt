@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.IndicatorImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 /**
  * A predicate indicator is used to denote predicates or functors.
@@ -66,9 +68,11 @@ interface Indicator : Struct {
         const val FUNCTOR = "/"
 
         /** Creates an indicator denoting functor named [name] with [arity] */
+        @JvmStatic
         fun of(name: Term, arity: Term): Indicator = IndicatorImpl(name, arity)
 
         /** Creates an indicator denoting functor named [name] with [arity] */
+        @JvmStatic
         fun of(name: String, arity: Int): Indicator = of(Atom.of(name), Integer.of(arity))
     }
 }

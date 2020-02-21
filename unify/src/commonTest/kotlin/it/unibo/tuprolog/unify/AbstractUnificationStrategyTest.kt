@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [AbstractUnificationStrategy]
+ * Test class for [AbstractUnificator]
  *
  * @author Enrico
  */
@@ -18,7 +18,7 @@ internal class AbstractUnificationStrategyTest {
 
     /** A concrete strategy constructor */
     private val myStrategyConstructor: (Substitution) -> Unificator = {
-        object : AbstractUnificationStrategy(it) {
+        object : AbstractUnificator(it) {
             override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
         }
     }
