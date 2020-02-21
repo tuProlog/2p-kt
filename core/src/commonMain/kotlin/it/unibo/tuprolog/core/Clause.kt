@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Clause.Companion.defaultPreparationForExecutionVisitor
-import it.unibo.tuprolog.core.Clause.Companion.preparationForExecutionVisitor
-import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.*
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -44,6 +45,7 @@ sealed class Equation<out A : Term, out B : Term>(
      *
      * To modify default equality between [Term]s, a custom [equalityChecker] can be provided
      */
+    @JvmOverloads
     fun apply(
         substitution: Substitution,
         equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -56,6 +58,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates an Equation with provided left-hand and right-hand sides */
         @JvmStatic
+        @JvmOverloads
         fun <A : Term, B : Term> of(
             lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -75,6 +78,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates an Equation from given [Pair] */
         @JvmStatic
+        @JvmOverloads
         fun <A : Term, B : Term> of(
             pair: Pair<A, B>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -83,6 +87,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         @JvmStatic
+        @JvmOverloads
         fun <A : Term, B : Term> allOf(
             pair: Pair<A, B>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -91,6 +96,7 @@ sealed class Equation<out A : Term, out B : Term>(
 
         /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
         @JvmStatic
+        @JvmOverloads
         fun <A : Term, B : Term> allOf(
             lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals

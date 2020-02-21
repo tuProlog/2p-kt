@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -58,13 +59,23 @@ interface List : Struct {
         fun of(items: Iterable<Term>): List = from(items.toList(), empty())
 
         @JvmStatic
-        fun from(items: Iterable<Term>, last: Term? = null): List = from(items.toList(), last)
+        fun from(items: Iterable<Term>, last: Term?): List =
+            from(items.toList(), last)
 
         @JvmStatic
-        fun from(items: Sequence<Term>, last: Term? = null): List = from(items.toList(), last)
+        fun from(items: Iterable<Term>): List =
+            from(items, null)
 
         @JvmStatic
-        fun from(items: KtList<Term>, last: Term? = null): List {
+        fun from(items: Sequence<Term>, last: Term?): List =
+            from(items.toList(), last)
+
+        @JvmStatic
+        fun from(items: Sequence<Term>): List =
+            from(items.toList(), null)
+
+        @JvmStatic
+        fun from(items: KtList<Term>, last: Term?): List {
             require(items.isNotEmpty() || last is EmptyList || last === null) {
                 "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
             }
@@ -72,5 +83,9 @@ interface List : Struct {
             val finalItem = last ?: empty()
             return items.foldRight(finalItem) { head, tail -> Cons.of(head, tail) } as List
         }
+
+        @JvmStatic
+        fun from(items: KtList<Term>): List =
+            from(items, null)
     }
 }
