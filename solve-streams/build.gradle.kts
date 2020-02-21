@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 val javaVersion: String by project
@@ -10,7 +9,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
             }
         }
 
@@ -27,9 +25,6 @@ kotlin {
 
             main.defaultSourceSet {
                 dependsOn(commonMain)
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
-                }
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)
@@ -43,9 +38,6 @@ kotlin {
 
             main.defaultSourceSet {
                 dependsOn(commonMain)
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
-                }
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)

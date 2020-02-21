@@ -6,8 +6,6 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.isWellFormed
 import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * The state responsible of initializing the state machine with the goal that has to be executed
@@ -15,9 +13,8 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class StateInit(
-    override val solve: Solve.Request<ExecutionContextImpl>,
-    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractTimedState(solve, executionStrategy) {
+    override val solve: Solve.Request<ExecutionContextImpl>
+) : AbstractTimedState(solve) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
         val initializedSideEffectsManager = with(solve.context) { sideEffectManager.stateInitInitialize(this) }
@@ -36,8 +33,7 @@ internal class StateInit(
                             signature = preparedGoal.extractSignature(),
                             arguments = preparedGoal.argsList,
                             context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
-                        ),
-                        executionStrategy
+                        )
                     ))
                 }
 
