@@ -25,6 +25,16 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
+//
+//publishing {
+//    publications.forEach {
+//        println("${project.name} publication: ${it.name}")
+//    }
+//}
+//
+//components.forEach {
+//    println("${project.name} component: ${it.name}")
+//}
 
 configure<JavaPluginConvention> {
     targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
@@ -52,4 +62,15 @@ tasks.generateGrammarSource {
 
 tasks.create("jvmTest") {
     dependsOn("test")
+}
+
+tasks.getByName<Jar>("sourcesJar") {
+    project.sourceSets.forEach { sourceSet ->
+        sourceSet.allSource.sourceDirectories.forEach {
+            from(it)
+        }
+        sourceSet.resources.sourceDirectories.forEach {
+            from(it)
+        }
+    }
 }

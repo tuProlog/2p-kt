@@ -3,10 +3,10 @@ import java.io.File
 
 plugins {
     kotlin("js")
-//    id("maven-publish")
-//    signing
-//    id("org.jetbrains.dokka")
-//    id("com.jfrog.bintray")
+    id("maven-publish")
+    signing
+    id("org.jetbrains.dokka")
+    id("com.jfrog.bintray")
 //    `java-library`
 }
 
@@ -125,4 +125,15 @@ listOf(thisProject, rootProject.subprojects.first { it.name == "parser-core" }).
 
 tasks.create("jsTest") {
     dependsOn("test")
+}
+
+tasks.getByName<Jar>("sourcesJar") {
+    kotlin.sourceSets.forEach { sourceSet ->
+        sourceSet.resources.sourceDirectories.forEach {
+            from(it)
+        }
+        sourceSet.kotlin.srcDirs.forEach {
+            from(it)
+        }
+    }
 }

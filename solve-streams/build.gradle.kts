@@ -55,8 +55,8 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinJvmTest> {
-    jvmArgs("-Xmx1G", "-Xss256M")
-    println("${name}.jvmArgs: $jvmArgs")
-    println("${name}.allJvmArgs: $allJvmArgs")
-}
+//tasks.withType<KotlinJvmTest> {
+//    jvmArgs("-Xmx1G", "-Xss256M")
+//    println("${name}.jvmArgs: $jvmArgs")
+//    println("${name}.allJvmArgs: $allJvmArgs")
+//}

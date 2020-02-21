@@ -2,6 +2,7 @@ import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -67,14 +68,7 @@ allSubprojects.forEachProject {
         maven("https://dl.bintray.com/kotlin/dokka")
     }
 
-    // Test Results printing
-    tasks.withType<AbstractTestTask> {
-        afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
-            if (desc.parent == null) { // will match the outermost suite
-                println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
-            }
-        }))
-    }
+    configureTestResultPrinting()
 }
 
 ktSubprojects.forEachProject {
@@ -155,7 +149,7 @@ ktSubprojects.forEachProject {
 
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+    tasks.withType<KotlinJvmCompile> {
         kotlinOptions {
             kotlinOptions {
                 jvmTarget = "1.$javaVersion"
@@ -164,7 +158,7 @@ ktSubprojects.forEachProject {
         }
     }
 
-    configureDokka()
+    configureDokka("jvm", "js")
 
     configureMavenPublications("packDokka${capitalize(name)}")
 
@@ -181,39 +175,102 @@ ktSubprojects.forEachProject {
     configureSigning()
 }
 
+jvmSubprojects.forEachProject {
+    apply(plugin = "maven-publish")
+    apply(plugin = "java-library")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "signing")
+    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "com.jfrog.bintray")
 
-fun Project.configureDokka() {
+    configureDokka()
+
+    createMavenPublications("jvm", "java", docArtifact = "packDokka")
+
+    configureUploadToMavenCentral(
+        if (version.toString().contains("SNAPSHOT")) {
+            "https://oss.sonatype.org/content/repositories/snapshots/"
+        } else {
+            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        }
+    )
+
+    configureUploadToBintray()
+
+    configureSigning()
+}
+
+jsSubprojects.forEachProject {
+    apply(plugin = "maven-publish")
+    apply(plugin = "org.jetbrains.kotlin.js")
+    apply(plugin = "signing")
+    apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "com.jfrog.bintray")
+
+    configureDokka()
+
+    createMavenPublications("jvm", "kotlin", docArtifact = "packDokka")
+
+    configureUploadToMavenCentral(
+        if (version.toString().contains("SNAPSHOT")) {
+            "https://oss.sonatype.org/content/repositories/snapshots/"
+        } else {
+            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        }
+    )
+
+    configureUploadToBintray()
+
+    configureSigning()
+}
+
+fun Project.configureDokka(vararg platforms: String) {
     tasks.withType<DokkaTask> {
         outputDirectory = docDir
         outputFormat = "html"
 
-        multiplatform {
-            registerPlatform("jvm")
-            registerPlatform("js")
+        if (platforms.isNotEmpty()) {
+            multiplatform {
+                platforms.forEach { registerPlatform(it) }
+            }
         }
-    }
 
-    val jarPlatform = tasks.withType<Jar>().map { it.name.replace("Jar", "") }
+    }
 
     task<DefaultTask>("packAllDokka") {
         group = "documentation"
     }
 
-    jarPlatform.forEach {
-        val packDokkaForPlatform = "packDokka${capitalize(it)}"
+    if (platforms.isNotEmpty()) {
+        val jarPlatform = tasks.withType<Jar>().map { it.name.replace("Jar", "") }
 
-        task<Jar>(packDokkaForPlatform) {
+        jarPlatform.forEach {
+            val packDokkaForPlatform = "packDokka${capitalize(it)}"
+
+            task<Jar>(packDokkaForPlatform) {
+                group = "documentation"
+                dependsOn("dokka")
+                from(docDir)
+                archiveBaseName.set(project.name)
+                archiveVersion.set(project.version.toString())
+                archiveAppendix.set(it)
+                archiveClassifier.set("javadoc")
+            }
+
+//            tasks.getByName("${it}Jar").dependsOn(packDokkaForPlatform)
+            tasks.getByName("packAllDokka").dependsOn(packDokkaForPlatform)
+        }
+    } else {
+        val packDokka by tasks.creating(Jar::class) {
             group = "documentation"
             dependsOn("dokka")
             from(docDir)
             archiveBaseName.set(project.name)
             archiveVersion.set(project.version.toString())
-            archiveAppendix.set(it)
             archiveClassifier.set("javadoc")
         }
 
-        tasks.getByName("${it}Jar").dependsOn(packDokkaForPlatform)
-        tasks.getByName("packAllDokka").dependsOn(packDokkaForPlatform)
+        tasks.getByName("packAllDokka").dependsOn(packDokka)
     }
 }
 
@@ -238,7 +295,11 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
         bintray {
             user = bintrayUser
             key = bintrayKey
-            setPublications(*publicationNames)
+            if (publicationNames.isEmpty()) {
+                setPublications(*this@configureUploadToBintray.publishing.publications.withType<MavenPublication>().map { it.name }.toTypedArray())
+            } else {
+                setPublications(*publicationNames)
+            }
             override = true
             with(pkg) {
                 repo = "tuprolog"
@@ -272,68 +333,55 @@ fun Project.configureUploadToMavenCentral(mavenRepoUrl: String) {
     }
 }
 
-fun Project.configureMavenPublications(docArtifact: String) {
+fun Project.configureMavenPublications(docArtifact: String? = null) {
     publishing {
         publications.withType<MavenPublication> {
             groupId = project.group.toString()
             version = project.version.toString()
 
-            if (docArtifact in tasks.names) {
+            if (docArtifact != null && docArtifact in tasks.names) {
                 artifact(tasks.getByName(docArtifact)) {
                     classifier = "javadoc"
                 }
             }
 
-            pom {
-                name.set("2P in Kotlin -- Module `${this@configureMavenPublications.name}`")
-                description.set("Multi-platform Prolog environment, in Kotlin")
-                url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
-                licenses {
-                    license {
-                        name.set("Apache 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                    }
-                }
-
-                developers {
-                    developer {
-                        name.set("Giovanni Ciatto")
-                        email.set("giovanni.ciatto@gmail.com")
-                        url.set("https://about.me/gciatto")
-                        organization.set("University of Bologna")
-                        organizationUrl.set("https://www.unibo.it/it")
-                    }
-                    developer {
-                        name.set("Enrico Siboni")
-                        email.set("enrico.siboni3@studio.unibo.it")
-                        url.set("https://www.linkedin.com/in/enrico-siboni/")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git:///gitlab.com/pika-lab/tuprolog/2p-in-kotlin.git")
-                    url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
-                }
-            }
+            configurePom(this@configureMavenPublications.name)
 
         }
     }
 }
 
-fun getPropertyOrWarnForAbsence(key: String): String? {
-    val value = property(key)?.toString()
-    if (value.isNullOrBlank()) {
-        System.err.println("WARNING: $key is not set")
+fun Project.createMavenPublications(name: String, vararg componentsStrings: String, docArtifact: String? = null) {
+
+    val sourcesJar by tasks.creating(Jar::class) {
+        archiveBaseName.set(this@createMavenPublications.name)
+        archiveVersion.set(this@createMavenPublications.version.toString())
+        archiveClassifier.set("sources")
     }
-    return value
+
+    publishing {
+        publications.create<MavenPublication>(name) {
+            groupId = project.group.toString()
+            version = project.version.toString()
+
+            for (component in componentsStrings) {
+                from(components[component])
+            }
+
+            if (docArtifact != null && docArtifact in tasks.names) {
+                artifact(tasks.getByName(docArtifact)) {
+                    classifier = "javadoc"
+                }
+            }
+
+            artifact(sourcesJar)
+
+            configurePom(this@createMavenPublications.name)
+        }
+    }
 }
 
-fun capitalize(s: String) = s[0].toUpperCase() + s.substring(1)
-
 fun Set<String>.forEachProject(f: Project.() -> Unit) = subprojects.filter { it.name in this }.forEach(f)
-
-val Project.docDir: String
-    get() = "$buildDir/doc"
 
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
     platform: String, configuration: Action<in GradlePassConfigurationImpl>
