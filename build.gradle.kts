@@ -17,6 +17,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/dokka")
+    maven("https://dl.bintray.com/gciatto-unibo/kt-math")
 }
 
 group = "it.unibo.tuprolog"
@@ -66,6 +67,7 @@ allSubprojects.forEachProject {
     repositories {
         mavenCentral()
         maven("https://dl.bintray.com/kotlin/dokka")
+        maven("https://dl.bintray.com/gciatto-unibo/kt-math")
     }
 
     configureTestResultPrinting()
