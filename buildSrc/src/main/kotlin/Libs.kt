@@ -5,25 +5,6 @@
  *   `$ ./gradlew buildSrcVersions`
  */
 object Libs {
-    /**
-     * https://github.com/Kotlin/kotlinx.coroutines
-     */
-    const val kotlinx_coroutines_core: String = "org.jetbrains.kotlinx:kotlinx-coroutines-core:" +
-            Versions.org_jetbrains_kotlinx_kotlinx_coroutines
-
-    /**
-     * https://github.com/Kotlin/kotlinx.coroutines
-     */
-    const val kotlinx_coroutines_core_common: String =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:" +
-                Versions.org_jetbrains_kotlinx_kotlinx_coroutines
-
-    /**
-     * https://github.com/Kotlin/kotlinx.coroutines
-     */
-    const val kotlinx_coroutines_core_js: String =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:" +
-                Versions.org_jetbrains_kotlinx_kotlinx_coroutines
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/

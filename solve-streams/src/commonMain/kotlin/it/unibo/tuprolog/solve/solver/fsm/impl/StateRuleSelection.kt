@@ -11,8 +11,6 @@ import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.*
 import it.unibo.tuprolog.solve.solver.fsm.*
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * State responsible of selecting a rule to be solved to demonstrate a goal
@@ -20,9 +18,8 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class StateRuleSelection(
-    override val solve: Solve.Request<ExecutionContextImpl>,
-    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractTimedState(solve, executionStrategy) {
+    override val solve: Solve.Request<ExecutionContextImpl>
+) : AbstractTimedState(solve) {
 
     /** The execute function to be used when a [State] needs, internally, to execute sub-[State]s behaviour */
     private val subStateExecute: (State) -> Sequence<AlreadyExecutedState> = StateMachineExecutor::executeWrapping
@@ -50,7 +47,7 @@ internal class StateRuleSelection(
                             isChoicePointChild = isChoicePoint
                         )
 
-                    val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope(), executionStrategy)
+                    val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope())
                         .also { yield(it.asAlreadyExecuted()) }
 
                     var cutNextSiblings = false
