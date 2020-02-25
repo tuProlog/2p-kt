@@ -10,6 +10,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
+                api(project(":dsl-theory"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
             }
         }
@@ -17,7 +18,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":solve-test"))
+                api(project(":solve-test"))
             }
         }
 

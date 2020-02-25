@@ -5,13 +5,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
+                api(project(":dsl-theory"))
             }
         }
 
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":solve-test"))
+                api(project(":solve-test"))
             }
         }
 
