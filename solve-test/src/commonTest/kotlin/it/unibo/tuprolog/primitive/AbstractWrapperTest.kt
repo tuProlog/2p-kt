@@ -13,13 +13,9 @@ internal class AbstractWrapperTest {
 
     private val signature = Signature("a", 0)
 
-    private val underTest1 = object : AbstractWrapper<Int>(signature) {
-        override val wrappedImplementation: Int = 1
-    }
+    private val underTest1 = AbstractWrapper.OfConstant(signature, 1)
 
-    private val underTest2 = object : AbstractWrapper<Int>(signature.name, signature.arity) {
-        override val wrappedImplementation: Int = 2
-    }
+    private val underTest2 = AbstractWrapper.OfConstant(signature.name, signature.arity, 2)
 
     private val allUnderTest = listOf(underTest1, underTest2)
 
