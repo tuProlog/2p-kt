@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.libraries.stdlib.primitive
 
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
@@ -50,19 +51,29 @@ internal class ConjunctionTest {
 
     @Test
     fun conjunctionExecutesLeftAndRightArgumentsRemovingNotReachableVariablesExceptForRightAdded() {
+
+        /** PrimitiveWrapper which returns a response with provided substitution; this is usable only by this test */
+        class WrapperOfPrimitiveWithSubstitution<C : ExecutionContext>(
+            name: String,
+            arity: Int,
+            private val responseSubstitution: Substitution.Unifier
+        ) : PrimitiveWrapper<C>(name, arity) {
+
+            // this class was added since Kotlin/JS won't pass tests using "object literals"
+            // maybe in future releases of Kotlin the problem will be solved
+
+            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
+                sequenceOf(request.replySuccess(responseSubstitution))
+        }
+
+
         prolog {
             val preRequestSubstitution = "PreRequest" to "a"
             val firstSubstitution = "L" to "first"
             val secondSubstitution = "R" to "second"
 
-            val leftPrimitive = object : PrimitiveWrapper<ExecutionContext>("left", 0) {
-                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                    sequenceOf(request.replySuccess(firstSubstitution))
-            }
-            val rightPrimitive = object : PrimitiveWrapper<ExecutionContext>("right", 0) {
-                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                    sequenceOf(request.replySuccess(secondSubstitution))
-            }
+            val leftPrimitive = WrapperOfPrimitiveWithSubstitution<ExecutionContext>("left", 0, firstSubstitution)
+            val rightPrimitive = WrapperOfPrimitiveWithSubstitution<ExecutionContext>("right", 0, secondSubstitution)
 
             val goal = "left" and "right"
             val request = Solve.Request(
