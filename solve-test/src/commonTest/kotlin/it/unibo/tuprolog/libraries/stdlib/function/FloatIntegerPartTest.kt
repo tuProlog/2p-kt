@@ -14,15 +14,21 @@ import kotlin.test.Test
 internal class FloatIntegerPartTest {
 
     companion object {
+        private inline val loggingOn get() = false
+
         fun <T> assertEquals(expected: T, actual: T) {
-            println("""
+            if (loggingOn) println(
+                """
                 Expecting:
                     $expected
                 got
                     $actual
-            """.trimIndent())
+                """.trimIndent()
+            )
+
             kotlin.test.assertEquals(expected, actual)
-            println("".padEnd(80, '-'))
+
+            if(loggingOn) println("".padEnd(80, '-'))
         }
     }
 
