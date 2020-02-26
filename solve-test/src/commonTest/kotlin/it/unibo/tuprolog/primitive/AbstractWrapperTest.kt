@@ -13,9 +13,8 @@ internal class AbstractWrapperTest {
 
     private val signature = Signature("a", 0)
 
-    private val underTest1 = AbstractWrapper.OfConstant(signature, 1)
-
-    private val underTest2 = AbstractWrapper.OfConstant(signature.name, signature.arity, 2)
+    private val underTest1 = WrapperOfConstant(signature, 1)
+    private val underTest2 = WrapperOfConstant(signature.name, signature.arity, 2)
 
     private val allUnderTest = listOf(underTest1, underTest2)
 
@@ -37,6 +36,23 @@ internal class AbstractWrapperTest {
     fun descriptionPairCorrect() {
         allUnderTest.forEach {
             assertEquals(Pair(signature, it.wrappedImplementation), it.descriptionPair)
+        }
+    }
+
+    private companion object {
+
+        /** A testing class for AbstractWrapper functionality */
+        private class WrapperOfConstant<out T>(signature: Signature, value: T) : AbstractWrapper<T>(signature) {
+            // this class was added since Kotlin/JS won't pass tests using "object literals"
+            // maybe in future releases of Kotlin the problem will be solved
+
+            constructor(name: String, arity: Int, vararg: Boolean, value: T)
+                    : this(Signature(name, arity, vararg), value)
+
+            constructor(name: String, arity: Int, value: T)
+                    : this(Signature(name, arity, false), value)
+
+            override val wrappedImplementation: T = value
         }
     }
 }

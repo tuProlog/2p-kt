@@ -19,17 +19,6 @@ abstract class AbstractWrapper<out Wrapped>(val signature: Signature) {
         )
     )
 
-    class OfConstant<out T>(signature: Signature, value: T) : AbstractWrapper<T>(signature) {
-
-        constructor(name: String, arity: Int, vararg: Boolean, value: T)
-                : this(Signature(name, arity, vararg), value)
-
-        constructor(name: String, arity: Int, value: T)
-                : this(Signature(name, arity, false), value)
-
-        override val wrappedImplementation: T = value
-    }
-
     /** A shorthand to get the signature functor name */
     val functor: String
         inline get() = signature.name
