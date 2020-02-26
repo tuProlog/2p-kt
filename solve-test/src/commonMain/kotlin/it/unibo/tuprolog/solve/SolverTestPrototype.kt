@@ -75,8 +75,8 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
     /** Utility function to log loaded Solver databases */
     private fun Solver.logDatabases() {
-        println(if (staticKB.clauses.any()) staticKB.clauses.joinToString(".\n", "", ".") else "")
-        println(if (dynamicKB.clauses.any()) dynamicKB.clauses.joinToString(".\n", "", ".") else "")
+        println(if (staticKB.clauses.any()) staticKB.toString(true) else "")
+        println(if (dynamicKB.clauses.any()) dynamicKB.toString(true) else "")
     }
 
     /** Utility function to log passed goal and solutions */
