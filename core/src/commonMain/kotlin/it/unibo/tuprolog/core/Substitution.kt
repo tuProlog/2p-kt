@@ -147,6 +147,7 @@ sealed class Substitution : Map<Var, Term> {
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
         override fun filter(variables: Collection<Var>): Fail = Fail
+        override fun toString(): String = "{Failed Substitution}"
     }
 
 
