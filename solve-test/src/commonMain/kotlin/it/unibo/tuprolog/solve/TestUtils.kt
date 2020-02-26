@@ -118,3 +118,7 @@ inline fun assertSolutionEquals(
 
     expected.zip(actual).forEach { (expected, actual) -> equalityAssertion(expected, actual) }
 }
+
+expect fun internalsOf(x: () -> Any): String
+
+expect fun log(x: () -> Any): Unit

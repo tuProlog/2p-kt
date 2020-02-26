@@ -58,7 +58,3 @@ fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: T
     assertTermsAreEqual(actual, expected)
     println("".padEnd(80, '-'))
 }
-
-expect fun internalsOf(x: () -> Any): String
-
-expect fun log(x: () -> Any): Unit

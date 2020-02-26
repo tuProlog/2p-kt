@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.core.parsing.test
+package it.unibo.tuprolog.solve
 
 actual fun internalsOf(x: () -> Any): String {
     return JSON.stringify(x())

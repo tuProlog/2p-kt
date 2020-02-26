@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
-
 val javaVersion: String by project
 val ktFreeCompilerArgsJvm: String by project
 
@@ -11,7 +8,6 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
             }
         }
 
@@ -28,9 +24,6 @@ kotlin {
 
             main.defaultSourceSet {
                 dependsOn(commonMain)
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
-                }
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)
@@ -44,9 +37,6 @@ kotlin {
 
             main.defaultSourceSet {
                 dependsOn(commonMain)
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.org_jetbrains_kotlinx_kotlinx_coroutines}")
-                }
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)
