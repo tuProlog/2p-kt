@@ -29,16 +29,24 @@ internal object StateGoalEvaluationUtils {
     internal val expectedContext = ExecutionContextImpl(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
-    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive) =
-        object : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
-            override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> =
+    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<ExecutionContextImpl> {
+
+        class WrapperOfBehaviour : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
+
+            // this class was added since Kotlin/JS won't pass tests using "object literals"
+            // maybe in future releases of Kotlin the problem will be solved
+
+            override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
                 primitiveBehaviour(request)
-        }.run {
+        }
+
+        return WrapperOfBehaviour().run {
             createSolveRequest(
                 signature withArgs emptyList(),
                 primitives = mapOf(descriptionPair, Throw.descriptionPair)
             )
         }
+    }
 
     /** Test data in the form (primitive, list of state types in which it should go) */
     internal val primitiveRequestToNextStateList by lazy {
