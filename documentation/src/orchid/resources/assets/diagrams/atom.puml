@@ -1,0 +1,32 @@
+left to right direction
+
+interface Term {
+  + isGround: Boolean
+  + variables: Sequence<Var>
+  + equals(other: Any): Boolean
+  + structurallyEquals(other: Term): Boolean
+  + freshCopy(): Term
+  + toString(): String
+}
+interface Constant {
+  + value: Any
+}
+interface Struct {
+  + functor: String
+  + arity: Int
+  + args: Array<Term>
+  + indicator: Indicator
+  + get(index: Int): Term
+  + {static} of(functor: String, **varargs** args: Term): Struct
+}
+interface Atom {
+  + value: String
+  + {static} of(value: String): Atom
+}
+
+Term <|-- Struct
+Term <|-- Constant
+
+Constant <|-- Atom
+
+Struct <|-- Atom

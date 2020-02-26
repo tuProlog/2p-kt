@@ -1,0 +1,39 @@
+left to right direction
+interface Struct
+interface Atom
+interface Empty {
+  + {static} list(): EmptyList
+  + {static} set(): EmptySet
+}
+interface EmptyList {
+  + {static} invoke(): EmptyList
+}
+interface List {
+  + size: Int
+  + unfoldedArray: Array<Term>
+  + unfoldedList: List<Term>
+  + unfoldedSequence: Sequence<Term>
+  + toArray(): Array<Term>
+  + toList(): List<Term>
+  + toSequence(): Sequence<Term>
+  + {static} empty(): List
+  + {static} of(**varargs** items: Term): List
+  + {static} of(items: Iterable<Term>): List
+  + {static} from(iterable: Iterable<Term>, last: Term? **= null**): List
+}
+interface Cons {
+  + head: Term
+  + tail: Term
+  + {static} of(head: Term, tail: Term): Cons
+  + {static} singleton(head: Term): Cons
+}
+
+Struct <|-- Atom
+Struct <|-- List
+
+Atom <|-- Empty
+
+Empty <|-- EmptyList
+
+List <|-- EmptyList
+List <|-- Cons

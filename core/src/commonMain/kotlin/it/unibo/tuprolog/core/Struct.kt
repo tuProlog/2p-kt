@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.StructImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
 interface Struct : Term {
@@ -85,8 +88,10 @@ interface Struct : Term {
     companion object {
 
         /** The pattern of a well-formed functor for a Struct */
+        @JvmField
         val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
+        @JvmStatic
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
                 args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
@@ -100,11 +105,18 @@ interface Struct : Term {
                 else -> StructImpl(functor, args.toTypedArray())
             }
 
+        @JvmStatic
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
+        @JvmStatic
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
-        fun fold(operator: String, terms: KtList<Term>, terminal: Term? = null): Struct =
+        @JvmStatic
+        fun fold(operator: String, terms: KtList<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, terms: KtList<Term>, terminal: Term?): Struct =
             when {
                 operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
                 operator == Cons.FUNCTOR && terminal === null ->
@@ -127,14 +139,29 @@ interface Struct : Term {
             }
 
 
-        fun fold(operator: String, terms: Sequence<Term>, terminal: Term? = null): Struct =
+        @JvmStatic
+        fun fold(operator: String, terms: Sequence<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
-        fun fold(operator: String, terms: Iterable<Term>, terminal: Term? = null): Struct =
+        @JvmStatic
+        fun fold(operator: String, terms: Sequence<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, terms: Iterable<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
-        fun fold(operator: String, vararg terms: Term, terminal: Term? = null): Struct =
+        @JvmStatic
+        fun fold(operator: String, terms: Iterable<Term>): Struct =
+            fold(operator, terms, null)
+
+        @JvmStatic
+        fun fold(operator: String, vararg terms: Term, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
+
+        @JvmStatic
+        fun fold(operator: String, vararg terms: Term): Struct =
+            fold(operator, listOf(*terms))
 
     }
 }

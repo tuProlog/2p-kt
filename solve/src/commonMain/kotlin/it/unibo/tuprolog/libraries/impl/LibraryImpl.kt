@@ -12,7 +12,7 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-internal open class LibraryImpl(
+open class LibraryImpl(
     override val operators: OperatorSet,
     override val theory: ClauseDatabase,
     override val primitives: Map<Signature, Primitive>,

@@ -7,8 +7,6 @@ import it.unibo.tuprolog.solve.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.TimedState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * Base class for all States that should have a timed behaviour
@@ -17,9 +15,8 @@ import kotlinx.coroutines.Dispatchers
  */
 internal abstract class AbstractTimedState(
     /** The [Solve.Request] that guides the State behaviour towards [Response]s */
-    override val solve: Solve.Request<ExecutionContext>,
-    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractState(solve, executionStrategy), IntermediateState, TimedState {
+    override val solve: Solve.Request<ExecutionContext>
+) : AbstractState(solve), IntermediateState, TimedState {
 
     /** Internal cached currentTime at first behave() call, enabling identical re-execution of that state */
     private val stateCurrentTime by lazy { currentTimeInstant() }

@@ -166,13 +166,3 @@ fun <T> Array<T>.cursor(): Cursor<out T> {
 fun <T> Collection<T>.cursor(): Cursor<out T> {
     return this.iterator().toCursor()
 }
-
-fun main(args: Array<String>) {
-    var i = (1..Int.MAX_VALUE).asSequence().map { println("$$it"); it }.cursor().map { it * 2 }
-
-    while (i.hasNext) {
-        println(i.current)
-        i = i.next
-    }
-
-}

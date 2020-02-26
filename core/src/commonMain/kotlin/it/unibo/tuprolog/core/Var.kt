@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 interface Var : Term {
 
@@ -33,8 +35,10 @@ interface Var : Term {
 
         val VAR_REGEX_PATTERN = "[A-Z_][A-Za-z_0-9]*".toRegex()
 
+        @JvmStatic
         fun of(name: String): Var = VarImpl(name)
 
+        @JvmStatic
         fun anonymous(): Var = VarImpl(ANONYMOUS_VAR_NAME)
     }
 }

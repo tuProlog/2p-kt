@@ -1,4 +1,3 @@
-// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
@@ -11,29 +10,31 @@ kotlin {
         }
 
         val commonTest by getting {
-            dependencies {
-                implementation(project(":solve-test"))
-            }
+            dependsOn(commonMain)
         }
 
-        // Default source set for JVM-specific sources and dependencies:
         jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
-                }
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
             }
         }
 
         js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api(project(":core"))
-//                    api(project(":unify"))
-//                    api(project(":theory"))
-                }
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(main.defaultSourceSet)
             }
         }
     }

@@ -27,7 +27,7 @@ internal class CutTest {
 
     @Test
     fun cutPrimitiveReturnsAlwaysYesResponseWithRequestSubstitution() {
-        val unchangedSubstitution = Substitution.of("A", Truth.`true`())
+        val unchangedSubstitution = Substitution.of("A", Truth.ofTrue())
         val context = ExecutionContextImpl(substitution = unchangedSubstitution)
         val solutions = Cut.wrappedImplementation(cutRequest(context))
 

@@ -47,177 +47,168 @@ The base type for logic terms in 2P-Kt is [`Term`](/kotlindoc/it/unibo/tuprolog/
 
 As shown in the following diagram, the `Term` interface is the root of an articulate hierarchy of term types: 
 
-<div style="width: 100%; overflow: auto; background-color:LightGray" >
-{% filter compileAs('uml') %}
-interface Term {
-  + isGround: Boolean
-  + variables: Sequence<Var>
-  + equals(other: Any): Boolean
-  + structurallyEquals(other: Term): Boolean
-  + freshCopy(): Term
-  + toString(): String
-}
-interface Constant {
-  + value: Any
-}
-interface Var {
-  + name: String
-  + complete: Name
-  + {static} of(name: String): Var
-}
-interface Struct {
-  + functor: String
-  + arity: Int
-  + args: Array<Term>
-  + indicator: Indicator
-  + get(index: Int): Term
-  + {static} of(functor: String, **varargs** args: Term): Struct
-}
-interface Numeric {
-  + intValue: BigInteger
-  + decimalValue: BigDecimal
-  + {static} of(value: Number): Numeric
-  + {static} of(number: String): Numeric
-  + {static} of(integer: BigInteger): Integer
-  + {static} of(decimal: BigDecimal): Real
-}
-interface Integer {
-  + value: BigInteger
-  + {static} of(integer: Int): Integer
-  + {static} of(integer: Long): Integer
-  + {static} of(integer: Byte): Integer
-  + {static} of(integer: Short): Integer
-  + {static} of(integer: BigInteger): Integer
-  + {static} of(integer: BigDecimal): Integer
-  + {static} of(integer: String): Integer
-  + {static} of(integer: String, radix: Int): Integer
-}
-interface Real {
-  + value: BigDecimal
-  + {static} of(real: BigDecimal): Real
-  + {static} of(real: Float): Real
-  + {static} of(real: Double): Real
-  + {static} of(real: String): Real
-}
-interface Atom {
-  + value: String
-  + {static} of(value: String): Atom
-}
-interface Truth {
-  + isTrue: Boolean
-  + isFail: Boolean
-  + {static} of(value: Boolean): Truth
-}
-interface Indicator {
-  + nameTerm: Term
-  + indicatedName: String?
-  + arityTerm: Term
-  + indicatedArity: Int?
-  + isWellFormed: Boolean
-  + {static} of(name: String, arity: Int): Indicator
-  + {static} of(name: Term, arity: Term): Indicator
-}
-interface Empty {
-  + {static} list(): EmptyList
-  + {static} set(): EmptySet
-}
-interface EmptySet {
-  + {static} invoke(): EmptySet
-}
-interface EmptyList {
-  + {static} invoke(): EmptyList
-}
-interface List {
-  + size: Int
-  + unfoldedArray: Array<Term>
-  + unfoldedList: List<Term>
-  + unfoldedSequence: Sequence<Term>
-  + toArray(): Array<Term>
-  + toList(): List<Term>
-  + toSequence(): Sequence<Term>
-  + {static} empty(): List
-  + {static} of(**varargs** items: Term): List
-  + {static} of(items: Iterable<Term>): List
-  + {static} from(iterable: Iterable<Term>, last: Term? **= null**): List
-}
-interface Cons {
-  + head: Term
-  + tail: Term
-  + {static} of(head: Term, tail: Term): Cons
-  + {static} singleton(head: Term): Cons
-}
-interface Set {
-  + unfoldedArray: Array<Term>
-  + unfoldedList: List<Term>
-  + unfoldedSequence: Sequence<Term>
-  + toArray(): Array<Term>
-  + toList(): List<Term>
-  + toSequence(): Sequence<Term>
-  + {static} empty(): Set
-  + {static} of(**varargs** items: Term): Set
-  + {static} of(items: Iterable<Term>): Set
-}
-interface Tuple {
-  + left: Term
-  + right: Term
-  + {static} of(left: Term, right: Term): Tuple
-  + {static} of(**varargs** items: Term): Tuple
-  + {static} of(items: Iterable<Term>): Tuple
-}
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/terms-nofields.puml') | raw }}
+<!--div-->
 
-Term <|-down- Struct
-Term <|-down- Constant
-Term <|-down- Var 
+### Terms 
 
-Constant <|-down- Numeric
-Constant <|-down- Atom
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/term.puml') | raw }}
+<!--div-->
 
-Numeric <|-down- Real
-Numeric <|-down- Integer
+Terms is 2P-Kt are __immutable__ data structures.
+This is why all subtypes of `Term` come with no `var` public property nor any public method provoking side effects.
+This is deliberate as it simplify design and implementation.
+Plus, this enables optimization through caching.
+From the user-side, this means that once one you have checked a property (say `isGround`, for example) on a term, you are sure it will never change (for that term).
 
-Struct <|-down- Atom
-Struct <|-down- List
-Struct <|-down- Tuple 
-Struct <|-down- Set
-Struct <|-down- Indicator
+### Main functionalities of terms
 
-Atom <|-down- Truth
-Atom <|-down- Empty
+Given a `Term` it is possible to:
 
-Empty <|-up- EmptyList
-Empty <|-up- EmptySet
+- retrieve the [sequence](https://kotlinlang.org/docs/reference/sequences.html) of `Var`iables contained within the term through the `variables: Sequence<Var>` read-only property 
 
-List <|-down- EmptyList
-List <|-down- Cons
-Set <|-down- EmptySet
+- check whether it is _ground_ (i.e., it does _not_ contain any variable) through the the `isGround: Boolean` read-only property
 
-package clauses <<Rectangle>> {
+- graphically represent it as a `String`, through the `toString()` method
 
-    interface Clause {
-      + head: Struct?
-      + body: Term
-      + isWellFormed: Boolean
-      + {static} of(head: Struct?, **varargs** body: Term): Clause
-    }
-    interface Rule {
-      + head: Struct
-      + body: Term
-      + {static} of(head: Struct, **varargs** body: Term): Rule
-    }
-    interface Directive {
-      + head: Struct? **= null**
-      + {static} of(**varargs** body: Term): Directive
-    }
-    interface Fact {
-      + body: Term **= Truth.of(true)**
-      + {static} of(head: Struct): Fact
-    }
-    Struct <|-down- Clause
-    Clause <|-down- Rule
-    Clause <|-down- Directive
-    Rule <|-down- Fact
+- clone it, in order to _refresh_ its variables, through the `freshCopy(): Term` method
 
-}
-{% endfilter %}
-</div>
+- check if it is _equal_ to another term, through the `equals(other: Any): Boolean` method
+    + of course, the semantics of `hashCode(): Int` is consistent w.r.t. `equals`
 
+- check if it is **structurally** _equal_ to another term, through the `structurallyEquals(other: Term): Boolean` method
+
+#### About terms representation as `String`
+
+The `Term.toString()` method prodeces a raw, debug-friendly representation of terms where:
+
+- all compound term are in their canonical form, e.g., `'functor'(arg1.toString(), ..., argN.toString())`
+    * where apexes may be omitted in simpler cases
+
+- except lists which are represented in square brackets, e.g., `[item1.toString(), ..., itemN.toString()]`
+
+- except sets which are represented within braces, e.g., `{item1.toString(), ..., itemN.toString()}`
+
+- except tuples which are represented within parentheses, e.g., `(item1.toString(), ..., itemN.toString())`
+
+- except clauses which are represented in their canonical form, e.g. `OptionalHead :- Body`
+    * where the `OptionalHead` is omitted in case of directives
+
+- all atoms are represented are bare strings, e.g., `'atom'`
+    * where apexes may be omitted in simpler cases
+   
+- all numbers are represented though their natural string representation as decimal integers/reals, e.g., `1` or `2.3`
+
+- all variables are represented though their _complete_ name, e.g., `VariableName_<some unique index here>`
+
+More details about the actual string representations of subtypes are provided in the following sections.
+
+The takeaway here is that the `Term.toString()` is __not__ aimed at presenting terms to teh users.
+
+#### About fresh copies of terms
+
+
+
+#### About terms equality
+
+Terms equality is recursively defined.
+Roughly speaking the equivalence among two terms holds if and only if:
+
+1. the type of the two terms is equal, and
+
+0. they are both variables, and they have the same _complete_ name, or
+
+0. they are both integers, and they have the same value, or
+
+0. they are both real numbers, and they have the same value, or
+
+0. they are both structures, and they have the same functor and arity, and their arguments are recursively equal.
+
+More details are provided in the following sections.
+
+#### About terms _structural_ equality
+
+### Instantiation of terms
+
+By default, terms are instantiated through static __factory__ methods in the form `<Subtype>.<factoryMethod>(<args>)`, which are described in details in the following sections.
+This is necessary since the actual implementation classes of the aforementioned interfaces are __not__ part of the public API of 2P-Kt.
+
+Of course, there is no way to create an instance of `Term` since this is just a super type for all terms.
+Only subtypes can actually be instantiated. 
+So, for instance, one may create 
+- a structure through the `Struct.of(functor: String, varargs args: Term)` method, 
+- a variable, through the `Var.of(name: String)` or `Var.anonymous()` methods,
+- an atom through the `Atom.of(value: String)` method
+- a number through the `Numeric.of(value: String)` method (or the `Integer.of`, or `Real.of` ones)
+- etc.
+
+Details about such factory methods are provided below. 
+
+Static factories are not the only means to instantiate terms. 
+The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a similar -- yet more articulated -- use case.
+
+### Numbers 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/numeric.puml') | raw }}
+<!--div-->
+
+### Variables 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/var.puml') | raw }}
+<!--div-->
+
+### Structures 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/struct.puml') | raw }}
+<!--div-->
+
+### Atoms 
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/atom.puml') | raw }}
+<!--div-->
+
+### Booleans
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/truth.puml') | raw }}
+<!--div-->
+
+### Indicators
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/indicator.puml') | raw }}
+<!--div-->
+
+### Collections
+
+#### Lists
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/list.puml') | raw }}
+<!--div-->
+
+#### Tuples
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/tuple.puml') | raw }}
+<!--div-->
+
+#### Sets
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/set.puml') | raw }}
+<!--div-->
+
+### Clauses
+
+#### Rules
+
+#### Facts
+
+#### Directives

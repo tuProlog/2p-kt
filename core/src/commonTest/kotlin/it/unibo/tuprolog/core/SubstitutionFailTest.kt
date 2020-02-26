@@ -40,8 +40,8 @@ internal class SubstitutionFailTest {
 
     @Test
     fun failedSubstitutionPlusOtherSubstitutionReturnsAlwaysFailedSubstitution() {
-        assertEquals(failedSubstitution, failedSubstitution + Substitution.of("A", Truth.`true`()))
-        assertEquals(failedSubstitution, Substitution.of("A", Truth.`true`()) + failedSubstitution)
+        assertEquals(failedSubstitution, failedSubstitution + Substitution.of("A", Truth.ofTrue()))
+        assertEquals(failedSubstitution, Substitution.of("A", Truth.ofTrue()) + failedSubstitution)
     }
 
     @Test

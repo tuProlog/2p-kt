@@ -10,9 +10,16 @@ sealed class ChoicePointContext(
     open val parent: ChoicePointContext?,
     open val depth: Int = 0
 ) {
-    init {
-        require((depth == 0 && parent == null) || (depth > 0 && parent != null))
-    }
+
+// This assertion fails on JS since depth is undefined
+//    init {
+//        require((depth == 0 && parent == null) || (depth > 0 && parent != null)) {
+//            """Violated initial constraint for claass ChoicePointContext: (depth == 0 && parent == null) || (depth > 0 && parent != null)
+//                |   depth=$depth
+//                |   parent=$parent
+//            """.trimMargin()
+//        }
+//    }
 
     val isRoot: Boolean
         get() = depth == 0

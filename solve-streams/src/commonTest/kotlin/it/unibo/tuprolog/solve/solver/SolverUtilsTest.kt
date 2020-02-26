@@ -129,7 +129,7 @@ internal class SolverUtilsTest {
     @Test
     fun newSolveRequestSetsCorrectlyRequestIssuingInstantRequestIssuingInstant() {
         val myCurrentTime = currentTimeInstant()
-        val toBeTested = solveRequest.newSolveRequest(Truth.fail(), currentTime = myCurrentTime)
+        val toBeTested = solveRequest.newSolveRequest(Truth.ofFalse(), currentTime = myCurrentTime)
 
         assertEquals(myCurrentTime, toBeTested.requestIssuingInstant)
     }
