@@ -50,15 +50,23 @@ fun MavenPublication.configurePom(projectName: String) {
     }
 }
 
+fun log(message: String) {
+    System.out.println("LOG: $message")
+}
+
+fun warn(message: String) {
+    System.err.println("WARNING: $message")
+}
+
 fun Project.getPropertyOrWarnForAbsence(key: String): String? {
     val value = property(key)?.toString()
     if (value.isNullOrBlank()) {
-        System.err.println("WARNING: $key is not set")
+        warn("$key is not set")
     }
     return value
 }
 
-fun capitalize(s: String) = s[0].toUpperCase() + s.substring(1)
+//fun capitalize(s: String) = s[0].toUpperCase() + s.substring(1)
 
 val Project.docDir: String
     get() = "$buildDir/doc"
