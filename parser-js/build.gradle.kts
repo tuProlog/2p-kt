@@ -82,9 +82,9 @@ with(fileTree("src/main/antlr")) {
             classpath = antlr
             standardOutput = System.out
 
-            doFirst {
-                println("java -cp ${classpath.joinToString(File.pathSeparator)} $main ${args?.joinToString(" ") ?: ""}")
-            }
+//            doFirst {
+//                println("java -cp ${classpath.joinToString(File.pathSeparator)} $main ${args?.joinToString(" ") ?: ""}")
+//            }
 
             args(
                 "-Dlanguage=JavaScript",

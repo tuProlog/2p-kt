@@ -26,6 +26,7 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }
@@ -39,6 +40,7 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }
