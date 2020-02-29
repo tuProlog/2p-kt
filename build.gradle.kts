@@ -17,7 +17,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/dokka")
-    maven("https://dl.bintray.com/gciatto-unibo/kt-math")
+//    maven("https://dl.bintray.com/gciatto-unibo/kt-math")
 }
 
 group = "it.unibo.tuprolog"
