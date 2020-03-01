@@ -50,11 +50,15 @@ fun TermParser.assertTermIsCorrectlyParsed(
     assertTermIsCorrectlyParsed(stringToBeParsed, PrologWithUnification.empty().expectedGenerator())
 }
 
-fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: Term) {
-    println("Parsing:\n\t$stringToBeParsed")
+fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: Term, loggingOn:Boolean = false) {
+    if(loggingOn) println("Parsing:\n\t$stringToBeParsed")
+
     val actual = Term.parse(stringToBeParsed)
-    println("Result:\n\t$actual")
-    println("Expected:\n\t$expected")
+
+    if(loggingOn) println("Result:\n\t$actual")
+    if(loggingOn) println("Expected:\n\t$expected")
+
     assertTermsAreEqual(actual, expected)
-    println("".padEnd(80, '-'))
+
+    if(loggingOn) println("".padEnd(80, '-'))
 }
