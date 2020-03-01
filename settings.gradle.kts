@@ -1,4 +1,4 @@
-rootProject.name = "2P-Kt"
+rootProject.name = "2p"
 
 include("documentation")
 
