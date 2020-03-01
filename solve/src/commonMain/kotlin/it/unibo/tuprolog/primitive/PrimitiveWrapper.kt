@@ -15,8 +15,7 @@ import it.unibo.tuprolog.solve.exception.prologerror.TypeError
  * @author Enrico
  * @author Giovanni
  */
-abstract class PrimitiveWrapper<C : ExecutionContext> :
-    AbstractWrapper<Primitive> {
+abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)
@@ -26,10 +25,19 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
 
     /** Checked primitive implementation */
     @Suppress("UNCHECKED_CAST")
-    final override val wrappedImplementation: Primitive by lazy {
+    final override val wrappedImplementation: Primitive =
         primitiveOf(signature, ::uncheckedImplementation as Primitive)
-    }
 
+    internal class FromFunction<C : ExecutionContext>(signature: Signature, private val uncheckedPrimitive: Primitive)
+        : PrimitiveWrapper<C>(signature) {
+
+        constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
+                : this(Signature(name, arity, vararg), uncheckedPrimitive)
+
+        override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> {
+            return uncheckedPrimitive(request)
+        }
+    }
 
     companion object {
 
@@ -39,11 +47,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function
          */
         fun <C : ExecutionContext> wrap(signature: Signature, primitive: Primitive): PrimitiveWrapper<C> {
-            return object : PrimitiveWrapper<C>(signature) {
-                override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> {
-                    return primitive(request)
-                }
-            }
+            return FromFunction(signature, primitive)
         }
 
         /**
@@ -55,11 +59,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
             vararg: Boolean,
             primitive: Primitive
         ): PrimitiveWrapper<C> {
-            return object : PrimitiveWrapper<C>(name, arity, vararg) {
-                override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> {
-                    return primitive(request)
-                }
-            }
+            return FromFunction(name, arity, vararg, primitive)
         }
 
         /**
