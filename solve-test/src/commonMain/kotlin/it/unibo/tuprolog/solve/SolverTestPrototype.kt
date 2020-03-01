@@ -59,6 +59,8 @@ import kotlin.collections.listOf as ktListOf
 /** A prototype class for testing solver implementations */
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
+    private inline val loggingOn get() = false
+
     /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
     private fun assertSolverSolutionsCorrect(
         solver: Solver,
@@ -66,10 +68,12 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            // solver.logDatabases()
+            if(loggingOn) solver.logDatabases()
+
             val solutions = solver.solve(goal, maxDuration).toList()
             assertSolutionEquals(solutionList, solutions)
-            // logGoalAndSolutions(goal, solutions)
+
+            if(loggingOn) logGoalAndSolutions(goal, solutions)
         }
     }
 
