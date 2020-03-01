@@ -14,7 +14,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                api(project(":solve-test"))
+                api(project(":test-solve"))
             }
         }
 
