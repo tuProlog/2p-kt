@@ -25,6 +25,7 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.varargArgumentList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 /**
  * Test class for [Solve.Request]
@@ -32,6 +33,10 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class SolveRequestTest {
+
+    companion object {
+        private const val TOLERANCE = 10L
+    }
 
     @Test
     fun requestInsertedDataCorrect() {
@@ -54,7 +59,7 @@ internal class SolveRequestTest {
     fun requestDefaultValuesCorrect() {
         val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
-        assertEquals(currentTimeInstant(), toBeTested.requestIssuingInstant)
+        assertTrue { currentTimeInstant() - toBeTested.requestIssuingInstant < TOLERANCE }
         assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
     }
 
