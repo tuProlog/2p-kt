@@ -20,7 +20,7 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
-    override fun solverOf(
+    override fun solverOf( // TODO: 17/01/2020 add not present tests 
         libraries: Libraries,
         flags: PrologFlags,
         staticKB: ClauseDatabase,
