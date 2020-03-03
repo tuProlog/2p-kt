@@ -15,15 +15,17 @@ import kotlin.test.assertNotEquals
  */
 internal class NumericTest {
 
+    private inline val loggingOn get() = false
+
     fun <T> assertEquals(expected: T, actual: T, message: String? = "Failed assertion $expected == $actual") {
-        println("Object\n\t$actual\nis expected to be equal to\n\t$expected")
+        if (loggingOn) println("Object\n\t$actual\nis expected to be equal to\n\t$expected")
         try {
             kotlin.test.assertEquals(expected, actual, message)
         } catch (e: Exception) {
-            println(e.message)
+            if (loggingOn) println(e.message)
             throw e
         } finally {
-            println("".padEnd(80, '-'))
+            if (loggingOn) println("".padEnd(80, '-'))
         }
     }
 

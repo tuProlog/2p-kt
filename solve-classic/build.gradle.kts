@@ -1,4 +1,6 @@
-// Project specific kotlin multiplatform configuration
+
+val mochaTimeout: String by project
+
 kotlin {
 
     sourceSets {
@@ -12,7 +14,7 @@ kotlin {
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                api(project(":solve-test"))
+                api(project(":test-solve"))
             }
         }
 
@@ -24,11 +26,19 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }
 
         js {
+            nodejs {
+                testTask {
+                    useMocha {
+                        timeout = mochaTimeout
+                    }
+                }
+            }
 
             val main = compilations["main"]
             val test = compilations["test"]
@@ -37,6 +47,7 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }

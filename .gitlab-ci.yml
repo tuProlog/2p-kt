@@ -1,7 +1,7 @@
 image: pikalab/ci:jdk13oracle-git
 
 variables:
-  GOPTS: "--no-daemon --console=plain --stacktrace"
+  GOPTS: "--no-daemon --console=plain"
   CI: "true"
   BEFORE_TASK: ""
   AFTER_TASK: ""
