@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
-val javaVersion: String by project
-val ktFreeCompilerArgsJvm: String by project
+val mochaTimeout: String by project
+val jvmStackSize: String by project
+val jvmMaxHeapSize: String by project
 
 kotlin {
 
@@ -9,13 +10,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
+                api(project(":dsl-theory"))
             }
         }
 
         val commonTest by getting {
             dependsOn(commonMain)
             dependencies {
-                implementation(project(":solve-test"))
+                api(project(":test-solve"))
             }
         }
 
@@ -27,11 +29,20 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }
 
         js {
+
+            nodejs {
+                testTask {
+                    useMocha {
+                        timeout = mochaTimeout
+                    }
+                }
+            }
 
             val main = compilations["main"]
             val test = compilations["test"]
@@ -40,6 +51,7 @@ kotlin {
                 dependsOn(commonMain)
             }
             test.defaultSourceSet {
+                dependsOn(commonTest)
                 dependsOn(main.defaultSourceSet)
             }
         }
@@ -47,8 +59,7 @@ kotlin {
     }
 }
 
-//tasks.withType<KotlinJvmTest> {
-//    jvmArgs("-Xmx1G", "-Xss256M")
-//    println("${name}.jvmArgs: $jvmArgs")
-//    println("${name}.allJvmArgs: $allJvmArgs")
-//}
+tasks.withType<KotlinJvmTest> {
+    maxHeapSize = jvmMaxHeapSize
+    jvmArgs("-Xss$jvmStackSize")
+}

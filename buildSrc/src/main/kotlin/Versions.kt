@@ -15,7 +15,7 @@ object Versions {
 
     const val org_jetbrains_kotlin: String = "1.3.61"
 
-    const val io_github_gciatto: String = "0.0.6"
+    const val io_github_gciatto: String = "0.1.0"
 
     const val org_antlr: String = "4.8-1"
 

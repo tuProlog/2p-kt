@@ -10,9 +10,9 @@ import kotlin.test.Test
 class StreamsSolverSystemTesting : SolverFactory {
 
     /** A short test max duration */
-    private val shortDuration = 100L
+    private val shortDuration = 500L
     /** A medium test max duration */
-    private val mediumDuration = 500L
+    private val mediumDuration = 1000L
     /** A long test max duration */
     private val longDuration = 2000L
 

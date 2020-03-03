@@ -10,7 +10,7 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
-                implementation(project(":solve-test"))
+                implementation(project(":test-solve"))
             }
         }
 

@@ -55,6 +55,8 @@ class EvaluationError(
                     valueOf(term.value.toUpperCase())
                 } catch (e: IllegalArgumentException) {
                     null
+                } catch (e: IllegalStateException) {
+                    null
                 }
                 else -> null
             }

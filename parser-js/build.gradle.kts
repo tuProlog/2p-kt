@@ -45,7 +45,7 @@ kotlin {
     }
 
     with(sourceSets["test"]) {
-        with(kotlin){
+        with(kotlin) {
             srcDir("src/test/js")
             srcDir("src/test/kotlin")
         }
@@ -83,7 +83,12 @@ with(fileTree("src/main/antlr")) {
             standardOutput = System.out
 
             doFirst {
-                println("java -cp ${classpath.joinToString(File.pathSeparator)} $main ${args?.joinToString(" ") ?: ""}")
+                logger.debug(
+                    "java -cp {} {} {}",
+                    classpath.joinToString(File.pathSeparator),
+                    main,
+                    args?.joinToString(" ") ?: ""
+                )
             }
 
             args(

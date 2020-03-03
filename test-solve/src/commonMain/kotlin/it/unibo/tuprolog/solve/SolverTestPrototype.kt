@@ -59,6 +59,8 @@ import kotlin.collections.listOf as ktListOf
 /** A prototype class for testing solver implementations */
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
+    private inline val loggingOn get() = false
+
     /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
     private fun assertSolverSolutionsCorrect(
         solver: Solver,
@@ -66,34 +68,35 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            with(solver) {
-                println(if (staticKB.clauses.any()) staticKB.clauses.joinToString(".\n", "", ".") else "")
-                println(if (dynamicKB.clauses.any()) dynamicKB.clauses.joinToString(".\n", "", ".") else "")
-                println("?- ${goal}.")
-            }
-//            try {
-                val solutions = solver.solve(goal, maxDuration).toList()
-                assertSolutionEquals(solutionList, solutions)
-//            } finally {
-                solutions.forEach {
-                    when (it) {
-                        is Solution.Yes -> {
-                            println("yes.\n\t${it.solvedQuery}")
-                            it.substitution.forEach { vt ->
-                                println("\t${vt.key} / ${vt.value}")
-                            }
-                        }
-                        is Solution.Halt -> {
-                            println("halt.\n\t${it.exception}")
-                        }
-                        is Solution.No -> {
-                            println("no.")
-                        }
-                    }
-                }
-                println("".padEnd(80, '-'))
-//            }
+            if(loggingOn) solver.logDatabases()
+
+            val solutions = solver.solve(goal, maxDuration).toList()
+            assertSolutionEquals(solutionList, solutions)
+
+            if(loggingOn) logGoalAndSolutions(goal, solutions)
         }
+    }
+
+    /** Utility function to log loaded Solver databases */
+    private fun Solver.logDatabases() {
+        println(if (staticKB.clauses.any()) staticKB.toString(true) else "")
+        println(if (dynamicKB.clauses.any()) dynamicKB.toString(true) else "")
+    }
+
+    /** Utility function to log passed goal and solutions */
+    private fun logGoalAndSolutions(goal: Struct, solutions: Iterable<Solution>) {
+        println("?- ${goal}.")
+        solutions.forEach {
+            when (it) {
+                is Solution.Yes -> {
+                    println("yes.\n\t${it.solvedQuery}")
+                    it.substitution.forEach { vt -> println("\t${vt.key} / ${vt.value}") }
+                }
+                is Solution.Halt -> println("halt.\n\t${it.exception}")
+                is Solution.No -> println("no.")
+            }
+        }
+        println("".padEnd(80, '-'))
     }
 
     /** Test presence of correct built-ins */
@@ -144,9 +147,9 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testTimeout1() {
         assertSolverSolutionsCorrect(
             solver = solverOf(
-                    staticKB = timeRelatedDatabase,
-                    libraries = defaultLibraries + timeLibrary
-                ),
+                staticKB = timeRelatedDatabase,
+                libraries = defaultLibraries + timeLibrary
+            ),
             goalToSolutions = lessThan500MsGoalToSolution,
             maxDuration = 400L
         )
@@ -232,7 +235,6 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             maxDuration
         )
     }
-
 
 
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */

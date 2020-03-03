@@ -17,6 +17,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/dokka")
+//    maven("https://dl.bintray.com/gciatto-unibo/kt-math")
 }
 
 group = "it.unibo.tuprolog"
@@ -66,6 +67,7 @@ allSubprojects.forEachProject {
     repositories {
         mavenCentral()
         maven("https://dl.bintray.com/kotlin/dokka")
+        maven("https://dl.bintray.com/gciatto-unibo/kt-math")
     }
 
     configureTestResultPrinting()
@@ -160,7 +162,7 @@ ktSubprojects.forEachProject {
 
     configureDokka("jvm", "js")
 
-    configureMavenPublications("packDokka${capitalize(name)}")
+    configureMavenPublications("packDokka")
 
     configureUploadToMavenCentral(
         if (version.toString().contains("SNAPSHOT")) {
@@ -245,7 +247,7 @@ fun Project.configureDokka(vararg platforms: String) {
         val jarPlatform = tasks.withType<Jar>().map { it.name.replace("Jar", "") }
 
         jarPlatform.forEach {
-            val packDokkaForPlatform = "packDokka${capitalize(it)}"
+            val packDokkaForPlatform = "packDokka${it.capitalize()}"
 
             task<Jar>(packDokkaForPlatform) {
                 group = "documentation"
@@ -282,7 +284,7 @@ fun Project.configureSigning() {
     }
 
     publishing {
-        val pubs = publications.withType<MavenPublication>().map { "sign${capitalize(it.name)}Publication" }
+        val pubs = publications.withType<MavenPublication>().map { "sign${it.name.capitalize()}Publication" }
 
         task<Sign>("signAllPublications") {
             dependsOn(*pubs.toTypedArray())
@@ -333,16 +335,21 @@ fun Project.configureUploadToMavenCentral(mavenRepoUrl: String) {
     }
 }
 
-fun Project.configureMavenPublications(docArtifact: String? = null) {
+fun Project.configureMavenPublications(docArtifactBaseName: String) {
     publishing {
         publications.withType<MavenPublication> {
-            groupId = project.group.toString()
-            version = project.version.toString()
+            groupId = this@configureMavenPublications.group.toString()
+            version = this@configureMavenPublications.version.toString()
 
-            if (docArtifact != null && docArtifact in tasks.names) {
+            val docArtifact = "${docArtifactBaseName}${name.capitalize()}"
+
+            if (docArtifact in tasks.names) {
                 artifact(tasks.getByName(docArtifact)) {
                     classifier = "javadoc"
                 }
+            } else {
+                log("no javadoc artifact for publication $name in project ${this@configureMavenPublications.name}: " +
+                        "no such a task: $docArtifact")
             }
 
             configurePom(this@configureMavenPublications.name)
@@ -361,8 +368,8 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
 
     publishing {
         publications.create<MavenPublication>(name) {
-            groupId = project.group.toString()
-            version = project.version.toString()
+            groupId = this@createMavenPublications.group.toString()
+            version = this@createMavenPublications.version.toString()
 
             for (component in componentsStrings) {
                 from(components[component])
@@ -372,6 +379,9 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                 artifact(tasks.getByName(docArtifact)) {
                     classifier = "javadoc"
                 }
+            } else {
+                log("no javadoc artifact for publication $name in project ${this@createMavenPublications.name}: " +
+                        "no such a task: $docArtifact")
             }
 
             artifact(sourcesJar)

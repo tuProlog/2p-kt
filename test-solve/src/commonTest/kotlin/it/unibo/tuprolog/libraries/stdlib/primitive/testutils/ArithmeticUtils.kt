@@ -48,7 +48,7 @@ internal object ArithmeticUtils {
                 Is.functor("Y", "*"("+"(1, 2), 3)) to ("Y" to 9),
                 Is.functor("Result", "+"(3, 11.0)) to ("Result" to 14.0),
                 Is.functor("foo", 77) to Substitution.failed(),
-                Is.functor(1.0, 1) to Substitution.failed(),
+                Is.functor(numOf(1.0), numOf(1)) to Substitution.failed(),
                 Is.functor("X", "+"("+"("N", 1), "/"(3, 0))) to InstantiationError::class,
                 Is.functor("C", "/"(3, 0)) to EvaluationError::class
             ).mapKeys { (query, _) -> createSolveRequest(query) }
