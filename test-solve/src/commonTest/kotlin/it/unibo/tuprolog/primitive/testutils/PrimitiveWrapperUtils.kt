@@ -30,11 +30,7 @@ internal object PrimitiveWrapperUtils {
     internal inline fun createPrimitiveWrapper(
         signature: Signature,
         crossinline uncheckedImplementation: Primitive
-    ): PrimitiveWrapper<ExecutionContext> =
-        object : PrimitiveWrapper<ExecutionContext>(signature) {
-            override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                uncheckedImplementation(request)
-        }
+    ): PrimitiveWrapper<ExecutionContext> = PrimitiveWrapper.wrap(signature) { uncheckedImplementation(it) }
 
     /** All under test requests */
     private val allRequests by lazy {

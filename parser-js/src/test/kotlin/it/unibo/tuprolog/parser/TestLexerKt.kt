@@ -4,6 +4,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestLexerKt {
+
+    private inline val loggingOn get() = false
+
     @Test
     fun testLexing() {
         val input = "1 + a :- b"
@@ -15,7 +18,7 @@ class TestLexerKt {
 
         val tokens = lexer.getAllTokens()
 
-        tokens.forEachIndexed { i, it ->
+        if (loggingOn) tokens.forEachIndexed { i, it ->
             println("token-$i=$it")
             println("type=${it.type} (i.e., ${it.getNameAccordingTo(lexer)})")
             println("text=`${it.text}`")

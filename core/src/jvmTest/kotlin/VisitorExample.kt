@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.core
+import it.unibo.tuprolog.core.*
 
 fun main() {
     val term: Term = Scope.empty {

@@ -30,17 +30,11 @@ internal object StateGoalEvaluationUtils {
 
     /** Creates a request launching exactly given primitive behaviour */
     internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<ExecutionContextImpl> {
-
-        class WrapperOfBehaviour : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
-
-            // this class was added since Kotlin/JS won't pass tests using "object literals"
-            // maybe in future releases of Kotlin the problem will be solved
-
-            override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                primitiveBehaviour(request)
+        val testPrimitive = PrimitiveWrapper.wrap<ExecutionContextImpl>("testPrimitive", 0) {
+            primitiveBehaviour(it)
         }
 
-        return WrapperOfBehaviour().run {
+        return testPrimitive.run {
             createSolveRequest(
                 signature withArgs emptyList(),
                 primitives = mapOf(descriptionPair, Throw.descriptionPair)

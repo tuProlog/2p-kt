@@ -26,7 +26,7 @@ Let's start with main existing modules:
     for interoperate with three different paradigms: declarative, functional and imperative. It depends only on antlr and js features.
 - **parser-core**: this module is like a bridge between platform specific world and common world. Consists of three main submodules:
     a JVM specific module, a JS specific module and a common module (written in bare Kotlin). The JVM submodule depends on `parser-jvm`,
-    ths JS submodule depends on `parser-js`, the common module depends on `core` and the test submodule depends on `solve-test`. The mapping established between the various worlds
+    ths JS submodule depends on `parser-js`, the common module depends on `core` and the test submodule depends on `test-solve`. The mapping established between the various worlds
     takes place through the concept of expect/actual Kotlin multi-platform feature. 
 - **dsl-x**: this modules creates a Kotlin dsl to simplify interaction between Prolog world and the others. For example,
     to test parsing in `parser-core`, we used Prolog dsl (to parse "a :- b" we can simply use this notation "a" impliedBy "b")

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.libraries.stdlib.function.testutils.FloatFunctionUtils
 import it.unibo.tuprolog.libraries.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.primitive.Signature
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 /**
  * Test class for [FloatIntegerPart]
@@ -13,6 +12,25 @@ import kotlin.test.assertEquals
  * @author Enrico
  */
 internal class FloatIntegerPartTest {
+
+    companion object {
+        private inline val loggingOn get() = false
+
+        fun <T> assertEquals(expected: T, actual: T) {
+            if (loggingOn) println(
+                """
+                Expecting:
+                    $expected
+                got
+                    $actual
+                """.trimIndent()
+            )
+
+            kotlin.test.assertEquals(expected, actual)
+
+            if(loggingOn) println("".padEnd(80, '-'))
+        }
+    }
 
     @Test
     fun functorNameCorrect() {
