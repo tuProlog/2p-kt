@@ -28,27 +28,26 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     final override val wrappedImplementation: Primitive =
         primitiveOf(signature, ::uncheckedImplementation as Primitive)
 
-    internal class FromFunction<C : ExecutionContext>(signature: Signature, private val uncheckedPrimitive: Primitive)
-        : PrimitiveWrapper<C>(signature) {
-
-        constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
-                : this(Signature(name, arity, vararg), uncheckedPrimitive)
-
-        override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> {
-            return uncheckedPrimitive(request)
-        }
-    }
-
     companion object {
+
+        /** Private class to support the wrap methods, without using the object literal notation */
+        private class FromFunction<C : ExecutionContext>(signature: Signature, private val uncheckedPrimitive: Primitive)
+            : PrimitiveWrapper<C>(signature) {
+
+            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
+                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
+
+            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
+                uncheckedPrimitive(request)
+        }
 
         // TODO: 16/01/2020 test the three "wrap" functions
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Signature] and a [Primitive] function
          */
-        fun <C : ExecutionContext> wrap(signature: Signature, primitive: Primitive): PrimitiveWrapper<C> {
-            return FromFunction(signature, primitive)
-        }
+        fun <C : ExecutionContext> wrap(signature: Signature, primitive: Primitive): PrimitiveWrapper<C> =
+            FromFunction(signature, primitive)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
@@ -58,16 +57,14 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             arity: Int,
             vararg: Boolean,
             primitive: Primitive
-        ): PrimitiveWrapper<C> {
-            return FromFunction(name, arity, vararg, primitive)
-        }
+        ): PrimitiveWrapper<C> =
+            FromFunction(name, arity, vararg, primitive)
 
         /**
          * Utility factory to build a [PrimitiveWrapper] out of a [Primitive] function
          */
-        fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> {
-            return wrap(name, arity, false, primitive)
-        }
+        fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> =
+            wrap(name, arity, false, primitive)
 
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
@@ -84,8 +81,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         // TODO: 16/01/2020 test those below ensure methods
 
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsNumeric(index: Int): Solve.Request<C> {
-            return when (val arg = arguments[index]) {
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsNumeric(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
                 !is Numeric -> throw TypeError(
                     "Argument $index of ${this.signature}` should be a ${TypeError.Expected.NUMBER}",
                     context = context,
@@ -94,10 +91,9 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 )
                 else -> this
             }
-        }
 
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsInteger(index: Int): Solve.Request<C> {
-            return when (val arg = arguments[index]) {
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsInteger(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
                 !is Integer -> throw TypeError(
                     "Argument $index of ${this.signature}` should be a ${TypeError.Expected.INTEGER}",
                     context = context,
@@ -106,6 +102,5 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 )
                 else -> this
             }
-        }
     }
 }

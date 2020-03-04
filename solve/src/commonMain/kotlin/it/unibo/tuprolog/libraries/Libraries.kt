@@ -16,7 +16,7 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
 
     /** All library aliases of libraries included in this library group */
     val libraryAliases: Set<String>
-        get() = keys
+        inline get() = keys
 
     override val libraries: Collection<LibraryAliased>
         get() = values.toList()
