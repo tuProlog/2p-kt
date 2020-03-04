@@ -13,7 +13,7 @@ import org.gradle.plugin.use.PluginDependencySpec
 object Versions {
     const val io_github_javaeden_orchid: String = "0.18.1"
 
-    const val org_jetbrains_kotlin: String = "1.3.61"
+    const val org_jetbrains_kotlin: String = "1.3.70"
 
     const val io_github_gciatto: String = "0.1.0"
 
@@ -21,7 +21,7 @@ object Versions {
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
 
-    const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.61"
+    const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.70"
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
