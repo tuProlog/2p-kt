@@ -112,7 +112,7 @@ internal class AbstractUnificationStrategyTest {
         val structWithX = Struct.of("f", xVar)
 
         val correctnessMap = mapOf(
-            (xVar `=` structWithX) to
+            (xVar eq structWithX) to
                     Triple(Substitution.of(xVar, structWithX), true, structWithX)
         )
 
