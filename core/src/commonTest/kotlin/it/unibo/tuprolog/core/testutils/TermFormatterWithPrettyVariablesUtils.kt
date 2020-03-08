@@ -27,8 +27,8 @@ object TermFormatterWithPrettyVariablesUtils {
         Set.empty() to EmptySet.FUNCTOR,
         Set.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A_1, A_2}",
         Var.of("A").let { Set.of(it, it, it) } to "{A, A, A}",
-        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "(A, A_1, A_2)",
-        Var.of("A").let { Tuple.of(it, it, it) } to "(A, A, A)"
+        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "','(A, ','(A_1, A_2))",
+        Var.of("A").let { Tuple.of(it, it, it) } to "','(A, ','(A, A))"
     )
 
     fun TermFormatter.assertProperlyFormats(entry: Map.Entry<Term, String>) {
