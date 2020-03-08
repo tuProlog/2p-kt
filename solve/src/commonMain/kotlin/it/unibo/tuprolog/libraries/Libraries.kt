@@ -15,9 +15,11 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     constructor(libraries: Iterable<LibraryAliased>) : this(libraries.asSequence())
 
     /** All library aliases of libraries included in this library group */
-    val libraryAliases: Set<String> by lazy { keys }
+    val libraryAliases: Set<String>
+        inline get() = keys
 
-    override val libraries: Collection<LibraryAliased> by lazy { values.toList() }
+    override val libraries: Collection<LibraryAliased>
+        get() = values.toList()
 
     override val operators: OperatorSet by lazy {
         OperatorSet(libraries.flatMap { it.operators.asSequence() })

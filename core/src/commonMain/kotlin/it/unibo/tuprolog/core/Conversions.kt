@@ -1,7 +1,10 @@
+@file:JvmName("Conversions")
+
 package it.unibo.tuprolog.core
 
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.jvm.JvmName
 
 fun BigInteger.toTerm(): Integer = Numeric.of(this)
 

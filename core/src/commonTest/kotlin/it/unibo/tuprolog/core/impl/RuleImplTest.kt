@@ -58,7 +58,7 @@ internal class RuleImplTest {
 
     @Test
     fun factDetected() {
-        assertTrue(RuleImpl(Atom.of("hey"), Truth.`true`()).isFact)
+        assertTrue(RuleImpl(Atom.of("hey"), Truth.ofTrue()).isFact)
     }
 
     @Test

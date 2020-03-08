@@ -29,16 +29,18 @@ internal object StateGoalEvaluationUtils {
     internal val expectedContext = ExecutionContextImpl(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
-    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive) =
-        object : PrimitiveWrapper<ExecutionContext>("testPrimitive", 0) {
-            override fun uncheckedImplementation(request: Solve.Request<*>): Sequence<Solve.Response> =
-                primitiveBehaviour(request)
-        }.run {
+    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<ExecutionContextImpl> {
+        val testPrimitive = PrimitiveWrapper.wrap<ExecutionContextImpl>("testPrimitive", 0) {
+            primitiveBehaviour(it)
+        }
+
+        return testPrimitive.run {
             createSolveRequest(
                 signature withArgs emptyList(),
                 primitives = mapOf(descriptionPair, Throw.descriptionPair)
             )
         }
+    }
 
     /** Test data in the form (primitive, list of state types in which it should go) */
     internal val primitiveRequestToNextStateList by lazy {

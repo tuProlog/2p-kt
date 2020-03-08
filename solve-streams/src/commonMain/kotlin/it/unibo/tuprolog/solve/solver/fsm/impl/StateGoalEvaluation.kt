@@ -11,8 +11,6 @@ import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.solver.newSolveRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * State responsible of solving a selected Goal, if it is a primitive
@@ -20,9 +18,8 @@ import kotlinx.coroutines.Dispatchers
  * @author Enrico
  */
 internal class StateGoalEvaluation(
-    override val solve: Solve.Request<ExecutionContextImpl>,
-    override val executionStrategy: CoroutineScope = CoroutineScope(Dispatchers.Default)
-) : AbstractTimedState(solve, executionStrategy) {
+    override val solve: Solve.Request<ExecutionContextImpl>
+) : AbstractTimedState(solve) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
         val primitive = with(solve) { context.libraries.primitives[signature] }
@@ -50,7 +47,7 @@ internal class StateGoalEvaluation(
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }
 
-        } ?: yield(StateRuleSelection(solve, executionStrategy))
+        } ?: yield(StateRuleSelection(solve))
     }
 
     private companion object {

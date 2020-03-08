@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import kotlin.jvm.JvmStatic
+
 /**
  * An interface representing a mapping between Variables and their Term substitutions
  *
@@ -145,6 +147,7 @@ sealed class Substitution : Map<Var, Term> {
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
         override fun filter(variables: Collection<Var>): Fail = Fail
+        override fun toString(): String = "{Failed Substitution}"
     }
 
 
@@ -152,33 +155,41 @@ sealed class Substitution : Map<Var, Term> {
     companion object {
 
         /** Returns failed substitution instance */
+        @JvmStatic
         fun failed(): Fail = Fail
 
         /** Returns empty successful substitution (aka Unifier) instance */
+        @JvmStatic
         fun empty(): Unifier = emptyMap<Var, Term>().asUnifier()
 
         /** Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type */
+        @JvmStatic
         fun Map<Var, Term>.asUnifier(): Unifier = Unifier(this)
 
         /** Creates a Substitution of given Variable with given Term */
+        @JvmStatic
         fun of(variable: Var, withTerm: Term): Unifier = of(variable to withTerm) as Unifier
 
         /** Creates a Substitution from the new Variable, with given name, to given Term */
+        @JvmStatic
         fun of(variable: String, withTerm: Term): Unifier = of(Var.of(variable) to withTerm) as Unifier
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence() + substitutionPair) -> Fail
             else -> mapOf(substitutionPair, *substitutionPairs).asUnifier()
         }
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence()) -> Fail
             else -> substitutionPairs.toMap().asUnifier()
         }
 
         /** Creates a new Substitution *composing* given substitutions in order; if any failure or contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
             substitutions.fold(substitution, Substitution::plus)
 

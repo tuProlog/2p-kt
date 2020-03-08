@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [AbstractUnificationStrategy]
+ * Test class for [AbstractUnificator]
  *
  * @author Enrico
  */
@@ -18,7 +18,7 @@ internal class AbstractUnificationStrategyTest {
 
     /** A concrete strategy constructor */
     private val myStrategyConstructor: (Substitution) -> Unificator = {
-        object : AbstractUnificationStrategy(it) {
+        object : AbstractUnificator(it) {
             override fun checkTermsEquality(first: Term, second: Term): Boolean = first == second
         }
     }
@@ -112,7 +112,7 @@ internal class AbstractUnificationStrategyTest {
         val structWithX = Struct.of("f", xVar)
 
         val correctnessMap = mapOf(
-            (xVar `=` structWithX) to
+            (xVar eq structWithX) to
                     Triple(Substitution.of(xVar, structWithX), true, structWithX)
         )
 

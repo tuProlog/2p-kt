@@ -20,11 +20,13 @@ abstract class AbstractWrapper<out Wrapped>(val signature: Signature) {
     )
 
     /** A shorthand to get the signature functor name */
-    val functor: String by lazy { signature.name }
+    val functor: String
+        inline get() = signature.name
 
     /** The wrapped implementation */
     abstract val wrappedImplementation: Wrapped
 
     /** Gets this wrapped primitive description Pair formed by [signature] and wrapped primitive type */
-    val descriptionPair: Pair<Signature, Wrapped> by lazy { signature to wrappedImplementation }
+    val descriptionPair: Pair<Signature, Wrapped>
+        inline get() = signature to wrappedImplementation
 }

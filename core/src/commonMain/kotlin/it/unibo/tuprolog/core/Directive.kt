@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.DirectiveImpl
+import kotlin.jvm.JvmStatic
 
 interface Directive : Clause {
 
@@ -21,11 +22,13 @@ interface Directive : Clause {
     override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 
     companion object {
+        @JvmStatic
         fun of(bodies: Iterable<Term>): Directive {
             require(bodies.any()) { "Directive requires at least one body element" }
             return DirectiveImpl(Tuple.wrapIfNeeded(*bodies.toList().toTypedArray()))
         }
 
+        @JvmStatic
         fun of(body1: Term, vararg body: Term): Directive =
             of(listOf(body1, *body))
     }

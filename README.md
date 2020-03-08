@@ -42,7 +42,7 @@ To import the 2P module named `2P_MODULE` (version `2P_VERSION`) into your Gradl
 // assumes Gradle's Kotlin DSL
 repositories {
     mavenCentral()
-    maven("https://bintray.com/pika-lab/tuprolog")
+    maven("https://dl.bintray.com/pika-lab/tuprolog/")
 }
 ``` 
 and then declare the desired dependency:

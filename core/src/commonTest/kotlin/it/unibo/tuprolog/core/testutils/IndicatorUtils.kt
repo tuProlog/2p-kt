@@ -33,7 +33,7 @@ internal object IndicatorUtils {
     internal val nonWellFormedNameIndicator by lazy {
         listOf(
             Var.anonymous() to Integer.of(2),
-            Struct.of(".", Truth.`true`()) to Integer.of(2)
+            Struct.of(".", Truth.ofTrue()) to Integer.of(2)
         )
     }
 
@@ -43,7 +43,7 @@ internal object IndicatorUtils {
             Atom.of("/") to Integer.of(-2),
             Atom.of("animal") to Integer.of(-1),
             Atom.of("1") to Real.of(0.5),
-            Truth.`true`() to Var.anonymous()
+            Truth.ofTrue() to Var.anonymous()
         )
     }
 

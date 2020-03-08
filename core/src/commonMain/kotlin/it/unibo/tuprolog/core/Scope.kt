@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.ScopeImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
+import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
@@ -33,6 +34,10 @@ interface Scope {
     fun tupleOf(terms: Iterable<Term>): Tuple
 
     fun listOf(vararg terms: Term): LogicList
+
+    fun emptyList(): EmptyList
+
+    fun emptySet(): EmptySet
 
     fun listOf(terms: Iterable<Term>): LogicList
 
@@ -86,24 +91,31 @@ interface Scope {
 
     companion object {
 
+        @JvmStatic
         fun empty(): Scope = ScopeImpl(mutableMapOf())
 
+        @JvmStatic
         fun of(vararg vars: String): Scope = of(*vars) {}
 
+        @JvmStatic
         fun of(vararg vars: String, lambda: Scope.() -> Unit): Scope =
             of(*vars.map { Var.of(it) }.toTypedArray(), lambda = lambda)
 
+        @JvmStatic
         fun of(vararg vars: Var): Scope = of(*vars) {}
 
+        @JvmStatic
         fun of(vararg vars: Var, lambda: Scope.() -> Unit): Scope =
             ScopeImpl(vars.map { it.name to it }.toMap(mutableMapOf()))
                 .where(lambda)
 
-
+        @JvmStatic
         fun <R> empty(lambda: Scope.() -> R): R = empty().with(lambda)
 
+        @JvmStatic
         fun <R> of(vararg vars: String, lambda: Scope.() -> R): R = of(*vars).with(lambda)
 
+        @JvmStatic
         fun <R> of(vararg vars: Var, lambda: Scope.() -> R): R = of(*vars).with(lambda)
     }
 }

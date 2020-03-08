@@ -18,7 +18,7 @@ internal class TruthTest {
 
     @Test
     fun trueTruthRetrieval() {
-        assertSame(TruthImpl.True, Truth.`true`())
+        assertSame(TruthImpl.True, Truth.ofTrue())
     }
 
     @Test
@@ -28,6 +28,6 @@ internal class TruthTest {
 
     @Test
     fun failTruthRetrieval() {
-        assertSame(TruthImpl.Fail, Truth.fail())
+        assertSame(TruthImpl.Fail, Truth.ofFalse())
     }
 }
