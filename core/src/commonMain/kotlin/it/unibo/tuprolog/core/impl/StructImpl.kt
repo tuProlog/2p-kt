@@ -27,7 +27,7 @@ internal open class StructImpl(override val functor: String, override val args: 
         functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
     }
 
-    override final fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other !is Struct) return false
 
@@ -45,7 +45,7 @@ internal open class StructImpl(override val functor: String, override val args: 
 
     override fun toString(): String {
         return (
-                if (isFunctorWellFormed) functor else "'$functor'"
+                if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
                 ) + (
                 if (arity > 0) "(${args.joinToString(", ")})" else ""
                 )

@@ -92,6 +92,18 @@ interface Struct : Term {
         val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         @JvmStatic
+        fun escapeFunctor(string: String): String =
+            "'$string'"
+
+        @JvmStatic
+        fun escapeFunctorIfNecessary(string: String): String =
+            if (STRUCT_FUNCTOR_REGEX_PATTERN.matches(string)) {
+                string
+            } else {
+                escapeFunctor(string)
+            }
+
+        @JvmStatic
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
                 args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
