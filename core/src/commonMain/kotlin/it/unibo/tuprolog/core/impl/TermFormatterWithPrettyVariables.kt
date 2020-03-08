@@ -4,13 +4,9 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Set
 
-internal class TermFormatterWithPrettyVariables : TermFormatter {
+internal class TermFormatterWithPrettyVariables : AbstractTermFormatter() {
 
     private val variables: MutableMap<String, MutableMap<Var, String>> = mutableMapOf()
-
-    override fun defaultValue(term: Term): String {
-        return term.toString()
-    }
 
     private fun formatVar(variable: Var, suffix: String): String {
         val baseName = variable.name + suffix
@@ -39,41 +35,4 @@ internal class TermFormatterWithPrettyVariables : TermFormatter {
             return formatVar(term, "")
         }
     }
-
-    override fun visitStruct(term: Struct): String =
-        (if (term.isFunctorWellFormed) term.functor else Struct.escapeFunctor(term.functor)) +
-                term.argsSequence.map { it.accept(this) }.joinToString(", ", "(", ")")
-
-    override fun visitSet(term: Set): String =
-        term.unfoldedList.joinToString(", ", "{", "}") {
-            it.accept(this)
-        }
-
-    override fun visitCons(term: Cons): String =
-        with(term.unfoldedList) {
-            val last = last()
-            val base = subList(0, lastIndex).joinToString(", ", "[", "") {
-                it.accept(this@TermFormatterWithPrettyVariables)
-            }
-            val lastString = if (last is EmptyList) {
-                "]"
-            } else {
-                " | ${last.accept(this@TermFormatterWithPrettyVariables)}]"
-            }
-            return base + lastString
-        }
-
-    override fun visitTuple(term: Tuple): String =
-        term.unfoldedList.joinToString(", ", "(", ")") {
-            it.accept(this)
-        }
-
-    override fun visitRule(term: Rule): String =
-        "${term.head.accept(this)} :- ${term.body.accept(this)}"
-
-    override fun visitFact(term: Fact): String =
-        "${term.head.accept(this)} :- true"
-
-    override fun visitDirective(term: Directive): String =
-        ":- ${term.body.accept(this)}"
 }
