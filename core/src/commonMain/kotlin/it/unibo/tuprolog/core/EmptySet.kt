@@ -15,6 +15,8 @@ interface EmptySet : Empty, LogicSet {
     override fun freshCopy(scope: Scope): EmptySet = this
 
     companion object {
+        const val FUNCTOR: String = Empty.EMPTY_SET_FUNCTOR
+
         @JvmStatic
         operator fun invoke(): EmptySet = EmptySetImpl
 

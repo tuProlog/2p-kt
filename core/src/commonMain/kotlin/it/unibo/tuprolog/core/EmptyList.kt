@@ -26,6 +26,9 @@ interface EmptyList : Empty, LogicList {
     override fun freshCopy(scope: Scope): EmptyList = this
 
     companion object {
+
+        const val FUNCTOR: String = Empty.EMPTY_LIST_FUNCTOR
+
         @JvmStatic
         operator fun invoke(): EmptyList = EmptyListImpl
 
