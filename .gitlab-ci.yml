@@ -78,4 +78,4 @@ pages:
     paths:
       - public
   only:
-    - /^(master)|(release)|(release)$/
+    - /^(master)|(release)|(develop)$/
