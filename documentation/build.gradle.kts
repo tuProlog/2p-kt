@@ -6,7 +6,7 @@ dependencies {
     orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDocs", Versions.com_eden_orchidplugin_gradle_plugin)
     orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidKotlindoc", Versions.com_eden_orchidplugin_gradle_plugin)
     orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidPluginDocs", Versions.com_eden_orchidplugin_gradle_plugin)
-//    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidGitlab", Versions.com_eden_orchidplugin_gradle_plugin)
+    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidAsciidoc", Versions.com_eden_orchidplugin_gradle_plugin)
     orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDiagrams", Versions.com_eden_orchidplugin_gradle_plugin)
 }
 

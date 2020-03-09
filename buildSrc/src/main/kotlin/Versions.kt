@@ -25,7 +25,7 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.18.1"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.19.0"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
 
