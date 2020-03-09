@@ -1,3 +1,5 @@
+skinparam shadowing false
+
 interface Term
 interface Constant
 interface Var
