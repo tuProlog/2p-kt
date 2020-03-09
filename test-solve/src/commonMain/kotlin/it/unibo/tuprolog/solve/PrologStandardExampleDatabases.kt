@@ -260,7 +260,7 @@ object PrologStandardExampleDatabases {
             theory(
                 { "shave"("barber", "X") `if` "not"("shave"("X", "X")) },
 
-                { "test_Prolog_unifiable"("X", "Y") `if` "not"("not"("X" `=` "Y")) },
+                { "test_Prolog_unifiable"("X", "Y") `if` "not"("not"("X" equalsTo "Y")) },
 
                 { "p1" `if` "not"("q1") },
                 { "q1" `if` false },
@@ -296,11 +296,11 @@ object PrologStandardExampleDatabases {
     val notStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                (("X" `=` 3) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ yes("X" to 3) }),
+                (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
                 "\\+"("fail").hasSolutions({ yes() }),
-                ("\\+"("!") or ("X" `=` 1)).hasSolutions({ yes("X" to 1) }),
-                ("\\+"(("X" `=` 1) or ("X" `=` 2)) and ("X" `=` 3)).hasSolutions({ no() }),
-                (("X" `=` 1) and "\\+"(("X" `=` 1) or ("X" `=` 2))).hasSolutions({ no() }),
+                ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
+                ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
+                (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
                 "\\+"("fail" and 1).hasSolutions({ halt(typeError) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
@@ -353,7 +353,7 @@ object PrologStandardExampleDatabases {
     val ifThenStandardExampleDatabaseNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                ("->"("X" `=` 0, true)).hasSolutions({ yes("X" to 0) }),
+                ("->"("X" equalsTo 0, true)).hasSolutions({ yes("X" to 0) }),
                 ("->"("legs"("A", 6), true)).hasSolutions({ yes("A" to "bee") }),
                 ("->"("\\="("X", 0), true)).hasSolutions({ no() }),
                 ("->"(false, ";"(true, true))).hasSolutions({ no() })
@@ -374,11 +374,11 @@ object PrologStandardExampleDatabases {
     val ifThenElseStandardExampleNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
-                ("->"("X" `=` 0, true) or false).hasSolutions({ yes("X" to 0) }),
-                ("X" `=` 1 and ("->"("X" `=` 0, false) or true)).hasSolutions({ yes("X" to 1) }),
-                (("->"("!" and ("X" `=` 1) and false, true) or false) or ("X" `=` 2)).hasSolutions({ yes("X" to 2) }),
+                ("->"("X" equalsTo 0, true) or false).hasSolutions({ yes("X" to 0) }),
+                ("X" equalsTo 1 and ("->"("X" equalsTo 0, false) or true)).hasSolutions({ yes("X" to 1) }),
+                (("->"("!" and ("X" equalsTo 1) and false, true) or false) or ("X" equalsTo 2)).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),
-                ("->"("!" and ("X" `=` 1) and false, true) or false).hasSolutions({ no() })
+                ("->"("!" and ("X" equalsTo 1) and false, true) or false).hasSolutions({ no() })
             )
         }
     }
