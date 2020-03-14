@@ -290,7 +290,7 @@ In particular:
 <!--div-->
 
 [`Struct`ures](/kotlindoc/it/unibo/tuprolog/core/struct/) are `Term`s _composed_ by other `Term`s.
-They are characterised by a _functor_ -- which states thir name -- and an _arity_---which states how many (sub-)terms (or arguments) compose them.
+They are characterised by a _functor_ -- which states their name -- and an _arity_---which states how many (sub-)terms (or arguments) compose them.
 
 ### Atoms 
 

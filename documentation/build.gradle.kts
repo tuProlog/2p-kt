@@ -15,14 +15,6 @@ repositories {
     maven("https://kotlin.bintray.com/kotlinx/")
 }
 
-fun getPropertyOrWarnForAbsence(key: String): String? {
-    val value = property(key)?.toString()
-    if (value.isNullOrBlank()) {
-        System.err.println("WARNING: $key is not set")
-    }
-    return value
-}
-
 // env ORG_GRADLE_PROJECT_orchidBaseUrl
 val orchidBaseUrl = getPropertyOrWarnForAbsence("orchidBaseUrl")
 

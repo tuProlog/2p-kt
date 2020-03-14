@@ -21,7 +21,7 @@ In particular, it is the _preferred_ way of using Git within the scope of this p
 leverage on the `git-flow` command line tool.
 
 In particular, within the 2P-Kt project, the following conventions on branch names and commits hold:
-![GitFlow example](/assets/media/git-flow.png)
+![GitFlow example]({{ site.baseUrl }}/assets/media/git-flow.png)
 
 ## Useful resources
 
