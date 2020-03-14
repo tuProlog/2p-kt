@@ -1,6 +1,5 @@
 # Parsing
 
-
 ## Introduction
 
 Parsing Prolog terms and theories is the purpose of the `parser-core` and `parser-theory` modules, respectively.

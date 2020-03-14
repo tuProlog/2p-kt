@@ -23,9 +23,9 @@ leverage on the `git-flow` command line tool.
 In particular, within the 2P-Kt project, the following conventions on branch names and commits hold:
 ![GitFlow example](/assets/media/git-flow.png)
 
-## Useful links
+## Useful resources
 
 If you are not practical with Git, please consider reading the following resources:
-- [Pianini, Danilo. _"Productive parallel teamwork: Decentralized Version Control Systems"_](https://www.slideshare.net/DanySK/productive-parallel-teamwork-decentralized-version-control-systems)
-- [Atlassian. _"Gitflow Workflow"_](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+1. [Pianini, Danilo. _"Productive parallel teamwork: Decentralized Version Control Systems"_](https://www.slideshare.net/DanySK/productive-parallel-teamwork-decentralized-version-control-systems)
+0. [Atlassian. _"Gitflow Workflow"_](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
  

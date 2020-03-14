@@ -5,6 +5,5 @@
 - [Kotlin DSL](./kotlin-dsl.md)
 - [Developing 2P-Kt with IntelliJ Idea](./2p-kt-with-intellij.md)
 - [Continous Integration](./ci.md)
-- [Continous Delivery](./continous-delivery.md)
 - [Documentation with Orchid and GitLab Pages](./meta-doc.md)
 * [Parsing Prolog with ANTLR](./parsing.md)
