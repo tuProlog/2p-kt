@@ -69,4 +69,4 @@ pages:
       - public
   allow_failure: true
   only:
-    - /^(master)|(release)|(develop)$/
+    - /^(master)|(release)|(documentation)$/
