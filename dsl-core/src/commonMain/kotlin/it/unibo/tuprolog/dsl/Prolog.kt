@@ -27,9 +27,7 @@ interface Prolog : Scope {
     operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
-    @Suppress("unused", "FunctionName")
-    @JsName("termUnify")
-    infix fun Any.`=`(other: Any): Struct = structOf("=",this, other)
+    infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
 
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 

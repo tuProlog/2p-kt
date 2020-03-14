@@ -1,3 +1,5 @@
+skinparam shadowing false
+
 interface Term {
   + isGround: Boolean
   + variables: Sequence<Var>
