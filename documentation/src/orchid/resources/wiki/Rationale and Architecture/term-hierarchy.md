@@ -298,11 +298,20 @@ They are characterised by a _functor_ -- which states their name -- and an _arit
 {{ load('assets/diagrams/atom.puml') | raw }}
 <!--div-->
 
+[`Atom`](/kotlindoc/it/unibo/tuprolog/core/atom/) are `Struct`ures with no argument, also known as 0-ary `Struct`ures.
+They are also `Constant`s whose `value` is a `String`.
+In particular the functor of an `Atom` is always equal to its `value`.
+
+`Atom`s are the way strings are represented in 2P-Kt.
+
 ### Booleans
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/truth.puml') | raw }}
 <!--div-->
+
+Boolean values are represented in 2P-Kt through the [`Truth`](/kotlindoc/it/unibo/tuprolog/core/truth/) interface.
+Objects of type `Truth` are a particular sort of `Atom` which can be interpreted as boolean values.
 
 ### Indicators
 
@@ -310,7 +319,22 @@ They are characterised by a _functor_ -- which states their name -- and an _arit
 {{ load('assets/diagrams/indicator.puml') | raw }}
 <!--div-->
 
+[`Indicator`s](/kotlindoc/it/unibo/tuprolog/core/indicator/) are a particular sort of `Struct`ures, having the form:
+```prolog
+'/'(Functor, Arity)
+```
+which is more often written as
+```prolog
+Functor / Arity
+```
+where both `Functor` and `Arity` are `Term`s of any sort.
+
+An `Indicator` is _well formed_ if and only if `Functor` is an atom and `Arity` is a non-negative `Integer`.
+
 ### Collections
+
+Collections in 2P-Kt are particular sorts of `Struct`ures, containing other `Term`s, which can be interpreted 
+(in iterated) as containers.
 
 #### Lists
 

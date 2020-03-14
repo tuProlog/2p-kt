@@ -16,6 +16,7 @@ Editorial:
       title: Home
       url: '/'
     - type: 'pages'
+    - type: "license"
     - type: 'separator'
       title: 'Wiki'
     - type: 'wiki'

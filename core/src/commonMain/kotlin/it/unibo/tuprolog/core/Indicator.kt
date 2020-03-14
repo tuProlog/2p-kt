@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.IndicatorImpl
+import org.gciatto.kt.math.BigInteger
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -44,7 +45,7 @@ interface Indicator : Struct {
     val isWellFormed: Boolean
         get() = nameTerm is Atom &&
                 arityTerm is Integer &&
-                arityTerm.`as`<Integer>().intValue.toInt() >= 0
+                arityTerm.`as`<Integer>().intValue.signum >= 0
 
     /** The indicated functor name, if well-formed */
     val indicatedName: String?
