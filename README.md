@@ -2,10 +2,14 @@
 
 ![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.png)
 
-tuProlog (2P henceforth) is a Kotlin multi-platform ecosystem for Symbolic Artificial Intelligence (AI).
-It consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.
+[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
+logic programming framework written in Java.
 
-Currently, 2P focuses on supporting knowledge representation and automatic reasoning through logic programming, by featuring:
+2P-Kt is a Kotlin-based and multi-platform reboot of 2P.
+It aims at becoming an open ecosystem for Symbolic Artificial Intelligence (AI).
+For this reason, 2P-Kt consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.
+
+Currently, 2P-Kt focuses on supporting knowledge representation and automatic reasoning through logic programming, by featuring:
 
 * a module for logic terms representation, namely `core`
 
@@ -16,8 +20,11 @@ Currently, 2P focuses on supporting knowledge representation and automatic reaso
 * a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations (i.e. `solve-classic` and `solve-streams`)
     
 * a number of modules (i.e., the many `dsl-*` modules) supporting a Prolog-like, Domain Specific Language (DSL) aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment
+
+A complete overview about modules and their dependencies is provided by the following diagram: 
+![2P-Kt project map](https://www.plantuml.com/plantuml/svg/TP31Rjim38RlV0eYT-q1XY0ePfy6332GPATTD8k9jSgY8SenWdNlFbjQNSLhBpRuVp_vYtoIg4CSUmUH1uoCFpb6xj7OG6sqx46UhHzqq3rAfmrFrb_nefqG5EZ2pb30tu3uHRVFry2ZDnKx3lkz7YooT_V30TdP6xtd2SnnvdToZgVt3BOVt2Sq5BLrit7gR2Ju0_0lUDToe1s-3bhbqTlBVRUMiICEHMt4gTof1UlgGK-j6PmVG1wIoMabmkuspodNVMIgTLh4jgdnM6sWn42wbmoFAnnq40flRsogBVfrwtUulK-oVlt-xJ-pVEJTHfPRDYU0vGMuVr669wymtGO_ew61l94VdZraRRNaVaY_GaxRGlekebekKLP7WBf25UorY-hbW4ikrET2IJb96eUbhYkeJmNFYREs6ivBiLUluT3C0OukR_ERKnBAzcPjRwhSeGxffFFMev0aAMKc_GXFvCtOkxy0)
     
-However, the modular, unopinionated architecture of 2P is deliberately aimed at supporting and encouraging extensions towards other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
+The modular, unopinionated architecture of 2P is deliberately aimed at supporting and encouraging extensions towards other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
 
 Furthermore, 2P is developed as in _pure_, __multi-platform__ Kotlin project. 
 This brings two immediate advantages:
