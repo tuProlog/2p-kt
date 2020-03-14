@@ -1,6 +1,6 @@
 # 2P in Kotlin
 
-![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.png)
+![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/logo.png)
 
 [tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
 logic programming framework written in Java.
