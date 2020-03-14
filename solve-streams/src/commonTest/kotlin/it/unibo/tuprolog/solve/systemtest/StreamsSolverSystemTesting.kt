@@ -4,14 +4,15 @@ import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class StreamsSolverSystemTesting : SolverFactory {
 
     /** A short test max duration */
-    private val shortDuration = 100L
+    private val shortDuration = 500L
     /** A medium test max duration */
-    private val mediumDuration = 500L
+    private val mediumDuration = 1000L
     /** A long test max duration */
     private val longDuration = 2000L
 
@@ -19,7 +20,7 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
-    override fun solverOf(
+    override fun solverOf( // TODO: 17/01/2020 add not present tests 
         libraries: Libraries,
         flags: PrologFlags,
         staticKB: ClauseDatabase,

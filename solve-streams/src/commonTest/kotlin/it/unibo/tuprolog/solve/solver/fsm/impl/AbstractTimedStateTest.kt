@@ -26,7 +26,7 @@ internal class AbstractTimedStateTest {
 
     /** Creates a test solve request with given timing fields, or defaults if not provided */
     private fun createTimedRequest(requestIssuingInstant: TimeInstant? = null, maxDuration: TimeDuration? = null) =
-        with(createSolveRequest(Truth.`true`())) {
+        with(createSolveRequest(Truth.ofTrue())) {
             copy(
                 requestIssuingInstant = requestIssuingInstant ?: this.requestIssuingInstant,
                 executionMaxDuration = maxDuration ?: this.executionMaxDuration

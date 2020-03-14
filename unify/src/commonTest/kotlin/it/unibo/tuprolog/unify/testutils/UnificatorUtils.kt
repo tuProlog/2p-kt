@@ -3,7 +3,7 @@ package it.unibo.tuprolog.unify.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.unify.Unificator
-import it.unibo.tuprolog.unify.`=`
+import it.unibo.tuprolog.unify.eq
 import kotlin.test.assertEquals
 import it.unibo.tuprolog.core.List.Companion as LogicList
 import kotlin.collections.List as KtList
@@ -41,33 +41,33 @@ internal object UnificatorUtils {
     internal val successfulUnifications by lazy {
         mapOf(
             *EquationUtils.allIdentityEquations.map { (lhs, rhs) ->
-                (lhs `=` rhs) to Triple(Substitution.empty(), true, lhs)
+                (lhs eq rhs) to Triple(Substitution.empty(), true, lhs)
             }.toTypedArray(),
 
-            (aAtom `=` aAtom) to Triple(Substitution.empty(), true, aAtom),
-            (xVar `=` xVar) to Triple(Substitution.empty(), true, xVar),
-            (aAtom `=` xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
-            (xVar `=` yVar) to Triple(Substitution.of(xVar, yVar), true, yVar),
-            Scope.empty { (xVar `=` varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
-            Var.anonymous().let { (xVar `=` it) to Triple(Substitution.of(xVar, it), true, it) },
-            (Struct.of("f", aAtom, xVar) `=` Struct.of("f", aAtom, bAtom)) to
+            (aAtom eq aAtom) to Triple(Substitution.empty(), true, aAtom),
+            (xVar eq xVar) to Triple(Substitution.empty(), true, xVar),
+            (aAtom eq xVar) to Triple(Substitution.of(xVar, aAtom), true, aAtom),
+            (xVar eq yVar) to Triple(Substitution.of(xVar, yVar), true, yVar),
+            Scope.empty { (xVar eq varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
+            Var.anonymous().let { (xVar eq it) to Triple(Substitution.of(xVar, it), true, it) },
+            (Struct.of("f", aAtom, xVar) eq Struct.of("f", aAtom, bAtom)) to
                     Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
-            (Struct.of("f", xVar) `=` Struct.of("f", yVar)) to
+            (Struct.of("f", xVar) eq Struct.of("f", yVar)) to
                     Triple(Substitution.of(xVar, yVar), true, Struct.of("f", yVar)),
-            (Struct.of("f", Struct.of("g", xVar)) `=` Struct.of("f", yVar)) to
+            (Struct.of("f", Struct.of("g", xVar)) eq Struct.of("f", yVar)) to
                     Triple(
                         Substitution.of(yVar, Struct.of("g", xVar)),
                         true,
                         Struct.of("f", Struct.of("g", xVar))
                     ),
-            (Struct.of("f", Struct.of("g", xVar), xVar) `=` Struct.of("f", yVar, aAtom)) to
+            (Struct.of("f", Struct.of("g", xVar), xVar) eq Struct.of("f", yVar, aAtom)) to
                     Triple(
                         Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
                         true,
                         Struct.of("f", Struct.of("g", aAtom), aAtom)
                     ),
             Scope.empty {
-                Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) `=`
+                Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) eq
                         Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
                         Triple(
                             Substitution.of(
@@ -80,7 +80,7 @@ internal object UnificatorUtils {
                         )
             },
             Scope.empty {
-                Indicator.of("ciao", 2) `=` Indicator.of(varOf("A"), varOf("B")) to
+                Indicator.of("ciao", 2) eq Indicator.of(varOf("A"), varOf("B")) to
                         Triple(
                             Substitution.of(varOf("A") to Atom.of("ciao"), varOf("B") to Integer.of(2)),
                             true,
@@ -95,32 +95,32 @@ internal object UnificatorUtils {
     internal val failedUnifications by lazy {
         mapOf(
             *EquationUtils.allContradictionEquations.map { (lhs, rhs) ->
-                (lhs `=` rhs) to failedResultsTriple
+                (lhs eq rhs) to failedResultsTriple
             }.toTypedArray(),
 
-            (aAtom `=` bAtom) to failedResultsTriple,
-            (Struct.of("f", aAtom) `=` Struct.of("g", aAtom)) to failedResultsTriple,
-            (Struct.of("f", xVar) `=` Struct.of("g", yVar)) to failedResultsTriple,
-            (Struct.of("f", xVar) `=` Struct.of("f", yVar, Var.of("Z"))) to failedResultsTriple
+            (aAtom eq bAtom) to failedResultsTriple,
+            (Struct.of("f", aAtom) eq Struct.of("g", aAtom)) to failedResultsTriple,
+            (Struct.of("f", xVar) eq Struct.of("g", yVar)) to failedResultsTriple,
+            (Struct.of("f", xVar) eq Struct.of("f", yVar, Var.of("Z"))) to failedResultsTriple
         )
     }
 
     /** Contains faulty equations that will be rejected by the occur-check */
     internal val occurCheckFailedUnifications by lazy {
         mapOf(
-            (xVar `=` Struct.of("f", xVar)) to failedResultsTriple,
-            (xVar `=` LogicList.from(listOf(aAtom, bAtom), xVar)) to failedResultsTriple
+            (xVar eq Struct.of("f", xVar)) to failedResultsTriple,
+            (xVar eq LogicList.from(listOf(aAtom, bAtom), xVar)) to failedResultsTriple
         )
     }
 
     /** Contains successful sequence of equations that should result in specified Triple(mgu, isMatching, unifiedTerm) */
     internal val successSequenceOfUnification by lazy {
         mapOf(
-            listOf(xVar `=` yVar, yVar `=` aAtom) to
+            listOf(xVar eq yVar, yVar eq aAtom) to
                     Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
-            listOf(aAtom `=` yVar, xVar `=` yVar) to
+            listOf(aAtom eq yVar, xVar eq yVar) to
                     Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
-            listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` aAtom) to
+            listOf(aAtom eq yVar, xVar eq yVar, xVar eq aAtom) to
                     Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom)
         )
     }
@@ -128,11 +128,11 @@ internal object UnificatorUtils {
     /** Contains faulty sequence of equations that should result in a failure */
     internal val failSequenceOfUnification by lazy {
         mapOf(
-            listOf(xVar `=` aAtom, bAtom `=` xVar) to failedResultsTriple,
-            listOf(xVar `=` aAtom, bAtom `=` xVar, yVar `=` aAtom) to failedResultsTriple,
-            listOf(aAtom `=` yVar, xVar `=` yVar, xVar `=` bAtom) to failedResultsTriple,
-            listOf(xVar `=` Struct.of("f", yVar, xVar), yVar `=` Struct.of("f", xVar, yVar)) to failedResultsTriple,
-            listOf(xVar `=` Struct.of("f", yVar), yVar `=` Struct.of("f", xVar), aAtom `=` bAtom) to failedResultsTriple
+            listOf(xVar eq aAtom, bAtom eq xVar) to failedResultsTriple,
+            listOf(xVar eq aAtom, bAtom eq xVar, yVar eq aAtom) to failedResultsTriple,
+            listOf(aAtom eq yVar, xVar eq yVar, xVar eq bAtom) to failedResultsTriple,
+            listOf(xVar eq Struct.of("f", yVar, xVar), yVar eq Struct.of("f", xVar, yVar)) to failedResultsTriple,
+            listOf(xVar eq Struct.of("f", yVar), yVar eq Struct.of("f", xVar), aAtom eq bAtom) to failedResultsTriple
         )
     }
 

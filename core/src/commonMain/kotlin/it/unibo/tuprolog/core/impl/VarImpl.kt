@@ -27,13 +27,11 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
 
     override fun freshCopy(): Var = VarImpl(name)
 
-    override fun toString(): String = if (isNameWellFormed) completeName else "¿$completeName?"
+    override fun toString(): String = if (isNameWellFormed) completeName else "`$completeName`"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as VarImpl
+        if (other == null || other !is Var) return false
 
         if (completeName != other.completeName) return false
 

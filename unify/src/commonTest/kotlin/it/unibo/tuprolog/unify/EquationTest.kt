@@ -219,14 +219,14 @@ internal class EquationTest {
         val aAtom = Atom.of("a")
         val myVar = Var.of("A")
 
-        val correct1 = aAtom `=` aAtom
-        val toBeTested1 = (aAtom `=` myVar).apply(Substitution.of(myVar, aAtom))
+        val correct1 = aAtom eq aAtom
+        val toBeTested1 = (aAtom eq myVar).apply(Substitution.of(myVar, aAtom))
 
         assertEquals(correct1, toBeTested1)
         assertTrue(toBeTested1 is Equation.Identity<*>)
 
-        val correct2 = (aAtom `=` myVar)
-        val toBeTested2 = (aAtom `=` myVar).apply(Substitution.of(Var.of("A"), aAtom))
+        val correct2 = (aAtom eq myVar)
+        val toBeTested2 = (aAtom eq myVar).apply(Substitution.of(Var.of("A"), aAtom))
 
         assertEquals(correct2, toBeTested2)
         assertTrue(toBeTested2 is Equation.Assignment<*, *>)
@@ -235,7 +235,7 @@ internal class EquationTest {
     @Test
     fun applyUsesProvidedEqualityCheckerToTestIdentity() {
         val aAtom = Atom.of("a")
-        val toBeTested = (aAtom `=` Var.of("A")).apply(Substitution.of("A", aAtom)) { _, _ -> false }
+        val toBeTested = (aAtom eq Var.of("A")).apply(Substitution.of("A", aAtom)) { _, _ -> false }
 
         assertFalse(toBeTested is Equation.Identity<*>)
     }
@@ -275,7 +275,7 @@ internal class EquationTest {
     @Test
     fun symbolicEqualsCreatesCorrectEquationInstances() {
         val correct = EquationUtils.mixedAllEquations.map { Equation.of(it) }
-        val toBeTested = EquationUtils.mixedAllEquations.map { (lhs, rhs) -> lhs `=` rhs }
+        val toBeTested = EquationUtils.mixedAllEquations.map { (lhs, rhs) -> lhs eq rhs }
 
         assertEquals(correct, toBeTested)
     }

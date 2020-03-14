@@ -1,36 +1,65 @@
-// Project specific kotlin multiplatform configuration
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+
+val mochaTimeout: String by project
+val jvmStackSize: String by project
+val jvmMaxHeapSize: String by project
+
 kotlin {
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.0-RC2")
+                api(project(":dsl-theory"))
             }
         }
 
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
-                implementation(project(":solve-test"))
+                api(project(":test-solve"))
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
         jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
-                }
-            }
+            val main = compilations["main"]
+            val test = compilations["test"]
 
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(commonTest)
+                dependsOn(main.defaultSourceSet)
+            }
         }
 
         js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.0-RC2")
+
+            nodejs {
+                testTask {
+                    useMocha {
+                        timeout = mochaTimeout
+                    }
                 }
             }
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(commonTest)
+                dependsOn(main.defaultSourceSet)
+            }
         }
+
     }
+}
+
+tasks.withType<KotlinJvmTest> {
+    maxHeapSize = jvmMaxHeapSize
+    jvmArgs("-Xss$jvmStackSize")
 }

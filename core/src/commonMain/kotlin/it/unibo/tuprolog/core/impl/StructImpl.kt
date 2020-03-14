@@ -27,11 +27,11 @@ internal open class StructImpl(override val functor: String, override val args: 
         functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
     }
 
-    override fun equals(other: Any?): Boolean {
+    override final fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || this::class != other::class) return false
+        if (other == null || other !is Struct) return false
 
-        if (functor != (other as StructImpl).functor) return false
+        if (functor != other.functor) return false
         if (!args.contentEquals(other.args)) return false
 
         return true

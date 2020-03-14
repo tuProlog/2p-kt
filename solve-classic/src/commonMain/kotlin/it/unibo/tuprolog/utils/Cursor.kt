@@ -29,6 +29,16 @@ interface Cursor<T> {
     }
 }
 
+operator fun <T> Cursor<out T>.plus(other: Cursor<out T>): Cursor<out T> {
+    if (other.hasNext) {
+        return ConjunctionCursor(this, other)
+    } else if (hasNext) {
+        return this;
+    } else {
+        return EmptyCursor
+    }
+}
+
 sealed class AbstractCursor<T> : Cursor<T> {
     override fun toString(): String {
         return when {
@@ -155,14 +165,4 @@ fun <T> Array<T>.cursor(): Cursor<out T> {
 
 fun <T> Collection<T>.cursor(): Cursor<out T> {
     return this.iterator().toCursor()
-}
-
-fun main(args: Array<String>) {
-    var i = (1..Int.MAX_VALUE).asSequence().map { println("$$it"); it }.cursor().map { it * 2 }
-
-    while (i.hasNext) {
-        println(i.current)
-        i = i.next
-    }
-
 }

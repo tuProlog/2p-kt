@@ -1,0 +1,46 @@
+left to right direction
+
+interface Term {
+  + isGround: Boolean
+  + variables: Sequence<Var>
+  + equals(other: Any): Boolean
+  + structurallyEquals(other: Term): Boolean
+  + freshCopy(): Term
+  + toString(): String
+}
+interface Constant {
+  + value: Any
+}
+interface Numeric {
+  + intValue: BigInteger
+  + decimalValue: BigDecimal
+  + {static} of(value: Number): Numeric
+  + {static} of(number: String): Numeric
+  + {static} of(integer: BigInteger): Integer
+  + {static} of(decimal: BigDecimal): Real
+}
+interface Integer {
+  + value: BigInteger
+  + {static} of(integer: Int): Integer
+  + {static} of(integer: Long): Integer
+  + {static} of(integer: Byte): Integer
+  + {static} of(integer: Short): Integer
+  + {static} of(integer: BigInteger): Integer
+  + {static} of(integer: BigDecimal): Integer
+  + {static} of(integer: String): Integer
+  + {static} of(integer: String, radix: Int): Integer
+}
+interface Real {
+  + value: BigDecimal
+  + {static} of(real: BigDecimal): Real
+  + {static} of(real: Float): Real
+  + {static} of(real: Double): Real
+  + {static} of(real: String): Real
+}
+
+Term <|-- Constant
+
+Constant <|-- Numeric
+
+Numeric <|-- Real
+Numeric <|-- Integer

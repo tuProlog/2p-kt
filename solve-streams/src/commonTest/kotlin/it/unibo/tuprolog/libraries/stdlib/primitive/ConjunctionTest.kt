@@ -55,13 +55,11 @@ internal class ConjunctionTest {
             val firstSubstitution = "L" to "first"
             val secondSubstitution = "R" to "second"
 
-            val leftPrimitive = object : PrimitiveWrapper<ExecutionContext>("left", 0) {
-                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                    sequenceOf(request.replySuccess(firstSubstitution))
+            val leftPrimitive = PrimitiveWrapper.wrap<ExecutionContext>("left", 0) {
+                sequenceOf(it.replySuccess(firstSubstitution))
             }
-            val rightPrimitive = object : PrimitiveWrapper<ExecutionContext>("right", 0) {
-                override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-                    sequenceOf(request.replySuccess(secondSubstitution))
+            val rightPrimitive = PrimitiveWrapper.wrap<ExecutionContext>("right", 0) {
+                sequenceOf(it.replySuccess(secondSubstitution))
             }
 
             val goal = "left" and "right"

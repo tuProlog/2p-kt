@@ -8,6 +8,9 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
 interface ExecutionContext {
 
+    /** The current procedure being executed */
+    val procedure: Struct?
+
     /** Loaded libraries */
     val libraries: Libraries
 

@@ -15,7 +15,7 @@ internal class TuPrologBenchmark {
     @Test
     @Ignore
     fun `8-QueensBenchmark`() {
-        val queensTheory = Theory(
+        val queensTheory = Theory.parseWithStandardOperators(
             """
                 top:-queens(8,Qs),fail.
                 top.

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
+import kotlin.jvm.JvmStatic
 
 /**
  * Enumeration containing all type of specifiers that can be given to Operators.
@@ -34,27 +35,38 @@ enum class Specifier : ToTermConvertible {
     YFX;
 
     /** Whether this specifier is a prefix one */
-    val isPrefix: Boolean by lazy { PREFIX.contains(this) }
+    val isPrefix: Boolean
+        get() = PREFIX.contains(this)
 
     /** Whether this specifier is an infix one */
-    val isInfix: Boolean by lazy { INFIX.contains(this) }
+    val isInfix: Boolean
+        get() = INFIX.contains(this)
 
     /** Whether this specifier is a postfix one */
-    val isPostfix: Boolean by lazy { POSTFIX.contains(this) }
+    val isPostfix: Boolean
+        get() = POSTFIX.contains(this)
 
     /** Creates an atom containing the specifier symbolic name */
     override fun toTerm(): Atom = atomRepresentation
 
-    private val atomRepresentation by lazy { Atom.of(name.toLowerCase()) }
+    private val atomRepresentation
+        get() = Atom.of(name.toLowerCase())
 
     companion object {
         /** Set of prefix specifiers */
+        @JvmStatic
         val PREFIX: Set<Specifier> = setOf(FX, FY)
+
         /** Set of postfix specifiers */
+        @JvmStatic
         val POSTFIX: Set<Specifier> = setOf(YF, XF)
+
         /** Set of infix specifiers */
+        @JvmStatic
         val INFIX: Set<Specifier> = setOf(XFX, YFX, XFY)
+
         /** Set of non-prefix specifiers */
+        @JvmStatic
         val NON_PREFIX: Set<Specifier> = POSTFIX + INFIX
 
         /**
@@ -62,13 +74,21 @@ enum class Specifier : ToTermConvertible {
          *
          * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
          */
-        fun fromTerm(atom: Atom): Specifier = valueOf(atom.value.toUpperCase())
+        @JvmStatic
+        fun fromTerm(atom: Atom): Specifier {
+            try {
+                return valueOf(atom.value.toUpperCase())
+            } catch (e: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+                throw IllegalArgumentException(e.message, e.cause)
+            }
+        }
 
         /**
          * Retrieves the specifier from an Atom value, throwing exception if not found
          *
          * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
          */
+        @JvmStatic
         fun fromTerm(term: Term): Specifier =
             when (term) {
                 is Atom -> fromTerm(term)

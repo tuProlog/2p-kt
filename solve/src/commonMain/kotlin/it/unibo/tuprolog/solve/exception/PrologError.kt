@@ -3,11 +3,8 @@ package it.unibo.tuprolog.solve.exception
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.prologerror.*
 import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
-import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
 
 /**
  * Base class for Standard Prolog Errors and possibly other custom Primitive errors
@@ -33,10 +30,10 @@ abstract class PrologError(
             : this(cause?.toString(), cause, context, type, extraData)
 
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
-    val errorStruct: Struct by lazy {
-        extraData?.let { errorStructOf(type, it) }
-            ?: errorStructOf(type)
-    }
+    val errorStruct: Struct by lazy { generateErrorStruct() }
+
+    private fun generateErrorStruct() =
+        extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
     override fun updateContext(newContext: ExecutionContext): PrologError =
         of(message, cause, newContext, type, extraData)
@@ -64,6 +61,7 @@ abstract class PrologError(
                     TypeError(message, cause, context, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
                 functor == EvaluationError.typeFunctor && arity == 1 && EvaluationError.Type.fromTerm(args.single()) != null ->
                     EvaluationError(message, cause, context, EvaluationError.Type.fromTerm(args.single())!!, extraData)
+                functor == MessageError.typeFunctor -> MessageError(message, cause, context, extraData)
                 else -> object : PrologError(message, cause, context, type, extraData) {}
             }
         }

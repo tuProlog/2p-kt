@@ -1,27 +1,58 @@
-// Project specific kotlin multiplatform configuration
+
+val mochaTimeout: String by project
+
 kotlin {
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(project(":solve"))
+                api(project(":dsl-theory"))
             }
         }
 
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
-                implementation(project(":solve-test"))
+                api(project(":test-solve"))
             }
         }
 
-        // Default source set for JVM-specific sources and dependencies:
         jvm {
-            compilations["test"].defaultSourceSet {
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(commonTest)
+                dependsOn(main.defaultSourceSet)
                 dependencies {
-                    implementation("it.unibo.alice.tuprolog:tuprolog:3.3.0")
+                    implementation("it.unibo.alice.tuprolog:2p-core:4.1.1")
                 }
             }
         }
 
+        js {
+            nodejs {
+                testTask {
+                    useMocha {
+                        timeout = mochaTimeout
+                    }
+                }
+            }
+
+            val main = compilations["main"]
+            val test = compilations["test"]
+
+            main.defaultSourceSet {
+                dependsOn(commonMain)
+            }
+            test.defaultSourceSet {
+                dependsOn(commonTest)
+                dependsOn(main.defaultSourceSet)
+            }
+        }
     }
 }

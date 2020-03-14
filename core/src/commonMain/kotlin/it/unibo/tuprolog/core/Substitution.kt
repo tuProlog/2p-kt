@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import kotlin.jvm.JvmStatic
+
 /**
  * An interface representing a mapping between Variables and their Term substitutions
  *
@@ -15,6 +17,14 @@ sealed class Substitution : Map<Var, Term> {
 
     /** Applies the Substitution to the given Term */
     fun applyTo(term: Term): Term = term[this]
+
+    /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
+     *
+     * Consider for instance the substitution { X -> Y, Y -> Z },
+     * then the invocation of `getOriginal(Z)` should retrieve `X`
+     * */
+    // TODO test this method
+    abstract fun getOriginal(variable: Var): Var?
 
     /**
      * Creates a new substitution that's the *composition* of this and [other]
@@ -54,6 +64,14 @@ sealed class Substitution : Map<Var, Term> {
     }
 
     /**
+     * Returns a new substitution containing all key-value pairs whose key is in [variables].
+     *
+     * The returned map preserves the entry iteration order of the original map.
+     */
+    open fun filter(variables: Collection<Var>): Substitution = // TODO: 16/01/2020 add tests for this specific method
+        filter { k, _ -> k in variables }
+
+    /**
      * Returns a new substitution containing all key-value pairs matching the given [predicate].
      *
      * The returned map preserves the entry iteration order of the original map.
@@ -69,6 +87,22 @@ sealed class Substitution : Map<Var, Term> {
         // because a map cannot have a mapping from same key to more than one
         // different value, by definition of map type
 
+        private fun reverseLookUp(variable: Var): Var? {
+            return entries
+                .filter { it.value == variable }
+                .map { it.key }
+                .firstOrNull()
+        }
+
+        override fun getOriginal(variable: Var): Var? =
+            sequence<Var> {
+                var current: Var? = reverseLookUp(variable)
+                while (current != null) {
+                    yield(current)
+                    current = reverseLookUp(current)
+                }
+            }.lastOrNull()
+
         override val isSuccess: Boolean = true
 
         override fun minus(keys: Iterable<Var>): Unifier = super.minus(keys) as Unifier
@@ -76,6 +110,7 @@ sealed class Substitution : Map<Var, Term> {
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier = super.filter(predicate) as Unifier
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier = super.filter(predicate) as Unifier
+        override fun filter(variables: Collection<Var>): Unifier = super.filter(variables) as Unifier
 
         /** The mappings used to implement [equals], [hashCode] and [toString] */
         // this should be kept in sync with class "by" right expression
@@ -106,10 +141,13 @@ sealed class Substitution : Map<Var, Term> {
     /** The Failed Substitution instance */
     object Fail : Substitution(), Map<Var, Term> by emptyMap() {
         override val isFailed: Boolean = true
+        override fun getOriginal(variable: Var): Var? = null
         override fun minus(other: Substitution): Fail = Fail
         override fun minus(keys: Iterable<Var>): Fail = Fail
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
+        override fun filter(variables: Collection<Var>): Fail = Fail
+        override fun toString(): String = "{Failed Substitution}"
     }
 
 
@@ -117,33 +155,41 @@ sealed class Substitution : Map<Var, Term> {
     companion object {
 
         /** Returns failed substitution instance */
+        @JvmStatic
         fun failed(): Fail = Fail
 
         /** Returns empty successful substitution (aka Unifier) instance */
+        @JvmStatic
         fun empty(): Unifier = emptyMap<Var, Term>().asUnifier()
 
         /** Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type */
+        @JvmStatic
         fun Map<Var, Term>.asUnifier(): Unifier = Unifier(this)
 
         /** Creates a Substitution of given Variable with given Term */
+        @JvmStatic
         fun of(variable: Var, withTerm: Term): Unifier = of(variable to withTerm) as Unifier
 
         /** Creates a Substitution from the new Variable, with given name, to given Term */
+        @JvmStatic
         fun of(variable: String, withTerm: Term): Unifier = of(Var.of(variable) to withTerm) as Unifier
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence() + substitutionPair) -> Fail
             else -> mapOf(substitutionPair, *substitutionPairs).asUnifier()
         }
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence()) -> Fail
             else -> substitutionPairs.toMap().asUnifier()
         }
 
         /** Creates a new Substitution *composing* given substitutions in order; if any failure or contradiction is found, the result will be [Substitution.Fail] */
+        @JvmStatic
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
             substitutions.fold(substitution, Substitution::plus)
 

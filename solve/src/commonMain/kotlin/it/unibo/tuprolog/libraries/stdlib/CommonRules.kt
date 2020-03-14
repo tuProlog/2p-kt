@@ -1,21 +1,25 @@
 package it.unibo.tuprolog.libraries.stdlib
 
-import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.libraries.stdlib.rule.Arrow
+import it.unibo.tuprolog.libraries.stdlib.rule.Member
+import it.unibo.tuprolog.libraries.stdlib.rule.Not
+import it.unibo.tuprolog.libraries.stdlib.rule.Semicolon
+import it.unibo.tuprolog.rule.RuleWrapper
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-object CommonRules : ClauseDatabase by ClauseDatabase.of(
-    { factOf(atomOf("!")) },
-    { ruleOf(structOf("\\+", varOf("X")), structOf("call", varOf("X")), atomOf("!"), Truth.fail()) },
-    { factOf(structOf("\\+", `_`)) },
-    { ruleOf(structOf("not", varOf("X")), structOf("\\+", varOf("X"))) },
-    { ruleOf(structOf(";", varOf("A"), whatever()), varOf("A")) },
-    { ruleOf(structOf(";", whatever(), varOf("B")), varOf("B")) },
-    { ruleOf(structOf("->", varOf("Cond"), varOf("Then")), varOf("Cond"), atomOf("!"), varOf("Then")) },
-    { factOf(structOf("member", varOf("H"), consOf(varOf("H"), whatever()))) },
-    {
-        ruleOf(
-            structOf("member", varOf("H"), consOf(whatever(), varOf("T"))),
-            structOf("member", varOf("H"), varOf("T"))
-        )
-    }
-)
+object CommonRules {
+    val wrappers: Sequence<RuleWrapper<ExecutionContext>> = sequenceOf(
+        Not,
+        Arrow,
+        Semicolon.If.Then,
+        Semicolon.If.Else,
+        Semicolon.Or.Left,
+        Semicolon.Or.Right,
+        Member.Base,
+        Member.Recursive
+    )
+
+    val clauseDb: ClauseDatabase
+        get() = ClauseDatabase.of(wrappers.map { it.wrappedImplementation })
+}
