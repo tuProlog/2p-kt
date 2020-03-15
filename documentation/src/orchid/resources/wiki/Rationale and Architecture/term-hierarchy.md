@@ -342,17 +342,84 @@ Collections in 2P-Kt are particular sorts of `Struct`ures, containing other `Ter
 {{ load('assets/diagrams/list.puml') | raw }}
 <!--div-->
 
+[`List`s](/kotlindoc/it/unibo/tuprolog/core/list/) are a particular sort of `Struct`ures, having the either form:
+```prolog
+'.'(Head, Tail) % which is often represented as [Head | Tail]
+```
+or the form:
+```prolog
+'[]' % which is often simply represented as []
+```
+In particular, terms in the form `[Head | Tail]` (which is a pretty way of representing the structure `'.'(Head, Term)`)
+are of type [`Cons`s](/kotlindoc/it/unibo/tuprolog/core/cons/) -- that is, a particular sub-sort of `List` -- whereas 
+`Atom`s in the form `[]` (which is equal to `'[]'`) is of type [`EmptyList`s](/kotlindoc/it/unibo/tuprolog/core/emptylist/)---which
+is a particular sub-sort of both `List` and `Atom`.
+
+A `List` is _well-formed_ if it is an `EmptyList` list or if it is a _well-formed_ `Cons`.
+A `Cons` is well-formed if its tail is a well-formed `List`.
+Thus, _finite_ well-formed list are `[]`-terminated and `'.'`-separated sequences of `Term`s.
+
+When well-formed `List`s are represented through the square brackets notation, the termination term -- namely, `[]` --
+is not represented, as well as pipes.
+Thus, for instance, the following lists are well-formed:
+```prolog
+[]        % which is the same thing of '[]'
+[1]       % which is the same thing of '.'(1, [])
+[a, 2]    % which is the same thing of '.'(a, '.'(2, []))
+[1, b, 3] % which is the same thing of '.'(1, '.'(b, '.'(3, [])))
+```
+Conversely, _non_-well-formed `List`s are represented through the piped notation:
+```prolog
+[1 | T]       % which is the same thing of '.'(1, T)
+[1, b | T]    % which is the same thing of '.'(1, '.'(b, T))
+[a, 2, c | T] % which is the same thing of '.'(a, '.'(2, '.'(c, T)))
+```
+
 #### Tuples
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/tuple.puml') | raw }}
 <!--div-->
 
+[`Tuple`s](/kotlindoc/it/unibo/tuprolog/core/tuple/) are a particular sort of `Struct`ures, having the form:
+```prolog
+','(Left, Right) % which is often represented as (Left, Right)
+```
+If the `Right` argument of a `Tuple` is a `Tuple`, then the outermost `Tuple` is represented as a `','`-separated
+and parentheses-delimited sequence of `Term`s.
+Thus, for instance:
+```prolog
+','(a, 2)                 % is the same thing of (a, 2)
+','(a, ','(2, c))         % is the same thing of (a, 2, c)
+','(a, ','(2, ','(c, 4))) % is the same thing of (a, 2, c, 4)
+```
+
+`Tuple`s must contain two or more items, thus there exists no empty tuple nor singleton tuples.
+
 #### Sets
 
 <!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 {{ load('assets/diagrams/set.puml') | raw }}
 <!--div-->
+
+[`Set`s](/kotlindoc/it/unibo/tuprolog/core/set/) are a particular sort of `Struct`ures, having the either form:
+```prolog
+'{}'(Argument) % which is often represented as {Argument}
+```
+or the form:
+```prolog
+'{}' % which is often simply represented as {}
+```
+
+If the `Argument` of a `Set` is a `Tuple`, then it is represented a `','`-separated and _braces_-delimited sequence of `Term`s. 
+Thus, for instance:
+```prolog
+'{}'                            % is the same thing of {}
+'{}'(1)                         % is the same thing of {1}
+'{}'(','(a, 2))                 % is the same thing of (a, 2)
+'{}'(','(a, ','(2, c)))         % is the same thing of (a, 2, c)
+'{}'(','(a, ','(2, ','(c, 4)))) % is the same thing of (a, 2, c, 4)
+```
 
 ### Clauses
 
