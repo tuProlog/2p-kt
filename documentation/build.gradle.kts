@@ -25,3 +25,11 @@ orchid {
     args = listOf("--experimentalSourceDoc")
 //    gitlabToken = gitlabApiKey
 }
+
+configurations {
+    val orchidRuntimeOnly by getting {
+        resolutionStrategy {
+            force("net.sourceforge.plantuml:plantuml:1.2020.2")
+        }
+    }
+}
