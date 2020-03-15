@@ -3,4 +3,4 @@
 
 ## Useful resources
 
-- https://orchid.run/
+- [Orchid Home Page](https://orchid.run/)
