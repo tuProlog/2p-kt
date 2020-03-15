@@ -423,8 +423,42 @@ Thus, for instance:
 
 ### Clauses
 
+[`Clause`s](/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
+[Horn clauses](https://en.wikipedia.org/wiki/Horn_clause).
+They all share the form:
+```prolog
+':-'(Head, Body) % which is often represented as Head :- Body
+```
+
+Optionally, the `Head` term may be missing.
+In such a case, the `Clause` is actually a [`Directive`](/kotlindoc/it/unibo/tuprolog/core/directive/), 
+i.e. a `Struct`ure in the form `':-'(Body)`.
+Conversely, if the `Head` term is present, then the `Clause` is actually 
+a [`Rule`](/kotlindoc/it/unibo/tuprolog/core/rule/).
+Finally, if the `Body` term of a `Rule` corresponds to `'true'`, then the `Rule` is actually
+a [`Fact`](/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `Struct`ure in the form `':-'(Head, true)`.
+
 #### Rules
+
+[`Rule`s](/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
+```prolog
+':-'(Head, Body) % which is often represented as Head :- Body
+```
+where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`iable or a `Struct`ure.
 
 #### Facts
 
+[`Fact`s](/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
+```prolog
+':-'(Head, true) % which is often represented as Head :- true
+                 % or simple as Head
+```
+where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`iable or a `Struct`ure.
+
 #### Directives
+
+[`Directive`s](/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
+```prolog
+':-'(Body) % which is often represented as :-Body
+```
+where `Body` is usually either a `Var`iable or a `Struct`ure.
