@@ -43,7 +43,7 @@ Thus, for instance, the term: `f(X, y, g(1, 2.3), h(_, 'j'("k")))` must be inter
     
 ## Logic terms in 2P-Kt
 
-The base type for logic terms in 2P-Kt is [`Term`](/kotlindoc/it/unibo/tuprolog/core/term). 
+The base type for logic terms in 2P-Kt is [`Term`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/term). 
 
 As shown in the following diagram, the `Term` interface is the root of an articulate hierarchy of term types: 
 
@@ -179,7 +179,7 @@ The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a simi
 {{ load('assets/diagrams/var.puml') | raw }}
 <!--div-->
 
-[`Var`iables](/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s acting as placeholders of other `Term`s.
+[`Var`iables]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s acting as placeholders of other `Term`s.
 They are identified by a _complete_ name, that is, a string in the form:
 ```
 <Name>_<Suffix> 
@@ -223,7 +223,7 @@ In particular:
 - `Var.anonymous()` creates a new instance of `Var` whose name is `"_"` and whose suffix is non-deterministically chosen by 2P-Kt
 
 In some cases, developers may be in need of re-using previously instantiated variables.
-In such situation, they may either store `Var` instances through Kotlin variables or use [`Scope`s](/kotlindoc/it/unibo/tuprolog/core/scope/) instead.
+In such situation, they may either store `Var` instances through Kotlin variables or use [`Scope`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/scope/) instead.
 
 ### Constants 
 
@@ -231,7 +231,7 @@ In such situation, they may either store `Var` instances through Kotlin variable
 {{ load('assets/diagrams/constant.puml') | raw }}
 <!--div-->
 
-[`Constant`s](/kotlindoc/it/unibo/tuprolog/core/constant/) are ground, non-compound terms characterised by a _value_.
+[`Constant`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/constant/) are ground, non-compound terms characterised by a _value_.
 Such value can be retrieved by users through the `value: Any` property.
 
 Constants can be either numbers or atoms (i.e. strings).
@@ -243,8 +243,8 @@ They cannot be instantiated directly, as they must be instantiated through their
 {{ load('assets/diagrams/numeric.puml') | raw }}
 <!--div-->
 
-Instances of the [`Numeric`](/kotlindoc/it/unibo/tuprolog/core/numeric/) interface are a particular sorts of constant
-whose value is either an [`Integer`](/kotlindoc/it/unibo/tuprolog/core/integer/) or a [`Real`](/kotlindoc/it/unibo/tuprolog/core/real/) number.
+Instances of the [`Numeric`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/numeric/) interface are a particular sorts of constant
+whose value is either an [`Integer`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/integer/) or a [`Real`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/real/) number.
 
 Behind the scenes, 2P-Kt employs `BigInteger`s and `BigDecimal`s to reify numbers.
 Briefly speaking, this means:
@@ -289,7 +289,7 @@ In particular:
 {{ load('assets/diagrams/struct.puml') | raw }}
 <!--div-->
 
-[`Struct`ures](/kotlindoc/it/unibo/tuprolog/core/struct/) are `Term`s _composed_ by other `Term`s.
+[`Struct`ures]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/struct/) are `Term`s _composed_ by other `Term`s.
 They are characterised by a _functor_ -- which states their name -- and an _arity_---which states how many (sub-)terms (or arguments) compose them.
 
 ### Atoms 
@@ -298,7 +298,7 @@ They are characterised by a _functor_ -- which states their name -- and an _arit
 {{ load('assets/diagrams/atom.puml') | raw }}
 <!--div-->
 
-[`Atom`](/kotlindoc/it/unibo/tuprolog/core/atom/) are `Struct`ures with no argument, also known as 0-ary `Struct`ures.
+[`Atom`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/atom/) are `Struct`ures with no argument, also known as 0-ary `Struct`ures.
 They are also `Constant`s whose `value` is a `String`.
 In particular the functor of an `Atom` is always equal to its `value`.
 
@@ -310,7 +310,7 @@ In particular the functor of an `Atom` is always equal to its `value`.
 {{ load('assets/diagrams/truth.puml') | raw }}
 <!--div-->
 
-Boolean values are represented in 2P-Kt through the [`Truth`](/kotlindoc/it/unibo/tuprolog/core/truth/) interface.
+Boolean values are represented in 2P-Kt through the [`Truth`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/truth/) interface.
 Objects of type `Truth` are a particular sort of `Atom` which can be interpreted as boolean values.
 
 ### Indicators
@@ -319,7 +319,7 @@ Objects of type `Truth` are a particular sort of `Atom` which can be interpreted
 {{ load('assets/diagrams/indicator.puml') | raw }}
 <!--div-->
 
-[`Indicator`s](/kotlindoc/it/unibo/tuprolog/core/indicator/) are a particular sort of `Struct`ures, having the form:
+[`Indicator`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/indicator/) are a particular sort of `Struct`ures, having the form:
 ```prolog
 '/'(Functor, Arity)
 ```
@@ -342,7 +342,7 @@ Collections in 2P-Kt are particular sorts of `Struct`ures, containing other `Ter
 {{ load('assets/diagrams/list.puml') | raw }}
 <!--div-->
 
-[`List`s](/kotlindoc/it/unibo/tuprolog/core/list/) are a particular sort of `Struct`ures, having the either form:
+[`List`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/list/) are a particular sort of `Struct`ures, having the either form:
 ```prolog
 '.'(Head, Tail) % which is often represented as [Head | Tail]
 ```
@@ -351,8 +351,8 @@ or the form:
 '[]' % which is often simply represented as []
 ```
 In particular, terms in the form `[Head | Tail]` (which is a pretty way of representing the structure `'.'(Head, Term)`)
-are of type [`Cons`s](/kotlindoc/it/unibo/tuprolog/core/cons/) -- that is, a particular sub-sort of `List` -- whereas 
-`Atom`s in the form `[]` (which is equal to `'[]'`) is of type [`EmptyList`s](/kotlindoc/it/unibo/tuprolog/core/emptylist/)---which
+are of type [`Cons`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/cons/) -- that is, a particular sub-sort of `List` -- whereas 
+`Atom`s in the form `[]` (which is equal to `'[]'`) is of type [`EmptyList`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/emptylist/)---which
 is a particular sub-sort of both `List` and `Atom`.
 
 A `List` is _well-formed_ if it is an `EmptyList` list or if it is a _well-formed_ `Cons`.
@@ -381,7 +381,7 @@ Conversely, _non_-well-formed `List`s are represented through the piped notation
 {{ load('assets/diagrams/tuple.puml') | raw }}
 <!--div-->
 
-[`Tuple`s](/kotlindoc/it/unibo/tuprolog/core/tuple/) are a particular sort of `Struct`ures, having the form:
+[`Tuple`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/tuple/) are a particular sort of `Struct`ures, having the form:
 ```prolog
 ','(Left, Right) % which is often represented as (Left, Right)
 ```
@@ -402,7 +402,7 @@ Thus, for instance:
 {{ load('assets/diagrams/set.puml') | raw }}
 <!--div-->
 
-[`Set`s](/kotlindoc/it/unibo/tuprolog/core/set/) are a particular sort of `Struct`ures, having the either form:
+[`Set`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/set/) are a particular sort of `Struct`ures, having the either form:
 ```prolog
 '{}'(Argument) % which is often represented as {Argument}
 ```
@@ -423,7 +423,7 @@ Thus, for instance:
 
 ### Clauses
 
-[`Clause`s](/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
+[`Clause`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
 [Horn clauses](https://en.wikipedia.org/wiki/Horn_clause).
 They all share the form:
 ```prolog
@@ -431,16 +431,16 @@ They all share the form:
 ```
 
 Optionally, the `Head` term may be missing.
-In such a case, the `Clause` is actually a [`Directive`](/kotlindoc/it/unibo/tuprolog/core/directive/), 
+In such a case, the `Clause` is actually a [`Directive`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/directive/), 
 i.e. a `Struct`ure in the form `':-'(Body)`.
 Conversely, if the `Head` term is present, then the `Clause` is actually 
-a [`Rule`](/kotlindoc/it/unibo/tuprolog/core/rule/).
+a [`Rule`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/).
 Finally, if the `Body` term of a `Rule` corresponds to `'true'`, then the `Rule` is actually
-a [`Fact`](/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `Struct`ure in the form `':-'(Head, true)`.
+a [`Fact`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `Struct`ure in the form `':-'(Head, true)`.
 
 #### Rules
 
-[`Rule`s](/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
+[`Rule`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
 ```prolog
 ':-'(Head, Body) % which is often represented as Head :- Body
 ```
@@ -448,7 +448,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 
 #### Facts
 
-[`Fact`s](/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
+[`Fact`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
 ```prolog
 ':-'(Head, true) % which is often represented as Head :- true
                  % or simple as Head
@@ -457,7 +457,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 
 #### Directives
 
-[`Directive`s](/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
+[`Directive`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
 ```prolog
 ':-'(Body) % which is often represented as :-Body
 ```
