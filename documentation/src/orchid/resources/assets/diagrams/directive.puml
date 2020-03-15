@@ -1,0 +1,14 @@
+left to right direction
+skinparam shadowing false
+
+interface Struct
+
+interface Clause
+
+interface Directive {
+  + head: Struct? **= null**
+  + {static} of(**varargs** body: Term): Directive
+}
+
+Struct <|-- Clause
+Clause <|-- Directive

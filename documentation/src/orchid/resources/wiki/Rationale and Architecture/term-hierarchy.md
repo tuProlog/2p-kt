@@ -423,6 +423,10 @@ Thus, for instance:
 
 ### Clauses
 
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/clause.puml') | raw }}
+<!--div-->
+
 [`Clause`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
 [Horn clauses](https://en.wikipedia.org/wiki/Horn_clause).
 They all share the form:
@@ -440,6 +444,10 @@ a [`Fact`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `S
 
 #### Rules
 
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/rule.puml') | raw }}
+<!--div-->
+
 [`Rule`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
 ```prolog
 ':-'(Head, Body) % which is often represented as Head :- Body
@@ -447,6 +455,10 @@ a [`Fact`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `S
 where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`iable or a `Struct`ure.
 
 #### Facts
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/fact.puml') | raw }}
+<!--div-->
 
 [`Fact`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
 ```prolog
@@ -456,6 +468,10 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`iable or a `Struct`ure.
 
 #### Directives
+
+<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
+{{ load('assets/diagrams/directive.puml') | raw }}
+<!--div-->
 
 [`Directive`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
 ```prolog
