@@ -228,7 +228,7 @@ interface Term {
     val isIndicator: Boolean get() = false
 
     /**
-     * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the currenct one in any aspect,
+     * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the current one in any aspect,
      * except variables directly or indirectly contained into this Term, which are refreshed.
      * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly
      * generated variables.

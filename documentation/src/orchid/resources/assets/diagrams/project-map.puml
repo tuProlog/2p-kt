@@ -22,7 +22,7 @@ folder "parser-jvm" <<impl. detail>> as PJVM
 folder "parser-js" <<impl. detail>> as PJS
 folder "parser-theory" as PT
 
-core <|-down- unify
+core <|-down- unify : depends\non
 unify <|-down- theory
 theory <|-down- solve
 solve <|-- SC
@@ -39,6 +39,6 @@ PC -left-|> core
 PT -left-|> theory
 PT -up-|> PC
 
-PC --> PJVM
+PC --> PJVM : uses
 PC -right-> PJS
 @enduml
