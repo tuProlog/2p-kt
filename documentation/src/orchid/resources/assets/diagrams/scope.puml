@@ -1,3 +1,5 @@
+skinparam shadowing false
+
 interface Scope {
     + _: Var
     + variables: Map<String, Var>
