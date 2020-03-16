@@ -1,5 +1,5 @@
 interface Scope {
-    + `_`: Var
+    + _: Var
     + variables: Map<String, Var>
     + contains(variable: Var): Boolean
     + contains(variable: String): Boolean
