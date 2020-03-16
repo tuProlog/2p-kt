@@ -2,15 +2,25 @@ plugins {
     id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(Libs.plantuml)
+    }
+}
+
 dependencies {
-    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDocs", Versions.com_eden_orchidplugin_gradle_plugin)
-    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidKotlindoc", Versions.com_eden_orchidplugin_gradle_plugin)
-    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidPluginDocs", Versions.com_eden_orchidplugin_gradle_plugin)
-    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidAsciidoc", Versions.com_eden_orchidplugin_gradle_plugin)
-    orchidRuntimeOnly("io.github.javaeden.orchid", "OrchidDiagrams", Versions.com_eden_orchidplugin_gradle_plugin)
+    orchidRuntimeOnly(Libs.orchiddocs)
+    orchidRuntimeOnly(Libs.orchidkotlindoc)
+    orchidRuntimeOnly(Libs.orchidplugindocs)
+    orchidRuntimeOnly(Libs.orchidasciidoc)
+    orchidRuntimeOnly(Libs.orchiddiagrams)
 }
 
 repositories {
+    mavenCentral()
     jcenter()
     maven("https://kotlin.bintray.com/kotlinx/")
 }
@@ -23,13 +33,12 @@ orchid {
     baseUrl = orchidBaseUrl
     version = rootProject.version.toString()
     args = listOf("--experimentalSourceDoc")
-//    gitlabToken = gitlabApiKey
 }
 
 configurations {
     val orchidRuntimeOnly by getting {
         resolutionStrategy {
-            force("net.sourceforge.plantuml:plantuml:1.2020.2")
+            force(Libs.plantuml)
         }
     }
 }
