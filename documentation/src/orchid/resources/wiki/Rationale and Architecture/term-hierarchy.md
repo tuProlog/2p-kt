@@ -302,11 +302,11 @@ Objects of type `Truth` are a particular sort of `Atom` which can be interpreted
 ![indicator class diagram]({{ site.baseUrl }}/assets/diagrams/indicator.svg)
 
 [`Indicator`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/indicator/) are a particular sort of `Struct`ures, having the form:
-```prolog
+```
 '/'(Functor, Arity)
 ```
 which is more often written as
-```prolog
+```
 Functor / Arity
 ```
 where both `Functor` and `Arity` are `Term`s of any sort.
@@ -323,11 +323,11 @@ Collections in 2P-Kt are particular sorts of `Struct`ures, containing other `Ter
 ![list class diagram]({{ site.baseUrl }}/assets/diagrams/list.svg)
 
 [`List`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/list/) are a particular sort of `Struct`ures, having the either form:
-```prolog
+```
 '.'(Head, Tail) % which is often represented as [Head | Tail]
 ```
 or the form:
-```prolog
+```
 '[]' % which is often simply represented as []
 ```
 In particular, terms in the form `[Head | Tail]` (which is a pretty way of representing the structure `'.'(Head, Term)`)
@@ -342,14 +342,14 @@ Thus, _finite_ well-formed list are `[]`-terminated and `'.'`-separated sequence
 When well-formed `List`s are represented through the square brackets notation, the termination term -- namely, `[]` --
 is not represented, as well as pipes.
 Thus, for instance, the following lists are well-formed:
-```prolog
+```
 []        % which is the same thing of '[]'
 [1]       % which is the same thing of '.'(1, [])
 [a, 2]    % which is the same thing of '.'(a, '.'(2, []))
 [1, b, 3] % which is the same thing of '.'(1, '.'(b, '.'(3, [])))
 ```
 Conversely, _non_-well-formed `List`s are represented through the piped notation:
-```prolog
+```
 [1 | T]       % which is the same thing of '.'(1, T)
 [1, b | T]    % which is the same thing of '.'(1, '.'(b, T))
 [a, 2, c | T] % which is the same thing of '.'(a, '.'(2, '.'(c, T)))
@@ -360,13 +360,13 @@ Conversely, _non_-well-formed `List`s are represented through the piped notation
 ![tuple class diagram]({{ site.baseUrl }}/assets/diagrams/tuple.svg)
 
 [`Tuple`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/tuple/) are a particular sort of `Struct`ures, having the form:
-```prolog
+```
 ','(Left, Right) % which is often represented as (Left, Right)
 ```
 If the `Right` argument of a `Tuple` is a `Tuple`, then the outermost `Tuple` is represented as a `','`-separated
 and parentheses-delimited sequence of `Term`s.
 Thus, for instance:
-```prolog
+```
 ','(a, 2)                 % is the same thing of (a, 2)
 ','(a, ','(2, c))         % is the same thing of (a, 2, c)
 ','(a, ','(2, ','(c, 4))) % is the same thing of (a, 2, c, 4)
@@ -379,17 +379,17 @@ Thus, for instance:
 ![set class diagram]({{ site.baseUrl }}/assets/diagrams/set.svg)
 
 [`Set`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/set/) are a particular sort of `Struct`ures, having the either form:
-```prolog
+```
 '{}'(Argument) % which is often represented as {Argument}
 ```
 or the form:
-```prolog
+```
 '{}' % which is often simply represented as {}
 ```
 
 If the `Argument` of a `Set` is a `Tuple`, then it is represented a `','`-separated and _braces_-delimited sequence of `Term`s. 
 Thus, for instance:
-```prolog
+```
 '{}'                            % is the same thing of {}
 '{}'(1)                         % is the same thing of {1}
 '{}'(','(a, 2))                 % is the same thing of (a, 2)
@@ -404,7 +404,7 @@ Thus, for instance:
 [`Clause`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
 [Horn clauses](https://en.wikipedia.org/wiki/Horn_clause).
 They all share the form:
-```prolog
+```
 ':-'(Head, Body) % which is often represented as Head :- Body
 ```
 
@@ -421,7 +421,7 @@ a [`Fact`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `S
 ![rule class diagram]({{ site.baseUrl }}/assets/diagrams/rule.svg)
 
 [`Rule`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
-```prolog
+```
 ':-'(Head, Body) % which is often represented as Head :- Body
 ```
 where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`iable or a `Struct`ure.
@@ -431,7 +431,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 ![fact class diagram]({{ site.baseUrl }}/assets/diagrams/fact.svg)
 
 [`Fact`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
-```prolog
+```
 ':-'(Head, true) % which is often represented as Head :- true
                  % or simple as Head
 ```
@@ -442,7 +442,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 ![directive class diagram]({{ site.baseUrl }}/assets/diagrams/directive.svg)
 
 [`Directive`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
-```prolog
+```
 ':-'(Body) % which is often represented as :-Body
 ```
 where `Body` is usually either a `Var`iable or a `Struct`ure.

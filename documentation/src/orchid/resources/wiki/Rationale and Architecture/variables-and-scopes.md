@@ -30,7 +30,7 @@ will always return `true`.
 Of course, in there exist articulated cases where defining a lot of Kotlin variables may be cumbersome.
 Consider for instance the code for creating the following Prolog rule representing the recursive case of the
 well known `member/2` standard predicate:
-```prolog
+```
 member(H, [_ | T]) :- member(H, T).
 ```
 There, the `H` and `T` `Var`iables both occur twice within the rule.
