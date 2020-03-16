@@ -65,3 +65,4 @@ assets:
   sourceDirs:
     - 'assets/media'
     - 'assets/diagrams'
+    - 'assets/generated'

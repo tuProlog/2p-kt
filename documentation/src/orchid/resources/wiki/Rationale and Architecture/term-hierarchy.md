@@ -47,11 +47,11 @@ The base type for logic terms in 2P-Kt is [`Term`]({{ site.baseUrl }}/kotlindoc/
 
 As shown in the following diagram, the `Term` interface is the root of an articulate hierarchy of term types: 
 
-![terms-nofields class diagram]({{ site.baseUrl }}/assets/diagrams/terms-nofields.svg)
+![terms-nofields class diagram]({{ site.baseUrl }}/assets/generated/terms-nofields.svg)
 
 ### Terms 
 
-![term class diagram]({{ site.baseUrl }}/assets/diagrams/term.svg)
+![term class diagram]({{ site.baseUrl }}/assets/generated/term.svg)
 
 Terms is 2P-Kt are __immutable__ data structures.
 This is why all subtypes of `Term` come with no `var` public property nor any public method provoking side effects.
@@ -171,7 +171,7 @@ The notion of [`Scope`](./variables-and-scopes.md) is introduced to serve a simi
 
 ### Variables 
 
-![var class diagram]({{ site.baseUrl }}/assets/diagrams/var.svg)
+![var class diagram]({{ site.baseUrl }}/assets/generated/var.svg)
 
 [`Var`iables]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/var/) are `Term`s acting as placeholders of other `Term`s.
 They are identified by a _complete_ name, that is, a string in the form:
@@ -221,7 +221,7 @@ In such situation, they may either store `Var` instances through Kotlin variable
 
 ### Constants 
 
-![constant class diagram]({{ site.baseUrl }}/assets/diagrams/constant.svg)
+![constant class diagram]({{ site.baseUrl }}/assets/generated/constant.svg)
 
 [`Constant`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/constant/) are ground, non-compound terms characterised by a _value_.
 Such value can be retrieved by users through the `value: Any` property.
@@ -231,7 +231,7 @@ They cannot be instantiated directly, as they must be instantiated through their
 
 ### Numbers 
 
-![numeric class diagram]({{ site.baseUrl }}/assets/diagrams/numeric.svg)
+![numeric class diagram]({{ site.baseUrl }}/assets/generated/numeric.svg)
 
 Instances of the [`Numeric`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/numeric/) interface are a particular sorts of constant
 whose value is either an [`Integer`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/integer/) or a [`Real`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/real/) number.
@@ -275,14 +275,14 @@ In particular:
 
 ### Structures 
 
-![struct class diagram]({{ site.baseUrl }}/assets/diagrams/struct.svg)
+![struct class diagram]({{ site.baseUrl }}/assets/generated/struct.svg)
 
 [`Struct`ures]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/struct/) are `Term`s _composed_ by other `Term`s.
 They are characterised by a _functor_ -- which states their name -- and an _arity_---which states how many (sub-)terms (or arguments) compose them.
 
 ### Atoms 
 
-![atom class diagram]({{ site.baseUrl }}/assets/diagrams/atom.svg)
+![atom class diagram]({{ site.baseUrl }}/assets/generated/atom.svg)
 
 [`Atom`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/atom/) are `Struct`ures with no argument, also known as 0-ary `Struct`ures.
 They are also `Constant`s whose `value` is a `String`.
@@ -292,14 +292,14 @@ In particular the functor of an `Atom` is always equal to its `value`.
 
 ### Booleans
 
-![truth class diagram]({{ site.baseUrl }}/assets/diagrams/truth.svg)
+![truth class diagram]({{ site.baseUrl }}/assets/generated/truth.svg)
 
 Boolean values are represented in 2P-Kt through the [`Truth`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/truth/) interface.
 Objects of type `Truth` are a particular sort of `Atom` which can be interpreted as boolean values.
 
 ### Indicators
 
-![indicator class diagram]({{ site.baseUrl }}/assets/diagrams/indicator.svg)
+![indicator class diagram]({{ site.baseUrl }}/assets/generated/indicator.svg)
 
 [`Indicator`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/indicator/) are a particular sort of `Struct`ures, having the form:
 ```prolog
@@ -320,7 +320,7 @@ Collections in 2P-Kt are particular sorts of `Struct`ures, containing other `Ter
 
 #### Lists
 
-![list class diagram]({{ site.baseUrl }}/assets/diagrams/list.svg)
+![list class diagram]({{ site.baseUrl }}/assets/generated/list.svg)
 
 [`List`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/list/) are a particular sort of `Struct`ures, having the either form:
 ```prolog
@@ -357,7 +357,7 @@ Conversely, _non_-well-formed `List`s are represented through the piped notation
 
 #### Tuples
 
-![tuple class diagram]({{ site.baseUrl }}/assets/diagrams/tuple.svg)
+![tuple class diagram]({{ site.baseUrl }}/assets/generated/tuple.svg)
 
 [`Tuple`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/tuple/) are a particular sort of `Struct`ures, having the form:
 ```prolog
@@ -376,7 +376,7 @@ Thus, for instance:
 
 #### Sets
 
-![set class diagram]({{ site.baseUrl }}/assets/diagrams/set.svg)
+![set class diagram]({{ site.baseUrl }}/assets/generated/set.svg)
 
 [`Set`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/set/) are a particular sort of `Struct`ures, having the either form:
 ```prolog
@@ -399,7 +399,7 @@ Thus, for instance:
 
 ### Clauses
 
-![clause class diagram]({{ site.baseUrl }}/assets/diagrams/clause.svg)
+![clause class diagram]({{ site.baseUrl }}/assets/generated/clause.svg)
 
 [`Clause`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/clause/) are particular sorts of `Struct`ures representing 
 [Horn clauses](https://en.wikipedia.org/wiki/Horn_clause).
@@ -418,7 +418,7 @@ a [`Fact`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/fact/), i.e. a `S
 
 #### Rules
 
-![rule class diagram]({{ site.baseUrl }}/assets/diagrams/rule.svg)
+![rule class diagram]({{ site.baseUrl }}/assets/generated/rule.svg)
 
 [`Rule`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Clause`s in the form
 ```prolog
@@ -428,7 +428,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 
 #### Facts
 
-![fact class diagram]({{ site.baseUrl }}/assets/diagrams/fact.svg)
+![fact class diagram]({{ site.baseUrl }}/assets/generated/fact.svg)
 
 [`Fact`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/rule/) are `Rule`s in the form
 ```prolog
@@ -439,7 +439,7 @@ where `Head` is usually a `Struct`ure, whereas `Body` is usually either a `Var`i
 
 #### Directives
 
-![directive class diagram]({{ site.baseUrl }}/assets/diagrams/directive.svg)
+![directive class diagram]({{ site.baseUrl }}/assets/generated/directive.svg)
 
 [`Directive`s]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/directive/) are `Clause`s in the form
 ```prolog

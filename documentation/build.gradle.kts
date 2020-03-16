@@ -45,16 +45,19 @@ fun File.changeExtension(ext: String): File {
     return File(parentFile, "$nameWithoutExtension.$ext")
 }
 
-val plantUmlFiles = fileTree("$projectDir/src").also { it.include("**/*.puml").include("**/*.uml") }
-
+val plantUmlFiles = fileTree("$projectDir/src/orchid/resources/assets/diagrams")
+    .also { it.include("**/*.puml").include("**/*.uml") }
 
 if (!plantUmlFiles.isEmpty) {
     val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
         inputs.files(plantUmlFiles)
-        outputs.files(plantUmlFiles.map { it.changeExtension("svg") })
+        outputs.files(plantUmlFiles
+            .map { it.changeExtension("svg").absolutePath }
+            .map { it.replace("diagrams", "generated") }
+            .map(::File))
         classpath = configurations.getByName("plantuml")
         main = "net.sourceforge.plantuml.Run"
-        args("-tsvg")
+        args("-tsvg", "-o", "$projectDir/src/orchid/resources/assets/generated")
         args(plantUmlFiles.map { it.absolutePath })
     }
     tasks.getByName("orchidClasses").dependsOn(generateUmlDiagramsInSvg)
