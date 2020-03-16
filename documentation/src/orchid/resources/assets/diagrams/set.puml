@@ -1,3 +1,4 @@
+@startuml
 left to right direction
 skinparam shadowing false
 
@@ -30,3 +31,5 @@ Atom <|-- Empty
 Empty <|-- EmptySet
 
 Set <|-- EmptySet
+
+@enduml

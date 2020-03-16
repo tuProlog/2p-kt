@@ -1,3 +1,4 @@
+@startuml
 left to right direction
 skinparam shadowing false
 
@@ -16,3 +17,4 @@ interface Fact
 Struct <|-- Clause
 Clause <|-- Rule
 Rule <|-- Fact
+@enduml

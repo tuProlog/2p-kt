@@ -64,3 +64,4 @@ assets:
       - 'png'
   sourceDirs:
     - 'assets/media'
+    - 'assets/diagrams'

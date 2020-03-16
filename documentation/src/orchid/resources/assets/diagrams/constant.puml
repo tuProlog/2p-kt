@@ -1,3 +1,4 @@
+@startuml
 left to right direction
 skinparam shadowing false
 
@@ -14,3 +15,5 @@ interface Constant {
 }
 
 Term <|-- Constant
+
+@enduml

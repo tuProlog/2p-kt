@@ -1,3 +1,4 @@
+@startuml
 left to right direction
 skinparam shadowing false
 
@@ -45,3 +46,4 @@ Constant <|-- Numeric
 
 Numeric <|-- Real
 Numeric <|-- Integer
+@enduml

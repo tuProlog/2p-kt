@@ -2,12 +2,14 @@ plugins {
     id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
+configurations {
+    val orchidRuntimeOnly by getting {
+        resolutionStrategy {
+            force(Libs.plantuml)
+        }
     }
-    dependencies {
-        classpath(Libs.plantuml)
+    create("plantuml") {
+        isTransitive = true
     }
 }
 
@@ -17,6 +19,10 @@ dependencies {
     orchidRuntimeOnly(Libs.orchidplugindocs)
     orchidRuntimeOnly(Libs.orchidasciidoc)
     orchidRuntimeOnly(Libs.orchiddiagrams)
+
+    val plantuml by configurations.getting
+
+    plantuml(Libs.plantuml)
 }
 
 repositories {
@@ -35,10 +41,21 @@ orchid {
     args = listOf("--experimentalSourceDoc")
 }
 
-configurations {
-    val orchidRuntimeOnly by getting {
-        resolutionStrategy {
-            force(Libs.plantuml)
-        }
+fun File.changeExtension(ext: String): File {
+    return File(parentFile, "$nameWithoutExtension.$ext")
+}
+
+val plantUmlFiles = fileTree("$projectDir/src").also { it.include("**/*.puml").include("**/*.uml") }
+
+
+if (!plantUmlFiles.isEmpty) {
+    val generateUmlDiagramsInSvg by tasks.creating(JavaExec::class) {
+        inputs.files(plantUmlFiles)
+        outputs.files(plantUmlFiles.map { it.changeExtension("svg") })
+        classpath = configurations.getByName("plantuml")
+        main = "net.sourceforge.plantuml.Run"
+        args("-tsvg")
+        args(plantUmlFiles.map { it.absolutePath })
     }
+    tasks.getByName("orchidBuild").dependsOn(generateUmlDiagramsInSvg)
 }

@@ -1,3 +1,4 @@
+@startuml
 skinparam shadowing false
 
 interface Scope {
@@ -48,3 +49,4 @@ interface Scope {
     + {static} <R> of(vararg vars: String, lambda: Scope.() -> R): R
     + {static} <R> of(vararg vars: Var, lambda: Scope.() -> R): R
 }
+@enduml

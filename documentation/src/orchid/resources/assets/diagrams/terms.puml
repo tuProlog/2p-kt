@@ -1,3 +1,4 @@
+@startuml
 skinparam shadowing false
 
 interface Term {
@@ -169,3 +170,4 @@ package clauses <<Rectangle>> {
     Rule <|-down- Fact
 
 }
+@enduml
