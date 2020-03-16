@@ -17,8 +17,8 @@ dependencies {
     orchidRuntimeOnly(Libs.orchiddocs)
     orchidRuntimeOnly(Libs.orchidkotlindoc)
     orchidRuntimeOnly(Libs.orchidplugindocs)
-    orchidRuntimeOnly(Libs.orchidasciidoc)
-    orchidRuntimeOnly(Libs.orchiddiagrams)
+//    orchidRuntimeOnly(Libs.orchidasciidoc)
+//    orchidRuntimeOnly(Libs.orchiddiagrams)
 
     val plantuml by configurations.getting
 
@@ -57,5 +57,5 @@ if (!plantUmlFiles.isEmpty) {
         args("-tsvg")
         args(plantUmlFiles.map { it.absolutePath })
     }
-    tasks.getByName("orchidBuild").dependsOn(generateUmlDiagramsInSvg)
+    tasks.getByName("orchidClasses").dependsOn(generateUmlDiagramsInSvg)
 }

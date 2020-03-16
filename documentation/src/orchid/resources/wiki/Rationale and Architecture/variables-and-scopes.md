@@ -51,7 +51,7 @@ To simplify the creation of complex terms, the 2P-Kt `core` library comprehends 
 of [`Scope`]({{ site.baseUrl }}/kotlindoc/it/unibo/tuprolog/core/scope/).
 Briefly speaking, from the OOP perspective, objects of type `Scope`s are _factories_ of `Term`s.
 The following diagram summarises the main methods exposed by the `Scope` interface.
-{{ load('assets/diagrams/scope.puml') | raw }}
+![scope class diagram]({{ site.baseUrl }}/assets/diagrams/scope.svg)
 
 So, for instance, the `member/2` predicate above could be more easily instantiated as follows:
 ```kotlin
