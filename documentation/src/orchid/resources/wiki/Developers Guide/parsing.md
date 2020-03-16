@@ -20,90 +20,18 @@ In particular, `parser-jvm` is a Kotlin/JVM project, whereas `parser-js` is a Ko
 They are to be considered _implementation_ modules and they must only depend on their respective ANTLR runtime.
 Accordingly, they must NOT depend on any other module in 2P-Kt.
 
+> TODO documentation below must be rewritten
 
-## Work
+### ANTLR Grammar for Prolog
 
-**Understanding main ANTLR features:**
-- Declaring a grammar -> grammar GrammarName
-- Strings/Identifiers match -> str : 'hello' ID; ID : [a-z]+; WS : [ \t\r\n]+ -> skip
-    in this example, we define a match with a keyword 'hello' followed by ad ID, this ID is a string
-    composed by lowercase letters and whitespaces, tab and new line are ignored.
-- Grammar with embedded actions: we can use the `@header` and `@members` annotation to extend functionality to generated grammar.
-    Remember that only the code written in target language goes into these annotations.
-    For example:
-    - @header{ import java.util.HashMap }
-    - @members{ HashMap meme = new HashMap(); }
-    
-    Near grammar rules we can add code in the specific target language to extend functionality.
-    
-   `statement : expr NEWLINE { System.out.println($expr.value);}
-    | ID '=' expr NEWLINE { mem.put($ID.text, new Integer($expr.value)); }`
-- We can also define additionally options, into the `option` statement, like:
-    - superClass: class that the generated class have to extend
-    - tokenVocab: token vocabulary for the parser
+The main ANTLR grammar feature is the `expression` rule. 
+The purpose is to parse an expression, like `3 + 4 * 5`, with right operators' associativity and priorities: how to do that? 
+Prolog has an internal representation of priority, that is a number in the range between 0 and 1200 
+(**0 identifies the highest priority**). 
 
-
-**Understanding Kotlin DSL for Gradle:**
-
-Kotlin general purpose features are optimal to develop every application type, but exists a lot of features 
-that allow to use Kotlin as a dsl (domain specific language):
-- Lambda Expression: (parameters list) -> return type, for example (String) -> Unit
-- High-Order functions: we can use functions like all other data value in the language:
-   
-        class Test{
-            fun setOne(one: String){//code}
-            fun setTwo(two: String){//code}
-        }
-    
-        fun test(action: (Test) -> Unit) : Test {
-            val t = Test()
-            action(t)
-            return t   
-        }
-    
-        test{
-            it.setOne("one")
-            it.setTwo("two")
-        }
-    
-    test function accept as parameter a lambda (Test) -> Unit and returns an instance of class Test.
-    dsl languages try to eliminate useless repetition: in fact, this code could be optimize eliminating 'it' reference:
-    
-        test{
-            setOne(..)
-            setTwo(..)
-        }
-    
-    If we replace  test with dependencies, setOne with compile and setTwo with testCompile,
-    we got a gradle dsl:
-    
-        dependencies{
-            compile("something")
-            testCompile("something")
-        }
-- Lambda expression with receiver
-The main Kotlin dsl features for Gradle are:
-- apply
-- dependencies
-- configurations
-- task (several types)
-- file
-An example:
-
-        dependencies{
-            api("org.antlr", "antlr4-runtime", Versions.org_antlr)
-            implementation(kotlin("stdlib-jdk8"))
-            testImplementation(kotlin("test-junit"))
-        }
-
-
-#### Grammar
-
-The main ANTLR grammar feature is the `expression` rule. The purpose is to parse an expression, like `3 + 4 * 5`,
-with right operators' associativity and priorities: how to do that? Prolog has an internal representation of priority,
-that is a number range between 0 and 1200 (**0 identifies the highest priority**). When we have an expression, we have to understand
-which of the following situations we are facing: XFY, YFX, YF, XF, XFX, FX, FY. The action we have to do is different depending on these situations.
-If we have the YFX, we need to memorize the left term, then parse the operator, making sure it's not part of disabled operators (for example, 
+When we have an expression, we have to understand which of the following situations we are facing: `XFY`, `YFX`, `YF`, `XF`, `XFX`, `FX`, `FY`. 
+The action we have to do is different depending on these situations.
+If we have the `YFX`, we need to memorize the left term, then parse the operator, making sure it's not part of disabled operators (for example, 
 if we have a List with elements separated by ',', than ',' must be a disabled operator, because in this context identifies the separation between elements),
 and memorize right expressions (can be more than one). In this case, right expressions have higher priority, so we have to parse the expression
 with a lower priority level, as aforementioned. Below a parser expression extract of grammar.
@@ -132,94 +60,76 @@ Then we have a higher priority level (so lower priority) `left - expression` and
 we memorize expression that go back in priority level. So the parse tree of this expression becomes:
 
     .
-
     +-- EOF
-
     +-- singletonExpr
-
         |   +-- "3"
-
         |   +-- "+"
-
         +-- expr
-
             | +-- "4"
-            
             | +-- "*"
-             
             | +-- "5"
-            
             +-- outer
-                
                 | +-- "-"
-                
                 | +-- "1"
        
 
 We can see how the go-back expression is transformed into an "outer" branch, which
-contains all the original information. Nevertheless this tree is not the right parse tree, in fact the "-" operation must be the first 
-appearing. The right tree corresponding is '-'('+'(3, '*'(4, 5)), 1). To do this, all outer branches are rotated in the order in which they appear.
+contains all the original information. Nevertheless this tree is not the right parse tree, in fact the `?` operation must be the first 
+appearing. The right tree corresponding is `'-'('+'(3, '*'(4, 5)), 1)`. 
+To do this, all outer branches are rotated in the order in which they appear.
 The steps are:
-- We build the tree until outer branch ('+'(3, '*'(4, 5))
-- We parse the outer branch '-'(X,1)
-- we substitute the previous expression to X and we obtain the tree '-'('+'(3, '*'(4, 5)), 1).
+- We build the tree until outer branch `('+'(3, '*'(4, 5))`
+- We parse the outer branch `'-'(X,1)`
+- we substitute the previous expression to X and we obtain the tree `'-'('+'(3, '*'(4, 5)), 1)`.
 Same steps for more than one outer.
 
 
 ### `parser-jvm`
 
-JVM specific module that aim to generate a jvm specific parser with ANTLR. It depends only on antlr4 features and jdk libraries. **See "Rationale and Architecture/parsing.md"**
+JVM specific module that aim to generate a jvm specific parser with ANTLR. It depends only on antlr4 features and jdk libraries. 
 
 When ANTLR generates the grammar in jvm specific target, it also generates:
-- PrologLexer.java: it contains all lexer support methods, token recognition and other minor features
-- PrologParser.java: it contains the parser main features. There are also a lot of `Context` classes, corresponding to every node/rule
+- `PrologLexer.java`: it contains all lexer support methods, token recognition and other minor features
+- `PrologParser.java`: it contains the parser main features. There are also a lot of `Context` classes, corresponding to every node/rule
     found in the grammar.
-- PrologParserBaseVisitor: it extends an interface (PrologParserVisitor) and it contains semantic actions to do in every node and every context.
-    It must be extended to add right semantic actions.
-- PrologParserBaseListener: it extends an interface (PrologParserListener) and it contains all semantic actions for specific events
-    that happen during the parsing (enter/exit Rule ecc). It's like an event handler.
+- `PrologParserBaseVisitor`: it extends an interface (PrologParserVisitor) and it contains semantic actions to do in every node and every context.
+It must be extended to add right semantic actions.
+- `PrologParserBaseListener`: it extends an interface (PrologParserListener) and it contains all semantic actions for specific events
+that happen during the parsing (enter/exit Rule ecc). It's like an event handler.
+
 To implement semantic in the right way, it was necessary to define custom methods and add them to parser features.
-To do that, as introduced into ANTLR paragraph, we created a class (DynamicLexer/Parser for Lexer/Parser) that implements dynamic features
-Lexer/Parser need to have, for example into DynamicLexer we memorize found operators and we define support methods like `isOperator` and `addOperators`.
+To do that, as introduced into ANTLR paragraph, we created a class (`DynamicLexer`/`Parser` for `Lexer`/`Parser`) that implements dynamic features
+Lexer/Parser need to have, for example into `DynamicLexer` we memorize found operators and we define support methods like `isOperator` and `addOperators`.
 In DynamicParser we must track also operator's associativity and priority, so we need a lot of support methods to understand how to handle
-every cases. For example, with ` option { superClass = DynamicParser}` into PrologParser.g4 we specify that generated PrologParser.java extends DynamicParser.
-
-
+every cases. For example, with `option { superClass = DynamicParser}` into PrologParser.g4 we specify that generated `PrologParser.java` extends DynamicParser.
 
 ### `parser-js`
 
-JS specific module that aim to generate a js specific parser with ANTLR. It depends only on antlr4 and js features. **See "Rationale and Architecture/parsing.md"**
+JS specific module that aim to generate a js specific parser with ANTLR. It depends only on antlr4 and js features. 
 
-To create dynamic behavior to PrologLexer, in `parser-jvm`, as mentioned above, it was created a DynamicLexer.java, extended by PrologLexer.java 
+To create dynamic behavior to PrologLexer, in `parser-jvm`, as mentioned above, it was created a `DynamicLexer.java`, extended by `PrologLexer.java` 
 (thanks to superClass ANTLR option). Unfortunately, in js class concept does not exist.
 JavaScript is a prototype-based language, meaning object properties and methods can be shared through generalized objects that have the ability to be cloned and extended.
 This is known as prototype inheritance and differs from class inheritance. So, to affront this problem, the solution is:
-- Create a DynamicLexer.js, that contains a constructor (DynamicLexer) and implements all behavior that must be added to PrologLexer
-- Use `@headers` (PrologLexer.g4) annotation to "import" this constructor into the generated PrologLexer (@headers{var DynamicLexer = require("./DynamicLexer").DynamicLexer})
-- Use `@members` (PrologLexer.g4) annotation to create the prototype inheritance between PrologLexer and DynamicLexer using call method:
+- Create a `DynamicLexer.js`, that contains a constructor (DynamicLexer) and implements all behavior that must be added to `PrologLexer`
+- Use `@headers` (`PrologLexer.g4`) annotation to "import" this constructor into the generated PrologLexer (`@headers{var DynamicLexer = require("./DynamicLexer").DynamicLexer}`)
+- Use `@members` (`PrologLexer.g4`) annotation to create the prototype inheritance between PrologLexer and DynamicLexer using call method:
     `@members {DynamicLexer.call(this);}`. This add involve that this code will be injected into PrologLexer constructor.
-Now, all functionality defined into DynamicLexer can be used from PrologLexer (the same of a class extension) The same procedure was use to develop PrologParser (with DynamicParser).
+Now, all functionality defined into `DynamicLexer` can be used from `PrologLexer` (the same of a class extension) The same procedure was use to develop `PrologParser` (with `DynamicParser`).
 After that, js specific tests have been implemented to ensure proper functionality (necessity to copy/paste js test files into right build directory)
 Despite in jvm module this was enough, in js module is missing an important feature: how to map from specific js to common?
 Kotlin helps us with external class mapping in several simple steps:
 - Exports necessarily js modules (for example, `exports.Associativity = Associativity;`)
 - Create Kotlin class with header `@file:JsModule("./Associativity")` (followed by `@file:JsNonModule`)
-- Create class/val/fun with same js signature and with "external" keyword (for example, external enum class Associativity )
-Now this class can be used in Kotlin common modules. It was necessarily to create PrologParser.kt, PrologLexer.kt, Associativity.kt, StringType.kt,
-PrologParserVisitor.kt and most of antlr4 sources file.
-
-JavaScript and Kotlin features:
-- JavaScript Prototype inheritance: how to simulate a class extension and how to manage js objects
-- JavaScript exports module: how to export js module
-- Kotlin/JavaScript support: how to use Koltin to interoperate with JavaScript (external:Kotlin, exports:JavaScript)
-- Functional paradigm: functional world features
-
+- Create class/val/fun with same js signature and with "external" keyword (for example, external enum class `Associativity`)
+Now this class can be used in Kotlin common modules. It was necessarily to create `PrologParser.kt`, `PrologLexer.kt`, `Associativity.kt`, `StringType.kt`,
+`PrologParserVisitor.kt` and most of antlr4 sources file.
 
 ### `parser-core`
 
 Bridge-like module that aim to link platform specific world to common world. **See "Rationale and Architecture/parsing.md"**
 
-It was necessary to define common methods in commonMain: implemented interface TermParser (with parse method extension in 
+It was necessary to define common methods in `commonMain`: implemented interface `TermParser` (with parse method extension in 
 main project classes, and also in String/Integer Kotlin classes, to simplify parsing). This interface had to be implemented in both platform specific 
 submodules (jvm and js). So, expect methods have been defined (that needed an actual match in both jvm and js submodules) to simplify TermParser
 creation. After that, common tests have been prepared, with aim to run in both jvm and js submodules. To prepare those, as `parser-core/common`
@@ -227,39 +137,19 @@ does not depend on any platform, there have benn complications: JUnit cannot be 
 have been developed, one to simplify the assertion between stringToBeParser and expected term, the other to introduce an exhausting test set (written
 in Prolog dsl, developed in Kotlin in dslX modules).
 
-
-Using of Prolog dsl: how to use it, for example  `"PrologActualString" to prolog { "expected" }`
-We have to include dsl.unify.prolog, that offers an interface with utilities methods to simply use Prolog concepts in Kotlin.
-We can convert Kotlin objects into Prolog elements in an easy way:
-- "a" and "B" are automatically translated in Atom and Var
-- `"a :- b"` can be translated as `"a" impliedBy "b"`
-- `" a; B :- 1, 3.1; '2'"` can be translated as `"a" or "B" impliedBy ((1 and 3.1) or "2")`. `or`, `and`, `impliedBy` are prolog dsl keywords
-    and those are generated by method extensions and infix Kotlin keyword (we can define new infix operator). For example:  `infix fun Any.or(other: Any): Struct = structOf(";", this.toTerm(), other.toTerm())`
-- Struct element, like "f","(" "x" ")", is convert to Prolog struct "f(x)"
-- Primitive operators, like "+" or "-", are automatically converted in Prolog operator if the first element is preventively converted to Prolog term. 
-
 ### `parser-core/jvm`
 
 Platform specific submodule for jvm.
-Considering `parser-jvm` module, it was necessarily to extend PrologParserBaseVisitor, PrologParserBaseListener and simplify Parser creation:
-- Implemented PrologExpressionVisitor that extends PrologParserBaseVisitor:  new structures of the core project, like List or Scope (that includes memory management)
-- Added PrologParserFactory interface in `jvmMain` with parse methods and Singleton Pattern
-- Implemented PrologParserFactory with a Singleton Impl and with Kotlin's methods and structures: this class is very useful to
+Considering `parser-jvm` module, it was necessarily to extend `PrologParserBaseVisitor`, `PrologParserBaseListener` and simplify Parser creation:
+- Implemented `PrologExpressionVisitor` that extends `PrologParserBaseVisitor`:  new structures of the core project, like List or Scope (that includes memory management)
+- Added `PrologParserFactory` interface in `jvmMain` with parse methods and Singleton Pattern
+- Implemented `PrologParserFactory` with a Singleton Impl and with Kotlin's methods and structures: this class is very useful to
     simplify the initialization of parsing
-- Implemented DynamicOpListener that extends PrologParserBaseListener: it adds exitClause functionality
+- Implemented `DynamicOpListener` that extends `PrologParserBaseListener`: it adds exitClause functionality
 - In fact, now, to trigger the parsing (in TermParserImpl) we just need to do:
-    `PrologParserFactory().parseExpression(input, operators).accept(PrologExpressionVisitor())`
-
-Kotlin features:
-- How to develop and use a Singleton object (using "object" keyword)
-- Define an invoke operator to simplify objects creation (for example in ParserPrologFactory -> invoke() PrologParserFactory = PrologParserFactoryImpl)
-  in fact this operator method allows developers to create a new PrologParserFactory by simply writing `PrologParserFactory()`
-- Non-verbose Kotlin syntax, for example function with an expression body and inferred return type could be: `fun add(a: Int, b: Int) = a + b`
-- Everything is an expression: it simplify every methods based on if/else statement: `fun max(a: Int,b: Int) if(a>b) a else b`
-- "when" Control flow: it is a substitution of the old-style "switch" and simplifies it: for example, a 21 lines Java if/else method has become in Kotlin only 6 lines
-- Kotlin Multi-platform: awareness of use "expect/actual" multi-platform keywords. 
-- Use of "Scope" interface to optimize stateful features
-
+```
+PrologParserFactory().parseExpression(input, operators).accept(PrologExpressionVisitor())
+```
 
 ### `parser-core/js`
 
@@ -267,15 +157,15 @@ Platform specific submodule for js.
 Considering `parser-js` module, it was necessarily to extend PrologParserVisitor.kt to develop expect semantic. Then, like
 `parser-core/jvm`, a PrologParserFactory has been developed to simplify Parser creation and parsing.
 As in `parser-js` module the antlr grammar does not create listener, DynamicOpListener has not been developed.
-- PrologVisitor: extends PrologParserVisitor<Term> and implements visit logic for each node.
-- PrologParserFactory with a Singleton Impl and with Kotlin's methods and structures: to simplify the initialization of parsing
+- `PrologVisitor`: extends `PrologParserVisitor<Term>` and implements visit logic for each node.
+- `PrologParserFactory` with a Singleton Impl and with Kotlin's methods and structures: to simplify the initialization of parsing
 Now to trigger the parsing (in TermParserImpl) we just need to do:
-    `PrologParserFactory().parseExpression(input,operators).accept(PrologVisitor())}`
+```
+PrologParserFactory().parseExpression(input,operators).accept(PrologVisitor())}
+```
 
 Main issues:
 - JS specific code into file.g4 does not consider ';' character. Probably an ANTLR4 issue. The solution is to use double ';;' instead.
 JS specific test from commonTest gave problems:
 - No way to add bare js sources in build folder, actually a Gradle issue. So to launch tests it is necessarily to copy/paste
-    every time js sources into build folder. [fixed]
-- Assertion error: although asserts give same "expected" and "actual" value, assertions fail. The issue's cause has been probably identified
-    in JavaScript Number management. [fixed]
+    every time js sources into build folder. \[fixed\]
