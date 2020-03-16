@@ -21,9 +21,7 @@ namely `parser-theory`.
 
 A complete overview about modules and their dependencies is provided by the following diagram: 
 
-<!--div style="width: 100%; overflow: auto; background-color:LightGray" -->
 ![project-map class diagram]({{ site.baseUrl }}/assets/diagrams/project-map.svg)
-<!--div-->
 
 All modules are currently available as pre-compiled Jars, through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) 
 for JVM and Kotlin users. 
