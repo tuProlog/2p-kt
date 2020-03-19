@@ -11,23 +11,25 @@ internal abstract class AbstractTermFormatter : TermFormatter {
 
     override fun visitStruct(term: Struct): String =
         (if (term.isFunctorWellFormed) term.functor else Struct.escapeFunctor(term.functor)) +
-                term.argsSequence.map { it.accept(this) }.joinToString(", ", "(", ")")
+                term.argsSequence.map { it.accept(itemFormatter()) }.joinToString(", ", "(", ")")
 
     override fun visitSet(term: Set): String =
         term.unfoldedList.joinToString(", ", "{", "}") {
-            it.accept(this)
+            it.accept(itemFormatter())
         }
+
+    protected open fun itemFormatter(): TermFormatter = this
 
     override fun visitCons(term: Cons): String =
         with(term.unfoldedList) {
             val last = last()
             val base = subList(0, lastIndex).joinToString(", ", "[", "") {
-                it.accept(this@AbstractTermFormatter)
+                it.accept(itemFormatter())
             }
             val lastString = if (last is EmptyList) {
                 "]"
             } else {
-                " | ${last.accept(this@AbstractTermFormatter)}]"
+                " | ${last.accept(itemFormatter())}]"
             }
             return base + lastString
         }

@@ -1,6 +1,8 @@
+@file:JvmName("Echo")
+package it.unibo.tuprolog.core.parsing
+
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
-import it.unibo.tuprolog.core.parsing.TermParser
 
 fun main(args: Array<String>) {
     val parser = TermParser.withStandardOperators

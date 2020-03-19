@@ -2,15 +2,38 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.operators.*
+import kotlin.collections.Set
 
 internal class TermFormatterWithPrettyExpressions(
     private val priority: Int,
     private val delegate: TermFormatter,
-    private val operators: OperatorsIndex
+    private val operators: OperatorsIndex,
+    private val forceParentheses: Set<String>
 ) : AbstractTermFormatter() {
 
-    public constructor(delegate: TermFormatter, operators: OperatorSet)
-        : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex())
+    companion object {
+        private data class OperatorDecorations(val prefix: String, val suffix: String)
+
+        private val defaultDecorations = OperatorDecorations(" ", " ")
+
+        private val adHocDecorations: Map<String, OperatorDecorations> = mapOf(
+            "," to OperatorDecorations("", " "),
+            ";" to OperatorDecorations("", " "),
+            "\\+" to OperatorDecorations("", " ")
+        )
+
+        private val String.decorations: OperatorDecorations
+            get() = adHocDecorations[this] ?: defaultDecorations
+
+        private val String.prefix: String
+            get() = decorations.prefix
+
+        private val String.suffix: String
+            get() = decorations.suffix
+    }
+
+    constructor(delegate: TermFormatter, operators: OperatorSet)
+        : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet())
 
     override fun visitVar(term: Var): String =
         term.accept(delegate)
@@ -38,64 +61,103 @@ internal class TermFormatterWithPrettyExpressions(
         }
     }
 
+    private fun addingParenthesesIfForced(struct: Struct, stringGenerator: Struct.() -> String): String {
+        val string = struct.stringGenerator()
+        if (struct.functor in forceParentheses) {
+            return "($string)"
+        }
+        return string
+    }
+
     private fun visitExpression(struct: Struct): String {
         val prefix = struct.isPrefix()
         if (prefix != null) {
-            return "${struct.functor} ${struct[0].accept(subFormatter(prefix.second))}"
+            return addingParenthesesIfForced(struct) {
+                "$functor${functor.suffix}${args[0].accept(childFormatter(prefix.second))}"
+            }
         }
         val postfix = struct.isPostfix()
         if (postfix != null) {
-            return "${struct[0].accept(subFormatter(postfix.second))} ${struct.functor} "
+            return addingParenthesesIfForced(struct) {
+                "${args[0].accept(childFormatter(postfix.second))}${functor.prefix}$functor"
+            }
         }
         val infix = struct.isInfix()
         if (infix != null) {
-            return "${struct[0].accept(subFormatter(infix.second))} ${struct.functor} ${struct[1].accept(subFormatter(infix.second))}"
+            val childFormatter = childFormatter(infix.second, setOf(","))
+            return addingParenthesesIfForced(struct) {
+                "${args[0].accept(childFormatter(infix.second))}${functor.prefix}$functor${functor.suffix}${args[1].accept(childFormatter)}"
+            }
         }
         val lowerPriority = struct.isLowerPriority()
         if (lowerPriority != null) {
-            return "(${struct.accept(subFormatter(lowerPriority.second))})"
+            return "(${struct.accept(childFormatter(lowerPriority.second))})"
         }
         return super.visitStruct(struct)
     }
 
-    private fun subFormatter(priority: Int): TermFormatterWithPrettyExpressions =
-        TermFormatterWithPrettyExpressions(priority, delegate, operators)
+    override fun itemFormatter(): TermFormatter {
+        return childFormatter(forceParentheses = setOf(",", "|"))
+    }
 
+    private fun childFormatter(priority: Int = Int.MAX_VALUE, forceParentheses: Set<String> = emptySet()): TermFormatter =
+        TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses)
 
     private fun String.isOperator() = operators.containsKey(this)
 
-    private fun Struct.isPrefix(): Pair<Specifier, Int>? =
-        if (arity == 1) operators[functor]?.asSequence()
-            ?.filter { it.key.isPrefix && it.value <= priority }
+    private fun OperatorsIndex.getSpecifierAndIndex(
+        functor: String,
+        priorityPredicate: (Int) -> Boolean,
+        specifierPredicate: Specifier.() -> Boolean
+    ): Pair<Specifier, Int>? {
+        return operators[functor]?.asSequence()
+            ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
+            ?.filter { it.key.name !in forceParentheses }
             ?.map { it.toPair() }
             ?.firstOrNull()
-        else null
+    }
 
+    private fun OperatorsIndex.getSpecifierAndIndexWithNonGreaterPriority(
+        functor: String,
+        priority: Int,
+        specifierPredicate: Specifier.() -> Boolean
+    ): Pair<Specifier, Int>? {
+        return getSpecifierAndIndex(functor, { it <= priority }, specifierPredicate)
+    }
+
+    private fun OperatorsIndex.getSpecifierAndIndexWithGreaterPriority(
+        functor: String,
+        priority: Int,
+        specifierPredicate: Specifier.() -> Boolean
+    ): Pair<Specifier, Int>? {
+        return getSpecifierAndIndex(functor, { it > priority }, specifierPredicate)
+    }
+
+    private fun Struct.isPrefix(): Pair<Specifier, Int>? =
+        if (arity == 1) {
+            operators.getSpecifierAndIndexWithNonGreaterPriority(functor, priority) { isPrefix }
+        } else {
+            null
+        }
 
     private fun Struct.isPostfix(): Pair<Specifier, Int>? =
-        if (arity == 1) operators[functor]?.asSequence()
-            ?.filter { it.key.isPostfix && it.value <= priority }
-            ?.map { it.toPair() }
-            ?.firstOrNull()
-        else null
+        if (arity == 1) {
+            operators.getSpecifierAndIndexWithNonGreaterPriority(functor, priority) { isPostfix }
+        } else {
+            null
+        }
 
     private fun Struct.isInfix(): Pair<Specifier, Int>? =
-        if (arity == 2) operators[functor]?.asSequence()
-            ?.filter { it.key.isInfix && it.value <= priority }
-            ?.map { it.toPair() }
-            ?.firstOrNull()
-        else null
+        if (arity == 2) {
+            operators.getSpecifierAndIndexWithNonGreaterPriority(functor, priority) { isInfix }
+        } else {
+            null
+        }
 
     private fun Struct.isLowerPriority(): Pair<Specifier, Int>? =
         when (arity) {
-            1 -> operators[functor]?.asSequence()
-                ?.filter { (it.key.isPrefix || it.key.isPostfix) && it.value > priority }
-                ?.map { it.toPair() }
-                ?.firstOrNull()
-            2 -> operators[functor]?.asSequence()
-                ?.filter { it.key.isInfix && it.value > priority }
-                ?.map { it.toPair() }
-                ?.firstOrNull()
+            1 -> operators.getSpecifierAndIndexWithGreaterPriority(functor, priority) { isPrefix || isPostfix }
+            2 -> operators.getSpecifierAndIndexWithGreaterPriority(functor, priority) { isInfix }
             else -> null
         }
 
