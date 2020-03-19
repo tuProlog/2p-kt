@@ -1,0 +1,44 @@
+@startuml
+top to bottom direction
+skinparam shadowing false
+
+skinparam folder {
+  BackgroundColor<<api only>> olive
+  BackgroundColor<<root>> yellow
+  BackgroundColor<<impl. detail>> white
+}
+
+folder "core" <<root>>
+folder "unify"
+folder "theory"
+folder "dsl-core" as DC
+folder "dsl-unify" as DU
+folder "dsl-theory" as DT
+folder "solve" <<api only>>
+folder "solve-classic" as SC
+folder "solve-streams" as SS
+folder "parser-core" as PC
+folder "parser-jvm" <<impl. detail>> as PJVM
+folder "parser-js" <<impl. detail>> as PJS
+folder "parser-theory" as PT
+
+core <|-down- unify : depends\non
+unify <|-down- theory
+theory <|-down- solve
+solve <|-- SC
+solve <|-- SS
+
+DC -right-|> core
+DU -right-|> unify
+DU -up-|> DC
+DT -right-|> theory
+DT -up-|> DU
+DT <-- solve
+
+PC -left-|> core
+PT -left-|> theory
+PT -up-|> PC
+
+PC --> PJVM : uses
+PC -right-> PJS
+@enduml

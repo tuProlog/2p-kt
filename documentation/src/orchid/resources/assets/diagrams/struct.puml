@@ -1,3 +1,4 @@
+@startuml
 left to right direction
 skinparam shadowing false
 
@@ -19,3 +20,5 @@ interface Struct {
 }
 
 Term <|-- Struct
+
+@enduml

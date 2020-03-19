@@ -1,28 +1,44 @@
 # 2P in Kotlin
 
-![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/feature/doc/logo.png)
+![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/logo.png)
 
-tuProlog (2P henceforth) is a Kotlin multi-platform ecosystem for Symbolic Artificial Intelligence (AI).
-It consists of a number of incrementally inter-dependent modules aimed at supporting symbolic manipulation and reasoning in an extensible and flexible way.
+[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
+logic programming framework written in Java.
 
-Currently, 2P focuses on supporting knowledge representation and automatic reasoning through logic programming, by featuring:
+2P-Kt is a Kotlin-based and multi-platform reboot of 2P.
+It aims at becoming an open ecosystem for Symbolic Artificial Intelligence (AI).
+For this reason, 2P-Kt consists of a number of incrementally inter-dependent modules aimed at supporting symbolic 
+manipulation and reasoning in an extensible and flexible way.
 
-* a module for logic terms representation, namely `core`
+Currently, 2P-Kt focuses on supporting knowledge representation and automatic reasoning through logic programming, 
+by featuring:
 
-* a module for logic unification representation, namely `unify`
+* a module for logic terms representation, namely `core`,
 
-* a module for in-memory indexing and storing logic theories, namely `theory`
+* a module for logic unification representation, namely `unify`,
 
-* a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations (i.e. `solve-classic` and `solve-streams`)
+* a module for in-memory indexing and storing logic theories, namely `theory`,
+
+* a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations 
+(i.e. `solve-classic` and `solve-streams`),
     
-* a number of modules (i.e., the many `dsl-*` modules) supporting a Prolog-like, Domain Specific Language (DSL) aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment
-    
-However, the modular, unopinionated architecture of 2P is deliberately aimed at supporting and encouraging extensions towards other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
+* a number of modules (i.e., the many `dsl-*` modules) supporting a Prolog-like, Domain Specific Language (DSL) 
+aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment,
 
-Furthermore, 2P is developed as in _pure_, __multi-platform__ Kotlin project. 
+* two parsing modules: one aimed at parsing terms, namely `parser-core`, and the other aimed at parsing theories, 
+namely `parser-theory`.
+
+A complete overview about modules and their dependencies is provided by the following diagram: 
+![2P-Kt project map](https://www.plantuml.com/plantuml/svg/TP31Rjim38RlV0eYT-q1XY0ePfy6332GPATTD8k9jSgY8SenWdNlFbjQNSLhBpRuVp_vYtoIg4CSUmUH1uoCFpb6xj7OG6sqx46UhHzqq3rAfmrFrb_nefqG5EZ2pb30tu3uHRVFry2ZDnKx3lkz7YooT_V30TdP6xtd2SnnvdToZgVt3BOVt2Sq5BLrit7gR2Ju0_0lUDToe1s-3bhbqTlBVRUMiICEHMt4gTof1UlgGK-j6PmVG1wIoMabmkuspodNVMIgTLh4jgdnM6sWn42wbmoFAnnq40flRsogBVfrwtUulK-oVlt-xJ-pVEJTHfPRDYU0vGMuVr669wymtGO_ew61l94VdZraRRNaVaY_GaxRGlekebekKLP7WBf25UorY-hbW4ikrET2IJb96eUbhYkeJmNFYREs6ivBiLUluT3C0OukR_ERKnBAzcPjRwhSeGxffFFMev0aAMKc_GXFvCtOkxy0)
+    
+The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
+other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
+
+Furthermore, 2P-Kt is developed as in _pure_, __multi-platform__ Kotlin project. 
 This brings two immediate advantages:
 1. it virtually supports several platforms, there including JVM, JS, Android, and Native
-2. it consists of a very minimal and lightweight library, only leveraging on the Kotlin _common_ library, as it cannot commit to any particular platform standard library
+2. it consists of a very minimal and lightweight library, only leveraging on the Kotlin _common_ library, as it cannot 
+commit to any particular platform standard library
 
 <!-- 
 ## Overview
@@ -32,12 +48,12 @@ This brings two immediate advantages:
 
 ## Users
 
-2P modules are currently available through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) for JVM and Kotlin users. 
+2P-Kt modules are currently available through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) for JVM and Kotlin users. 
 NPM modules will be deployed soon, making 2P easily available for JS users as well.
 
 ### Gradle
 
-To import the 2P module named `2P_MODULE` (version `2P_VERSION`) into your Gradle-based project, you must setup your Maven repositories first:
+To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Gradle-based project, you must setup your Maven repositories first:
 ```kotlin
 // assumes Gradle's Kotlin DSL
 repositories {
@@ -56,7 +72,7 @@ Notice that dependencies of `2P_MODULE` should be automatically imported.
 
 ### Maven
 
-To import the 2P module named `2P_MODULE` (version `2P_VERSION`) into your Maven-based project, you must setup your Maven repositories first:
+To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Maven-based project, you must setup your Maven repositories first:
 ```xml
 <repositories>
     <repository>
@@ -77,15 +93,15 @@ Notice that dependencies of `2P_MODULE` should be automatically imported.
 
 ## Developers
 
-Working with the 2P codebase requires a number of tools to be installed and properly configured on your system:
-- JDK 8+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.3.60+
-- Gradle 6.0+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
+Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
+- JDK 12+ (please ensure the `JAVA_HOME` environment variable is properly) configured
+- Kotlin 1.3.70+
+- Gradle 6.2+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 
-### Develop 2P with IntelliJ Idea
+### Develop 2P-Kt with IntelliJ Idea
 
-To participate in the development of 2P, we suggest the [IntelliJ Idea](https://www.jetbrains.com/idea/download/) IDE. 
+To participate in the development of 2P-Kt, we suggest the [IntelliJ Idea](https://www.jetbrains.com/idea/download/) IDE. 
 The free, _Community_ version will be fine. 
 
 #### Recommended configuration

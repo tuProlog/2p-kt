@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+interface Struct
+
+interface Clause
+
+interface Rule
+
+interface Fact {
+  + body: Term **= Truth.of(true)**
+  + {static} of(head: Struct): Fact
+}
+
+Struct <|-- Clause
+Clause <|-- Rule
+Rule <|-- Fact
+@enduml

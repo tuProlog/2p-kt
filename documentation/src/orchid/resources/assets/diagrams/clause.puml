@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+interface Struct
+
+interface Clause {
+  + head: Struct?
+  + body: Term
+  + isWellFormed: Boolean
+  + {static} of(head: Struct?, **varargs** body: Term): Clause
+}
+interface Rule {
+  + head: Struct
+  + body: Term
+  + {static} of(head: Struct, **varargs** body: Term): Rule
+}
+interface Directive {
+  + head: Struct? **= null**
+  + {static} of(**varargs** body: Term): Directive
+}
+interface Fact {
+  + body: Term **= Truth.of(true)**
+  + {static} of(head: Struct): Fact
+}
+Struct <|-- Clause
+Clause <|-- Rule
+Clause <|-- Directive
+Rule <|-- Fact
+@enduml

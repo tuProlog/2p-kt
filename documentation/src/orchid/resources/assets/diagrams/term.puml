@@ -1,3 +1,4 @@
+@startuml
 skinparam shadowing false
 
 interface Term {
@@ -8,3 +9,4 @@ interface Term {
   + freshCopy(): Term
   + toString(): String
 }
+@enduml

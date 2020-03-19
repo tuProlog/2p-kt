@@ -1,3 +1,4 @@
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -11,11 +12,9 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val io_github_javaeden_orchid: String = "0.18.1"
+    const val io_github_javaeden_orchid: String = "0.19.0"
 
     const val org_jetbrains_kotlin: String = "1.3.70"
-
-    const val io_github_gciatto: String = "0.1.0"
 
     const val org_antlr: String = "4.8-1"
 
@@ -27,9 +26,13 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.19.0"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0" // available: "0.10.1"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"
+
+    const val plantuml: String = "1.2020.2" // available: "8059"
+
+    const val kt_math: String = "0.1.0"
 
     /**
      * Current version: "6.2.2"
@@ -45,4 +48,4 @@ object Versions {
  */
 val PluginDependenciesSpec.buildSrcVersions: PluginDependencySpec
     inline get() =
-        id("de.fayard.buildSrcVersions").version(Versions.de_fayard_buildsrcversions_gradle_plugin)
+            id("de.fayard.buildSrcVersions").version(Versions.de_fayard_buildsrcversions_gradle_plugin)

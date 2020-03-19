@@ -1,4 +1,4 @@
-image: pikalab/ci:jdk13oracle-git
+image: pikalab/ci:jdk13oracle-git-graphviz
 
 variables:
   GOPTS: "--no-daemon --console=plain"
@@ -69,4 +69,4 @@ pages:
       - public
   allow_failure: true
   only:
-    - /^(master)|(release)|(develop)$/
+    - /^(master)|(release)|(documentation)$/

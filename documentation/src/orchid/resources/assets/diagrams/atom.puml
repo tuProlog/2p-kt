@@ -1,3 +1,5 @@
+@startuml
+
 left to right direction
 skinparam shadowing false
 
@@ -31,3 +33,4 @@ Term <|-- Constant
 Constant <|-- Atom
 
 Struct <|-- Atom
+@enduml
