@@ -2,13 +2,14 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.TermFormatterUtils
 import it.unibo.tuprolog.core.testutils.TermFormatterUtils.assertProperlyFormats
+import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TermFormatterWithPrettyVariablesTest {
+class TermFormatterWithPrettyExpressionsTest {
     @Test
     fun formatTerms() {
-        TermFormatterUtils.expectedFormatsWithPrettyVariables.forEach {
-            TermFormatter.prettyVariables.assertProperlyFormats(it)
+        TermFormatterUtils.expectedFormatsWithPrettyExpressions.forEach {
+            TermFormatter.prettyExpressions().assertProperlyFormats(it)
         }
     }
 }

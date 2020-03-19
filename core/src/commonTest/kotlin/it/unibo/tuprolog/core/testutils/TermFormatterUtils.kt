@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Var
 import kotlin.test.assertEquals
 
-object TermFormatterWithPrettyVariablesUtils {
-    val expectedFormats: Map<Term, String> = mapOf(
+object TermFormatterUtils {
+    private val common: Map<Term, String> = mapOf(
         Atom.of("a") to "a",
         Atom.of("a b") to "'a b'",
         Integer.of(1) to "1",
@@ -26,9 +26,24 @@ object TermFormatterWithPrettyVariablesUtils {
         Var.of("A").let { List.from(items = listOf(it, it, it), last = it) } to "[A, A, A | A]",
         Set.empty() to EmptySet.FUNCTOR,
         Set.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A_1, A_2}",
-        Var.of("A").let { Set.of(it, it, it) } to "{A, A, A}",
+        Var.of("A").let { Set.of(it, it, it) } to "{A, A, A}"
+    )
+
+    val expectedFormatsWithPrettyVariables: Map<Term, String> = common + mapOf(
         Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "','(A, ','(A_1, A_2))",
         Var.of("A").let { Tuple.of(it, it, it) } to "','(A, ','(A, A))"
+    )
+
+    val expectedFormatsWithPrettyExpressions: Map<Term, String> = common + mapOf(
+        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "A, A_1, A_2",
+        Var.of("A").let { Tuple.of(it, it, it) } to "A, A, A",
+        Struct.of("+",
+            Struct.of("+", Atom.of("a"), Atom.of("b")),
+            Struct.of("+", Atom.of("c"), Atom.of("d"))) to "a + b + c + d",
+        Struct.of("+",
+            Struct.of("-", Atom.of("a"), Atom.of("b")),
+            Struct.of("-", Atom.of("c"), Atom.of("d"))) to "a - b + c - d"
+        // TODO add more cases
     )
 
     fun TermFormatter.assertProperlyFormats(entry: Map.Entry<Term, String>) {

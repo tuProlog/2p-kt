@@ -61,10 +61,23 @@ internal class TermFormatterWithPrettyExpressions(
         }
     }
 
+    private fun String.wrapWithinParentheses(): String = "($this)"
+
     private fun addingParenthesesIfForced(struct: Struct, stringGenerator: Struct.() -> String): String {
         val string = struct.stringGenerator()
         if (struct.functor in forceParentheses) {
-            return "($string)"
+            return string.wrapWithinParentheses()
+        }
+        return string
+    }
+
+    override fun visitTuple(term: Tuple): String {
+        val op = Tuple.FUNCTOR
+        val string = term.unfoldedSequence
+            .map { it.accept(itemFormatter()) }
+            .joinToString("${op.prefix}$op${op.suffix}")
+        if (op in forceParentheses) {
+            return string.wrapWithinParentheses()
         }
         return string
     }
@@ -91,7 +104,7 @@ internal class TermFormatterWithPrettyExpressions(
         }
         val lowerPriority = struct.isLowerPriority()
         if (lowerPriority != null) {
-            return "(${struct.accept(childFormatter(lowerPriority.second))})"
+            return struct.accept(childFormatter(lowerPriority.second)).wrapWithinParentheses()
         }
         return super.visitStruct(struct)
     }

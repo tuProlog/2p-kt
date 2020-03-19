@@ -38,5 +38,10 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
         fun prettyExpressions(prettyVariables: Boolean): TermFormatter {
             return prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
         }
+
+        @JvmStatic
+        fun prettyExpressions(): TermFormatter {
+            return prettyExpressions(true, OperatorSet.DEFAULT)
+        }
     }
 }
