@@ -13,15 +13,15 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
 
     companion object {
         @JvmStatic
-        val withPrettyVariables: TermFormatter
+        val prettyVariables: TermFormatter
             get() = TermFormatterWithPrettyVariables()
 
         @JvmStatic
-        val withPrologDefaults: TermFormatter
-            get() = withPrettyExpressions(OperatorSet.DEFAULT)
+        val prologDefaults: TermFormatter
+            get() = prettyExpressions(OperatorSet.DEFAULT)
 
         @JvmStatic
-        fun withPrettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter {
+        fun prettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter {
             return if (prettyVariables) {
                 TermFormatterWithPrettyExpressions(TermFormatterWithPrettyVariables(), operatorSet)
             } else {
@@ -30,13 +30,13 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
         }
 
         @JvmStatic
-        fun withPrettyExpressions(operatorSet: OperatorSet): TermFormatter {
-            return withPrettyExpressions(true, operatorSet)
+        fun prettyExpressions(operatorSet: OperatorSet): TermFormatter {
+            return prettyExpressions(true, operatorSet)
         }
 
         @JvmStatic
-        fun withPrettyExpressions(prettyVariables: Boolean): TermFormatter {
-            return withPrettyExpressions(prettyVariables, OperatorSet.DEFAULT)
+        fun prettyExpressions(prettyVariables: Boolean): TermFormatter {
+            return prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
         }
     }
 }
