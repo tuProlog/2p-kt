@@ -28,7 +28,7 @@ object PrologParserFactory {
                 line: Int,
                 charPositionInLine: Int,
                 msg: String,
-                e: RecognitionException
+                e: RecognitionException?
             ) {
                 if (recognizer is PrologParser) {
                     recognizer.removeParseListeners()

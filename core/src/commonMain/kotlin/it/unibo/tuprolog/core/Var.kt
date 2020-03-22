@@ -40,5 +40,17 @@ interface Var : Term {
 
         @JvmStatic
         fun anonymous(): Var = VarImpl(ANONYMOUS_VAR_NAME)
+
+        @JvmStatic
+        fun escapeName(string: String): String =
+            "`$string`"
+
+        @JvmStatic
+        fun escapeNameIfNecessary(string: String): String =
+            if (VAR_REGEX_PATTERN.matches(string)) {
+                string
+            } else {
+                escapeName(string)
+            }
     }
 }

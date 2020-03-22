@@ -42,8 +42,16 @@ interface Atom : Struct, Constant {
 
     companion object {
 
+        @JvmStatic
+        fun escapeValue(string: String): String =
+            Struct.escapeFunctor(string)
+
+        @JvmStatic
+        fun escapeValueIfNecessary(string: String): String =
+            Struct.escapeFunctorIfNecessary(string)
+
         @JvmField
-        val ATOM_REGEX_PATTERN = "^[a-z][a-zA-Z0-9_]*$".toRegex()
+        val ATOM_REGEX_PATTERN = Struct.STRUCT_FUNCTOR_REGEX_PATTERN
 
         @JvmStatic
         fun of(value: String): Atom =
