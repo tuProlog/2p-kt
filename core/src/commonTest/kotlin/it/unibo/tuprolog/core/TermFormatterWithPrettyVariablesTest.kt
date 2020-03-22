@@ -8,7 +8,7 @@ class TermFormatterWithPrettyVariablesTest {
     @Test
     fun formatTerms() {
         TermFormatterUtils.expectedFormatsWithPrettyVariables.forEach {
-            TermFormatter.prettyVariables.assertProperlyFormats(it)
+            TermFormatter.prettyVariables().assertProperlyFormats(it)
         }
     }
 }

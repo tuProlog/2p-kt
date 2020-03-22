@@ -11,6 +11,6 @@ fun main(args: Array<String>) {
         print("> ")
         val line = readLine()
         val term = parser.parseTerm(line!!)
-        println(term.format(TermFormatter.prologDefaults))
+        println(term.format(TermFormatter.prettyExpressions()))
     }
 }
