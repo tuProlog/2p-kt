@@ -16,34 +16,67 @@ object TermFormatterUtils {
         Var.anonymous() to Var.ANONYMOUS_VAR_NAME,
         Var.of("A b") to Var.escapeName("A b"),
         Struct.of("f", Var.of("A"), Atom.of("b")) to "f(A, b)",
-        Struct.of("f", Var.of("A"), Var.of("B"), Var.of("A")) to "f(A, B, A_1)",
+        Struct.of("f", Var.of("A"), Var.of("B"), Var.of("A")) to "f(A, B, A1)",
         Var.of("A").let { Struct.of("f", it, Var.of("B"), it) } to "f(A, B, A)",
         Struct.of("F", Atom.of("a"), Integer.of(1), Real.of("3.2")) to "'F'(a, 1, 3.2)",
         List.empty() to EmptyList.FUNCTOR,
-        List.of(Var.of("A"), Var.of("A"), Var.of("A")) to "[A, A_1, A_2]",
+        List.of(Var.of("A"), Var.of("A"), Var.of("A")) to "[A, A1, A2]",
         Var.of("A").let { List.of(it, it, it) } to "[A, A, A]",
-        List.from(items = listOf(Var.of("A"), Var.of("A"), Var.of("A")), last = Var.of("A")) to "[A, A_1, A_2 | A_3]",
+        List.from(items = listOf(Var.of("A"), Var.of("A"), Var.of("A")), last = Var.of("A")) to "[A, A1, A2 | A3]",
         Var.of("A").let { List.from(items = listOf(it, it, it), last = it) } to "[A, A, A | A]",
         Set.empty() to EmptySet.FUNCTOR,
-        Set.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A_1, A_2}",
+        Set.of(Var.of("A"), Var.of("A"), Var.of("A")) to "{A, A1, A2}",
         Var.of("A").let { Set.of(it, it, it) } to "{A, A, A}"
     )
 
     val expectedFormatsWithPrettyVariables: Map<Term, String> = common + mapOf(
-        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "','(A, ','(A_1, A_2))",
-        Var.of("A").let { Tuple.of(it, it, it) } to "','(A, ','(A, A))"
+        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "','(A, ','(A1, A2))",
+        Var.of("A").let { Tuple.of(it, it, it) } to "','(A, ','(A, A))",
+        Indicator.of(Var.of("A"), Var.of("B")) to "'/'(A, B)",
+        Rule.of(
+            Tuple.of(Var.of("A"), Var.of("B")),
+            Tuple.of(Var.of("C"), Var.of("D"))) to "':-'(','(A, B), ','(C, D))",
+        Fact.of(
+            Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
+        ) to "':-'(','(A, ','(B, ','(A1, B1))), true)",
+        Directive.of(
+            Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
+        ) to "':-'(','(A, ','(B, ','(A1, B1))))"
     )
 
     val expectedFormatsWithPrettyExpressions: Map<Term, String> = common + mapOf(
-        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "A, A_1, A_2",
+        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "A, A1, A2",
         Var.of("A").let { Tuple.of(it, it, it) } to "A, A, A",
+        Struct.of("f", Tuple.of(Var.of("A"), Var.of("B")), Var.of("A")) to "f((A, B), A1)",
+        Struct.of("f", Var.of("A"), Tuple.of(Var.of("B"), Var.of("A"))) to "f(A, (B, A1))",
+        Tuple.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "(A, B), A1, B1",
+        Set.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "{(A, B), A1, B1}",
+        List.of(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))) to "[(A, B), (A1, B1)]",
+        List.of(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")) to "[(A, B), A1, B1]",
+        List.from(
+            items = listOf(Tuple.of(Var.of("A"), Var.of("B")), Tuple.of(Var.of("A"), Var.of("B"))),
+            last = Tuple.of(Var.of("A"), Var.of("B"))
+        ) to "[(A, B), (A1, B1) | (A2, B2)]",
+        List.from(
+            items = listOf(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")),
+            last = Tuple.of(Var.of("A"), Var.of("B"))
+        ) to "[(A, B), A1, B1 | (A2, B2)]",
         Struct.of("+",
-            Struct.of("+", Atom.of("a"), Atom.of("b")),
-            Struct.of("+", Atom.of("c"), Atom.of("d"))) to "a + b + c + d",
+            Struct.of("+", Var.of("A"), Var.of("B")),
+            Struct.of("+", Var.of("C"), Var.of("D"))) to "A + B + C + D",
         Struct.of("+",
-            Struct.of("-", Atom.of("a"), Atom.of("b")),
-            Struct.of("-", Atom.of("c"), Atom.of("d"))) to "a - b + c - d"
-        // TODO add more cases
+            Struct.of("-", Var.of("A"), Var.of("B")),
+            Struct.of("-", Var.of("C"), Var.of("D"))) to "A - B + C - D",
+        Indicator.of(Var.of("A"), Var.of("B")) to "A / B",
+        Rule.of(
+            Tuple.of(Var.of("A"), Var.of("B")),
+            Tuple.of(Var.of("C"), Var.of("D"))) to "A, B :- C, D",
+        Fact.of(
+            Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
+        ) to "A, B, A1, B1 :- true",
+        Directive.of(
+            Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
+        ) to ":- A, B, A1, B1"
     )
 
     fun TermFormatter.assertProperlyFormats(entry: Map.Entry<Term, String>) {

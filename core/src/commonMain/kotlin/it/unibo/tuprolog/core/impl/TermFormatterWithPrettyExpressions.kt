@@ -97,9 +97,8 @@ internal class TermFormatterWithPrettyExpressions(
         }
         val infix = struct.isInfix()
         if (infix != null) {
-            val childFormatter = childFormatter(infix.second, setOf(","))
             return addingParenthesesIfForced(struct) {
-                "${args[0].accept(childFormatter(infix.second))}${functor.prefix}$functor${functor.suffix}${args[1].accept(childFormatter)}"
+                "${args[0].accept(childFormatter(infix.second))}${functor.prefix}$functor${functor.suffix}${args[1].accept(childFormatter(infix.second))}"
             }
         }
         val lowerPriority = struct.isLowerPriority()
@@ -110,10 +109,14 @@ internal class TermFormatterWithPrettyExpressions(
     }
 
     override fun itemFormatter(): TermFormatter {
-        return childFormatter(forceParentheses = setOf(",", "|"))
+        return childFormatter(Int.MAX_VALUE, setOf(",", "|"))
     }
 
-    private fun childFormatter(priority: Int = Int.MAX_VALUE, forceParentheses: Set<String> = emptySet()): TermFormatter =
+    override fun childFormatter(): TermFormatter {
+        return childFormatter(Int.MAX_VALUE, setOf(","))
+    }
+
+    private fun childFormatter(priority: Int, forceParentheses: Set<String> = emptySet()): TermFormatter =
         TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses)
 
     private fun String.isOperator() = operators.containsKey(this)
@@ -173,13 +176,4 @@ internal class TermFormatterWithPrettyExpressions(
             2 -> operators.getSpecifierAndIndexWithGreaterPriority(functor, priority) { isInfix }
             else -> null
         }
-
-    override fun visitRule(term: Rule): String =
-        visitExpression(term)
-
-    override fun visitFact(term: Fact): String =
-        term.head.accept(this)
-
-    override fun visitDirective(term: Directive): String =
-        visitExpression(term)
 }

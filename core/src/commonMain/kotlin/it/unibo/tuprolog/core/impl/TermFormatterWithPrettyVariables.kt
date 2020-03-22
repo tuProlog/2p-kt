@@ -26,7 +26,7 @@ internal class TermFormatterWithPrettyVariables : AbstractTermFormatter() {
                 formatVar(term, homonymous[term]!!)
             } else {
                 val homonymousCount = homonymous.size
-                val suffix = "_$homonymousCount"
+                val suffix = homonymousCount.toString()
                 homonymous[term] = suffix
                 formatVar(term, suffix)
             }

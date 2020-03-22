@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TupleImpl
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -62,9 +61,8 @@ interface Tuple : Struct {
         @JvmStatic
         fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
 
-        // TODO rename left -> first, right -> second
         @JvmStatic
-        fun of(left: Term, right: Term, others: Term): Tuple = of(listOf(left, right, others))
+        fun of(first: Term, second: Term, vararg others: Term): Tuple = of(listOf(first, second, *others))
 
         @JvmStatic
         fun of(terms: Iterable<Term>): Tuple = of(terms.toList())

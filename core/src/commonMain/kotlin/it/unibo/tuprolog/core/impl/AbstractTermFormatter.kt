@@ -11,7 +11,7 @@ internal abstract class AbstractTermFormatter : TermFormatter {
 
     override fun visitStruct(term: Struct): String =
         (if (term.isFunctorWellFormed) term.functor else Struct.escapeFunctor(term.functor)) +
-                term.argsSequence.map { it.accept(itemFormatter()) }.joinToString(", ", "(", ")")
+                term.argsSequence.map { it.accept(childFormatter()) }.joinToString(", ", "(", ")")
 
     override fun visitSet(term: Set): String =
         term.unfoldedList.joinToString(", ", "{", "}") {
@@ -19,6 +19,8 @@ internal abstract class AbstractTermFormatter : TermFormatter {
         }
 
     protected open fun itemFormatter(): TermFormatter = this
+
+    protected open fun childFormatter(): TermFormatter = this
 
     override fun visitCons(term: Cons): String =
         with(term.unfoldedList) {
@@ -38,11 +40,14 @@ internal abstract class AbstractTermFormatter : TermFormatter {
         visitStruct(term)
 
     override fun visitRule(term: Rule): String =
-        "${term.head.accept(this)} :- ${term.body.accept(this)}"
+        visitStruct(term)
 
     override fun visitFact(term: Fact): String =
-        "${term.head.accept(this)} :- true"
+        visitStruct(term)
 
     override fun visitDirective(term: Directive): String =
-        ":- ${term.body.accept(this)}"
+        visitStruct(term)
+
+    override fun visitIndicator(term: Indicator): String =
+        visitStruct(term)
 }
