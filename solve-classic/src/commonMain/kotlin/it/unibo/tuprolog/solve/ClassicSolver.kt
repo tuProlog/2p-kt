@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
@@ -16,15 +17,25 @@ fun Solver.Companion.classic(
     dynamicKB: ClauseDatabase = ClauseDatabase.empty()
 ) = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
-data class ClassicSolver(
-    override val libraries: Libraries = Libraries(),
-    /** Enabled flags */
-    override val flags: PrologFlags = emptyMap(),
-    /** Static Knowledge-base, that is a KB that *can't* change executing goals */
-    override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
-    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty()
+class ClassicSolver(
+    libraries: Libraries = Libraries(),
+    flags: PrologFlags = emptyMap(),
+    staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    inputChannels: PrologInputChannels<String> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: PrologOutputChannels<String> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
+
+    private var state: State = StateInit(
+        ExecutionContextImpl(
+            libraries = libraries,
+            flags = flags,
+            staticKB = staticKB,
+            dynamicKB = dynamicKB,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+    )
 
     private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
         return filter { _, term -> term !is Var }
@@ -37,16 +48,17 @@ data class ClassicSolver(
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
         val initialContext = ExecutionContextImpl(
             query = goal,
-            procedure = null,
             libraries = libraries,
             flags = flags,
             staticKB = staticKB,
             dynamicKB = dynamicKB,
-            startTime = currentTimeInstant(),
-            maxDuration = maxDuration
+            inputChannels = inputChannels,
+            outputChannels = outputChannels,
+            maxDuration = maxDuration,
+            startTime = currentTimeInstant()
         )
 
-        var state: State = StateInit(initialContext)
+        state = StateInit(initialContext)
         var step: Long = 0
 
         while (true) {
@@ -55,16 +67,34 @@ data class ClassicSolver(
             step += 1
 
             if (state is EndState) {
+                val endState = state as EndState
                 yield(
-                    when (val sol = state.solution) {
+                    when (val sol = endState.solution) {
                         is Solution.Yes -> sol.cleanUp()
                         else -> sol
                     }
                 )
 
-                if (!state.hasOpenAlternatives) break
+                if (!endState.hasOpenAlternatives) break
             }
         }
     }
 
+    override val libraries: Libraries
+        get() = state.context.libraries
+
+    override val flags: PrologFlags
+        get() = state.context.flags
+
+    override val staticKB: ClauseDatabase
+        get() = state.context.staticKB
+
+    override val dynamicKB: ClauseDatabase
+        get() = state.context.dynamicKB
+
+    override val inputChannels: PrologInputChannels<String>
+        get() = state.context.inputChannels
+
+    override val outputChannels: PrologOutputChannels<String>
+        get() = state.context.outputChannels
 }

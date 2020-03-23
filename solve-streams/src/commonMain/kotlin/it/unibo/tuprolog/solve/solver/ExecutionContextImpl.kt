@@ -2,11 +2,10 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.PrologFlags
-import it.unibo.tuprolog.solve.SolverStrategies
-import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -19,6 +18,8 @@ internal data class ExecutionContextImpl(
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val inputChannels: Map<String, InputChannel<String>> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: Map<String, OutputChannel<String>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,

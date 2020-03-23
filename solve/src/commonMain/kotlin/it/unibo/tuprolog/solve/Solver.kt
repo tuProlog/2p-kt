@@ -10,22 +10,10 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-interface Solver {
+interface Solver : ExecutionContextAware {
 
     /** Solves the provided goal, returning lazily initialized sequence of solutions, optionally limiting computation [maxDuration] */
     fun solve(goal: Struct, maxDuration: TimeDuration = TimeDuration.MAX_VALUE): Sequence<Solution>
-
-    /** Loaded libraries */
-    val libraries: Libraries
-
-    /** Enabled flags */
-    val flags: PrologFlags
-
-    /** Static Knowledge-base, that is a KB that *can't* change executing goals */
-    val staticKB: ClauseDatabase
-
-    /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
-    val dynamicKB: ClauseDatabase
 
     companion object {
         // To be extended through extension methods

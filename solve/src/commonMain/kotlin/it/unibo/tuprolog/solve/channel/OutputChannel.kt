@@ -7,6 +7,9 @@ interface OutputChannel<T> : Channel<T> {
         val stdout: OutputChannel<String>
             get() = stdout()
 
+        val stderr: OutputChannel<String>
+            get() = stderr()
+
         fun <T> of(consumer: (T) -> Unit): OutputChannel<T> = OutputChannelFromFunction(consumer)
     }
 

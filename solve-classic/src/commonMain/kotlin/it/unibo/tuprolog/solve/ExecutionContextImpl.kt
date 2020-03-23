@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
@@ -8,13 +10,15 @@ import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.Set as KtSet
 
 data class ExecutionContextImpl(
-    override val procedure: Struct?,
+    override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val inputChannels: Map<String, InputChannel<String>> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: Map<String, OutputChannel<String>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
-    val query: Struct,
+    val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
@@ -77,6 +81,4 @@ data class ExecutionContextImpl(
                 "step=$step" +
                 ")"
     }
-
-
 }

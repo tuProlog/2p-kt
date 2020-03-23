@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.channel
 
-expect fun stdin(): InputChannel<String>
+internal expect fun stdin(): InputChannel<String>
 
-fun stdout(): OutputChannel<String> = OutputChannel.of { print(it) }
+internal expect fun stdout(): OutputChannel<String>
+
+internal expect fun stderr(): OutputChannel<String>

@@ -19,7 +19,9 @@ data class StreamsSolver(
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty()
+    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val inputChannels: PrologInputChannels<String> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: PrologOutputChannels<String> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
@@ -27,7 +29,7 @@ data class StreamsSolver(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                ExecutionContextImpl(libraries, flags, staticKB, dynamicKB),
+                ExecutionContextImpl(libraries, flags, staticKB, dynamicKB, inputChannels, outputChannels),
                 executionMaxDuration = maxDuration
             )
         ).map { it.solution.cleanUp() }

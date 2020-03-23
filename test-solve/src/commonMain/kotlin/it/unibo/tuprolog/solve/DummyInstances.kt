@@ -14,6 +14,8 @@ object DummyInstances {
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKB: Nothing by lazy { throw NotImplementedError() }
         override val dynamicKB: Nothing by lazy { throw NotImplementedError() }
+        override val inputChannels: Nothing by lazy { throw NotImplementedError() }
+        override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Nothing by lazy { throw NotImplementedError() }
         override val prologStackTrace: Nothing by lazy { throw NotImplementedError() }
     }

@@ -7,8 +7,11 @@ interface InputChannel<T> : Channel<T> {
         val stdin: InputChannel<String>
             get() = stdin()
 
-        fun <T> of(generator: () -> T, availabilityChecker: () -> Boolean = { true }): InputChannel<T> =
+        fun <T> of(generator: () -> T, availabilityChecker: () -> Boolean): InputChannel<T> =
             InputChannelFromFunction(generator, availabilityChecker)
+
+        fun <T> of(generator: () -> T): InputChannel<T> =
+            InputChannelFromFunction(generator, { true })
     }
 
     val available: Boolean
