@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.Library
+import it.unibo.tuprolog.solve.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Library
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl

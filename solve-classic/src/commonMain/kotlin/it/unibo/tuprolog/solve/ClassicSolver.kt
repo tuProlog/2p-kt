@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit

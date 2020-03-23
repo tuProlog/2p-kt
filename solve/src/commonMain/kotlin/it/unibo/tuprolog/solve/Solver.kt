@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**

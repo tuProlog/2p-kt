@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.primitive.Signature
+import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1

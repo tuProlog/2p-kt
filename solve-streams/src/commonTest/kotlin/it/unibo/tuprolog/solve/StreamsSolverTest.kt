@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals

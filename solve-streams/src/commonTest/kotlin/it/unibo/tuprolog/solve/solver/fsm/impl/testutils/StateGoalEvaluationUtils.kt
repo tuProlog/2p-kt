@@ -1,10 +1,9 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.libraries.stdlib.primitive.Throw
-import it.unibo.tuprolog.primitive.Primitive
-import it.unibo.tuprolog.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libraries.stdlib.primitive.Throw
+import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException

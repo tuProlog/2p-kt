@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.testutils
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException

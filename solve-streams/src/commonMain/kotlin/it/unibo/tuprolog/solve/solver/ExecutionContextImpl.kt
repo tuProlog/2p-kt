@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Libraries
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.PrologFlags
 import it.unibo.tuprolog.solve.SolverStrategies

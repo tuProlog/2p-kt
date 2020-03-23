@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.fsm
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.libraries.stdlib.rule.Catch
+import it.unibo.tuprolog.solve.libraries.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException

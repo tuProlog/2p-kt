@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.libraries.Libraries
-import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.primitive.Primitive
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.libraries.Libraries
+import it.unibo.tuprolog.solve.libraries.Library
+import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl

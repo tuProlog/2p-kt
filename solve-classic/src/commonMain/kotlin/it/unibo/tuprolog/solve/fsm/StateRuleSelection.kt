@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.libraries.stdlib.magic.MagicCut
-import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.extractSignature
+import it.unibo.tuprolog.solve.libraries.stdlib.magic.MagicCut
+import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
