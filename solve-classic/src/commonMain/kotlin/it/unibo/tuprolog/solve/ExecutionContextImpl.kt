@@ -75,6 +75,8 @@ data class ExecutionContextImpl(
                 "rules=$rules, " +
                 "primitives=$primitives, " +
                 "startTime=$startTime, " +
+                "inputChannels=${inputChannels.keys}, " +
+                "outputChannels=${outputChannels.keys}, " +
                 "maxDuration=$maxDuration, " +
                 "choicePoints=$choicePoints, " +
                 "depth=$depth, " +

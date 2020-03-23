@@ -29,14 +29,14 @@ class ClassicSolverSystemTesting : SolverFactory {
     ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
 
     @Test
-    @Ignore
+//    @Ignore
     fun entryPointForManualTests() {
         prolog {
             val solver = Solver.classic(
                 libraries = defaultLibraries
             )
 
-            val query = "catch"("catch"("throw"(1), "X", false or "X"), `_`, false)
+            val query = "write"("hello world") and "nl"
 
             solver.solve(query).forEach { sol ->
                 println(sol)
