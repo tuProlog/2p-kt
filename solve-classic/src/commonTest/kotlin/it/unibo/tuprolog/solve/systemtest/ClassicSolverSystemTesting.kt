@@ -7,6 +7,8 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ClassicSolverSystemTesting : SolverFactory {
 
@@ -36,15 +38,18 @@ class ClassicSolverSystemTesting : SolverFactory {
                 libraries = defaultLibraries
             )
 
-            val query = "write"("hello world") and "nl"
+            val prints = mutableListOf<String>()
 
-            solver.solve(query).forEach { sol ->
-                println(sol)
-                if (sol is Solution.Halt) {
-                    sol.exception.prologStackTrace.forEach {
-                        println("\t$it")
-                    }
-                }
+            solver.stdout?.addListener { prints.add(it) }
+
+            val query = "write"("hello world") and "nl" and "assert"("a")
+
+            solver.solve(query).forEach(::println)
+
+            assertEquals("hello world", prints[0])
+            assertEquals("\n", prints[1])
+            assertTrue {
+                solver.dynamicKB.contains(atomOf("a"))
             }
         }
     }

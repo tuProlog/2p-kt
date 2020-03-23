@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentsIsInteger
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInteger
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
 object TestingPrimitives {
@@ -18,7 +18,7 @@ object TestingPrimitives {
     val sleep = PrimitiveWrapper.wrap<ExecutionContext>("sleep", 1) { request ->
         sequence {
             request.ensuringAllArgumentsAreInstantiated()
-                .ensuringArgumentsIsInteger(0).let {
+                .ensuringArgumentIsInteger(0).let {
                     val initialTime = currentTimeInstant()
                     val threshold = request.arguments[0].castTo<Integer>().intValue.toLongExact()
                     while (currentTimeInstant() - initialTime < threshold);

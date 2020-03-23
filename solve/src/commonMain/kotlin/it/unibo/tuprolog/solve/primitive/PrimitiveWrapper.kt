@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
@@ -82,7 +83,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
 
         // TODO: 16/01/2020 test those below ensure methods
 
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsNumeric(index: Int): Solve.Request<C> =
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Numeric -> throw TypeError(
                     "Argument $index of ${this.signature}` should be a ${TypeError.Expected.NUMBER}",
@@ -93,7 +94,18 @@ abstract class PrimitiveWrapper<C : ExecutionContext> :
                 else -> this
             }
 
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentsIsInteger(index: Int): Solve.Request<C> =
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Struct -> throw TypeError(
+                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.COMPOUND}",
+                    context = context,
+                    expectedType = TypeError.Expected.COMPOUND,
+                    actualValue = arg
+                )
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Integer -> throw TypeError(
                     "Argument $index of ${this.signature}` should be a ${TypeError.Expected.INTEGER}",
