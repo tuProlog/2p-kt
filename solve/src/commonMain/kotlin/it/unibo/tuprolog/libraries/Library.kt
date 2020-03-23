@@ -53,17 +53,17 @@ interface Library {
             functions: Map<Signature, PrologFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
-        /** Creates an instance of [LibraryAliased] with given parameters */
+        /** Creates an instance of [AliasedLibrary] with given parameters */
         fun of(
             operatorSet: OperatorSet = OperatorSet(),
             theory: ClauseDatabase = ClauseDatabase.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
             functions: Map<Signature, PrologFunction> = emptyMap(),
             alias: String
-        ): LibraryAliased = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
+        ): AliasedLibrary = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
-        /** Creates an instance of [LibraryAliased] starting from [Library] and an alias */
-        fun of(library: Library, alias: String): LibraryAliased =
+        /** Creates an instance of [AliasedLibrary] starting from [Library] and an alias */
+        fun of(library: Library, alias: String): AliasedLibrary =
             LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }
 }

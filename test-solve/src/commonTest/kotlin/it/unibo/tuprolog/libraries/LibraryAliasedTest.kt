@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [LibraryAliased.Companion]
+ * Test class for [AliasedLibrary.Companion]
  *
  * @author Enrico
  */

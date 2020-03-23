@@ -108,7 +108,7 @@ internal class LibrariesTest {
 
         assertEquals(
             overriddenLibrary.primitives,
-            toBeTested.primitives.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) }
+            toBeTested.primitives.filterKeys { !it.name.contains(AliasedLibrary.ALIAS_SEPARATOR) }
         )
     }
 
@@ -137,7 +137,7 @@ internal class LibrariesTest {
 
         assertEquals(
             overriddenLibrary.functions,
-            toBeTested.functions.filterKeys { !it.name.contains(LibraryAliased.ALIAS_SEPARATOR) }
+            toBeTested.functions.filterKeys { !it.name.contains(AliasedLibrary.ALIAS_SEPARATOR) }
         )
     }
 

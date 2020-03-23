@@ -8,17 +8,17 @@ import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /** A class representing an agglomerate of libraries with an alias */
-class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAliased>,
-    Map<String, LibraryAliased> by (libraries.map { it.alias to it }.toMap()) {
+class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibrary>,
+    Map<String, AliasedLibrary> by (libraries.map { it.alias to it }.toMap()) {
 
-    constructor(vararg library: LibraryAliased) : this(library.asSequence())
-    constructor(libraries: Iterable<LibraryAliased>) : this(libraries.asSequence())
+    constructor(vararg library: AliasedLibrary) : this(library.asSequence())
+    constructor(libraries: Iterable<AliasedLibrary>) : this(libraries.asSequence())
 
     /** All library aliases of libraries included in this library group */
     val libraryAliases: Set<String>
         inline get() = keys
 
-    override val libraries: Collection<LibraryAliased>
+    override val libraries: Collection<AliasedLibrary>
         get() = values.toList()
 
     override val operators: OperatorSet by lazy {
@@ -34,7 +34,7 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
             lib.primitives.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + LibraryAliased.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + AliasedLibrary.ALIAS_SEPARATOR + it.key.name) to it.value
                 )
             }
         }.toMap()
@@ -45,23 +45,23 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
             lib.functions.entries.asSequence().flatMap {
                 sequenceOf(
                     it.toPair(),
-                    it.key.copy(name = lib.alias + LibraryAliased.ALIAS_SEPARATOR + it.key.name) to it.value
+                    it.key.copy(name = lib.alias + AliasedLibrary.ALIAS_SEPARATOR + it.key.name) to it.value
                 )
             }
         }.toMap()
     }
 
-    override fun plus(library: LibraryAliased): Libraries =
+    override fun plus(library: AliasedLibrary): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
             ?.let { alreadyLoadedError(library) }
             ?: Libraries(libraries.asSequence() + sequenceOf(library))
 
-    override fun plus(libraryGroup: LibraryGroup<LibraryAliased>): Libraries =
+    override fun plus(libraryGroup: LibraryGroup<AliasedLibrary>): Libraries =
         libraryGroup.libraries.find { it.alias in libraryAliases }
             ?.let { alreadyLoadedError(it) }
             ?: Libraries(libraries.asSequence() + libraryGroup.libraries.asSequence())
 
-    override fun update(library: LibraryAliased): Libraries =
+    override fun update(library: AliasedLibrary): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
             ?.let { Libraries(libraries.asSequence() + sequenceOf(library)) }
             ?: throw IllegalArgumentException("A library aliased as `${library.alias}` has never been loaded")
@@ -83,6 +83,6 @@ class Libraries(libraries: Sequence<LibraryAliased>) : LibraryGroup<LibraryAlias
     override fun toString(): String = "Libraries($libraries)"
 
     /** Utility function to handle already loaded error */
-    private fun alreadyLoadedError(library: LibraryAliased): Nothing =
+    private fun alreadyLoadedError(library: AliasedLibrary): Nothing =
         throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 }

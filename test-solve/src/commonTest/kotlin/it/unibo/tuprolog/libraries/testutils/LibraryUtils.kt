@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.libraries.Library
-import it.unibo.tuprolog.libraries.LibraryAliased
+import it.unibo.tuprolog.libraries.AliasedLibrary
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.function.Compute
@@ -121,7 +121,7 @@ internal object LibraryUtils {
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, PrologFunction>,
         alias: String
-    ): LibraryAliased = Library.of(opSet, theory, primitives, functions, alias)
+    ): AliasedLibrary = Library.of(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
@@ -132,13 +132,13 @@ internal object LibraryUtils {
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> LibraryAliased
-    ): LibraryAliased =
+        constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> AliasedLibrary
+    ): AliasedLibrary =
         constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 
     /** Utility function to alias a primitive/function */
     internal fun aliasPrimitiveOrFunction(libAlias: String, entry: Map.Entry<Signature, *>) =
-        entry.key.copy(name = libAlias + LibraryAliased.ALIAS_SEPARATOR + entry.key.name) to entry.value
+        entry.key.copy(name = libAlias + AliasedLibrary.ALIAS_SEPARATOR + entry.key.name) to entry.value
 
     /** Utility function to duplicate all primitive/functions aliasing them in library */
     internal fun aliasLibraryMap(libAlias: String, toAliasMap: Map<Signature, *>) =

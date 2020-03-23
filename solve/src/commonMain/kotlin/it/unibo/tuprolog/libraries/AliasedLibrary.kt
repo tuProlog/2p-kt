@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.libraries
 
 /** Represents a [Library] that can have an alias */
-interface LibraryAliased : Library {
+interface AliasedLibrary : Library {
 
     /** The library alias */
     val alias: String
@@ -14,5 +14,5 @@ interface LibraryAliased : Library {
 }
 
 /** Creates a library group from this library aliased and the "added" one */
-operator fun <L : LibraryAliased> L.plus(library: L): LibraryGroup<LibraryAliased> =
+operator fun <L : AliasedLibrary> L.plus(library: L): LibraryGroup<AliasedLibrary> =
     Libraries(this, library)

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.libraries.impl
 
-import it.unibo.tuprolog.libraries.LibraryAliased
+import it.unibo.tuprolog.libraries.AliasedLibrary
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils
 import it.unibo.tuprolog.libraries.testutils.LibraryUtils.makeLib
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test class for [LibraryAliasedImpl] and [LibraryAliased]
+ * Test class for [LibraryAliasedImpl] and [AliasedLibrary]
  *
  * @author Enrico
  */
