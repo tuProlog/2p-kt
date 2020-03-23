@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl.integrationtest
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.libraries.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
 import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution

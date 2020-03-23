@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.libraries.Libraries
-import it.unibo.tuprolog.solve.libraries.Library
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.primitive.extractSignature

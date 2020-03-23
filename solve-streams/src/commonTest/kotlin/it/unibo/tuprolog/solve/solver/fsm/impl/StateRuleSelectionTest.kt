@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.libraries.Libraries
-import it.unibo.tuprolog.solve.libraries.Library
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl

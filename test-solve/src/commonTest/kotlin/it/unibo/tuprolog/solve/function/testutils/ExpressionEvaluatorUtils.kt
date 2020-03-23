@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.function.testutils
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libraries.Libraries
-import it.unibo.tuprolog.solve.libraries.Library
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.PrologFunction

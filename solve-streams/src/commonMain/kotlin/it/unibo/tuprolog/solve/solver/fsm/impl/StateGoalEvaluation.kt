@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.libraries.stdlib.primitive.Throw
+import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver

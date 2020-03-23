@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.libraries.Libraries
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.PrologFlags
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution

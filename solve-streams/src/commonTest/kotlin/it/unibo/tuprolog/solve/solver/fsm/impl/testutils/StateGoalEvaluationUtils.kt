@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.libraries.stdlib.primitive.Throw
+import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve

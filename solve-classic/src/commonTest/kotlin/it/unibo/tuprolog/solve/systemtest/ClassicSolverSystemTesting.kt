@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.libraries.Libraries
-import it.unibo.tuprolog.solve.libraries.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Ignore

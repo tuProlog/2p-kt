@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.solve.libraries.Library
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringAllArgumentsAreInstantiated
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentsIsInteger

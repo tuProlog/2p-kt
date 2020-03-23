@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.solve.libraries.Libraries
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 interface SolverFactory {
