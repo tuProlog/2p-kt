@@ -12,7 +12,7 @@ class InputStreamChannel(inputStream: InputStream) : AbstractInputChannel<String
         BufferedReader(InputStreamReader(inputStream))
     }
 
-    override fun read(): String {
+    override fun readActually(): String {
         return reader.readText()
     }
 

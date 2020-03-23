@@ -9,9 +9,6 @@ interface Channel<T> {
             get() = OutputChannel.stdout
     }
 
-    val listeners: Collection<Listener<T>>
-
-    val countListeners: Int
     fun addListener(listener: Listener<T>)
     fun removeListener(listener: Listener<T>)
 

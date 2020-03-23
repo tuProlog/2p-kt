@@ -8,5 +8,5 @@ internal class InputChannelFromFunction<T>(
     override val available: Boolean
         get() = availabilityChecker()
 
-    override fun read(): T = generator()
+    override fun readActually(): T = generator()
 }
