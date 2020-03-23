@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term

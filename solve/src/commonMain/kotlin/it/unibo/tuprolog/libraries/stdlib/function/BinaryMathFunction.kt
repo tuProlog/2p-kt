@@ -3,7 +3,7 @@ package it.unibo.tuprolog.libraries.stdlib.function
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.primitive.function.Compute
+import it.unibo.tuprolog.function.Compute
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**

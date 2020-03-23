@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.primitive.function.testutils
+package it.unibo.tuprolog.function.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.Compute
+import it.unibo.tuprolog.function.Compute
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.TimeDuration

@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.stdlib.function.BinaryMathFunction
 import it.unibo.tuprolog.libraries.stdlib.function.UnaryMathFunction
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.Compute
-import it.unibo.tuprolog.primitive.function.FunctionWrapper
+import it.unibo.tuprolog.function.Compute
+import it.unibo.tuprolog.function.FunctionWrapper
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError

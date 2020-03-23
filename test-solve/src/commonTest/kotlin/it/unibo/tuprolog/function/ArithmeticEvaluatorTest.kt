@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
-import it.unibo.tuprolog.primitive.function.testutils.ArithmeticEvaluatorUtils
-import it.unibo.tuprolog.primitive.function.testutils.ArithmeticEvaluatorUtils.inputToErrorType
-import it.unibo.tuprolog.primitive.function.testutils.ArithmeticEvaluatorUtils.inputToResult
+import it.unibo.tuprolog.function.testutils.ArithmeticEvaluatorUtils
+import it.unibo.tuprolog.function.testutils.ArithmeticEvaluatorUtils.inputToErrorType
+import it.unibo.tuprolog.function.testutils.ArithmeticEvaluatorUtils.inputToResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

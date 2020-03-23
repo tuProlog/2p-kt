@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.solve.ExecutionContext

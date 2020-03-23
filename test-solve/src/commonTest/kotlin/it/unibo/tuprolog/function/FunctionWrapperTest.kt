@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
-import it.unibo.tuprolog.primitive.function.testutils.FunctionWrapperUtils.createFunctionRequest
-import it.unibo.tuprolog.primitive.function.testutils.FunctionWrapperUtils.createFunctionWrapper
-import it.unibo.tuprolog.primitive.function.testutils.FunctionWrapperUtils.defaultFunctionResult
-import it.unibo.tuprolog.primitive.function.testutils.FunctionWrapperUtils.function
+import it.unibo.tuprolog.function.testutils.FunctionWrapperUtils.createFunctionRequest
+import it.unibo.tuprolog.function.testutils.FunctionWrapperUtils.createFunctionWrapper
+import it.unibo.tuprolog.function.testutils.FunctionWrapperUtils.defaultFunctionResult
+import it.unibo.tuprolog.function.testutils.FunctionWrapperUtils.function
 import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
 import it.unibo.tuprolog.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
 import kotlin.test.Test

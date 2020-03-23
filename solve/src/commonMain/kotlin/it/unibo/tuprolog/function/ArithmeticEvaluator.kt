@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins

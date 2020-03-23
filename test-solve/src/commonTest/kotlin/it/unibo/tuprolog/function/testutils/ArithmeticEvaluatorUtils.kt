@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.primitive.function.testutils
+package it.unibo.tuprolog.function.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.stdlib.CommonBuiltins
-import it.unibo.tuprolog.primitive.function.ArithmeticEvaluator
+import it.unibo.tuprolog.function.ArithmeticEvaluator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
 import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError

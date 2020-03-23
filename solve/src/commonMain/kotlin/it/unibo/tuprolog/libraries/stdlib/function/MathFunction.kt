@@ -2,7 +2,7 @@ package it.unibo.tuprolog.libraries.stdlib.function
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.FunctionWrapper
+import it.unibo.tuprolog.function.FunctionWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
 import it.unibo.tuprolog.solve.exception.prologerror.TypeError

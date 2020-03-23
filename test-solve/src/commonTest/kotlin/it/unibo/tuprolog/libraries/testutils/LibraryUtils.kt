@@ -11,8 +11,8 @@ import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.libraries.LibraryAliased
 import it.unibo.tuprolog.primitive.Primitive
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.Compute
-import it.unibo.tuprolog.primitive.function.PrologFunction
+import it.unibo.tuprolog.function.Compute
+import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.theory.ClauseDatabase

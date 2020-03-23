@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.primitive.function
+package it.unibo.tuprolog.function
 
 import it.unibo.tuprolog.AbstractWrapper
 import it.unibo.tuprolog.primitive.Signature

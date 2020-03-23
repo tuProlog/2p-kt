@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.primitive.function.testutils
+package it.unibo.tuprolog.function.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
@@ -6,8 +6,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.libraries.Libraries
 import it.unibo.tuprolog.libraries.Library
 import it.unibo.tuprolog.primitive.Signature
-import it.unibo.tuprolog.primitive.function.ExpressionEvaluator
-import it.unibo.tuprolog.primitive.function.PrologFunction
+import it.unibo.tuprolog.function.ExpressionEvaluator
+import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 

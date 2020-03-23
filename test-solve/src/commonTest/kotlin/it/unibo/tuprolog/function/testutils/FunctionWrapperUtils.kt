@@ -1,12 +1,12 @@
-package it.unibo.tuprolog.primitive.function.testutils
+package it.unibo.tuprolog.function.testutils
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.primitive.Signature
 import it.unibo.tuprolog.primitive.extractSignature
-import it.unibo.tuprolog.primitive.function.Compute
-import it.unibo.tuprolog.primitive.function.FunctionWrapper
-import it.unibo.tuprolog.primitive.function.PrologFunction
+import it.unibo.tuprolog.function.Compute
+import it.unibo.tuprolog.function.FunctionWrapper
+import it.unibo.tuprolog.function.PrologFunction
 import it.unibo.tuprolog.primitive.testutils.WrapperUtils
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
