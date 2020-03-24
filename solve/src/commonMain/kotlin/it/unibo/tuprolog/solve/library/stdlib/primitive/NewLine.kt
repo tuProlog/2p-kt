@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.Solve
 
 object NewLine : SideEffect0<ExecutionContext>("nl") {
     override fun accept(request: Solve.Request<ExecutionContext>): Solve.Response {
-        return request.context.stdout.let {
+        return request.context.standardOutput.let {
             if (it == null) {
                 request.replyFail()
             } else {

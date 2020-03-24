@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
- * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree
+ * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree in a purely functional way
  *
  * @author Enrico
  */
@@ -20,8 +20,8 @@ data class StreamsSolver(
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val inputChannels: PrologInputChannels<String> = ExecutionContextAware.defaultInputChannels(),
-    override val outputChannels: PrologOutputChannels<String> = ExecutionContextAware.defaultOutputChannels()
+    override val inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,7 +39,7 @@ class ClassicSolverSystemTesting : SolverFactory {
 
             val prints = mutableListOf<String>()
 
-            solver.stdout?.addListener { prints.add(it) }
+            solver.standardOutput?.addListener { prints.add(it) }
 
             val query = "write"("hello world") and "nl" and "assert"("a")
 

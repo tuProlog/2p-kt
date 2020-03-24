@@ -22,8 +22,8 @@ class ClassicSolver(
     flags: PrologFlags = emptyMap(),
     staticKB: ClauseDatabase = ClauseDatabase.empty(),
     dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-    inputChannels: PrologInputChannels<String> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<String> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     private var state: State = StateInit(
@@ -92,9 +92,9 @@ class ClassicSolver(
     override val dynamicKB: ClauseDatabase
         get() = state.context.dynamicKB
 
-    override val inputChannels: PrologInputChannels<String>
+    override val inputChannels: PrologInputChannels<*>
         get() = state.context.inputChannels
 
-    override val outputChannels: PrologOutputChannels<String>
+    override val outputChannels: PrologOutputChannels<*>
         get() = state.context.outputChannels
 }

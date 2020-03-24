@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.Solve
 
 object Write : SideEffect1<ExecutionContext>("write") {
     override fun accept(request: Solve.Request<ExecutionContext>, term: Term): Solve.Response {
-        return request.context.stdout.let {
+        return request.context.standardOutput.let {
             if (it == null) {
                 request.replyFail()
             } else {

@@ -18,8 +18,8 @@ internal data class ExecutionContextImpl(
     override val flags: PrologFlags = emptyMap(),
     override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
     override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val inputChannels: Map<String, InputChannel<String>> = ExecutionContextAware.defaultInputChannels(),
-    override val outputChannels: Map<String, OutputChannel<String>> = ExecutionContextAware.defaultOutputChannels(),
+    override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
