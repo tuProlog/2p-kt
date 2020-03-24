@@ -26,6 +26,11 @@ interface ExecutionContextAware {
                 WARNINGS to OutputChannel.stdErr<PrologWarning>()
             )
         }
+
+        private inline fun <reified T> Any?.castOrNull(): T? {
+            @Suppress("UNCHECKED_CAST")
+            return if (this !== null) this as T else null
+        }
     }
 
     /** Loaded libraries */
@@ -51,7 +56,7 @@ interface ExecutionContextAware {
      */
     val standardInput: InputChannel<String>?
         get() {
-            return inputChannels[STDIN] as InputChannel<String>
+            return inputChannels[STDIN].castOrNull()
         }
 
     /**
@@ -60,7 +65,7 @@ interface ExecutionContextAware {
      */
     val standardOutput: OutputChannel<String>?
         get() {
-            return outputChannels[STDOUT] as OutputChannel<String>
+            return outputChannels[STDOUT].castOrNull()
         }
 
     /** Shortcut for the standard error channel defined in [outputChannels], and named as [STDERR].
@@ -68,7 +73,7 @@ interface ExecutionContextAware {
      */
     val standardError: OutputChannel<String>?
         get() {
-            return outputChannels[STDERR] as OutputChannel<String>
+            return outputChannels[STDERR].castOrNull()
         }
 
     /** Shortcut for the warnings channel defined in [outputChannels], and named as [WARNINGS].
@@ -76,6 +81,6 @@ interface ExecutionContextAware {
      */
     val warnings: OutputChannel<PrologWarning>?
         get() {
-            return outputChannels[WARNINGS] as OutputChannel<PrologWarning>
+            return outputChannels[WARNINGS].castOrNull()
         }
 }
