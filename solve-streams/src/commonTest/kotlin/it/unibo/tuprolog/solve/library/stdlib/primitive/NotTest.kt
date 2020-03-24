@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.dsl.theory.PrologWithTheories
 import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 

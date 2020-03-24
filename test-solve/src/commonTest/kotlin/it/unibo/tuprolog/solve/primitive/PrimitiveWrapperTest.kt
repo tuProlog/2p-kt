@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.primitive.testutils.PrimitiveWrapperUtils.primiti
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToMatchingSignatureRequest
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils.wrapperToNotMatchingSignatureRequest
 import it.unibo.tuprolog.solve.assertOverFailure
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

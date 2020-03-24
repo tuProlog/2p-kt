@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.solve.exception.prologerror
+package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.exception.prologerror.testutils.TypeErrorExpectedUtils
+import it.unibo.tuprolog.solve.exception.error.testutils.TypeErrorExpectedUtils
 import kotlin.test.*
 
 /**

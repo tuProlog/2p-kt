@@ -5,11 +5,11 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
-import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.error.EvaluationError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.test.assertEquals
 
 /**

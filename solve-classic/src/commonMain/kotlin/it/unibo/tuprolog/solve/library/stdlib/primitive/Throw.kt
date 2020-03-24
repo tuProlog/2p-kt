@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.exception.prologerror.MessageError
+import it.unibo.tuprolog.solve.exception.error.MessageError
 
 object Throw : UnaryPredicate<ExecutionContext>("throw") {
     override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =

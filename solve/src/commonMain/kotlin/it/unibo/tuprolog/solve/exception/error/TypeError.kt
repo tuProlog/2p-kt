@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.exception.prologerror
+package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.primitive.toIndicator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError.Expected
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected
 
 /**
  * The type error occurs when something is not of [Expected] type

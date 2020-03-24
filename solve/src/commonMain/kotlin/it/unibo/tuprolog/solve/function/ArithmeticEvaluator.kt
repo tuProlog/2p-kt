@@ -5,8 +5,8 @@ import it.unibo.tuprolog.solve.library.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.library.stdlib.function.*
 import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 /**
  * Prolog Arithmetic Expression evaluator implementation

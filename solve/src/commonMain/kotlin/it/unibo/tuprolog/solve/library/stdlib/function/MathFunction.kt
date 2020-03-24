@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.prologerror.EvaluationError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.EvaluationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.jvm.JvmStatic
 
 /**

@@ -7,8 +7,8 @@ import it.unibo.tuprolog.solve.library.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.ExecutionContextImpl
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.exception.prologerror.MessageError
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
+import it.unibo.tuprolog.solve.exception.error.MessageError
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus

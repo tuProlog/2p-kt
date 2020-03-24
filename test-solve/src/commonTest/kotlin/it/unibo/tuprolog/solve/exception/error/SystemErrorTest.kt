@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.exception.prologerror
+package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.solve.exception.testutils.PrologErrorUtils

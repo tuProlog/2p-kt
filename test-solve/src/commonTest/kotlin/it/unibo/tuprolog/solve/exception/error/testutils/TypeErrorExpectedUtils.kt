@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.solve.exception.prologerror.testutils
+package it.unibo.tuprolog.solve.exception.error.testutils
 
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 /**
  * Utils singleton to help testing [TypeError.Expected]

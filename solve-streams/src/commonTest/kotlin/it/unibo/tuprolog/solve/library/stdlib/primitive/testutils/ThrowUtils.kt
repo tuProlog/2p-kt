@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
-import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.SystemError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.ErrorUtils
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 
 /**

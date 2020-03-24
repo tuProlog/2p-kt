@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.prologerror.InstantiationError
-import it.unibo.tuprolog.solve.exception.prologerror.TypeError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
     private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<Unit> =

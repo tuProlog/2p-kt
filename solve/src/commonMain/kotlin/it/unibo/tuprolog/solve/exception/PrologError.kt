@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.exception
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.prologerror.*
-import it.unibo.tuprolog.solve.exception.prologerror.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.error.*
+import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
 
 /**
  * Base class for Standard Prolog Errors and possibly other custom Primitive errors
