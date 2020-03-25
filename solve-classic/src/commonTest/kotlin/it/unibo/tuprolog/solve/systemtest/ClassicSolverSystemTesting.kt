@@ -38,7 +38,7 @@ class ClassicSolverSystemTesting : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = ClassicSolverFactory.solverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): Solver = Solver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
     @Test
 //    @Ignore

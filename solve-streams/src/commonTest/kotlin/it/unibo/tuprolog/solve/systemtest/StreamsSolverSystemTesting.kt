@@ -35,7 +35,7 @@ class StreamsSolverSystemTesting : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = StreamsSolverFactory.solverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): Solver = Solver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
     @Test
     fun testTrue() {
