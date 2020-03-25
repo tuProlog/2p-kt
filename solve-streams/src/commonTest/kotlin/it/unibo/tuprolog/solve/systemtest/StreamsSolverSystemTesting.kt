@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.solve.systemtest
 
+import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 
@@ -19,12 +23,19 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
-    override fun solverOf( // TODO: 17/01/2020 add not present tests 
+    override val defaultBuiltins: AliasedLibrary
+        get() = DefaultBuiltins
+
+    override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
         staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase
-    ): Solver = StreamsSolver(libraries, flags, staticKB, dynamicKB)
+        dynamicKB: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): Solver = StreamsSolverFactory.solverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
     @Test
     fun testTrue() {

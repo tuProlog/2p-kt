@@ -3,12 +3,16 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 interface SolverFactory {
+
     val defaultLibraries: Libraries
         get() = Libraries()
+
+    val defaultBuiltins: AliasedLibrary
 
     val defaultFlags: PrologFlags
         get() = emptyMap()
@@ -41,4 +45,25 @@ interface SolverFactory {
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): Solver
+
+    fun solverWithDefaultBuiltins(
+        otherLibraries: Libraries = defaultLibraries,
+        flags: PrologFlags = defaultFlags,
+        staticKB: ClauseDatabase = defaultStaticKB,
+        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        stdIn: InputChannel<String> = defaultInputChannel,
+        stdOut: OutputChannel<String> = defaultOutputChannel,
+        stdErr: OutputChannel<String> = defaultErrorChannel,
+        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+    ): Solver =
+        solverOf(
+            otherLibraries + defaultBuiltins,
+            flags,
+            staticKB,
+            dynamicKB,
+            stdIn,
+            stdOut,
+            stdErr,
+            warnings
+        )
 }

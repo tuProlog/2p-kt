@@ -15,14 +15,15 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-data class StreamsSolver(
-    override val libraries: Libraries = Libraries(),
-    override val flags: PrologFlags = emptyMap(),
-    override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    override val outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
-) : Solver {
+internal data class StreamsSolver
+    constructor(
+        override val libraries: Libraries = Libraries(),
+        override val flags: PrologFlags = emptyMap(),
+        override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
+        override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+        override val inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
+        override val outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    ) : Solver {
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
         solve(

@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,6 +26,9 @@ class ClassicSolverSystemTesting : SolverFactory {
 
     override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
 
+    override val defaultBuiltins: AliasedLibrary
+        get() = DefaultBuiltins
+
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
@@ -34,13 +38,13 @@ class ClassicSolverSystemTesting : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = Solver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): Solver = ClassicSolverFactory.solverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
     @Test
 //    @Ignore
     fun entryPointForManualTests() {
         prolog {
-            val solver = Solver.classic(
+            val solver = solverOf(
                 libraries = defaultLibraries
             )
 

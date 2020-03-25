@@ -12,8 +12,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-object ClassicSolverFactory : SolverFactory {
-
+object StreamsSolverFactory : SolverFactory {
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
 
@@ -27,7 +26,7 @@ object ClassicSolverFactory : SolverFactory {
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
     ): Solver =
-        ClassicSolver(
+        StreamsSolver(
             libraries,
             flags,
             staticKB,
