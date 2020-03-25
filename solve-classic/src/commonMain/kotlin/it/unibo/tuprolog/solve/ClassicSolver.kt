@@ -4,20 +4,20 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDERR
+import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDIN
+import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDOUT
+import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.WARNINGS
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-fun Solver.Companion.classic(
-    libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty()
-) = ClassicSolver(libraries, flags, staticKB, dynamicKB)
-
-class ClassicSolver(
+internal class ClassicSolver(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
     staticKB: ClauseDatabase = ClauseDatabase.empty(),

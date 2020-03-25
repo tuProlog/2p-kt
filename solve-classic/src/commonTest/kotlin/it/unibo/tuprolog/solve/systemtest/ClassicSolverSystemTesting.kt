@@ -4,6 +4,9 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,8 +29,12 @@ class ClassicSolverSystemTesting : SolverFactory {
         libraries: Libraries,
         flags: PrologFlags,
         staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase
-    ): Solver = ClassicSolver(libraries, flags, staticKB, dynamicKB)
+        dynamicKB: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): Solver = Solver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
     @Test
 //    @Ignore

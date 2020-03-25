@@ -1,4 +1,7 @@
+@file:JvmName("Time")
 package it.unibo.tuprolog.solve
+
+import kotlin.jvm.JvmName
 
 /** This type represents how the solver will see time instants */
 typealias TimeInstant = Long
