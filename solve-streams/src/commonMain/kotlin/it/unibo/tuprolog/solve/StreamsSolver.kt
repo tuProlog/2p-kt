@@ -34,8 +34,17 @@ internal class StreamsSolver
         outputChannels
     )
 
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
-        solve(
+    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
+        executionContext = ExecutionContextImpl(
+            libraries = libraries,
+            flags = flags,
+            staticKB = staticKB,
+            dynamicKB = dynamicKB,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+
+        return solve(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
@@ -47,6 +56,7 @@ internal class StreamsSolver
             // executionContext = TODO
             it.solve.solution.cleanUp()
         }
+    }
 
     override val libraries: Libraries
         get() = executionContext.libraries
