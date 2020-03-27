@@ -12,8 +12,8 @@ object DummyInstances {
         override val procedure: Nothing by lazy { throw NotImplementedError() }
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
-        override val staticKB: Nothing by lazy { throw NotImplementedError() }
-        override val dynamicKB: Nothing by lazy { throw NotImplementedError() }
+        override val staticKb: Nothing by lazy { throw NotImplementedError() }
+        override val dynamicKb: Nothing by lazy { throw NotImplementedError() }
         override val inputChannels: Nothing by lazy { throw NotImplementedError() }
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Nothing by lazy { throw NotImplementedError() }

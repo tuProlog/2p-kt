@@ -39,8 +39,8 @@ internal class StateRuleSelectionTest {
                 alias = "testLib",
                 theory = prolog { theory({ "f"("a") }) }
             )),
-            staticKB = prolog { theory({ "f"("b") }) },
-            dynamicKB = prolog { theory({ "f"("c") }) }
+            staticKb = prolog { theory({ "f"("b") }) },
+            dynamicKb = prolog { theory({ "f"("c") }) }
         ))
 
     @Test

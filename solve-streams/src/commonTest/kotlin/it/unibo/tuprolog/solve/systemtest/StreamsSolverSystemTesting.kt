@@ -60,7 +60,7 @@ class StreamsSolverSystemTesting : SolverFactory {
             assertEquals("hello world", prints[0])
             assertEquals("\n", prints[1])
             assertTrue {
-                solver.dynamicKB.contains(atomOf("a"))
+                solver.dynamicKb.contains(atomOf("a"))
             }
         }
     }

@@ -40,10 +40,10 @@ interface ExecutionContextAware {
     val flags: PrologFlags
 
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
-    val staticKB: ClauseDatabase
+    val staticKb: ClauseDatabase
 
     /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
-    val dynamicKB: ClauseDatabase
+    val dynamicKb: ClauseDatabase
 
     /** The currently open input channels */
     val inputChannels: PrologInputChannels<*>

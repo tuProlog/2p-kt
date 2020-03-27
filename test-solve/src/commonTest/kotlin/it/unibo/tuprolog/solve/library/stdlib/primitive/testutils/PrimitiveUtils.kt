@@ -18,7 +18,7 @@ internal object PrimitiveUtils {
 
     private fun contextWith(database: ClauseDatabase) = object : ExecutionContext by DummyInstances.executionContext {
         override val libraries: Libraries = Libraries(CommonBuiltins)
-        override val staticKB: ClauseDatabase = database
+        override val staticKb: ClauseDatabase = database
     }
 
     /** Creates a solve request with [database] and [CommonBuiltins] loaded and given query struct*/

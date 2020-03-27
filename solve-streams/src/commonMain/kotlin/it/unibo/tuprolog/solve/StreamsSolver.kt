@@ -38,8 +38,8 @@ internal class StreamsSolver
         executionContext = ExecutionContextImpl(
             libraries = libraries,
             flags = flags,
-            staticKB = staticKB,
-            dynamicKB = dynamicKB,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
             inputChannels = inputChannels,
             outputChannels = outputChannels
         )
@@ -64,11 +64,11 @@ internal class StreamsSolver
     override val flags: PrologFlags
         get() = executionContext.flags
 
-    override val staticKB: ClauseDatabase
-        get() = executionContext.staticKB
+    override val staticKb: ClauseDatabase
+        get() = executionContext.staticKb
 
-    override val dynamicKB: ClauseDatabase
-        get() = executionContext.dynamicKB
+    override val dynamicKb: ClauseDatabase
+        get() = executionContext.dynamicKb
 
     override val inputChannels: PrologInputChannels<*>
         get() = executionContext.inputChannels

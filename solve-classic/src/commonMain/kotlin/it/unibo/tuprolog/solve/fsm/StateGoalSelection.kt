@@ -18,8 +18,8 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                         copy(
                             choicePoints = context.choicePoints,
                             flags = context.flags,
-                            dynamicKB = context.dynamicKB,
-                            staticKB = context.staticKB,
+                            dynamicKb = context.dynamicKb,
+                            staticKb = context.staticKb,
                             substitution = context.substitution.filter(interestingVariables),
                             goals = goals.next, // go on with parent's goals
                             procedure = procedure,

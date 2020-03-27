@@ -96,8 +96,10 @@ fun ClassicExecutionContext.toRequest(
         copy(
             libraries = libraries,
             flags = flags,
-            staticKB = staticKB,
-            dynamicKB = dynamicKB,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels,
             substitution = substitution
         ),
         executionMaxDuration = maxDuration

@@ -18,8 +18,8 @@ internal class StreamsSolverTest {
 
         assertEquals(Libraries(), toBeTested.libraries)
         assertEquals(emptyMap(), toBeTested.flags)
-        assertEquals(ClauseDatabase.empty(), toBeTested.staticKB)
-        assertEquals(ClauseDatabase.empty(), toBeTested.dynamicKB)
+        assertEquals(ClauseDatabase.empty(), toBeTested.staticKb)
+        assertEquals(ClauseDatabase.empty(), toBeTested.dynamicKb)
     }
 
 }

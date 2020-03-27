@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.theory.ClauseDatabase
 
-internal class ClassicSolver(
+internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
     staticKB: ClauseDatabase = ClauseDatabase.empty(),
@@ -22,8 +22,8 @@ internal class ClassicSolver(
         ClassicExecutionContext(
             libraries = libraries,
             flags = flags,
-            staticKB = staticKB,
-            dynamicKB = dynamicKB,
+            staticKb = staticKB,
+            dynamicKb = dynamicKB,
             inputChannels = inputChannels,
             outputChannels = outputChannels
         )
@@ -42,8 +42,8 @@ internal class ClassicSolver(
             query = goal,
             libraries = libraries,
             flags = flags,
-            staticKB = staticKB,
-            dynamicKB = dynamicKB,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             maxDuration = maxDuration,
@@ -78,11 +78,11 @@ internal class ClassicSolver(
     override val flags: PrologFlags
         get() = state.context.flags
 
-    override val staticKB: ClauseDatabase
-        get() = state.context.staticKB
+    override val staticKb: ClauseDatabase
+        get() = state.context.staticKb
 
-    override val dynamicKB: ClauseDatabase
-        get() = state.context.dynamicKB
+    override val dynamicKb: ClauseDatabase
+        get() = state.context.dynamicKb
 
     override val inputChannels: PrologInputChannels<*>
         get() = state.context.inputChannels

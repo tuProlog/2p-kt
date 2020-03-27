@@ -16,8 +16,8 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal data class ExecutionContextImpl(
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
-    override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    override val staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    override val dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),

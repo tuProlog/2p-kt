@@ -97,7 +97,7 @@ internal class StateRuleSelection(
         private fun ExecutionContext.retrieveRulesMatching(currentGoal: Struct): Sequence<Rule> =
             currentGoal.freshCopy().let { refreshedGoal ->
                 libraries.theory[refreshedGoal].takeIf { it.any() }
-                    ?: sequenceOf(staticKB, dynamicKB).flatMap { it[refreshedGoal] }
+                    ?: sequenceOf(staticKb, dynamicKb).flatMap { it[refreshedGoal] }
             }
 
         /** Prepares provided solveRequest "side effects manager" to enter this "rule body sub-scope" */

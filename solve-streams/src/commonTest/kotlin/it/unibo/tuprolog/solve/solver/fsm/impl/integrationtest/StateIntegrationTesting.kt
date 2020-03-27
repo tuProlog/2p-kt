@@ -123,7 +123,7 @@ internal class StateIntegrationTesting {
             val request = Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                ExecutionContextImpl(staticKB = infiniteComputationDatabase),
+                ExecutionContextImpl(staticKb = infiniteComputationDatabase),
                 executionMaxDuration = maxDuration
             )
             val nextStates = request.executeFSM()

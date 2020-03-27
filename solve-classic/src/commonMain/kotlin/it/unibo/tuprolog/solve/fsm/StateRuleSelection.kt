@@ -102,7 +102,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                 )
             }
             is Struct -> with(context) {
-                val ruleSources = sequenceOf(libraries.theory, staticKB, dynamicKB)
+                val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
 
                 when {
                     currentGoal is Truth -> {
