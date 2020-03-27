@@ -40,11 +40,23 @@ class ClassicSolverSystemTesting : SolverFactory {
         warnings: OutputChannel<PrologWarning>
     ): Solver = Solver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
+    override fun mutableSolverOf(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKB: ClauseDatabase,
+        dynamicKB: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver =
+        MutableSolver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
     @Test
 //    @Ignore
     fun entryPointForManualTests() {
         prolog {
-            val solver = solverOf(
+            val solver = mutableSolverOf(
                 libraries = defaultLibraries
             )
 
@@ -52,7 +64,15 @@ class ClassicSolverSystemTesting : SolverFactory {
 
             solver.standardOutput?.addListener { prints.add(it) }
 
-            val query = "write"("hello world") and "nl" and "assert"("a") and "a"
+            solver.assertZ("f"(1))
+            solver.assertZ("f"(2))
+            solver.assertZ("f"(3))
+
+            assertTrue {
+                solver.dynamicKb.contains("f"("X"))
+            }
+
+            val query = "f"("X") and "write"("hello world") and "nl" and "assert"("a") and "a"
 
             solver.solve(query).forEach(::println)
 
@@ -60,6 +80,10 @@ class ClassicSolverSystemTesting : SolverFactory {
             assertEquals("\n", prints[1])
             assertTrue {
                 solver.dynamicKb.contains(atomOf("a"))
+            }
+            solver.retractAll("f"("X"))
+            assertTrue {
+                "f"("X") !in solver.dynamicKb
             }
         }
     }

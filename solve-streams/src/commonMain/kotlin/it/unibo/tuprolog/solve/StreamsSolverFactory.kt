@@ -34,4 +34,17 @@ object StreamsSolverFactory : SolverFactory {
             mapOf(STDIN to stdIn),
             mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
         )
+
+    override fun mutableSolverOf(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKB: ClauseDatabase,
+        dynamicKB: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver {
+        TODO("Not yet implemented")
+    }
 }

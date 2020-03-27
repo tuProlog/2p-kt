@@ -17,71 +17,113 @@ internal class MutableClassicSolver(
 ) : ClassicSolver(libraries, flags, staticKB, dynamicKB, inputChannels, outputChannels), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(libraries = libraries + library)
+        }
     }
 
     override fun unloadLibrary(library: AliasedLibrary) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(libraries = libraries - library)
+        }
     }
 
     override fun setLibraries(libraries: Libraries) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(libraries = libraries)
+        }
     }
 
     override fun loadStaticKb(theory: ClauseDatabase) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(staticKb = theory)
+        }
     }
 
     override fun appendStaticKb(theory: ClauseDatabase) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(staticKb = staticKb + theory)
+        }
     }
 
     override fun resetStaticKb() {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(staticKb = ClauseDatabase.empty())
+        }
     }
 
     override fun loadDynamicKb(theory: ClauseDatabase) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = theory)
+        }
     }
 
     override fun appendDynamicKb(theory: ClauseDatabase) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = dynamicKb + theory)
+        }
     }
 
     override fun resetDynamicKb() {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = ClauseDatabase.empty())
+        }
     }
 
     override fun assertA(clause: Clause) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = dynamicKb.assertA(clause))
+        }
     }
 
     override fun assertA(fact: Struct) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = dynamicKb.assertA(fact))
+        }
     }
 
     override fun assertZ(clause: Clause) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = dynamicKb.assertZ(clause))
+        }
     }
 
     override fun assertZ(fact: Struct) {
-        TODO("Not yet implemented")
+        updateContext {
+            copy(dynamicKb = dynamicKb.assertZ(fact))
+        }
     }
 
     override fun retract(clause: Clause): RetractResult {
-        TODO("Not yet implemented")
+        val result = dynamicKb.retract(clause)
+        updateContext {
+            copy(dynamicKb = result.clauseDatabase)
+        }
+        return result
     }
 
     override fun retract(fact: Struct): RetractResult {
-        TODO("Not yet implemented")
+        val result = dynamicKb.retract(fact)
+        updateContext {
+            copy(dynamicKb = result.clauseDatabase)
+        }
+        return result
     }
 
-    override fun retractAll(clause: Clause): List<RetractResult> {
-        TODO("Not yet implemented")
+    override fun retractAll(clause: Clause): RetractResult {
+        val result = dynamicKb.retractAll(clause)
+        updateContext {
+            copy(dynamicKb = result.clauseDatabase)
+        }
+        return result
     }
 
-    override fun retractAll(fact: Struct): List<RetractResult> {
-        TODO("Not yet implemented")
+    override fun retractAll(fact: Struct): RetractResult {
+        val result = dynamicKb.retractAll(fact)
+        updateContext {
+            copy(dynamicKb = result.clauseDatabase)
+        }
+        return result
     }
 
 }

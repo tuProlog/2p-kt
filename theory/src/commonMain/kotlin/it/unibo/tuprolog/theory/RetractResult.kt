@@ -9,6 +9,7 @@ sealed class RetractResult {
     abstract val clauseDatabase: ClauseDatabase
 
     /** A successful "retract" operation result, carrying the new [clauseDatabase] and removed [clauses] */
+    // TODO use lists in place of Iterables
     data class Success(override val clauseDatabase: ClauseDatabase, val clauses: Iterable<Clause>) : RetractResult() {
 
         /** Gets the first successfully retracted clause */

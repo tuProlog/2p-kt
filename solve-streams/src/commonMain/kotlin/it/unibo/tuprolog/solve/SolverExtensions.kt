@@ -31,3 +31,27 @@ fun Solver.Companion.streamsWithDefaultBuiltins(
     warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
 ): Solver =
     StreamsSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
+fun MutableSolver.Companion.streams(
+    libraries: Libraries = Libraries(),
+    flags: PrologFlags = emptyMap(),
+    staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    stdIn: InputChannel<String> = InputChannel.stdIn(),
+    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
+    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+): MutableSolver =
+    StreamsSolverFactory.mutableSolverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
+fun MutableSolver.Companion.streamsWithDefaultBuiltins(
+    libraries: Libraries = Libraries(),
+    flags: PrologFlags = emptyMap(),
+    staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    stdIn: InputChannel<String> = InputChannel.stdIn(),
+    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
+    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+): MutableSolver =
+    StreamsSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)

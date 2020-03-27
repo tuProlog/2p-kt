@@ -31,8 +31,8 @@ interface MutableSolver : Solver {
 
     fun retract(clause: Clause): RetractResult
     fun retract(fact: Struct): RetractResult
-    fun retractAll(clause: Clause): List<RetractResult>
-    fun retractAll(fact: Struct): List<RetractResult>
+    fun retractAll(clause: Clause): RetractResult
+    fun retractAll(fact: Struct): RetractResult
 
     companion object {
         // To be extended through extension methods

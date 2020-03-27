@@ -17,5 +17,4 @@ internal data class StateBacktracking(override val context: ClassicExecutionCont
             }
         }
     }
-
 }

@@ -56,14 +56,28 @@ interface SolverFactory {
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): Solver =
-        solverOf(
-            otherLibraries + defaultBuiltins,
-            flags,
-            staticKB,
-            dynamicKB,
-            stdIn,
-            stdOut,
-            stdErr,
-            warnings
-        )
+        solverOf(otherLibraries + defaultBuiltins, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
+    fun mutableSolverOf(
+        libraries: Libraries = defaultLibraries,
+        flags: PrologFlags = defaultFlags,
+        staticKB: ClauseDatabase = defaultStaticKB,
+        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        stdIn: InputChannel<String> = defaultInputChannel,
+        stdOut: OutputChannel<String> = defaultOutputChannel,
+        stdErr: OutputChannel<String> = defaultErrorChannel,
+        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+    ): MutableSolver
+
+    fun mutableSolverWithDefaultBuiltins(
+        otherLibraries: Libraries = defaultLibraries,
+        flags: PrologFlags = defaultFlags,
+        staticKB: ClauseDatabase = defaultStaticKB,
+        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        stdIn: InputChannel<String> = defaultInputChannel,
+        stdOut: OutputChannel<String> = defaultOutputChannel,
+        stdErr: OutputChannel<String> = defaultErrorChannel,
+        warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
+    ): MutableSolver =
+        mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 }

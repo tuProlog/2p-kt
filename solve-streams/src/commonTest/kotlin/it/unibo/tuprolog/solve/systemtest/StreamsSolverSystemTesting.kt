@@ -41,6 +41,17 @@ class StreamsSolverSystemTesting : SolverFactory {
         warnings: OutputChannel<PrologWarning>
     ): Solver = Solver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
 
+    override fun mutableSolverOf(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKB: ClauseDatabase,
+        dynamicKB: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver = MutableSolver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
     @Test
     @Ignore
     fun entryPointForManualTests() {

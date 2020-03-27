@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
+import it.unibo.tuprolog.solve.fsm.clone
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 internal open class ClassicSolver(
@@ -28,6 +29,14 @@ internal open class ClassicSolver(
             outputChannels = outputChannels
         )
     )
+
+    protected fun updateContext(contextMapper: ClassicExecutionContext.() -> ClassicExecutionContext) {
+        val ctx = state.context
+        val newCtx = ctx.contextMapper()
+        if (newCtx != ctx) {
+            state = state.clone(newCtx)
+        }
+    }
 
     private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
         return filter { _, term -> term !is Var }

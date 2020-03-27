@@ -12,6 +12,9 @@ interface LibraryGroup<L : Library> : Library {
     /** Adds all libraries in provided libraryGroup to this libraryGroup */
     operator fun plus(libraryGroup: LibraryGroup<L>): LibraryGroup<L>
 
+    /** Removes the library from this library group */
+    operator fun minus(library: L): LibraryGroup<L>
+
     /** Updates an already contained library, with given library */
     fun update(library: L): LibraryGroup<L>
 
