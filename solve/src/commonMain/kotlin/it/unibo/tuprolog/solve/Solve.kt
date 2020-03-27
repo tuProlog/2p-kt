@@ -123,6 +123,8 @@ sealed class Solve {
         /** The Dynamic KB after request execution (use `null` in case nothing changed) */
         val dynamicKB: ClauseDatabase? = null,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
-        val sideEffectManager: SideEffectManager? = null
+        val sideEffectManager: SideEffectManager? = null,
+        val inputChannels: PrologInputChannels<*>? = null,
+        val outputChannels: PrologOutputChannels<*>? = null
     ) : Solve()
 }

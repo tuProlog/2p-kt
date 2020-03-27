@@ -15,35 +15,65 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-internal data class StreamsSolver
+internal class StreamsSolver
     constructor(
-        override val libraries: Libraries = Libraries(),
-        override val flags: PrologFlags = emptyMap(),
-        override val staticKB: ClauseDatabase = ClauseDatabase.empty(),
-        override val dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-        override val inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-        override val outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+        libraries: Libraries = Libraries(),
+        flags: PrologFlags = emptyMap(),
+        staticKB: ClauseDatabase = ClauseDatabase.empty(),
+        dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+        inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
+        outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
     ) : Solver {
+
+    private var executionContext = ExecutionContextImpl(
+        libraries,
+        flags,
+        staticKB,
+        dynamicKB,
+        inputChannels,
+        outputChannels
+    )
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> =
         solve(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                ExecutionContextImpl(libraries, flags, staticKB, dynamicKB, inputChannels, outputChannels),
+                executionContext,
                 executionMaxDuration = maxDuration
             )
-        ).map { it.solution.cleanUp() }
+        ).map {
+            // TODO update executionContext
+            // executionContext = TODO
+            it.solve.solution.cleanUp()
+        }
+
+    override val libraries: Libraries
+        get() = executionContext.libraries
+
+    override val flags: PrologFlags
+        get() = executionContext.flags
+
+    override val staticKB: ClauseDatabase
+        get() = executionContext.staticKB
+
+    override val dynamicKB: ClauseDatabase
+        get() = executionContext.dynamicKB
+
+    override val inputChannels: PrologInputChannels<*>
+        get() = executionContext.inputChannels
+
+    override val outputChannels: PrologOutputChannels<*>
+        get() = executionContext.outputChannels
 
 
     internal companion object {
 
         /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
-        internal fun solve(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+        internal fun solve(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<FinalState> =
             StateMachineExecutor.execute(StateInit(goalRequest))
                 .filterIsInstance<FinalState>()
                 .filter { it.solve.solution.query == goalRequest.query }
-                .map { it.solve }
 
         /** Utility function to clean up unassigned variables from final result */
         private fun Solution.cleanUp(): Solution = when (this) {

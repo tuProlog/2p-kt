@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.systemtest
 
+import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -8,7 +9,10 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class StreamsSolverSystemTesting : SolverFactory {
 
@@ -36,6 +40,30 @@ class StreamsSolverSystemTesting : SolverFactory {
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
     ): Solver = Solver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+
+    @Test
+    @Ignore
+    fun entryPointForManualTests() {
+        prolog {
+            val solver = solverOf(
+                libraries = defaultLibraries
+            )
+
+            val prints = mutableListOf<String>()
+
+            solver.standardOutput?.addListener { prints.add(it) }
+
+            val query = "write"("hello world") and "nl" and "assert"("a")
+
+            solver.solve(query).forEach(::println)
+
+            assertEquals("hello world", prints[0])
+            assertEquals("\n", prints[1])
+            assertTrue {
+                solver.dynamicKB.contains(atomOf("a"))
+            }
+        }
+    }
 
     @Test
     fun testTrue() {
