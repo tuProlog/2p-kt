@@ -41,7 +41,7 @@ internal data class StatePrimitiveSelection(override val context: ExecutionConte
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
 
                         try {
-                            val primitiveExecutions = primitive(req).cursor() //.also { require(!it.isOver) }
+                            val primitiveExecutions = primitive(req).cursor()
 
                             StatePrimitiveExecution(
                                 context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions)

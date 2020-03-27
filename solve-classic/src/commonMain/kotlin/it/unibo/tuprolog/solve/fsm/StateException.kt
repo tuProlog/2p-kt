@@ -52,16 +52,13 @@ internal data class StateException(
                 val catchGoal = context.currentGoal!!
 
                 when {
-//                    catchGoal !is Struct -> {
-//                        StateHalt(exception, context.copy(step = nextStep()))
-//                    }
                     catchGoal is Struct && catchGoal.isCatch() -> {
                         val catcher = catchGoal[1] mguWith exception.getExceptionContent()
 
                         when {
                             catcher is Substitution.Unifier -> {
                                 val newSubstitution =
-                                    (context.substitution + catcher).filter(context.interestingVariables) as Substitution.Unifier
+                                    (context.substitution + catcher).filter(context.interestingVariables)
                                 val subGoals = catchGoal[2][newSubstitution]
                                 val newGoals = subGoals.toGoals() + context.goals.next
 
@@ -70,7 +67,7 @@ internal data class StateException(
                                         goals = newGoals,
                                         rules = Cursor.empty(),
                                         primitives = Cursor.empty(),
-                                        substitution = newSubstitution,
+                                        substitution = newSubstitution as Substitution.Unifier,
                                         step = nextStep()
                                     )
                                 )

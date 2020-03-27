@@ -19,7 +19,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             Signature("->", 2)
         )
 
-        sealed class CutLimit {
+        private sealed class CutLimit {
             abstract val depthToCut: Int
             abstract val procedure: Struct?
 
@@ -37,12 +37,11 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
             context.copy(step = nextStep())
         )
 
-    private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
-        return StateException(
+    private fun exceptionalState(exception: TuPrologRuntimeException): StateException =
+        StateException(
             exception,
             context.copy(step = nextStep())
         )
-    }
 
     private val ignoreState: StateGoalSelection
         get() = StateGoalSelection(
@@ -66,10 +65,14 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun ChoicePointContext?.performCut(cutLimit: CutLimit): ChoicePointContext? {
         return when {
-            this === null -> null
-            cutLimit is CutLimit.None -> this
-            cutLimit.depthToCut > executionContext!!.depth -> this
-            cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> this
+            this === null -> {
+                null
+            }
+            cutLimit is CutLimit.None ||
+            cutLimit.depthToCut > executionContext!!.depth ||
+            cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
+                this
+            }
             else -> {
                 val cutCandidates = pathToRoot.filter {
                     it.executionContext!!.procedure == cutLimit.procedure

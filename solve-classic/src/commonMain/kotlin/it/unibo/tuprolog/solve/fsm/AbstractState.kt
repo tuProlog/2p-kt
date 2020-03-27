@@ -11,7 +11,7 @@ internal abstract class AbstractState(override val context: ExecutionContextImpl
         currentTime()
     }
 
-    protected val nextCache: State by lazy {
+    private val nextCache: State by lazy {
         val deltaTime = executionTime - context.startTime
         if (deltaTime <= context.maxDuration) {
             computeNext()
@@ -30,7 +30,7 @@ internal abstract class AbstractState(override val context: ExecutionContextImpl
 
     protected abstract fun computeNext(): State
 
-    fun currentTime(): TimeInstant =
+    private fun currentTime(): TimeInstant =
         currentTimeInstant()
 
     protected fun nextStep(): Long = context.step + 1

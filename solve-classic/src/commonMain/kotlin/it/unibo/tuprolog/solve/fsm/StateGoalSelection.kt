@@ -33,7 +33,6 @@ internal data class StateGoalSelection(override val context: ExecutionContextImp
 
             StatePrimitiveSelection(
                 context.copy(
-//                    procedure = goalsWithSubstitution.current,
                     goals = goalsWithSubstitution,
                     step = nextStep()
                 )

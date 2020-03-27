@@ -7,31 +7,27 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
 internal data class StateRuleExecution(override val context: ExecutionContextImpl) : AbstractState(context) {
-    private val failureState: StateBacktracking by lazy {
-        StateBacktracking(
+    private val failureState: StateBacktracking
+        get() = StateBacktracking(
             context.copy(rules = Cursor.empty(), step = nextStep())
         )
-    }
 
     override fun computeNext(): State {
-        return with(context) {
-            when (val unifier = goals.current!! mguWith rules.current!!.head) {
-                is Substitution.Unifier -> {
-                    val newSubstitution = (substitution + unifier) as Substitution.Unifier
-                    val subGoals = rules.current!!.prepareForExecution(newSubstitution).body[newSubstitution]
+        return when (val unifier = context.goals.current!! mguWith context.rules.current!!.head) {
+            is Substitution.Unifier -> {
+                val newSubstitution = (context.substitution + unifier) as Substitution.Unifier
+                val subGoals = context.rules.current!!.prepareForExecution(newSubstitution).body[newSubstitution]
 
-                    StateGoalSelection(
-                        copy(
-                            goals = subGoals.toGoals(),
-                            rules = Cursor.empty(),
-                            substitution = newSubstitution,
-                            step = nextStep()
-                        )
+                StateGoalSelection(
+                    context.copy(
+                        goals = subGoals.toGoals(),
+                        rules = Cursor.empty(),
+                        substitution = newSubstitution,
+                        step = nextStep()
                     )
-                }
-                else -> failureState
+                )
             }
+            else -> failureState
         }
     }
-
 }
