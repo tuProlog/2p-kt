@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
-internal data class StateInit(override val context: ExecutionContextImpl) : AbstractState(context) {
+internal data class StateInit(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     override fun computeNext(): State {
         return StateGoalSelection(

@@ -2,16 +2,16 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.utils.Cursor
 
-internal data class StatePrimitiveExecution(override val context: ExecutionContextImpl) : AbstractState(context) {
+internal data class StatePrimitiveExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
 
-    private fun ExecutionContextImpl.copyFromCurrentPrimitive(goals: Cursor<out Term>? = null,
-                                              parentProcedure: Boolean = false,
-                                              substitution: Substitution? = null): ExecutionContextImpl {
+    private fun ClassicExecutionContext.copyFromCurrentPrimitive(goals: Cursor<out Term>? = null,
+                                                                 parentProcedure: Boolean = false,
+                                                                 substitution: Substitution? = null): ClassicExecutionContext {
         return copy(
             goals = goals ?: this.goals,
             procedure = if (parentProcedure) parent?.procedure else procedure,

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
-internal abstract class AbstractState(override val context: ExecutionContextImpl) : State {
+internal abstract class AbstractState(override val context: ClassicExecutionContext) : State {
 
     protected val executionTime: TimeInstant by lazy {
         currentTime()

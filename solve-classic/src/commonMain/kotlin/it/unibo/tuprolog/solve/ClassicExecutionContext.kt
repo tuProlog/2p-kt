@@ -9,7 +9,7 @@ import it.unibo.tuprolog.utils.Cursor
 
 import kotlin.collections.Set as KtSet
 
-data class ExecutionContextImpl(
+data class ClassicExecutionContext(
     override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
@@ -25,7 +25,7 @@ data class ExecutionContextImpl(
     val startTime: TimeInstant = 0,
     val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val choicePoints: ChoicePointContext? = null,
-    val parent: ExecutionContextImpl? = null,
+    val parent: ClassicExecutionContext? = null,
     val depth: Int = 0,
     val step: Long = 0
 ) : ExecutionContext {
@@ -42,8 +42,8 @@ data class ExecutionContextImpl(
     val isActivationRecord: Boolean
         get() = parent == null || parent.depth == depth - 1
 
-    val pathToRoot: Sequence<ExecutionContextImpl> = sequence {
-        var current: ExecutionContextImpl? = this@ExecutionContextImpl
+    val pathToRoot: Sequence<ClassicExecutionContext> = sequence {
+        var current: ClassicExecutionContext? = this@ClassicExecutionContext
         while (current != null) {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             yield(current!!)
@@ -67,7 +67,7 @@ data class ExecutionContextImpl(
     }
 
     override fun toString(): String {
-        return "ExecutionContextImpl(" +
+        return "ClassicExecutionContext(" +
                 "query=$query, " +
                 "procedure=$procedure, " +
                 "substitution=$substitution, " +

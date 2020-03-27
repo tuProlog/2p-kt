@@ -2,15 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDERR
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDIN
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDOUT
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.WARNINGS
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
@@ -27,7 +19,7 @@ internal class ClassicSolver(
 ) : Solver {
 
     private var state: State = StateInit(
-        ExecutionContextImpl(
+        ClassicExecutionContext(
             libraries = libraries,
             flags = flags,
             staticKB = staticKB,
@@ -46,7 +38,7 @@ internal class ClassicSolver(
     }
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
-        val initialContext = ExecutionContextImpl(
+        val initialContext = ClassicExecutionContext(
             query = goal,
             libraries = libraries,
             flags = flags,

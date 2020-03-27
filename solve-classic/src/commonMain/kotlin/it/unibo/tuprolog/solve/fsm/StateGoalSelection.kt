@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Solution
 
-internal data class StateGoalSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
+internal data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
 
         return if (context.goals.isOver) {

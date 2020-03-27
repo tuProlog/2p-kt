@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.appendPrimitives
 import it.unibo.tuprolog.solve.appendRules
@@ -29,7 +29,7 @@ fun Term.toGoals(): Cursor<out Term> =
         }
     }.cursor()
 
-fun ExecutionContextImpl.createTempChild(inferProcedureFromGoals: Boolean = true): ExecutionContextImpl {
+fun ClassicExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
     val currentGoal = this.currentGoal as Struct
 
     return copy(
@@ -41,7 +41,7 @@ fun ExecutionContextImpl.createTempChild(inferProcedureFromGoals: Boolean = true
     )
 }
 
-fun ExecutionContextImpl.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ExecutionContextImpl {
+fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ClassicExecutionContext {
     val newChoicePointContext = if (rules.hasNext) {
         choicePoints.appendRules(rules.next, this)
     } else {
@@ -54,7 +54,7 @@ fun ExecutionContextImpl.appendRulesAndChoicePoints(rules: Cursor<out Rule>): Ex
     )
 }
 
-fun ExecutionContextImpl.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ExecutionContextImpl {
+fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
     val newChoicePointContext = if (primitiveExecutions.hasNext) {
         choicePoints.appendPrimitives(primitiveExecutions.next, this)
     } else {
@@ -67,29 +67,29 @@ fun ExecutionContextImpl.appendPrimitivesAndChoicePoints(primitiveExecutions: Cu
     )
 }
 
-fun ExecutionContextImpl.createChildAppendingRulesAndChoicePoints(
+fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true
-): ExecutionContextImpl {
+): ClassicExecutionContext {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
 
-fun ExecutionContextImpl.createChildAppendingPrimitivesAndChoicePoints(
+fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
     inferProcedureFromGoals: Boolean = true
-): ExecutionContextImpl {
+): ClassicExecutionContext {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
 // TODO Giovanni's review needed!! with Git > Show History
-fun ExecutionContextImpl.toRequest(
+fun ClassicExecutionContext.toRequest(
     signature: Signature,
     arguments: kotlin.collections.List<Term>
-): Solve.Request<ExecutionContextImpl> =
+): Solve.Request<ClassicExecutionContext> =
     Solve.Request(
         signature,
         arguments,

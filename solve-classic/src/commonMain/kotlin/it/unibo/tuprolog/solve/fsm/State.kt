@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 
 interface State {
-    val context: ExecutionContextImpl
+    val context: ClassicExecutionContext
 
     fun next(): State
 }

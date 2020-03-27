@@ -6,7 +6,7 @@ import it.unibo.tuprolog.utils.Cursor
 
 sealed class ChoicePointContext(
     open val alternatives: Cursor<out Any>,
-    open val executionContext: ExecutionContextImpl?,
+    open val executionContext: ClassicExecutionContext?,
     open val parent: ChoicePointContext?,
     open val depth: Int = 0
 ) {
@@ -56,11 +56,11 @@ sealed class ChoicePointContext(
 
     protected abstract val typeName: String
 
-    abstract fun backtrack(nextStep: Long): ExecutionContextImpl
+    abstract fun backtrack(nextStep: Long): ClassicExecutionContext
 
     data class Primitives(
         override val alternatives: Cursor<out Solve.Response>,
-        override val executionContext: ExecutionContextImpl?,
+        override val executionContext: ClassicExecutionContext?,
         override val parent: ChoicePointContext?,
         override val depth: Int
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
@@ -72,7 +72,7 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Primitives"
 
-        override fun backtrack(nextStep: Long): ExecutionContextImpl {
+        override fun backtrack(nextStep: Long): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 primitives = alternatives,
                 step = nextStep
@@ -89,7 +89,7 @@ sealed class ChoicePointContext(
 
     data class Rules(
         override val alternatives: Cursor<out Rule>,
-        override val executionContext: ExecutionContextImpl?,
+        override val executionContext: ClassicExecutionContext?,
         override val parent: ChoicePointContext?,
         override val depth: Int
     ) : ChoicePointContext(alternatives, executionContext, parent, depth) {
@@ -101,7 +101,7 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Rules"
 
-        override fun backtrack(nextStep: Long): ExecutionContextImpl {
+        override fun backtrack(nextStep: Long): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 rules = alternatives,
                 step = nextStep
@@ -121,10 +121,10 @@ fun ChoicePointContext?.nextDepth(): Int = if (this == null) 0 else this.depth +
 
 fun ChoicePointContext?.appendPrimitives(
     alternatives: Cursor<out Solve.Response>,
-    executionContext: ExecutionContextImpl? = null
+    executionContext: ClassicExecutionContext? = null
 ): ChoicePointContext? = ChoicePointContext.Primitives(alternatives, executionContext, this, nextDepth())
 
 fun ChoicePointContext?.appendRules(
     alternatives: Cursor<out Rule>,
-    executionContext: ExecutionContextImpl? = null
+    executionContext: ClassicExecutionContext? = null
 ): ChoicePointContext? = ChoicePointContext.Rules(alternatives, executionContext, this, nextDepth())

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Solution
 
 internal data class StateEnd(
     override val solution: Solution,
-    override val context: ExecutionContextImpl
+    override val context: ClassicExecutionContext
 ) : AbstractEndState(solution, context) {
 
     override fun computeNext(): State {

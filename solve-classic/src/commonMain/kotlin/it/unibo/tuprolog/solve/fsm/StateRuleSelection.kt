@@ -5,12 +5,12 @@ import it.unibo.tuprolog.solve.library.stdlib.magic.MagicCut
 import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.ChoicePointContext
-import it.unibo.tuprolog.solve.ExecutionContextImpl
+import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal data class StateRuleSelection(override val context: ExecutionContextImpl) : AbstractState(context) {
+internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     companion object {
         val transparentToCut = setOf(
@@ -50,7 +50,7 @@ internal data class StateRuleSelection(override val context: ExecutionContextImp
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
-    private fun ExecutionContextImpl.computeCutLimit(magicCut: Boolean = false): CutLimit {
+    private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
             val cutLimit = if (magicCut) {
                 this.pathToRoot.firstOrNull()
             } else {
