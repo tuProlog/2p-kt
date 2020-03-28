@@ -20,8 +20,8 @@ object ClassicSolverFactory : SolverFactory {
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -30,8 +30,8 @@ object ClassicSolverFactory : SolverFactory {
         ClassicSolver(
             libraries,
             flags,
-            staticKB,
-            dynamicKB,
+            staticKb,
+            dynamicKb,
             mapOf(STDIN to stdIn),
             mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
         )
@@ -39,8 +39,8 @@ object ClassicSolverFactory : SolverFactory {
     override fun mutableSolverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -49,8 +49,8 @@ object ClassicSolverFactory : SolverFactory {
         MutableClassicSolver(
             libraries,
             flags,
-            staticKB,
-            dynamicKB,
+            staticKb,
+            dynamicKb,
             mapOf(STDIN to stdIn),
             mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
         )

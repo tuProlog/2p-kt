@@ -3,11 +3,8 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.StreamsSolver
-import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.solver.*
 
 /**
@@ -15,9 +12,9 @@ import it.unibo.tuprolog.solve.solver.*
  *
  * @author Enrico
  */
-internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCTOR, 2) {
+internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FUNCTOR, 2) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val subGoals = with(request) {
                 query.`as`<Tuple>().toSequence()
@@ -28,6 +25,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
             solveConjunctionGoals(
                 request,
                 subGoals,
+                request.context,
                 Substitution.empty(),
                 request.context.sideEffectManager,
                 previousGoalsHadAlternatives = false
@@ -46,8 +44,9 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
      * @return The boolean value signaling if the following goals executed the cut or not
      */
     private suspend fun SequenceScope<Solve.Response>.solveConjunctionGoals(
-        mainRequest: Solve.Request<ExecutionContextImpl>,
+        mainRequest: Solve.Request<StreamsExecutionContext>,
         goals: Iterable<Term>,
+        toPropagateContext: ExecutionContext,
         accumulatedSubstitutions: Substitution,
         previousResponseSideEffectManager: SideEffectManagerImpl?,
         previousGoalsHadAlternatives: Boolean
@@ -57,11 +56,13 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
         val goalRequest = mainRequest.newSolveRequest(
             goal,
             accumulatedSubstitutions,
+            toPropagateContext,
             baseSideEffectManager = previousResponseSideEffectManager ?: mainRequest.context.sideEffectManager
         )
 
         var cutExecuted = false
-        StreamsSolver.solveToResponses(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
+        StreamsSolver.solveToFinalStates(goalRequest).forEachWithLookahead { goalFinalState, currentHasAlternatives ->
+            val goalResponse = goalFinalState.solve
             if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 
@@ -73,6 +74,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
                         solveConjunctionGoals(
                             mainRequest,
                             goals.drop(1),
+                            goalFinalState.context,
                             goalResponse.solution.substitution - mainRequest.context.substitution,
                             goalResponse.sideEffectManager as? SideEffectManagerImpl,
                             previousGoalsHadAlternatives || currentHasAlternatives

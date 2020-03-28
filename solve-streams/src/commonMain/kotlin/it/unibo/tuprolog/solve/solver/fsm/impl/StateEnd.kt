@@ -1,13 +1,11 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.PrologFlags
-import it.unibo.tuprolog.solve.SideEffectManager
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
@@ -25,6 +23,19 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal sealed class StateEnd(override val solve: Solve.Response) : AbstractState(solve), FinalState {
 
     override fun behave(): Sequence<State> = emptySequence()
+
+    override val context: ExecutionContext
+        get() = with(solve) {
+            StreamsExecutionContext(
+                libraries ?: Libraries(),
+                flags ?: emptyMap(),
+                staticKb ?: ClauseDatabase.empty(),
+                dynamicKb ?: ClauseDatabase.empty(),
+                inputChannels ?: ExecutionContextAware.defaultInputChannels(),
+                outputChannels ?: ExecutionContextAware.defaultOutputChannels(),
+                solution.substitution as? Substitution.Unifier ?: Substitution.empty()
+            )
+        }
 
     /** The *True* state is reached when a successful computational path has ended */
     internal data class True(override val solve: Solve.Response) : StateEnd(solve), FinalState {
@@ -56,13 +67,21 @@ internal fun IntermediateState.stateEndTrue(
     substitution: Substitution.Unifier = Substitution.empty(),
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
-    sideEffectManager: SideEffectManager? = null
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null,
+    inputChannels: PrologInputChannels<*>? = null,
+    outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.True(
     solve.replySuccess(
-        substitution, libraries, flags, staticKB, dynamicKB,
-        sideEffectManager ?: solve.context.getSideEffectManager()
+        substitution,
+        libraries ?: solve.context.libraries,
+        flags ?: solve.context.flags,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
+        sideEffectManager ?: solve.context.getSideEffectManager(),
+        inputChannels ?: solve.context.inputChannels,
+        outputChannels ?: solve.context.outputChannels
     )
 )
 
@@ -70,13 +89,20 @@ internal fun IntermediateState.stateEndTrue(
 internal fun IntermediateState.stateEndFalse(
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
-    sideEffectManager: SideEffectManager? = null
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null,
+    inputChannels: PrologInputChannels<*>? = null,
+    outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.False(
     solve.replyFail(
-        libraries, flags, staticKB, dynamicKB,
-        sideEffectManager ?: solve.context.getSideEffectManager()
+        libraries ?: solve.context.libraries,
+        flags ?: solve.context.flags,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
+        sideEffectManager ?: solve.context.getSideEffectManager(),
+        inputChannels ?: solve.context.inputChannels,
+        outputChannels ?: solve.context.outputChannels
     )
 )
 
@@ -85,15 +111,23 @@ internal fun IntermediateState.stateEndHalt(
     exception: TuPrologRuntimeException,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
-    sideEffectManager: SideEffectManager? = null
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null,
+    inputChannels: PrologInputChannels<*>? = null,
+    outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.Halt(
     solve.replyException(
-        exception, libraries, flags, staticKB, dynamicKB,
+        exception,
+        libraries ?: solve.context.libraries,
+        flags ?: solve.context.flags,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager
             ?: exception.context.getSideEffectManager()
-            ?: solve.context.getSideEffectManager()
+            ?: solve.context.getSideEffectManager(),
+        inputChannels ?: solve.context.inputChannels,
+        outputChannels ?: solve.context.outputChannels
     )
 )
 
@@ -102,15 +136,48 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
-    sideEffectManager: SideEffectManager? = null
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
+    sideEffectManager: SideEffectManager? = null,
+    inputChannels: PrologInputChannels<*>? = null,
+    outputChannels: PrologOutputChannels<*>? = null
 ): StateEnd = when (solution) {
-    is Solution.Yes -> stateEndTrue(solution.substitution, libraries, flags, staticKB, dynamicKB, sideEffectManager)
-    is Solution.No -> stateEndFalse(libraries, flags, staticKB, dynamicKB, sideEffectManager)
-    is Solution.Halt -> stateEndHalt(solution.exception, libraries, flags, staticKB, dynamicKB, sideEffectManager)
+    is Solution.Yes ->
+        stateEndTrue(
+            solution.substitution,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            sideEffectManager,
+            inputChannels,
+            outputChannels
+        )
+    is Solution.No ->
+        stateEndFalse(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
+    is Solution.Halt ->
+        stateEndHalt(
+            solution.exception,
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            sideEffectManager,
+            inputChannels,
+            outputChannels
+        )
 }
 
 /** Transition from this intermediate state to a [StateEnd] containing provided [response] data */
-internal fun IntermediateState.stateEnd(response: Solve.Response) =
-    with(response) { stateEnd(solution, libraries, flags, staticKB, dynamicKB, sideEffectManager) }
+internal fun IntermediateState.stateEnd(response: Solve.Response) = with(response) {
+    stateEnd(
+        solution,
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        sideEffectManager,
+        inputChannels,
+        outputChannels
+    )
+}

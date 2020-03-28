@@ -24,7 +24,7 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGo
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.assertSolutionEquals
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
@@ -47,7 +47,7 @@ import kotlin.test.assertEquals
 internal class StateIntegrationTesting {
 
     /** Shorthand function to execute a solveRequest */
-    private fun Solve.Request<ExecutionContextImpl>.executeFSM(): Sequence<State> =
+    private fun Solve.Request<StreamsExecutionContext>.executeFSM(): Sequence<State> =
         StateMachineExecutor.execute(StateInit(this))
 
     /** Utility function to test correct states behaviour inside this class */
@@ -123,7 +123,7 @@ internal class StateIntegrationTesting {
             val request = Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                ExecutionContextImpl(staticKb = infiniteComputationDatabase),
+                StreamsExecutionContext(staticKb = infiniteComputationDatabase),
                 executionMaxDuration = maxDuration
             )
             val nextStates = request.executeFSM()

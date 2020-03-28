@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.solver.newSolveRequest
@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.solver.newSolveRequest
  * @author Enrico
  */
 internal class StateGoalEvaluation(
-    override val solve: Solve.Request<ExecutionContextImpl>
+    override val solve: Solve.Request<StreamsExecutionContext>
 ) : AbstractTimedState(solve) {
 
     override fun behaveTimed(): Sequence<State> = sequence {
@@ -53,7 +53,7 @@ internal class StateGoalEvaluation(
     private companion object {
 
         /** Utility function to create "throw/1" solve requests */
-        private fun Solve.Request<ExecutionContextImpl>.newThrowSolveRequest(error: PrologError) =
+        private fun Solve.Request<StreamsExecutionContext>.newThrowSolveRequest(error: PrologError) =
             newSolveRequest(
                 Struct.of(Throw.functor, error.errorStruct),
                 baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager

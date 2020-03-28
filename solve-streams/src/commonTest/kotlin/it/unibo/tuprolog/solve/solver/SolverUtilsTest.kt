@@ -5,6 +5,8 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.*
 
 /**
@@ -14,7 +16,11 @@ import kotlin.test.*
  */
 internal class SolverUtilsTest {
 
-    private val aContext = ExecutionContextImpl()
+    private val aContext = StreamsExecutionContext(
+        dynamicKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
+        staticKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
+        flags = mapOf()
+    )
 
     /** A "true" solveRequest */
     private val solveRequest = Solve.Request(Signature("true", 0), emptyList(), aContext)
@@ -124,6 +130,24 @@ internal class SolverUtilsTest {
         val toBeTested = solveRequest.newSolveRequest(solveRequest.query, newSubstitution)
 
         assertEquals(newSubstitution, toBeTested.context.substitution)
+    }
+
+    @Test
+    fun newSolveRequestPropagatesCorrectlyContextFields() {
+        val aClause = Clause.of(Atom.of("ddd"), Atom.of("ccc"))
+        val modifiedContext = aContext.copy(
+            dynamicKb = ClauseDatabase.empty(),
+            staticKb = aContext.staticKb.assertA(aClause),
+            flags = mapOf(Atom.of("someFlag") to Atom.of("someFlagValue")),
+            libraries = Libraries()
+        )
+
+        val toBeTested = solveRequest.newSolveRequest(solveRequest.query, toPropagateContextData = modifiedContext)
+
+        assertEquals(modifiedContext.dynamicKb, toBeTested.context.dynamicKb)
+        assertEquals(modifiedContext.staticKb, toBeTested.context.staticKb)
+        assertEquals(modifiedContext.flags, toBeTested.context.flags)
+        assertEquals(modifiedContext.libraries, toBeTested.context.libraries)
     }
 
     @Test

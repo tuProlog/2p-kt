@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils
 import it.unibo.tuprolog.solve.exception.error.SystemError
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -17,9 +17,9 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
  *
  * @author Enrico
  */
-internal object Throw : PrimitiveWrapper<ExecutionContextImpl>("throw", 1) {
+internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         try {
             request.ensuringAllArgumentsAreInstantiated().arguments.single().freshCopy().let { throwArgument ->
                 val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)

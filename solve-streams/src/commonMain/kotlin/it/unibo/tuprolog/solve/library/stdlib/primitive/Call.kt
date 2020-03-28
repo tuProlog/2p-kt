@@ -11,9 +11,9 @@ import it.unibo.tuprolog.solve.solver.*
  *
  * @author Enrico
  */
-internal object Call : PrimitiveWrapper<ExecutionContextImpl>("call", 1) {
+internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         request.ensuringAllArgumentsAreInstantiated().arguments.single().let { toBeCalledGoal ->
             when {
                 toBeCalledGoal.isWellFormed() ->

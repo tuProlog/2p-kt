@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.createRequest
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToMultipleMatchesDatabaseAndSubstitution
@@ -34,7 +34,7 @@ internal class StateRuleSelectionTest {
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(theQuery.extractSignature(), theQuery.argsList,
-        ExecutionContextImpl(
+        StreamsExecutionContext(
             libraries = Libraries(Library.of(
                 alias = "testLib",
                 theory = prolog { theory({ "f"("a") }) }

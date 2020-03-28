@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
@@ -25,11 +25,11 @@ import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
  */
 internal object StateGoalEvaluationUtils {
 
-    internal val expectedContext = ExecutionContextImpl(sideEffectManager = SideEffectManagerImpl())
+    internal val expectedContext = StreamsExecutionContext(sideEffectManager = SideEffectManagerImpl())
 
     /** Creates a request launching exactly given primitive behaviour */
-    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<ExecutionContextImpl> {
-        val testPrimitive = PrimitiveWrapper.wrap<ExecutionContextImpl>("testPrimitive", 0) {
+    internal fun createRequestForPrimitiveResponding(primitiveBehaviour: Primitive): Solve.Request<StreamsExecutionContext> {
+        val testPrimitive = PrimitiveWrapper.wrap<StreamsExecutionContext>("testPrimitive", 0) {
             primitiveBehaviour(it)
         }
 

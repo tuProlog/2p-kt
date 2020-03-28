@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.newSolveRequest
 import it.unibo.tuprolog.solve.solver.replyWith
 
@@ -14,9 +14,9 @@ import it.unibo.tuprolog.solve.solver.replyWith
  *
  * @author Enrico
  */
-internal object Not : PrimitiveWrapper<ExecutionContextImpl>("\\+", 1) {
+internal object Not : PrimitiveWrapper<StreamsExecutionContext>("\\+", 1) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val goalArgument = request.arguments.single()
 

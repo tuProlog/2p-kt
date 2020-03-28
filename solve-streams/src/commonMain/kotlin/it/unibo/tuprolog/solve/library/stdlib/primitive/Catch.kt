@@ -12,9 +12,9 @@ import it.unibo.tuprolog.solve.solver.*
  *
  * @author Enrico
  */
-internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
+internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val goalArgument = request.arguments.first()
 
@@ -44,7 +44,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
     private fun call(goal: Term) = Struct.of(Call.functor, goal)
 
     /** Calls [SideEffectManagerImpl.ensureNoMoreSelectableCatch] */
-    private fun Solve.Request<ExecutionContextImpl>.ensureNoMoreSelectableCatch(notSelectableContext: ExecutionContextImpl) =
+    private fun Solve.Request<StreamsExecutionContext>.ensureNoMoreSelectableCatch(notSelectableContext: StreamsExecutionContext) =
         copy(
             context = context.copy(
                 sideEffectManager = context.sideEffectManager.ensureNoMoreSelectableCatch(notSelectableContext)

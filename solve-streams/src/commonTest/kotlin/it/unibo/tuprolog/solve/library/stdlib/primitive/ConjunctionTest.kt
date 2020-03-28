@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.library.stdlib.primitive.testutils.PrimitiveUtils
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 import kotlin.test.Test
 import kotlin.collections.listOf as ktListOf
@@ -64,7 +64,7 @@ internal class ConjunctionTest {
 
             val goal = "left" and "right"
             val request = Solve.Request(
-                goal.extractSignature(), goal.argsList, ExecutionContextImpl(
+                goal.extractSignature(), goal.argsList, StreamsExecutionContext(
                     substitution = preRequestSubstitution,
                     libraries = Libraries(
                         Library.of(

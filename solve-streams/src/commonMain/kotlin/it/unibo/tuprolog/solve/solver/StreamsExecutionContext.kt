@@ -13,7 +13,7 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-internal data class ExecutionContextImpl(
+internal data class StreamsExecutionContext(
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
     override val staticKb: ClauseDatabase = ClauseDatabase.empty(),
@@ -36,4 +36,4 @@ internal data class ExecutionContextImpl(
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
 internal fun ExecutionContext.getSideEffectManager(): SideEffectManagerImpl? =
-    (this as? ExecutionContextImpl)?.sideEffectManager
+    (this as? StreamsExecutionContext)?.sideEffectManager

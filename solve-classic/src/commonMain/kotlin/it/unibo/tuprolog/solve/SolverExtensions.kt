@@ -11,47 +11,47 @@ import kotlin.jvm.JvmName
 fun Solver.Companion.classic(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
     stdOut: OutputChannel<String> = OutputChannel.stdOut(),
     stdErr: OutputChannel<String> = OutputChannel.stdOut(),
     warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
 ): Solver =
-    ClassicSolverFactory.solverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ClassicSolverFactory.solverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun Solver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
     stdOut: OutputChannel<String> = OutputChannel.stdOut(),
     stdErr: OutputChannel<String> = OutputChannel.stdOut(),
     warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
 ): Solver =
-    ClassicSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ClassicSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.classic(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
     stdOut: OutputChannel<String> = OutputChannel.stdOut(),
     stdErr: OutputChannel<String> = OutputChannel.stdOut(),
     warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
 ): MutableSolver =
-    ClassicSolverFactory.mutableSolverOf(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ClassicSolverFactory.mutableSolverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
     stdOut: OutputChannel<String> = OutputChannel.stdOut(),
     stdErr: OutputChannel<String> = OutputChannel.stdOut(),
     warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
 ): MutableSolver =
-    ClassicSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ClassicSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)

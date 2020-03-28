@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
- * Test class for [ExecutionContextImpl]
+ * Test class for [StreamsExecutionContext]
  *
  * @author Enrico
  */
@@ -23,7 +23,7 @@ internal class ExecutionContextImplTest {
                 createSolveRequest(Atom.of("ciao2"))
             )
         )
-        val toBeTested = ExecutionContextImpl(sideEffectManager = sideEffectManagerWithLogicalParents)
+        val toBeTested = StreamsExecutionContext(sideEffectManager = sideEffectManagerWithLogicalParents)
 
         assertEquals(
             sequenceOf(Atom.of("ciao"), Atom.of("ciao2")).toList(),
@@ -34,7 +34,7 @@ internal class ExecutionContextImplTest {
     @Test
     fun getSideEffectManagerWorksForCorrectInstances() {
         val aSideEffectManager = SideEffectManagerImpl()
-        val contextImpl: ExecutionContext = ExecutionContextImpl(sideEffectManager = aSideEffectManager)
+        val contextImpl: ExecutionContext = StreamsExecutionContext(sideEffectManager = aSideEffectManager)
 
         assertEquals(aSideEffectManager, contextImpl.getSideEffectManager())
     }

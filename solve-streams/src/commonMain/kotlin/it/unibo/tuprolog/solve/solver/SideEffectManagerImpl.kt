@@ -19,20 +19,20 @@ internal data class SideEffectManagerImpl(
     // CUT side effect fields
 
     /** The sequence of parent execution contexts before this, limited to a "clause scope" */
-    private val clauseScopedParents: Sequence<ExecutionContextImpl> = emptySequence(),
+    private val clauseScopedParents: Sequence<StreamsExecutionContext> = emptySequence(),
     /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
     private val isChoicePointChild: Boolean = false,
     /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
-    private val toCutContextsParent: Sequence<ExecutionContextImpl> = emptySequence(),
+    private val toCutContextsParent: Sequence<StreamsExecutionContext> = emptySequence(),
 
     // Catch / Throw side effects fields
 
     /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
-    internal val logicalParentRequests: Sequence<Solve.Request<ExecutionContextImpl>> = emptySequence(),
+    internal val logicalParentRequests: Sequence<Solve.Request<StreamsExecutionContext>> = emptySequence(),
     /** The sequence of no more selectable parent requests, because already used */
-    private val throwNonSelectableParentContexts: Sequence<ExecutionContextImpl> = emptySequence(),
+    private val throwNonSelectableParentContexts: Sequence<StreamsExecutionContext> = emptySequence(),
     /** The execution context where a `catch` was found and till which other unexplored sub-trees should be cut */
-    private val throwRelatedToCutContextsParent: ExecutionContextImpl? = null
+    private val throwRelatedToCutContextsParent: StreamsExecutionContext? = null
 
 ) : SideEffectManager {
 
@@ -41,7 +41,7 @@ internal data class SideEffectManagerImpl(
     )
 
     /** Initializes isChoicePointChild to `false` whatever it was, and adds given [currentContext] to clauseScopedParents */
-    internal fun stateInitInitialize(currentContext: ExecutionContextImpl): SideEffectManagerImpl = copy(
+    internal fun stateInitInitialize(currentContext: StreamsExecutionContext): SideEffectManagerImpl = copy(
         clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
         isChoicePointChild = false
     )
@@ -54,9 +54,9 @@ internal data class SideEffectManagerImpl(
      * @param logicalParentRequest the Solve.Request to be considered logically the parent of this (to correctly implement `catch/throw` interaction)
      */
     internal fun creatingNewRequest(
-        currentContext: ExecutionContextImpl,
+        currentContext: StreamsExecutionContext,
         isChoicePointChild: Boolean,
-        logicalParentRequest: Solve.Request<ExecutionContextImpl>
+        logicalParentRequest: Solve.Request<StreamsExecutionContext>
     ) = copy(
         clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
         isChoicePointChild = isChoicePointChild,
@@ -91,7 +91,7 @@ internal data class SideEffectManagerImpl(
                 || shouldExecuteThrowCut()
 
     /** A method to retrieve the first ancestor catch request that has its second argument that unifies with [toUnifyArgument] */
-    internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<ExecutionContextImpl>? {
+    internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<StreamsExecutionContext>? {
         val ancestorCatchesRequests = logicalParentRequests.filter { it.signature == Catch.signature }
             .filterNot { it.context in throwNonSelectableParentContexts } // exclude already used catch requests
 
@@ -99,16 +99,16 @@ internal data class SideEffectManagerImpl(
     }
 
     /** Method to set the catch request whose not explored children should be cut from search tree */
-    internal fun throwCut(ancestorCatchContext: ExecutionContextImpl) = copy(
+    internal fun throwCut(ancestorCatchContext: StreamsExecutionContext) = copy(
         throwRelatedToCutContextsParent = ancestorCatchContext
     )
 
     /** Method to query if provided context was that selected by [throwCut] invocation */
-    internal fun isSelectedThrowCatch(contextImpl: ExecutionContextImpl) =
+    internal fun isSelectedThrowCatch(contextImpl: StreamsExecutionContext) =
         throwRelatedToCutContextsParent == contextImpl
 
     /** Method to remove catch request with that [contextImpl], ensuring that's no more selectable */
-    internal fun ensureNoMoreSelectableCatch(contextImpl: ExecutionContextImpl) = copy(
+    internal fun ensureNoMoreSelectableCatch(contextImpl: StreamsExecutionContext) = copy(
         throwNonSelectableParentContexts = throwNonSelectableParentContexts + contextImpl
     )
 
@@ -147,7 +147,7 @@ internal fun SideEffectManager?.resetCutWorkChanges(toRecoverSituation: SideEffe
     (this as? SideEffectManagerImpl)?.resetCutWorkChanges(toRecoverSituation)
 
 /** Bridge method to reach [SideEffectManagerImpl.isSelectedThrowCatch] homonym method from a [SideEffectManager] */
-internal fun SideEffectManager?.isSelectedThrowCatch(context: ExecutionContextImpl): Boolean =
+internal fun SideEffectManager?.isSelectedThrowCatch(context: StreamsExecutionContext): Boolean =
     (this as? SideEffectManagerImpl)?.isSelectedThrowCatch(context) ?: false
 
 /** Bridge method to reach [SideEffectManagerImpl.shouldExecuteThrowCut] homonym method from a [SideEffectManager] */
