@@ -59,13 +59,13 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
-    fun testIfThen2() {
-        prototype.testIfThen2()
+    fun testIfThen1() {
+        prototype.testIfThen1()
     }
 
     @Test
-    fun testIfThen1() {
-        prototype.testIfThen1()
+    fun testIfThen2() {
+        prototype.testIfThen2()
     }
 
     @Test
@@ -75,7 +75,7 @@ class ClassicSolverSystemTesting : SolverFactory {
 
     @Test
     fun testIfThenElse2() {
-        prototype.testIfThenElse1()
+        prototype.testIfThenElse2()
     }
 
     @Test
