@@ -37,7 +37,7 @@ internal class StateGoalEvaluation(
             } catch (prologError: PrologError) {
                 // if primitive throws PrologError try to solve corresponding throw/1 request
 
-                responses = StreamsSolver.solve(solve.newThrowSolveRequest(prologError))
+                responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(prologError))
             }
 
             responses?.forEach {

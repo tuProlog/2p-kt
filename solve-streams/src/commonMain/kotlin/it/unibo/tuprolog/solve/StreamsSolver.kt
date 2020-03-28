@@ -15,17 +15,16 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  *
  * @author Enrico
  */
-internal class StreamsSolver
-    constructor(
-        libraries: Libraries = Libraries(),
-        flags: PrologFlags = emptyMap(),
-        staticKB: ClauseDatabase = ClauseDatabase.empty(),
-        dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
-        inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-        outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
-    ) : Solver {
+internal class StreamsSolver constructor(
+    libraries: Libraries = Libraries(),
+    flags: PrologFlags = emptyMap(),
+    staticKB: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+) : Solver {
 
-    private var executionContext = ExecutionContextImpl(
+    private var executionContext: ExecutionContext = ExecutionContextImpl(
         libraries,
         flags,
         staticKB,
@@ -44,11 +43,11 @@ internal class StreamsSolver
             outputChannels = outputChannels
         )
 
-        return solve(
+        return solveToFinalStates(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                executionContext,
+                executionContext as ExecutionContextImpl,
                 executionMaxDuration = maxDuration
             )
         ).map {
@@ -79,11 +78,15 @@ internal class StreamsSolver
 
     internal companion object {
 
-        /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
-        internal fun solve(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<FinalState> =
+        /** Internal version of other [solve] method, that accepts raw requests and returns raw statemachine final states */
+        internal fun solveToFinalStates(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<FinalState> =
             StateMachineExecutor.execute(StateInit(goalRequest))
                 .filterIsInstance<FinalState>()
                 .filter { it.solve.solution.query == goalRequest.query }
+
+        /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
+        internal fun solveToResponses(goalRequest: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+            solveToFinalStates(goalRequest).map { it.solve }
 
         /** Utility function to clean up unassigned variables from final result */
         private fun Solution.cleanUp(): Solution = when (this) {

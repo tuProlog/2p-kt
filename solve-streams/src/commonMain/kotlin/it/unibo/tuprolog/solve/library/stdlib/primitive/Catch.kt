@@ -18,7 +18,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
         sequence {
             val goalArgument = request.arguments.first()
 
-            StreamsSolver.solve(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
+            StreamsSolver.solveToResponses(request.newSolveRequest(call(goalArgument))).forEach { goalResponse ->
                 when {
                     // if i'm the catch selected by throw/1 primitive
                     goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
@@ -33,7 +33,7 @@ internal object Catch : PrimitiveWrapper<ExecutionContextImpl>("catch", 3) {
                             )
                             .ensureNoMoreSelectableCatch(request.context)
 
-                        yieldAll(StreamsSolver.solve(recoverGoalSolveRequest).map { request.replyWith(it) })
+                        yieldAll(StreamsSolver.solveToResponses(recoverGoalSolveRequest).map { request.replyWith(it) })
                     }
                     else -> yield(request.replyWith(goalResponse))
                 }

@@ -56,12 +56,12 @@ internal object StateGoalEvaluationUtils {
                     to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(StreamsSolver.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(StreamsSolver.solveToResponses(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
                 }
             } to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
-                    yieldAll(StreamsSolver.solve(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
+                    yieldAll(StreamsSolver.solveToResponses(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))
                     yield(it.replyFail())
                 }
             } to listOf(StateEnd.Halt::class)

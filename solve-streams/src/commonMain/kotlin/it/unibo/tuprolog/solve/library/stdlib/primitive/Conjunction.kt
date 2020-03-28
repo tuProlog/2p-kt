@@ -61,7 +61,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
         )
 
         var cutExecuted = false
-        StreamsSolver.solve(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
+        StreamsSolver.solveToResponses(goalRequest).forEachWithLookahead { goalResponse, currentHasAlternatives ->
             if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 
