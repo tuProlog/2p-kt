@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.library.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.solve.library.stdlib.function.testutils.FunctionUtils.computeOf
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.function
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.library.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.library.stdlib.function.*
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError

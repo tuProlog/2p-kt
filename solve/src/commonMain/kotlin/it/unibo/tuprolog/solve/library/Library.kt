@@ -5,9 +5,8 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.PrologFunction
-import it.unibo.tuprolog.solve.primitive.toIndicator
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /** Represents a Prolog library */

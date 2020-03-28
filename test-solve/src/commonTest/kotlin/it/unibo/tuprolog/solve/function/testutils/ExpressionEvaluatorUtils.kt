@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.DummyInstances

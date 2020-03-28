@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.*
 
 /** A base class for Computation requests and responses */

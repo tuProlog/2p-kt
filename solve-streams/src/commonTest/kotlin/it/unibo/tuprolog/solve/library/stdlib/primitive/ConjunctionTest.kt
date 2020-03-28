@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.library.stdlib.primitive.testutils.ConjunctionUti
 import it.unibo.tuprolog.solve.library.stdlib.primitive.testutils.ConjunctionUtils.twoMatchesDB
 import it.unibo.tuprolog.solve.library.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest

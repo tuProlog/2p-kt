@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**

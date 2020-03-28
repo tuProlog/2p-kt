@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.library.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl

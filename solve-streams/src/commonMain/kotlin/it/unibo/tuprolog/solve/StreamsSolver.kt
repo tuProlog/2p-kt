@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.primitive.extractSignature
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor

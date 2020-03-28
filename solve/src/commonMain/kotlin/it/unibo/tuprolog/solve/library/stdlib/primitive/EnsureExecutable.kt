@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError

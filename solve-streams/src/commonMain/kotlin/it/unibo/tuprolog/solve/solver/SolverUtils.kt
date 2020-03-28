@@ -8,7 +8,7 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.*
 import kotlin.jvm.JvmName
 

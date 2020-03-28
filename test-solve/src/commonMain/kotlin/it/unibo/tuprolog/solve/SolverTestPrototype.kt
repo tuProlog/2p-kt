@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1
@@ -51,6 +49,13 @@ import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalTo
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.library.stdlib.primitive.*
+import it.unibo.tuprolog.solve.library.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.library.stdlib.rule.Member
+import it.unibo.tuprolog.solve.library.stdlib.rule.Not
+import it.unibo.tuprolog.solve.library.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -68,13 +73,33 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            if(loggingOn) solver.logDatabases()
+            if (loggingOn) solver.logDatabases()
 
             val solutions = solver.solve(goal, maxDuration).toList()
             assertSolutionEquals(solutionList, solutions)
 
-            if(loggingOn) logGoalAndSolutions(goal, solutions)
+            if (loggingOn) logGoalAndSolutions(goal, solutions)
         }
+    }
+
+    private fun Solver.assertHasPredicateInAPI(rule: RuleWrapper<*>) {
+        assertHasPredicateInAPI(rule.signature)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(primitive: PrimitiveWrapper<*>) {
+        assertHasPredicateInAPI(primitive.signature)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(signature: Signature) {
+        assertHasPredicateInAPI(signature.name, signature.arity, signature.vararg)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(functor: String, arity: Int, vararg: Boolean = false) {
+        val varargMsg = if (vararg) "(vararg) " else ""
+        assertTrue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
+            Signature(functor, arity, vararg) in libraries
+        }
+        if (loggingOn) println("Solver has predicate $functor/$arity ${varargMsg}in its API")
     }
 
     /** Utility function to log loaded Solver databases */
@@ -104,26 +129,46 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         prolog {
             val solver = solverOf()
 
-            solver.libraries.let { builtins ->
-                assertTrue { Signature("!", 0) in builtins }
-                assertTrue { Signature("call", 1) in builtins }
-                assertTrue { Signature("catch", 3) in builtins }
-                assertTrue { Signature("throw", 1) in builtins }
-                assertTrue { Signature("halt", 0) in builtins }
-                assertTrue { Signature(",", 2) in builtins }
-                assertTrue { Signature(";", 2) in builtins }
-                assertTrue { Signature("->", 2) in builtins }
-                assertTrue { Signature("\\+", 1) in builtins }
-                assertTrue { Signature("not", 1) in builtins }
-                assertTrue { Signature(">", 2) in builtins }
-                assertTrue { Signature(">=", 2) in builtins }
-                assertTrue { Signature("<", 2) in builtins }
-                assertTrue { Signature("=<", 2) in builtins }
-                assertTrue { Signature("=", 2) in builtins }
-                assertTrue { Signature("==", 2) in builtins }
-                assertTrue { Signature("\\=", 2) in builtins }
-                assertTrue { Signature("\\==", 2) in builtins }
-                assertTrue { Signature("member", 2) in builtins }
+            with(solver) {
+                assertHasPredicateInAPI("!", 0)
+                assertHasPredicateInAPI("call", 1)
+                assertHasPredicateInAPI("catch", 3)
+                assertHasPredicateInAPI("throw", 1)
+                assertHasPredicateInAPI(",", 2)
+                assertHasPredicateInAPI("\\+", 1)
+                assertHasPredicateInAPI(Arrow)
+                assertHasPredicateInAPI(Member.SIGNATURE)
+                assertHasPredicateInAPI(Not)
+                assertHasPredicateInAPI(Semicolon.SIGNATURE)
+                assertHasPredicateInAPI(ArithmeticEqual)
+                assertHasPredicateInAPI(ArithmeticGreaterThan)
+                assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
+                assertHasPredicateInAPI(ArithmeticLowerThan)
+                assertHasPredicateInAPI(ArithmeticLowerThanOrEqualTo)
+                assertHasPredicateInAPI(ArithmeticNotEqual)
+                assertHasPredicateInAPI(Assert)
+                assertHasPredicateInAPI(AssertA)
+                assertHasPredicateInAPI(AssertZ)
+                assertHasPredicateInAPI(Atom)
+                assertHasPredicateInAPI(Atomic)
+                assertHasPredicateInAPI(Callable)
+                assertHasPredicateInAPI(Compound)
+                assertHasPredicateInAPI(EnsureExecutable)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Float)
+                assertHasPredicateInAPI(Ground)
+                assertHasPredicateInAPI(Halt)
+                assertHasPredicateInAPI(Integer)
+                assertHasPredicateInAPI(Is)
+                assertHasPredicateInAPI(Natural)
+                assertHasPredicateInAPI(NewLine)
+                assertHasPredicateInAPI(NonVar)
+                assertHasPredicateInAPI(NotUnifiableWith)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Number)
+                assertHasPredicateInAPI(TermIdentical)
+                assertHasPredicateInAPI(TermNotIdentical)
+                assertHasPredicateInAPI(UnifiesWith)
+                assertHasPredicateInAPI(Var)
+                assertHasPredicateInAPI(Write)
             }
 
         }
@@ -536,18 +581,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -565,27 +599,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //      with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
-            //      solutions
-            // )
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(3), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(3), it.substitution["N"])
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(
+                with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
+                solutions
+            )
         }
     }
 
@@ -603,18 +620,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -632,18 +638,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -677,17 +672,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes()), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-            }
+            assertSolutionEquals(ktListOf(query.yes()), solutions)
         }
     }
 
@@ -703,19 +688,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 1)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(1), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 1)), solutions)
         }
     }
 
@@ -731,25 +704,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //         with(query) { ktListOf(yes(), yes()) },
-            //         solutions
-            // )
-
-            assertEquals(2, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
+            assertSolutionEquals(
+                with(query) { ktListOf(yes(), yes()) },
+                solutions
+            )
         }
     }
 
@@ -765,69 +723,32 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //        with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
-            //        solutions
-            // )
+            assertSolutionEquals(
+                with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
+                solutions
+            )
 
             assertEquals(2, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(1), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution["N"])
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
         }
     }
+
+    private inline fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
 
     fun testMember(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf()
 
-            val constants = arrayOf("a", "b", "c")
-            val goal = "member"("X", listOf(*constants))
+            val constants = ktListOf("a", "b", "c")
+            val goal = "member"("X", constants.toTerm())
 
             val solutions = solver.solve(goal, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //        ktListOf(constants.map { goal.yes("X" to it) }, ktListOf(goal.no())).flatten(),
-            //        solutions
-            // )
+            assertSolutionEquals(
+                ktListConcat(constants.map { goal.yes("X" to it) }, ktListOf(goal.no())),
+                solutions
+            )
 
             assertEquals(constants.size + 1, solutions.size)
-
-            solutions.last().let {
-                assertTrue { it is Solution.No }
-                assertEquals(goal, it.query)
-                assertTrue { it.substitution is Substitution.Fail }
-                assertNull(it.solvedQuery)
-            }
-
-
-            for (i in constants.indices) {
-                solutions[i].let {
-                    assertTrue { it is Solution.Yes }
-                    assertEquals(goal, it.query)
-                    assertEquals("member"(constants[i], listOf(*constants)), it.solvedQuery)
-                    assertTrue { it.substitution is Substitution.Unifier }
-                    assertTrue { "X" in it.substitution }
-                    assertEquals(atomOf(constants[i]), it.substitution["X"])
-                }
-            }
         }
     }
 }

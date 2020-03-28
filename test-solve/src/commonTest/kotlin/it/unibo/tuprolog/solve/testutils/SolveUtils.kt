@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.testutils
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.theory.ClauseDatabase

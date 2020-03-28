@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.library.stdlib.function.testutils.FloatFunctionUtils
 import it.unibo.tuprolog.solve.library.stdlib.function.testutils.FunctionUtils.computeOf
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

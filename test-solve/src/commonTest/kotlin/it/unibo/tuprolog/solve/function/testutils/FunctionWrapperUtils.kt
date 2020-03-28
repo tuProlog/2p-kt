@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.function.testutils
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.PrologFunction

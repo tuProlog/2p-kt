@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -49,53 +50,22 @@ class ClassicSolverSystemTesting : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableSolver =
-        MutableSolver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): MutableSolver = throw NotImplementedError()
 
     @Test
-//    @Ignore
+    @Ignore
     fun entryPointForManualTests() {
-        prolog {
-            val solver = mutableSolverOf(
-                libraries = defaultLibraries
-            )
-
-            val prints = mutableListOf<String>()
-
-            solver.standardOutput?.addListener { prints.add(it) }
-
-            solver.assertZ("f"(1))
-            solver.assertZ("f"(2))
-            solver.assertZ("f"(3))
-
-            assertTrue {
-                solver.dynamicKb.contains("f"("X"))
-            }
-
-            val query = "f"("X") and "write"("hello world") and "nl" and "assert"("a") and "a"
-
-            solver.solve(query).forEach(::println)
-
-            assertEquals("hello world", prints[0])
-            assertEquals("\n", prints[1])
-            assertTrue {
-                solver.dynamicKb.contains(atomOf("a"))
-            }
-            solver.retractAll("f"("X"))
-            assertTrue {
-                "f"("X") !in solver.dynamicKb
-            }
-        }
-    }
-
-    @Test
-    fun testIfThen2() {
-        prototype.testIfThen2()
+        TODO()
     }
 
     @Test
     fun testIfThen1() {
         prototype.testIfThen1()
+    }
+
+    @Test
+    fun testIfThen2() {
+        prototype.testIfThen2()
     }
 
     @Test
@@ -105,7 +75,7 @@ class ClassicSolverSystemTesting : SolverFactory {
 
     @Test
     fun testIfThenElse2() {
-        prototype.testIfThenElse1()
+        prototype.testIfThenElse2()
     }
 
     @Test

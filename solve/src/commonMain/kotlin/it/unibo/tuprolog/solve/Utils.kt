@@ -1,4 +1,7 @@
+@file:JvmName("Utils")
 package it.unibo.tuprolog.solve
+
+import kotlin.jvm.JvmName
 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
 inline fun <T> Iterator<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) {

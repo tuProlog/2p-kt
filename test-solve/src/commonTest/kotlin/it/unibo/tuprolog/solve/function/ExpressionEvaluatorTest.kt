@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.createContextWithFunctionBy
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.inputFunctionOutputTriple

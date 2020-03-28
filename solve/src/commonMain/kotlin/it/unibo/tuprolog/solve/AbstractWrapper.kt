@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.solve.primitive.Signature
-
 /**
  * Signature to [Wrapped] type, abstract wrapper class
  *

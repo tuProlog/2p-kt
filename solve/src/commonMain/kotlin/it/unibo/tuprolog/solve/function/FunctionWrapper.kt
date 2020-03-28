@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.solve.AbstractWrapper
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
 
 /**

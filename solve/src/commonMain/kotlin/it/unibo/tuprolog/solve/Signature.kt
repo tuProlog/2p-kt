@@ -1,13 +1,6 @@
-package it.unibo.tuprolog.solve.primitive
+package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.*
-
-/** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
-fun Signature.toIndicator(): Indicator? =
-    when {
-        this.vararg -> null
-        else -> Indicator.of(this.name, this.arity)
-    }
 
 /** The signature of a query Struct or a Primitive */
 data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) : ToTermConvertible {
@@ -19,8 +12,19 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
     /** Converts this signature to a Struct `'/'([name],[arity])` or `'/'([name],'+'([arity], vararg))` */
     override fun toTerm(): Struct =
         when {
-            vararg -> Struct.of(FUNCTOR, Atom.of(name), Struct.of(varargStructFunctor, Integer.of(arity), varargAtom))
+            vararg -> Struct.of(
+                FUNCTOR, Atom.of(name), Struct.of(
+                    varargStructFunctor, Integer.of(arity),
+                    varargAtom
+                ))
             else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
+        }
+
+    /** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
+    fun toIndicator(): Indicator? =
+        when {
+            this.vararg -> null
+            else -> Indicator.of(this.name, this.arity)
         }
 
     /** Creates corresponding Struct of this Signature with provided arguments */
@@ -91,11 +95,11 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
 
         /** Creates a Signature instance from a well-formed Indicator, or returns `null` if it wasn't */
         fun fromIndicator(indicator: Indicator): Signature? = when {
-            indicator.isWellFormed -> Signature(indicator.indicatedName!!, indicator.indicatedArity!!)
+            indicator.isWellFormed -> Signature(
+                indicator.indicatedName!!,
+                indicator.indicatedArity!!
+            )
             else -> null
         }
     }
 }
-
-/** Extracts this [Struct] indicator and converts it to [Signature] */
-fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!

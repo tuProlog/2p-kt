@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
@@ -32,7 +33,8 @@ sealed class Member : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     companion object {
         const val FUNCTOR: String = "member"
-
         const val ARITY: Int = 2
+        val SIGNATURE: Signature
+            get() = Signature(FUNCTOR, ARITY)
     }
 }

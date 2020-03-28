@@ -19,8 +19,3 @@ interface Solver : ExecutionContextAware {
         // To be extended through extension methods
     }
 }
-
-inline fun Solver.solve(
-    maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
-    scopedContext: Scope.() -> Struct
-): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)

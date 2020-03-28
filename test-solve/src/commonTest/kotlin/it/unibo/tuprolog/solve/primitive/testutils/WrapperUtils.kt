@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.primitive.testutils
 
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import kotlin.collections.List as KtList
 
 /**

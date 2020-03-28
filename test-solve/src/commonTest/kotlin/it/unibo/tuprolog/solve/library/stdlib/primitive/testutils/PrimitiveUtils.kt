@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive.testutils
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.CommonBuiltins
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
