@@ -811,69 +811,32 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //        with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
-            //        solutions
-            // )
+             assertSolutionEquals(
+                    with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
+                    solutions
+             )
 
             assertEquals(2, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(1), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution["N"])
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
         }
     }
+
+    private inline fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
 
     fun testMember(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf()
 
-            val constants = arrayOf("a", "b", "c")
-            val goal = "member"("X", listOf(*constants))
+            val constants = ktListOf("a", "b", "c")
+            val goal = "member"("X", constants.toTerm())
 
             val solutions = solver.solve(goal, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //        ktListOf(constants.map { goal.yes("X" to it) }, ktListOf(goal.no())).flatten(),
-            //        solutions
-            // )
+             assertSolutionEquals(
+                ktListConcat(constants.map { goal.yes("X" to it) }, ktListOf(goal.no())),
+                solutions
+             )
 
             assertEquals(constants.size + 1, solutions.size)
-
-            solutions.last().let {
-                assertTrue { it is Solution.No }
-                assertEquals(goal, it.query)
-                assertTrue { it.substitution is Substitution.Fail }
-                assertNull(it.solvedQuery)
-            }
-
-
-            for (i in constants.indices) {
-                solutions[i].let {
-                    assertTrue { it is Solution.Yes }
-                    assertEquals(goal, it.query)
-                    assertEquals("member"(constants[i], listOf(*constants)), it.solvedQuery)
-                    assertTrue { it.substitution is Substitution.Unifier }
-                    assertTrue { "X" in it.substitution }
-                    assertEquals(atomOf(constants[i]), it.substitution["X"])
-                }
-            }
         }
     }
 }
