@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
@@ -74,12 +73,12 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         maxDuration: TimeDuration
     ) {
         goalToSolutions.forEach { (goal, solutionList) ->
-            if(loggingOn) solver.logDatabases()
+            if (loggingOn) solver.logDatabases()
 
             val solutions = solver.solve(goal, maxDuration).toList()
             assertSolutionEquals(solutionList, solutions)
 
-            if(loggingOn) logGoalAndSolutions(goal, solutions)
+            if (loggingOn) logGoalAndSolutions(goal, solutions)
         }
     }
 
@@ -582,18 +581,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -611,27 +599,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //      with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
-            //      solutions
-            // )
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(3), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(3), it.substitution["N"])
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(
+                with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
+                solutions
+            )
         }
     }
 
@@ -649,18 +620,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -678,18 +638,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(2), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertEquals(numOf(2), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 2)), solutions)
         }
     }
 
@@ -723,17 +672,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes()), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-            }
+            assertSolutionEquals(ktListOf(query.yes()), solutions)
         }
     }
 
@@ -749,19 +688,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(ktListOf(query.yes("N" to 1)), solutions)
-
-            assertEquals(1, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals("a"("N"), it.query)
-                assertEquals("a"(1), it.solvedQuery)
-                assertTrue { it.substitution is Substitution.Unifier }
-                assertTrue { "N" in it.substitution }
-                assertEquals(numOf(1), it.substitution["N"])
-            }
+            assertSolutionEquals(ktListOf(query.yes("N" to 1)), solutions)
         }
     }
 
@@ -777,25 +704,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
-            // TODO enable after solving #52 and remove all other assertions below
-            // assertSolutionEquals(
-            //         with(query) { ktListOf(yes(), yes()) },
-            //         solutions
-            // )
-
-            assertEquals(2, solutions.size)
-
-            solutions[0].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
-
-            solutions[1].let {
-                assertTrue { it is Solution.Yes }
-                assertEquals(atomOf("a"), it.query)
-                assertEquals(atomOf("a"), it.solvedQuery)
-            }
+            assertSolutionEquals(
+                with(query) { ktListOf(yes(), yes()) },
+                solutions
+            )
         }
     }
 
@@ -811,10 +723,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
             val query = "a"("N")
             val solutions = solver.solve(query, maxDuration).toList()
 
-             assertSolutionEquals(
-                    with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
-                    solutions
-             )
+            assertSolutionEquals(
+                with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
+                solutions
+            )
 
             assertEquals(2, solutions.size)
         }
@@ -831,10 +743,10 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
             val solutions = solver.solve(goal, maxDuration).toList()
 
-             assertSolutionEquals(
+            assertSolutionEquals(
                 ktListConcat(constants.map { goal.yes("X" to it) }, ktListOf(goal.no())),
                 solutions
-             )
+            )
 
             assertEquals(constants.size + 1, solutions.size)
         }
