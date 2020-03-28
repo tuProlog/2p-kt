@@ -77,6 +77,22 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testAssert() {
+        prototype.testAssert()
+    }
+
+    @Test
+    fun testAssertZ() {
+        prototype.testAssertZ()
+    }
+
+    @Test
+    @Ignore
+    fun testAssertA() {
+        prototype.testAssertA()
+    }
+
+    @Test
     fun testWrite() {
         prototype.testWrite()
     }

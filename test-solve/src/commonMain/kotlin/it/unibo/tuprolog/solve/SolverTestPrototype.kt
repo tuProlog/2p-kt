@@ -174,6 +174,44 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
+    private fun testAssert(suffix: String, inverse: Boolean) {
+        prolog {
+            val solver = solverOf()
+            val assert = "assert$suffix"
+
+            val query = assert("f"(1)) and
+                    assert("f"(2)) and
+                    assert("f"(3)) and
+                    "f"("X")
+
+            val solutions = solver.solve(query).toList()
+            val ints = if (inverse) (3 downTo 1) else (1..3)
+
+            assertSolutionEquals(
+                (ints).map { query.yes("X" to it) },
+                solutions
+            )
+
+            ints.forEach {
+                assertTrue {
+                    "f"(it) in solver.dynamicKb
+                }
+            }
+        }
+    }
+
+    fun testAssert() {
+        testAssert("", false)
+    }
+
+    fun testAssertZ() {
+        testAssert("z", false)
+    }
+
+    fun testAssertA() {
+        testAssert("a", true)
+    }
+
     fun testWrite() {
         val outputs = mutableListOf<String>()
         prolog {
