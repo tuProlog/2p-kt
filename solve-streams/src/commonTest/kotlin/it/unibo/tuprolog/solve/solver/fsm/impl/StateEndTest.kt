@@ -76,8 +76,8 @@ internal class StateEndTest {
         fullResponseStateEndInstances.forEach {
             assertSame(it.solve.libraries, it.context.libraries)
             assertSame(it.solve.flags, it.context.flags)
-            assertSame(it.solve.dynamicKB, it.context.dynamicKb)
-            assertSame(it.solve.staticKB, it.context.staticKb)
+            assertSame(it.solve.dynamicKb, it.context.dynamicKb)
+            assertSame(it.solve.staticKb, it.context.staticKb)
         }
     }
 
@@ -307,8 +307,8 @@ internal class StateEndTest {
             assertStateContentsCorrect(
                 response.libraries ?: defaultLibraries,
                 response.flags ?: defaultFlags,
-                response.staticKB ?: defaultStaticKb,
-                response.dynamicKB ?: defaultDynamicKb,
+                response.staticKb ?: defaultStaticKb,
+                response.dynamicKb ?: defaultDynamicKb,
                 theRequestSideEffectManager,
                 toBeTested
             )

@@ -57,7 +57,6 @@ import it.unibo.tuprolog.solve.library.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.collections.listOf as ktListOf
 
@@ -192,7 +191,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testTimeout1() {
         assertSolverSolutionsCorrect(
             solver = solverOf(
-                staticKB = timeRelatedDatabase,
+                staticKb = timeRelatedDatabase,
                 libraries = defaultLibraries + timeLibrary
             ),
             goalToSolutions = lessThan500MsGoalToSolution,
@@ -204,7 +203,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testTimeout2() {
         assertSolverSolutionsCorrect(
             solver = solverOf(
-                staticKB = timeRelatedDatabase,
+                staticKb = timeRelatedDatabase,
                 libraries = defaultLibraries + timeLibrary
             ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
@@ -216,7 +215,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testTimeout3() {
         assertSolverSolutionsCorrect(
             solver = solverOf(
-                staticKB = timeRelatedDatabase,
+                staticKb = timeRelatedDatabase,
                 libraries = defaultLibraries + timeLibrary
             ),
             goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
@@ -228,7 +227,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testTimeout4() {
         assertSolverSolutionsCorrect(
             solver = solverOf(
-                staticKB = timeRelatedDatabase,
+                staticKb = timeRelatedDatabase,
                 libraries = defaultLibraries + timeLibrary
             ),
             goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
@@ -239,7 +238,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [ifThen1ToSolution] */
     fun testIfThen1(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKB = ifThenDatabase1),
+            solver = solverOf(staticKb = ifThenDatabase1),
             goalToSolutions = ifThen1ToSolution,
             maxDuration = maxDuration
         )
@@ -248,7 +247,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [ifThenElse1ToSolution] */
     fun testIfThenElse1(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKB = ifThenDatabase1),
+            solver = solverOf(staticKb = ifThenDatabase1),
             goalToSolutions = ifThenElse1ToSolution,
             maxDuration = maxDuration
         )
@@ -257,7 +256,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [ifThenElse2ToSolution] */
     fun testIfThenElse2(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKB = ifThenDatabase2),
+            solver = solverOf(staticKb = ifThenDatabase2),
             goalToSolutions = ifThenElse2ToSolution,
             maxDuration = maxDuration
         )
@@ -266,7 +265,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [ifThen2ToSolution] */
     fun testIfThen2(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKB = ifThenDatabase2),
+            solver = solverOf(staticKb = ifThenDatabase2),
             goalToSolutions = ifThen2ToSolution,
             maxDuration = maxDuration
         )
@@ -275,7 +274,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     fun testUnification(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = simpleFactDatabase),
+            solverOf(staticKb = simpleFactDatabase),
             simpleFactDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -285,7 +284,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     fun testSimpleCutAlternatives(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = simpleCutDatabase),
+            solverOf(staticKb = simpleCutDatabase),
             simpleCutDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -294,7 +293,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
     fun testCutAndConjunction(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = simpleCutAndConjunctionDatabase),
+            solverOf(staticKb = simpleCutAndConjunctionDatabase),
             simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -303,7 +302,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
     fun testCutConjunctionAndBacktracking(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = cutConjunctionAndBacktrackingDatabase),
+            solverOf(staticKb = cutConjunctionAndBacktrackingDatabase),
             cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -312,7 +311,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
     fun testMaxDurationParameterAndTimeOutException(maxDuration: TimeDuration = 100L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = infiniteComputationDatabase),
+            solverOf(staticKb = infiniteComputationDatabase),
             infiniteComputationDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -321,7 +320,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeExample(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = prologStandardExampleDatabase),
+            solverOf(staticKb = prologStandardExampleDatabase),
             prologStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -330,7 +329,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
     fun testPrologStandardSearchTreeWithCutExample(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = prologStandardExampleWithCutDatabase),
+            solverOf(staticKb = prologStandardExampleWithCutDatabase),
             prologStandardExampleWithCutDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -339,7 +338,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [customReverseListDatabaseNotableGoalToSolution] */
     fun testBacktrackingWithCustomReverseListImplementation(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = customReverseListDatabase),
+            solverOf(staticKb = customReverseListDatabase),
             customReverseListDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -348,7 +347,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
     fun testWithPrologStandardConjunctionExamples(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = conjunctionStandardExampleDatabase),
+            solverOf(staticKb = conjunctionStandardExampleDatabase),
             conjunctionStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -380,7 +379,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKB = database),
+                    solverOf(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -391,7 +390,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
     fun testCallPrimitive(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = callStandardExampleDatabase),
+            solverOf(staticKb = callStandardExampleDatabase),
             callStandardExampleDatabaseGoalsToSolution,
             maxDuration
         )
@@ -412,7 +411,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKB = database),
+                    solverOf(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -423,7 +422,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
     fun testCatchPrimitive(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = catchAndThrowStandardExampleDatabase),
+            solverOf(staticKb = catchAndThrowStandardExampleDatabase),
             catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -462,7 +461,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKB = database),
+                    solverOf(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -482,7 +481,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Not rule testing with [notStandardExampleDatabaseNotableGoalToSolution] */
     fun testNotPrimitive(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = notStandardExampleDatabase),
+            solverOf(staticKb = notStandardExampleDatabase),
             notStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -520,7 +519,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                     }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKB = database),
+                    solverOf(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -531,7 +530,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
     fun testIfThenRule(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = ifThenStandardExampleDatabase),
+            solverOf(staticKb = ifThenStandardExampleDatabase),
             ifThenStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -549,7 +548,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
     fun testNumbersRangeListGeneration(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(staticKB = customRangeListGeneratorDatabase),
+            solverOf(staticKb = customRangeListGeneratorDatabase),
             customRangeListGeneratorDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -569,7 +568,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking1(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                     { "b"(1) },
                     { "b"(2) impliedBy "!" },
@@ -588,7 +587,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking2(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy ("c"("X") and "b"("X")) },
                     { "b"(2) impliedBy "!" },
                     { "b"(3) },
@@ -609,7 +608,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking3(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
                     { "b"(2) },
                     { "b"(3) },
@@ -627,7 +626,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testBasicBacktracking4(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
                     { "b"(2) },
                     { "b"(3) },
@@ -645,7 +644,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunction(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a" impliedBy ("b" and "c") },
                     { "b" },
                     { "c" }
@@ -661,7 +660,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunctionOfConjunctions(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
                     { "b" },
                     { "c" },
@@ -679,7 +678,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testConjunctionWithUnification(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                     { "b"(1) },
                     { "c"(1) }
@@ -695,7 +694,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testDisjunction(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a" impliedBy ("b" or "c") },
                     { "b" },
                     { "c" }
@@ -714,7 +713,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testDisjunctionWithUnification(maxDuration: TimeDuration = 500L) {
         prolog {
             val solver = solverOf(
-                staticKB = theory(
+                staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") or "c"("X")) },
                     { "b"(1) },
                     { "c"(2) }

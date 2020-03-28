@@ -29,8 +29,8 @@ internal sealed class StateEnd(override val solve: Solve.Response) : AbstractSta
             StreamsExecutionContext(
                 libraries ?: Libraries(),
                 flags ?: emptyMap(),
-                staticKB ?: ClauseDatabase.empty(),
-                dynamicKB ?: ClauseDatabase.empty(),
+                staticKb ?: ClauseDatabase.empty(),
+                dynamicKb ?: ClauseDatabase.empty(),
                 inputChannels ?: ExecutionContextAware.defaultInputChannels(),
                 outputChannels ?: ExecutionContextAware.defaultOutputChannels(),
                 solution.substitution as? Substitution.Unifier ?: Substitution.empty()
@@ -67,8 +67,8 @@ internal fun IntermediateState.stateEndTrue(
     substitution: Substitution.Unifier = Substitution.empty(),
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -77,8 +77,8 @@ internal fun IntermediateState.stateEndTrue(
         substitution,
         libraries ?: solve.context.libraries,
         flags ?: solve.context.flags,
-        staticKB ?: solve.context.staticKb,
-        dynamicKB ?: solve.context.dynamicKb,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager ?: solve.context.getSideEffectManager(),
         inputChannels ?: solve.context.inputChannels,
         outputChannels ?: solve.context.outputChannels
@@ -89,8 +89,8 @@ internal fun IntermediateState.stateEndTrue(
 internal fun IntermediateState.stateEndFalse(
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -98,8 +98,8 @@ internal fun IntermediateState.stateEndFalse(
     solve.replyFail(
         libraries ?: solve.context.libraries,
         flags ?: solve.context.flags,
-        staticKB ?: solve.context.staticKb,
-        dynamicKB ?: solve.context.dynamicKb,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager ?: solve.context.getSideEffectManager(),
         inputChannels ?: solve.context.inputChannels,
         outputChannels ?: solve.context.outputChannels
@@ -111,8 +111,8 @@ internal fun IntermediateState.stateEndHalt(
     exception: TuPrologRuntimeException,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -121,8 +121,8 @@ internal fun IntermediateState.stateEndHalt(
         exception,
         libraries ?: solve.context.libraries,
         flags ?: solve.context.flags,
-        staticKB ?: solve.context.staticKb,
-        dynamicKB ?: solve.context.dynamicKb,
+        staticKb ?: solve.context.staticKb,
+        dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager
             ?: exception.context.getSideEffectManager()
             ?: solve.context.getSideEffectManager(),
@@ -136,8 +136,8 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKB: ClauseDatabase? = null,
-    dynamicKB: ClauseDatabase? = null,
+    staticKb: ClauseDatabase? = null,
+    dynamicKb: ClauseDatabase? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -147,21 +147,21 @@ internal fun IntermediateState.stateEnd(
             solution.substitution,
             libraries,
             flags,
-            staticKB,
-            dynamicKB,
+            staticKb,
+            dynamicKb,
             sideEffectManager,
             inputChannels,
             outputChannels
         )
     is Solution.No ->
-        stateEndFalse(libraries, flags, staticKB, dynamicKB, sideEffectManager, inputChannels, outputChannels)
+        stateEndFalse(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
     is Solution.Halt ->
         stateEndHalt(
             solution.exception,
             libraries,
             flags,
-            staticKB,
-            dynamicKB,
+            staticKb,
+            dynamicKb,
             sideEffectManager,
             inputChannels,
             outputChannels
@@ -174,8 +174,8 @@ internal fun IntermediateState.stateEnd(response: Solve.Response) = with(respons
         solution,
         libraries,
         flags,
-        staticKB,
-        dynamicKB,
+        staticKb,
+        dynamicKb,
         sideEffectManager,
         inputChannels,
         outputChannels

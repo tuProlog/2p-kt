@@ -101,7 +101,7 @@ private fun adjustExecutionMaxDuration(
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
     with(otherResponse) {
         replyWith(
-            solution, libraries, flags, staticKB, dynamicKB, sideEffectManager
+            solution, libraries, flags, staticKb, dynamicKb, sideEffectManager
                 ?: this@replyWith.context.getSideEffectManager()
         )
     }

@@ -17,8 +17,8 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal class StreamsSolver constructor(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
@@ -26,8 +26,8 @@ internal class StreamsSolver constructor(
     private var executionContext: ExecutionContext = StreamsExecutionContext(
         libraries,
         flags,
-        staticKB,
-        dynamicKB,
+        staticKb,
+        dynamicKb,
         inputChannels,
         outputChannels
     )

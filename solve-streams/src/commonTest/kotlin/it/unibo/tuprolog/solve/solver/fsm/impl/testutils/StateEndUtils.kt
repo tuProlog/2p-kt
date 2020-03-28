@@ -82,8 +82,8 @@ internal object StateEndUtils {
     ) = with(actualStateEnd.solve) {
         assertEquals(expectedLibraries, libraries)
         assertEquals(expectedFlags, flags)
-        assertEquals(expectedStaticKB, staticKB)
-        assertEquals(expectedDynamicKB, dynamicKB)
+        assertEquals(expectedStaticKB, staticKb)
+        assertEquals(expectedDynamicKB, dynamicKb)
         assertEquals(expectedSideEffectManager, sideEffectManager)
     }
 }

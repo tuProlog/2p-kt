@@ -92,7 +92,7 @@ internal class StateRuleSelection(
          * Retrieves from receiver [ExecutionContext] those rules whose head matches [currentGoal]
          *
          * 1) It searches for matches inside libraries, if nothing found
-         * 2) it looks inside both staticKB and dynamicKB
+         * 2) it looks inside both staticKb and dynamicKb
          */
         private fun ExecutionContext.retrieveRulesMatching(currentGoal: Struct): Sequence<Rule> =
             currentGoal.freshCopy().let { refreshedGoal ->

@@ -10,11 +10,11 @@ import it.unibo.tuprolog.theory.RetractResult
 internal class MutableClassicSolver(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
-) : ClassicSolver(libraries, flags, staticKB, dynamicKB, inputChannels, outputChannels), MutableSolver {
+) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {
         updateContext {

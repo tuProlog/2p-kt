@@ -33,24 +33,24 @@ class StreamsSolverSystemTesting : SolverFactory {
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = Solver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): Solver = Solver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableSolver = MutableSolver.streams(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): MutableSolver = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     @Test
     @Ignore

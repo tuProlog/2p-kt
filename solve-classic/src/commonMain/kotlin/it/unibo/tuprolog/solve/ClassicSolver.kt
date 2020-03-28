@@ -13,8 +13,8 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKB: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKB: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: ClauseDatabase = ClauseDatabase.empty(),
+    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
@@ -23,8 +23,8 @@ internal open class ClassicSolver(
         ClassicExecutionContext(
             libraries = libraries,
             flags = flags,
-            staticKb = staticKB,
-            dynamicKb = dynamicKB,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
             inputChannels = inputChannels,
             outputChannels = outputChannels
         )

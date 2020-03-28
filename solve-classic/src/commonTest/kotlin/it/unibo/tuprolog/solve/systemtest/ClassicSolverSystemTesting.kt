@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.*
@@ -11,8 +10,6 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ClassicSolverSystemTesting : SolverFactory {
 
@@ -33,19 +30,19 @@ class ClassicSolverSystemTesting : SolverFactory {
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = Solver.classic(libraries, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+    ): Solver = Solver.classic(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKB: ClauseDatabase,
-        dynamicKB: ClauseDatabase,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,

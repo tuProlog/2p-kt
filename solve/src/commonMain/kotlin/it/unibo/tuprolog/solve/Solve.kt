@@ -44,20 +44,20 @@ sealed class Solve {
             solution: Solution,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKB: ClauseDatabase? = null,
-            dynamicKB: ClauseDatabase? = null,
+            staticKb: ClauseDatabase? = null,
+            dynamicKb: ClauseDatabase? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = when (solution) {
             is Solution.Yes -> replySuccess(
                 solution.substitution,
-                libraries, flags, staticKB, dynamicKB, sideEffectManager, inputChannels, outputChannels
+                libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels
             )
-            is Solution.No -> replyFail(libraries, flags, staticKB, dynamicKB, sideEffectManager, inputChannels, outputChannels)
+            is Solution.No -> replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
             is Solution.Halt -> replyException(
                 solution.exception,
-                libraries, flags, staticKB, dynamicKB, sideEffectManager, inputChannels, outputChannels
+                libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels
             )
         }
 
@@ -66,8 +66,8 @@ sealed class Solve {
             condition: Boolean,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKB: ClauseDatabase? = null,
-            dynamicKB: ClauseDatabase? = null,
+            staticKb: ClauseDatabase? = null,
+            dynamicKb: ClauseDatabase? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -75,13 +75,13 @@ sealed class Solve {
             true -> replySuccess(
                 libraries = libraries,
                 flags = flags,
-                staticKB = staticKB,
-                dynamicKB = dynamicKB,
+                staticKb = staticKb,
+                dynamicKb = dynamicKb,
                 sideEffectManager = sideEffectManager,
                 inputChannels = inputChannels,
                 outputChannels = outputChannels
             )
-            false -> replyFail(libraries, flags, staticKB, dynamicKB, sideEffectManager, inputChannels, outputChannels)
+            false -> replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
@@ -89,8 +89,8 @@ sealed class Solve {
             substitution: Substitution.Unifier = Substitution.empty(),
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKB: ClauseDatabase? = null,
-            dynamicKB: ClauseDatabase? = null,
+            staticKb: ClauseDatabase? = null,
+            dynamicKb: ClauseDatabase? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -98,8 +98,8 @@ sealed class Solve {
                 Solution.Yes(query, substitution),
                 libraries,
                 flags,
-                staticKB,
-                dynamicKB,
+                staticKb,
+                dynamicKb,
                 sideEffectManager,
                 inputChannels,
                 outputChannels
@@ -109,8 +109,8 @@ sealed class Solve {
         fun replyFail(
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKB: ClauseDatabase? = null,
-            dynamicKB: ClauseDatabase? = null,
+            staticKb: ClauseDatabase? = null,
+            dynamicKb: ClauseDatabase? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -118,8 +118,8 @@ sealed class Solve {
                 Solution.No(query),
                 libraries,
                 flags,
-                staticKB,
-                dynamicKB,
+                staticKb,
+                dynamicKb,
                 sideEffectManager,
                 inputChannels,
                 outputChannels
@@ -130,8 +130,8 @@ sealed class Solve {
             exception: TuPrologRuntimeException,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKB: ClauseDatabase? = null,
-            dynamicKB: ClauseDatabase? = null,
+            staticKb: ClauseDatabase? = null,
+            dynamicKb: ClauseDatabase? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -139,8 +139,8 @@ sealed class Solve {
                 Solution.Halt(query, exception),
                 libraries,
                 flags,
-                staticKB,
-                dynamicKB,
+                staticKb,
+                dynamicKb,
                 sideEffectManager,
                 inputChannels,
                 outputChannels
@@ -157,9 +157,9 @@ sealed class Solve {
         /** The map of loaded flags after request execution (use `null` in case nothing changed) */
         val flags: PrologFlags? = null,
         /** The Static KB after request execution (use `null` in case nothing changed) */
-        val staticKB: ClauseDatabase? = null,
+        val staticKb: ClauseDatabase? = null,
         /** The Dynamic KB after request execution (use `null` in case nothing changed) */
-        val dynamicKB: ClauseDatabase? = null,
+        val dynamicKb: ClauseDatabase? = null,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
         val sideEffectManager: SideEffectManager? = null,
         /** The input channels modification after request execution (use `null` in case nothing changed) */

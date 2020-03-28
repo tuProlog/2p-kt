@@ -17,10 +17,10 @@ interface SolverFactory {
     val defaultFlags: PrologFlags
         get() = emptyMap()
 
-    val defaultStaticKB: ClauseDatabase
+    val defaultStaticKb: ClauseDatabase
         get() = ClauseDatabase.empty()
 
-    val defaultDynamicKB: ClauseDatabase
+    val defaultDynamicKb: ClauseDatabase
         get() = ClauseDatabase.empty()
 
     val defaultInputChannel: InputChannel<String>
@@ -38,8 +38,8 @@ interface SolverFactory {
     fun solverOf(
         libraries: Libraries = defaultLibraries,
         flags: PrologFlags = defaultFlags,
-        staticKB: ClauseDatabase = defaultStaticKB,
-        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        staticKb: ClauseDatabase = defaultStaticKb,
+        dynamicKb: ClauseDatabase = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
@@ -49,20 +49,20 @@ interface SolverFactory {
     fun solverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
         flags: PrologFlags = defaultFlags,
-        staticKB: ClauseDatabase = defaultStaticKB,
-        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        staticKb: ClauseDatabase = defaultStaticKb,
+        dynamicKb: ClauseDatabase = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): Solver =
-        solverOf(otherLibraries + defaultBuiltins, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+        solverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     fun mutableSolverOf(
         libraries: Libraries = defaultLibraries,
         flags: PrologFlags = defaultFlags,
-        staticKB: ClauseDatabase = defaultStaticKB,
-        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        staticKb: ClauseDatabase = defaultStaticKb,
+        dynamicKb: ClauseDatabase = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
@@ -72,12 +72,12 @@ interface SolverFactory {
     fun mutableSolverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
         flags: PrologFlags = defaultFlags,
-        staticKB: ClauseDatabase = defaultStaticKB,
-        dynamicKB: ClauseDatabase = defaultDynamicKB,
+        staticKb: ClauseDatabase = defaultStaticKb,
+        dynamicKb: ClauseDatabase = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): MutableSolver =
-        mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKB, dynamicKB, stdIn, stdOut, stdErr, warnings)
+        mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 }

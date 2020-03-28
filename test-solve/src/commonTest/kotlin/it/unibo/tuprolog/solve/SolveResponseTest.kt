@@ -25,8 +25,8 @@ internal class SolveResponseTest {
         assertEquals(aSolution, aResponse.solution)
         assertEquals(someLibraries, aResponse.libraries)
         assertEquals(someFlags, aResponse.flags)
-        assertEquals(aStaticKB, aResponse.staticKB)
-        assertEquals(aDynamicKB, aResponse.dynamicKB)
+        assertEquals(aStaticKB, aResponse.staticKb)
+        assertEquals(aDynamicKB, aResponse.dynamicKb)
         assertEquals(aSideEffectManager, aResponse.sideEffectManager)
     }
 
@@ -36,8 +36,8 @@ internal class SolveResponseTest {
 
         assertNull(toBeTested.libraries)
         assertNull(toBeTested.flags)
-        assertNull(toBeTested.staticKB)
-        assertNull(toBeTested.dynamicKB)
+        assertNull(toBeTested.staticKb)
+        assertNull(toBeTested.dynamicKb)
         assertNull(toBeTested.sideEffectManager)
     }
 
