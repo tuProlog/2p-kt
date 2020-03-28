@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableG
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
@@ -131,7 +131,7 @@ internal object CallUtils {
      * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
      */
     internal fun assertErrorCauseChainComputedCorrectly(
-        request: Solve.Request<ExecutionContextImpl>,
+        request: Solve.Request<StreamsExecutionContext>,
         expectedErrorSolution: Solution.Halt
     ) {
         val nextState = StateGoalEvaluation(request).behave().toList().single()

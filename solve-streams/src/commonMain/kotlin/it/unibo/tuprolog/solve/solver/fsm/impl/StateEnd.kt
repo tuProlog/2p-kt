@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
@@ -26,7 +26,7 @@ internal sealed class StateEnd(override val solve: Solve.Response) : AbstractSta
 
     override val context: ExecutionContext
         get() = with(solve) {
-            ExecutionContextImpl(
+            StreamsExecutionContext(
                 libraries ?: Libraries(),
                 flags ?: emptyMap(),
                 staticKB ?: ClauseDatabase.empty(),

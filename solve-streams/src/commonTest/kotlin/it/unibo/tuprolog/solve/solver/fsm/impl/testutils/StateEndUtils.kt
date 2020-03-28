@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
@@ -63,7 +63,7 @@ internal object StateEndUtils {
     internal val aDifferentSideEffectManager =
         SideEffectManagerImpl(isChoicePointChild = true).also { assertNotEquals(it, theRequestSideEffectManager) }
     internal val theIntermediateStateRequest = createSolveRequest(aQuery).copy(
-        context = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
+        context = StreamsExecutionContext(sideEffectManager = theRequestSideEffectManager)
     )
     internal val anIntermediateState = object : IntermediateState {
         override val solve: Solve.Request<ExecutionContext> = theIntermediateStateRequest

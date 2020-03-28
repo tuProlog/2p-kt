@@ -16,7 +16,7 @@ import kotlin.test.*
  */
 internal class SolverUtilsTest {
 
-    private val aContext = ExecutionContextImpl(
+    private val aContext = StreamsExecutionContext(
         dynamicKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
         staticKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
         flags = mapOf()

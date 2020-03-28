@@ -62,14 +62,14 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
  * @param currentTime The current time instant on new request creation, if different from method invocation time instant
  * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
  */
-internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
+internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     newGoal: Struct,
     toAddSubstitutions: Substitution = Substitution.empty(),
     toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
     currentTime: TimeInstant = currentTimeInstant(),
     isChoicePointChild: Boolean = false
-): Solve.Request<ExecutionContextImpl> = copy(
+): Solve.Request<StreamsExecutionContext> = copy(
     newGoal.extractSignature(),
     newGoal.argsList,
     context.copy(
@@ -88,7 +88,7 @@ internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
 
 /** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
 private fun adjustExecutionMaxDuration(
-    oldSolveRequest: Solve.Request<ExecutionContextImpl>,
+    oldSolveRequest: Solve.Request<StreamsExecutionContext>,
     currentTime: TimeInstant
 ): TimeDuration = when (oldSolveRequest.executionMaxDuration) {
     TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE

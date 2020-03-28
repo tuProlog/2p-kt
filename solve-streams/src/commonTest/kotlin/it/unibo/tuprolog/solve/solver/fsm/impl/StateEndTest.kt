@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.no
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDifferentSideEffectManager
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKb
@@ -317,8 +317,8 @@ internal class StateEndTest {
 
     @Test
     fun stateEndWithResponseSideEffectManagerTaking() {
-        val contextImplInstance = ExecutionContextImpl(sideEffectManager = theRequestSideEffectManager)
-        val differentContextImplInstance = ExecutionContextImpl(sideEffectManager = aDifferentSideEffectManager)
+        val contextImplInstance = StreamsExecutionContext(sideEffectManager = theRequestSideEffectManager)
+        val differentContextImplInstance = StreamsExecutionContext(sideEffectManager = aDifferentSideEffectManager)
             .also { assertNotEquals(it, contextImplInstance) }
 
         val endStateForwardingExceptionalResponseWithNonNullSideEffectManager = anIntermediateState.stateEnd(

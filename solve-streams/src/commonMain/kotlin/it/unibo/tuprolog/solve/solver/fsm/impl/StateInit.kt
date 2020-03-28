@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.isWellFormed
 import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
  * @author Enrico
  */
 internal class StateInit(
-    override val solve: Solve.Request<ExecutionContextImpl>
+    override val solve: Solve.Request<StreamsExecutionContext>
 ) : AbstractTimedState(solve) {
 
     override fun behaveTimed(): Sequence<State> = sequence {

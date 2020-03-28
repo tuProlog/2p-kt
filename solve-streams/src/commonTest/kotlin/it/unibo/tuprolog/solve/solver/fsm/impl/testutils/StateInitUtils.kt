@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
 
@@ -19,7 +19,7 @@ internal object StateInitUtils {
 
     /** Utility function to create a [Solve.Request] */
     private fun createSolveRequest(signature: Signature, argList: List<Term> = emptyList()) =
-        Solve.Request(signature, argList, ExecutionContextImpl())
+        Solve.Request(signature, argList, StreamsExecutionContext())
 
     /** Solve request for `true` Atom */
     internal val trueRequest = createSolveRequest(Signature("true", 0))

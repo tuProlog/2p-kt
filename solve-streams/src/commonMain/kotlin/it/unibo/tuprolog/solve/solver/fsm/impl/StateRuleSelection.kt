@@ -18,7 +18,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
  * @author Enrico
  */
 internal class StateRuleSelection(
-    override val solve: Solve.Request<ExecutionContextImpl>
+    override val solve: Solve.Request<StreamsExecutionContext>
 ) : AbstractTimedState(solve) {
 
     /** The execute function to be used when a [State] needs, internally, to execute sub-[State]s behaviour */
@@ -101,7 +101,7 @@ internal class StateRuleSelection(
             }
 
         /** Prepares provided solveRequest "side effects manager" to enter this "rule body sub-scope" */
-        private fun Solve.Request<ExecutionContextImpl>.initializeForSubRuleScope() =
+        private fun Solve.Request<StreamsExecutionContext>.initializeForSubRuleScope() =
             copy(context = with(context) { copy(sideEffectManager = sideEffectManager.enterRuleSubScope()) })
 
         /**

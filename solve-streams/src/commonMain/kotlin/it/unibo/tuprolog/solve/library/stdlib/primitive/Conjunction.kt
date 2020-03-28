@@ -12,9 +12,9 @@ import it.unibo.tuprolog.solve.solver.*
  *
  * @author Enrico
  */
-internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCTOR, 2) {
+internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FUNCTOR, 2) {
 
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContextImpl>): Sequence<Solve.Response> =
+    override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val subGoals = with(request) {
                 query.`as`<Tuple>().toSequence()
@@ -44,7 +44,7 @@ internal object Conjunction : PrimitiveWrapper<ExecutionContextImpl>(Tuple.FUNCT
      * @return The boolean value signaling if the following goals executed the cut or not
      */
     private suspend fun SequenceScope<Solve.Response>.solveConjunctionGoals(
-        mainRequest: Solve.Request<ExecutionContextImpl>,
+        mainRequest: Solve.Request<StreamsExecutionContext>,
         goals: Iterable<Term>,
         toPropagateContext: ExecutionContext,
         accumulatedSubstitutions: Substitution,

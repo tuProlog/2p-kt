@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -26,7 +26,7 @@ internal object SolverTestUtils {
     ) = Solve.Request(
         query.extractSignature(),
         query.argsList,
-        ExecutionContextImpl(
+        StreamsExecutionContext(
             libraries = Libraries(
                 Library.of(
                     alias = "solve.solver.test",
