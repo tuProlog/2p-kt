@@ -108,6 +108,55 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    @Ignore
+    fun testIfThen1() {
+        prototype.testIfThen1()
+    }
+
+    @Test
+    @Ignore
+    fun testIfThen2() {
+        prototype.testIfThen2()
+    }
+
+    @Test
+    @Ignore
+    fun testIfThenElse1() {
+        prototype.testIfThenElse1()
+    }
+
+    @Test
+    @Ignore
+    fun testIfThenElse2() {
+        prototype.testIfThenElse2()
+    }
+
+
+    @Test
+    @Ignore
+    fun testTimeout1() {
+        prototype.testTimeout1()
+    }
+
+    @Test
+    @Ignore
+    fun testTimeout2() {
+        prototype.testTimeout2()
+    }
+
+    @Test
+    @Ignore
+    fun testTimeout3() {
+        prototype.testTimeout3()
+    }
+
+    @Test
+    @Ignore
+    fun testTimeout4() {
+        prototype.testTimeout4()
+    }
+
+    @Test
     fun testUnification() {
         prototype.testUnification(shortDuration)
     }
