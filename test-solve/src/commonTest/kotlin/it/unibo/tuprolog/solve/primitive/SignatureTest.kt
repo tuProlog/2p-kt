@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import kotlin.test.*
 
 /**
@@ -17,7 +19,8 @@ internal class SignatureTest {
     private val argList = listOf(aAtom, aAtom, aAtom)
 
     private val normalSignature = Signature(signatureName, signatureArity)
-    private val varargSignature = Signature(signatureName, signatureArity, true)
+    private val varargSignature =
+        Signature(signatureName, signatureArity, true)
 
     private val normalSignatureTerm = Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity))
     private val varargSignatureTerm =
@@ -44,7 +47,12 @@ internal class SignatureTest {
 
     @Test
     fun signatureWithNegativeArityIsProhibited() {
-        assertFailsWith<IllegalArgumentException> { Signature(signatureName, -1) }
+        assertFailsWith<IllegalArgumentException> {
+            Signature(
+                signatureName,
+                -1
+            )
+        }
     }
 
     @Test

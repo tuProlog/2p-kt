@@ -10,7 +10,7 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.ExecutionContext

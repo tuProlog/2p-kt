@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.solve.AbstractWrapper
+import it.unibo.tuprolog.solve.Signature
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.library.stdlib.function
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.EvaluationError

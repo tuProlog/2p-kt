@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solve
 
 /** A typealias for a primitive function that accepts a [Solve.Request] and returns a Sequence of [Solve.Response]s */

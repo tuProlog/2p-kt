@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.primitive.Signature
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
 import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1
@@ -123,6 +122,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertTrue { Signature("==", 2) in builtins }
                 assertTrue { Signature("\\=", 2) in builtins }
                 assertTrue { Signature("\\==", 2) in builtins }
+                assertTrue { Signature("member", 2) in builtins }
                 assertTrue { Signature("member", 2) in builtins }
             }
 

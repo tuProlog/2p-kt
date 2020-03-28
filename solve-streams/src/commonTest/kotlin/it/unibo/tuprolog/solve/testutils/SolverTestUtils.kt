@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl

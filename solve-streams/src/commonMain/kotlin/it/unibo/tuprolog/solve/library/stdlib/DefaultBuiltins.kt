@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.library.stdlib
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.stdlib.primitive.*
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 
 object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
 

@@ -9,8 +9,8 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
-import it.unibo.tuprolog.solve.primitive.Signature
-import it.unibo.tuprolog.solve.primitive.extractSignature
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -97,7 +97,10 @@ internal class LibraryImplTest {
 
             primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
 
-            (theory.rules.map { it.head.extractSignature() } + Signature("ciao", 3)).forEach {
+            (theory.rules.map { it.head.extractSignature() } + Signature(
+                "ciao",
+                3
+            )).forEach {
                 assertFalse { libraryInstance.hasPrimitive(it) }
             }
         }

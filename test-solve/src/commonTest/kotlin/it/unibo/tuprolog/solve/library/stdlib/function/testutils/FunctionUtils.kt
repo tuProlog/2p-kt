@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.library.stdlib.function.BinaryMathFunction
 import it.unibo.tuprolog.solve.library.stdlib.function.UnaryMathFunction
-import it.unibo.tuprolog.solve.primitive.Signature
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.DummyInstances
