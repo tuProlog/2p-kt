@@ -77,6 +77,16 @@ class StreamsSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testWrite() {
+        prototype.testWrite()
+    }
+
+    @Test
+    fun testStandardOutput() {
+        prototype.testStandardOutput()
+    }
+
+    @Test
     fun testTrue() {
         prototype.testTrue()
     }
