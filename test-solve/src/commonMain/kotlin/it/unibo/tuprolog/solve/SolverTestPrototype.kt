@@ -50,6 +50,13 @@ import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalTo
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.library.stdlib.primitive.*
+import it.unibo.tuprolog.solve.library.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.library.stdlib.rule.Member
+import it.unibo.tuprolog.solve.library.stdlib.rule.Not
+import it.unibo.tuprolog.solve.library.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -74,6 +81,26 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
             if(loggingOn) logGoalAndSolutions(goal, solutions)
         }
+    }
+
+    private fun Solver.assertHasPredicateInAPI(rule: RuleWrapper<*>) {
+        assertHasPredicateInAPI(rule.signature)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(primitive: PrimitiveWrapper<*>) {
+        assertHasPredicateInAPI(primitive.signature)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(signature: Signature) {
+        assertHasPredicateInAPI(signature.name, signature.arity, signature.vararg)
+    }
+
+    private fun Solver.assertHasPredicateInAPI(functor: String, arity: Int, vararg: Boolean = false) {
+        val varargMsg = if (vararg) "(vararg) " else ""
+        assertTrue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
+            Signature(functor, arity, vararg) in libraries
+        }
+        if (loggingOn) println("Solver has predicate $functor/$arity ${varargMsg}in its API")
     }
 
     /** Utility function to log loaded Solver databases */
@@ -103,27 +130,46 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         prolog {
             val solver = solverOf()
 
-            solver.libraries.let { builtins ->
-                assertTrue { Signature("!", 0) in builtins }
-                assertTrue { Signature("call", 1) in builtins }
-                assertTrue { Signature("catch", 3) in builtins }
-                assertTrue { Signature("throw", 1) in builtins }
-                assertTrue { Signature("halt", 0) in builtins }
-                assertTrue { Signature(",", 2) in builtins }
-                assertTrue { Signature(";", 2) in builtins }
-                assertTrue { Signature("->", 2) in builtins }
-                assertTrue { Signature("\\+", 1) in builtins }
-                assertTrue { Signature("not", 1) in builtins }
-                assertTrue { Signature(">", 2) in builtins }
-                assertTrue { Signature(">=", 2) in builtins }
-                assertTrue { Signature("<", 2) in builtins }
-                assertTrue { Signature("=<", 2) in builtins }
-                assertTrue { Signature("=", 2) in builtins }
-                assertTrue { Signature("==", 2) in builtins }
-                assertTrue { Signature("\\=", 2) in builtins }
-                assertTrue { Signature("\\==", 2) in builtins }
-                assertTrue { Signature("member", 2) in builtins }
-                assertTrue { Signature("member", 2) in builtins }
+            with(solver) {
+                assertHasPredicateInAPI("!", 0)
+                assertHasPredicateInAPI("call", 1)
+                assertHasPredicateInAPI("catch", 3)
+                assertHasPredicateInAPI("throw", 1)
+                assertHasPredicateInAPI(",", 2)
+                assertHasPredicateInAPI("\\+", 1)
+                assertHasPredicateInAPI(Arrow)
+                assertHasPredicateInAPI(Member.SIGNATURE)
+                assertHasPredicateInAPI(Not)
+                assertHasPredicateInAPI(Semicolon.SIGNATURE)
+                assertHasPredicateInAPI(ArithmeticEqual)
+                assertHasPredicateInAPI(ArithmeticGreaterThan)
+                assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
+                assertHasPredicateInAPI(ArithmeticLowerThan)
+                assertHasPredicateInAPI(ArithmeticLowerThanOrEqualTo)
+                assertHasPredicateInAPI(ArithmeticNotEqual)
+                assertHasPredicateInAPI(Assert)
+                assertHasPredicateInAPI(AssertA)
+                assertHasPredicateInAPI(AssertZ)
+                assertHasPredicateInAPI(Atom)
+                assertHasPredicateInAPI(Atomic)
+                assertHasPredicateInAPI(Callable)
+                assertHasPredicateInAPI(Compound)
+                assertHasPredicateInAPI(EnsureExecutable)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Float)
+                assertHasPredicateInAPI(Ground)
+                assertHasPredicateInAPI(Halt)
+                assertHasPredicateInAPI(Integer)
+                assertHasPredicateInAPI(Is)
+                assertHasPredicateInAPI(Natural)
+                assertHasPredicateInAPI(NewLine)
+                assertHasPredicateInAPI(NonVar)
+                assertHasPredicateInAPI(NotUnifiableWith)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Number)
+                assertHasPredicateInAPI(TermIdentical)
+                assertHasPredicateInAPI(TermNotIdentical)
+                assertHasPredicateInAPI(UnifiesWith)
+                assertHasPredicateInAPI(Var)
+                assertHasPredicateInAPI(Write)
             }
 
         }
