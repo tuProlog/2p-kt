@@ -59,6 +59,16 @@ class ClassicSolverSystemTesting : SolverFactory {
     }
 
     @Test
+    fun testWrite() {
+        prototype.testWrite()
+    }
+
+    @Test
+    fun testStandardOutput() {
+        prototype.testStandardOutput()
+    }
+
+    @Test
     fun testIfThen1() {
         prototype.testIfThen1()
     }

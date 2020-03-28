@@ -57,6 +57,7 @@ import it.unibo.tuprolog.solve.library.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.collections.listOf as ktListOf
@@ -171,6 +172,69 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertHasPredicateInAPI(Write)
             }
 
+        }
+    }
+
+    fun testWrite() {
+        val outputs = mutableListOf<String>()
+        prolog {
+            val solver = solverOf()
+
+            assertNotNull(solver.standardOutput)
+
+            with(solver.standardOutput!!) {
+                addListener { outputs += it }
+            }
+
+            val query = "write"(atomOf("atom")) and
+                    "write"(atomOf("a string")) and
+                    "write"(varOf("A_Var")) and
+                    "write"(numOf(1)) and
+                    "write"(numOf(2.1)) and
+                    "write"("f"("x")) and
+                    "nl"
+
+            val solutions = solver.solve(query).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes()),
+                solutions
+            )
+
+            assertEquals(
+                ktListOf("atom", "a string", varOf("A_Var").completeName, "1", "2.1", "f(x)", "\n"),
+                outputs
+            )
+        }
+    }
+
+    fun testStandardOutput() {
+        val outputs = mutableListOf<String>()
+        prolog {
+            val solver = solverOf()
+
+            assertNotNull(solver.standardOutput)
+
+            with(solver.standardOutput!!) {
+                addListener { outputs += it }
+                write("a")
+            }
+
+            val query = "write"("b") and "write"("c") and "write"("d") and "nl"
+
+            val solutions = solver.solve(query).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes()),
+                solutions
+            )
+
+            solver.standardOutput?.write("e")
+
+            assertEquals(
+                ktListOf("a", "b", "c", "d", "\n", "e"),
+                outputs
+            )
         }
     }
 
