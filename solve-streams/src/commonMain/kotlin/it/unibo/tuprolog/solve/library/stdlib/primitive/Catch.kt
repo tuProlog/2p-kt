@@ -2,9 +2,10 @@ package it.unibo.tuprolog.solve.library.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.currentTimeInstant
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.solver.*
 
 /**
@@ -29,7 +30,8 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
                         val recoverGoalSolveRequest = request
                             .newSolveRequest(
                                 call(recoverGoalArgument),
-                                goalResponse.solution.substitution - request.context.substitution
+                                goalResponse.solution.substitution - request.context.substitution,
+                                solutionRequestIssuingInstant = currentTimeInstant()
                             )
                             .ensureNoMoreSelectableCatch(request.context)
 

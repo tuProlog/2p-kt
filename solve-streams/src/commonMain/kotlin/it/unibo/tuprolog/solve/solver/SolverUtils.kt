@@ -8,8 +8,10 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.*
 import kotlin.jvm.JvmName
 
 /** Check whether the receiver term is a well-formed predication */
@@ -57,9 +59,10 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
  * A method to create a new [Solve.Request] physically chained to receiver request.
  *
  * @param newGoal The new solve request goal
+ * @param toPropagateContextData The context data to be propagated to the new request
  * @param toAddSubstitutions The added substitutions to new request context, if any
  * @param baseSideEffectManager The base side effect manager to be injected in the new solve request, if different from physical parent request one
- * @param currentTime The current time instant on new request creation, if different from method invocation time instant
+ * @param solutionRequestIssuingInstant The current time instant on new request creation, if different from method invocation time instant
  * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
  */
 internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
@@ -67,7 +70,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     toAddSubstitutions: Substitution = Substitution.empty(),
     toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
-    currentTime: TimeInstant = currentTimeInstant(),
+    solutionRequestIssuingInstant: TimeInstant = requestIssuingInstant,
     isChoicePointChild: Boolean = false
 ): Solve.Request<StreamsExecutionContext> = copy(
     newGoal.extractSignature(),
@@ -82,20 +85,8 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
         substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
         sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
     ),
-    requestIssuingInstant = currentTime,
-    executionMaxDuration = adjustExecutionMaxDuration(this, currentTime)
+    requestIssuingInstant = solutionRequestIssuingInstant
 )
-
-/** Re-computes the execution timeout, leaving it `TimeDuration.MAX_VALUE` if it was it, or decreasing it with elapsed time */
-private fun adjustExecutionMaxDuration(
-    oldSolveRequest: Solve.Request<StreamsExecutionContext>,
-    currentTime: TimeInstant
-): TimeDuration = when (oldSolveRequest.executionMaxDuration) {
-    TimeDuration.MAX_VALUE -> TimeDuration.MAX_VALUE
-    else -> with(oldSolveRequest) { executionMaxDuration - (currentTime - requestIssuingInstant) }
-        .takeIf { it >= 0 }
-        ?: 0
-}
 
 /** Responds to this solve request forwarding the provided [otherResponse] data */
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
@@ -42,7 +43,7 @@ internal class StateGoalEvaluation(
 
             responses?.forEach {
 
-                yield(stateEnd(it))
+                yield(ifTimeIsNotOver(stateEnd(it)))
 
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }
@@ -56,7 +57,8 @@ internal class StateGoalEvaluation(
         private fun Solve.Request<StreamsExecutionContext>.newThrowSolveRequest(error: PrologError) =
             newSolveRequest(
                 Struct.of(Throw.functor, error.errorStruct),
-                baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager
+                baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager,
+                solutionRequestIssuingInstant = currentTimeInstant()
             )
     }
 }

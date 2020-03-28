@@ -133,25 +133,21 @@ class StreamsSolverSystemTesting : SolverFactory {
 
 
     @Test
-    @Ignore
     fun testTimeout1() {
         prototype.testTimeout1()
     }
 
     @Test
-    @Ignore
     fun testTimeout2() {
         prototype.testTimeout2()
     }
 
     @Test
-    @Ignore
     fun testTimeout3() {
         prototype.testTimeout3()
     }
 
     @Test
-    @Ignore
     fun testTimeout4() {
         prototype.testTimeout4()
     }

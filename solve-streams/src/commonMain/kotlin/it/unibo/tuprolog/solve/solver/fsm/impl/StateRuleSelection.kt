@@ -4,10 +4,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.prepareForExecution
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.forEachWithLookahead
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.solver.*
 import it.unibo.tuprolog.solve.solver.fsm.*
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -44,7 +41,9 @@ internal class StateRuleSelection(
                         solve.newSolveRequest(
                             wellFormedRuleBody,
                             unifyingSubstitution,
-                            isChoicePointChild = isChoicePoint
+                            isChoicePointChild = isChoicePoint,
+                            solutionRequestIssuingInstant = if (solve.query == solve.context.procedure)
+                                currentTimeInstant() else solve.requestIssuingInstant
                         )
 
                     val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope())
