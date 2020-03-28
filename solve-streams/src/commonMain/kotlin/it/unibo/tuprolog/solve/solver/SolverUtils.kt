@@ -65,6 +65,7 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
 internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
     newGoal: Struct,
     toAddSubstitutions: Substitution = Substitution.empty(),
+    toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
     currentTime: TimeInstant = currentTimeInstant(),
     isChoicePointChild: Boolean = false
@@ -72,6 +73,12 @@ internal fun Solve.Request<ExecutionContextImpl>.newSolveRequest(
     newGoal.extractSignature(),
     newGoal.argsList,
     context.copy(
+        libraries = toPropagateContextData.libraries,
+        flags = toPropagateContextData.flags,
+        staticKb = toPropagateContextData.staticKb,
+        dynamicKb = toPropagateContextData.dynamicKb,
+        inputChannels = toPropagateContextData.inputChannels,
+        outputChannels = toPropagateContextData.outputChannels,
         substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
         sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
     ),
