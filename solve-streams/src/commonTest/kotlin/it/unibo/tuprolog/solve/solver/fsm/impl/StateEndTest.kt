@@ -5,25 +5,34 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.solver.ExecutionContextImpl
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDifferentSideEffectManager
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKB
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aDynamicKb
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aFullExceptionResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aFullNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aFullYesResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aMinimalExceptionResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aMinimalNoResponse
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aMinimalYesResponse
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aQuery
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aStaticKB
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aStaticKb
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aSubstitution
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.aYesResponse
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.allResponseTypes
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anException
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anExceptionalResponse
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.anIntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.assertStateContentsCorrect
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.defaultDynamicKb
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.defaultFlags
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.defaultLibraries
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.defaultStaticKb
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someFlags
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someLibraries
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theIntermediateStateRequest
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theRequestSideEffectManager
+import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.*
 
 /**
@@ -33,12 +42,20 @@ import kotlin.test.*
  */
 internal class StateEndTest {
 
+    private val minimalResponseStateEndInstances = listOf(
+        StateEnd.True(aMinimalYesResponse),
+        StateEnd.False(aMinimalNoResponse),
+        StateEnd.Halt(aMinimalExceptionResponse)
+    )
+
+    private val fullResponseStateEndInstances = listOf(
+        StateEnd.True(aFullYesResponse),
+        StateEnd.False(aFullNoResponse),
+        StateEnd.Halt(aFullExceptionResponse)
+    )
+
     private val stateEndCorrectInstances by lazy {
-        listOf(
-            StateEnd.True(aYesResponse),
-            StateEnd.False(aNoResponse),
-            StateEnd.Halt(anExceptionalResponse)
-        )
+        minimalResponseStateEndInstances + fullResponseStateEndInstances
     }
 
     @Test
@@ -55,8 +72,30 @@ internal class StateEndTest {
     }
 
     @Test
+    fun filledResponseStateEndInstancesContextIsCreatedFromHeldSolveResponse() {
+        fullResponseStateEndInstances.forEach {
+            assertSame(it.solve.libraries, it.context.libraries)
+            assertSame(it.solve.flags, it.context.flags)
+            assertSame(it.solve.dynamicKB, it.context.dynamicKb)
+            assertSame(it.solve.staticKB, it.context.staticKb)
+        }
+    }
+
+    @Test
+    fun minimalResponseStateEndInstancesContextIsCreatedWithDefaultValues() {
+        minimalResponseStateEndInstances.forEach {
+            assertEquals(Libraries(), it.context.libraries)
+            assertEquals(mapOf(), it.context.flags)
+            assertEquals(ClauseDatabase.empty(), it.context.dynamicKb)
+            assertEquals(ClauseDatabase.empty(), it.context.staticKb)
+        }
+    }
+
+    @Test
     fun trueContainsInsertedData() {
-        assertSame(aYesResponse, StateEnd.True(aYesResponse).solve)
+        listOf(aMinimalYesResponse, aFullYesResponse).forEach {
+            assertSame(it, StateEnd.True(it).solve)
+        }
     }
 
     @Test
@@ -68,7 +107,9 @@ internal class StateEndTest {
 
     @Test
     fun falseContainsInsertedData() {
-        assertSame(aNoResponse, StateEnd.False(aNoResponse).solve)
+        listOf(aMinimalNoResponse, aFullNoResponse).forEach {
+            assertSame(it, StateEnd.False(it).solve)
+        }
     }
 
     @Test
@@ -80,11 +121,13 @@ internal class StateEndTest {
 
     @Test
     fun haltContainsInsertedData() {
-        assertSame(anExceptionalResponse, StateEnd.Halt(anExceptionalResponse).solve)
-        assertSame(
-            (anExceptionalResponse.solution as Solution.Halt).exception,
-            StateEnd.Halt(anExceptionalResponse).exception
-        )
+        listOf(aMinimalExceptionResponse, aFullExceptionResponse).forEach {
+            assertSame(it, StateEnd.Halt(it).solve)
+            assertSame(
+                (it.solution as Solution.Halt).exception,
+                StateEnd.Halt(it).exception
+            )
+        }
     }
 
     @Test
@@ -100,8 +143,8 @@ internal class StateEndTest {
             aSubstitution,
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager
         )
 
@@ -112,8 +155,8 @@ internal class StateEndTest {
         assertStateContentsCorrect(
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager,
             toBeTested
         )
@@ -125,7 +168,14 @@ internal class StateEndTest {
 
         assertEquals(Substitution.empty(), toBeTested.solve.solution.substitution)
 
-        assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            defaultLibraries,
+            defaultFlags,
+            defaultStaticKb,
+            defaultDynamicKb,
+            theRequestSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -133,8 +183,8 @@ internal class StateEndTest {
         val toBeTested = anIntermediateState.stateEndFalse(
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager
         )
 
@@ -143,8 +193,8 @@ internal class StateEndTest {
         assertStateContentsCorrect(
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager,
             toBeTested
         )
@@ -154,7 +204,14 @@ internal class StateEndTest {
     fun statEndFalseHasCorrectDefaultParameters() {
         val toBeTested = anIntermediateState.stateEndFalse()
 
-        assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            defaultLibraries,
+            defaultFlags,
+            defaultStaticKb,
+            defaultDynamicKb,
+            theRequestSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -163,8 +220,8 @@ internal class StateEndTest {
             anException,
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager
         )
 
@@ -175,8 +232,8 @@ internal class StateEndTest {
         assertStateContentsCorrect(
             someLibraries,
             someFlags,
-            aStaticKB,
-            aDynamicKB,
+            aStaticKb,
+            aDynamicKb,
             aDifferentSideEffectManager,
             toBeTested
         )
@@ -186,7 +243,14 @@ internal class StateEndTest {
     fun statEndHaltHasCorrectDefaultParameters() {
         val toBeTested = anIntermediateState.stateEndHalt(anException)
 
-        assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, toBeTested)
+        assertStateContentsCorrect(
+            defaultLibraries,
+            defaultFlags,
+            defaultStaticKb,
+            defaultDynamicKb,
+            theRequestSideEffectManager,
+            toBeTested
+        )
     }
 
     @Test
@@ -194,7 +258,14 @@ internal class StateEndTest {
         allResponseTypes.map { it.solution }.forEach { responseSolution ->
             val toBeTested1 = anIntermediateState.stateEnd(responseSolution)
 
-            assertStateContentsCorrect(null, null, null, null, theRequestSideEffectManager, toBeTested1)
+            assertStateContentsCorrect(
+                defaultLibraries,
+                defaultFlags,
+                defaultStaticKb,
+                defaultDynamicKb,
+                theRequestSideEffectManager,
+                toBeTested1
+            )
 
             when (responseSolution) {
                 is Solution.Yes -> {
@@ -212,15 +283,15 @@ internal class StateEndTest {
                 responseSolution,
                 someLibraries,
                 someFlags,
-                aStaticKB,
-                aDynamicKB,
+                aStaticKb,
+                aDynamicKb,
                 aDifferentSideEffectManager
             )
             assertStateContentsCorrect(
                 someLibraries,
                 someFlags,
-                aStaticKB,
-                aDynamicKB,
+                aStaticKb,
+                aDynamicKb,
                 aDifferentSideEffectManager,
                 toBeTested2
             )
@@ -228,16 +299,16 @@ internal class StateEndTest {
     }
 
     @Test
-    fun stateEndWithResponseForwardsToCorrectStateEndMethodUsingResponseDataExceptForSideEffectManagerIfNull() {
+    fun stateEndWithResponseForwardsToCorrectStateEndMethodUsingResponseDataOrDefaultValuesIfNull() {
         allResponseTypes.forEach { response ->
             val toBeTested = anIntermediateState.stateEnd(response)
 
             assertEquals(response.solution, toBeTested.solve.solution)
             assertStateContentsCorrect(
-                response.libraries,
-                response.flags,
-                response.staticKB,
-                response.dynamicKB,
+                response.libraries ?: defaultLibraries,
+                response.flags ?: defaultFlags,
+                response.staticKB ?: defaultStaticKb,
+                response.dynamicKB ?: defaultDynamicKb,
                 theRequestSideEffectManager,
                 toBeTested
             )

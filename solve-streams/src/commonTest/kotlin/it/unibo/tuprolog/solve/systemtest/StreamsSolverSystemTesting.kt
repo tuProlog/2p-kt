@@ -64,7 +64,7 @@ class StreamsSolverSystemTesting : SolverFactory {
 
             solver.standardOutput?.addListener { prints.add(it) }
 
-            val query = "write"("hello world") and "nl" and "assert"("a")
+            val query = "write"("hello world") and "nl" and "assert"("a") and "true" and "a"
 
             solver.solve(query).forEach(::println)
 

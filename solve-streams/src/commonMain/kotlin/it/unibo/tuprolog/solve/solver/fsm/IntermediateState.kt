@@ -11,7 +11,10 @@ import it.unibo.tuprolog.solve.Solve.Response
  */
 interface IntermediateState : State {
 
-    /** The [Solve.Request] that guides the State behaviour towards [Response]s */
+    /** The [Solve.Request] that drives the State behaviour towards [Response]s */
     override val solve: Solve.Request<ExecutionContext>
+
+    override val context: ExecutionContext
+        get() = solve.context
 
 }

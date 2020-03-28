@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 
 /**
@@ -9,7 +10,7 @@ import it.unibo.tuprolog.solve.Solve
  */
 interface State {
 
-    /** The [Solve.Request] or [Solve.Response] that this state carries with it*/
+    /** The [Solve.Request] or [Solve.Response] that this state carries with it */
     val solve: Solve
 
     /** Makes the state behave and lazily returns next states */
@@ -17,4 +18,7 @@ interface State {
 
     /** A flag signaling if this [State.behave] has been called */
     val hasBehaved: Boolean
+
+    /** The state machine execution context in this state */
+    val context: ExecutionContext
 }

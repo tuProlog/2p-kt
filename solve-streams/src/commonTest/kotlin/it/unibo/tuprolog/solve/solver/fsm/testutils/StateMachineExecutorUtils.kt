@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.testutils
 
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
 import kotlin.reflect.KClass
@@ -14,9 +16,10 @@ internal object StateMachineExecutorUtils {
 
     /** A dummy state that has not already behaved and whose behaviour returns an emptySequence, making execution stop */
     private val defaultDummyEndState = object : State {
-        override val solve: Nothing by lazy { throw NotImplementedError() }
+        override val solve: Solve by lazy<Solve> { throw NotImplementedError() }
         override fun behave(): Sequence<State> = emptySequence()
         override val hasBehaved: Boolean = false
+        override val context: ExecutionContext by lazy<ExecutionContext> { throw NotImplementedError() }
         override fun toString(): String = this::class.className()
     }
 
@@ -69,10 +72,13 @@ internal object StateMachineExecutorUtils {
 
     /** A state that goes directly to [endState] */
     internal val oneShotState = oneStateAtATimeState(0, endState)
+
     /** A state that goes into [endState] after three calls of [State.behave] */
     internal val threeShotState = oneStateAtATimeState(3, endState)
+
     /** A state that generates two alternative paths both going into [endState] */
     internal val twoAlternativeState = allNextStatesFromThis(2, endState)
+
     /** A state that generates a search Tree with eight leafs */
     internal val eightLeafSearchTreeState =
         allNextStatesFromThis(
@@ -82,8 +88,10 @@ internal object StateMachineExecutorUtils {
                 allNextStatesFromThis(2, endState)
             )
         )
+
     /** A [threeShotState] that won't produce any state because already executed */
     internal val threeShotStateAlreadyExecuted = toBehavedState(threeShotState)
+
     /** A `fiveShotState` that has the third state that has already executed */
     internal val thirdStateHasAlreadyBehaved = oneStateAtATimeState(
         2,

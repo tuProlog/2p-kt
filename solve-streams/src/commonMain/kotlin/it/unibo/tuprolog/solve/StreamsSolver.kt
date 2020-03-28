@@ -51,8 +51,7 @@ internal class StreamsSolver constructor(
                 executionMaxDuration = maxDuration
             )
         ).map {
-            // TODO update executionContext
-            // executionContext = TODO
+            executionContext = it.context
             it.solve.solution.cleanUp()
         }
     }
