@@ -2,6 +2,8 @@ package it.unibo.tuprolog.core
 
 import kotlin.jvm.JvmStatic
 
+import kotlin.collections.Collection as KtCollection
+
 /**
  * An interface representing a mapping between Variables and their Term substitutions
  *
@@ -68,7 +70,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
-    open fun filter(variables: Collection<Var>): Substitution = // TODO: 16/01/2020 add tests for this specific method
+    open fun filter(variables: KtCollection<Var>): Substitution = // TODO: 16/01/2020 add tests for this specific method
         filter { k, _ -> k in variables }
 
     /**
@@ -110,7 +112,7 @@ sealed class Substitution : Map<Var, Term> {
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier = super.filter(predicate) as Unifier
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier = super.filter(predicate) as Unifier
-        override fun filter(variables: Collection<Var>): Unifier = super.filter(variables) as Unifier
+        override fun filter(variables: KtCollection<Var>): Unifier = super.filter(variables) as Unifier
 
         /** The mappings used to implement [equals], [hashCode] and [toString] */
         // this should be kept in sync with class "by" right expression
@@ -146,7 +148,7 @@ sealed class Substitution : Map<Var, Term> {
         override fun minus(keys: Iterable<Var>): Fail = Fail
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail = Fail
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Fail = Fail
-        override fun filter(variables: Collection<Var>): Fail = Fail
+        override fun filter(variables: KtCollection<Var>): Fail = Fail
         override fun toString(): String = "{Failed Substitution}"
     }
 

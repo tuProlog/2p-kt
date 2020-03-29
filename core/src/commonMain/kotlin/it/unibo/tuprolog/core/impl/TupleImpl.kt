@@ -18,6 +18,8 @@ internal class TupleImpl(override val left: Term, override val right: Term) :
         unfoldedList.toTypedArray()
     }
 
+    override val size: Int get() = unfoldedList.size
+
     override val functor: String = Tuple.FUNCTOR
 
     override val args: Array<Term> by lazy { super<StructImpl>.args }

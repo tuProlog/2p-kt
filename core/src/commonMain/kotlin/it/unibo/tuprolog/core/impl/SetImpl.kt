@@ -25,5 +25,7 @@ internal open class SetImpl(private val item: Term?) :
         unfoldedList.toTypedArray()
     }
 
+    override val size: Int get() = unfoldedList.size
+
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
 }
