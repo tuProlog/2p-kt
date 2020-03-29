@@ -17,11 +17,13 @@ import kotlin.test.assertTrue
 class StreamsSolverSystemTesting : SolverFactory {
 
     /** A short test max duration */
-    private val shortDuration = 500L
+    private val shortDuration = 250L
+
     /** A medium test max duration */
-    private val mediumDuration = 1000L
+    private val mediumDuration = shortDuration * 2
+
     /** A long test max duration */
-    private val longDuration = 2000L
+    private val longDuration = mediumDuration * 2
 
     private val prototype = SolverTestPrototype(this)
 
@@ -154,47 +156,47 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     @Test
     fun testUnification() {
-        prototype.testUnification(shortDuration)
+        prototype.testUnification(mediumDuration)
     }
 
     @Test
     fun testSimpleCutAlternatives() {
-        prototype.testSimpleCutAlternatives(shortDuration)
+        prototype.testSimpleCutAlternatives(mediumDuration)
     }
 
     @Test
     fun testCutAndConjunction() {
-        prototype.testCutAndConjunction(shortDuration)
+        prototype.testCutAndConjunction(mediumDuration)
     }
 
     @Test
     fun testCutConjunctionAndBacktracking() {
-        prototype.testCutConjunctionAndBacktracking(shortDuration)
+        prototype.testCutConjunctionAndBacktracking(mediumDuration)
     }
 
     @Test
     fun testMaxDurationParameterAndTimeOutException() {
-        prototype.testMaxDurationParameterAndTimeOutException(shortDuration)
+        prototype.testMaxDurationParameterAndTimeOutException(mediumDuration)
     }
 
     @Test
     fun testPrologStandardSearchTreeExample() {
-        prototype.testPrologStandardSearchTreeExample(shortDuration)
+        prototype.testPrologStandardSearchTreeExample(mediumDuration)
     }
 
     @Test
     fun testPrologStandardSearchTreeWithCutExample() {
-        prototype.testPrologStandardSearchTreeWithCutExample(shortDuration)
+        prototype.testPrologStandardSearchTreeWithCutExample(mediumDuration)
     }
 
     @Test
     fun testBacktrackingWithCustomReverseListImplementation() {
-        prototype.testBacktrackingWithCustomReverseListImplementation(shortDuration)
+        prototype.testBacktrackingWithCustomReverseListImplementation(mediumDuration)
     }
 
     @Test
     fun testWithPrologStandardConjunctionExamples() {
-        prototype.testWithPrologStandardConjunctionExamples(shortDuration)
+        prototype.testWithPrologStandardConjunctionExamples(mediumDuration)
     }
 
     @Test
@@ -204,32 +206,32 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     @Test
     fun testCallPrimitive() {
-        prototype.testCallPrimitive(shortDuration)
+        prototype.testCallPrimitive(mediumDuration)
     }
 
     @Test
     fun testCallPrimitiveTransparency() {
-        prototype.testCallPrimitiveTransparency(shortDuration)
+        prototype.testCallPrimitiveTransparency(mediumDuration)
     }
 
     @Test
     fun testCatchPrimitive() {
-        prototype.testCatchPrimitive(shortDuration)
+        prototype.testCatchPrimitive(mediumDuration)
     }
 
     @Test
     fun testCatchPrimitiveTransparency() {
-        prototype.testCatchPrimitiveTransparency(shortDuration)
+        prototype.testCatchPrimitiveTransparency(mediumDuration)
     }
 
     @Test
     fun testHaltPrimitive() {
-        prototype.testHaltPrimitive(shortDuration)
+        prototype.testHaltPrimitive(mediumDuration)
     }
 
     @Test
     fun testNotPrimitive() {
-        prototype.testNotPrimitive(shortDuration)
+        prototype.testNotPrimitive(mediumDuration)
     }
 
     @Test
@@ -239,27 +241,27 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     @Test
     fun testIfThenRule() {
-        prototype.testIfThenRule(shortDuration)
+        prototype.testIfThenRule(mediumDuration)
     }
 
     @Test
     fun testIfTheElseRule() {
-        prototype.testIfThenElseRule(shortDuration)
+        prototype.testIfThenElseRule(mediumDuration)
     }
 
     @Test
     fun testNumbersRangeListGeneration() {
-        prototype.testNumbersRangeListGeneration(shortDuration)
+        prototype.testNumbersRangeListGeneration(mediumDuration)
     }
 
     @Test
     fun testConjunction() {
-        prototype.testConjunction(shortDuration)
+        prototype.testConjunction(mediumDuration)
     }
 
     @Test
     fun testConjunctionWithUnification() {
-        prototype.testConjunctionWithUnification(shortDuration)
+        prototype.testConjunctionWithUnification(mediumDuration)
     }
 
     @Test
@@ -269,46 +271,46 @@ class StreamsSolverSystemTesting : SolverFactory {
 
     @Test
     fun testDisjunction() {
-        prototype.testDisjunction(shortDuration)
+        prototype.testDisjunction(mediumDuration)
     }
 
     @Test
     fun testFailure() {
-        prototype.testFailure(shortDuration)
+        prototype.testFailure(mediumDuration)
     }
 
     @Test
     fun testDisjunctionWithUnification() {
-        prototype.testDisjunctionWithUnification(shortDuration)
+        prototype.testDisjunctionWithUnification(mediumDuration)
     }
 
     @Test
     fun testConjunctionOfConjunctions() {
-        prototype.testConjunctionOfConjunctions(shortDuration)
+        prototype.testConjunctionOfConjunctions(mediumDuration)
     }
 
     @Test
     fun testMember() {
-        prototype.testMember(shortDuration)
+        prototype.testMember(mediumDuration)
     }
 
     @Test
     fun testBasicBacktracking1() {
-        prototype.testBasicBacktracking1(shortDuration)
+        prototype.testBasicBacktracking1(mediumDuration)
     }
 
     @Test
     fun testBasicBacktracking2() {
-        prototype.testBasicBacktracking2(shortDuration)
+        prototype.testBasicBacktracking2(mediumDuration)
     }
 
     @Test
     fun testBasicBacktracking3() {
-        prototype.testBasicBacktracking3(shortDuration)
+        prototype.testBasicBacktracking3(mediumDuration)
     }
 
     @Test
     fun testBasicBacktracking4() {
-        prototype.testBasicBacktracking4(shortDuration)
+        prototype.testBasicBacktracking4(mediumDuration)
     }
 }
