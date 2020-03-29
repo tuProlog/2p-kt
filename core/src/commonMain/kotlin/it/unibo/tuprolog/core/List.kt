@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.core
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -9,6 +7,8 @@ interface List : Collection {
 
     override val isList: Boolean
         get() = true
+
+    val isWellFormed: Boolean
 
     override val unfoldedSequence: Sequence<Term>
 

@@ -24,8 +24,12 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
 
     override val args: Array<Term> by lazy { super<StructImpl>.args }
 
+    override val isWellFormed: Boolean by lazy {
+        tail is LogicList && tail.isWellFormed
+    }
+
     override fun toString(): String {
-        val ending = if (unfoldedList.last() is EmptyList) {
+        val ending = if (isWellFormed) {
             "]"
         } else {
             " | ${unfoldedList.last()}]"
