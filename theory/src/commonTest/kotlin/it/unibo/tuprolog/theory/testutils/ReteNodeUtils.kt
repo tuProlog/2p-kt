@@ -16,41 +16,39 @@ import kotlin.test.fail
 internal object ReteNodeUtils {
 
     /** Contains some well-formed rules */
-    internal val rules by lazy {
-        listOf(
-            Fact.of(Truth.TRUE),
-            Fact.of(Truth.FAIL),
-            Fact.of(Atom.of("a")),
-            Fact.of(Atom.of("other")),
-            Fact.of(Struct.of("a", Atom.of("other"))),
-            Fact.of(Struct.of("other", Integer.of(1))),
-            Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
-            Rule.of(Atom.of("a"), Atom.of("other")),
-            Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
-            Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
-            Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
-            Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
-            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-            Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Empty.set()),
-            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-            Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
-        )
-    }
+    internal val rules = listOf(
+        Fact.of(Truth.TRUE),
+        Fact.of(Truth.FAIL),
+        Fact.of(Atom.of("a")),
+        Fact.of(Atom.of("other")),
+        Fact.of(Struct.of("a", Atom.of("other"))),
+        Fact.of(Struct.of("other", Integer.of(1))),
+        Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
+        Rule.of(Atom.of("a"), Atom.of("other")),
+        Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
+        Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
+        Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+        Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
+        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+        Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+        Rule.of(Struct.of("a", Atom.of("a")), Empty.set()),
+        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+        Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
+    )
 
     /** Contains some well-formed rules with no args head */
-    internal val noArgHeadedRules by lazy { rules.filter { it.head.isAtom } }
+    internal val noArgHeadedRules = rules.filter { it.head.isAtom }
 
     /** Contains some well-formed wules with "a" functor */
-    internal val aFunctorRules by lazy { rules.filter { it.head.functor == "a" } }
+    internal val aFunctorRules = rules.filter { it.head.functor == "a" }
 
     /** Contains some well-formed wules with "f" functor */
-    internal val fFunctorRules by lazy { rules.filter { it.head.functor == "f" } }
+    internal val fFunctorRules = rules.filter { it.head.functor == "f" }
 
     /** Contains a map of queries and results crafted watching [rules] collection (NOTE: any modifications must be reviewed by hand) */
-    internal val rulesQueryResultsMap by lazy {
+    internal val rulesQueryResultsMap =
         mapOf(
             Fact.of(Truth.TRUE) to listOf(Fact.of(Truth.TRUE)),
             Fact.of(Empty.list()) to emptyList(),
@@ -65,13 +63,12 @@ internal object ReteNodeUtils {
                 this to rules.filter { it matches this }
             }
         )
-    }
 
     /** Contains a map of queries and results made excluding queries with non "a" functor from [rulesQueryResultsMap] */
-    internal val aFunctorRulesQueryResultsMap by lazy { rulesQueryResultsMap.filterKeys { it.head.functor == "a" } }
+    internal val aFunctorRulesQueryResultsMap = rulesQueryResultsMap.filterKeys { it.head.functor == "a" }
 
     /** Contains some well-formed directives */
-    internal val directives by lazy {
+    internal val directives =
         listOf(
             Directive.of(Truth.TRUE),
             Directive.of(Truth.FAIL),
@@ -91,10 +88,9 @@ internal object ReteNodeUtils {
             Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
         )
-    }
 
     /** Contains a map of queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
-    internal val directivesQueryResultsMap by lazy {
+    internal val directivesQueryResultsMap =
         mapOf(
             Directive.of(Truth.TRUE) to listOf(Directive.of(Truth.TRUE)),
             Directive.of(Empty.list()) to emptyList(),
@@ -106,13 +102,12 @@ internal object ReteNodeUtils {
                 this to directives.filter { it matches this }
             }
         )
-    }
 
     /** Contains well-formed mixed [rules] and [directives] */
-    internal val mixedClauses by lazy { rules + directives }
+    internal val mixedClauses = rules + directives
 
     /** Contains a map of queries and results obtained by [rulesQueryResultsMap] and [directivesQueryResultsMap] */
-    internal val mixedClausesQueryResultsMap by lazy { rulesQueryResultsMap + directivesQueryResultsMap }
+    internal val mixedClausesQueryResultsMap = rulesQueryResultsMap + directivesQueryResultsMap
 
     /** Asserts that rete node has correct elements count */
     internal fun assertReteNodeElementCount(reteNode: ReteNode<*, Clause>, expectedCount: Int) =
