@@ -48,7 +48,7 @@ interface Tuple : Struct {
 
         @JvmStatic
         fun wrapIfNeeded(vararg terms: Term): Term =
-            wrapIfNeeded(*terms, default = Truth.Companion::ofTrue)
+            wrapIfNeeded(*terms, default = { Truth.TRUE })
 
         @JvmStatic
         fun wrapIfNeeded(vararg terms: Term, default: () -> Term): Term =

@@ -67,7 +67,7 @@ internal class ClauseTest {
     @Test
     fun clauseOfNonNullHeadAndTrueBodyProvidedReturnsAFact() {
         val correctInstances = FactUtils.mixedFacts.map { Fact.of(it) }
-        val toBeTested = FactUtils.mixedFacts.map { Clause.of(it, Truth.ofTrue()) }
+        val toBeTested = FactUtils.mixedFacts.map { Clause.of(it, Truth.TRUE) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }

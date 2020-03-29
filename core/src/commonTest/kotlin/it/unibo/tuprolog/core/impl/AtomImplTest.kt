@@ -79,7 +79,7 @@ internal class AtomImplTest {
     fun equalsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
         val trueAtom = AtomImpl("true")
-        val trueTruth = Truth.ofTrue()
+        val trueTruth = Truth.TRUE
 
         assertEquals(trueAtom, trueStruct)
         assertEquals<Atom>(trueAtom, trueTruth)
@@ -89,7 +89,7 @@ internal class AtomImplTest {
     fun structurallyEqualsWorksAsExpected() {
         val trueStruct = StructImpl("true", emptyArray())
         val trueAtom = AtomImpl("true")
-        val trueTruth = Truth.ofTrue()
+        val trueTruth = Truth.TRUE
 
         assertStructurallyEquals(trueAtom, trueStruct)
         assertStructurallyEquals(trueAtom, trueTruth)

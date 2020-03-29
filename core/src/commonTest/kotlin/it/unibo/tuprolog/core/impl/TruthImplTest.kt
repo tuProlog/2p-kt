@@ -14,8 +14,8 @@ import kotlin.test.assertTrue
  */
 internal class TruthImplTest {
 
-    private val `true` = TruthImpl.True
-    private val fail = TruthImpl.Fail
+    private val `true` = TruthImpl.TRUE
+    private val fail = TruthImpl.FAIL
 
     private val truthInstances = listOf(`true`, fail)
 

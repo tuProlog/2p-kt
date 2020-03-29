@@ -73,7 +73,7 @@ internal class ListTest {
 
     @Test
     fun fromEmptyIterableSpecifyingLast() {
-        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.ofFalse()) }
+        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asIterable(), Truth.FALSE) }
     }
 
     @Test
@@ -108,7 +108,7 @@ internal class ListTest {
 
     @Test
     fun fromEmptySequenceSpecifyingLast() {
-        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asSequence(), Truth.ofFalse()) }
+        assertFailsWith<IllegalArgumentException> { LogicList.from(emptyList<Term>().asSequence(), Truth.FALSE) }
     }
 
     @Test

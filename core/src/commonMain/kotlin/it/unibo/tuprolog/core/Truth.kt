@@ -7,10 +7,9 @@ import kotlin.jvm.JvmStatic
 interface Truth : Atom {
 
     override val isTrue: Boolean
-        get() = TRUE_FUNCTOR == functor
 
     override val isFail: Boolean
-        get() = FAIL_FUNCTOR == functor
+        get() = !isTrue
 
     override fun freshCopy(): Truth = this
 
@@ -20,24 +19,22 @@ interface Truth : Atom {
 
         @JvmField
         val TRUE_FUNCTOR = "true"
-
+        @JvmField
+        val FALSE_FUNCTOR = "false"
         @JvmField
         val FAIL_FUNCTOR = "fail"
 
         @JvmField
-        val TRUE = ofTrue()
+        val TRUE: Truth = TruthImpl.TRUE
 
         @JvmField
-        val FAIL = ofFalse()
+        val FAIL: Truth = TruthImpl.FAIL
+
+        @JvmField
+        val FALSE: Truth = TruthImpl.FALSE
 
         @JvmStatic
         fun of(truth: Boolean): Truth =
-            if (truth) TruthImpl.True else TruthImpl.Fail
-
-        @JvmStatic
-        fun ofTrue(): Truth = TruthImpl.True
-
-        @JvmStatic
-        fun ofFalse(): Truth = TruthImpl.Fail
+            if (truth) TRUE else FALSE
     }
 }
