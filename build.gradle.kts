@@ -17,7 +17,6 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/dokka")
-//    maven("https://dl.bintray.com/gciatto-unibo/kt-math")
 }
 
 group = "it.unibo.tuprolog"
@@ -67,7 +66,6 @@ allSubprojects.forEachProject {
     repositories {
         mavenCentral()
         maven("https://dl.bintray.com/kotlin/dokka")
-        maven("https://dl.bintray.com/gciatto-unibo/kt-math")
     }
 
     configureTestResultPrinting()
@@ -347,7 +345,7 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
                 artifact(tasks.getByName(docArtifact)) {
                     classifier = "javadoc"
                 }
-            } else {
+            } else if (!docArtifact.endsWith("KotlinMultiplatform")) {
                 log("no javadoc artifact for publication $name in project ${this@configureMavenPublications.name}: " +
                         "no such a task: $docArtifact")
             }
@@ -379,7 +377,7 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                 artifact(tasks.getByName(docArtifact)) {
                     classifier = "javadoc"
                 }
-            } else {
+            } else if (docArtifact == null || !docArtifact.endsWith("KotlinMultiplatform")) {
                 log("no javadoc artifact for publication $name in project ${this@createMavenPublications.name}: " +
                         "no such a task: $docArtifact")
             }
