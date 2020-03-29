@@ -144,7 +144,7 @@ internal fun IntermediateState.stateEnd(
 ): StateEnd = when (solution) {
     is Solution.Yes ->
         stateEndTrue(
-            solution.substitution,
+            solution.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
             libraries,
             flags,
             staticKb,
