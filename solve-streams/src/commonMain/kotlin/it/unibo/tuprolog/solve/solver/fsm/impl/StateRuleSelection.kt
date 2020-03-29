@@ -42,7 +42,7 @@ internal class StateRuleSelection(
                             wellFormedRuleBody,
                             unifyingSubstitution,
                             isChoicePointChild = isChoicePoint,
-                            solutionRequestIssuingInstant = if (solve.query == solve.context.procedure)
+                            solutionRequestIssuingInstant = if (solve.query === solve.context.procedure)
                                 currentTimeInstant() else solve.requestIssuingInstant
                         )
 
