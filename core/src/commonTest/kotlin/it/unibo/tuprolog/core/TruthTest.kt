@@ -13,26 +13,26 @@ internal class TruthTest {
 
     @Test
     fun trueTruthCreation() {
-        assertSame(TruthImpl.TRUE, Truth.of(true))
+        assertSame(TruthImpl.True, Truth.of(true))
     }
 
     @Test
     fun trueTruthRetrieval() {
-        assertSame(TruthImpl.TRUE, Truth.TRUE)
+        assertSame(TruthImpl.True, Truth.TRUE)
     }
 
     @Test
     fun falseTruthCreation() {
-        assertSame(TruthImpl.FALSE, Truth.of(false))
+        assertSame(TruthImpl.False, Truth.of(false))
     }
 
     @Test
     fun failTruthRetrieval() {
-        assertSame(TruthImpl.FAIL, Truth.FAIL)
+        assertSame(TruthImpl.Fail, Truth.FAIL)
     }
 
     @Test
     fun falseTruthRetrieval() {
-        assertSame(TruthImpl.FALSE, Truth.FALSE)
+        assertSame(TruthImpl.False, Truth.FALSE)
     }
 }

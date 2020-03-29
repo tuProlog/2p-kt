@@ -25,16 +25,25 @@ interface Truth : Atom {
         val FAIL_FUNCTOR = "fail"
 
         @JvmField
-        val TRUE: Truth = TruthImpl.TRUE
+        val TRUE: Truth = TruthImpl.True
 
         @JvmField
-        val FAIL: Truth = TruthImpl.FAIL
+        val FAIL: Truth = TruthImpl.Fail
 
         @JvmField
-        val FALSE: Truth = TruthImpl.FALSE
+        val FALSE: Truth = TruthImpl.False
 
         @JvmStatic
         fun of(truth: Boolean): Truth =
             if (truth) TRUE else FALSE
+
+        @JvmStatic
+        fun of(string: String): Truth =
+            when (string) {
+                TRUE_FUNCTOR -> TRUE
+                FALSE_FUNCTOR -> FALSE
+                FAIL_FUNCTOR -> FAIL
+                else -> throw IllegalArgumentException("Cannot parse $string as a Truth value")
+            }
     }
 }

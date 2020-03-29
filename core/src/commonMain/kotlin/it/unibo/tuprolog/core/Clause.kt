@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {
