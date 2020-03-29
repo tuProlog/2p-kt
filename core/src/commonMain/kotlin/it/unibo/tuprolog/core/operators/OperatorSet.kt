@@ -106,14 +106,18 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
                 .map { Operator(it, Specifier.XFX, 1200) }
         )
 
-        /** Default OperatorSet */
+        /** Standard OperatorSet */
         @JvmField
-        val DEFAULT = OperatorSet(
+        val STANDARD = OperatorSet(
             ARITHMETIC.asSequence()
                     + ARITHMETIC_COMPARISON.asSequence()
                     + TERM_COMPARISON.asSequence()
                     + CONTROL_FLOW.asSequence()
                     + CLAUSES.asSequence()
         )
+
+        /** Default OperatorSet */
+        @JvmField
+        val DEFAULT = STANDARD
     }
 }
