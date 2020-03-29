@@ -31,7 +31,7 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
                             .newSolveRequest(
                                 call(recoverGoalArgument),
                                 goalResponse.solution.substitution - request.context.substitution,
-                                solutionRequestIssuingInstant = currentTimeInstant()
+                                requestIssuingInstant = currentTimeInstant()
                             )
                             .ensureNoMoreSelectableCatch(request.context)
 

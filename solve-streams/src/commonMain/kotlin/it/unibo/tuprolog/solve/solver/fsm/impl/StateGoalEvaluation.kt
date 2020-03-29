@@ -58,7 +58,7 @@ internal class StateGoalEvaluation(
             newSolveRequest(
                 Struct.of(Throw.functor, error.errorStruct),
                 baseSideEffectManager = error.context.getSideEffectManager() ?: context.sideEffectManager,
-                solutionRequestIssuingInstant = currentTimeInstant()
+                requestIssuingInstant = currentTimeInstant()
             )
     }
 }

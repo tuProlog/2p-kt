@@ -62,7 +62,7 @@ fun moreThanOne(elements: Sequence<*>): Boolean = with(elements.iterator()) {
  * @param toPropagateContextData The context data to be propagated to the new request
  * @param toAddSubstitutions The added substitutions to new request context, if any
  * @param baseSideEffectManager The base side effect manager to be injected in the new solve request, if different from physical parent request one
- * @param solutionRequestIssuingInstant The current time instant on new request creation, if different from method invocation time instant
+ * @param requestIssuingInstant The current time instant on new request creation, if different from method invocation time instant
  * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
  */
 internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
@@ -70,7 +70,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
     toAddSubstitutions: Substitution = Substitution.empty(),
     toPropagateContextData: ExecutionContext = context,
     baseSideEffectManager: SideEffectManagerImpl = context.sideEffectManager,
-    solutionRequestIssuingInstant: TimeInstant = requestIssuingInstant,
+    requestIssuingInstant: TimeInstant = this.requestIssuingInstant,
     isChoicePointChild: Boolean = false
 ): Solve.Request<StreamsExecutionContext> = copy(
     newGoal.extractSignature(),
@@ -85,7 +85,7 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
         substitution = (context.substitution + toAddSubstitutions) as Substitution.Unifier,
         sideEffectManager = baseSideEffectManager.creatingNewRequest(context, isChoicePointChild, this)
     ),
-    requestIssuingInstant = solutionRequestIssuingInstant
+    requestIssuingInstant = requestIssuingInstant
 )
 
 /** Responds to this solve request forwarding the provided [otherResponse] data */
