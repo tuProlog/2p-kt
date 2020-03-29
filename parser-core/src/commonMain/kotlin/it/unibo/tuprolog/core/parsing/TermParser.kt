@@ -67,12 +67,10 @@ interface TermParser {
 
     fun parseClause(input: String, operators: OperatorSet): Clause {
         require(operators.any { it.functor == Clause.FUNCTOR }) {
-            "The provided operator set has no operator for '${Clause.FUNCTOR}'/1 or '${Clause.FUNCTOR}'/1"
+            "Error while parsing string as Clause: the provided operator set has no " +
+                    "operator for '${Clause.FUNCTOR}'/1 or '${Clause.FUNCTOR}'/1"
         }
-        return when (val term = parseTerm(input, operators)) {
-            is Clause -> term
-            else -> Fact.of(term as Struct)
-        }
+        return parseTerm(input, operators).toClause()
     }
 
     fun parseClause(input: String): Clause =

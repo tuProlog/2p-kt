@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestClauseDatabaseParser {
+class TestClausesParser {
 
     companion object {
         fun assertMatch(expected: Term, actual: Term) {
@@ -25,7 +25,7 @@ class TestClauseDatabaseParser {
 
     @Test
     fun testClauseDbParsing() {
-        val db = with(ClauseDatabaseParser.withStandardOperators) {
+        val db = with(ClausesParser.withStandardOperators) {
             parseClauseDatabase("f(1).\nf(2).\n:- f(X), g(X).\nf(X) :- g(X).")
         }
 

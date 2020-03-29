@@ -10,6 +10,13 @@ internal expect fun termParserWithOperators(operators: OperatorSet): TermParser
 
 private val defaultParser = TermParser.withDefaultOperators
 
+fun Term.toClause(source: Any? = null, line: Int = 0, column: Int = 0): Clause =
+    when(this) {
+        is Clause -> this
+        is Struct -> Fact.of(this)
+        else -> throw InvalidTermTypeException(source, toString(), Clause::class, line, column)
+    }
+
 fun Term.Companion.parse(input: String, operators: OperatorSet): Term =
     defaultParser.parseTerm(input, operators)
 
