@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class StreamsSolverSystemTesting : SolverFactory {
 
     /** A short test max duration */
-    private val shortDuration = 250L
+    private val shortDuration = 200L
 
     /** A medium test max duration */
     private val mediumDuration = shortDuration * 2
