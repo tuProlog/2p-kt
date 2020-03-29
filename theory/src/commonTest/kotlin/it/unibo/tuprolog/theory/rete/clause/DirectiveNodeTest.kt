@@ -20,7 +20,7 @@ internal class DirectiveNodeTest {
     private lateinit var emptyDirectiveNode: DirectiveNode
     private lateinit var filledDirectiveNode: DirectiveNode
 
-    private val aDirective: Directive = Directive.of(Truth.ofTrue(), Var.of("B"))
+    private val aDirective: Directive = Directive.of(Truth.TRUE, Var.of("B"))
 
     @BeforeTest
     fun init() {

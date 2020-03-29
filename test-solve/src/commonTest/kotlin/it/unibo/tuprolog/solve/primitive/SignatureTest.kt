@@ -99,7 +99,7 @@ internal class SignatureTest {
         assertNull(Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
         assertNull(
             Signature.fromSignatureTerm(
-                Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.ofTrue())
+                Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.TRUE)
             )
         )
         assertNull(Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
@@ -114,7 +114,7 @@ internal class SignatureTest {
                 Struct.of(
                     "/",
                     Atom.of(signatureName),
-                    Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.ofTrue())
+                    Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.TRUE)
                 )
             )
         )

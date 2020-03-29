@@ -20,7 +20,7 @@ internal class RootNodeTest {
     private lateinit var filledRootNode: RootNode
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
-    private val aDirective: Directive = Directive.of(Truth.ofTrue(), Var.of("B"))
+    private val aDirective: Directive = Directive.of(Truth.TRUE, Var.of("B"))
 
     @BeforeTest
     fun init() {

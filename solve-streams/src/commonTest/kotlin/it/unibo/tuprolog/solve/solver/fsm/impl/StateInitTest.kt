@@ -32,7 +32,7 @@ internal class StateInitTest {
         // precondition
         assertTrue {
             SolverStrategies.prologStandard.successCheckStrategy(
-                Truth.ofTrue(),
+                Truth.TRUE,
                 DummyInstances.executionContext
             )
         }

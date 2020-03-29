@@ -27,7 +27,7 @@ internal object WrapperUtils {
                 Signature("another", 1),
                 listOf(
                     Struct.of("another", Var.anonymous()),
-                    Struct.of("another", Truth.ofTrue())
+                    Struct.of("another", Truth.TRUE)
                 ),
                 listOf(
                     Atom.of("another"),
@@ -40,7 +40,7 @@ internal object WrapperUtils {
                 listOf(
                     Struct.of("aVarargOne", Var.of("X")),
                     Struct.of("aVarargOne", Integer.of(1), Real.of(1.5)),
-                    Struct.of("aVarargOne", Var.of("X"), Var.of("Y"), Truth.ofTrue())
+                    Struct.of("aVarargOne", Var.of("X"), Var.of("Y"), Truth.TRUE)
                 ),
                 listOf(
                     Atom.of("aVarargOne"),
