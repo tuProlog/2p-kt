@@ -45,7 +45,6 @@ internal object ComputeUtils {
         assertTrue("Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from expected one `$expectedRequestIssuingInstant`") {
             requestIssuingInstant - expectedRequestIssuingInstant < toleranceInMillis
         }
-        assertEquals(expectedRequestIssuingInstant, requestIssuingInstant)
         assertEquals(expectedMaxDuration, executionMaxDuration)
     }
 
