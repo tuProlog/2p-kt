@@ -20,13 +20,7 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         visitExpression(ctx.expression())
 
     override fun visitClause(ctx: PrologParser.ClauseContext): Term =
-        ctx.expression().accept(this).let {
-            when (it) {
-                is Clause -> it
-                is Struct -> Fact.of(it)
-                else -> throw throw InvalidTermTypeException(null, it.toString(), Clause::class, ctx.start.line, ctx.start.charPositionInLine)
-            }
-        }
+        ctx.expression().accept(this).toClause(ctx.text, ctx.start.line, ctx.start.charPositionInLine)
 
     override fun visitExpression(ctx: PrologParser.ExpressionContext): Term {
         return handleOuters(

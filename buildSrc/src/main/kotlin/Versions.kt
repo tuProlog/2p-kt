@@ -26,7 +26,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.19.0"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0" // available: "0.10.1"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"
 
@@ -35,11 +35,11 @@ object Versions {
     const val kt_math: String = "0.1.0"
 
     /**
-     * Current version: "6.2.2"
+     * Current version: "6.3"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.2.2"
+    const val gradleLatestVersion: String = "6.3"
 }
 
 /**
