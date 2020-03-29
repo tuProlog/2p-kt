@@ -25,20 +25,20 @@ internal abstract class AbstractTimedState(
         solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
 
         timeIsOver(stateCurrentTime - solve.requestIssuingInstant, solve.executionMaxDuration) ->
-            sequenceOf(
-                stateEndHalt(
-                    TimeOutException(
-                        "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
-                        context = solve.context,
-                        exceededDuration = solve.executionMaxDuration
-                    )
-                )
-            )
+            sequenceOf(statEndHaltTimeout())
         else -> behaveTimed()
     }
 
     /** Called only if executionTimeout has not been reached yet, and computation should go on */
     protected abstract fun behaveTimed(): Sequence<State>
+
+    /** A function to check if currently the timeout has expired and return the halt state if yes,
+     * the provided [toYieldState] otherwise*/
+    protected fun IntermediateState.ifTimeIsNotOver(toYieldState: State): State = when {
+        timeIsOver(currentTimeInstant() - solve.requestIssuingInstant, solve.executionMaxDuration) ->
+            statEndHaltTimeout()
+        else -> toYieldState
+    }
 
     override fun getCurrentTime(): TimeInstant = stateCurrentTime
 
@@ -47,4 +47,17 @@ internal abstract class AbstractTimedState(
         currentDuration >= maxDuration
 
     override fun toString(): String = "${this::class} with $solve"
+
+    companion object {
+
+        /** An utility function to create the end Halt state to be returned upon timeout expiry */
+        private fun IntermediateState.statEndHaltTimeout(): State =
+            stateEndHalt(
+                TimeOutException(
+                    "Given time for `${solve.query}` computation (${solve.executionMaxDuration}) wasn't enough for completion",
+                    context = solve.context,
+                    exceededDuration = solve.executionMaxDuration
+                )
+            )
+    }
 }

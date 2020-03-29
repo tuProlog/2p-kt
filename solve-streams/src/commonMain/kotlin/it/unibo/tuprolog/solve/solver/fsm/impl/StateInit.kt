@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.isWellFormed
@@ -23,7 +23,14 @@ internal class StateInit(
         when {
             with(solve.context) { solverStrategies.successCheckStrategy(currentGoal, this) } ->
                 // current goal is already demonstrated
-                yield(stateEndTrue(solve.context.substitution, sideEffectManager = initializedSideEffectsManager))
+                yield(
+                    ifTimeIsNotOver(
+                        stateEndTrue(
+                            solve.context.substitution,
+                            sideEffectManager = initializedSideEffectsManager
+                        )
+                    )
+                )
 
             else -> when {
                 currentGoal.isWellFormed() -> currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->

@@ -153,36 +153,9 @@ internal class SolverUtilsTest {
     @Test
     fun newSolveRequestSetsCorrectlyRequestIssuingInstantRequestIssuingInstant() {
         val myCurrentTime = currentTimeInstant()
-        val toBeTested = solveRequest.newSolveRequest(Truth.ofFalse(), currentTime = myCurrentTime)
+        val toBeTested = solveRequest.newSolveRequest(Truth.ofFalse(), requestIssuingInstant = myCurrentTime)
 
         assertEquals(myCurrentTime, toBeTested.requestIssuingInstant)
-    }
-
-    @Test
-    fun newSolveRequestAdjustsCurrentTimeoutIfNotMaxValue() {
-        val initialStartTime = 40L
-        val initialTimeout = 200L
-        val startSolveRequest = with(solveRequest) {
-            copy(executionMaxDuration = initialTimeout, requestIssuingInstant = initialStartTime)
-        }
-
-        val currentTimeLow = 80L
-        val toBeTested = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeLow)
-
-        assertEquals(initialTimeout - (currentTimeLow - initialStartTime), toBeTested.executionMaxDuration)
-
-        val currentTimeHigh = 350L
-        val toBeTestedZeroTimeout = startSolveRequest.newSolveRequest(Atom.of("a"), currentTime = currentTimeHigh)
-
-        assertEquals(0L, toBeTestedZeroTimeout.executionMaxDuration)
-    }
-
-    @Test
-    fun newSolveRequestDoesntAdjustTimeOutIfMaxValue() {
-        val toBeTested = solveRequest.copy(executionMaxDuration = TimeDuration.MAX_VALUE)
-            .newSolveRequest(Atom.of("a"), currentTime = 100L)
-
-        assertEquals(TimeDuration.MAX_VALUE, toBeTested.executionMaxDuration)
     }
 
     @Test
