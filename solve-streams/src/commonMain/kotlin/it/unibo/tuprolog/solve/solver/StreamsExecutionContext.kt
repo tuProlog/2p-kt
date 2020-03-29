@@ -3,9 +3,9 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**
@@ -30,7 +30,9 @@ internal data class StreamsExecutionContext(
     override val procedure: Struct?
         get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 
-    override val prologStackTrace: Sequence<Struct> by lazy { sideEffectManager.logicalParentRequests.map { it.query } }
+    override val prologStackTrace: Sequence<Struct> by lazy {
+        sideEffectManager.logicalParentRequests.asSequence().map { it.query }
+    }
 
 }
 
