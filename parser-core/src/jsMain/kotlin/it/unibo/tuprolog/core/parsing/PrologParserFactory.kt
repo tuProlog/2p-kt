@@ -46,25 +46,32 @@ object PrologParserFactory {
         return parseExpression(parser, string)
     }
 
-    private fun parseExpression(parser: PrologParser, source: String): SingletonExpressionContext {
+    private fun parseExpression(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: String): SingletonExpressionContext {
+        var mark = -1
+        var index = -1
+        val parser = parserAndErrorStrategy.first
         return try {
+            mark = parser.getTokenStream().mark()
+            index = parser.getTokenStream().index.coerceAtLeast(0)
             parser.singletonExpression()
-        } catch (ex: ParseCancellationException) {
+        } catch (e: dynamic) {
             when {
-                parser._interp.predictionMode === PredictionMode.SLL -> {
-                    parser.tokenStream.seek(0)
+                isParseCancellationException(e) && parser._interp.predictionMode === PredictionMode.SLL -> {
+                    parser.getTokenStream().seek(index)
                     parser._interp.predictionMode = PredictionMode.LL
-                    parser._errHandler = DefaultErrorStrategy()
+                    parser._errHandler = parserAndErrorStrategy.second
                     parser.addErrorListener(newErrorListener(source))
-                    parseExpression(parser, source)
+                    parseExpression(parserAndErrorStrategy, source)
                 }
-                ex.cause is RecognitionException -> {
-                    throw ex.cause as RecognitionException
+                e.clause !== null && isRecognitionException(e.cause) -> {
+                    throw e.cause as RecognitionException
                 }
                 else -> {
-                    throw ex
+                    throw e as Throwable
                 }
             }
+        } finally {
+            parser.getTokenStream().release(mark)
         }
     }
 
@@ -72,44 +79,34 @@ object PrologParserFactory {
     fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
         parseExpression(string, OperatorSet.DEFAULT)
 
-
-    fun parseTerm(string: String): SingletonTermContext =
-        parseTerm(string, OperatorSet.EMPTY)
-
-    fun parseTerm(string: String, withOperators: OperatorSet): SingletonTermContext {
-        val parser = createParser(string, withOperators)
-        return parseTerm(parser)
-    }
-
-    fun parseTermWithStandardOperators(string: String): SingletonTermContext =
-        parseTerm(string, OperatorSet.DEFAULT)
-
     fun parseClauses(source: String, withOperators: OperatorSet): Sequence<ClauseContext> {
         val parser = createParser(source, withOperators)
-        return parseClauses(parser)
+        return parseClauses(parser, source)
     }
+
 
     fun parseClauses(source: String): Sequence<ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
 
-
     fun parseClausesWithStandardOperators(source: String): Sequence<ClauseContext> =
         parseClauses(source, OperatorSet.DEFAULT)
 
-    fun createParser(string: String): PrologParser =
+    fun createParser(string: String): Pair<PrologParser, ErrorStrategy> =
         createParser(string, OperatorSet.DEFAULT)
 
-    fun createParser(source: String, operators: OperatorSet): PrologParser {
+    fun createParser(source: String, operators: OperatorSet): Pair<PrologParser, ErrorStrategy> {
         val stream = InputStream(source)
         val lexer = PrologLexer(stream)
         lexer.removeErrorListeners()
         val tokenStream = CommonTokenStream(lexer)
         val parser = PrologParser(tokenStream)
         parser.removeErrorListeners()
+        val originalErrorStrategy = parser._errHandler
         parser._errHandler = BailErrorStrategy()
         parser._interp.predictionMode = PredictionMode.SLL
-        return addOperators(parser, operators)
+        return addOperators(parser, operators) to originalErrorStrategy
     }
+
 
     fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         val ops = mutableListOf<String>()
@@ -130,20 +127,40 @@ object PrologParserFactory {
         return prologParser
     }
 
-
-    private fun parseTerm(parser: PrologParser): SingletonTermContext {
-        return parser.singletonTerm()
+    private fun parseClause(parserAndErrorStrategy: Pair<PrologParser, ErrorStrategy>, source: Any): OptClauseContext {
+        var mark = -1
+        var index = -1
+        val parser = parserAndErrorStrategy.first
+        return try {
+            mark = parser.getTokenStream().mark()
+            index = parser.getTokenStream().index.coerceAtLeast(0)
+            parser.optClause()
+        } catch (e: dynamic) {
+            when {
+                isParseCancellationException(e) && parser._interp.predictionMode === PredictionMode.SLL -> {
+                    parser.getTokenStream().seek(index)
+                    parser._interp.predictionMode = PredictionMode.LL
+                    parser._errHandler = parserAndErrorStrategy.second
+                    parser.addErrorListener(newErrorListener(source))
+                    parseClause(parserAndErrorStrategy, source)
+                }
+                e.clause !== null && isRecognitionException(e.cause) -> {
+                    throw e.cause as RecognitionException
+                }
+                else -> {
+                    throw e as Throwable
+                }
+            }
+        } finally {
+            parser.getTokenStream().release(mark)
+        }
     }
 
-    private fun parseClause(parser: PrologParser): OptClauseContext {
-        return parser.optClause()
-    }
-
-    private fun parseClauses(parser: PrologParser): Sequence<ClauseContext> {
+    private fun parseClauses(parser: Pair<PrologParser, ErrorStrategy>, source: Any): Sequence<ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
-                    parseClause(parser)
+                    parseClause(parser, source)
                 } catch (e: ParseException) {
                     e.clauseIndex = it
                     throw e

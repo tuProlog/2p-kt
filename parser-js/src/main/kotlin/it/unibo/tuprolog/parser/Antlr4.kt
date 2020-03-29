@@ -78,7 +78,7 @@ open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
     val fetchedEOF: Boolean
 
     fun mark(): Int
-    fun release()
+    fun release(marker: Int)
     fun reset()
     fun seek(index: Int)
     operator fun get(index: Int): Token

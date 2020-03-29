@@ -833,7 +833,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         }
     }
 
-    private inline fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
+    private fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
 
     fun testMember(maxDuration: TimeDuration = 500L) {
         prolog {
