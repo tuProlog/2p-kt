@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.impl.TupleImpl
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface Tuple : Struct {
+interface Tuple : Collection {
 
     override val isTuple: Boolean
         get() = true
@@ -22,17 +22,11 @@ interface Tuple : Struct {
 
     val right: Term
 
-    val unfoldedSequence: Sequence<Term>
+    override fun toArray(): Array<Term> = unfoldedArray
 
-    val unfoldedList: KtList<Term>
+    override fun toList(): KtList<Term> = unfoldedList
 
-    val unfoldedArray: Array<Term>
-
-    fun toArray(): Array<Term> = unfoldedArray
-
-    fun toList(): KtList<Term> = unfoldedList
-
-    fun toSequence(): Sequence<Term> = unfoldedSequence
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
 
     override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
@@ -48,7 +42,7 @@ interface Tuple : Struct {
 
         @JvmStatic
         fun wrapIfNeeded(vararg terms: Term): Term =
-            wrapIfNeeded(*terms, default = Truth.Companion::ofTrue)
+            wrapIfNeeded(*terms, default = { Truth.TRUE })
 
         @JvmStatic
         fun wrapIfNeeded(vararg terms: Term, default: () -> Term): Term =

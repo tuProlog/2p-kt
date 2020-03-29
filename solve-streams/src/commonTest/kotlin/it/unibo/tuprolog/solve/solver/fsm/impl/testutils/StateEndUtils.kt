@@ -27,12 +27,12 @@ import kotlin.test.assertNotEquals
 internal object StateEndUtils {
 
     /** The query to which test responses respond */
-    internal val aQuery = Truth.ofTrue()
+    internal val aQuery = Truth.TRUE
 
     /** The exception inside [aMinimalExceptionResponse] */
     internal val anException = HaltException(context = DummyInstances.executionContext)
 
-    internal val aSubstitution = Substitution.of("A", Truth.ofFalse())
+    internal val aSubstitution = Substitution.of("A", Truth.FAIL)
     internal val someLibraries = Libraries(Library.of(alias = "stateEnd.test", operatorSet = OperatorSet.DEFAULT))
     internal val someFlags = mapOf(Atom.of("function1") to Atom.of("off"))
     internal val aStaticKb = ClauseDatabase.of({ factOf(atomOf("myStaticFact")) })

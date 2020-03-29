@@ -21,7 +21,7 @@ internal class TupleTest {
 
     @Test
     fun wrapIfNeededWithNoArgs() {
-        assertSame(Truth.ofTrue(), Tuple.wrapIfNeeded())
+        assertSame(Truth.TRUE, Tuple.wrapIfNeeded())
     }
 
     @Test
@@ -59,8 +59,8 @@ internal class TupleTest {
     fun tupleOfLeftRightOthers() {
         val first = Var.of("A")
         val second = Atom.of("b")
-        val third = Truth.ofFalse()
-        val fourth = Truth.ofTrue()
+        val third = Truth.FALSE
+        val fourth = Truth.TRUE
         val correctInstance = TupleImpl(first, TupleImpl(second, TupleImpl(third, fourth)))
 
         val others = Tuple.of(third, fourth)

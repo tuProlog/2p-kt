@@ -24,32 +24,32 @@ internal object SolveUtils {
 
     // Request parameters
     internal val aSignature = Signature("ciao", 2)
-    internal val anArgumentList = listOf(Atom.of("a"), Truth.ofTrue())
+    internal val anArgumentList = listOf(Atom.of("a"), Truth.TRUE)
     internal val anExecutionContext = DummyInstances.executionContext
     internal const val aRequestIssuingInstant = 0L
     internal const val anExecutionMaxDuration = 300L
 
     internal val aVarargSignature = Signature("ciao", 2, true)
-    internal val varargArgumentList = anArgumentList + Truth.ofTrue()
+    internal val varargArgumentList = anArgumentList + Truth.TRUE
 
     internal val differentLibraries by lazy {
         Libraries(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) }
     }
     internal val differentFlags by lazy {
-        mapOf<Atom, Term>(Truth.ofTrue() to Truth.ofFalse()).also { assertNotEquals(it, someFlags) }
+        mapOf<Atom, Term>(Truth.TRUE to Truth.FAIL).also { assertNotEquals(it, someFlags) }
     }
     internal val differentStaticKB by lazy {
-        ClauseDatabase.of(Fact.of(Truth.ofTrue())).also { assertNotEquals(it, aStaticKB) }
+        ClauseDatabase.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
     }
     internal val differentDynamicKB by lazy {
-        ClauseDatabase.of(Fact.of(Truth.ofTrue())).also { assertNotEquals(it, aDynamicKB) }
+        ClauseDatabase.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
     }
 
-    internal val solutionSubstitution = Substitution.of("A", Truth.ofTrue())
+    internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)
     internal val solutionException = TuPrologRuntimeException(context = DummyInstances.executionContext)
 
     // Response parameters
-    internal val aSolution = Solution.No(Truth.ofFalse())
+    internal val aSolution = Solution.No(Truth.FAIL)
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
     }

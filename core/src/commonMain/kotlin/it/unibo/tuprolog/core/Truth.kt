@@ -7,10 +7,9 @@ import kotlin.jvm.JvmStatic
 interface Truth : Atom {
 
     override val isTrue: Boolean
-        get() = TRUE_FUNCTOR == functor
 
     override val isFail: Boolean
-        get() = FAIL_FUNCTOR == functor
+        get() = !isTrue
 
     override fun freshCopy(): Truth = this
 
@@ -20,24 +19,31 @@ interface Truth : Atom {
 
         @JvmField
         val TRUE_FUNCTOR = "true"
-
+        @JvmField
+        val FALSE_FUNCTOR = "false"
         @JvmField
         val FAIL_FUNCTOR = "fail"
 
         @JvmField
-        val TRUE = ofTrue()
+        val TRUE: Truth = TruthImpl.True
 
         @JvmField
-        val FAIL = ofFalse()
+        val FAIL: Truth = TruthImpl.Fail
+
+        @JvmField
+        val FALSE: Truth = TruthImpl.False
 
         @JvmStatic
         fun of(truth: Boolean): Truth =
-            if (truth) TruthImpl.True else TruthImpl.Fail
+            if (truth) TRUE else FALSE
 
         @JvmStatic
-        fun ofTrue(): Truth = TruthImpl.True
-
-        @JvmStatic
-        fun ofFalse(): Truth = TruthImpl.Fail
+        fun of(string: String): Truth =
+            when (string) {
+                TRUE_FUNCTOR -> TRUE
+                FALSE_FUNCTOR -> FALSE
+                FAIL_FUNCTOR -> FAIL
+                else -> throw IllegalArgumentException("Cannot parse $string as a Truth value")
+            }
     }
 }

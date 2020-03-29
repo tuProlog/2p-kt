@@ -1,40 +1,40 @@
 package it.unibo.tuprolog.core
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface List : Struct {
+interface List : Collection {
 
     override val isList: Boolean
         get() = true
 
-    val unfoldedSequence: Sequence<Term>
+    val isWellFormed: Boolean
 
-    val unfoldedList: KtList<Term>
+    override val unfoldedSequence: Sequence<Term>
 
-    val unfoldedArray: Array<Term>
+    override val unfoldedList: KtList<Term>
 
-    val size: Int
+    override val unfoldedArray: Array<Term>
+
+    override val size: Int
         get() = when {
             unfoldedList.last() is EmptyList -> unfoldedList.size - 1
             else -> unfoldedList.size
         }
 
-    fun toArray(): Array<Term> =
+    override fun toArray(): Array<Term> =
         when {
             unfoldedArray.last() is EmptyList -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
             else -> unfoldedArray
         }
 
-    fun toList(): KtList<Term> =
+    override fun toList(): KtList<Term> =
         when {
             unfoldedList.last() is EmptyList -> unfoldedList.slice(0 until unfoldedArray.lastIndex)
             else -> unfoldedList
         }
 
-    fun toSequence(): Sequence<Term> = toList().asSequence()
+    override fun toSequence(): Sequence<Term> = toList().asSequence()
 
     override fun freshCopy(): List = super.freshCopy() as List
 

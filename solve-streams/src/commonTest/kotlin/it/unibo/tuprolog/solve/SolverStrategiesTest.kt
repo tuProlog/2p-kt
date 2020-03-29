@@ -39,7 +39,7 @@ internal class SolverStrategiesTest {
 
     @Test
     fun prologStandardSuccessCheckStrategyConsidersOnlyTrue() {
-        assertTrue { prologStandard.successCheckStrategy(Truth.ofTrue(), aContext) }
+        assertTrue { prologStandard.successCheckStrategy(Truth.TRUE, aContext) }
         assertFalse { prologStandard.successCheckStrategy(Atom.of("ciao"), aContext) }
     }
 

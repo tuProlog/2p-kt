@@ -2,13 +2,14 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Truth
 
-internal class TruthImpl private constructor(truth: Boolean) :
-    AtomImpl(if (truth) Truth.TRUE_FUNCTOR else Truth.FAIL_FUNCTOR), Truth {
-    override val isTrue: Boolean = truth
-    override val isFail: Boolean = !truth
-
-    companion object {
-        val True = TruthImpl(true)
-        val Fail = TruthImpl(false)
+internal sealed class TruthImpl(value: String, override val isTrue: Boolean) : Truth, AtomImpl(value) {
+    object True : TruthImpl(Truth.TRUE_FUNCTOR, true) {
+        override fun toString(): String = value
+    }
+    object Fail : TruthImpl(Truth.FAIL_FUNCTOR, false) {
+        override fun toString(): String = value
+    }
+    object False : TruthImpl(Truth.FALSE_FUNCTOR, false) {
+        override fun toString(): String = value
     }
 }

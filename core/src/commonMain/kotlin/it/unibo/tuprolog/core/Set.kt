@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.SetImpl
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface Set : Struct {
+interface Set : Collection {
 
     override val isSet: Boolean
         get() = true
@@ -16,17 +15,11 @@ interface Set : Struct {
     override val functor: String
         get() = FUNCTOR
 
-    val unfoldedSequence: Sequence<Term>
+    override fun toArray(): Array<Term> = unfoldedArray
 
-    val unfoldedList: KtList<Term>
+    override fun toList(): KtList<Term> = unfoldedList
 
-    val unfoldedArray: Array<Term>
-
-    fun toArray(): Array<Term> = unfoldedArray
-
-    fun toList(): KtList<Term> = unfoldedList
-
-    fun toSequence(): Sequence<Term> = unfoldedSequence
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
 
     override fun freshCopy(): Set = super.freshCopy() as Set
 

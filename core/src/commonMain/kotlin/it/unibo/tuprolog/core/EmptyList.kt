@@ -15,6 +15,9 @@ interface EmptyList : Empty, LogicList {
     override val isEmptyList: Boolean
         get() = true
 
+    override val isWellFormed: Boolean
+        get() = true
+
     override fun toArray(): Array<Term> = arrayOf()
 
     override fun toList(): List<Term> = emptyList()

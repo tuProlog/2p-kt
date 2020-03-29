@@ -10,23 +10,23 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils.assertIsTruth
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class TestTrue {
+class TestFalse {
 
-    private val correctAtom = "true"
-    private val notCorrectAtom = "true "
+    private val correctAtom = "false"
+    private val notCorrectAtom = "fail"
 
     private val heterogeneousCreatedInstances = listOf(
-        Truth.TRUE,
-        Truth.of(true),
+        Truth.FALSE,
+        Truth.of(false),
         Atom.of(correctAtom),
         Struct.of(correctAtom)
     )
 
     @Test
-    fun variousCreationMethodsCreateCorrectlyTrue() {
+    fun variousCreationMethodsCreateCorrectlyFail() {
         heterogeneousCreatedInstances.forEach {
             assertIsTruth(it)
-            assertTrue(it.isTrue)
+            assertTrue(it.isFail)
         }
     }
 
@@ -34,7 +34,7 @@ class TestTrue {
     fun equality() {
         assertAllVsAll(heterogeneousCreatedInstances, ::assertEqualities)
 
-        val notTrueAtom = Atom.of(notCorrectAtom)
-        heterogeneousCreatedInstances.forEach { correct -> assertNoEqualities(notTrueAtom, correct) }
+        val notFailAtom = Atom.of(notCorrectAtom)
+        heterogeneousCreatedInstances.forEach { correct -> assertNoEqualities(notFailAtom, correct) }
     }
 }

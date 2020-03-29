@@ -14,5 +14,7 @@ internal object EmptySetImpl : SetImpl(null), EmptySet {
 
     override val isGround: Boolean by lazy { super<EmptySet>.isGround }
 
+    override val size: Int get() = 0
+
     override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
 }
