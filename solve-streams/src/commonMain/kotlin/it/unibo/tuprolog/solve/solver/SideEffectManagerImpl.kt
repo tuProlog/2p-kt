@@ -19,7 +19,7 @@ internal data class SideEffectManagerImpl(
     // CUT side effect fields
 
     /** The sequence of parent execution contexts before this, limited to a "clause scope" */
-    private val clauseScopedParents: Sequence<StreamsExecutionContext> = emptySequence(),
+    private val clauseScopedParents: List<StreamsExecutionContext> = emptyList(),
     /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
     private val isChoicePointChild: Boolean = false,
     /** Filled when cut execution happens, this indicates which are the parent contexts whose unexplored children should be cut */
@@ -28,7 +28,7 @@ internal data class SideEffectManagerImpl(
     // Catch / Throw side effects fields
 
     /** The sequence of parent [Solve.Request]s from this execution context till the resolution root */
-    internal val logicalParentRequests: Sequence<Solve.Request<StreamsExecutionContext>> = emptySequence(),
+    internal val logicalParentRequests: List<Solve.Request<StreamsExecutionContext>> = emptyList(),
     /** The sequence of no more selectable parent requests, because already used */
     private val throwNonSelectableParentContexts: Sequence<StreamsExecutionContext> = emptySequence(),
     /** The execution context where a `catch` was found and till which other unexplored sub-trees should be cut */
@@ -42,7 +42,7 @@ internal data class SideEffectManagerImpl(
 
     /** Initializes isChoicePointChild to `false` whatever it was, and adds given [currentContext] to clauseScopedParents */
     internal fun stateInitInitialize(currentContext: StreamsExecutionContext): SideEffectManagerImpl = copy(
-        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
+        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) },
         isChoicePointChild = false
     )
 
@@ -58,17 +58,17 @@ internal data class SideEffectManagerImpl(
         isChoicePointChild: Boolean,
         logicalParentRequest: Solve.Request<StreamsExecutionContext>
     ) = copy(
-        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) }.asSequence(),
+        clauseScopedParents = clauseScopedParents.toMutableList().apply { add(0, currentContext) },
         isChoicePointChild = isChoicePointChild,
         logicalParentRequests = when (logicalParentRequest) {
-            in logicalParentRequests -> logicalParentRequests.dropWhile { it != logicalParentRequest }.toList().asSequence()
-            else -> logicalParentRequests.toMutableList().apply { add(0, logicalParentRequest) }.asSequence()
+            in logicalParentRequests -> logicalParentRequests.dropWhile { it != logicalParentRequest }
+            else -> logicalParentRequests.toMutableList().apply { add(0, logicalParentRequest) }
         }
     )
 
     /** Method that updates sideEffects manager to not consider parents older than current first, because entering new "rule-scope" */
     internal fun enterRuleSubScope() = copy(
-        clauseScopedParents = sequenceOf(clauseScopedParents.first())
+        clauseScopedParents = listOf(clauseScopedParents.first())
     )
 
     /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
@@ -76,7 +76,6 @@ internal data class SideEffectManagerImpl(
         clauseScopedParents = clauseScopedParents
             .toMutableList()
             .apply { addAll(upperScopeSideEffectsManager.clauseScopedParents) }
-            .asSequence()
     )
 
     /**
