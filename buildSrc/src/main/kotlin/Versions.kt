@@ -14,7 +14,7 @@ import org.gradle.plugin.use.PluginDependencySpec
 object Versions {
     const val io_github_javaeden_orchid: String = "0.19.0"
 
-    const val org_jetbrains_kotlin: String = "1.3.70"
+    const val org_jetbrains_kotlin: String = "1.3.71"
 
     const val org_antlr: String = "4.8-1"
 
