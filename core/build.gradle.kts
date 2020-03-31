@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+
 kotlin {
 
     sourceSets {
@@ -6,22 +8,10 @@ kotlin {
                 api("io.github.gciatto:kt-math:${Versions.kt_math}")
             }
         }
-
-        // Default source set for JVM-specific sources and dependencies:
-        jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api("io.github.gciatto:kt-math-jvm:${Versions.kt_math}")
-                }
-            }
-        }
-
-        js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api("io.github.gciatto:kt-math-js:${Versions.kt_math}")
-                }
-            }
-        }
     }
 }
+
+//tasks.getByName<KotlinPackageJsonTask>("jsPackageJson") {
+//    println(this::class.java)
+//    this.
+//}

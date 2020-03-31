@@ -3,6 +3,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import node.*
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -173,6 +175,8 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
 
     configureSigning()
+
+    configureJsPackage()
 }
 
 jvmSubprojects.forEachProject {
@@ -222,6 +226,8 @@ jsSubprojects.forEachProject {
     configureUploadToBintray()
 
     configureSigning()
+
+    configureJsPackage()
 }
 
 fun Project.configureDokka(vararg platforms: String) {
@@ -414,3 +420,20 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(platform: String) =
     registerPlatform(platform) { }
 
+fun Project.configureJsPackage() {
+    val packageJsonTasks = tasks.withType<KotlinPackageJsonTask>().toList()
+
+    packageJsonTasks.forEach {
+        tasks.create<LiftPackageJsonTask>("${it.name}Lift") {
+            dependsOn(it)
+            packageJsonFile = it.packageJson
+            lift {
+                name = "@tuprolog/$name"
+                license = "Apache-2.0"
+                people = mutableListOf(
+                    People("Giovanni Ciatto", "giovanni.ciatto@gmail.com", "https://about.me/gciatto")
+                )
+            }
+        }
+    }
+}

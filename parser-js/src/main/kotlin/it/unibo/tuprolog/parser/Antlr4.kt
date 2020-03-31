@@ -1,6 +1,5 @@
 @file:JsModule("antlr4")
 @file:JsNonModule
-
 package it.unibo.tuprolog.parser
 
 /**
