@@ -311,7 +311,7 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
                 repo = "tuprolog"
                 name = project.name
                 userOrg = "pika-lab"
-                vcsUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin"
+                vcsUrl = "https://github.com/tuProlog/2p-kt"
                 setLicenses("Apache-2.0")
                 with(version) {
                     name = project.version.toString()
@@ -424,16 +424,35 @@ fun Project.configureJsPackage() {
     val packageJsonTasks = tasks.withType<KotlinPackageJsonTask>().toList()
 
     packageJsonTasks.forEach {
-        tasks.create<LiftPackageJsonTask>("${it.name}Lift") {
+        val copyReadme = tasks.create<Copy>("copyFilesNextTo${it.name.capitalize()}") {
+            group = "nodejs"
+            from(rootProject.projectDir)
+            include("README*")
+            include("CONTRIB*")
+            include("LICENSE*")
+            into(it.packageJson.parent)
+        }
+        tasks.create<LiftPackageJsonTask>("lift${it.name.capitalize()}") {
             dependsOn(it)
+            dependsOn(copyReadme)
             packageJsonFile = it.packageJson
             lift {
                 name = "@tuprolog/$name"
                 license = "Apache-2.0"
                 people = mutableListOf(
-                    People("Giovanni Ciatto", "giovanni.ciatto@gmail.com", "https://about.me/gciatto")
+                    People(
+                        "Giovanni Ciatto",
+                        "giovanni.ciatto@unibo.it",
+                        "https://about.me/gciatto"
+                    )
+                )
+                homepage = "https://github.com/tuProlog/2p-kt"
+                bugs = Bugs(
+                    "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/issues",
+                    "giovanni.ciatto@unibo.it"
                 )
             }
         }
+
     }
 }
