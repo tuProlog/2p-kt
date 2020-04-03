@@ -49,6 +49,8 @@ val signingKey = getPropertyOrWarnForAbsence("signingKey")
 val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
 val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
 val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
+val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
+val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
 val allSubprojects = subprojects.map { it.name }.toSet()
 val jvmSubprojects = setOf("parser-jvm")
@@ -156,15 +158,10 @@ ktSubprojects.forEachProject {
     }
 
     configureDokka("jvm", "js")
-
     configureMavenPublications("packDokka")
-
     configureUploadToMavenCentral()
-
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
-
     configureSigning()
-
     configureJsPackage()
 }
 
@@ -177,13 +174,9 @@ jvmSubprojects.forEachProject {
     apply(plugin = "com.jfrog.bintray")
 
     configureDokka()
-
     createMavenPublications("jvm", "java", docArtifact = "packDokka")
-
     configureUploadToMavenCentral()
-
     configureUploadToBintray()
-
     configureSigning()
 }
 
@@ -195,16 +188,10 @@ jsSubprojects.forEachProject {
     apply(plugin = "com.jfrog.bintray")
 
     configureDokka()
-
-    createMavenPublications("jvm", "kotlin", docArtifact = "packDokka")
-
+    createMavenPublications("js", "kotlin", docArtifact = "packDokka")
     configureUploadToMavenCentral()
-
     configureUploadToBintray()
-
     configureSigning()
-
-    configureJsPackage()
 }
 
 fun Project.configureDokka(vararg platforms: String) {
@@ -301,8 +288,6 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
 
 fun Project.configureUploadToMavenCentral() {
     val sonatypeUrl: String by this
-    val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
-    val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
     if (ossrhUsername != null && ossrhPassword != null) {
         publishing {
@@ -331,11 +316,11 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
                     classifier = "javadoc"
                 }
             } else if (!docArtifact.endsWith("KotlinMultiplatform")) {
-                log("no javadoc artifact for publication $name in project ${this@configureMavenPublications.name}: " +
+                log("no javadoc artifact for publication $name in project ${project.name}: " +
                         "no such a task: $docArtifact")
             }
 
-            configurePom(this@configureMavenPublications.name)
+            configurePom(project.name)
         }
     }
 }
@@ -404,10 +389,10 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
     val npmToken: String by this
 
     configure<NpmPublishExtension> {
-        nodeRoot = tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
+        nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
         token = npmToken
         packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
-        nodeSetupTask = "kotlinNodeJsSetup"
+        nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
         jsCompileTask = compileTask
 
         liftPackageJson {
@@ -415,6 +400,10 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
             homepage = projectHomepage
             bugs = Bugs(projectIssues,"gcEmail")
             license = projectLicense
+            name = "@tuprolog/$name"
+            dependencies = dependencies?.mapKeys {
+                if ("2p" in it.key) "@tuprolog/${it.key}" else it.key
+            }?.toMutableMap()
         }
     }
 }

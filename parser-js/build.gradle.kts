@@ -1,26 +1,26 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import java.io.File
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import node.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 
-plugins {
-    kotlin("js")
-    id("maven-publish")
-    signing
-    id("org.jetbrains.dokka")
-    id("com.jfrog.bintray")
-//    `java-library`
-}
+apply<NpmPublishPlugin>()
 
 val antlr by configurations.creating {
     setTransitive(true)
 }
 
-repositories {
-    mavenCentral()
-    maven("https://dl.bintray.com/kotlin/dokka")
-}
-
 val javaVersion: String by project
 val ktFreeCompilerArgs: String by project
+val gcName: String by project
+val gcEmail: String by project
+val gcUrl: String by project
+val projectHomepage: String by project
+val bintrayRepo: String by project
+val bintrayUserOrg: String by project
+val projectLicense: String by project
+val projectIssues: String by project
+val npmToken: String by project
 
 val generatedSrcDir = "$buildDir/generated-src/antlr/main"
 
@@ -39,7 +39,7 @@ kotlin {
             srcDir("src/main/antlr")
         }
         dependencies {
-            implementation(kotlin("stdlib-js"))
+            api(kotlin("stdlib-js"))
             api(npm("antlr4", "^${Versions.org_antlr.replace("-1", ".0")}"))
         }
     }
@@ -102,6 +102,25 @@ with(fileTree("src/main/antlr")) {
                 antlrFile.absolutePath
             )
         }
+    }
+}
+
+configure<NpmPublishExtension> {
+    nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
+    token = npmToken
+    packageJson = tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson
+    nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
+    jsCompileTask = "mainClasses"
+
+    liftPackageJson {
+        people = mutableListOf(People(gcName, gcEmail, gcUrl))
+        homepage = projectHomepage
+        bugs = Bugs(projectIssues,"gcEmail")
+        license = projectLicense
+        name = "@tuprolog/$name"
+        dependencies = dependencies?.mapKeys {
+            if ("2p" in it.key) "@tuprolog/${it.key}" else it.key
+        }?.toMutableMap()
     }
 }
 
