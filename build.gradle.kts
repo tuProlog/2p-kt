@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import node.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -35,21 +36,21 @@ println("2p-Kt version: $version")
 
 val javaVersion: String by project
 val ktFreeCompilerArgsJvm: String by project
+val gcName: String by project
+val gcEmail: String by project
+val gcUrl: String by project
+val projectHomepage: String by project
+val bintrayRepo: String by project
+val bintrayUserOrg: String by project
+val projectLicense: String by project
+val projectIssues: String by project
 
-// env ORG_GRADLE_PROJECT_signingKey
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
-// env ORG_GRADLE_PROJECT_signingPassword
 val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
-// env ORG_GRADLE_PROJECT_bintrayUser
 val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
-// env ORG_GRADLE_PROJECT_bintrayKey
 val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
-// env ORG_GRADLE_PROJECT_ossrhUsername
-val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
-// env ORG_GRADLE_PROJECT_ossrhPassword
-val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
-val allSubprojects = subprojects.map { it.name  }.toSet()
+val allSubprojects = subprojects.map { it.name }.toSet()
 val jvmSubprojects = setOf("parser-jvm")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
@@ -97,16 +98,12 @@ ktSubprojects.forEachProject {
                 }
             }
 
-            // Default source set for JVM-specific sources and dependencies:
             jvm {
-
                 compilations["main"].defaultSourceSet {
                     dependencies {
                         api(kotlin("stdlib-jdk8"))
                     }
                 }
-
-                // JVM-specific tests and their dependencies:
                 compilations["test"].defaultSourceSet {
                     dependencies {
                         implementation(kotlin("test-junit"))
@@ -121,15 +118,13 @@ ktSubprojects.forEachProject {
             js {
                 nodejs()
 //                browser()
-                sequenceOf("", "Test").forEach {
-                    tasks.getByName<KotlinJsCompile>("compile${it}KotlinJs") {
-                        kotlinOptions {
-                            moduleKind = "umd"
-                            //noStdlib = true
-                            metaInfo = true
-                            sourceMap = true
-                            sourceMapEmbedSources = "always"
-                        }
+                tasks.withType<KotlinJsCompile>{
+                    kotlinOptions {
+                        moduleKind = "umd"
+                        //noStdlib = true
+                        metaInfo = true
+                        sourceMap = true
+                        sourceMapEmbedSources = "always"
                     }
                 }
                 compilations["main"].defaultSourceSet {
@@ -164,13 +159,7 @@ ktSubprojects.forEachProject {
 
     configureMavenPublications("packDokka")
 
-    configureUploadToMavenCentral(
-        if (version.toString().contains("SNAPSHOT")) {
-            "https://oss.sonatype.org/content/repositories/snapshots/"
-        } else {
-            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        }
-    )
+    configureUploadToMavenCentral()
 
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
 
@@ -191,13 +180,7 @@ jvmSubprojects.forEachProject {
 
     createMavenPublications("jvm", "java", docArtifact = "packDokka")
 
-    configureUploadToMavenCentral(
-        if (version.toString().contains("SNAPSHOT")) {
-            "https://oss.sonatype.org/content/repositories/snapshots/"
-        } else {
-            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        }
-    )
+    configureUploadToMavenCentral()
 
     configureUploadToBintray()
 
@@ -215,13 +198,7 @@ jsSubprojects.forEachProject {
 
     createMavenPublications("jvm", "kotlin", docArtifact = "packDokka")
 
-    configureUploadToMavenCentral(
-        if (version.toString().contains("SNAPSHOT")) {
-            "https://oss.sonatype.org/content/repositories/snapshots/"
-        } else {
-            "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        }
-    )
+    configureUploadToMavenCentral()
 
     configureUploadToBintray()
 
@@ -263,7 +240,6 @@ fun Project.configureDokka(vararg platforms: String) {
                 archiveClassifier.set("javadoc")
             }
 
-//            tasks.getByName("${it}Jar").dependsOn(packDokkaForPlatform)
             tasks.getByName("packAllDokka").dependsOn(packDokkaForPlatform)
         }
     } else {
@@ -283,7 +259,6 @@ fun Project.configureDokka(vararg platforms: String) {
 fun Project.configureSigning() {
     signing {
         useInMemoryPgpKeys(signingKey, signingPassword)
-
         sign(publishing.publications)
     }
 
@@ -302,17 +277,17 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
             user = bintrayUser
             key = bintrayKey
             if (publicationNames.isEmpty()) {
-                setPublications(*this@configureUploadToBintray.publishing.publications.withType<MavenPublication>().map { it.name }.toTypedArray())
+                setPublications(*project.publishing.publications.withType<MavenPublication>().map { it.name }.toTypedArray())
             } else {
                 setPublications(*publicationNames)
             }
             override = true
             with(pkg) {
-                repo = "tuprolog"
+                repo = bintrayRepo
                 name = project.name
-                userOrg = "pika-lab"
-                vcsUrl = "https://github.com/tuProlog/2p-kt"
-                setLicenses("Apache-2.0")
+                userOrg = bintrayUserOrg
+                vcsUrl = projectHomepage
+                setLicenses(projectLicense)
                 with(version) {
                     name = project.version.toString()
                 }
@@ -324,11 +299,15 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
     }
 }
 
-fun Project.configureUploadToMavenCentral(mavenRepoUrl: String) {
+fun Project.configureUploadToMavenCentral() {
+    val sonatypeUrl: String by this
+    val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
+    val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
+
     if (ossrhUsername != null && ossrhPassword != null) {
         publishing {
             repositories {
-                maven(mavenRepoUrl) {
+                maven(sonatypeUrl) {
                     credentials {
                         username = ossrhUsername
                         password = ossrhPassword
@@ -342,8 +321,8 @@ fun Project.configureUploadToMavenCentral(mavenRepoUrl: String) {
 fun Project.configureMavenPublications(docArtifactBaseName: String) {
     publishing {
         publications.withType<MavenPublication> {
-            groupId = this@configureMavenPublications.group.toString()
-            version = this@configureMavenPublications.version.toString()
+            groupId = project.group.toString()
+            version = project.version.toString()
 
             val docArtifact = "${docArtifactBaseName}${name.capitalize()}"
 
@@ -357,7 +336,6 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
             }
 
             configurePom(this@configureMavenPublications.name)
-
         }
     }
 }
@@ -365,15 +343,15 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
 fun Project.createMavenPublications(name: String, vararg componentsStrings: String, docArtifact: String? = null) {
 
     val sourcesJar by tasks.creating(Jar::class) {
-        archiveBaseName.set(this@createMavenPublications.name)
-        archiveVersion.set(this@createMavenPublications.version.toString())
+        archiveBaseName.set(project.name)
+        archiveVersion.set(project.version.toString())
         archiveClassifier.set("sources")
     }
 
     publishing {
         publications.create<MavenPublication>(name) {
-            groupId = this@createMavenPublications.group.toString()
-            version = this@createMavenPublications.version.toString()
+            groupId = project.group.toString()
+            version = project.version.toString()
 
             for (component in componentsStrings) {
                 from(components[component])
@@ -384,13 +362,13 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                     classifier = "javadoc"
                 }
             } else if (docArtifact == null || !docArtifact.endsWith("KotlinMultiplatform")) {
-                log("no javadoc artifact for publication $name in project ${this@createMavenPublications.name}: " +
+                log("no javadoc artifact for publication $name in project ${project.name}: " +
                         "no such a task: $docArtifact")
             }
 
             artifact(sourcesJar)
 
-            configurePom(this@createMavenPublications.name)
+            configurePom(project.name)
         }
     }
 }
@@ -420,39 +398,23 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(platform: String) =
     registerPlatform(platform) { }
 
-fun Project.configureJsPackage() {
-    val packageJsonTasks = tasks.withType<KotlinPackageJsonTask>().toList()
+fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
+    apply<NpmPublishPlugin>()
 
-    packageJsonTasks.forEach {
-        val copyReadme = tasks.create<Copy>("copyFilesNextTo${it.name.capitalize()}") {
-            group = "nodejs"
-            from(rootProject.projectDir)
-            include("README*")
-            include("CONTRIB*")
-            include("LICENSE*")
-            into(it.packageJson.parent)
-        }
-        tasks.create<LiftPackageJsonTask>("lift${it.name.capitalize()}") {
-            dependsOn(it)
-            dependsOn(copyReadme)
-            packageJsonFile = it.packageJson
-            lift {
-                name = "@tuprolog/$name"
-                license = "Apache-2.0"
-                people = mutableListOf(
-                    People(
-                        "Giovanni Ciatto",
-                        "giovanni.ciatto@unibo.it",
-                        "https://about.me/gciatto"
-                    )
-                )
-                homepage = "https://github.com/tuProlog/2p-kt"
-                bugs = Bugs(
-                    "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/issues",
-                    "giovanni.ciatto@unibo.it"
-                )
-            }
-        }
+    val npmToken: String by this
 
+    configure<NpmPublishExtension> {
+        nodeRoot = tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
+        token = npmToken
+        packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
+        nodeSetupTask = "kotlinNodeJsSetup"
+        jsCompileTask = compileTask
+
+        liftPackageJson {
+            people = mutableListOf(People(gcName, gcEmail, gcUrl))
+            homepage = projectHomepage
+            bugs = Bugs(projectIssues,"gcEmail")
+            license = projectLicense
+        }
     }
 }

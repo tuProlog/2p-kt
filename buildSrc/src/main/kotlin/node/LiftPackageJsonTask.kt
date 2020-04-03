@@ -4,9 +4,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import warn
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -14,39 +13,42 @@ import java.io.FileWriter
 open class LiftPackageJsonTask : DefaultTask() {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
-    private val liftingActions: MutableList<Action<PackageJson>> = mutableListOf()
-    private val rawLiftingActions: MutableList<Action<JsonObject>> = mutableListOf()
     private var packageJson: PackageJson? = null
     private lateinit var packageJsonRaw: JsonObject
 
-    @InputFile
+    internal var  liftingActions: List<Action<PackageJson>> = emptyList()
+        @Internal
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    internal var rawLiftingActions: List<Action<JsonObject>> = emptyList()
+        @Internal
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    @Internal
     lateinit var packageJsonFile: File
 
-    val outputFile: File
-        @OutputFile
-        get() = packageJsonFile
-
-
-    init {
-        group = "nodejs"
-        doFirst {
-            resolve()
-        }
-        doLast {
-            performLifting()
-            save()
-        }
-    }
-
-    private fun resolve() {
+    @TaskAction
+    fun lift() {
         if (!packageJsonFile.exists()) {
             error("File ${packageJsonFile.path} does not exist")
         }
+        resolve()
+        performLifting()
+        save()
+    }
+
+    private fun resolve() {
         packageJsonRaw = gson.fromJson(FileReader(packageJsonFile), JsonObject::class.java)
         packageJson = try {
             PackageJson.fromJson(packageJsonRaw)
         } catch (_: Throwable) {
-            warn("Cannot parse $packageJsonFile as a data class, use raw lifting")
+            System.err.println("Cannot parse $packageJsonFile as a data class, use raw lifting")
             null
         }
     }
@@ -63,13 +65,5 @@ open class LiftPackageJsonTask : DefaultTask() {
         FileWriter(packageJsonFile).use {
             gson.toJson(packageJson?.toJson() ?: packageJsonRaw, it)
         }
-    }
-
-    fun lift(action: Action<PackageJson>) {
-        liftingActions.add(action)
-    }
-
-    fun liftRaw(action: Action<JsonObject>) {
-        rawLiftingActions.add(action)
     }
 }
