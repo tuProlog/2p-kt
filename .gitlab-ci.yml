@@ -11,6 +11,7 @@ variables:
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
   BINTRAY_TASK: "publishAllToBintray"
+  NPM_TASK: "clean jsMain npmPublish"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
 
@@ -39,25 +40,23 @@ Test JS:
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
   allow_failure: true
 
-Publish to Bintray (dev):
+Deploy to Bintray:
   stage: deploy
   script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
-    - /^develop$/
-  dependencies:
-    - Test JVM
+    - /^(master)|(release)|(develop)$/
 
-Publish Releases to Bintray:
+Deploy to NPM:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  script: $GCMD $BEFORE_TASK $NPM_TASK $AFTER_TASK $GOPTS
   environment:
-    name: Bintray
-    url: "https://bintray.com/pika-lab/tuprolog"
+    name: NPM
+    url: "https://www.npmjs.com/org/tuprolog"
   only:
-    - /^(master)|(release)$/
+    - /^(master)|(release)|(develop)$/
 
 pages:
   script:
