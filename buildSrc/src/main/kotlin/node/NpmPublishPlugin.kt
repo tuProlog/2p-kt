@@ -24,7 +24,7 @@ class NpmPublishPlugin : Plugin<Project> {
         }
         extension.onExtensionChanged.add {
             setRegistry.executable = node.absolutePath
-            setRegistry.setArgs(listOf(npm, "set", "registry", "https://$registry"))
+            setRegistry.setArgs(listOf(npm, "set", "registry", "https://$registry/"))
             setToken.executable = node.absolutePath
             setToken.setArgs(listOf(npm, "set", "//$registry/:_authToken", token))
             nodeSetupTask?.let {

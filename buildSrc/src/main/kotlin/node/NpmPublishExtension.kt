@@ -68,7 +68,7 @@ open class NpmPublishExtension {
             onExtensionChanged.forEach { it(this) }
         }
 
-    var registry = "registry.npmjs.org/"
+    var registry = "registry.npmjs.org"
         get() = field
         set(value) {
             field = value
