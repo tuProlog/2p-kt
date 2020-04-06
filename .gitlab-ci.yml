@@ -11,21 +11,21 @@ variables:
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
   BINTRAY_TASK: "publishAllToBintray"
-  NPM_TASK: "clean jsMain npmPublish"
+  JS_COMPILE_TASK: "clean jsMain"
+  NPM_PUBLISH_TASK: "npmPublish"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
 
 before_script:
   - chmod +x gradlew
 
-#cache:
-#  paths:
-#    - /root/.gradle/caches
-#    - /root/.gradle/daemon
-#    - /root/.gradle/wrapper
-#    - gradle/
-#    - build/
-#    - .gradle/
+cache:
+  paths:
+    - $HOME/.gradle/caches
+    - $HOME/.gradle/wrapper
+    - $HOME/.gradle/nodejs
+    - gradle/
+    - .gradle/
 
 Compile:
   stage: build
@@ -51,7 +51,9 @@ Deploy to Bintray:
 
 Deploy to NPM:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $NPM_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $JS_COMPILE_TASK $AFTER_TASK $GOPTS
+    - $GCMD $BEFORE_TASK $NPM_PUBLISH_TASK $AFTER_TASK $GOPTS
   environment:
     name: NPM
     url: "https://www.npmjs.com/org/tuprolog"
