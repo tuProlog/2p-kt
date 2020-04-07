@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 import kotlin.collections.Collection as KtCollection
@@ -13,11 +14,14 @@ import kotlin.collections.Collection as KtCollection
 sealed class Substitution : Map<Var, Term> {
 
     /** Whether this Substitution is a successful one (is a Unifier) */
+    @JsName("isSuccess")
     open val isSuccess: Boolean = false
     /** Whether this Substitution is a failed one */
+    @JsName("isFailed")
     open val isFailed: Boolean = false
 
     /** Applies the Substitution to the given Term */
+    @JsName("applyTo")
     fun applyTo(term: Term): Term = term[this]
 
     /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
@@ -26,6 +30,7 @@ sealed class Substitution : Map<Var, Term> {
      * then the invocation of `getOriginal(Z)` should retrieve `X`
      * */
     // TODO test this method
+    @JsName("getOriginal")
     abstract fun getOriginal(variable: Var): Var?
 
     /**
@@ -35,6 +40,7 @@ sealed class Substitution : Map<Var, Term> {
      * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
      * - If the set of substitutions resulting from this union is contradicting, the result is [Substitution.Fail]
      */
+    @JsName("plus")
     operator fun plus(other: Substitution): Substitution = when {
         anyFailed(this, other) || anyContradiction(this, other) -> Fail
         else -> (this.mapValues { (_, value) -> value.apply(other) } + other).asUnifier()
@@ -44,6 +50,7 @@ sealed class Substitution : Map<Var, Term> {
      * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [keys] iterable.
      */
+    @JsName("minusIterable")
     open operator fun minus(keys: Iterable<Var>): Substitution = when (this) {
         is Fail -> Fail
         else -> (this as Map<Var, Term> - keys).asUnifier()
@@ -53,6 +60,7 @@ sealed class Substitution : Map<Var, Term> {
      * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [other] substitution.
      */
+    @JsName("minus")
     open operator fun minus(other: Substitution): Substitution = this - other.keys
 
     /**
@@ -60,6 +68,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
+    @JsName("filterEntry")
     open fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution = when (this) {
         is Fail -> Fail
         else -> (this as Map<Var, Term>).filter(predicate).asUnifier()
@@ -70,6 +79,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
+    @JsName("filterCollection")
     open fun filter(variables: KtCollection<Var>): Substitution = // TODO: 16/01/2020 add tests for this specific method
         filter { k, _ -> k in variables }
 
@@ -78,6 +88,7 @@ sealed class Substitution : Map<Var, Term> {
      *
      * The returned map preserves the entry iteration order of the original map.
      */
+    @JsName("filter")
     open fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
         filter { (key, value) -> predicate(key, value) }
 
@@ -158,26 +169,33 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Returns failed substitution instance */
         @JvmStatic
+        @JsName("failed")
         fun failed(): Fail = Fail
 
         /** Returns empty successful substitution (aka Unifier) instance */
         @JvmStatic
+        @JsName("empty")
         fun empty(): Unifier = emptyMap<Var, Term>().asUnifier()
 
         /** Conversion from a raw Map<Var, Term> to Successful Substitution (aka Unifier) type */
         @JvmStatic
+        // TODO move to Extensions
+        @JsName("asUnifier")
         fun Map<Var, Term>.asUnifier(): Unifier = Unifier(this)
 
         /** Creates a Substitution of given Variable with given Term */
         @JvmStatic
+        @JsName("ofVar")
         fun of(variable: Var, withTerm: Term): Unifier = of(variable to withTerm) as Unifier
 
         /** Creates a Substitution from the new Variable, with given name, to given Term */
         @JvmStatic
+        @JsName("of")
         fun of(variable: String, withTerm: Term): Unifier = of(Var.of(variable) to withTerm) as Unifier
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
         @JvmStatic
+        @JsName("ofPair")
         fun of(substitutionPair: Pair<Var, Term>, vararg substitutionPairs: Pair<Var, Term>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence() + substitutionPair) -> Fail
             else -> mapOf(substitutionPair, *substitutionPairs).asUnifier()
@@ -185,6 +203,7 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
         @JvmStatic
+        @JsName("ofIterable")
         fun of(substitutionPairs: Iterable<Pair<Var, Term>>): Substitution = when {
             anyContradiction(substitutionPairs.asSequence()) -> Fail
             else -> substitutionPairs.toMap().asUnifier()
@@ -192,6 +211,7 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Creates a new Substitution *composing* given substitutions in order; if any failure or contradiction is found, the result will be [Substitution.Fail] */
         @JvmStatic
+        @JsName("ofSubstitution")
         fun of(substitution: Substitution, vararg substitutions: Substitution): Substitution =
             substitutions.fold(substitution, Substitution::plus)
 
