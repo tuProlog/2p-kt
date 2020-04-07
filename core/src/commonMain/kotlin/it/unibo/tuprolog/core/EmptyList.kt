@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -33,9 +34,11 @@ interface EmptyList : Empty, LogicList {
         const val FUNCTOR: String = Empty.EMPTY_LIST_FUNCTOR
 
         @JvmStatic
+        @JsName("invoke")
         operator fun invoke(): EmptyList = EmptyListImpl
 
         @JvmStatic
+        @JsName("instance")
         val instance: EmptyList = EmptyListImpl
     }
 }
