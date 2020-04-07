@@ -2,6 +2,7 @@
 
 package it.unibo.tuprolog.core
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 
@@ -12,8 +13,10 @@ import kotlin.jvm.JvmName
  * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
  * as the Term: `product(A) :- call(A), call(A)`
  */
+@JsName("prepareForExecution")
 fun Clause.prepareForExecution(): Clause =
     accept(Clause.defaultPreparationForExecutionVisitor) as Clause
 
+@JsName("prepareForExecutionWithUnifier")
 fun Clause.prepareForExecution(unifier: Substitution.Unifier): Clause =
     accept(Clause.preparationForExecutionVisitor(unifier)) as Clause
