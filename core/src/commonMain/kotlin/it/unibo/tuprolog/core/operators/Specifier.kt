@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.operators
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
@@ -75,6 +76,7 @@ enum class Specifier : ToTermConvertible {
          * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
          */
         @JvmStatic
+        @JsName("fromAtom")
         fun fromTerm(atom: Atom): Specifier {
             try {
                 return valueOf(atom.value.toUpperCase())
@@ -89,6 +91,7 @@ enum class Specifier : ToTermConvertible {
          * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
          */
         @JvmStatic
+        @JsName("fromTerm")
         fun fromTerm(term: Term): Specifier =
             when (term) {
                 is Atom -> fromTerm(term)

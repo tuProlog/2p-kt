@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.operators
 
 import it.unibo.tuprolog.core.*
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -54,6 +55,7 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
 
         /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
         @JvmStatic
+        @JsName("fromTerm")
         fun fromTerm(struct: Struct): Operator? = with(struct) {
             when {
                 functor == FUNCTOR && arity == 3 &&
