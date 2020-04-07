@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.AtomImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -24,6 +25,7 @@ interface Atom : Struct, Constant {
     override val isTrue: Boolean
         get() = Truth.TRUE_FUNCTOR == value
 
+
     override val isFail: Boolean
         get() = Truth.FAIL_FUNCTOR == value
 
@@ -43,10 +45,12 @@ interface Atom : Struct, Constant {
     companion object {
 
         @JvmStatic
+        @JsName("escapeValue")
         fun escapeValue(string: String): String =
             Struct.escapeFunctor(string)
 
         @JvmStatic
+        @JsName("escapeValueIfNecessary")
         fun escapeValueIfNecessary(string: String): String =
             Struct.escapeFunctorIfNecessary(string)
 
@@ -54,6 +58,7 @@ interface Atom : Struct, Constant {
         val ATOM_REGEX_PATTERN = Struct.STRUCT_FUNCTOR_REGEX_PATTERN
 
         @JvmStatic
+        @JsName("of")
         fun of(value: String): Atom =
             when (value) {
                 Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
