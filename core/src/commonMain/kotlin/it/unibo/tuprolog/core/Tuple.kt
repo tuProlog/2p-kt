@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TupleImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -18,8 +19,10 @@ interface Tuple : Collection {
     override val arity: Int
         get() = 2
 
+    @JsName("left")
     val left: Term
 
+    @JsName("right")
     val right: Term
 
     override fun toArray(): Array<Term> = unfoldedArray
@@ -41,10 +44,12 @@ interface Tuple : Collection {
         const val FUNCTOR = ","
 
         @JvmStatic
+        @JsName("wrapIfNeededTrueDefault")
         fun wrapIfNeeded(vararg terms: Term): Term =
             wrapIfNeeded(*terms, default = { Truth.TRUE })
 
         @JvmStatic
+        @JsName("wrapIfNeeded")
         fun wrapIfNeeded(vararg terms: Term, default: () -> Term): Term =
             when {
                 terms.isEmpty() -> default()
@@ -53,15 +58,19 @@ interface Tuple : Collection {
             }
 
         @JvmStatic
+        @JsName("of")
         fun of(left: Term, right: Term): Tuple = TupleImpl(left, right)
 
         @JvmStatic
+        @JsName("ofMany")
         fun of(first: Term, second: Term, vararg others: Term): Tuple = of(listOf(first, second, *others))
 
         @JvmStatic
+        @JsName("ofIterable")
         fun of(terms: Iterable<Term>): Tuple = of(terms.toList())
 
         @JvmStatic
+        @JsName("ofList")
         fun of(terms: KtList<Term>): Tuple {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"
