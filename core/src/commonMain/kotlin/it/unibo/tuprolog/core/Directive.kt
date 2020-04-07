@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.DirectiveImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Directive : Clause {
@@ -23,12 +24,14 @@ interface Directive : Clause {
 
     companion object {
         @JvmStatic
+        @JsName("ofIterable")
         fun of(bodies: Iterable<Term>): Directive {
             require(bodies.any()) { "Directive requires at least one body element" }
             return DirectiveImpl(Tuple.wrapIfNeeded(*bodies.toList().toTypedArray()))
         }
 
         @JvmStatic
+        @JsName("of")
         fun of(body1: Term, vararg body: Term): Directive =
             of(listOf(body1, *body))
     }

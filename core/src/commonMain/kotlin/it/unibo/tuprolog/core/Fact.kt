@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.FactImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Fact : Rule {
@@ -17,6 +18,7 @@ interface Fact : Rule {
 
     companion object {
         @JvmStatic
+        @JsName("of")
         fun of(head: Struct): Fact = FactImpl(head)
     }
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.RuleImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -26,6 +27,7 @@ interface Rule : Clause {
         const val FUNCTOR = ":-"
 
         @JvmStatic
+        @JsName("of")
         fun of(head: Struct, vararg body: Term): Rule =
             when {
                 body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)
