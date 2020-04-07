@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.core
 
+import kotlin.js.JsName
+
 /**
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
@@ -39,6 +41,7 @@ interface Term {
      * @param other is the [Term] the current [Term] should be compared with
      * @return `true` if the two terms are structurally equal, or `false`, otherwise
      */
+    @JsName("structurallyEquals")
     infix fun structurallyEquals(other: Term): Boolean
 
     /** The sequence of [Var]iables directly or indirectly contained in the current term.
@@ -49,6 +52,7 @@ interface Term {
      *
      * @return a [Sequence] of [Var]
      */
+    @JsName("variables")
     val variables: Sequence<Var>
 
     /**
@@ -57,13 +61,16 @@ interface Term {
      * is an instance of [Var].
      * @return `true` if the current term is a variable, or `false`, otherwise
      */
+    @JsName("isVariable")
     val isVariable: Boolean get() = false
 
     /**
      * This check is always false and it is actually useless
      */
     // TODO remove this method
-    @Deprecated("This sort of check is useless given the current architecture of terms and substitutions")
+    @Deprecated("This sort of check is useless given the current architecture of terms and substitutions",
+        ReplaceWith("do not use this property")
+    )
     val isBound: Boolean get() = false
 
     /**
@@ -73,6 +80,7 @@ interface Term {
      * of the current term refers to an empty sequence.
      * @return `true` if the current term is ground, or `false`, otherwise
      */
+    @JsName("isGround")
     val isGround: Boolean get() = variables.none()
 
     /**
@@ -81,6 +89,7 @@ interface Term {
      * is an instance of [Struct].
      * @return `true` if the current term is a structure, or `false`, otherwise
      */
+    @JsName("isStruct")
     val isStruct: Boolean get() = false
 
     /**
@@ -89,6 +98,7 @@ interface Term {
      * is an instance of [Atom].
      * @return `true` if the current term is an atom, or `false`, otherwise
      */
+    @JsName("isAtom")
     val isAtom: Boolean get() = false
 
     /**
@@ -97,6 +107,7 @@ interface Term {
      * is an instance of [Constant].
      * @return `true` if the current term is a constant, or `false`, otherwise
      */
+    @JsName("isConstant")
     val isConstant: Boolean get() = false
 
     /**
@@ -105,6 +116,7 @@ interface Term {
      * is an instance of [Numeric].
      * @return `true` if the current term is a number, or `false`, otherwise
      */
+    @JsName("isNumber")
     val isNumber: Boolean get() = false
 
     /**
@@ -113,6 +125,7 @@ interface Term {
      * is an instance of [Integer].
      * @return `true` if the current term is an integer number, or `false`, otherwise
      */
+    @JsName("isInt")
     val isInt: Boolean get() = false
 
     /**
@@ -121,6 +134,7 @@ interface Term {
      * is an instance of [Real].
      * @return `true` if the current term is a real number, or `false`, otherwise
      */
+    @JsName("isReal")
     val isReal: Boolean get() = false
 
     /**
@@ -129,6 +143,7 @@ interface Term {
      * is an instance of [List].
      * @return `true` if the current term is a logic list, or `false`, otherwise
      */
+    @JsName("isList")
     val isList: Boolean get() = false
 
     /**
@@ -137,6 +152,7 @@ interface Term {
      * is an instance of [Tuple].
      * @return `true` if the current term is a logic tuple, or `false`, otherwise
      */
+    @JsName("isTuple")
     val isTuple: Boolean get() = false
 
     /**
@@ -145,6 +161,7 @@ interface Term {
      * is an instance of [Set].
      * @return `true` if the current term is a logic set, or `false`, otherwise
      */
+    @JsName("isSet")
     val isSet: Boolean get() = false
 
     /**
@@ -153,6 +170,7 @@ interface Term {
      * is an instance of [EmptySet].
      * @return `true` if the current term is an empty logic set, or `false`, otherwise
      */
+    @JsName("isEmptySet")
     val isEmptySet: Boolean get() = false
 
     /**
@@ -161,6 +179,7 @@ interface Term {
      * is an instance of [Clause].
      * @return `true` if the current term is a clause, or `false`, otherwise
      */
+    @JsName("isClause")
     val isClause: Boolean get() = false
 
     /**
@@ -169,6 +188,7 @@ interface Term {
      * is an instance of [Rule].
      * @return `true` if the current term is a rule, or `false`, otherwise
      */
+    @JsName("isRule")
     val isRule: Boolean get() = false
 
     /**
@@ -177,6 +197,7 @@ interface Term {
      * is an instance of [Fact].
      * @return `true` if the current term is a fact, or `false`, otherwise
      */
+    @JsName("isFact")
     val isFact: Boolean get() = false
 
     /**
@@ -185,6 +206,7 @@ interface Term {
      * is an instance of [Directive].
      * @return `true` if the current term is a directive, or `false`, otherwise
      */
+    @JsName("isDirective")
     val isDirective: Boolean get() = false
 
     /**
@@ -193,6 +215,7 @@ interface Term {
      * is an instance of [Cons].
      * @return `true` if the current term is a cons, or `false`, otherwise
      */
+    @JsName("isCons")
     val isCons: Boolean get() = false
 
     /**
@@ -201,6 +224,7 @@ interface Term {
      * is an instance of [EmptyList].
      * @return `true` if the current term is an empty logic list, or `false`, otherwise
      */
+    @JsName("isEmptyList")
     val isEmptyList: Boolean get() = false
 
     /**
@@ -209,6 +233,7 @@ interface Term {
      * is an instance of [Truth] and its [Truth.value] is `"true"`.
      * @return `true` if the current term is `"true"`, or `false`, otherwise
      */
+    @JsName("isTrue")
     val isTrue: Boolean get() = false
 
     /**
@@ -217,6 +242,7 @@ interface Term {
      * is an instance of [Truth] and its [Truth.value] is `"fail"` or `"false"`.
      * @return `true` if the current term is either `"fail"` or `"false"`, or `false`, otherwise
      */
+    @JsName("isFail")
     val isFail: Boolean get() = false
 
     /**
@@ -225,6 +251,7 @@ interface Term {
      * is an instance of [Indicator].
      * @return `true` if the current term is an indicator, or `false`, otherwise
      */
+    @JsName("isIndicator")
     val isIndicator: Boolean get() = false
 
     /**
@@ -242,6 +269,7 @@ interface Term {
      *
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
+    @JsName("freshCopy")
     fun freshCopy(): Term = freshCopy(Scope.empty())
 
     /**
@@ -252,6 +280,7 @@ interface Term {
      * @param scope the Scope containing variables to be used in copying
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
+    @JsName("freshCopyFromScope")
     fun freshCopy(scope: Scope): Term = this
 
     /**
@@ -264,6 +293,7 @@ interface Term {
      * @param substitution is the [Substitution] to be applied to the current term
      * @return a [Term] where variables in [substitution] are replaced by their values
      */
+    @JsName("applySubstitution")
     // TODO what if the substitution is failed
     fun apply(substitution: Substitution): Term = when {
         substitution.isEmpty() || this.isGround -> this
@@ -286,6 +316,7 @@ interface Term {
      * @see apply
      * @see Substitution.of
      */
+    @JsName("apply")
     fun apply(substitution: Substitution, vararg substitutions: Substitution): Term =
         apply(Substitution.of(substitution, *substitutions))
 
@@ -306,6 +337,7 @@ interface Term {
      * @see apply
      * @see Substitution.of
      */
+    @JsName("getSubstituted")
     operator fun get(substitution: Substitution, vararg substitutions: Substitution): Term =
         apply(substitution, *substitutions)
 
@@ -320,6 +352,7 @@ interface Term {
      * @param T is the type of the object built by [visitor] through its visit
      * @return an object of type [T], produced by [visitor] through its visit
      */
+    @JsName("accept")
     fun <T> accept(visitor: TermVisitor<T>): T =
         visitor.visit(this)
 
