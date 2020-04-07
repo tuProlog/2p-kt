@@ -49,6 +49,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun truthOf(value: Boolean): Truth = Truth.of(value)
 
+    override fun fail(): Truth = Truth.FAIL
+
     override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
 
     override fun setOf(vararg terms: Term): LogicSet = LogicSet.of(*terms)
@@ -110,4 +112,6 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun numOf(value: Byte): Integer = Numeric.of(value)
 
     override fun numOf(value: String): Numeric = Numeric.of(value)
+
+    override fun numOf(value: Number): Numeric = Numeric.of(value)
 }
