@@ -398,7 +398,7 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
             homepage = projectHomepage
-            bugs = Bugs(projectIssues,"gcEmail")
+            bugs = Bugs(projectIssues,gcEmail)
             license = projectLicense
             name = "@tuprolog/$name"
             dependencies = dependencies?.mapKeys {
