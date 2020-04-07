@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -8,6 +9,7 @@ interface List : Collection {
     override val isList: Boolean
         get() = true
 
+    @JsName("isWellFormed")
     val isWellFormed: Boolean
 
     override val unfoldedSequence: Sequence<Term>
@@ -50,31 +52,39 @@ interface List : Collection {
     companion object {
 
         @JvmStatic
+        @JsName("empty")
         fun empty(): List = Empty.list()
 
         @JvmStatic
+        @JsName("of")
         fun of(vararg items: Term): List = from(items.toList(), empty())
 
         @JvmStatic
+        @JsName("ofIterable")
         fun of(items: Iterable<Term>): List = from(items.toList(), empty())
 
         @JvmStatic
+        @JsName("fromIterable")
         fun from(items: Iterable<Term>, last: Term?): List =
             from(items.toList(), last)
 
         @JvmStatic
+        @JsName("fromIterableNullTerminated")
         fun from(items: Iterable<Term>): List =
             from(items, null)
 
         @JvmStatic
+        @JsName("fromSequence")
         fun from(items: Sequence<Term>, last: Term?): List =
             from(items.toList(), last)
 
         @JvmStatic
+        @JsName("fromSequenceNullTerminated")
         fun from(items: Sequence<Term>): List =
             from(items.toList(), null)
 
         @JvmStatic
+        @JsName("fromList")
         fun from(items: KtList<Term>, last: Term?): List {
             require(items.isNotEmpty() || last is EmptyList || last === null) {
                 "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
@@ -85,6 +95,7 @@ interface List : Collection {
         }
 
         @JvmStatic
+        @JsName("fromListNullTerminated")
         fun from(items: KtList<Term>): List =
             from(items, null)
     }
