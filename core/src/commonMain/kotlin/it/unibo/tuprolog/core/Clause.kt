@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {
@@ -7,8 +8,10 @@ interface Clause : Struct {
     override val functor: String
         get() = FUNCTOR
 
+    @JsName("head")
     val head: Struct?
 
+    @JsName("body")
     val body: Term
 
     /**
@@ -18,6 +21,7 @@ interface Clause : Struct {
      * - its head isn't a Numeric or a Var
      * - its body isn't a Numeric and doesn't contain a Numeric in arguments place, for notable Structs with functors ','/2, ';'/2 and '->'/2
      */
+    @JsName("isWellFormed")
     val isWellFormed: Boolean
 
     override val args: Array<Term>
@@ -47,6 +51,7 @@ interface Clause : Struct {
         const val FUNCTOR = ":-"
 
         @JvmStatic
+        @JsName("of")
         fun of(head: Struct? = null, vararg body: Term): Clause =
             when (head) {
                 null -> {
@@ -58,10 +63,12 @@ interface Clause : Struct {
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic
+        @JsName("notableFunctors")
         val notableFunctors = listOf(",", ";", "->")
 
         /** A visitor that checks whether [isWellFormed] (body constraints part) is respected */
         @JvmStatic
+        @JsName("bodyWellFormedVisitor")
         val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
             override fun defaultValue(term: Term): Boolean = term !is Numeric
