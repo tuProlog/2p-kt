@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.impl.SimpleTermFormatter
 import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyExpressions
 import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyVariables
 import it.unibo.tuprolog.core.operators.OperatorSet
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
@@ -30,6 +31,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          * So for instance, the term `A_3 + A_4` is represented as `'+'(A1, A2)`.
          */
         @JvmStatic
+        @JsName("prettyVariables")
         fun prettyVariables(): TermFormatter =
             TermFormatterWithPrettyVariables()
 
@@ -42,6 +44,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          * would be represented as `A + B`, if [prettyVariables] is `true`, or `A_1 + B_2` otherwise.
          */
         @JvmStatic
+        @JsName("prettyExpressions")
         fun prettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter {
             return if (prettyVariables) {
                 TermFormatterWithPrettyExpressions(TermFormatterWithPrettyVariables(), operatorSet)
@@ -59,6 +62,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          * would be represented as `A + B`.
          */
         @JvmStatic
+        @JsName("prettyExpressionsPrettyVariables")
         fun prettyExpressions(operatorSet: OperatorSet): TermFormatter {
             return prettyExpressions(true, operatorSet)
         }
@@ -72,6 +76,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          * or `A_1 + B_2` otherwise.
          */
         @JvmStatic
+        @JsName("prettyExpressionsDefaultOperators")
         fun prettyExpressions(prettyVariables: Boolean): TermFormatter {
             return prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
         }
@@ -84,6 +89,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          * So for instance the term `A_1 + B_2` is represented as `A + B`.
          */
         @JvmStatic
+        @JsName("prettyExpressionsPrettyVariablesDefaultOperators")
         fun prettyExpressions(): TermFormatter {
             return prettyExpressions(true, OperatorSet.DEFAULT)
         }
