@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.StructImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -63,26 +64,36 @@ interface Struct : Term {
         else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
     }
 
+    @JsName("functor")
     val functor: String
 
+
+    @JsName("isFunctorWellFormed")
     val isFunctorWellFormed: Boolean
 
+    @JsName("args")
     val args: Array<Term>
 
+    @JsName("arity")
     val arity: Int
         get() = args.size
 
+    @JsName("indicator")
     val indicator: Indicator
         get() = Indicator.of(functor, arity)
 
+    @JsName("argsList")
     val argsList: KtList<Term>
         get() = listOf(*args)
 
+    @JsName("argsSequence")
     val argsSequence: Sequence<Term>
         get() = sequenceOf(*args)
 
+    @JsName("getArgAt")
     fun getArgAt(index: Int): Term = args[index]
 
+    @JsName("get")
     operator fun get(index: Int): Term = getArgAt(index)
 
     companion object {
@@ -92,10 +103,12 @@ interface Struct : Term {
         val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         @JvmStatic
+        @JsName("escapeFunctor")
         fun escapeFunctor(string: String): String =
             "'$string'"
 
         @JvmStatic
+        @JsName("escapeFunctorIfNecessary")
         fun escapeFunctorIfNecessary(string: String): String =
             if (STRUCT_FUNCTOR_REGEX_PATTERN.matches(string)) {
                 string
@@ -104,6 +117,7 @@ interface Struct : Term {
             }
 
         @JvmStatic
+        @JsName("ofList")
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
                 args.size == 2 && Cons.FUNCTOR == functor -> Cons.of(args.first(), args.last())
@@ -118,16 +132,20 @@ interface Struct : Term {
             }
 
         @JvmStatic
+        @JsName("of")
         fun of(functor: String, vararg args: Term): Struct = of(functor, args.toList())
 
         @JvmStatic
+        @JsName("ofSequence")
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
 
         @JvmStatic
+        @JsName("foldListNullTerminated")
         fun fold(operator: String, terms: KtList<Term>): Struct =
             fold(operator, terms, null)
 
         @JvmStatic
+        @JsName("foldList")
         fun fold(operator: String, terms: KtList<Term>, terminal: Term?): Struct =
             when {
                 operator == Cons.FUNCTOR && terminal == EmptyList() -> List.of(terms)
@@ -152,26 +170,32 @@ interface Struct : Term {
 
 
         @JvmStatic
+        @JsName("foldSequence")
         fun fold(operator: String, terms: Sequence<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
         @JvmStatic
+        @JsName("foldSequenceNullTerminated")
         fun fold(operator: String, terms: Sequence<Term>): Struct =
             fold(operator, terms, null)
 
         @JvmStatic
+        @JsName("foldIterable")
         fun fold(operator: String, terms: Iterable<Term>, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
         @JvmStatic
+        @JsName("foldIterableNullTerminated")
         fun fold(operator: String, terms: Iterable<Term>): Struct =
             fold(operator, terms, null)
 
         @JvmStatic
+        @JsName("fold")
         fun fold(operator: String, vararg terms: Term, terminal: Term?): Struct =
             fold(operator, terms.toList(), terminal)
 
         @JvmStatic
+        @JsName("foldNullTerminated")
         fun fold(operator: String, vararg terms: Term): Struct =
             fold(operator, listOf(*terms))
 
