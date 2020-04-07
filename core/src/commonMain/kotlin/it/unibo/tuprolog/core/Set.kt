@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.SetImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -34,12 +35,15 @@ interface Set : Collection {
         const val FUNCTOR = "{}"
 
         @JvmStatic
+        @JsName("empty")
         fun empty(): EmptySet = EmptySet()
 
         @JvmStatic
+        @JsName("of")
         fun of(vararg terms: Term): Set = of(terms.toList())
 
         @JvmStatic
+        @JsName("ofList")
         fun of(terms: KtList<Term>): Set =
             when {
                 terms.isEmpty() -> empty()
@@ -48,9 +52,11 @@ interface Set : Collection {
             }
 
         @JvmStatic
+        @JsName("ofIterable")
         fun of(terms: Iterable<Term>): Set = of(terms.toList())
 
         @JvmStatic
+        @JsName("ofSequence")
         fun of(terms: Sequence<Term>): Set = of(terms.toList())
     }
 }
