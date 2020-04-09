@@ -129,6 +129,39 @@ interface Scope {
     @JsName("numOf")
     fun numOf(value: Number): Numeric
 
+    @JsName("intOfBigInteger")
+    fun intOf(value: BigInteger): Integer
+
+    @JsName("intOf")
+    fun intOf(value: Int): Integer
+
+    @JsName("intOfLong")
+    fun intOf(value: Long): Integer
+
+    @JsName("intOfShort")
+    fun intOf(value: Short): Integer
+
+    @JsName("intOfByte")
+    fun intOf(value: Byte): Integer
+
+    @JsName("parseInt")
+    fun intOf(value: String): Integer
+
+    @JsName("parseIntRadix")
+    fun intOf(value: String, radix: Int): Integer
+
+    @JsName("realOfBigDecimal")
+    fun realOf(value: BigDecimal): Real
+
+    @JsName("realOf")
+    fun realOf(value: Double): Real
+
+    @JsName("realOfFloat")
+    fun realOf(value: Float): Real
+
+    @JsName("parseReal")
+    fun realOf(value: String): Real
+
     @JsName("truthOf")
     fun truthOf(value: Boolean): Truth
 

@@ -43,75 +43,141 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         return true
     }
 
-    override fun hashCode(): Int = _variables.hashCode()
+    override fun hashCode(): Int =
+        _variables.hashCode()
 
-    override fun toString(): String = variables.toString()
+    override fun toString(): String =
+        variables.toString()
 
-    override fun truthOf(value: Boolean): Truth = Truth.of(value)
+    override fun truthOf(value: Boolean): Truth =
+        Truth.of(value)
 
-    override fun fail(): Truth = Truth.FAIL
+    override fun fail(): Truth =
+        Truth.FAIL
 
-    override fun setOf(terms: Iterable<Term>): LogicSet = LogicSet.of(terms)
+    override fun setOf(terms: Iterable<Term>): LogicSet =
+        LogicSet.of(terms)
 
-    override fun setOf(vararg terms: Term): LogicSet = LogicSet.of(*terms)
+    override fun setOf(vararg terms: Term): LogicSet =
+        LogicSet.of(*terms)
 
-    override fun listOf(terms: Iterable<Term>): LogicList = LogicList.of(terms)
+    override fun listOf(terms: Iterable<Term>): LogicList =
+        LogicList.of(terms)
 
-    override fun emptyList(): EmptyList = EmptyList()
+    override fun emptyList(): EmptyList =
+        EmptyList()
 
-    override fun emptySet(): EmptySet = EmptySet()
+    override fun emptySet(): EmptySet =
+        EmptySet()
 
-    override fun listOf(vararg terms: Term): LogicList = LogicList.of(*terms)
+    override fun listOf(vararg terms: Term): LogicList =
+        LogicList.of(*terms)
 
     override fun listFrom(terms: Iterable<Term>, last: Term?): LogicList =
         LogicList.from(terms, last)
 
-    override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms.toList())
+    override fun tupleOf(terms: Iterable<Term>): Tuple =
+        Tuple.of(terms.toList())
 
-    override fun tupleOf(vararg terms: Term): Tuple = Tuple.of(terms.toList())
+    override fun tupleOf(vararg terms: Term): Tuple =
+        Tuple.of(terms.toList())
 
-    override fun atomOf(value: String): Atom = Atom.of(value)
+    override fun atomOf(value: String): Atom =
+        Atom.of(value)
 
-    override fun structOf(functor: String, vararg args: Term): Struct = Struct.of(functor, *args)
+    override fun structOf(functor: String, vararg args: Term): Struct =
+        Struct.of(functor, *args)
 
-    override fun structOf(functor: String, args: Sequence<Term>): Struct = Struct.of(functor, args)
+    override fun structOf(functor: String, args: Sequence<Term>): Struct =
+        Struct.of(functor, args)
 
-    override fun factOf(head: Struct): Fact = Fact.of(head)
+    override fun factOf(head: Struct): Fact =
+        Fact.of(head)
 
     override fun ruleOf(head: Struct, body1: Term, vararg body: Term): Rule =
         Rule.of(head, body1, *body)
 
-    override fun directiveOf(body1: Term, vararg body: Term): Directive = Directive.of(body1, *body)
+    override fun directiveOf(body1: Term, vararg body: Term): Directive =
+        Directive.of(body1, *body)
 
-    override fun clauseOf(head: Struct?, vararg body: Term): Clause = Clause.of(head, *body)
+    override fun clauseOf(head: Struct?, vararg body: Term): Clause =
+        Clause.of(head, *body)
 
-    override fun consOf(head: Term, tail: Term): Cons = Cons.of(head, tail)
+    override fun consOf(head: Term, tail: Term): Cons =
+        Cons.of(head, tail)
 
-    override fun indicatorOf(name: Term, arity: Term): Indicator = Indicator.of(name, arity)
+    override fun indicatorOf(name: Term, arity: Term): Indicator =
+        Indicator.of(name, arity)
 
-    override fun indicatorOf(name: String, arity: Int): Indicator = Indicator.of(name, arity)
+    override fun indicatorOf(name: String, arity: Int): Indicator =
+        Indicator.of(name, arity)
 
-    override fun anonymous(): Var = Var.anonymous()
+    override fun anonymous(): Var =
+        Var.anonymous()
 
-    override fun whatever(): Var = anonymous()
+    override fun whatever(): Var =
+        anonymous()
 
-    override fun numOf(value: BigDecimal): Real = Numeric.of(value)
+    override fun numOf(value: BigDecimal): Real =
+        Numeric.of(value)
 
-    override fun numOf(value: Double): Real = Numeric.of(value)
+    override fun numOf(value: Double): Real =
+        Numeric.of(value)
 
-    override fun numOf(value: Float): Real = Numeric.of(value)
+    override fun numOf(value: Float): Real =
+        Numeric.of(value)
 
-    override fun numOf(value: BigInteger): Integer = Numeric.of(value)
+    override fun numOf(value: BigInteger): Integer =
+        Numeric.of(value)
 
-    override fun numOf(value: Int): Integer = Numeric.of(value)
+    override fun numOf(value: Int): Integer =
+        Numeric.of(value)
 
-    override fun numOf(value: Long): Integer = Numeric.of(value)
+    override fun numOf(value: Long): Integer =
+        Numeric.of(value)
 
-    override fun numOf(value: Short): Integer = Numeric.of(value)
+    override fun numOf(value: Short): Integer =
+        Numeric.of(value)
 
-    override fun numOf(value: Byte): Integer = Numeric.of(value)
+    override fun numOf(value: Byte): Integer =
+        Numeric.of(value)
 
-    override fun numOf(value: String): Numeric = Numeric.of(value)
+    override fun numOf(value: String): Numeric =
+        Numeric.of(value)
 
-    override fun numOf(value: Number): Numeric = Numeric.of(value)
+    override fun numOf(value: Number): Numeric =
+        Numeric.of(value)
+
+    override fun intOf(value: BigInteger): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: Int): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: Long): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: Short): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: Byte): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: String): Integer =
+        Integer.of(value)
+
+    override fun intOf(value: String, radix: Int): Integer =
+        Integer.of(value, radix)
+
+    override fun realOf(value: BigDecimal): Real =
+        Real.of(value)
+
+    override fun realOf(value: Double): Real =
+        Real.of(value)
+
+    override fun realOf(value: Float): Real =
+        Real.of(value)
+
+    override fun realOf(value: String): Real =
+        Real.of(value)
 }
