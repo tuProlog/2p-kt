@@ -33,7 +33,7 @@ fun String.parseAsClauses(operators: OperatorSet): List<Clause> =
     defaultParser.parseClauses(this, operators)
 
 @JsName("parseAsClauses")
-fun String.parseClauses(): List<Clause> =
+fun String.parseAsClauses(): List<Clause> =
     defaultParser.parseClauses(this)
 
 @JsName("parseAsClausesLazilyWithOperators")
@@ -41,5 +41,5 @@ fun String.parseAsClausesLazily(operators: OperatorSet): Sequence<Clause> =
     defaultParser.parseClausesLazily(this, operators)
 
 @JsName("parseAsClausesLazily")
-fun String.parseClausesLazily(): Sequence<Clause> =
+fun String.parseAsClausesLazily(): Sequence<Clause> =
     defaultParser.parseClausesLazily(this)
