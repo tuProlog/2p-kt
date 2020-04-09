@@ -1,11 +1,14 @@
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
+import node.Bugs
+import node.NpmPublishExtension
+import node.NpmPublishPlugin
+import node.People
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import node.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -403,7 +406,11 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
             name = "@tuprolog/$name"
             dependencies = dependencies?.mapKeys {
                 if ("2p" in it.key) "@tuprolog/${it.key}" else it.key
+            }?.mapValues {
+                if ("2p" in it.key) it.value.substringBefore('+') else it.value
             }?.toMutableMap()
+            version = version?.substringBefore('+')
         }
+
     }
 }
