@@ -36,14 +36,17 @@ enum class Specifier : ToTermConvertible {
     YFX;
 
     /** Whether this specifier is a prefix one */
+    @JsName("isPrefix")
     val isPrefix: Boolean
         get() = PREFIX.contains(this)
 
     /** Whether this specifier is an infix one */
+    @JsName("isInfix")
     val isInfix: Boolean
         get() = INFIX.contains(this)
 
     /** Whether this specifier is a postfix one */
+    @JsName("isPostfix")
     val isPostfix: Boolean
         get() = POSTFIX.contains(this)
 

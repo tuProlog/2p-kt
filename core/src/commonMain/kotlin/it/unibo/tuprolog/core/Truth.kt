@@ -19,8 +19,10 @@ interface Truth : Atom {
 
         @JvmField
         val TRUE_FUNCTOR = "true"
+
         @JvmField
         val FALSE_FUNCTOR = "false"
+
         @JvmField
         val FAIL_FUNCTOR = "fail"
 

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.EmptyListImpl
 import it.unibo.tuprolog.core.impl.EmptySetImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
