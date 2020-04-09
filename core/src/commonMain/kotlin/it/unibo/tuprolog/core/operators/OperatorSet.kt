@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core.operators
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmStatic
 
 /** Class representing a Set of [Operator]s */
 class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.toHashSet() {
@@ -14,18 +14,22 @@ class OperatorSet(operators: Sequence<Operator>) : Set<Operator> by operators.to
     constructor(operators: Iterable<Operator>) : this(operators.asSequence())
 
     /** Creates a new OperatorSet adding to this the other Operator, overriding already present operator if one */
+    @JsName("plus")
     operator fun plus(operator: Operator): OperatorSet =
         OperatorSet(sequenceOf(operator, *this.toTypedArray()))
 
     /** Creates a new OperatorSet adding to this the other operators, overriding already present operators */
+    @JsName("plusOperatorSet")
     operator fun plus(other: OperatorSet): OperatorSet =
         OperatorSet(other.asSequence() + this.asSequence())
 
     /** Creates a new OperatorSet removing from this the other operators */
+    @JsName("minus")
     operator fun minus(operator: Operator): OperatorSet =
         OperatorSet(this as Set<Operator> - operator)
 
     /** Creates a new OperatorSet removing from this the other operators */
+    @JsName("minusOperatorSet")
     operator fun minus(other: OperatorSet): OperatorSet =
         OperatorSet(((this as Set<Operator>) - (other as Set<Operator>)))
 
