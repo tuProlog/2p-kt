@@ -424,7 +424,7 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
 
         liftJsSources { _, _, line ->
             line.replace("'2p", "'@tuprolog/2p")
-            line.replace("\"2p", "\"@tuprolog/2p")
+                .replace("\"2p", "\"@tuprolog/2p")
         }
     }
 }
