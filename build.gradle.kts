@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -123,7 +124,7 @@ ktSubprojects.forEachProject {
             js {
                 nodejs()
 //                browser()
-                tasks.withType<KotlinJsCompile>{
+                tasks.withType<KotlinJsCompile> {
                     kotlinOptions {
                         moduleKind = "umd"
                         //noStdlib = true
@@ -267,7 +268,8 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
             user = bintrayUser
             key = bintrayKey
             if (publicationNames.isEmpty()) {
-                setPublications(*project.publishing.publications.withType<MavenPublication>().map { it.name }.toTypedArray())
+                setPublications(*project.publishing.publications.withType<MavenPublication>().map { it.name }
+                    .toTypedArray())
             } else {
                 setPublications(*publicationNames)
             }
@@ -319,8 +321,10 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
                     classifier = "javadoc"
                 }
             } else if (!docArtifact.endsWith("KotlinMultiplatform")) {
-                log("no javadoc artifact for publication $name in project ${project.name}: " +
-                        "no such a task: $docArtifact")
+                log(
+                    "no javadoc artifact for publication $name in project ${project.name}: " +
+                            "no such a task: $docArtifact"
+                )
             }
 
             configurePom(project.name)
@@ -350,8 +354,10 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                     classifier = "javadoc"
                 }
             } else if (docArtifact == null || !docArtifact.endsWith("KotlinMultiplatform")) {
-                log("no javadoc artifact for publication $name in project ${project.name}: " +
-                        "no such a task: $docArtifact")
+                log(
+                    "no javadoc artifact for publication $name in project ${project.name}: " +
+                            "no such a task: $docArtifact"
+                )
             }
 
             artifact(sourcesJar)
@@ -397,11 +403,15 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
         packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
         nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
         jsCompileTask = compileTask
+        jsSourcesDir = tasks.withType<Kotlin2JsCompile>().asSequence()
+            .filter { "Test" !in it.name }
+            .map { it.outputFile.parentFile }
+            .first()
 
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
             homepage = projectHomepage
-            bugs = Bugs(projectIssues,gcEmail)
+            bugs = Bugs(projectIssues, gcEmail)
             license = projectLicense
             name = "@tuprolog/$name"
             dependencies = dependencies?.mapKeys {
@@ -412,5 +422,9 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
             version = version?.substringBefore('+')
         }
 
+        liftJsSources { _, _, line ->
+            line.replace("'2p", "'@tuprolog/2p")
+            line.replace("\"2p", "\"@tuprolog/2p")
+        }
     }
 }

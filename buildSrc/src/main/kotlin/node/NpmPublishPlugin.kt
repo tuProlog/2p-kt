@@ -67,14 +67,26 @@ class NpmPublishPlugin : Plugin<Project> {
         return copy
     }
 
+    private fun Project.createLiftJsSourceTask(name: String): DefaultTask {
+        val lift = tasks.maybeCreate(name, LiftJsSourcesTask::class.java).also {
+            it.group = "nodeJs"
+        }
+        extension.onExtensionChanged.add {
+            lift.jsSourcesDir = jsSourcesDir
+            lift.liftingActions = jsSourcesLiftingActions
+            jsCompileTask?.let { lift.dependsOn(it) }
+        }
+        return lift
+    }
+
     private fun Project.createLiftPackageJsonTask(name: String): LiftPackageJsonTask {
         val lift = tasks.maybeCreate(name, LiftPackageJsonTask::class.java).also {
             it.group = "nodeJs"
         }
         extension.onExtensionChanged.add {
             lift.packageJsonFile = packageJson
-            lift.liftingActions = liftingActions
-            lift.rawLiftingActions = rawLiftingActions
+            lift.liftingActions = packageJsonLiftingActions
+            lift.rawLiftingActions = packageJsonRawLiftingActions
             jsCompileTask?.let { lift.dependsOn(it) }
         }
         return lift
@@ -84,11 +96,13 @@ class NpmPublishPlugin : Plugin<Project> {
         extension = target.extensions.create("greeting", NpmPublishExtension::class.java)
         val login = target.createNpmLoginTask("npmLogin")
         val publish = target.createNpmPublishTask("npmPublish")
-        val lift = target.createLiftPackageJsonTask("liftPackageJson")
+        val liftPackageJson = target.createLiftPackageJsonTask("liftPackageJson")
         val copy = target.createCopyRootProjectFilesTask("copyFilesNextToPackageJson")
+        val liftJsSourcesTask = target.createLiftJsSourceTask("liftJsSources")
         publish.dependsOn(login)
-        publish.dependsOn(lift)
-        lift.dependsOn(copy)
+        publish.dependsOn(liftPackageJson)
+        publish.dependsOn(liftJsSourcesTask)
+        liftPackageJson.dependsOn(copy)
     }
 }
 

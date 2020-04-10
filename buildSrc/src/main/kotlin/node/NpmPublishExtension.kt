@@ -96,22 +96,38 @@ open class NpmPublishExtension {
     internal val npmProject: File
         get() = packageJson.parentFile ?: File("")
 
-    private val _liftingActions: MutableList<Action<PackageJson>> = mutableListOf()
-    private val _rawLiftingActions: MutableList<Action<JsonObject>> = mutableListOf()
+    var jsSourcesDir: File = File("build/")
+        get() = field
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
+        }
 
-    internal val liftingActions: List<Action<PackageJson>>
-        get() = _liftingActions.toList()
+    private val _packageJsonliftingActions: MutableList<Action<PackageJson>> = mutableListOf()
+    private val _packageJsonRawLiftingActions: MutableList<Action<JsonObject>> = mutableListOf()
+    private val _jsLiftingActions: MutableList<FileLineTransformer> = mutableListOf()
 
-    internal val rawLiftingActions: List<Action<JsonObject>>
-        get() = _rawLiftingActions.toList()
+    internal val packageJsonLiftingActions: List<Action<PackageJson>>
+        get() = _packageJsonliftingActions.toList()
+
+    internal val packageJsonRawLiftingActions: List<Action<JsonObject>>
+        get() = _packageJsonRawLiftingActions.toList()
+
+    internal val jsSourcesLiftingActions: List<FileLineTransformer>
+        get() = _jsLiftingActions.toList()
 
     fun liftPackageJson(action: Action<PackageJson>) {
-        _liftingActions.add(action)
+        _packageJsonliftingActions.add(action)
         onExtensionChanged.forEach { it(this) }
     }
 
     fun liftPackageJsonRaw(action: Action<JsonObject>) {
-        _rawLiftingActions.add(action)
+        _packageJsonRawLiftingActions.add(action)
+        onExtensionChanged.forEach { it(this) }
+    }
+
+    fun liftJsSources(lineTransformer: FileLineTransformer) {
+        _jsLiftingActions.add(lineTransformer)
         onExtensionChanged.forEach { it(this) }
     }
 }
