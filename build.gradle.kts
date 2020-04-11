@@ -57,7 +57,7 @@ val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 
 val allSubprojects = subprojects.map { it.name }.toSet()
-val jvmSubprojects = setOf("parser-jvm")
+val jvmSubprojects = setOf("parser-jvm", "examples")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
 
