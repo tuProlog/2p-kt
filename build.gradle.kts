@@ -21,11 +21,6 @@ plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
 }
 
-repositories {
-    mavenCentral()
-    maven("https://dl.bintray.com/kotlin/dokka")
-}
-
 group = "it.unibo.tuprolog"
 
 gitSemVer {
@@ -74,6 +69,7 @@ allSubprojects.forEachProject {
 
     repositories {
         mavenCentral()
+        jcenter()
         maven("https://dl.bintray.com/kotlin/dokka")
     }
 
