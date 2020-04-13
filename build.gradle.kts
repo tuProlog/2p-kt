@@ -21,6 +21,12 @@ plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+    maven("https://dl.bintray.com/kotlin/dokka")
+}
+
 group = "it.unibo.tuprolog"
 
 gitSemVer {
@@ -67,11 +73,7 @@ allSubprojects.forEachProject {
     group = rootProject.group
     version = rootProject.version
 
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven("https://dl.bintray.com/kotlin/dokka")
-    }
+    repositories.addAll(rootProject.repositories)
 
     configureTestResultPrinting()
 }
