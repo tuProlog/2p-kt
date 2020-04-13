@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
+import kotlin.js.JsName
 
 /**
  * A typealias for a prolog function that accepts a [Compute.Request] and returns a [Compute.Response]
@@ -14,6 +15,7 @@ typealias PrologFunction = (Compute.Request<ExecutionContext>) -> Compute.Respon
  * Creates a new [PrologFunction], behaving exactly as given [uncheckedFunction], but accepting only provided [supportedSignature]
  * as [Compute.Request] signature, throwing [IllegalArgumentException] otherwise
  */
+@JsName("functionOf")
 fun functionOf(supportedSignature: Signature, uncheckedFunction: PrologFunction): PrologFunction = {
     when (it.signature) { // TODO see TODO in "Signature"; here should be called that method to check if primitive could execute
         supportedSignature -> uncheckedFunction(it)

@@ -1,9 +1,12 @@
 package it.unibo.tuprolog.solve.rule
 
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.AbstractWrapper
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import kotlin.collections.List as KtList
 
 

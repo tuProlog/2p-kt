@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.library
 
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
-import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
+import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.js.JsName
 
 /** A class representing an agglomerate of libraries with an alias */
 class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibrary>,
@@ -16,6 +17,7 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
     constructor(libraries: Iterable<AliasedLibrary>) : this(libraries.asSequence())
 
     /** All library aliases of libraries included in this library group */
+    @JsName("libraryAliases")
     val libraryAliases: Set<String>
         inline get() = keys
 

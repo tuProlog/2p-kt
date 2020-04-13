@@ -1,9 +1,12 @@
 package it.unibo.tuprolog.solve.library
 
+import kotlin.js.JsName
+
 /** Represents a [Library] that can have an alias */
 interface AliasedLibrary : Library {
 
     /** The library alias */
+    @JsName("alias")
     val alias: String
 
     companion object {
