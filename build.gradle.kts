@@ -23,6 +23,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    jcenter()
     maven("https://dl.bintray.com/kotlin/dokka")
 }
 
@@ -72,10 +73,7 @@ allSubprojects.forEachProject {
     group = rootProject.group
     version = rootProject.version
 
-    repositories {
-        mavenCentral()
-        maven("https://dl.bintray.com/kotlin/dokka")
-    }
+    repositories.addAll(rootProject.repositories)
 
     configureTestResultPrinting()
 }

@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.*
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
-import kotlin.collections.List as KtList
 
 /**
  * A class representing an Equation of logic terms, to be unified;
@@ -13,9 +12,9 @@ import kotlin.collections.List as KtList
  */
 sealed class Equation<out A : Term, out B : Term>(
     /** The left-hand side of the equation */
-    open val lhs: A,
+    @JsName("lhs") open val lhs: A,
     /** The right-hand side of the equation */
-    open val rhs: B
+    @JsName("rhs") open val rhs: B
 ) : ToTermConvertible {
 
 
@@ -36,8 +35,10 @@ sealed class Equation<out A : Term, out B : Term>(
 
     override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
+    @JsName("toPair")
     fun toPair(): Pair<A, B> = Pair(lhs, rhs)
 
+    @JsName("swap")
     fun swap(): Equation<Term, Term> = of(rhs, lhs)
 
     /**
@@ -46,6 +47,7 @@ sealed class Equation<out A : Term, out B : Term>(
      * To modify default equality between [Term]s, a custom [equalityChecker] can be provided
      */
     @JvmOverloads
+    @JsName("apply")
     fun apply(
         substitution: Substitution,
         equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -59,6 +61,7 @@ sealed class Equation<out A : Term, out B : Term>(
         /** Creates an Equation with provided left-hand and right-hand sides */
         @JvmStatic
         @JvmOverloads
+        @JsName("of")
         fun <A : Term, B : Term> of(
             lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -79,6 +82,7 @@ sealed class Equation<out A : Term, out B : Term>(
         /** Creates an Equation from given [Pair] */
         @JvmStatic
         @JvmOverloads
+        @JsName("ofPair")
         fun <A : Term, B : Term> of(
             pair: Pair<A, B>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -88,6 +92,7 @@ sealed class Equation<out A : Term, out B : Term>(
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         @JvmStatic
         @JvmOverloads
+        @JsName("allOfPair")
         fun <A : Term, B : Term> allOf(
             pair: Pair<A, B>,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
@@ -97,6 +102,7 @@ sealed class Equation<out A : Term, out B : Term>(
         /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
         @JvmStatic
         @JvmOverloads
+        @JsName("allOf")
         fun <A : Term, B : Term> allOf(
             lhs: A, rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals

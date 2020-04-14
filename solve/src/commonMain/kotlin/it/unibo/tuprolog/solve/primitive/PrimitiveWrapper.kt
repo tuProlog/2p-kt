@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solve
@@ -17,8 +17,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
  * @author Enrico
  * @author Giovanni
  */
-abstract class PrimitiveWrapper<C : ExecutionContext> :
-    AbstractWrapper<Primitive> {
+abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitive> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)

@@ -1,16 +1,15 @@
 package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.solve.AbstractWrapper
-import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 
 /**
  * A class wrapping a [PrologFunction] implementation
  *
  * @author Enrico
  */
-abstract class FunctionWrapper<C : ExecutionContext> :
-    AbstractWrapper<PrologFunction> {
+abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFunction> {
 
     constructor(signature: Signature) : super(signature)
     constructor(name: String, arity: Int, vararg: Boolean = false) : super(name, arity, vararg)

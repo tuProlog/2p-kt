@@ -5,6 +5,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.*
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * Base class for Standard Prolog Errors and possibly other custom Primitive errors
@@ -22,8 +24,8 @@ abstract class PrologError(
     message: String? = null,
     cause: Throwable? = null,
     context: ExecutionContext,
-    open val type: Struct,
-    open val extraData: Term? = null
+    @JsName("type") open val type: Struct,
+    @JsName("extraData") open val extraData: Term? = null
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
@@ -47,6 +49,8 @@ abstract class PrologError(
          *
          * It creates correct subclass instance if [type] detected, otherwise defaulting to a [PrologError] instance
          */
+        @JvmStatic
+        @JsName("of")
         fun of(
             message: String? = null,
             cause: Throwable? = null,

@@ -3,9 +3,10 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
+import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
 sealed class Solve {
@@ -13,14 +14,19 @@ sealed class Solve {
     /** Class representing a Request to be full-filled by the Solver */
     data class Request<out C : ExecutionContext>(
         /** Signature of the goal to be solved in this [Request] */
+        @JsName("signature")
         val signature: Signature,
         /** Arguments with which the goal is invoked in this [Request] */
+        @JsName("arguments")
         val arguments: List<Term>,
         /** The context that's current at Request making */
+        @JsName("context")
         val context: C,
         /** The time instant when the request was submitted for resolution */
+        @JsName("requestIssuingInstant")
         val requestIssuingInstant: TimeInstant = currentTimeInstant(),
         /** The execution max duration after which the computation should end, because no more useful */
+        @JsName("executionMaxDuration")
         val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE
     ) : Solve() {
         init {
@@ -37,9 +43,11 @@ sealed class Solve {
         }
 
         /** The current query [Struct] of this request */
+        @JsName("query")
         val query: Struct by lazy { signature withArgs arguments }
 
         /** Creates a new [Response] to this Request */
+        @JsName("replyWith")
         fun replyWith(
             solution: Solution,
             libraries: Libraries? = null,
@@ -62,6 +70,7 @@ sealed class Solve {
         }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
+        @JsName("replyWithCondition")
         fun replyWith(
             condition: Boolean,
             libraries: Libraries? = null,
@@ -85,6 +94,7 @@ sealed class Solve {
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
+        @JsName("replySuccess")
         fun replySuccess(
             substitution: Substitution.Unifier = Substitution.empty(),
             libraries: Libraries? = null,
@@ -106,6 +116,7 @@ sealed class Solve {
             )
 
         /** Creates a new failed [Response] to this Request */
+        @JsName("replyFail")
         fun replyFail(
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
@@ -126,6 +137,7 @@ sealed class Solve {
             )
 
         /** Creates a new halt [Response] to this Request, with cause exception */
+        @JsName("replyException")
         fun replyException(
             exception: TuPrologRuntimeException,
             libraries: Libraries? = null,
@@ -151,20 +163,28 @@ sealed class Solve {
     /** Class representing a Response, from the Solver, to a [Solve.Request] */
     data class Response(
         /** The solution attached to the response */
+        @JsName("solution")
         val solution: Solution,
         /** The set of loaded libraries after request execution (use `null` in case nothing changed) */
+        @JsName("libraries")
         val libraries: Libraries? = null,
         /** The map of loaded flags after request execution (use `null` in case nothing changed) */
+        @JsName("flags")
         val flags: PrologFlags? = null,
         /** The Static KB after request execution (use `null` in case nothing changed) */
+        @JsName("staticKb")
         val staticKb: ClauseDatabase? = null,
         /** The Dynamic KB after request execution (use `null` in case nothing changed) */
+        @JsName("dynamicKb")
         val dynamicKb: ClauseDatabase? = null,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
+        @JsName("sideEffectManager")
         val sideEffectManager: SideEffectManager? = null,
         /** The input channels modification after request execution (use `null` in case nothing changed) */
+        @JsName("inputChannels")
         val inputChannels: PrologInputChannels<*>? = null,
         /** The output channels flow modification after request execution (use `null` in case nothing changed) */
+        @JsName("outputChannels")
         val outputChannels: PrologOutputChannels<*>? = null
     ) : Solve()
 }

@@ -1,9 +1,17 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.*
+import kotlin.js.JsName
 
 /** The signature of a query Struct or a Primitive */
-data class Signature(val name: String, val arity: Int, val vararg: Boolean = false) : ToTermConvertible {
+data class Signature(
+    @JsName("name")
+    val name: String,
+    @JsName("arity")
+    val arity: Int,
+    @JsName("vararg")
+    val vararg: Boolean = false
+) : ToTermConvertible {
 
     init {
         require(arity >= 0) { "Signature arity should be greater than or equals to 0: $arity" }
@@ -21,6 +29,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         }
 
     /** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
+    @JsName("toIndicator")
     fun toIndicator(): Indicator? =
         when {
             this.vararg -> null
@@ -28,6 +37,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         }
 
     /** Creates corresponding Struct of this Signature with provided arguments */
+    @JsName("withArgs")
     infix fun withArgs(arguments: Iterable<Term>): Struct = when {
         vararg -> require(arguments.count() >= this.arity) {
             "Trying to create Struct of signature `$this` with not enough arguments ${arguments.toList()}"
@@ -58,6 +68,7 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         const val FUNCTOR = Indicator.FUNCTOR
 
         /** Creates a Signature instance from a well-formed Signature Struct, or returns `null` if it cannot be interpreted as Signature */
+        @JsName("fromSignatureStruct")
         fun fromSignatureTerm(term: Struct): Signature? = try {
             with(term) {
                 when {
@@ -88,12 +99,14 @@ data class Signature(val name: String, val arity: Int, val vararg: Boolean = fal
         }
 
         /** Creates a Signature instance from a well-formed Signature Term, or returns `null` if it cannot be interpreted as Signature */
+        @JsName("fromSignatureTerm")
         fun fromSignatureTerm(term: Term): Signature? = when (term) {
             is Struct -> fromSignatureTerm(term)
             else -> null
         }
 
         /** Creates a Signature instance from a well-formed Indicator, or returns `null` if it wasn't */
+        @JsName("fromIndicator")
         fun fromIndicator(indicator: Indicator): Signature? = when {
             indicator.isWellFormed -> Signature(
                 indicator.indicatedName!!,

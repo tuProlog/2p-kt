@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
 import it.unibo.tuprolog.parser.dynamic.Associativity.*
@@ -94,6 +96,7 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
             scope.setOf(ctx.items.map(this::visitExpression))
     }
 
+    @Suppress("NullableBooleanElvis", "UNNECESSARY_SAFE_CALL")
     private fun parseInteger(ctx: PrologParser.IntegerContext): BigInteger {
         val str = ctx.value.text
         val base: Int

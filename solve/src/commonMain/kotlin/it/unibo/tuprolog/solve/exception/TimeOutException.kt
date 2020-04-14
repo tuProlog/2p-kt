@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.TimeDuration
+import kotlin.js.JsName
 
 /**
  * Exception thrown if time for execution finished, before completion of solution process
@@ -17,7 +18,7 @@ class TimeOutException(
     message: String? = null,
     cause: Throwable? = null,
     context: ExecutionContext,
-    val exceededDuration: TimeDuration
+    @JsName("exceededDuration") val exceededDuration: TimeDuration
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration)

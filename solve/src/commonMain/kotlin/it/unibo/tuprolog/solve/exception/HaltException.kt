@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.solve.ExecutionContext
+import kotlin.js.JsName
 
 /**
  * An exception thrown if there are problems during state machine execution, and solution process should be halted
@@ -16,7 +17,7 @@ class HaltException(
     message: String? = null,
     cause: Throwable? = null,
     context: ExecutionContext,
-    val exitStatus: Int = 1
+    @JsName("exitStatus") val exitStatus: Int = 1
 ) : TuPrologRuntimeException(message, cause, context) {
 
     constructor(cause: Throwable?, context: ExecutionContext, exitStatus: Int = 1)
