@@ -172,7 +172,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub("jvm")
+    configureUploadToGithub({ "jvm" in it })
 }
 
 jvmSubprojects.forEachProject {
@@ -188,7 +188,7 @@ jvmSubprojects.forEachProject {
     configureUploadToMavenCentral()
     configureUploadToBintray()
     configureSigning()
-    configureUploadToGithub("jar")
+    configureUploadToGithub()
 }
 
 jsSubprojects.forEachProject {
@@ -221,10 +221,13 @@ configure<GithubReleaseExtension> {
     )
 }
 
-fun Project.configureUploadToGithub(jarTaskPositiveFilter: String = "jar", jarTaskNegativeFilter: String = "dokka") {
+fun Project.configureUploadToGithub(
+    jarTaskPositiveFilter: (String) -> Boolean = { "jar" in it },
+    jarTaskNegativeFilter: (String) -> Boolean = { "dokka" in it || "source" in it }
+) {
     val jarTasks = tasks.withType(Jar::class).asSequence()
-        .filter { it.name.contains(jarTaskPositiveFilter, true) }
-        .filter { !it.name.contains(jarTaskNegativeFilter, true) }
+        .filter { jarTaskPositiveFilter(it.name.toLowerCase()) }
+        .filter { !jarTaskNegativeFilter(it.name.toLowerCase()) }
         .map { it.archiveFile }
         .toList()
 
