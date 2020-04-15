@@ -13,6 +13,7 @@ variables:
   BINTRAY_TASK: "publishAllToBintray"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
+  GITHUB_PUBLISH_TASK: "githubRelease"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
 
@@ -21,9 +22,7 @@ before_script:
 
 cache:
   paths:
-    - $HOME/.gradle/caches
-    - $HOME/.gradle/wrapper
-    - $HOME/.gradle/nodejs
+    - $HOME/.gradle/
     - gradle/
     - .gradle/
 
@@ -56,6 +55,16 @@ Deploy to NPM:
   environment:
     name: NPM
     url: "https://www.npmjs.com/org/tuprolog"
+  only:
+    - /^(master)|(release)|(develop)$/
+
+Deploy to GitHub:
+  stage: deploy
+  script:
+    - $GCMD $BEFORE_TASK $GITHUB_PUBLISH_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: GitHub
+    url: "https://github.com/tuProlog/2p-kt/releases"
   only:
     - /^(master)|(release)|(develop)$/
 
