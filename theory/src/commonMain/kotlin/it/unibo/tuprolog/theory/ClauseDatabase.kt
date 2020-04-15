@@ -21,27 +21,35 @@ interface ClauseDatabase : Iterable<Clause> {
         get() = clauses.filterIsInstance<Directive>()
 
     /** Adds given ClauseDatabase to this */
+    @JsName("plusClauseDatabase")
     operator fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase
 
     /** Adds given Clause to this ClauseDatabase */
+    @JsName("plus")
     operator fun plus(clause: Clause): ClauseDatabase = assertZ(clause)
 
     /** Checks if given clause is contained in this database */
+    @JsName("contains")
     operator fun contains(clause: Clause): Boolean
 
     /** Checks if given clause is present in this database */
+    @JsName("containsHead")
     operator fun contains(head: Struct): Boolean
 
     /** Checks if clauses exists in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    @JsName("containsIndicator")
     operator fun contains(indicator: Indicator): Boolean
 
     /** Retrieves matching clauses from this database */
+    @JsName("get")
     operator fun get(clause: Clause): Sequence<Clause>
 
     /** Retrieves matching rules from this database */
+    @JsName("getByHead")
     operator fun get(head: Struct): Sequence<Rule>
 
     /** Retrieves all rules in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    @JsName("getByIndicator")
     operator fun get(indicator: Indicator): Sequence<Rule>
 
     /** Adds given clause before all other clauses in this database */

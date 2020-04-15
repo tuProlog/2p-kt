@@ -38,7 +38,6 @@ Test JVM:
 Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
-  allow_failure: true
 
 Deploy to Bintray:
   stage: deploy
