@@ -1,3 +1,4 @@
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -31,7 +32,7 @@ object Versions {
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 
-    const val kt_math: String = "0.1.2"
+    const val kt_math: String = "0.1.3"
 
     /**
      * Current version: "6.3"
