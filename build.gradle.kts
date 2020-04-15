@@ -214,17 +214,11 @@ configure<GithubReleaseExtension> {
     allowUploadToExisting { true }
     prerelease { !isFullVersion }
     draft { false }
-
-    tasks.withType(GithubReleaseTask::class) {
-        doFirst {
-            body(
-                """|
-                |## CHANGELOG
-                |${changelog().call()}
-                """.trimMargin()
-            )
-        }
-    }
+    body(
+        """|## CHANGELOG
+            |${changelog().call()}
+            """.trimMargin()
+    )
 }
 
 fun Project.configureUploadToGithub(jarTaskPositiveFilter: String = "jar", jarTaskNegativeFilter: String = "dokka") {
