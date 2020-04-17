@@ -5,7 +5,8 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
-interface Tuple : Collection {
+interface
+Tuple : Collection {
 
     override val isTuple: Boolean
         get() = true
