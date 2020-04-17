@@ -6,6 +6,11 @@ import org.gradle.api.tasks.testing.TestResult
 import org.gradle.kotlin.dsl.KotlinClosure2
 import org.gradle.kotlin.dsl.withType
 
+private val FULL_VERSION_REGEX = "^[0-9]+\\.[0-9]+\\.[0-9]+$".toRegex()
+
+val Project.isFullVersion: Boolean
+    get() = version.toString().matches(FULL_VERSION_REGEX)
+
 fun Project.configureTestResultPrinting() {
     tasks.withType<AbstractTestTask> {
         afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.exception
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
+import kotlin.js.JsName
 
 /**
  * An exception that could occur during Solver execution
@@ -14,12 +15,13 @@ import it.unibo.tuprolog.solve.ExecutionContext
 open class TuPrologRuntimeException(
     message: String? = null,
     cause: Throwable? = null,
-    val context: ExecutionContext
+    @JsName("context") val context: ExecutionContext
 ) : TuPrologException(message, cause) {
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
 
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
+    @JsName("prologStackTrace")
     val prologStackTrace: Sequence<Struct> by lazy { context.prologStackTrace }
 
     /**
@@ -27,6 +29,7 @@ open class TuPrologRuntimeException(
      *
      * Subclasses should override this method and return the correct instance.
      */
+    @JsName("updateContext")
     open fun updateContext(newContext: ExecutionContext): TuPrologRuntimeException =
         TuPrologRuntimeException(message, cause, newContext)
 }

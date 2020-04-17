@@ -4,16 +4,22 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A class representing a solution to a goal */
 sealed class Solution {
 
     /** The query to which the solution refers */
+    @JsName("query")
     abstract val query: Struct
+
     /** The substitution that has been applied to find the solution, or a `failed` substitution */
+    @JsName("substitution")
     open val substitution: Substitution = Substitution.failed()
+
     /** The Struct representing the solution, or `null` if no solution is available */
+    @JsName("solvedQuery")
     open val solvedQuery: Struct? = null
 
     /** A class representing the successful solution */
@@ -49,7 +55,7 @@ sealed class Solution {
     data class Halt(
         override val query: Struct,
         /** The exception that made the resolution to halt */
-        val exception: TuPrologRuntimeException
+        @JsName("exception") val exception: TuPrologRuntimeException
     ) : Solution() {
 
         constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)

@@ -4,36 +4,44 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Unificator {
 
     /** The context (in terms of already present bindings) in which the unification is performed */
+    @JsName("context")
     val context: Substitution
 
     /** Calculates the Most General Unifier of given [Term]s, optionally enabling occur-check */
+    @JsName("mguWithOccurCheck")
     fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean = true): Substitution
 
     /** Calculates the Most General Unifier of given [Term]s, enabling occur-check */
+    @JsName("mgu")
     fun mgu(term1: Term, term2: Term): Substitution =
         mgu(term1, term2, true)
 
     /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them */
+    @JsName("matchWithOccurCheck")
     fun match(term1: Term, term2: Term, occurCheckEnabled: Boolean): Boolean =
         mgu(term1, term2, occurCheckEnabled) !== Substitution.failed()
 
     /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them.
      * It performs unification with occur check*/
+    @JsName("match")
     fun match(term1: Term, term2: Term): Boolean =
         match(term1, term2, true)
 
     /** Unifies two [Term]s if possible */
+    @JsName("unifyWithOccurCheck")
     fun unify(term1: Term, term2: Term, occurCheckEnabled: Boolean): Term? {
         val substitution = mgu(term1, term2, occurCheckEnabled)
         return if (substitution.isFailed) null else term1[substitution]
     }
 
     /** Unifies two [Term]s if possible, with occurs check */
+    @JsName("unify")
     fun unify(term1: Term, term2: Term): Term? =
         unify(term1, term2, true)
 
@@ -41,23 +49,28 @@ interface Unificator {
 
         /** The default unification strategy that uses plain equals to determine [Term]s identity */
         @JvmStatic
+        @JsName("default")
         val default by lazy { strict() }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
         @JvmStatic
+        @JsName("mguWith")
         infix fun Term.mguWith(other: Term): Substitution = default.mgu(this, other)
 
         /** Computes whether the two terms match, using [default] unification strategy */
         @JvmStatic
+        @JsName("matches")
         infix fun Term.matches(other: Term): Boolean = default.match(this, other)
 
         /** Computes the unified term, using [default] unification strategy */
         @JvmStatic
+        @JsName("unifyWith")
         infix fun Term.unifyWith(other: Term): Term? = default.unify(this, other)
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
         @JvmStatic
+        @JsName("naiveWithContext")
         fun naive(context: Substitution): Unificator =
             object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) =
@@ -71,12 +84,14 @@ interface Unificator {
         /** Creates naive, empty unification strategy, that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */
         @JvmStatic
+        @JsName("naive")
         fun naive(): Unificator =
             naive(Substitution.empty())
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods */
         @JvmStatic
+        @JsName("strictWithContext")
         fun strict(context: Substitution): Unificator =
             object : AbstractUnificator(context) {
                 override fun checkTermsEquality(first: Term, second: Term) = first == second
@@ -85,6 +100,7 @@ interface Unificator {
         /** Creates naive unification strategy, that checks [Term]s identity through their [Term.equals]
          * methods */
         @JvmStatic
+        @JsName("strict")
         fun strict(): Unificator =
             strict(Substitution.empty())
     }
