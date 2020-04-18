@@ -62,15 +62,15 @@ class IntegerImplTest {
         val `1` = IntegerImpl(BigInteger.of(1))
         val `2` = IntegerImpl(BigInteger.of(2))
 
-        assertTrue(`1`.compareTo(`1`) == 0)
-        assertTrue(`1` >= `1`)
+        assertTrue(`1`.compareValueTo(`1`) == 0)
+        assertTrue(`1`.compareValueTo(`1`) >= 0)
 
-        assertTrue(`1`.compareTo(`2`) != 0)
-        assertTrue(`1` <= `2`)
-        assertTrue(`1` < `2`)
+        assertTrue(`1`.compareValueTo(`2`) != 0)
+        assertTrue(`1`.compareValueTo(`2`) <= 0)
+        assertTrue(`1`.compareValueTo(`2`) < 0)
 
-        assertFalse(`1` >= `2`)
-        assertFalse(`1` > `2`)
+        assertFalse(`1`.compareValueTo(`2`) >= 0)
+        assertFalse(`1`.compareValueTo(`2`) > 0)
     }
 
     @Test
