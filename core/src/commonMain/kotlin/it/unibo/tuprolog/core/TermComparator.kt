@@ -26,34 +26,34 @@ interface TermComparator<T : Term> : Comparator<T> {
         private fun compareVarAndTerm(a: Var, b: Term): Int =
             when (b) {
                 is Var -> VarComparator.compare(a, b)
-                else -> 1
+                else -> -1
             }
 
         private fun compareRealAndTerm(a: Real, b: Term): Int =
             when (b) {
                 is Real -> RealComparator.compare(a, b)
-                is Var -> -1
-                else -> 1
+                is Var -> 1
+                else -> -1
             }
 
         private fun compareIntegerAndTerm(a: Integer, b: Term): Int =
             when (b) {
                 is Integer -> IntegerComparator.compare(a, b)
-                is Var, is Real -> -1
+                is Var, is Real -> 1
                 else -> -1
             }
 
         private fun compareAtomAndTerm(a: Atom, b: Term): Int =
             when (b) {
                 is Atom -> AtomComparator.compare(a, b)
-                is Struct -> 1
-                else -> -1
+                is Struct -> -1
+                else -> 1
             }
 
         private fun compareStructAndTerm(a: Struct, b: Term): Int =
             when (b) {
                 is Struct -> StructComparator.compare(a, b)
-                else -> -1
+                else -> 1
             }
 
         override fun compare(a: Term, b: Term): Int =
@@ -73,7 +73,7 @@ interface TermComparator<T : Term> : Comparator<T> {
                 0 -> when (val functorComparison = a.functor.compareTo(b.functor)) {
                     0 -> {
                         for (i in 0 until a.arity) {
-                            val ithArgComparison = DefaultComparator.compare(a, b)
+                            val ithArgComparison = DefaultComparator.compare(a[i], b[i])
                             if (ithArgComparison != 0) {
                                 return ithArgComparison
                             }
