@@ -60,15 +60,15 @@ internal class RealImplTest {
         val `1,1` = RealImpl(BigDecimal.of(1.1))
         val `1,22f` = RealImpl(BigDecimal.of(1.22f))
 
-        assertTrue(`1,1`.compareTo(`1,1`) == 0)
-        assertTrue(`1,1` >= `1,1`)
+        assertTrue(`1,1`.compareValueTo(`1,1`) == 0)
+        assertTrue(`1,1`.compareValueTo(`1,1`) >= 0)
 
-        assertTrue(`1,1`.compareTo(`1,22f`) != 0)
-        assertTrue(`1,1` <= `1,22f`)
-        assertTrue(`1,1` < `1,22f`)
+        assertTrue(`1,1`.compareValueTo(`1,22f`) != 0)
+        assertTrue(`1,1`.compareValueTo(`1,22f`) <= 0)
+        assertTrue(`1,1`.compareValueTo(`1,22f`) < 0)
 
-        assertFalse(`1,1` >= `1,22f`)
-        assertFalse(`1,1` > `1,22f`)
+        assertFalse(`1,1`.compareValueTo(`1,22f`) >= 0)
+        assertFalse(`1,1`.compareValueTo(`1,22f`) > 0)
     }
 
     @Test
