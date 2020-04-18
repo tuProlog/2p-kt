@@ -10,78 +10,78 @@ import it.unibo.tuprolog.core.toTerm as extToTerm
 
 interface Prolog : Scope {
 
-    @JsName("toTerm")
+    @JsName("anyToTerm")
     fun Any.toTerm(): Term
 
-    @JsName("PrologStructOf")
+    @JsName("structOfAny")
     fun structOf(functor: String, vararg args: Any): Struct =
         structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
-    @JsName("invoke")
+    @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
         structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
 
-    @JsName("plus")
+    @JsName("anyPlus")
     operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
 
-    @JsName("minus")
+    @JsName("anyMinus")
     operator fun Any.minus(other: Any): Struct = structOf("-", this.toTerm(), other.toTerm())
 
-    @JsName("times")
+    @JsName("anyTimes")
     operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
 
-    @JsName("div")
+    @JsName("anyDiv")
     operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
-    @JsName("equalsTo")
+    @JsName("anyEqualsTo")
     infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
 
-    @JsName("greaterThan")
+    @JsName("anyGreaterThan")
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 
-    @JsName("greaterThanOrEqualsTo")
+    @JsName("anyGreaterThanOrEqualsTo")
     infix fun Any.greaterThanOrEqualsTo(other: Any): Struct =
         structOf(">=", this.toTerm(), other.toTerm())
 
-    @JsName("nonLowerThan")
+    @JsName("anyNonLowerThan")
     infix fun Any.nonLowerThan(other: Any): Struct = this greaterThanOrEqualsTo other
 
-    @JsName("lowerThan")
+    @JsName("anyLowerThan")
     infix fun Any.lowerThan(other: Any): Struct = structOf("<", this.toTerm(), other.toTerm())
 
-    @JsName("lowerThanOrEqualsTo")
+    @JsName("anyLowerThanOrEqualsTo")
     infix fun Any.lowerThanOrEqualsTo(other: Any): Struct =
         structOf("=<", this.toTerm(), other.toTerm())
 
-    @JsName("nonGreaterThan")
+    @JsName("anyNonGreaterThan")
     infix fun Any.nonGreaterThan(other: Any): Struct = this lowerThanOrEqualsTo other
 
-    @JsName("intDiv")
+    @JsName("anyIntDiv")
     infix fun Any.intDiv(other: Any): Struct = structOf("//", this.toTerm(), other.toTerm())
 
-    @JsName("rem")
+    @JsName("anyRem")
     operator fun Any.rem(other: Any): Struct = structOf("rem", this.toTerm(), other.toTerm())
 
-    @JsName("and")
+    @JsName("anyAnd")
     infix fun Any.and(other: Any): Struct = tupleOf(this.toTerm(), other.toTerm())
 
-    @JsName("or")
+    @JsName("anyOr")
     infix fun Any.or(other: Any): Struct = structOf(";", this.toTerm(), other.toTerm())
 
-    @JsName("pow")
+    @JsName("anyPow")
     infix fun Any.pow(other: Any): Struct = structOf("**", this.toTerm(), other.toTerm())
 
-    @JsName("sup")
+    @JsName("anySup")
     infix fun Any.sup(other: Any): Struct = structOf("^", this.toTerm(), other.toTerm())
 
-    @JsName("is")
+    @JsName("anyIs")
     infix fun Any.`is`(other: Any): Struct = structOf("is", this.toTerm(), other.toTerm())
 
-    @JsName("then")
+    @JsName("anyThen")
     infix fun Any.then(other: Any): Struct = structOf("->", this.toTerm(), other.toTerm())
 
-    @JsName("impliedBy")
+    @JsName("anyImpliedBy")
     infix fun Any.impliedBy(other: Any): Rule {
         when (val t = this.toTerm()) {
             is Struct -> return ruleOf(t, other.toTerm())
@@ -89,35 +89,35 @@ interface Prolog : Scope {
         }
     }
 
-    @JsName("if")
+    @JsName("anyIf")
     infix fun Any.`if`(other: Any): Rule = this impliedBy other
 
-    @JsName("impliedByVararg")
+    @JsName("anyImpliedByVararg")
     fun Any.impliedBy(vararg other: Any): Rule =
         this impliedBy Tuple.wrapIfNeeded(*other.map { it.toTerm() }.toTypedArray())
 
-    @JsName("ifVararg")
+    @JsName("anyIfVararg")
     fun Any.`if`(vararg other: Any): Rule =
         this.impliedBy(*other)
 
-    @JsName("PrologtupleOf")
+    @JsName("tupleOfAny")
     fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("ProloglistOf")
+    @JsName("listOfAny")
     fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List =
         this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("PrologsetOf")
+    @JsName("setOfAny")
     fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set =
         this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("PrologconsOf")
+    @JsName("consOfAny")
     fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
 
-    @JsName("PrologfactOf")
+    @JsName("factOfAny")
     fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
 
-    @JsName("PrologdirectiveOf")
+    @JsName("directiveOfAny")
     fun directiveOf(term: Any, vararg terms: Any): Directive =
         directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
@@ -154,41 +154,35 @@ interface Prolog : Scope {
         }
     }
 
-    @JsName("to")
+    @JsName("varTo")
     infix fun Var.to(termObject: Any) = Substitution.of(this, termObject.toTerm())
 
-    @JsName("StringTo")
+    @JsName("stringTo")
     infix fun String.to(termObject: Any) = Substitution.of(varOf(this), termObject.toTerm())
 
-    @JsName("SubstitutionGet")
+    @JsName("substitutionGet")
     operator fun Substitution.get(term: Any): Term? =
         when (val t = term.toTerm()) {
             is Var -> this[t]
             else -> term.raiseErrorConvertingTo(Var::class)
         }
 
-    @JsName("containsKey")
+    @JsName("substitutionContainsKey")
     fun Substitution.containsKey(term: Any): Boolean =
         when (val t = term.toTerm()) {
             is Var -> this.containsKey(t)
             else -> term.raiseErrorConvertingTo(Var::class)
         }
 
-    @JsName("SubstitutionContains")
+    @JsName("substitutionContains")
     operator fun Substitution.contains(term: Any): Boolean = containsKey(term)
 
-    @JsName("containsValue")
+    @JsName("substitutionContainsValue")
     fun Substitution.containsValue(term: Any): Boolean =
         this.containsValue(term.toTerm())
 
     companion object {
+        @JsName("empty")
         fun empty(): Prolog = PrologImpl()
     }
 }
-
-@JsName("prolog")
-fun <R> prolog(function: Prolog.() -> R): R = Prolog.empty().function()
-
-/** Utility method to launch conversion failed errors */
-internal fun Any.raiseErrorConvertingTo(`class`: KClass<*>): Nothing =
-    throw IllegalArgumentException("Cannot convert ${this::class} into $`class`")

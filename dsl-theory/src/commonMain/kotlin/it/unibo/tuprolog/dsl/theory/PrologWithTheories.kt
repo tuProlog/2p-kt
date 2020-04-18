@@ -11,6 +11,7 @@ interface PrologWithTheories : PrologWithUnification {
     fun theoryOf(vararg clause: Clause): ClauseDatabase {
         return ClauseDatabase.of(*clause)
     }
+
     @JsName("theory")
     fun theory(vararg clauseFunctions: Prolog.() -> Any): ClauseDatabase = theoryOf(
         *clauseFunctions.map { function ->
@@ -22,9 +23,4 @@ interface PrologWithTheories : PrologWithUnification {
         @JsName("empty")
         fun empty(): PrologWithTheories = PrologWithTheoriesImpl()
     }
-}
-
-
-fun <R> prolog(function: PrologWithTheories.() -> R): R {
-    return PrologWithTheories.empty().function()
 }

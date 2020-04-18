@@ -7,27 +7,27 @@ import kotlin.js.JsName
 
 interface PrologWithUnification : Prolog, Unificator {
 
-    @JsName("mguwith")
+    @JsName("anyMguWith")
     infix fun Any.mguWith(other: Any): Substitution =
         this@PrologWithUnification.mgu(this.toTerm(), other.toTerm())
 
-    @JsName("matches")
+    @JsName("anyMatches")
     infix fun Any.matches(other: Any): Boolean =
         this@PrologWithUnification.match(this.toTerm(), other.toTerm())
 
-    @JsName("unifyWith")
+    @JsName("anyUnifyWith")
     infix fun Any.unifyWith(other: Any): Term? =
         this@PrologWithUnification.unify(this.toTerm(), other.toTerm())
 
-    @JsName("mgu")
+    @JsName("mguAny")
     fun mgu(term1: Any, term2: Any, occurCheckEnabled: Boolean = true): Substitution =
         mgu(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
 
-    @JsName("match")
+    @JsName("matchAny")
     fun match(term1: Any, term2: Any, occurCheckEnabled: Boolean = true): Boolean =
         match(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
 
-    @JsName("unify")
+    @JsName("unifyAny")
     fun unify(term1: Any, term2: Any, occurCheckEnabled: Boolean = true): Term? =
         unify(term1.toTerm(), term2.toTerm(), occurCheckEnabled)
 
@@ -38,20 +38,4 @@ interface PrologWithUnification : Prolog, Unificator {
         @JsName("of")
         fun of(unificator: Unificator): PrologWithUnification = PrologWithUnificationImpl(unificator)
     }
-}
-
-fun <R> PrologWithUnification.scope(function: PrologWithUnification.() -> R): R {
-    return PrologWithUnification.empty().function()
-}
-
-fun PrologWithUnification.rule(function: PrologWithUnification.() -> Term): Rule {
-    return PrologWithUnification.empty().function() as Rule
-}
-
-fun PrologWithUnification.fact(function: PrologWithUnification.() -> Term): Fact {
-    return factOf(PrologWithUnification.empty().function() as Struct)
-}
-
-fun <R> prolog(function: PrologWithUnification.() -> R): R {
-    return PrologWithUnification.empty().function()
 }

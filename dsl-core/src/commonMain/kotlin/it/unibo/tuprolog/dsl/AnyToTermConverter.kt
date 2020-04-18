@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.toTerm as extToTerm
 
 internal interface AnyToTermConverter {
 
+    @JsName("prolog")
     val prolog: Prolog
 
     @JsName("toTerm")
@@ -38,19 +39,19 @@ internal interface AnyToTermConverter {
     val String.isVariable: Boolean
         get() = this matches Var.VAR_REGEX_PATTERN
 
-    @JsName("toInteger")
+    @JsName("numberToInteger")
     fun Number.toInteger(): Integer
 
-    @JsName("toReal")
+    @JsName("numberToReal")
     fun Number.toReal(): Real
 
-    @JsName("toVariable")
+    @JsName("stringToVariable")
     fun String.toVariable(): Var = prolog.varOf(this)
 
-    @JsName("toAtom")
+    @JsName("stringToAtom")
     fun String.toAtom(): Atom = prolog.atomOf(this)
 
-    @JsName("toTruth")
+    @JsName("booleanToTruth")
     fun Boolean.toTruth(): Truth = prolog.truthOf(this)
 
     companion object {
