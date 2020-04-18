@@ -22,8 +22,9 @@ interface Numeric : Constant, Comparable<Numeric> {
     override fun freshCopy(): Numeric = this
 
     override fun freshCopy(scope: Scope): Numeric = this
-    
-    override fun compareTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
+
+    @JsName("compareValueTo")
+    fun compareValueTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
     companion object {
 
