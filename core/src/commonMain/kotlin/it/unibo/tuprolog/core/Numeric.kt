@@ -5,7 +5,7 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Numeric : Constant, Comparable<Numeric> {
+interface Numeric : Constant {
 
     override val isNumber: Boolean
         get() = true
