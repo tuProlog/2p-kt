@@ -40,11 +40,10 @@ internal abstract class AbstractClauseDatabase : ClauseDatabase {
 
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as AbstractClauseDatabase
+        if (other == null) return false
+        if (other !is ClauseDatabase) return false
 
         if (clauses != other.clauses) return false
 

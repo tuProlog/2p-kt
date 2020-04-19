@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
  */
 internal class ClauseDatabaseTest {
 
-    private val correctInstance = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
+    private val correctInstance = ClauseDatabaseListImpl(ClauseDatabaseUtils.wellFormedClauses)
 
     @Test
     fun emptyCreatesEmptyClauseDatabase() {
