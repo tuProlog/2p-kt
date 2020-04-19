@@ -13,7 +13,9 @@ import kotlin.test.assertEquals
  */
 internal class ClauseDatabaseTest {
 
-    private val correctInstance = ClauseDatabaseListImpl(ClauseDatabaseUtils.wellFormedClauses)
+    // TODO riprogettare questo test
+
+    private val correctInstance = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
 
     @Test
     fun emptyCreatesEmptyClauseDatabase() {

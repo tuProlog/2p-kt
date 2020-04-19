@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.rete.clause.ReteTree
-import kotlin.collections.List
 
 internal abstract class AbstractClauseDatabase : ClauseDatabase {
 
-    override val rules: List<Rule> by lazy { super.rules.toList() }
-
-    override val directives: List<Directive> by lazy { super.directives.toList() }
+//    Così creavi e memorizzavi due nuove liste, occupando spazio inutilmente
+//    inoltre rendevi il tipo di ritorno più specifico del dovuto, per tutte le sottoclassi
+//    (mi sa che l'ha fatta siboni sta scelta, ne approfitto per correggerla, ma questo cambia un pò le cose sotto)
+//    override val rules: List<Rule> by lazy { super.rules.toList() }
+//    override val directives: List<Directive> by lazy { super.directives.toList() }
 
     override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
 
@@ -21,7 +21,7 @@ internal abstract class AbstractClauseDatabase : ClauseDatabase {
     override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it as Rule }
 
     override fun get(indicator: Indicator): Sequence<Rule> {
-        require(indicator.isWellFormed) { "Provided indicator should be wellFormed! $indicator" }
+        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
 
         return get(
             Rule.of(
@@ -41,16 +41,40 @@ internal abstract class AbstractClauseDatabase : ClauseDatabase {
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
     final override fun equals(other: Any?): Boolean {
+        // questa implementazione funziona anche se clauses non è una lista
         if (this === other) return true
         if (other == null) return false
         if (other !is ClauseDatabase) return false
 
-        if (clauses != other.clauses) return false
+        val i = clauses.iterator()
+        val j = other.clauses.iterator()
 
-        return true
+        while (i.hasNext() && j.hasNext()) {
+            if (i.next() != j.next()) {
+                return false
+            }
+        }
+
+        return i.hasNext() == j.hasNext()
     }
 
-    override fun hashCode(): Int = clauses.hashCode()
+    override fun hashCode(): Int {
+        // questa implementazione funziona anche se clauses non è una lista
+        val base = "AbstractClauseDatabase".hashCode()
+        var result = (base xor (base ushr 32))
+        for (clause in clauses) {
+            result = 31 * result + clause.hashCode()
+        }
+        return result
+    }
+
+    override val size: Long by lazy {
+        var i: Long = 0
+        for (clause in clauses) {
+            i++
+        }
+        i
+    }
 
     /** Utility method to check clause well-formed property */
     protected fun checkClauseCorrect(clause: Clause) = clause.also {

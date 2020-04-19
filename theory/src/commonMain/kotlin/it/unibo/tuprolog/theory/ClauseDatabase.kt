@@ -20,6 +20,10 @@ interface ClauseDatabase : Iterable<Clause> {
     val directives: Iterable<Directive>
         get() = clauses.filterIsInstance<Directive>()
 
+    /** The amount of clauses in this [ClauseDatabase] */
+    @JsName("size")
+    val size: Long
+
     /** Adds given ClauseDatabase to this */
     @JsName("plusClauseDatabase")
     operator fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase
@@ -113,6 +117,34 @@ interface ClauseDatabase : Iterable<Clause> {
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseListImpl(clauses)
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
+
+
+        // TODO trovare dei nomi migliori per i factory sottostanti
+
+        /** Creates an empty ClauseDatabase */
+        @JvmStatic
+        @JsName("emptyListed")
+        fun emptyListed(): ClauseDatabase = ofListed(emptySequence())
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("of")
+        fun ofListed(vararg clause: Clause): ClauseDatabase = ofListed(clause.asIterable())
+
+        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        @JvmStatic
+        @JsName("ofListedScopes")
+        fun ofListed(vararg clause: Scope.() -> Clause): ClauseDatabase = ofListed(clause.map { Scope.empty(it) })
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("ofListedSequence")
+        fun ofListed(clauses: Sequence<Clause>): ClauseDatabase = ofListed(clauses.asIterable())
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("ofListedIterable")
+        fun ofListed(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseListImpl(clauses)
     }
 }

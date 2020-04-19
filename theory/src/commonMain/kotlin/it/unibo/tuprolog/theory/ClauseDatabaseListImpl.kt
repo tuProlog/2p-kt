@@ -3,13 +3,14 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.*
 import kotlin.collections.List as KtList
 
-internal class ClauseDatabaseListImpl private constructor (private val clauseList : KtList<Clause>) : AbstractClauseDatabase() {
+internal class ClauseDatabaseListImpl
+    private constructor (
+        override val clauses: KtList<Clause> // nota: era inutile avere due property perchè le liste sono immutabili in kt
+    ) : AbstractClauseDatabase() {
 
     constructor(clauses: Iterable<Clause>) : this(clauses.toList()) {
         checkClausesCorrect(clauses)
     }
-
-    override val clauses: Iterable<Clause> by lazy { clauseList.asIterable() }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
         ClauseDatabaseListImpl(clauses.asIterable() + clauseDatabase.asIterable())
@@ -18,10 +19,10 @@ internal class ClauseDatabaseListImpl private constructor (private val clauseLis
         clauses.filter { it.structurallyEquals(clause) }.asSequence()
 
     override fun assertA(clause: Clause): ClauseDatabase =
-        ClauseDatabaseListImpl(listOf(checkClauseCorrect(clause)) + clauseList)
+        ClauseDatabaseListImpl(listOf(checkClauseCorrect(clause)) + clauses)
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-        ClauseDatabaseListImpl(clauseList + listOf(checkClauseCorrect(clause)))
+        ClauseDatabaseListImpl(clauses + listOf(checkClauseCorrect(clause)))
 
     override fun retract(clause: Clause): RetractResult {
         val retractability = clauses.filter { it.structurallyEquals(clause) }
