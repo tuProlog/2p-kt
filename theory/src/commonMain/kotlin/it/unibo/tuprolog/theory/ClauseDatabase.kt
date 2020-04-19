@@ -117,7 +117,7 @@ interface ClauseDatabase : Iterable<Clause> {
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseReteImpl(clauses)
 
 
         // TODO trovare dei nomi migliori per i factory sottostanti

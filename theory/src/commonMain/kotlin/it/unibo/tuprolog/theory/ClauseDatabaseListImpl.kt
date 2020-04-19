@@ -5,7 +5,7 @@ import kotlin.collections.List as KtList
 
 internal class ClauseDatabaseListImpl
     private constructor (
-        override val clauses: KtList<Clause> // nota: era inutile avere due property perchè le liste sono immutabili in kt
+        override val clauses: KtList<Clause>
     ) : AbstractClauseDatabase() {
 
     constructor(clauses: Iterable<Clause>) : this(clauses.toList()) {

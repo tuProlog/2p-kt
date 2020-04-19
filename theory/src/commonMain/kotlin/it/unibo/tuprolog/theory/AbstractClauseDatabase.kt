@@ -4,12 +4,6 @@ import it.unibo.tuprolog.core.*
 
 internal abstract class AbstractClauseDatabase : ClauseDatabase {
 
-//    Così creavi e memorizzavi due nuove liste, occupando spazio inutilmente
-//    inoltre rendevi il tipo di ritorno più specifico del dovuto, per tutte le sottoclassi
-//    (mi sa che l'ha fatta siboni sta scelta, ne approfitto per correggerla, ma questo cambia un pò le cose sotto)
-//    override val rules: List<Rule> by lazy { super.rules.toList() }
-//    override val directives: List<Directive> by lazy { super.directives.toList() }
-
     override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
 
     override fun contains(clause: Clause): Boolean = get(clause).any()
@@ -41,7 +35,6 @@ internal abstract class AbstractClauseDatabase : ClauseDatabase {
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
     final override fun equals(other: Any?): Boolean {
-        // questa implementazione funziona anche se clauses non è una lista
         if (this === other) return true
         if (other == null) return false
         if (other !is ClauseDatabase) return false
@@ -59,7 +52,6 @@ internal abstract class AbstractClauseDatabase : ClauseDatabase {
     }
 
     override fun hashCode(): Int {
-        // questa implementazione funziona anche se clauses non è una lista
         val base = "AbstractClauseDatabase".hashCode()
         var result = (base xor (base ushr 32))
         for (clause in clauses) {

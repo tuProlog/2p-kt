@@ -15,13 +15,13 @@ internal class ClauseDatabaseTest {
 
     // TODO riprogettare questo test
 
-    private val correctInstance = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
+    private val correctInstance = ClauseDatabaseReteImpl(ClauseDatabaseUtils.wellFormedClauses)
 
     @Test
     fun emptyCreatesEmptyClauseDatabase() {
         val toBeTested = ClauseDatabase.empty()
 
-        assertEquals(ClauseDatabaseImpl(emptyList()), toBeTested)
+        assertEquals(ClauseDatabaseReteImpl(emptyList()), toBeTested)
     }
 
     @Test
