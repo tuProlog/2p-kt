@@ -1,11 +1,11 @@
-image: pikalab/ci:jdk13oracle-git-graphviz
+image: pikalab/ci:ubuntu-jdk14-git-gradle-graphviz
 
 variables:
   GOPTS: "--no-daemon --console=plain"
   CI: "true"
   BEFORE_TASK: ""
   AFTER_TASK: ""
-  GCMD: "./gradlew"
+  GCMD: "gradle"
   BUILD_TASK: "assemble"
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
@@ -19,12 +19,14 @@ variables:
 
 before_script:
   - chmod +x gradlew
+  - source $HOME/.sdkman/bin/sdkman-init.sh
 
 cache:
   paths:
     - $HOME/.gradle/
     - gradle/
     - .gradle/
+    - build/
 
 Compile:
   stage: build
