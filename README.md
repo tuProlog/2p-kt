@@ -1,5 +1,13 @@
 # 2P in Kotlin
 
+Some quick links:
+* [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (the one used by developers)
+* [GitHub Repository](https://github.com/tuProlog/2p-kt) (where JVM releases are hosted)
+* [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
+* [Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted)
+
+## Intro
+
 ![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/logo.png)
 
 [tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
@@ -29,6 +37,7 @@ aimed at bridging the logic programming with the Kotlin object-oriented \& funct
 namely `parser-theory`.
 
 A complete overview about modules and their dependencies is provided by the following diagram: 
+
 ![2P-Kt project map](https://www.plantuml.com/plantuml/svg/TP31Rjim38RlV0eYT-q1XY0ePfy6332GPATTD8k9jSgY8SenWdNlFbjQNSLhBpRuVp_vYtoIg4CSUmUH1uoCFpb6xj7OG6sqx46UhHzqq3rAfmrFrb_nefqG5EZ2pb30tu3uHRVFry2ZDnKx3lkz7YooT_V30TdP6xtd2SnnvdToZgVt3BOVt2Sq5BLrit7gR2Ju0_0lUDToe1s-3bhbqTlBVRUMiICEHMt4gTof1UlgGK-j6PmVG1wIoMabmkuspodNVMIgTLh4jgdnM6sWn42wbmoFAnnq40flRsogBVfrwtUulK-oVlt-xJ-pVEJTHfPRDYU0vGMuVr669wymtGO_ew61l94VdZraRRNaVaY_GaxRGlekebekKLP7WBf25UorY-hbW4ikrET2IJb96eUbhYkeJmNFYREs6ivBiLUluT3C0OukR_ERKnBAzcPjRwhSeGxffFFMev0aAMKc_GXFvCtOkxy0)
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
@@ -77,7 +86,7 @@ To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Ma
 <repositories>
     <repository>
         <id>bintray-2p-repo</id>
-        <url>https://bintray.com/pika-lab/tuprolog</url>
+        <url>https://dl.bintray.com/pika-lab/tuprolog/</url>
     </repository>
 </repositories>
 ``` 

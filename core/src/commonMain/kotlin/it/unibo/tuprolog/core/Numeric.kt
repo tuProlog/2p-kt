@@ -5,7 +5,7 @@ import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Numeric : Constant, Comparable<Numeric> {
+interface Numeric : Constant {
 
     override val isNumber: Boolean
         get() = true
@@ -23,7 +23,8 @@ interface Numeric : Constant, Comparable<Numeric> {
 
     override fun freshCopy(scope: Scope): Numeric = this
 
-    override fun compareTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
+    @JsName("compareValueTo")
+    fun compareValueTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
     companion object {
 

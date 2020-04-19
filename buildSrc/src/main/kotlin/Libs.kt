@@ -10,18 +10,6 @@ object Libs {
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidasciidoc: String = "io.github.javaeden.orchid:OrchidAsciidoc:" +
-            Versions.io_github_javaeden_orchid
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchiddiagrams: String = "io.github.javaeden.orchid:OrchidDiagrams:" +
-            Versions.io_github_javaeden_orchid
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
     const val orchiddocs: String = "io.github.javaeden.orchid:OrchidDocs:" +
             Versions.io_github_javaeden_orchid
 
@@ -106,6 +94,10 @@ object Libs {
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
             Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
 
+    const val com_github_breadmoirai_github_release_gradle_plugin: String =
+            "com.github.breadmoirai.github-release:com.github.breadmoirai.github-release.gradle.plugin:" +
+            Versions.com_github_breadmoirai_github_release_gradle_plugin
+
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String =
             "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:" +
             Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
@@ -132,7 +124,7 @@ object Libs {
     const val plantuml: String = "net.sourceforge.plantuml:plantuml:" + Versions.plantuml
 
     /**
-     * 0.1.0
+     * 0.1.3
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
 }
