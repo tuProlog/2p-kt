@@ -6,10 +6,10 @@ import kotlin.js.JsName
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
  */
-interface Term {
+interface Term : Comparable<Term> {
 
     /**
-     * Empty companion aimed at letting extentions be injected through extention methods
+     * Empty companion aimed at letting extensions be injected through extension methods
      */
     companion object
 
@@ -31,6 +31,15 @@ interface Term {
      */
     @Suppress("UNCHECKED_CAST")
     fun <T : Term> castTo(): T = this as T
+
+    /**
+     * Compares this term to the provided one, returning a positive integer if this term _precedes_ [other],
+     * a negative integer if [other] precedes this term, or `0` otherwise
+     * @param other is the term to be compared against this term
+     * @return an [Int] indicating whether this term precedes [other] or not
+     */
+    override fun compareTo(other: Term): Int =
+        TermComparator.DefaultComparator.compare(this, other)
 
     /**
      * Checks whether an[other] term is _structurally equals_ to the current one or not.

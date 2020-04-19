@@ -124,7 +124,7 @@ object Libs {
     const val plantuml: String = "net.sourceforge.plantuml:plantuml:" + Versions.plantuml
 
     /**
-     * 0.1.2
+     * 0.1.3
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
 }
