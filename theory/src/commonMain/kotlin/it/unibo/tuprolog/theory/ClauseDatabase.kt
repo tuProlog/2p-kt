@@ -105,6 +105,6 @@ interface ClauseDatabase : Iterable<Clause> {
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
+        fun of(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseListImpl(clauses)
     }
 }
