@@ -1,4 +1,5 @@
 package it.unibo.tuprolog.theory
+
 import it.unibo.tuprolog.core.*
 import kotlin.collections.List as KtList
 
@@ -19,10 +20,8 @@ internal class ClauseDatabaseListImpl private constructor (private val clauseLis
     override fun assertA(clause: Clause): ClauseDatabase =
         ClauseDatabaseListImpl(listOf(checkClauseCorrect(clause)) + clauseList)
 
-
     override fun assertZ(clause: Clause): ClauseDatabase =
         ClauseDatabaseListImpl(clauseList + listOf(checkClauseCorrect(clause)))
-
 
     override fun retract(clause: Clause): RetractResult {
         val retractability = clauses.filter { it.structurallyEquals(clause) }
@@ -49,16 +48,4 @@ internal class ClauseDatabaseListImpl private constructor (private val clauseLis
             }
         }
     }
-
-    /*override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as ClauseDatabaseListImpl
-
-        if (clauses != other.clauses) return false
-
-        return true
-    }*/
-
 }
