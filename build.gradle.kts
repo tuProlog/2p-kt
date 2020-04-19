@@ -206,25 +206,33 @@ jsSubprojects.forEachProject {
 }
 
 configure<GithubReleaseExtension> {
-    token(githubToken)
-    owner(githubOwner)
-    repo(githubRepo)
-    tagName { version.toString() }
-    releaseName { version.toString() }
-    allowUploadToExisting { true }
-    prerelease { !isFullVersion }
-    draft { false }
-    body(
-        """|## CHANGELOG
-            |${changelog().call()}
-            """.trimMargin()
-    )
+    if (githubToken != null) {
+        token(githubToken)
+        owner(githubOwner)
+        repo(githubRepo)
+        tagName { version.toString() }
+        releaseName { version.toString() }
+        allowUploadToExisting { true }
+        prerelease { false }
+        draft { false }
+        try {
+            body(
+                """|## CHANGELOG
+                   |${changelog().call()}
+                   """.trimMargin()
+            )
+        } catch (e: NullPointerException) {
+            e.message?.let { warn(it) }
+        }
+    }
 }
 
 fun Project.configureUploadToGithub(
     jarTaskPositiveFilter: (String) -> Boolean = { "jar" in it },
     jarTaskNegativeFilter: (String) -> Boolean = { "dokka" in it || "source" in it }
 ) {
+    if (githubToken == null) return
+
     val jarTasks = tasks.withType(Jar::class).asSequence()
         .filter { jarTaskPositiveFilter(it.name.toLowerCase()) }
         .filter { !jarTaskNegativeFilter(it.name.toLowerCase()) }
