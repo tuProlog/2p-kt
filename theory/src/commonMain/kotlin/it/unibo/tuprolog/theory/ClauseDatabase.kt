@@ -129,7 +129,7 @@ interface ClauseDatabase : Iterable<Clause> {
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
-        @JsName("of")
+        @JsName("ofListed")
         fun ofListed(vararg clause: Clause): ClauseDatabase = ofListed(clause.asIterable())
 
         /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
