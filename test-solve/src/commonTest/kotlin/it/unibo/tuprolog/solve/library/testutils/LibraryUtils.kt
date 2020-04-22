@@ -38,8 +38,8 @@ internal object LibraryUtils {
 
     private val minusOperatorOverridden = Operator("-", Specifier.YFX, 1000)
 
-    private val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
-    private val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
+    private val theory = ClauseDatabase.indexedOf(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
+    private val theoryWithDuplicates = ClauseDatabase.indexedOf(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
 
     private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
         throw NotImplementedError()
@@ -99,7 +99,7 @@ internal object LibraryUtils {
 
     /** A duplicated alias library w.r.t. [library] */
     internal val duplicatedAliasLibrary by lazy {
-        RawLibrary("myLibrary", OperatorSet(), ClauseDatabase.of(Fact.of(Truth.FAIL)), emptyMap(), emptyMap())
+        RawLibrary("myLibrary", OperatorSet(), ClauseDatabase.indexedOf(Fact.of(Truth.FAIL)), emptyMap(), emptyMap())
     }
 
     /** Contains various libraries */

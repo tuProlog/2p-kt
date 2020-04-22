@@ -26,14 +26,14 @@ internal class ClauseDatabaseTest {
 
     @Test
     fun ofVarargClauseCreatesCorrectInstance() {
-        val toBeTested = ClauseDatabase.of(*ClauseDatabaseUtils.wellFormedClauses.toTypedArray())
+        val toBeTested = ClauseDatabase.indexedOf(*ClauseDatabaseUtils.wellFormedClauses.toTypedArray())
 
         assertEquals(correctInstance, toBeTested)
     }
 
     @Test
     fun ofVarargScopeToClauseCreatesCorrectInstance() {
-        val toBeTested = ClauseDatabase.of(
+        val toBeTested = ClauseDatabase.indexedOf(
             *ClauseDatabaseUtils.wellFormedClauses
                 .map<Clause, Scope.() -> Clause> { { clauseOf(it.head, it.body) } }
                 .toTypedArray()
@@ -44,14 +44,14 @@ internal class ClauseDatabaseTest {
 
     @Test
     fun ofIterableClauseCreatesCorrectInstance() {
-        val toBeTested = ClauseDatabase.of(ClauseDatabaseUtils.wellFormedClauses)
+        val toBeTested = ClauseDatabase.indexedOf(ClauseDatabaseUtils.wellFormedClauses)
 
         assertEquals(correctInstance, toBeTested)
     }
 
     @Test
     fun ofSequenceClauseCreatesCorrectInstance() {
-        val toBeTested = ClauseDatabase.of(ClauseDatabaseUtils.wellFormedClauses.asSequence())
+        val toBeTested = ClauseDatabase.indexedOf(ClauseDatabaseUtils.wellFormedClauses.asSequence())
 
         assertEquals(correctInstance, toBeTested)
     }

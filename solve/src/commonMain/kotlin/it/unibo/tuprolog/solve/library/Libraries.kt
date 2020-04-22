@@ -29,7 +29,7 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
     }
 
     override val theory: ClauseDatabase by lazy {
-        ClauseDatabase.of(libraries.flatMap { it.theory.clauses.asSequence() })
+        ClauseDatabase.indexedOf(libraries.flatMap { it.theory.clauses.asSequence() })
     }
 
     override val primitives: Map<Signature, Primitive> by lazy {

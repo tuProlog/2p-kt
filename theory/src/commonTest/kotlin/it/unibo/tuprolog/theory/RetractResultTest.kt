@@ -20,7 +20,7 @@ internal class RetractResultTest {
 
     private val clauses = listOf(clause1, clause2)
 
-    private val clauseDatabase: ClauseDatabase = ClauseDatabase.of(clauses)
+    private val clauseDatabase: ClauseDatabase = ClauseDatabase.indexedOf(clauses)
 
     private val toTestSuccess = RetractResult.Success(clauseDatabase, clauses)
     private val toTestFailure = RetractResult.Failure(clauseDatabase)

@@ -35,8 +35,8 @@ internal object StateEndUtils {
     internal val aSubstitution = Substitution.of("A", Truth.FAIL)
     internal val someLibraries = Libraries(Library.of(alias = "stateEnd.test", operatorSet = OperatorSet.DEFAULT))
     internal val someFlags = mapOf(Atom.of("function1") to Atom.of("off"))
-    internal val aStaticKb = ClauseDatabase.of({ factOf(atomOf("myStaticFact")) })
-    internal val aDynamicKb = ClauseDatabase.of({ factOf(atomOf("myDynamicFact")) })
+    internal val aStaticKb = ClauseDatabase.indexedOf({ factOf(atomOf("myStaticFact")) })
+    internal val aDynamicKb = ClauseDatabase.indexedOf({ factOf(atomOf("myDynamicFact")) })
 
     internal val defaultLibraries = Libraries()
     internal val defaultFlags = mapOf<Atom, Term>()

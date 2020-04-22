@@ -12,7 +12,7 @@ object SpecificRules {
         NegationAsFailure.Success
     )
 
-    val clauseDb: ClauseDatabase = ClauseDatabase.of(
+    val clauseDb: ClauseDatabase = ClauseDatabase.indexedOf(
         wrappers.map { it.wrappedImplementation }
     )
 }

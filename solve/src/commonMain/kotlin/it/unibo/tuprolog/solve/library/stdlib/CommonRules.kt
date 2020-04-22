@@ -21,5 +21,5 @@ object CommonRules {
     )
 
     val clauseDb: ClauseDatabase
-        get() = ClauseDatabase.of(wrappers.map { it.wrappedImplementation })
+        get() = ClauseDatabase.indexedOf(wrappers.map { it.wrappedImplementation })
 }
