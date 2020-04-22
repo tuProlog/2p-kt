@@ -124,7 +124,7 @@ interface ClauseDatabase : Iterable<Clause> {
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("indexedOfIterable")
-        fun indexedOf(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseImpl(clauses)
+        fun indexedOf(clauses: Iterable<Clause>): ClauseDatabase = IndexedClauseDatabase(clauses)
 
         /** Creates an empty ClauseDatabase */
         @JvmStatic
@@ -149,6 +149,6 @@ interface ClauseDatabase : Iterable<Clause> {
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("listedOfIterable")
-        fun listedOf(clauses: Iterable<Clause>): ClauseDatabase = ClauseDatabaseListImpl(clauses)
+        fun listedOf(clauses: Iterable<Clause>): ClauseDatabase = ListedClauseDatabase(clauses)
     }
 }

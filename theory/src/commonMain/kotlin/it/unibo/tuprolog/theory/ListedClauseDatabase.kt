@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.*
 import kotlin.collections.List as KtList
 
-internal class ClauseDatabaseListImpl
+internal class ListedClauseDatabase
     private constructor (
         override val clauses: KtList<Clause> // nota: era inutile avere due property perchè le liste sono immutabili in kt
     ) : AbstractClauseDatabase() {
@@ -13,16 +13,16 @@ internal class ClauseDatabaseListImpl
     }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-        ClauseDatabaseListImpl(clauses.asIterable() + clauseDatabase.asIterable())
+        ListedClauseDatabase(clauses.asIterable() + clauseDatabase.asIterable())
 
     override fun get(clause: Clause): Sequence<Clause> =
         clauses.filter { it.structurallyEquals(clause) }.asSequence()
 
     override fun assertA(clause: Clause): ClauseDatabase =
-        ClauseDatabaseListImpl(listOf(checkClauseCorrect(clause)) + clauses)
+        ListedClauseDatabase(listOf(checkClauseCorrect(clause)) + clauses)
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-        ClauseDatabaseListImpl(clauses + listOf(checkClauseCorrect(clause)))
+        ListedClauseDatabase(clauses + listOf(checkClauseCorrect(clause)))
 
     override fun retract(clause: Clause): RetractResult {
         val retractability = clauses.filter { it.structurallyEquals(clause) }
@@ -32,7 +32,7 @@ internal class ClauseDatabaseListImpl
             else -> {
                 val toBeActuallyRetracted = retractability.first()
                 val newTheory = clauses.filter { it == toBeActuallyRetracted }
-                RetractResult.Success(ClauseDatabaseListImpl(newTheory), listOf(toBeActuallyRetracted))
+                RetractResult.Success(ListedClauseDatabase(newTheory), listOf(toBeActuallyRetracted))
             }
         }
     }
@@ -45,7 +45,7 @@ internal class ClauseDatabaseListImpl
                 val partitionedClauses = clauses.toList().partition { it.structurallyEquals(clause) }
                 val newTheory = partitionedClauses.first
                 val toBeActuallyRetracted = partitionedClauses.second
-                RetractResult.Success(ClauseDatabaseListImpl(newTheory), toBeActuallyRetracted)
+                RetractResult.Success(ListedClauseDatabase(newTheory), toBeActuallyRetracted)
             }
         }
     }

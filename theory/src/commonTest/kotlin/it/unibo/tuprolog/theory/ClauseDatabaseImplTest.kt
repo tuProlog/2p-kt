@@ -6,7 +6,7 @@ import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialO
 import kotlin.test.*
 
 /**
- * Test class for [ClauseDatabaseImpl] and [ClauseDatabase]
+ * Test class for [IndexedClauseDatabase] and [ClauseDatabase]
  *
  * @author Enrico
  */
@@ -27,13 +27,13 @@ internal class ClauseDatabaseImplTest {
 
     @BeforeTest
     fun init() {
-        emptyClauseDatabase = ClauseDatabaseImpl(emptyList())
-        filledClauseDatabase = ClauseDatabaseImpl(ClauseDatabaseUtils.wellFormedClauses)
+        emptyClauseDatabase = IndexedClauseDatabase(emptyList())
+        filledClauseDatabase = IndexedClauseDatabase(ClauseDatabaseUtils.wellFormedClauses)
     }
 
     @Test
     fun clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { ClauseDatabaseImpl(ClauseDatabaseUtils.notWellFormedClauses) }
+        assertFailsWith<IllegalArgumentException> { IndexedClauseDatabase(ClauseDatabaseUtils.notWellFormedClauses) }
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun plusClauseDatabasePreservesOrder() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-        val toBeTested = ClauseDatabaseImpl(firstHalfClauses) + ClauseDatabaseImpl(secondHalfClauses)
+        val toBeTested = IndexedClauseDatabase(firstHalfClauses) + IndexedClauseDatabase(secondHalfClauses)
 
         assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
     }
@@ -77,7 +77,7 @@ internal class ClauseDatabaseImplTest {
     @Test
     fun plusClause() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-        var toBeTested: ClauseDatabase = ClauseDatabaseImpl(firstHalfClauses)
+        var toBeTested: ClauseDatabase = IndexedClauseDatabase(firstHalfClauses)
         secondHalfClauses.forEach { toBeTested += it }
 
         assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
