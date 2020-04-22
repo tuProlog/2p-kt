@@ -6,11 +6,14 @@ import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialO
 import kotlin.test.*
 
 /**
- * Test class for [IndexedClauseDatabase] and [ClauseDatabase]
+ * Test class for all [ClauseDatabase] subtypes
  *
  * @author Enrico
  */
-internal class ClauseDatabaseImplTest {
+class ClauseDatabaseTestPrototype(
+    private val emptyClauseDbGenerator: () -> ClauseDatabase,
+    private val clauseDbGenerator: (Iterable<Clause>) -> ClauseDatabase
+) {
 
     private lateinit var emptyClauseDatabase: ClauseDatabase
     private lateinit var filledClauseDatabase: ClauseDatabase
@@ -25,24 +28,20 @@ internal class ClauseDatabaseImplTest {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.filterValues { it.isNotEmpty() }
     }
 
-    @BeforeTest
     fun init() {
-        emptyClauseDatabase = IndexedClauseDatabase(emptyList())
-        filledClauseDatabase = IndexedClauseDatabase(ClauseDatabaseUtils.wellFormedClauses)
+        emptyClauseDatabase = emptyClauseDbGenerator()
+        filledClauseDatabase = clauseDbGenerator(ClauseDatabaseUtils.wellFormedClauses)
     }
 
-    @Test
     fun clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { IndexedClauseDatabase(ClauseDatabaseUtils.notWellFormedClauses) }
+        assertFailsWith<IllegalArgumentException> { clauseDbGenerator(ClauseDatabaseUtils.notWellFormedClauses) }
     }
 
-    @Test
     fun clausesCorrect() {
         assertTrue(emptyClauseDatabase.clauses.none())
         assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses, filledClauseDatabase.clauses)
     }
 
-    @Test
     fun rulesCorrect() {
         val rules = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>()
 
@@ -50,7 +49,6 @@ internal class ClauseDatabaseImplTest {
         assertTrue(emptyClauseDatabase.rules.none())
     }
 
-    @Test
     fun directivesCorrect() {
         val directives = ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Directive>()
 
@@ -58,39 +56,34 @@ internal class ClauseDatabaseImplTest {
         assertTrue(emptyClauseDatabase.directives.none())
     }
 
-    @Test
     fun plusClauseDatabasePreservesOrder() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-        val toBeTested = IndexedClauseDatabase(firstHalfClauses) + IndexedClauseDatabase(secondHalfClauses)
+        val toBeTested = clauseDbGenerator(firstHalfClauses) + clauseDbGenerator(secondHalfClauses)
 
         assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
     }
 
-    @Test
     fun plusClauseDatabaseFailsOnBadDatabase() {
-        val badClauseDatabase = object : ClauseDatabase by ClauseDatabase.empty() {
+        val badClauseDatabase = object : ClauseDatabase by emptyClauseDbGenerator() {
             override val clauses: Iterable<Clause> = ClauseDatabaseUtils.notWellFormedClauses
         }
         assertFailsWith<IllegalArgumentException> { filledClauseDatabase + badClauseDatabase }
     }
 
-    @Test
     fun plusClause() {
         val (firstHalfClauses, secondHalfClauses) = ClauseDatabaseUtils.wellFormedClausesHelves
-        var toBeTested: ClauseDatabase = IndexedClauseDatabase(firstHalfClauses)
+        var toBeTested: ClauseDatabase = clauseDbGenerator(firstHalfClauses)
         secondHalfClauses.forEach { toBeTested += it }
 
         assertEquals(filledClauseDatabase.clauses, toBeTested.clauses)
     }
 
-    @Test
     fun plusClauseRespectsPartialOrdering() {
         val toBeTested = filledClauseDatabase + aRule
 
         assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + aRule, toBeTested.clauses)
     }
 
-    @Test
     fun plusClauseReturnsNewUnlinkedClauseDatabaseInstance() {
         val toBeTested = filledClauseDatabase + anIndependentFact
 
@@ -98,14 +91,12 @@ internal class ClauseDatabaseImplTest {
         assertTrue(anIndependentFact in toBeTested)
     }
 
-    @Test
     fun plusClauseComplainsOnBadClause() {
         ClauseDatabaseUtils.notWellFormedClauses.forEach {
             assertFailsWith<IllegalArgumentException> { filledClauseDatabase + it }
         }
     }
 
-    @Test
     fun containsClauseReturnsTrueWithPresentClauses() {
         ClauseDatabaseUtils.wellFormedClauses.forEach {
             assertTrue { it in filledClauseDatabase }
@@ -116,7 +107,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun containsClauseReturnsFalseWithNonPresentClauses() {
         assertFalse(anIndependentFact in filledClauseDatabase)
 
@@ -125,19 +115,16 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun containsStructReturnsTrueIfMatchingHeadIsFound() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
             assertTrue { it.head in filledClauseDatabase }
         }
     }
 
-    @Test
     fun containsStructReturnsFalseIfNoMatchingHeadIsFound() {
         assertFalse(anIndependentFact.head in filledClauseDatabase)
     }
 
-    @Test
     fun containsIndicatorReturnsTrueIfMatchingClauseIsFound() {
         ClauseDatabaseUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
             assertTrue { it.head.indicator in filledClauseDatabase }
@@ -149,7 +136,6 @@ internal class ClauseDatabaseImplTest {
             }
     }
 
-    @Test
     fun containsIndicatorReturnsFalseIfNoMatchingClauseIsFound() {
         assertFalse(filledClauseDatabase.contains(anIndependentFact.head.indicator))
 
@@ -159,21 +145,18 @@ internal class ClauseDatabaseImplTest {
             }
     }
 
-    @Test
     fun containsIndicatorComplainsIfIndicatorNonWellFormed() {
         assertFailsWith<IllegalArgumentException> {
             Indicator.of(Var.anonymous(), Var.anonymous()) in filledClauseDatabase
         }
     }
 
-    @Test
     fun getClause() {
         ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
             assertEquals(result, filledClauseDatabase[query].toList())
         }
     }
 
-    @Test
     fun getStruct() {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap
             .forEach { (query, result) ->
@@ -182,7 +165,6 @@ internal class ClauseDatabaseImplTest {
             }
     }
 
-    @Test
     fun getIndicator() {
         ClauseDatabaseUtils.rulesQueryResultByFunctorAndArity
             .forEach { (query, result) ->
@@ -191,14 +173,12 @@ internal class ClauseDatabaseImplTest {
             }
     }
 
-    @Test
     fun getIndicatorComplainsIfIndicatorNonWellFormed() {
         assertFailsWith<IllegalArgumentException> {
             filledClauseDatabase.get(Indicator.of(Var.anonymous(), Var.anonymous()))
         }
     }
 
-    @Test
     fun assertAClause() {
         val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
             .apply { add(0, aRule) }
@@ -207,14 +187,12 @@ internal class ClauseDatabaseImplTest {
         assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
     }
 
-    @Test
     fun assertAClauseComplainsOnBadClause() {
         ClauseDatabaseUtils.notWellFormedClauses.forEach {
             assertFailsWith<IllegalArgumentException> { filledClauseDatabase.assertA(it) }
         }
     }
 
-    @Test
     fun assertAStruct() {
         val correctPartiallyOrderedClauses = ClauseDatabaseUtils.wellFormedClauses.toMutableList()
             .apply { add(0, Fact.of(aRule.head)) }
@@ -223,7 +201,6 @@ internal class ClauseDatabaseImplTest {
         assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
     }
 
-    @Test
     fun assertACreatesNewUnlinkedInstance() {
         val toBeTested = filledClauseDatabase.assertA(anIndependentFact)
 
@@ -231,21 +208,18 @@ internal class ClauseDatabaseImplTest {
         assertTrue(anIndependentFact in toBeTested)
     }
 
-    @Test
     fun assertZClause() {
         val toBeTested = filledClauseDatabase.assertZ(aRule)
 
         assertClauseHeadPartialOrderingRespected(ClauseDatabaseUtils.wellFormedClauses + aRule, toBeTested.clauses)
     }
 
-    @Test
     fun assertZClauseComplainsOnBadClause() {
         ClauseDatabaseUtils.notWellFormedClauses.forEach {
             assertFailsWith<IllegalArgumentException> { filledClauseDatabase.assertZ(it) }
         }
     }
 
-    @Test
     fun assertZStruct() {
         val toBeTested = filledClauseDatabase.assertZ(aRule.head)
 
@@ -255,7 +229,6 @@ internal class ClauseDatabaseImplTest {
         )
     }
 
-    @Test
     fun assertZCreatesNewUnlinkedInstance() {
         val toBeTested = filledClauseDatabase.assertZ(anIndependentFact)
 
@@ -263,7 +236,6 @@ internal class ClauseDatabaseImplTest {
         assertTrue(anIndependentFact in toBeTested)
     }
 
-    @Test
     fun retractClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
         ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retract(query)
@@ -273,7 +245,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractClauseRemovesOnlyFirstMatchingClause() {
         successfulRetractQueryResultMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retract(query) as RetractResult.Success
@@ -282,7 +253,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retract(query)
@@ -292,7 +262,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractStructRemovesOnlyFirstMatchingClause() {
         successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retract(query.head) as RetractResult.Success
@@ -301,7 +270,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractCreatesNewUnlinkedInstanceIfSuccessful() {
         val aDatabaseClause = filledClauseDatabase.clauses.first()
         val toBeTested = filledClauseDatabase.retract(aDatabaseClause).clauseDatabase
@@ -311,14 +279,12 @@ internal class ClauseDatabaseImplTest {
         assertFalse(aDatabaseClause in toBeTested)
     }
 
-    @Test
     fun retractReturnsSameClauseDatabaseOnFailure() {
         val toBeTested = filledClauseDatabase.retract(anIndependentFact).clauseDatabase
 
         assertSame(filledClauseDatabase, toBeTested)
     }
 
-    @Test
     fun retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
         ClauseDatabaseUtils.clausesQueryResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retractAll(query)
@@ -328,7 +294,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractAllClauseRemovesOnlyFirstMatchingClause() {
         successfulRetractQueryResultMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retractAll(query) as RetractResult.Success
@@ -337,7 +302,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
         ClauseDatabaseUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retractAll(query)
@@ -347,7 +311,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractAllStructRemovesOnlyFirstMatchingClause() {
         successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
             val retractResult = filledClauseDatabase.retractAll(query.head) as RetractResult.Success
@@ -356,7 +319,6 @@ internal class ClauseDatabaseImplTest {
         }
     }
 
-    @Test
     fun retractAllCreatesNewUnlinkedInstanceIfSuccessful() {
         val aDatabaseClause = filledClauseDatabase.clauses.first()
         val toBeTested = filledClauseDatabase.retractAll(aDatabaseClause).clauseDatabase
@@ -366,14 +328,12 @@ internal class ClauseDatabaseImplTest {
         assertFalse(aDatabaseClause in toBeTested)
     }
 
-    @Test
     fun retractAllReturnsSameClauseDatabaseOnFailure() {
         val toBeTested = filledClauseDatabase.retractAll(anIndependentFact).clauseDatabase
 
         assertSame(filledClauseDatabase, toBeTested)
     }
 
-    @Test
     fun iteratorReturnsCorrectInstance() {
         assertEquals(
             filledClauseDatabase.clauses.iterator().asSequence().toList(),

@@ -1,0 +1,227 @@
+package it.unibo.tuprolog.theory
+
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+internal class IndexedClauseDatabaseTest {
+
+    private val prototype = ClauseDatabaseTestPrototype(
+        ClauseDatabase.Companion::emptyIndexed,
+        ClauseDatabase.Companion::indexedOf
+    )
+
+    @BeforeTest
+    fun init() {
+        prototype.init()
+    }
+
+    @Test
+    fun clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction() {
+        prototype.clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction()
+    }
+
+    @Test
+    fun clausesCorrect() {
+        prototype.clausesCorrect()
+    }
+
+    @Test
+    fun rulesCorrect() {
+        prototype.rulesCorrect()
+    }
+
+    @Test
+    fun directivesCorrect() {
+        prototype.directivesCorrect()
+    }
+
+    @Test
+    fun plusClauseDatabasePreservesOrder() {
+        prototype.plusClauseDatabasePreservesOrder()
+    }
+
+    @Test
+    fun plusClauseDatabaseFailsOnBadDatabase() {
+        prototype.plusClauseDatabaseFailsOnBadDatabase()
+    }
+
+    @Test
+    fun plusClause() {
+        prototype.plusClause()
+    }
+
+    @Test
+    fun plusClauseRespectsPartialOrdering() {
+        prototype.plusClauseRespectsPartialOrdering()
+    }
+
+    @Test
+    fun plusClauseReturnsNewUnlinkedClauseDatabaseInstance() {
+        prototype.plusClauseReturnsNewUnlinkedClauseDatabaseInstance()
+    }
+
+    @Test
+    fun plusClauseComplainsOnBadClause() {
+        prototype.plusClauseComplainsOnBadClause()
+    }
+
+    @Test
+    fun containsClauseReturnsTrueWithPresentClauses() {
+        prototype.containsClauseReturnsTrueWithPresentClauses()
+    }
+
+    @Test
+    fun containsClauseReturnsFalseWithNonPresentClauses() {
+        prototype.containsClauseReturnsFalseWithNonPresentClauses()
+    }
+
+    @Test
+    fun containsStructReturnsTrueIfMatchingHeadIsFound() {
+        prototype.containsStructReturnsTrueIfMatchingHeadIsFound()
+    }
+
+    @Test
+    fun containsStructReturnsFalseIfNoMatchingHeadIsFound() {
+        prototype.containsStructReturnsFalseIfNoMatchingHeadIsFound()
+    }
+
+    @Test
+    fun containsIndicatorReturnsTrueIfMatchingClauseIsFound() {
+        prototype.containsIndicatorReturnsTrueIfMatchingClauseIsFound()
+    }
+
+    @Test
+    fun containsIndicatorReturnsFalseIfNoMatchingClauseIsFound() {
+        prototype.containsIndicatorReturnsFalseIfNoMatchingClauseIsFound()
+    }
+
+    @Test
+    fun containsIndicatorComplainsIfIndicatorNonWellFormed() {
+        prototype.containsIndicatorComplainsIfIndicatorNonWellFormed()
+    }
+
+    @Test
+    fun getClause() {
+        prototype.getClause()
+    }
+
+    @Test
+    fun getStruct() {
+        prototype.getStruct()
+    }
+
+    @Test
+    fun getIndicator() {
+        prototype.getIndicator()
+    }
+
+    @Test
+    fun getIndicatorComplainsIfIndicatorNonWellFormed() {
+        prototype.getIndicatorComplainsIfIndicatorNonWellFormed()
+    }
+
+    @Test
+    fun assertAClause() {
+        prototype.assertAClause()
+    }
+
+    @Test
+    fun assertAClauseComplainsOnBadClause() {
+        prototype.assertAClauseComplainsOnBadClause()
+    }
+
+    @Test
+    fun assertAStruct() {
+        prototype.assertAStruct()
+    }
+
+    @Test
+    fun assertACreatesNewUnlinkedInstance() {
+        prototype.assertACreatesNewUnlinkedInstance()
+    }
+
+    @Test
+    fun assertZClause() {
+        prototype.assertZClause()
+    }
+
+    @Test
+    fun assertZClauseComplainsOnBadClause() {
+        prototype.assertZClauseComplainsOnBadClause()
+    }
+
+    @Test
+    fun assertZStruct() {
+        prototype.assertZStruct()
+    }
+
+    @Test
+    fun assertZCreatesNewUnlinkedInstance() {
+        prototype.assertZCreatesNewUnlinkedInstance()
+    }
+
+    @Test
+    fun retractClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        prototype.retractClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise()
+    }
+
+    @Test
+    fun retractClauseRemovesOnlyFirstMatchingClause() {
+        prototype.retractClauseRemovesOnlyFirstMatchingClause()
+    }
+
+    @Test
+    fun retractStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        prototype.retractStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise()
+    }
+
+    @Test
+    fun retractStructRemovesOnlyFirstMatchingClause() {
+        prototype.retractStructRemovesOnlyFirstMatchingClause()
+    }
+
+    @Test
+    fun retractCreatesNewUnlinkedInstanceIfSuccessful() {
+        prototype.retractCreatesNewUnlinkedInstanceIfSuccessful()
+    }
+
+    @Test
+    fun retractReturnsSameClauseDatabaseOnFailure() {
+        prototype.retractReturnsSameClauseDatabaseOnFailure()
+    }
+
+    @Test
+    fun retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        prototype.retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise()
+    }
+
+    @Test
+    fun retractAllClauseRemovesOnlyFirstMatchingClause() {
+        prototype.retractAllClauseRemovesOnlyFirstMatchingClause()
+    }
+
+    @Test
+    fun retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
+        prototype.retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise()
+    }
+
+    @Test
+    fun retractAllStructRemovesOnlyFirstMatchingClause() {
+        prototype.retractAllStructRemovesOnlyFirstMatchingClause()
+    }
+
+    @Test
+    fun retractAllCreatesNewUnlinkedInstanceIfSuccessful() {
+        prototype.retractAllCreatesNewUnlinkedInstanceIfSuccessful()
+    }
+
+    @Test
+    fun retractAllReturnsSameClauseDatabaseOnFailure() {
+        prototype.retractAllReturnsSameClauseDatabaseOnFailure()
+    }
+
+    @Test
+    fun iteratorReturnsCorrectInstance() {
+        prototype.iteratorReturnsCorrectInstance()
+    }
+}
