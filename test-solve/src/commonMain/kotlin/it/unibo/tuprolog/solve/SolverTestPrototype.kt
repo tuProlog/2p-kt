@@ -49,11 +49,11 @@ import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalTo
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.solve.library.stdlib.primitive.*
-import it.unibo.tuprolog.solve.library.stdlib.rule.Arrow
-import it.unibo.tuprolog.solve.library.stdlib.rule.Member
-import it.unibo.tuprolog.solve.library.stdlib.rule.Not
-import it.unibo.tuprolog.solve.library.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.stdlib.rule.Member
+import it.unibo.tuprolog.solve.stdlib.rule.Not
+import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.test.assertEquals
@@ -154,7 +154,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertHasPredicateInAPI(Callable)
                 assertHasPredicateInAPI(Compound)
                 assertHasPredicateInAPI(EnsureExecutable)
-                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Float)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.stdlib.primitive.Float)
                 assertHasPredicateInAPI(Ground)
                 assertHasPredicateInAPI(Halt)
                 assertHasPredicateInAPI(Integer)
@@ -163,7 +163,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertHasPredicateInAPI(NewLine)
                 assertHasPredicateInAPI(NonVar)
                 assertHasPredicateInAPI(NotUnifiableWith)
-                assertHasPredicateInAPI(it.unibo.tuprolog.solve.library.stdlib.primitive.Number)
+                assertHasPredicateInAPI(it.unibo.tuprolog.solve.stdlib.primitive.Number)
                 assertHasPredicateInAPI(TermIdentical)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)

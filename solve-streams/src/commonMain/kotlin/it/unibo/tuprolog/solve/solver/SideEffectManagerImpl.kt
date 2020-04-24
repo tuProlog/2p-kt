@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Call
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Catch
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.stdlib.primitive.Call
+import it.unibo.tuprolog.solve.stdlib.primitive.Catch
+import it.unibo.tuprolog.solve.stdlib.primitive.Cut
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /**

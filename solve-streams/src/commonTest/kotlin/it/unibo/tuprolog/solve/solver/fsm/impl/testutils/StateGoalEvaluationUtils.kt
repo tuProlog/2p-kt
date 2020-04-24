@@ -1,9 +1,6 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
-import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -11,11 +8,14 @@ import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
+import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
+import it.unibo.tuprolog.solve.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
 
 /**
