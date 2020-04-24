@@ -17,8 +17,7 @@ interface ExecutionContext : ExecutionContextAware {
 
     /** The Prolog call stacktrace till this ExecutionContext */
     @JsName("prologStackTrace")
-    val prologStackTrace: Sequence<Struct>
+    val prologStackTrace: List<Struct>
 
     // TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
-
 }

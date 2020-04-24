@@ -19,7 +19,7 @@ internal object TuPrologRuntimeExceptionUtils {
 
     /** A context with emptySequence [ExecutionContext.prologStackTrace] field */
     internal val aContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val prologStackTrace: Sequence<Struct> = emptySequence()
+        override val prologStackTrace: List<Struct> = emptyList()
     }
 
     /** Different instance from [aContext] with same behaviour */

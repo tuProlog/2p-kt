@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
-
+import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
 data class ClassicExecutionContext(
@@ -61,9 +61,10 @@ data class ClassicExecutionContext(
         baseInterestingVars + currInterestingVars
     }
 
-    override val prologStackTrace: Sequence<Struct> by lazy {
+    override val prologStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
+            .toList()
     }
 
     override fun toString(): String {
