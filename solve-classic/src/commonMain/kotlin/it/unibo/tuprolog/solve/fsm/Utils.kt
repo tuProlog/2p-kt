@@ -1,11 +1,7 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.ClassicExecutionContext
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.appendPrimitives
-import it.unibo.tuprolog.solve.appendRules
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.EmptyCursor
 import it.unibo.tuprolog.utils.cursor

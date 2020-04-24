@@ -2,12 +2,12 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ClassicExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
 internal data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {

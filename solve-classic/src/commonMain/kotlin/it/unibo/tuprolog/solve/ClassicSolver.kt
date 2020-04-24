@@ -3,11 +3,11 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.fsm.EndState
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.solve.fsm.clone
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 internal open class ClassicSolver(
