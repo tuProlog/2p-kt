@@ -26,6 +26,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         Callable,
         Compound,
         EnsureExecutable,
+        FindAll,
         it.unibo.tuprolog.solve.stdlib.primitive.Float,
         Ground,
         Halt,

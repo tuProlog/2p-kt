@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.systemtest
 
+import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.dsl.unify.fact
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -50,9 +52,24 @@ class ClassicSolverSystemTesting : SolverFactory {
     ): MutableSolver = throw NotImplementedError()
 
     @Test
-    @Ignore
     fun entryPointForManualTests() {
-        TODO()
+        prolog {
+            val s = solverOf(
+                staticKb = theoryOf(
+                    fact { "a"(1) },
+                    fact { "a"(2) },
+                    fact { "a"(3) }
+                )
+            )
+
+            s.solve("findall"("X", "a"("X"), "Y")).forEach {
+                println(it)
+            }
+
+            s.solve("findall"(("A" and "B"), "a"("A"), "Y")).forEach {
+                println(it)
+            }
+        }
     }
 
     @Test
