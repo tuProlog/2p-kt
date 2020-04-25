@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.stdlib.function.*
 import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 
 object CommonBuiltins : AliasedLibrary by Library.of(
     alias = "prolog.lang",
@@ -27,7 +28,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         Compound,
         EnsureExecutable,
         FindAll,
-        it.unibo.tuprolog.solve.stdlib.primitive.Float,
+        FloatPrimitive,
         Ground,
         Halt,
         Integer,

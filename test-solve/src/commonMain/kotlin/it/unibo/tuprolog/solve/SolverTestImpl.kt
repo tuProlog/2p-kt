@@ -48,6 +48,7 @@ import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalTo
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
 import it.unibo.tuprolog.solve.stdlib.rule.Member
@@ -58,12 +59,12 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 
-internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by solverFactory, SolverTest {
+internal class SolverTestImpl(private val solverFactory: SolverFactory) : SolverTest {
 
     /** Test presence of correct built-ins */
     override fun testBuiltinApi() {
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
             with(solver) {
                 assertHasPredicateInAPI("!", 0)
@@ -111,7 +112,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     private fun testAssert(suffix: String, inverse: Boolean) {
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
             val assert = "assert$suffix"
 
             val query = assert("f"(1)) and
@@ -136,11 +137,11 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     }
 
     override fun testAssert() {
-        testAssert("", true)
+        testAssert("", false)
     }
 
     override fun testAssertZ() {
-        testAssert("z", true)
+        testAssert("z", false)
     }
 
     override fun testAssertA() {
@@ -150,7 +151,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     override fun testWrite() {
         val outputs = mutableListOf<String>()
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
             assertNotNull(solver.standardOutput)
 
@@ -191,7 +192,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     override fun testStandardOutput() {
         val outputs = mutableListOf<String>()
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
             assertNotNull(solver.standardOutput)
 
@@ -221,7 +222,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test `true` goal */
     override fun testTrue() {
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
             val query = truthOf(true)
             val solutions = solver.solve(query, maxDuration).toList()
 
@@ -235,9 +236,9 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [lessThan500MsGoalToSolution] */
     override fun testTimeout1() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(
+            solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = timeRelatedDatabase,
-                libraries = defaultLibraries + timeLibrary
+                otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = lessThan500MsGoalToSolution,
             maxDuration = 400L
@@ -247,9 +248,9 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [slightlyMoreThan500MsGoalToSolution] */
     override fun testTimeout2() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(
+            solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = timeRelatedDatabase,
-                libraries = defaultLibraries + timeLibrary
+                otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
             maxDuration = 1000L
@@ -259,9 +260,9 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [slightlyMoreThan1100MsGoalToSolution] */
     override fun testTimeout3() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(
+            solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = timeRelatedDatabase,
-                libraries = defaultLibraries + timeLibrary
+                otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
             maxDuration = 1700L
@@ -271,9 +272,9 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [slightlyMoreThan1800MsGoalToSolution] */
     override fun testTimeout4() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(
+            solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = timeRelatedDatabase,
-                libraries = defaultLibraries + timeLibrary
+                otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
             maxDuration = 2000L
@@ -283,7 +284,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [ifThen1ToSolution] */
     override fun testIfThen1() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKb = ifThenDatabase1),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase1),
             goalToSolutions = ifThen1ToSolution,
             maxDuration = maxDuration
         )
@@ -292,7 +293,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [ifThenElse1ToSolution] */
     override fun testIfThenElse1() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKb = ifThenDatabase1),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase1),
             goalToSolutions = ifThenElse1ToSolution,
             maxDuration = maxDuration
         )
@@ -301,7 +302,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [ifThenElse2ToSolution] */
     override fun testIfThenElse2() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKb = ifThenDatabase2),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase2),
             goalToSolutions = ifThenElse2ToSolution,
             maxDuration = maxDuration
         )
@@ -310,7 +311,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [ifThen2ToSolution] */
     override fun testIfThen2() {
         assertSolverSolutionsCorrect(
-            solver = solverOf(staticKb = ifThenDatabase2),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase2),
             goalToSolutions = ifThen2ToSolution,
             maxDuration = maxDuration
         )
@@ -319,7 +320,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
     override fun testUnification() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = simpleFactDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactDatabase),
             simpleFactDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -329,7 +330,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
     override fun testSimpleCutAlternatives() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = simpleCutDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutDatabase),
             simpleCutDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -338,7 +339,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
     override fun testCutAndConjunction() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = simpleCutAndConjunctionDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionDatabase),
             simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -347,7 +348,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
     override fun testCutConjunctionAndBacktracking() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = cutConjunctionAndBacktrackingDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingDatabase),
             cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
             maxDuration
         )
@@ -356,7 +357,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
     override fun testMaxDurationParameterAndTimeOutException() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = infiniteComputationDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationDatabase),
             infiniteComputationDatabaseNotableGoalToSolution,
             shortDuration
         )
@@ -365,7 +366,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeExample() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = prologStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleDatabase),
             prologStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -374,7 +375,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeWithCutExample() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase),
             prologStandardExampleWithCutDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -383,7 +384,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [customReverseListDatabaseNotableGoalToSolution] */
     override fun testBacktrackingWithCustomReverseListImplementation() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = customReverseListDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListDatabase),
             customReverseListDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -392,7 +393,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
     override fun testWithPrologStandardConjunctionExamples() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = conjunctionStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleDatabase),
             conjunctionStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -424,7 +425,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKb = database),
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -435,13 +436,13 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
     override fun testCallPrimitive() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = callStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleDatabase),
             callStandardExampleDatabaseGoalsToSolution,
             maxDuration
         )
 
         assertSolverSolutionsCorrect(
-            solverWithDefaultBuiltins(),
+            solverFactory.solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions,
             maxDuration
         )
@@ -456,7 +457,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKb = database),
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -467,13 +468,13 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
     override fun testCatchPrimitive() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = catchAndThrowStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowStandardExampleDatabase),
             catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
 
         assertSolverSolutionsCorrect(
-            solverWithDefaultBuiltins(),
+            solverFactory.solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
             maxDuration
         )
@@ -507,7 +508,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKb = database),
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -518,7 +519,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Halt primitive testing with [haltTestingGoalsToSolutions] */
     override fun testHaltPrimitive() {
         assertSolverSolutionsCorrect(
-            solverWithDefaultBuiltins(),
+            solverFactory.solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
             maxDuration
         )
@@ -527,7 +528,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Not rule testing with [notStandardExampleDatabaseNotableGoalToSolution] */
     override fun testNotPrimitive() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = notStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleDatabase),
             notStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -569,7 +570,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
                     }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
-                    solverOf(staticKb = database),
+                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
                     maxDuration
                 )
@@ -580,7 +581,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
     override fun testIfThenRule() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = ifThenStandardExampleDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleDatabase),
             ifThenStandardExampleDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -589,7 +590,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
     override fun testIfThenElseRule() {
         assertSolverSolutionsCorrect(
-            solverWithDefaultBuiltins(),
+            solverFactory.solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
             maxDuration
         )
@@ -598,7 +599,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
     override fun testNumbersRangeListGeneration() {
         assertSolverSolutionsCorrect(
-            solverOf(staticKb = customRangeListGeneratorDatabase),
+            solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorDatabase),
             customRangeListGeneratorDatabaseNotableGoalToSolution,
             maxDuration
         )
@@ -607,7 +608,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
     override fun testFailure() {
         // TODO: 12/11/2019 enrich this test after solving #51
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
@@ -621,7 +622,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testBasicBacktracking1() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                     { "b"(1) },
@@ -644,7 +645,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testBasicBacktracking2() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("c"("X") and "b"("X")) },
                     { "b"(2) impliedBy "!" },
@@ -665,7 +666,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testBasicBacktracking3() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
                     { "b"(2) },
@@ -687,7 +688,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testBasicBacktracking4() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
                     { "b"(2) },
@@ -709,7 +710,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testConjunction() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" and "c") },
                     { "b" },
@@ -729,7 +730,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testConjunctionOfConjunctions() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy (tupleOf("b", "c") and tupleOf("d", "e")) },
                     { "b" },
@@ -751,7 +752,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testConjunctionWithUnification() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                     { "b"(1) },
@@ -771,7 +772,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testDisjunction() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a" impliedBy ("b" or "c") },
                     { "b" },
@@ -790,7 +791,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testDisjunctionWithUnification() {
         prolog {
-            val solver = solverOf(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") or "c"("X")) },
                     { "b"(1) },
@@ -813,7 +814,7 @@ internal class SolverTestImpl(solverFactory: SolverFactory) : SolverFactory by s
 
     override fun testMember() {
         prolog {
-            val solver = solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
             val constants = kotlin.collections.listOf("a", "b", "c")
             val goal = "member"("X", constants.toTerm())

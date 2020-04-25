@@ -16,8 +16,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
 
     private val prototype = SolverTest.prototype(this)
 
-    override val defaultBuiltins: AliasedLibrary
-        get() = DefaultBuiltins
+    override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,
@@ -28,7 +27,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = ClassicSolverFactory.solverOf(
+    ) = Solver.classic(
         libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
 
@@ -41,12 +40,11 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableSolver = ClassicSolverFactory.mutableSolverOf(
+    ) = MutableSolver.classic(
         libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
 
     @Test
-    @Ignore
     fun entryPointForManualTests() {
         prolog {
             val s = solverOf(

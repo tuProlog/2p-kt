@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -11,15 +10,12 @@ import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-abstract class StreamsSolverSystemTesting : SolverFactory, SolverTest {
+class StreamsSolverSystemTesting : SolverFactory, SolverTest {
 
     private val prototype = SolverTest.prototype(this)
 
-    override val defaultBuiltins: AliasedLibrary
-        get() = DefaultBuiltins
+    override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,
@@ -30,7 +26,7 @@ abstract class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = Solver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = Solver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         libraries: Libraries,
@@ -41,7 +37,7 @@ abstract class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableSolver = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 
     @Test
