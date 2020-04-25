@@ -64,12 +64,10 @@ import kotlin.collections.listOf as ktListOf
 /** A prototype class for testing solver implementations */
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
-
-
     /** Test presence of correct built-ins */
     fun testBuiltinApi() {
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
 
             with(solver) {
                 assertHasPredicateInAPI("!", 0)
@@ -117,7 +115,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
     private fun testAssert(suffix: String, inverse: Boolean) {
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
             val assert = "assert$suffix"
 
             val query = assert("f"(1)) and
@@ -156,7 +154,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testWrite() {
         val outputs = mutableListOf<String>()
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
 
             assertNotNull(solver.standardOutput)
 
@@ -189,7 +187,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testStandardOutput() {
         val outputs = mutableListOf<String>()
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
 
             assertNotNull(solver.standardOutput)
 
@@ -219,7 +217,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Test `true` goal */
     fun testTrue() {
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
             val query = truthOf(true)
             val solutions = solver.solve(query).toList()
 
@@ -439,7 +437,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         )
 
         assertSolverSolutionsCorrect(
-            solverOf(),
+            solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions,
             maxDuration
         )
@@ -471,7 +469,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
         )
 
         assertSolverSolutionsCorrect(
-            solverOf(),
+            solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
             maxDuration
         )
@@ -515,7 +513,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** Halt primitive testing with [haltTestingGoalsToSolutions] */
     fun testHaltPrimitive(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(),
+            solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
             maxDuration
         )
@@ -582,7 +580,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
     fun testIfThenElseRule(maxDuration: TimeDuration = 500L) {
         assertSolverSolutionsCorrect(
-            solverOf(),
+            solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
             maxDuration
         )
@@ -600,7 +598,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
     fun testFailure(maxDuration: TimeDuration = 500L) {
         // TODO: 12/11/2019 enrich this test after solving #51
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
             val query = atomOf("a")
             val solutions = solver.solve(query, maxDuration).toList()
 
@@ -778,7 +776,7 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
 
     fun testMember(maxDuration: TimeDuration = 500L) {
         prolog {
-            val solver = solverOf()
+            val solver = solverWithDefaultBuiltins()
 
             val constants = ktListOf("a", "b", "c")
             val goal = "member"("X", constants.toTerm())
