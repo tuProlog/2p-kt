@@ -14,7 +14,7 @@ internal class ListedClauseDatabase
     }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-        ListedClauseDatabase(clauses.asIterable() + clauseDatabase.asIterable())
+        ListedClauseDatabase(clauses.asIterable() + checkClausesCorrect(clauseDatabase.clauses))
 
     override fun get(clause: Clause): Sequence<Clause> =
         //TODO check validity and performances impact
@@ -34,7 +34,7 @@ internal class ListedClauseDatabase
             retractability.none() -> RetractResult.Failure(this)
             else -> {
                 val toBeActuallyRetracted = retractability.first()
-                val newTheory = clauses.filter { it == toBeActuallyRetracted }
+                val newTheory = clauses.filter { it != toBeActuallyRetracted }
                 RetractResult.Success(ListedClauseDatabase(newTheory), listOf(toBeActuallyRetracted))
             }
         }
@@ -48,8 +48,8 @@ internal class ListedClauseDatabase
             else -> {
                 //TODO check validity and performances impact
                 val partitionedClauses = clauses.toList().partition { it matches clause }
-                val newTheory = partitionedClauses.first
-                val toBeActuallyRetracted = partitionedClauses.second
+                val newTheory = partitionedClauses.second
+                val toBeActuallyRetracted = partitionedClauses.first
                 RetractResult.Success(ListedClauseDatabase(newTheory), toBeActuallyRetracted)
             }
         }
