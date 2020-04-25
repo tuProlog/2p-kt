@@ -14,20 +14,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class StreamsSolverSystemTesting : SolverFactory {
+abstract class StreamsSolverSystemTesting : SolverFactory, SolverTest {
 
-    /** A short test max duration */
-    private val shortDuration = 200L
-
-    /** A medium test max duration */
-    private val mediumDuration = shortDuration * 2
-
-    /** A long test max duration */
-    private val longDuration = mediumDuration * 2
-
-    private val prototype = SolverTestPrototype(this)
-
-    override val defaultLibraries: Libraries = Libraries(DefaultBuiltins)
+    private val prototype = SolverTest.prototype(this)
 
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
@@ -54,263 +43,240 @@ class StreamsSolverSystemTesting : SolverFactory {
         warnings: OutputChannel<PrologWarning>
     ): MutableSolver = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
-    @Test
-    @Ignore
-    fun entryPointForManualTests() {
-        prolog {
-            val solver = solverOf(
-                libraries = defaultLibraries
-            )
-
-            val prints = mutableListOf<String>()
-
-            solver.standardOutput?.addListener { prints.add(it) }
-
-            val query = "write"("hello world") and "nl" and "assert"("a") and "true" and "a"
-
-            solver.solve(query).forEach(::println)
-
-            assertEquals("hello world", prints[0])
-            assertEquals("\n", prints[1])
-            assertTrue {
-                solver.dynamicKb.contains(atomOf("a"))
-            }
-        }
-    }
 
     @Test
-    fun testAssert() {
+    override fun testAssert() {
         prototype.testAssert()
     }
 
     @Test
-    fun testAssertZ() {
+    override fun testAssertZ() {
         prototype.testAssertZ()
     }
 
     @Test
     @Ignore
-    fun testAssertA() {
+    override fun testAssertA() {
         prototype.testAssertA()
     }
 
     @Test
-    fun testWrite() {
+    override fun testWrite() {
         prototype.testWrite()
     }
 
     @Test
-    fun testStandardOutput() {
+    override fun testStandardOutput() {
         prototype.testStandardOutput()
     }
 
     @Test
-    fun testTrue() {
+    override fun testTrue() {
         prototype.testTrue()
     }
 
     @Test
     @Ignore
-    fun testIfThen1() {
+    override fun testIfThen1() {
         prototype.testIfThen1()
     }
 
     @Test
     @Ignore
-    fun testIfThen2() {
+    override fun testIfThen2() {
         prototype.testIfThen2()
     }
 
     @Test
     @Ignore
-    fun testIfThenElse1() {
+    override fun testIfThenElse1() {
         prototype.testIfThenElse1()
     }
 
     @Test
     @Ignore
-    fun testIfThenElse2() {
+    override fun testIfThenElse2() {
         prototype.testIfThenElse2()
     }
 
 
     @Test
-    fun testTimeout1() {
+    override fun testTimeout1() {
         prototype.testTimeout1()
     }
 
     @Test
-    fun testTimeout2() {
+    override fun testTimeout2() {
         prototype.testTimeout2()
     }
 
     @Test
-    fun testTimeout3() {
+    override fun testTimeout3() {
         prototype.testTimeout3()
     }
 
     @Test
-    fun testTimeout4() {
+    override fun testTimeout4() {
         prototype.testTimeout4()
     }
 
     @Test
-    fun testUnification() {
-        prototype.testUnification(mediumDuration)
+    override fun testUnification() {
+        prototype.testUnification()
     }
 
     @Test
-    fun testSimpleCutAlternatives() {
-        prototype.testSimpleCutAlternatives(mediumDuration)
+    override fun testSimpleCutAlternatives() {
+        prototype.testSimpleCutAlternatives()
     }
 
     @Test
-    fun testCutAndConjunction() {
-        prototype.testCutAndConjunction(mediumDuration)
+    override fun testCutAndConjunction() {
+        prototype.testCutAndConjunction()
     }
 
     @Test
-    fun testCutConjunctionAndBacktracking() {
-        prototype.testCutConjunctionAndBacktracking(mediumDuration)
+    override fun testCutConjunctionAndBacktracking() {
+        prototype.testCutConjunctionAndBacktracking()
     }
 
     @Test
-    fun testMaxDurationParameterAndTimeOutException() {
-        prototype.testMaxDurationParameterAndTimeOutException(mediumDuration)
+    override fun testMaxDurationParameterAndTimeOutException() {
+        prototype.testMaxDurationParameterAndTimeOutException()
     }
 
     @Test
-    fun testPrologStandardSearchTreeExample() {
-        prototype.testPrologStandardSearchTreeExample(mediumDuration)
+    override fun testPrologStandardSearchTreeExample() {
+        prototype.testPrologStandardSearchTreeExample()
     }
 
     @Test
-    fun testPrologStandardSearchTreeWithCutExample() {
-        prototype.testPrologStandardSearchTreeWithCutExample(mediumDuration)
+    override fun testPrologStandardSearchTreeWithCutExample() {
+        prototype.testPrologStandardSearchTreeWithCutExample()
     }
 
     @Test
-    fun testBacktrackingWithCustomReverseListImplementation() {
-        prototype.testBacktrackingWithCustomReverseListImplementation(mediumDuration)
+    override fun testBacktrackingWithCustomReverseListImplementation() {
+        prototype.testBacktrackingWithCustomReverseListImplementation()
     }
 
     @Test
-    fun testWithPrologStandardConjunctionExamples() {
-        prototype.testWithPrologStandardConjunctionExamples(mediumDuration)
+    override fun testWithPrologStandardConjunctionExamples() {
+        prototype.testWithPrologStandardConjunctionExamples()
     }
 
     @Test
-    fun testConjunctionProperties() {
-        prototype.testConjunctionProperties(shortDuration)
+    override fun testConjunctionProperties() {
+        prototype.testConjunctionProperties()
     }
 
     @Test
-    fun testCallPrimitive() {
-        prototype.testCallPrimitive(mediumDuration)
+    override fun testCallPrimitive() {
+        prototype.testCallPrimitive()
     }
 
     @Test
-    fun testCallPrimitiveTransparency() {
-        prototype.testCallPrimitiveTransparency(mediumDuration)
+    override fun testCallPrimitiveTransparency() {
+        prototype.testCallPrimitiveTransparency()
     }
 
     @Test
-    fun testCatchPrimitive() {
-        prototype.testCatchPrimitive(mediumDuration)
+    override fun testCatchPrimitive() {
+        prototype.testCatchPrimitive()
     }
 
     @Test
-    fun testCatchPrimitiveTransparency() {
-        prototype.testCatchPrimitiveTransparency(mediumDuration)
+    override fun testCatchPrimitiveTransparency() {
+        prototype.testCatchPrimitiveTransparency()
     }
 
     @Test
-    fun testHaltPrimitive() {
-        prototype.testHaltPrimitive(mediumDuration)
+    override fun testHaltPrimitive() {
+        prototype.testHaltPrimitive()
     }
 
     @Test
-    fun testNotPrimitive() {
-        prototype.testNotPrimitive(mediumDuration)
+    override fun testNotPrimitive() {
+        prototype.testNotPrimitive()
     }
 
     @Test
-    fun testNotModularity() {
-        prototype.testNotModularity(shortDuration)
+    override fun testNotModularity() {
+        prototype.testNotModularity()
     }
 
     @Test
-    fun testIfThenRule() {
-        prototype.testIfThenRule(mediumDuration)
+    override fun testIfThenRule() {
+        prototype.testIfThenRule()
     }
 
     @Test
-    fun testIfTheElseRule() {
-        prototype.testIfThenElseRule(mediumDuration)
+    override fun testIfThenElseRule() {
+        prototype.testIfThenElseRule()
     }
 
     @Test
-    fun testNumbersRangeListGeneration() {
-        prototype.testNumbersRangeListGeneration(mediumDuration)
+    override fun testNumbersRangeListGeneration() {
+        prototype.testNumbersRangeListGeneration()
     }
 
     @Test
-    fun testConjunction() {
-        prototype.testConjunction(mediumDuration)
+    override fun testConjunction() {
+        prototype.testConjunction()
     }
 
     @Test
-    fun testConjunctionWithUnification() {
-        prototype.testConjunctionWithUnification(mediumDuration)
+    override fun testConjunctionWithUnification() {
+        prototype.testConjunctionWithUnification()
     }
 
     @Test
-    fun testBuiltinApi() {
+    override fun testBuiltinApi() {
         prototype.testBuiltinApi()
     }
 
     @Test
-    fun testDisjunction() {
-        prototype.testDisjunction(mediumDuration)
+    override fun testDisjunction() {
+        prototype.testDisjunction()
     }
 
     @Test
-    fun testFailure() {
-        prototype.testFailure(mediumDuration)
+    override fun testFailure() {
+        prototype.testFailure()
     }
 
     @Test
-    fun testDisjunctionWithUnification() {
-        prototype.testDisjunctionWithUnification(mediumDuration)
+    override fun testDisjunctionWithUnification() {
+        prototype.testDisjunctionWithUnification()
     }
 
     @Test
-    fun testConjunctionOfConjunctions() {
-        prototype.testConjunctionOfConjunctions(mediumDuration)
+    override fun testConjunctionOfConjunctions() {
+        prototype.testConjunctionOfConjunctions()
     }
 
     @Test
-    fun testMember() {
-        prototype.testMember(mediumDuration)
+    override fun testMember() {
+        prototype.testMember()
     }
 
     @Test
-    fun testBasicBacktracking1() {
-        prototype.testBasicBacktracking1(mediumDuration)
+    override fun testBasicBacktracking1() {
+        prototype.testBasicBacktracking1()
     }
 
     @Test
-    fun testBasicBacktracking2() {
-        prototype.testBasicBacktracking2(mediumDuration)
+    override fun testBasicBacktracking2() {
+        prototype.testBasicBacktracking2()
     }
 
     @Test
-    fun testBasicBacktracking3() {
-        prototype.testBasicBacktracking3(mediumDuration)
+    override fun testBasicBacktracking3() {
+        prototype.testBasicBacktracking3()
     }
 
     @Test
-    fun testBasicBacktracking4() {
-        prototype.testBasicBacktracking4(mediumDuration)
+    override fun testBasicBacktracking4() {
+        prototype.testBasicBacktracking4()
     }
 }
