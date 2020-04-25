@@ -64,65 +64,7 @@ import kotlin.collections.listOf as ktListOf
 /** A prototype class for testing solver implementations */
 class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solverFactory {
 
-    private inline val loggingOn get() = false
 
-    /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
-    private fun assertSolverSolutionsCorrect(
-        solver: Solver,
-        goalToSolutions: List<Pair<Struct, List<Solution>>>,
-        maxDuration: TimeDuration
-    ) {
-        goalToSolutions.forEach { (goal, solutionList) ->
-            if (loggingOn) solver.logDatabases()
-
-            val solutions = solver.solve(goal, maxDuration).toList()
-            assertSolutionEquals(solutionList, solutions)
-
-            if (loggingOn) logGoalAndSolutions(goal, solutions)
-        }
-    }
-
-    private fun Solver.assertHasPredicateInAPI(rule: RuleWrapper<*>) {
-        assertHasPredicateInAPI(rule.signature)
-    }
-
-    private fun Solver.assertHasPredicateInAPI(primitive: PrimitiveWrapper<*>) {
-        assertHasPredicateInAPI(primitive.signature)
-    }
-
-    private fun Solver.assertHasPredicateInAPI(signature: Signature) {
-        assertHasPredicateInAPI(signature.name, signature.arity, signature.vararg)
-    }
-
-    private fun Solver.assertHasPredicateInAPI(functor: String, arity: Int, vararg: Boolean = false) {
-        val varargMsg = if (vararg) "(vararg) " else ""
-        assertTrue("Missing predicate $functor/$arity ${varargMsg}in solver API") {
-            Signature(functor, arity, vararg) in libraries
-        }
-        if (loggingOn) println("Solver has predicate $functor/$arity ${varargMsg}in its API")
-    }
-
-    /** Utility function to log loaded Solver databases */
-    private fun Solver.logDatabases() {
-        println(if (staticKb.clauses.any()) staticKb.toString(true) else "")
-        println(if (dynamicKb.clauses.any()) dynamicKb.toString(true) else "")
-    }
-
-    /** Utility function to log passed goal and solutions */
-    private fun logGoalAndSolutions(goal: Struct, solutions: Iterable<Solution>) {
-        println("?- ${goal}.")
-        solutions.forEach {
-            when (it) {
-                is Solution.Yes -> {
-                    println("yes.\n\t${it.solvedQuery}")
-                    it.substitution.forEach { vt -> println("\t${vt.key} / ${vt.value}") }
-                }
-                is Solution.Halt -> println("halt.\n\t${it.exception}")
-                is Solution.No -> println("no.")
-            }
-        }
-        println("".padEnd(80, '-'))
-    }
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi() {
@@ -170,7 +112,6 @@ class SolverTestPrototype(solverFactory: SolverFactory) : SolverFactory by solve
                 assertHasPredicateInAPI(Var)
                 assertHasPredicateInAPI(Write)
             }
-
         }
     }
 
