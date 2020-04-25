@@ -4,7 +4,7 @@ import kotlin.test.Test
 
 internal class ListedRetractResultTest {
 
-    private val prototype: RetractResultTestPrototype = RetractResultTestPrototype(
+    private val prototype: PrototypeRetractResultTest = PrototypeRetractResultTest(
         ClauseDatabase.Companion::emptyListed,
         ClauseDatabase.Companion::listedOf
     )

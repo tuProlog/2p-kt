@@ -4,7 +4,7 @@ import kotlin.test.Test
 
 internal class IndexedRetractResultTest {
 
-    private val prototype: RetractResultTestPrototype = RetractResultTestPrototype(
+    private val prototype: PrototypeRetractResultTest = PrototypeRetractResultTest(
         ClauseDatabase.Companion::emptyIndexed,
         ClauseDatabase.Companion::indexedOf
     )

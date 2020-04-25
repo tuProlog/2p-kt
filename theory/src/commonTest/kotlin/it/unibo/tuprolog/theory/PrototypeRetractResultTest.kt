@@ -12,7 +12,7 @@ import kotlin.test.assertFailsWith
  *
  * @author Enrico
  */
-internal class RetractResultTestPrototype(
+internal class PrototypeRetractResultTest(
     private val emptyClauseDbGenerator: () -> ClauseDatabase,
     private val clauseDbGenerator: (Iterable<Clause>) -> ClauseDatabase
 ) {
