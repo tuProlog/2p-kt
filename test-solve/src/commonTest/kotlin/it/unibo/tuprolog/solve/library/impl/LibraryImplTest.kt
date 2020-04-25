@@ -73,7 +73,7 @@ internal class LibraryImplTest {
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
         val library =
-            LibraryImpl(OperatorSet(), ClauseDatabase.of(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+            LibraryImpl(OperatorSet(), ClauseDatabase.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
 
         assertTrue { Signature("f", 1, false) in library }
         assertFalse { Signature("f", 1, true) in library }

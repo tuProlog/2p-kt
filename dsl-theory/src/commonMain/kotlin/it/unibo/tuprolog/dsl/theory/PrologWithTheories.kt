@@ -9,7 +9,7 @@ import kotlin.js.JsName
 interface PrologWithTheories : PrologWithUnification {
     @JsName("theoryOf")
     fun theoryOf(vararg clause: Clause): ClauseDatabase {
-        return ClauseDatabase.of(*clause)
+        return ClauseDatabase.indexedOf(*clause)
     }
 
     @JsName("theory")

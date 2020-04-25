@@ -13,7 +13,7 @@ interface ClausesParser {
 
     @JsName("parseClauseDatabaseWithOperators")
     fun parseClauseDatabase(input: String, operators: OperatorSet): ClauseDatabase =
-        ClauseDatabase.of(parseClausesLazily(input, operators))
+        ClauseDatabase.indexedOf(parseClausesLazily(input, operators))
 
     @JsName("parseClauseDatabase")
     fun parseClauseDatabase(input: String): ClauseDatabase =
