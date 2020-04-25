@@ -4,7 +4,7 @@ import kotlin.test.Test
 
 internal class IndexedClauseDatabaseCreationTest {
 
-    private val prototype: ClauseDatabaseCreationTestPrototype = ClauseDatabaseCreationTestPrototype(
+    private val prototype: PrototypeClauseDatabaseCreationTest = PrototypeClauseDatabaseCreationTest(
         ClauseDatabase.Companion::emptyIndexed,
         { ClauseDatabase.indexedOf(*it) },
         ClauseDatabase.Companion::indexedOf,

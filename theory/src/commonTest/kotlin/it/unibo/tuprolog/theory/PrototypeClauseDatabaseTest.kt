@@ -10,7 +10,7 @@ import kotlin.test.*
  *
  * @author Enrico
  */
-class ClauseDatabaseTestPrototype(
+class PrototypeClauseDatabaseTest(
     private val emptyClauseDbGenerator: () -> ClauseDatabase,
     private val clauseDbGenerator: (Iterable<Clause>) -> ClauseDatabase
 ) {

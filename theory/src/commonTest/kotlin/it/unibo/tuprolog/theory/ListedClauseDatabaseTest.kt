@@ -5,7 +5,7 @@ import kotlin.test.Test
 
 internal class ListedClauseDatabaseTest {
 
-    private val prototype = ClauseDatabaseTestPrototype(
+    private val prototype = PrototypeClauseDatabaseTest(
         ClauseDatabase.Companion::emptyListed,
         ClauseDatabase.Companion::listedOf
     )

@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
  *
  * @author Enrico
  */
-internal class ClauseDatabaseCreationTestPrototype(
+internal class PrototypeClauseDatabaseCreationTest(
     private val emptyClauseDbConstructor: () -> ClauseDatabase,
     private val clauseDbConstructorFromArray: (Array<Clause>) -> ClauseDatabase,
     private val clauseDbConstructorFromIterable: (Iterable<Clause>) -> ClauseDatabase,
