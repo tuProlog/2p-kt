@@ -15,8 +15,7 @@ internal data class FunctorNode(
     override fun put(element: Rule, beforeOthers: Boolean) {
         if (functor == element.head.functor) {
             val a = element.head.arity
-            children.getOrPut(a) { ArityNode(a) }
-                .put(element, beforeOthers)
+            children.getOrPut(a) { ArityNode(a) }.put(element, beforeOthers)
         }
     }
 

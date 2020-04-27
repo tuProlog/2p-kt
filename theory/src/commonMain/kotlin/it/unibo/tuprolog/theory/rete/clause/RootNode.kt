@@ -19,11 +19,11 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
                 @Suppress("UNCHECKED_CAST")
                 children.getOrPut(null) { DirectiveNode() as ReteNode<*, Clause> }
 
-            is Rule -> with(element.head.functor) {
+            is Rule -> element.head.functor.let {
 
                 // safe cast because accessing children[functor] is only for inserting rules
                 @Suppress("UNCHECKED_CAST")
-                children.getOrPut(this) { FunctorNode(this) as ReteNode<*, Clause> }
+                children.getOrPut(it) { FunctorNode(it) as ReteNode<*, Clause> }
 
             }
 
@@ -32,13 +32,14 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
         }?.put(element, beforeOthers)
     }
 
-    override fun selectChildren(element: Clause) = sequenceOf(
-        when (element) {
-            is Directive -> children[null]
-            is Rule -> children[element.head.functor]
-            else -> null
-        }
-    )
+    override fun selectChildren(element: Clause): Sequence<ReteNode<*, Clause>?> =
+        sequenceOf(
+            when (element) {
+                is Directive -> children[null]
+                is Rule -> children[element.head.functor]
+                else -> null
+            }
+        )
 
     override fun removeWithNonZeroLimit(element: Clause, limit: Int): Sequence<Clause> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
