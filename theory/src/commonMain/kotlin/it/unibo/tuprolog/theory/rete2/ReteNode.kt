@@ -4,7 +4,9 @@ package it.unibo.tuprolog.theory.rete2
 internal interface ReteNode<K, E> {
 
     /** All direct children of this node */
-    val children: MutableMap<K, ReteNode<*, E>>
+    val childrenMap: MutableMap<K, ReteNode<*, E>>
+
+    //val childrenList: MutableList<ReteNode<*, E>>
 
     /** All indexed elements by this node and its children */
     val indexedElements: Sequence<E>

@@ -3,8 +3,9 @@ package it.unibo.tuprolog.theory.rete2
 import kotlin.math.min
 
 /** A leaf Rete Node */
-internal abstract class AbstractLeafReteNode<E>(override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf()) :
-    AbstractReteNode<Nothing, E>(children) {
+internal abstract class AbstractLeafReteNode<E>(
+    override val childrenMap: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf()
+) : AbstractReteNode<Nothing, E>(childrenMap) {
 
     /** Internal data structure to store leaf elements */
     protected abstract val leafElements: MutableList<E>
@@ -19,14 +20,17 @@ internal abstract class AbstractLeafReteNode<E>(override val children: MutableMa
             leafElements.add(element)
     }
 
-    override fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E> =
+    override fun removeWithLimit(element: E, limit: Int): Sequence<E> =
         get(element)
             .take(if (limit > 0) min(limit, leafElements.count()) else leafElements.count())
-            .toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
+            .toList()
+            .asSequence()
             .also { leafElements.removeAll(it) }
 
     override fun removeAll(element: E): Sequence<E> =
-        get(element).toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
+        get(element)
+            .toList()
+            .asSequence()
             .also { leafElements.removeAll(it) }
 
     override fun toString(treefy: Boolean): String =

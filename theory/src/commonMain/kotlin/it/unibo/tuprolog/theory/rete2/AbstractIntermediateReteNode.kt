@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.theory.rete2
 
 /** A non-leaf Rete Node */
-internal abstract class AbstractIntermediateReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
-    AbstractReteNode<K, E>(children) {
+internal abstract class AbstractIntermediateReteNode<K, E>(override val childrenMap: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
+    AbstractReteNode<K, E>(childrenMap) {
 
     override val indexedElements: Sequence<E>
-        get() = children.asSequence().flatMap { it.value.indexedElements }
+        get() = childrenMap.asSequence().flatMap { it.value.indexedElements }
 
     /** Selects correct children, according to [element], onto which to propagate received method calls */
     protected abstract fun selectChildren(element: E): Sequence<ReteNode<*, E>?>
@@ -34,7 +34,8 @@ internal abstract class AbstractIntermediateReteNode<K, E>(override val children
         limit: Int,
         operation: (acc: R, T) -> R
     ) =
-        if (limit < 0) fold(initial, operation)
+        if (limit < 0)
+            fold(initial, operation)
         else
             fold(initial) { accumulator, element ->
                 if (accumulator.count() < limit)

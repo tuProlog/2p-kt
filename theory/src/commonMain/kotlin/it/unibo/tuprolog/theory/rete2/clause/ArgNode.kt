@@ -10,8 +10,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 internal data class ArgNode(
     private val index: Int,
     private val term: Term,
-    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
-) : AbstractIntermediateReteNode<Term?, Rule>(children) {
+    override val childrenMap: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
+) : AbstractIntermediateReteNode<Term?, Rule>(childrenMap) {
 
     init {
         require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
@@ -23,27 +23,27 @@ internal data class ArgNode(
         index < element.head.arity - 1 -> { // if more arguments after "index" arg
             val nextArg = element.head[index + 1]
 
-            val child = children.getOrElse(nextArg) {
-                children.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
+            val child = childrenMap.getOrElse(nextArg) {
+                childrenMap.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
                     .singleOrNull()
             }
 
-            child ?: ArgNode(index + 1, nextArg).also { children[nextArg] = it }
+            child ?: ArgNode(index + 1, nextArg).also { childrenMap[nextArg] = it }
         }
 
-        else -> children.getOrPut(null) { RuleNode() }
+        else -> childrenMap.getOrPut(null) { RuleNode() }
 
     }.put(element, beforeOthers)
 
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = when {
         index < element.head.arity - 1 -> {
             val nextArg = element.head[index + 1]
-            children.retrieve<ArgNode> { head -> head != null && head matches nextArg }
+            childrenMap.retrieve<ArgNode> { head -> head != null && head matches nextArg }
         }
-        else -> sequenceOf(children[null])
+        else -> sequenceOf(childrenMap[null])
     }
 
-    override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
+    override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
         selectChildren(element)
             .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
                 yetRemoved.also {
@@ -61,5 +61,5 @@ internal data class ArgNode(
                 }
             }.asSequence()
 
-    override fun deepCopy(): ArgNode = ArgNode(index, term, children.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): ArgNode = ArgNode(index, term, childrenMap.deepCopy({ it }, { it.deepCopy() }))
 }

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory.rete2
 import kotlin.jvm.JvmStatic
 
 /** Abstract base class for Rete Tree nodes */
-internal abstract class AbstractReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
+internal abstract class AbstractReteNode<K, E>(override val childrenMap: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
     ReteNode<K, E> {
 
     /** Description for current Rete Tree Node */
@@ -11,22 +11,22 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
 
     override fun remove(element: E, limit: Int): Sequence<E> = when (limit) {
         0 -> emptySequence()
-        else -> removeWithNonZeroLimit(element, limit)
+        else -> removeWithLimit(element, limit)
     }
 
     /** Called when a non-zero-limit removal is required inside a node */
-    protected abstract fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E>
+    protected abstract fun removeWithLimit(element: E, limit: Int): Sequence<E>
 
     override fun removeAll(element: E): Sequence<E> = remove(element, Int.MAX_VALUE)
 
     override fun toString(treefy: Boolean): String =
         if (treefy)
             "$header {" +
-                    children.values.joinToString(",\n\t", "\n\t", "\n") {
+                    childrenMap.values.joinToString(",\n\t", "\n\t", "\n") {
                         it.toString(treefy).replace("\n", "\n\t")
                     } + "}"
         else
-            "$header {${children.values.joinToString(","){
+            "$header {${childrenMap.values.joinToString(","){
                 it.toString()
             }}"
 

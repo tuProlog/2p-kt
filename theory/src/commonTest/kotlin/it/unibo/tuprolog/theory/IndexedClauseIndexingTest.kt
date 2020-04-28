@@ -13,6 +13,12 @@ internal class IndexedClauseIndexingTest {
     fun init() {}
 
     @Test
+    fun dedicatedMain() {
+        //TODO REMOVE
+        prototype.dedicatedMain()
+    }
+
+    @Test
     fun correctIndexingOverDedicatedClauseDatabase() {
         prototype.correctIndexingOverDedicatedClauseDatabase()
     }
