@@ -11,7 +11,7 @@ internal class IssueClauseDatabase private constructor(private val reteTree: Ret
         checkClausesCorrect(clauses)
     }
 
-    override val clauses: List<Clause> by lazy { reteTree.indexedElements.toList() }
+    override val clauses: Iterable<Clause> by lazy { reteTree.indexedElements.toList() }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
         IssueClauseDatabase(clauses + checkClausesCorrect(clauseDatabase.clauses))

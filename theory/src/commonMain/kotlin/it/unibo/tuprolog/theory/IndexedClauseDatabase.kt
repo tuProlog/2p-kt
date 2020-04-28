@@ -3,7 +3,6 @@ package it.unibo.tuprolog.theory
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.rete.ReteNode
 import it.unibo.tuprolog.theory.rete.clause.ReteTree
-import kotlin.collections.List as KtList
 
 internal class IndexedClauseDatabase private constructor(private val reteTree: ReteNode<*, Clause>) : AbstractClauseDatabase() {
 
@@ -12,7 +11,7 @@ internal class IndexedClauseDatabase private constructor(private val reteTree: R
         checkClausesCorrect(clauses)
     }
 
-    override val clauses: KtList<Clause> by lazy { reteTree.indexedElements.toList() }
+    override val clauses: Iterable<Clause> by lazy { reteTree.indexedElements.toList() }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
         IndexedClauseDatabase(clauses + checkClausesCorrect(clauseDatabase.clauses))
