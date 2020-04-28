@@ -150,5 +150,30 @@ interface ClauseDatabase : Iterable<Clause> {
         @JvmStatic
         @JsName("listedOfIterable")
         fun listedOf(clauses: Iterable<Clause>): ClauseDatabase = ListedClauseDatabase(clauses)
+
+        /** Creates an empty ClauseDatabase */
+        @JvmStatic
+        @JsName("emptyIssue")
+        fun emptyIssue(): ClauseDatabase = issueOf(emptySequence())
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("issueOf")
+        fun issueOf(vararg clause: Clause): ClauseDatabase = issueOf(clause.asIterable())
+
+        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        @JvmStatic
+        @JsName("issueOfScopes")
+        fun issueOf(vararg clause: Scope.() -> Clause): ClauseDatabase = issueOf(clause.map { Scope.empty(it) })
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("issueOfSequence")
+        fun issueOf(clauses: Sequence<Clause>): ClauseDatabase = issueOf(clauses.asIterable())
+
+        /** Creates a ClauseDatabase with given clauses */
+        @JvmStatic
+        @JsName("issueOfIterable")
+        fun issueOf(clauses: Iterable<Clause>): ClauseDatabase = IssueClauseDatabase(clauses)
     }
 }

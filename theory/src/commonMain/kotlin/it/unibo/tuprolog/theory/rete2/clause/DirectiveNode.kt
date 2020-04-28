@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.theory.rete2.clause
 
 import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.theory.rete.AbstractLeafReteNode
+import it.unibo.tuprolog.theory.rete2.AbstractLeafReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Directive]s */
