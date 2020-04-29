@@ -28,7 +28,7 @@ dependencies {
 repositories {
     mavenCentral()
     jcenter()
-    maven("https://kotlin.bintray.com/kotlinx/")
+    maven(Repos.kotlinx)
 }
 
 // env ORG_GRADLE_PROJECT_orchidBaseUrl
