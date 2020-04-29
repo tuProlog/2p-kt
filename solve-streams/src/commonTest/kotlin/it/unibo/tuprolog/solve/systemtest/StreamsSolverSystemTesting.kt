@@ -17,6 +17,9 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
 
     override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
 
+//    override val maxDuration: TimeDuration
+//        get() = mediumDuration
+
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
