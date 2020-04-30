@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule

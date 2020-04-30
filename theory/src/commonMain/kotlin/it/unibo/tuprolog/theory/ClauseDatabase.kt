@@ -94,86 +94,77 @@ interface ClauseDatabase : Iterable<Clause> {
 
     companion object {
 
-        private val EMPTY: ClauseDatabase = indexedOf(emptySequence())
+        private val EMPTY: ClauseDatabase =
+            indexedOf(emptySequence())
 
         /** Creates an empty ClauseDatabase */
         @JvmStatic
         @JsName("empty")
-        fun empty(): ClauseDatabase = EMPTY
+        fun empty(): ClauseDatabase =
+            EMPTY
 
         /** Creates an empty ClauseDatabase */
         @JvmStatic
         @JsName("emptyIndexed")
-        fun emptyIndexed(): ClauseDatabase = indexedOf(emptyList())
+        fun emptyIndexed(): ClauseDatabase =
+            indexedOf(emptyList())
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("indexedOf")
-        fun indexedOf(vararg clause: Clause): ClauseDatabase = indexedOf(clause.asIterable())
+        fun indexedOf(vararg clause: Clause): ClauseDatabase =
+            indexedOf(clause.asIterable())
 
         /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("indexedOfScopes")
-        fun indexedOf(vararg clause: Scope.() -> Clause): ClauseDatabase = indexedOf(clause.map { Scope.empty(it) })
+        fun indexedOf(vararg clause: Scope.() -> Clause): ClauseDatabase =
+            indexedOf(clause.map {
+                Scope.empty(it)
+            })
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("indexedOfSequence")
-        fun indexedOf(clauses: Sequence<Clause>): ClauseDatabase = indexedOf(clauses.asIterable())
+        fun indexedOf(clauses: Sequence<Clause>): ClauseDatabase =
+            indexedOf(clauses.asIterable())
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("indexedOfIterable")
-        fun indexedOf(clauses: Iterable<Clause>): ClauseDatabase = IndexedClauseDatabase(clauses)
+        fun indexedOf(clauses: Iterable<Clause>): ClauseDatabase =
+            IndexedClauseDatabase(clauses)
 
         /** Creates an empty ClauseDatabase */
         @JvmStatic
         @JsName("emptyListed")
-        fun emptyListed(): ClauseDatabase = listedOf(emptySequence())
+        fun emptyListed(): ClauseDatabase =
+            listedOf(emptySequence())
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("listedOf")
-        fun listedOf(vararg clause: Clause): ClauseDatabase = listedOf(clause.asIterable())
+        fun listedOf(vararg clause: Clause): ClauseDatabase =
+            listedOf(clause.asIterable())
 
         /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
         @JvmStatic
         @JsName("listedOfScopes")
-        fun listedOf(vararg clause: Scope.() -> Clause): ClauseDatabase = listedOf(clause.map { Scope.empty(it) })
+        fun listedOf(vararg clause: Scope.() -> Clause): ClauseDatabase =
+            listedOf(clause.map {
+                Scope.empty(it)
+            })
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("listedOfSequence")
-        fun listedOf(clauses: Sequence<Clause>): ClauseDatabase = listedOf(clauses.asIterable())
+        fun listedOf(clauses: Sequence<Clause>): ClauseDatabase =
+            listedOf(clauses.asIterable())
 
         /** Creates a ClauseDatabase with given clauses */
         @JvmStatic
         @JsName("listedOfIterable")
-        fun listedOf(clauses: Iterable<Clause>): ClauseDatabase = ListedClauseDatabase(clauses)
-
-        /** Creates an empty ClauseDatabase */
-        @JvmStatic
-        @JsName("emptyIssue")
-        fun emptyIssue(): ClauseDatabase = issueOf(emptySequence())
-
-        /** Creates a ClauseDatabase with given clauses */
-        @JvmStatic
-        @JsName("issueOf")
-        fun issueOf(vararg clause: Clause): ClauseDatabase = issueOf(clause.asIterable())
-
-        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
-        @JvmStatic
-        @JsName("issueOfScopes")
-        fun issueOf(vararg clause: Scope.() -> Clause): ClauseDatabase = issueOf(clause.map { Scope.empty(it) })
-
-        /** Creates a ClauseDatabase with given clauses */
-        @JvmStatic
-        @JsName("issueOfSequence")
-        fun issueOf(clauses: Sequence<Clause>): ClauseDatabase = issueOf(clauses.asIterable())
-
-        /** Creates a ClauseDatabase with given clauses */
-        @JvmStatic
-        @JsName("issueOfIterable")
-        fun issueOf(clauses: Iterable<Clause>): ClauseDatabase = IssueClauseDatabase(clauses)
+        fun listedOf(clauses: Iterable<Clause>): ClauseDatabase =
+            ListedClauseDatabase(clauses)
     }
 }

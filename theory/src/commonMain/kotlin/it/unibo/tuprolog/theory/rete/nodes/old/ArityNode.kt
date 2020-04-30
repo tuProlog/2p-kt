@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
@@ -27,7 +27,8 @@ internal data class ArityNode(
                     .singleOrNull()
             }
 
-            child ?: ArgNode(0, headFirstArg).also { children[headFirstArg] = it }
+            child ?: ArgNode(0, headFirstArg)
+                .also { children[headFirstArg] = it }
         }
 
         else -> children.getOrPut(null) { NoArgsNode() }
@@ -41,7 +42,7 @@ internal data class ArityNode(
         else -> sequenceOf(children[null])
     }
 
-    override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
+    override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
         selectChildren(element)
             .foldWithLimit(mutableListOf<Rule>(), limit) { yetRemoved, currentChild ->
                 yetRemoved.also {
@@ -59,5 +60,9 @@ internal data class ArityNode(
                 }
             }.asSequence()
 
-    override fun deepCopy(): ArityNode = ArityNode(arity, children.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): ArityNode =
+        ArityNode(
+            arity,
+            children.deepCopy({ it }, { it.deepCopy() })
+        )
 }

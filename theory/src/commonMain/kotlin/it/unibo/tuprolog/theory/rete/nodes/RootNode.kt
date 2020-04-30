@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
@@ -15,20 +15,13 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
     override fun put(element: Clause, beforeOthers: Boolean) {
         when (element) {
             is Directive ->
-                // safe cast because accessing children[null] is only for inserting directives
                 @Suppress("UNCHECKED_CAST")
                 children.getOrPut(null) { DirectiveNode() as ReteNode<*, Clause> }
-
             is Rule -> element.head.functor.let {
-
-                // safe cast because accessing children[functor] is only for inserting rules
                 @Suppress("UNCHECKED_CAST")
                 children.getOrPut(it) { FunctorNode(it) as ReteNode<*, Clause> }
-
             }
-
             else -> null
-
         }?.put(element, beforeOthers)
     }
 
@@ -41,7 +34,7 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
             }
         )
 
-    override fun removeWithNonZeroLimit(element: Clause, limit: Int): Sequence<Clause> =
+    override fun removeWithLimit(element: Clause, limit: Int): Sequence<Clause> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
     override fun deepCopy(): RootNode = RootNode(children.deepCopy({ it }, { it.deepCopy() }))

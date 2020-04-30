@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
@@ -17,8 +17,12 @@ internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteN
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> =
         sequenceOf(children[null])
 
-    override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
+    override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
-    override fun deepCopy(): NoArgsNode = NoArgsNode(children.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): NoArgsNode =
+        NoArgsNode(
+            children.deepCopy({ it },
+                { it.deepCopy() })
+        )
 }

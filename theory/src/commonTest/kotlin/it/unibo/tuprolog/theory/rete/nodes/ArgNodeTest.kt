@@ -1,6 +1,8 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.rete.nodes.old.ArgNode
+import it.unibo.tuprolog.theory.rete.nodes.old.RuleNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
@@ -25,8 +27,10 @@ internal class ArgNodeTest {
 
     private val aAtomRules = listOf(aAtomAsFirstHeadArgRule, aAtomAsThirdHeadArgRule)
 
-    private val aAtomAsFirstHeadArgRuleNode = RuleNode(mutableListOf(aAtomAsFirstHeadArgRule))
-    private val aAtomAsThirdHeadArgRuleNode = RuleNode(mutableListOf(aAtomAsThirdHeadArgRule))
+    private val aAtomAsFirstHeadArgRuleNode =
+        RuleNode(mutableListOf(aAtomAsFirstHeadArgRule))
+    private val aAtomAsThirdHeadArgRuleNode =
+        RuleNode(mutableListOf(aAtomAsThirdHeadArgRule))
 
     private lateinit var argNodeZeroIndexAndAAtom: ArgNode
     private lateinit var argNodeZeroIndexAndBAtom: ArgNode
@@ -50,14 +54,21 @@ internal class ArgNodeTest {
         allEmptyArgNodes = zeroIndexEmptyArgNodes + twoIndexEmptyArgNodes
 
         allFilledArgNodes = listOf(
-            ArgNode(0, aAtom), ArgNode(0, bAtom),
-            ArgNode(2, aAtom), ArgNode(2, bAtom)
+            ArgNode(0, aAtom),
+            ArgNode(0, bAtom),
+            ArgNode(2, aAtom),
+            ArgNode(2, bAtom)
         ).map { argNode -> argNode.apply { aAtomRules.forEach { put(it) } } }
     }
 
     @Test
     fun argNodeCannotAcceptNegativeIndexUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { ArgNode(-1, Atom.of("a")) }
+        assertFailsWith<IllegalArgumentException> {
+            ArgNode(
+                -1,
+                Atom.of("a")
+            )
+        }
     }
 
     @Test
@@ -85,7 +96,12 @@ internal class ArgNodeTest {
         allEmptyArgNodes.forEach {
             it.put(noArgsHeadedRule)
 
-            assertEquals(RuleNode(mutableListOf(noArgsHeadedRule)), it.children[null])
+            assertEquals(
+                RuleNode(
+                    mutableListOf(
+                        noArgsHeadedRule
+                    )
+                ), it.children[null])
         }
     }
 

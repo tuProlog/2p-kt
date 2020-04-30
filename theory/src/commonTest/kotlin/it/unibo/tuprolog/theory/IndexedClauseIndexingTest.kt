@@ -13,54 +13,93 @@ internal class IndexedClauseIndexingTest {
     fun init() {}
 
     @Test
-    fun dedicatedMain() {
-        //TODO REMOVE
-        prototype.dedicatedMain()
+    fun correctIndexingOverDedicatedClauseDatabaseForF1Family() {
+        prototype.correctIndexingOverDedicatedClauseDatabaseForF1Family()
     }
 
     @Test
-    fun correctIndexingOverDedicatedClauseDatabase() {
-        prototype.correctIndexingOverDedicatedClauseDatabase()
+    fun correctIndexingOverDedicatedClauseDatabaseForF2Family() {
+        prototype.correctIndexingOverDedicatedClauseDatabaseForF2Family()
     }
 
     @Test
-    fun correctIndexingOnInitializedClauseDatabaseWithoutStructurallyEqualsClauses() {
-        prototype.correctIndexingOnInitializedClauseDatabaseWithoutStructurallyEqualsClauses()
+    fun correctIndexingOverDedicatedClauseDatabaseG1Family() {
+        prototype.correctIndexingOverDedicatedClauseDatabaseG1Family()
     }
 
     @Test
-    fun correctIndexingOnInitializedClauseDatabaseWithStructurallyEqualsClauses() {
-        prototype.correctIndexingOnInitializedClauseDatabaseWithStructurallyEqualsClauses()
+    fun correctIndexingOverDedicatedClauseDatabaseG2Family() {
+        prototype.correctIndexingOverDedicatedClauseDatabaseG2Family()
     }
 
     @Test
-    fun correctIndexingOnInitializedClauseDatabaseWithStructurallyEqualsClausesAndClausesRepetition() {
-        prototype.correctIndexingOnInitializedClauseDatabaseWithStructurallyEqualsClausesAndClausesRepetition()
+    fun correctIndexingAfterClauseDatabasesConcatenationForF1Family() {
+        prototype.correctIndexingAfterClauseDatabasesConcatenationForF1Family()
     }
 
     @Test
-    fun correctIndexingAfterClauseDatabasesConcatenation() {
-        prototype.correctIndexingAfterClauseDatabasesConcatenation()
+    fun correctIndexingAfterClauseDatabasesConcatenationForF2Family() {
+        prototype.correctIndexingAfterClauseDatabasesConcatenationForF2Family()
     }
 
     @Test
-    fun correctIndexingAfterAssertionA() {
-        prototype.correctIndexingAfterAssertionA()
+    fun correctIndexingAfterClauseDatabasesConcatenationForG1Family() {
+        prototype.correctIndexingAfterClauseDatabasesConcatenationForG1Family()
     }
 
     @Test
-    fun correctIndexingAfterAssertionZ() {
-        prototype.correctIndexingAfterAssertionZ()
+    fun correctIndexingAfterClauseDatabasesConcatenationForG2Family() {
+        prototype.correctIndexingAfterClauseDatabasesConcatenationForG2Family()
     }
 
     @Test
-    fun correctIndexingAfterSingleClauseRetracting() {
-        prototype.correctIndexingAfterSingleClauseRetracting()
+    fun correctIndexingAfterOneArityAtomClauseAssertionA() {
+        prototype.correctIndexingAfterOneArityAtomClauseAssertionA()
     }
 
     @Test
-    fun correctIndexingAfterMultipleClausesRetracting() {
-        prototype.correctIndexingAfterMultipleClausesRetracting()
+    fun correctIndexingAfterOneArityVariableClauseAssertionA() {
+        prototype.correctIndexingAfterOneArityVariableClauseAssertionA()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityAtomClauseAssertionA() {
+        prototype.correctIndexingAfterTwoArityAtomClauseAssertionA()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityVarClauseAssertionA() {
+        prototype.correctIndexingAfterTwoArityVarClauseAssertionA()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityMixedClauseAssertionA() {
+        prototype.correctIndexingAfterTwoArityMixedClauseAssertionA()
+    }
+
+    @Test
+    fun correctIndexingAfterOneArityAtomClauseAssertionZ() {
+        prototype.correctIndexingAfterOneArityAtomClauseAssertionZ()
+    }
+
+    @Test
+    fun correctIndexingAfterOneArityVariableClauseAssertionZ() {
+        prototype.correctIndexingAfterOneArityVariableClauseAssertionZ()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityAtomClauseAssertionZ() {
+        prototype.correctIndexingAfterTwoArityAtomClauseAssertionZ()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityVariableClauseAssertionZ() {
+        prototype.correctIndexingAfterTwoArityVariableClauseAssertionZ()
+    }
+
+    @Test
+    fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
+        prototype.correctIndexingAfterTwoArityMixedClauseAssertionZ()
     }
 
 }

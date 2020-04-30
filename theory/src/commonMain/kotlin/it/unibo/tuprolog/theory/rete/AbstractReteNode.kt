@@ -11,11 +11,11 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
 
     override fun remove(element: E, limit: Int): Sequence<E> = when (limit) {
         0 -> emptySequence()
-        else -> removeWithNonZeroLimit(element, limit)
+        else -> removeWithLimit(element, limit)
     }
 
     /** Called when a non-zero-limit removal is required inside a node */
-    protected abstract fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E>
+    protected abstract fun removeWithLimit(element: E, limit: Int): Sequence<E>
 
     override fun removeAll(element: E): Sequence<E> = remove(element, Int.MAX_VALUE)
 

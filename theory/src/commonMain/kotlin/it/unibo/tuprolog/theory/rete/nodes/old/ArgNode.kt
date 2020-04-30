@@ -1,17 +1,17 @@
-package it.unibo.tuprolog.theory.rete2.clause
+package it.unibo.tuprolog.theory.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.theory.rete2.AbstractIntermediateReteNode
-import it.unibo.tuprolog.theory.rete2.ReteNode
+import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
+import it.unibo.tuprolog.theory.rete.ReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** The arg node indexes Clauses by argument, starting from first to all the others */
 internal data class ArgNode(
     private val index: Int,
     private val term: Term,
-    override val childrenMap: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
-) : AbstractIntermediateReteNode<Term?, Rule>(childrenMap) {
+    override val children: MutableMap<Term?, ReteNode<*, Rule>> = mutableMapOf()
+) : AbstractIntermediateReteNode<Term?, Rule>(children) {
 
     init {
         require(index >= 0) { "ArgNode index should be greater than or equal to 0" }
@@ -23,24 +23,25 @@ internal data class ArgNode(
         index < element.head.arity - 1 -> { // if more arguments after "index" arg
             val nextArg = element.head[index + 1]
 
-            val child = childrenMap.getOrElse(nextArg) {
-                childrenMap.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
+            val child = children.getOrElse(nextArg) {
+                children.retrieve<ArgNode> { head -> head != null && head structurallyEquals nextArg }
                     .singleOrNull()
             }
 
-            child ?: ArgNode(index + 1, nextArg).also { childrenMap[nextArg] = it }
+            child ?: ArgNode(index + 1, nextArg)
+                .also { children[nextArg] = it }
         }
 
-        else -> childrenMap.getOrPut(null) { RuleNode() }
+        else -> children.getOrPut(null) { RuleNode() }
 
     }.put(element, beforeOthers)
 
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = when {
         index < element.head.arity - 1 -> {
             val nextArg = element.head[index + 1]
-            childrenMap.retrieve<ArgNode> { head -> head != null && head matches nextArg }
+            children.retrieve<ArgNode> { head -> head != null && head matches nextArg }
         }
-        else -> sequenceOf(childrenMap[null])
+        else -> sequenceOf(children[null])
     }
 
     override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
@@ -61,5 +62,10 @@ internal data class ArgNode(
                 }
             }.asSequence()
 
-    override fun deepCopy(): ArgNode = ArgNode(index, term, childrenMap.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): ArgNode =
+        ArgNode(
+            index,
+            term,
+            children.deepCopy({ it }, { it.deepCopy() })
+        )
 }

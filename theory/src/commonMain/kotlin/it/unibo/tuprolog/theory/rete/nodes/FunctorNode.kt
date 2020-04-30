@@ -1,8 +1,9 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
 import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.theory.rete.nodes.ArityNode
 
 /** An intermediate node indexing by Rules head's functor */
 internal data class FunctorNode(
@@ -21,7 +22,7 @@ internal data class FunctorNode(
 
     override fun selectChildren(element: Rule) = sequenceOf(children[element.head.arity])
 
-    override fun removeWithNonZeroLimit(element: Rule, limit: Int): Sequence<Rule> =
+    override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
     override fun deepCopy(): FunctorNode = FunctorNode(functor, children.deepCopy({ it }, { it.deepCopy() }))

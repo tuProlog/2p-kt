@@ -19,14 +19,17 @@ internal abstract class AbstractLeafReteNode<E>(override val children: MutableMa
             leafElements.add(element)
     }
 
-    override fun removeWithNonZeroLimit(element: E, limit: Int): Sequence<E> =
+    override fun removeWithLimit(element: E, limit: Int): Sequence<E> =
         get(element)
             .take(if (limit > 0) min(limit, leafElements.count()) else leafElements.count())
-            .toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
+            .toList()
+            .asSequence()
             .also { leafElements.removeAll(it) }
 
     override fun removeAll(element: E): Sequence<E> =
-        get(element).toList().asSequence() // toList needed to reify the get's returned sequence, and not evaluate it two times
+        get(element)
+            .toList()
+            .asSequence()
             .also { leafElements.removeAll(it) }
 
     override fun toString(treefy: Boolean): String =

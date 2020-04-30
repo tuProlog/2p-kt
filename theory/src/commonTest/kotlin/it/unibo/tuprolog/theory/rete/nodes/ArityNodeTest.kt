@@ -1,6 +1,7 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.rete.nodes.old.ArityNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
@@ -32,7 +33,11 @@ internal class ArityNodeTest {
 
     @Test
     fun arityNodeCannotAcceptNegativeArityUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { ArityNode(-1) }
+        assertFailsWith<IllegalArgumentException> {
+            ArityNode(
+                -1
+            )
+        }
     }
 
     @Test

@@ -34,7 +34,8 @@ internal abstract class AbstractIntermediateReteNode<K, E>(override val children
         limit: Int,
         operation: (acc: R, T) -> R
     ) =
-        if (limit < 0) fold(initial, operation)
+        if (limit < 0)
+            fold(initial, operation)
         else
             fold(initial) { accumulator, element ->
                 if (accumulator.count() < limit)

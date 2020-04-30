@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.clause
+package it.unibo.tuprolog.theory.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.theory.rete.AbstractLeafReteNode
@@ -12,5 +12,6 @@ internal data class RuleNode(override val leafElements: MutableList<Rule> = muta
 
     override fun get(element: Rule): Sequence<Rule> = indexedElements.filter { it matches element }
 
-    override fun deepCopy(): RuleNode = RuleNode(leafElements.toMutableList())
+    override fun deepCopy(): RuleNode =
+        RuleNode(leafElements.toMutableList())
 }

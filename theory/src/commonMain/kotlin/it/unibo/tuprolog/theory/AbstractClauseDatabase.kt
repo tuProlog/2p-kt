@@ -2,7 +2,8 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 
-internal abstract class AbstractClauseDatabase : ClauseDatabase {
+internal abstract class AbstractClauseDatabase :
+    ClauseDatabase {
 
     override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
 

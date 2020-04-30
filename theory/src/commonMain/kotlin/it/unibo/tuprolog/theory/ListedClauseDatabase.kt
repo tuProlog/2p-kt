@@ -14,17 +14,31 @@ internal class ListedClauseDatabase
     }
 
     override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-        ListedClauseDatabase(clauses.asIterable() + checkClausesCorrect(clauseDatabase.clauses))
+        ListedClauseDatabase(
+            clauses.asIterable() + checkClausesCorrect(
+                clauseDatabase.clauses
+            )
+        )
 
     override fun get(clause: Clause): Sequence<Clause> =
         //TODO check validity and performances impact
         clauses.filter { it matches clause }.asSequence()
 
     override fun assertA(clause: Clause): ClauseDatabase =
-        ListedClauseDatabase(listOf(checkClauseCorrect(clause)) + clauses)
+        ListedClauseDatabase(
+            listOf(
+                checkClauseCorrect(
+                    clause
+                )
+            ) + clauses
+        )
 
     override fun assertZ(clause: Clause): ClauseDatabase =
-        ListedClauseDatabase(clauses + listOf(checkClauseCorrect(clause)))
+        ListedClauseDatabase(
+            clauses + listOf(
+                checkClauseCorrect(clause)
+            )
+        )
 
     override fun retract(clause: Clause): RetractResult {
         //TODO check validity and performances impact
@@ -35,7 +49,11 @@ internal class ListedClauseDatabase
             else -> {
                 val toBeActuallyRetracted = retractability.first()
                 val newTheory = clauses.filter { it != toBeActuallyRetracted }
-                RetractResult.Success(ListedClauseDatabase(newTheory), listOf(toBeActuallyRetracted))
+                RetractResult.Success(
+                    ListedClauseDatabase(
+                        newTheory
+                    ), listOf(toBeActuallyRetracted)
+                )
             }
         }
     }
@@ -50,7 +68,11 @@ internal class ListedClauseDatabase
                 val partitionedClauses = clauses.toList().partition { it matches clause }
                 val newTheory = partitionedClauses.second
                 val toBeActuallyRetracted = partitionedClauses.first
-                RetractResult.Success(ListedClauseDatabase(newTheory), toBeActuallyRetracted)
+                RetractResult.Success(
+                    ListedClauseDatabase(
+                        newTheory
+                    ), toBeActuallyRetracted
+                )
             }
         }
     }
