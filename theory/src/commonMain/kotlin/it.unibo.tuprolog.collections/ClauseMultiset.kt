@@ -6,12 +6,12 @@ interface ClauseMultiset : ClauseCollection {
 
     fun count(clause: Clause): Long
 
-    override fun assert(clause: Clause): ClauseMultiset
+    override fun add(clause: Clause): ClauseMultiset
 
-    override fun assertAll(clause: Iterable<Clause>): ClauseMultiset
+    override fun addAll(clause: Iterable<Clause>): ClauseMultiset
 
-    override fun retract(clause: Clause): RetractResult<out ClauseMultiset>
+    override fun retrieve(clause: Clause): RetrieveResult<out ClauseMultiset>
 
-    override fun retractAll(clause: Clause): RetractResult<out ClauseMultiset>
+    override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseMultiset>
 }
 

@@ -3,17 +3,17 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.core.Clause
 
 interface ClauseDeque : ClauseCollection {
-    fun assertA(clause: Clause): ClauseDeque
+    fun addFirst(clause: Clause): ClauseDeque
 
-    fun assertZ(clause: Clause): ClauseDeque
+    fun addLast(clause: Clause): ClauseDeque
 
-    override fun assert(clause: Clause): ClauseDeque =
-        assertZ(clause)
+    override fun add(clause: Clause): ClauseDeque =
+        addLast(clause)
 
-    override fun assertAll(clause: Iterable<Clause>): ClauseDeque
+    override fun addAll(clause: Iterable<Clause>): ClauseDeque
 
-    override fun retract(clause: Clause): RetractResult<out ClauseDeque>
+    override fun retrieve(clause: Clause): RetrieveResult<out ClauseDeque>
 
-    override fun retractAll(clause: Clause): RetractResult<out ClauseDeque>
+    override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseDeque>
 }
 

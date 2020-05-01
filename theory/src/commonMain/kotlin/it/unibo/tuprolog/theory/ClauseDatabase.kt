@@ -88,6 +88,9 @@ interface ClauseDatabase : Iterable<Clause> {
     @JsName("retractAllByHead")
     fun retractAll(head: Struct): RetractResult = retractAll(Rule.of(head, Var.anonymous()))
 
+    @JsName("abolish")
+    fun abolish(indicator: Indicator): ClauseDatabase = TODO()
+
     /** An enhanced toString that prints the database in a Prolog program format, if [asPrologText] is `true` */
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String

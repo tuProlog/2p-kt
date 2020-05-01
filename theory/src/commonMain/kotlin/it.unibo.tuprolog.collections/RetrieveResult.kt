@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.core.Clause
 import kotlin.js.JsName
 
-sealed class RetractResult<C : ClauseCollection> {
+sealed class RetrieveResult<C : ClauseCollection> {
 
     @JsName("collection")
     abstract val collection: C
@@ -11,12 +11,12 @@ sealed class RetractResult<C : ClauseCollection> {
     data class Success<C : ClauseCollection>(
         override val collection: C,
         @JsName("clauses") val clauses: List<Clause>
-    ) : RetractResult<C>() {
+    ) : RetrieveResult<C>() {
 
         @JsName("firstClause")
         val firstClause: Clause
             get() = clauses.first()
     }
 
-    data class Failure<C : ClauseCollection>(override val collection: C) : RetractResult<C>()
+    data class Failure<C : ClauseCollection>(override val collection: C) : RetrieveResult<C>()
 }

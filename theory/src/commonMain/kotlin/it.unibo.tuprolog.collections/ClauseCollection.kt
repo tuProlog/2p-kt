@@ -11,12 +11,14 @@ interface ClauseCollection : Iterable<Clause> {
 
     fun containsAll(element: Iterable<Clause>): Boolean
 
-    fun assert(clause: Clause): ClauseCollection
+    fun add(clause: Clause): ClauseCollection
 
-    fun assertAll(clause: Iterable<Clause>): ClauseCollection
+    fun addAll(clause: Iterable<Clause>): ClauseCollection
 
-    fun retract(clause: Clause): RetractResult<out ClauseCollection>
+    fun retrieve(clause: Clause): RetrieveResult<out ClauseCollection>
 
-    fun retractAll(clause: Clause): RetractResult<out ClauseCollection>
+    fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
+
+
 }
 
