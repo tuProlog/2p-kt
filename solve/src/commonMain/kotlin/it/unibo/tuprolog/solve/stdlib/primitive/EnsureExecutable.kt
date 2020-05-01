@@ -30,7 +30,7 @@ object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
                 throw InstantiationError.forGoal(
                     context,
                     context.procedure!!.extractSignature(),
-                    context.substitution.getOriginal(term)!!
+                    context.substitution.getOriginal(term) ?: term
                 )
             }
             else -> {

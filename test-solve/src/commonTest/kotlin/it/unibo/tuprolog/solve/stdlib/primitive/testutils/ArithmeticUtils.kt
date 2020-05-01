@@ -23,6 +23,7 @@ import kotlin.test.fail
 internal object ArithmeticUtils {
 
     /** Utility method to check if the arithmetic relation responses are correct */
+    @Suppress("IMPLICIT_CAST_TO_ANY")
     internal fun assertCorrectResponse(
         arithmeticRelation: ArithmeticRelation<out ExecutionContext>,
         input: Solve.Request<ExecutionContext>,

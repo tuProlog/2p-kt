@@ -7,16 +7,10 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 
 abstract class TypeEnsurer<E : ExecutionContext>(typeName: String) : UnaryPredicate<E>(typeName) {
     override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> = sequence {
-        yield(
-            with(request) {
-                try {
-                    ensureType(context, arguments[0][context.substitution])
-                    replySuccess()
-                } catch(e: TuPrologRuntimeException) {
-                    replyException(e)
-                }
-            }
-        )
+        with (request) {
+            ensureType(context, arguments[0][context.substitution])
+            yield(replySuccess())
+        }
     }
 
     abstract fun ensureType(context: E, term: Term)
