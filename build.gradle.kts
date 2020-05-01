@@ -25,9 +25,10 @@ plugins {
 }
 
 repositories {
+    maven(Repos.Mirrors.mavenCentralEurope)
     mavenCentral()
     jcenter()
-    maven("https://dl.bintray.com/kotlin/dokka")
+    maven(Repos.dokka)
 }
 
 group = "it.unibo.tuprolog"
