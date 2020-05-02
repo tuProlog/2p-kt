@@ -14,7 +14,7 @@ interface MutableClauseDeque : ClauseDeque {
     override fun add(clause: Clause): MutableClauseDeque
 
     /** Adds all the given [Clause] to this [MutableClauseDeque] **/
-    override fun addAll(clause: Iterable<Clause>): MutableClauseDeque
+    override fun addAll(clauses: Iterable<Clause>): MutableClauseDeque
 
     /** Retrieves the first [Clause] unifying the given one, searching from the first position **/
     override fun retrieveFirst(clause: Clause): RetrieveResult<out MutableClauseDeque>

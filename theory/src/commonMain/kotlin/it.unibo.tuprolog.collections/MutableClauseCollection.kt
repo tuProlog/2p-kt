@@ -8,7 +8,7 @@ interface MutableClauseCollection : ClauseCollection {
     override fun add(clause: Clause): MutableClauseCollection
 
     /** Adds all the given [Clause] to this [MutableClauseCollection] **/
-    override fun addAll(clause: Iterable<Clause>): MutableClauseCollection
+    override fun addAll(clauses: Iterable<Clause>): MutableClauseCollection
 
     /** Retrieves the first occurrence of the given [Clause] from this [MutableClauseCollection] as a [RetrieveResult] **/
     override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseCollection>

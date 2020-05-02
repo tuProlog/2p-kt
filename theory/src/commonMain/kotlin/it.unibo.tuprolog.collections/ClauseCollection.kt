@@ -3,10 +3,6 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.ReteClauseCollection
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.theory.ClauseDatabase
-import it.unibo.tuprolog.theory.IndexedClauseDatabase
-import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 interface ClauseCollection : Iterable<Clause> {
 
@@ -20,13 +16,13 @@ interface ClauseCollection : Iterable<Clause> {
     operator fun contains(element: Clause): Boolean
 
     /** Tells if the [ClauseCollection] contains all the given [Clause] **/
-    fun containsAll(element: Iterable<Clause>): Boolean
+    fun containsAll(elements: Iterable<Clause>): Boolean
 
     /** Gives a freshly produced [ClauseCollection] including the given [Clause] and the content of this one **/
     fun add(clause: Clause): ClauseCollection
 
     /** Gives a freshly produced [ClauseCollection] including all the given [Clause] and the content of this one **/
-    fun addAll(clause: Iterable<Clause>): ClauseCollection
+    fun addAll(clauses: Iterable<Clause>): ClauseCollection
 
     /** Produces a [RetrieveResult] as a consequence of the attempt at deleting the given [Clause]
      *  from this [ClauseCollection] **/

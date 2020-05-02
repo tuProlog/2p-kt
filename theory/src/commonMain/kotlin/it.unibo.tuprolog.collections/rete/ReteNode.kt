@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete
 
-import it.unibo.tuprolog.collections.rete.nodes.set.RootNode
+import it.unibo.tuprolog.collections.rete.nodes.set.RootNode as SetNode
+import it.unibo.tuprolog.collections.rete.nodes.list.RootNode as ListNode
 import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
 
@@ -19,6 +20,12 @@ internal interface ReteNode<K, E> {
     /** Indexes a new element under this node, after the others */
     fun put(element: E) =
         put(element, false)
+
+    /** Indexes all the element given as input, after the others**/
+    fun put(clauses: Iterable<E>) =
+        clauses.forEach {
+            put(it)
+        }
 
     /** Gets a sequence of matching elements starting from give one */
     fun get(element: @UnsafeVariance E): Sequence<E>
@@ -50,7 +57,7 @@ internal interface ReteNode<K, E> {
         /** Creates a ReteTree from give clauses */
         @JvmStatic
         fun ofSet(clauses: Iterable<Clause>): ReteNode<*, Clause> =
-            RootNode().apply { clauses.forEach { put(it) } }
+            SetNode().apply { clauses.forEach { put(it) } }
 
         /** Creates a ReteTree from give clauses */
         @JvmStatic
@@ -60,7 +67,7 @@ internal interface ReteNode<K, E> {
         /** Creates a ReteTree from give clauses */
         @JvmStatic
         fun ofList(clauses: Iterable<Clause>): ReteNode<*, Clause> =
-            RootNode().apply { clauses.forEach { put(it) } }
+            ListNode().apply { clauses.forEach { put(it) } }
 
         /** Creates a ReteTree from give clauses */
         @JvmStatic

@@ -18,7 +18,7 @@ interface ClauseMultiset : ClauseCollection {
     override fun add(clause: Clause): ClauseMultiset
 
     /** Gives a freshly produced [ClauseMultiset] including all the given [Clause] and the content of this one **/
-    override fun addAll(clause: Iterable<Clause>): ClauseMultiset
+    override fun addAll(clauses: Iterable<Clause>): ClauseMultiset
 
     /** Produces a [RetrieveResult] as a consequence of the attempt at deleting the given [Clause]
      *  from this [ClauseMultiset] **/

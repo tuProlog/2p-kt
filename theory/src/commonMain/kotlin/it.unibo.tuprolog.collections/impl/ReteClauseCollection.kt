@@ -16,21 +16,45 @@ internal class ReteClauseCollection private constructor(
         Theory.checkClausesCorrect(clauses)
     }
 
-    override fun add(clause: Clause): ClauseCollection {
-        TODO("Not yet implemented")
+    override fun add(clause: Clause): ReteClauseCollection =
+        ReteClauseCollection(
+            rete.deepCopy().apply {
+                put(Theory.checkClauseCorrect(clause))
+            }
+        )
+
+    override fun addAll(clauses: Iterable<Clause>): ReteClauseCollection =
+        ReteClauseCollection(
+            rete.deepCopy().apply {
+                put(Theory.checkClausesCorrect(clauses))
+            }
+        )
+
+    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseCollection> {
+        val newTheory = rete.deepCopy()
+        val retracted = newTheory.remove(clause)
+
+        return when {
+            retracted.none() ->
+                RetrieveResult.Failure(this)
+            else ->
+                RetrieveResult.Success(
+                    ReteClauseCollection(newTheory), retracted.toList()
+                )
+        }
     }
 
-    override fun addAll(clause: Iterable<Clause>): ClauseCollection {
-        TODO("Not yet implemented")
+    override fun retrieveAll(clause: Clause): RetrieveResult<out ReteClauseCollection> {
+        val newTheory = rete.deepCopy()
+        val retracted = newTheory.removeAll(clause)
+
+        return when {
+            retracted.none() ->
+                RetrieveResult.Failure(this)
+            else ->
+                RetrieveResult.Success(
+                    ReteClauseCollection(newTheory), retracted.toList()
+                )
+        }
     }
-
-    override fun retrieve(clause: Clause): RetrieveResult<out ClauseCollection> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection> {
-        TODO("Not yet implemented")
-    }
-
-
 }

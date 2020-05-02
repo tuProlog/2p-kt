@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.old
+package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.collections.rete.AbstractLeafReteNode

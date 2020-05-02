@@ -11,10 +11,8 @@ internal abstract class AbstractClauseCollection protected constructor(private v
     }
 
     override val size: Int
-        get() {
-            TODO("ArityNode should collect info about its subtree to optimize")
-            rete.indexedElements.count()
-        }
+        get() = rete.indexedElements.count()
+
 
     override fun isEmpty(): Boolean =
         size == 0
@@ -22,13 +20,13 @@ internal abstract class AbstractClauseCollection protected constructor(private v
     override fun contains(element: Clause): Boolean =
         rete.get(element).any()
 
-    override fun containsAll(element: Iterable<Clause>): Boolean {
+    override fun containsAll(elements: Iterable<Clause>): Boolean {
         TODO("whats the correct way of folding over element (can't overturn initial false)")
     }
 
     abstract override fun add(clause: Clause): ClauseCollection
 
-    abstract override fun addAll(clause: Iterable<Clause>): ClauseCollection
+    abstract override fun addAll(clauses: Iterable<Clause>): ClauseCollection
 
     abstract override fun retrieve(clause: Clause): RetrieveResult<out ClauseCollection>
 

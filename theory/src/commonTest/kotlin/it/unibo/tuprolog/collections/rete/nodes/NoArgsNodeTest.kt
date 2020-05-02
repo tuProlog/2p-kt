@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.collections.rete.nodes.old.NoArgsNode
+import it.unibo.tuprolog.collections.rete.nodes.set.NoArgsNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode

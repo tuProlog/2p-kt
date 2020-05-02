@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.nodes
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.collections.rete.nodes.old.RuleNode
+import it.unibo.tuprolog.collections.rete.nodes.set.RuleNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode

@@ -15,28 +15,52 @@ internal class ReteClauseMultiSet private constructor(
         Theory.checkClausesCorrect(clauses)
     }
 
-    override fun count(clause: Clause): Long {
-        TODO("Not yet implemented")
-    }
+    override fun count(clause: Clause): Long =
+        rete.get(clause).count().toLong()
 
-    override fun get(clause: Clause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
+    override fun get(clause: Clause): Sequence<Clause> =
+        rete.get(clause)
 
-    override fun add(clause: Clause): ReteClauseMultiSet {
-        TODO("Not yet implemented")
-    }
+    override fun add(clause: Clause): ReteClauseMultiSet =
+        ReteClauseMultiSet(
+            rete.deepCopy().apply {
+                put(Theory.checkClauseCorrect(clause))
+            }
+        )
 
-    override fun addAll(clause: Iterable<Clause>): ReteClauseMultiSet {
-        TODO("Not yet implemented")
-    }
+    override fun addAll(clauses: Iterable<Clause>): ReteClauseMultiSet =
+        ReteClauseMultiSet(
+            rete.deepCopy().apply {
+                put(Theory.checkClausesCorrect(clauses))
+            }
+        )
 
     override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseMultiSet> {
-        TODO("Not yet implemented")
+        val newTheory = rete.deepCopy()
+        val retracted = newTheory.remove(clause)
+
+        return when {
+            retracted.none() ->
+                RetrieveResult.Failure(this)
+            else ->
+                RetrieveResult.Success(
+                    ReteClauseMultiSet(newTheory), retracted.toList()
+                )
+        }
     }
 
     override fun retrieveAll(clause: Clause): RetrieveResult<out ReteClauseMultiSet> {
-        TODO("Not yet implemented")
+        val newTheory = rete.deepCopy()
+        val retracted = newTheory.removeAll(clause)
+
+        return when {
+            retracted.none() ->
+                RetrieveResult.Failure(this)
+            else ->
+                RetrieveResult.Success(
+                    ReteClauseMultiSet(newTheory), retracted.toList()
+                )
+        }
     }
 
 }
