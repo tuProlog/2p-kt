@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.collections.rete
 
+import it.unibo.tuprolog.collections.rete.nodes.set.RootNode
+import it.unibo.tuprolog.core.Clause
+import kotlin.jvm.JvmStatic
+
 /** A class modeling a Rete Tree Node */
 internal interface ReteNode<K, E> {
 
@@ -41,4 +45,26 @@ internal interface ReteNode<K, E> {
     fun toString(treefy: Boolean): String
 
     override fun toString(): String
+
+    companion object {
+        /** Creates a ReteTree from give clauses */
+        @JvmStatic
+        fun ofSet(clauses: Iterable<Clause>): ReteNode<*, Clause> =
+            RootNode().apply { clauses.forEach { put(it) } }
+
+        /** Creates a ReteTree from give clauses */
+        @JvmStatic
+        fun ofSet(vararg clauses: Clause): ReteNode<*, Clause> =
+            ofSet(listOf(*clauses))
+
+        /** Creates a ReteTree from give clauses */
+        @JvmStatic
+        fun ofList(clauses: Iterable<Clause>): ReteNode<*, Clause> =
+            RootNode().apply { clauses.forEach { put(it) } }
+
+        /** Creates a ReteTree from give clauses */
+        @JvmStatic
+        fun ofList(vararg clauses: Clause): ReteNode<*, Clause> =
+            ofList(listOf(*clauses))
+    }
 }

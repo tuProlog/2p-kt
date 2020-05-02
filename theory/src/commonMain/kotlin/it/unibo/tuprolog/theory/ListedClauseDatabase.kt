@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.Theory.checkClauseCorrect
+import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.collections.List as KtList
 

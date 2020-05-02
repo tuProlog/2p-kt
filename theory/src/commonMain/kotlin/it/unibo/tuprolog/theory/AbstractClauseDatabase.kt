@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.*
 internal abstract class AbstractClauseDatabase :
     ClauseDatabase {
 
-    override fun plus(clause: Clause): ClauseDatabase = super.plus(checkClauseCorrect(clause))
+    override fun plus(clause: Clause): ClauseDatabase = super.plus(Theory.checkClauseCorrect(clause))
 
     override fun contains(clause: Clause): Boolean = get(clause).any()
 
@@ -67,19 +67,6 @@ internal abstract class AbstractClauseDatabase :
             i++
         }
         i
-    }
-
-    /** Utility method to check clause well-formed property */
-    protected fun checkClauseCorrect(clause: Clause) = clause.also {
-        require(clause.isWellFormed) { "ClauseDatabase can contain only well formed clauses: this isn't $clause" }
-    }
-
-    /** Utility method to check more than one clause well-formed property */
-    protected fun checkClausesCorrect(clauses: Iterable<Clause>) = clauses.also {
-        require(clauses.all { it.isWellFormed }) {
-            "ClauseDatabase can contain only well formed clauses: these aren't " +
-                    "${clauses.filterNot { it.isWellFormed }.toList()}"
-        }
     }
 
 }

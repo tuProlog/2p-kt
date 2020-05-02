@@ -2,12 +2,13 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.collections.rete.ReteNode
-import it.unibo.tuprolog.collections.rete.nodes.ReteTree
+import it.unibo.tuprolog.theory.Theory.checkClauseCorrect
+import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 
 internal class IndexedClauseDatabase private constructor(private val reteTree: ReteNode<*, Clause>) : AbstractClauseDatabase() {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteTree.of(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
         checkClausesCorrect(clauses)
     }
 

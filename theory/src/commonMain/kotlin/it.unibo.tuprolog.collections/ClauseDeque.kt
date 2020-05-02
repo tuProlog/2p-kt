@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.impl.ReteClauseDeque
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
 
 interface ClauseDeque : ClauseCollection {
 
@@ -44,5 +46,28 @@ interface ClauseDeque : ClauseCollection {
 
     /** Retrieve all the [Clause] unifying the given one **/
     override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseDeque>
+
+    companion object {
+
+        /** Creates an empty [ClauseDeque] **/
+        fun empty(): ClauseDeque = of(emptyList())
+
+        /** Creates a [ClauseDeque] with given clauses */
+        fun of(vararg clause: Clause): ClauseDeque = of(clause.asIterable())
+
+        /** Let developers easily create a [ClauseDeque] programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): ClauseDeque =
+            of(clause.map {
+                Scope.empty(it)
+            })
+
+        /** Creates a [ClauseDeque] from the given [Sequence] of [Clause] */
+        fun of(clauses: Sequence<Clause>): ClauseDeque = of(clauses.asIterable())
+
+        /** Creates a [ClauseDeque] from the given [Iterable] of [Clause] */
+        fun of(clauses: Iterable<Clause>): ClauseDeque =
+            ReteClauseDeque(clauses)
+    }
+
 }
 

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.nodes
 
+import it.unibo.tuprolog.collections.rete.nodes.set.FunctorNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Var

@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.impl.ReteClauseCollection
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.IndexedClauseDatabase
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface ClauseCollection : Iterable<Clause> {
 
@@ -29,6 +35,28 @@ interface ClauseCollection : Iterable<Clause> {
     /** Produces a [RetrieveResult] as a consequence of the attempt at deleting all the given [Clause]
      *  from this [ClauseCollection] **/
     fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
+
+    companion object {
+
+        /** Creates an empty [ClauseCollection] **/
+        fun empty(): ClauseCollection = of(emptyList())
+
+        /** Creates a [ClauseCollection] with given clauses */
+        fun of(vararg clause: Clause): ClauseCollection = of(clause.asIterable())
+
+        /** Let developers easily create a [ClauseCollection] programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): ClauseCollection =
+            of(clause.map {
+                Scope.empty(it)
+            })
+
+        /** Creates a [ClauseCollection] from the given [Sequence] of [Clause] */
+        fun of(clauses: Sequence<Clause>): ClauseCollection = of(clauses.asIterable())
+
+        /** Creates a [ClauseCollection] from the given [Iterable] of [Clause] */
+        fun of(clauses: Iterable<Clause>): ClauseCollection =
+            ReteClauseCollection(clauses)
+    }
 }
 
 

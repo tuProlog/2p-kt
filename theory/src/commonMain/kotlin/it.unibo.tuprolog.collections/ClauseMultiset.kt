@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.impl.ReteClauseDeque
+import it.unibo.tuprolog.collections.impl.ReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.theory.IndexedClauseDatabase
 
 interface ClauseMultiset : ClauseCollection {
 
@@ -23,5 +27,27 @@ interface ClauseMultiset : ClauseCollection {
     /** Produces a [RetrieveResult] as a consequence of the attempt at deleting all the given [Clause]
      *  from this [ClauseMultiset] **/
     override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseMultiset>
+
+    companion object {
+
+        /** Creates an empty [ClauseMultiset] **/
+        fun empty(): ClauseMultiset = of(emptyList())
+
+        /** Creates a [ClauseMultiset] with given clauses */
+        fun of(vararg clause: Clause): ClauseMultiset = of(clause.asIterable())
+
+        /** Let developers easily create a [ClauseMultiset] programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): ClauseMultiset =
+            of(clause.map {
+                Scope.empty(it)
+            })
+
+        /** Creates a [ClauseMultiset] from the given [Sequence] of [Clause] */
+        fun of(clauses: Sequence<Clause>): ClauseMultiset = of(clauses.asIterable())
+
+        /** Creates a [ClauseMultiset] from the given [Iterable] of [Clause] */
+        fun of(clauses: Iterable<Clause>): ClauseMultiset =
+            ReteClauseMultiSet(clauses)
+    }
 }
 

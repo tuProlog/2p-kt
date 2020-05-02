@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes
 
+import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.set.RootNode
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
 import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
@@ -21,6 +23,18 @@ internal class RootNodeTest {
 
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
     private val aDirective: Directive = Directive.of(Truth.TRUE, Var.of("B"))
+
+    private val reteTreeTestContents by lazy {
+        listOf(
+            ReteNodeUtils.rules,
+            ReteNodeUtils.directives,
+            ReteNodeUtils.mixedClauses
+        )
+    }
+
+    private val correctInstances = reteTreeTestContents.map { clauses ->
+        RootNode().apply { clauses.forEach { put(it) } }
+    }
 
     @BeforeTest
     fun init() {
@@ -145,6 +159,20 @@ internal class RootNodeTest {
         val independentCopy = emptyRootNode.deepCopy()
 
         assertSame(emptyRootNode.indexedElements.single(), independentCopy.indexedElements.single())
+    }
+
+    @Test
+    fun reteTreeOfIterableCreatesCorrectInstances() {
+        val toBeTested = reteTreeTestContents.map { ReteNode.ofSet(it) }
+
+        assertEquals(correctInstances, toBeTested)
+    }
+
+    @Test
+    fun reteTreeOfVarargsCreatesCorrectInstances() {
+        val toBeTested = reteTreeTestContents.map { ReteNode.ofSet(*it.toTypedArray()) }
+
+        assertEquals(correctInstances, toBeTested)
     }
 
 }

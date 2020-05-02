@@ -1,9 +1,8 @@
-package it.unibo.tuprolog.collections.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes.list
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
 import it.unibo.tuprolog.collections.rete.ReteNode
-import it.unibo.tuprolog.collections.rete.nodes.ArityNode
 
 /** An intermediate node indexing by Rules head's functor */
 internal data class FunctorNode(
