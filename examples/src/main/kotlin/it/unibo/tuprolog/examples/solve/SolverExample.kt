@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.examples
+package it.unibo.tuprolog.examples.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.Solution

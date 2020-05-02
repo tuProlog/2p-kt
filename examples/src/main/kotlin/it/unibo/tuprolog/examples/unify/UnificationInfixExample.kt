@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.examples
+package it.unibo.tuprolog.examples.unify
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
