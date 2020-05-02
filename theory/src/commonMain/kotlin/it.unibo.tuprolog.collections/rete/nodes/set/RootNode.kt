@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
 import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.DirectiveNode
 
 /** The root node, of the Rete Tree indexing [Clause]s */
 internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf()) :

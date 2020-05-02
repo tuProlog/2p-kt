@@ -8,7 +8,7 @@ interface MutableClauseMultiset : ClauseMultiset {
     override fun add(clause: Clause): MutableClauseMultiset
 
     /** Adds all the given [Clause] to this [MutableClauseMultiset] **/
-    override fun addAll(clause: Iterable<Clause>): MutableClauseMultiset
+    override fun addAll(clauses: Iterable<Clause>): MutableClauseMultiset
 
     /** Retrieves the first unifying [Clause] from this [MutableClauseMultiset] as a [RetrieveResult]**/
     override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseMultiset>

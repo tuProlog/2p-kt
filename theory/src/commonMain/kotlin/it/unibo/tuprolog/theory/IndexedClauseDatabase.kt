@@ -8,7 +8,7 @@ import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 internal class IndexedClauseDatabase private constructor(private val reteTree: ReteNode<*, Clause>) : AbstractClauseDatabase() {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofList(clauses)) {
         checkClausesCorrect(clauses)
     }
 
