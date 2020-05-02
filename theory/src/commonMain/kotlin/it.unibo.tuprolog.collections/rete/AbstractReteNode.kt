@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete
+package it.unibo.tuprolog.collections.rete
 
 import kotlin.jvm.JvmStatic
 

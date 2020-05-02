@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.theory.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.ReteNode
 import kotlin.jvm.JvmStatic
 
 /** A factory singleton for Rete Trees */

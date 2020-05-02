@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete
+package it.unibo.tuprolog.collections.rete
 
 /** A class modeling a Rete Tree Node */
 internal interface ReteNode<K, E> {

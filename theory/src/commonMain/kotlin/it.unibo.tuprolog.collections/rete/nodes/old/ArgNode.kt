@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.theory.rete.nodes.old
+package it.unibo.tuprolog.collections.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.ReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** The arg node indexes Clauses by argument, starting from first to all the others */

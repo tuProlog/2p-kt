@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes
 
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Truth

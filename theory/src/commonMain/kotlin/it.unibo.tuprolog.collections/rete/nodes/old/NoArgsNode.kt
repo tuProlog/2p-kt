@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.theory.rete.nodes.old
+package it.unibo.tuprolog.collections.rete.nodes.old
 
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.ReteNode
 
 /** An intermediate node indexing Rules with no-args' heads */
 internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteNode<*, Rule>> = mutableMapOf()) :

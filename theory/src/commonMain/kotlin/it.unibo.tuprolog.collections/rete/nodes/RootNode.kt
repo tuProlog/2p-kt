@@ -1,10 +1,10 @@
-package it.unibo.tuprolog.theory.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.theory.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.theory.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.ReteNode
 
 /** The root node, of the Rete Tree indexing [Clause]s */
 internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf()) :

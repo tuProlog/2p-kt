@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.rete.ReteNode
-import it.unibo.tuprolog.theory.rete.nodes.ReteTree
+import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.ReteTree
 
 internal class IndexedClauseDatabase private constructor(private val reteTree: ReteNode<*, Clause>) : AbstractClauseDatabase() {
 
