@@ -1,12 +1,11 @@
-package it.unibo.tuprolog.collections.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.collections.rete.nodes.set.NoArgsNode
-import it.unibo.tuprolog.theory.testutils.ReteNodeUtils
-import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertNoChangesInReteNode
-import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertRemovedFromReteNode
-import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
-import it.unibo.tuprolog.theory.testutils.ReteNodeUtils.assertReteNodeEmpty
+import it.unibo.tuprolog.testutils.ReteNodeUtils
+import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
+import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
+import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
+import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

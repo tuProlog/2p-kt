@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.theory.testutils
+package it.unibo.tuprolog.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.theory.ClauseDatabase

@@ -2,7 +2,8 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.theory.testutils.ClauseDatabaseUtils
+import it.unibo.tuprolog.theory.impl.IndexedClauseDatabase
+import it.unibo.tuprolog.testutils.ClauseDatabaseUtils
 import kotlin.test.assertEquals
 
 /**

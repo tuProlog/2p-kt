@@ -1,13 +1,16 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.PrototypeRetractResultTest
 import kotlin.test.Test
 
 internal class IndexedRetractResultTest {
 
-    private val prototype: PrototypeRetractResultTest = PrototypeRetractResultTest(
-        ClauseDatabase.Companion::emptyIndexed,
-        ClauseDatabase.Companion::indexedOf
-    )
+    private val prototype: PrototypeRetractResultTest =
+        PrototypeRetractResultTest(
+            ClauseDatabase.Companion::emptyIndexed,
+            ClauseDatabase.Companion::indexedOf
+        )
 
     @Test
     fun successClauseDatabaseCorrect() {

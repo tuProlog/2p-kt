@@ -1,6 +1,9 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.AbstractClauseDatabase
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory.checkClauseCorrect
 import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches

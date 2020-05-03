@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.impl.IndexedClauseDatabase
+import it.unibo.tuprolog.theory.impl.ListedClauseDatabase
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 

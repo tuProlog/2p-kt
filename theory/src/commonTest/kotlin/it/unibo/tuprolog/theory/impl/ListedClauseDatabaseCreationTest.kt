@@ -1,16 +1,19 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.PrototypeClauseDatabaseCreationTest
 import kotlin.test.Test
 
 internal class ListedClauseDatabaseCreationTest {
 
-    private val prototype: PrototypeClauseDatabaseCreationTest = PrototypeClauseDatabaseCreationTest(
-        ClauseDatabase.Companion::emptyListed,
-        { ClauseDatabase.listedOf(*it) },
-        ClauseDatabase.Companion::listedOf,
-        ClauseDatabase.Companion::listedOf,
-        ClauseDatabase.Companion::listedOf
-    )
+    private val prototype: PrototypeClauseDatabaseCreationTest =
+        PrototypeClauseDatabaseCreationTest(
+            ClauseDatabase.Companion::emptyListed,
+            { ClauseDatabase.listedOf(*it) },
+            ClauseDatabase.Companion::listedOf,
+            ClauseDatabase.Companion::listedOf,
+            ClauseDatabase.Companion::listedOf
+        )
 
     @Test
     fun emptyCreatesEmptyClauseDatabase() {

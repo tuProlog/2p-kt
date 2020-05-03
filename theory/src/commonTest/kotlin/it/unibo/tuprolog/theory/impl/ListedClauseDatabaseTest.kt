@@ -1,5 +1,7 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.PrototypeClauseDatabaseTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

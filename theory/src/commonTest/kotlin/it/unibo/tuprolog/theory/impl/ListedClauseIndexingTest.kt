@@ -1,16 +1,14 @@
-package it.unibo.tuprolog.theory
+package it.unibo.tuprolog.theory.impl
 
-import kotlin.test.BeforeTest
+import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.PrototypeProperIndexingTest
 import kotlin.test.Test
 
-internal class IndexedClauseIndexingTest {
+internal class ListedClauseIndexingTest {
 
     private val prototype = PrototypeProperIndexingTest(
-        ClauseDatabase.Companion::indexedOf
+        ClauseDatabase.Companion::listedOf
     )
-
-    @BeforeTest
-    fun init() {}
 
     @Test
     fun correctIndexingOverDedicatedClauseDatabaseForF1Family() {
