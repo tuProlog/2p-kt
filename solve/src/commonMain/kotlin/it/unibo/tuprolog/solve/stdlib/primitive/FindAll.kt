@@ -12,7 +12,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object FindAll : NonBacktrackableTernaryRelation<ExecutionContext>("findall") {
     override fun Solve.Request<ExecutionContext>.computeOne(x: Term, y: Term, z: Term): Solve.Response {
-        ensuringArgumentIsStruct(1)
+        ensuringArgumentIsInstantiated(1)
         val solutions = solve(y as Struct).toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
         if (error != null) {

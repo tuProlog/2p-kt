@@ -48,6 +48,7 @@ import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalTo
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
@@ -58,6 +59,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
+import kotlin.collections.listOf as ktListOf
 
 internal class SolverTestImpl(private val solverFactory: SolverFactory) : SolverTest {
 
@@ -170,12 +172,12 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                ktListOf(query.yes()),
                 solutions
             )
 
             assertEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     "atom",
                     "a string",
                     varOf("A_Var").completeName,
@@ -206,15 +208,59 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                ktListOf(query.yes()),
                 solutions
             )
 
             solver.standardOutput?.write("e")
 
             assertEquals(
-                kotlin.collections.listOf("a", "b", "c", "d", "\n", "e"),
+                ktListOf("a", "b", "c", "d", "\n", "e"),
                 outputs
+            )
+        }
+    }
+
+    override fun testFindAll() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                staticKb = theoryOf(
+                    fact { "a"(1) },
+                    fact { "a"(2) },
+                    fact { "a"(3) }
+                )
+            )
+
+            var query = "findall"("N", "a"("N"), "L")
+            var solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("L" to listOf(1, 2, 3))),
+                solutions
+            )
+
+            query = "findall"(`_`, false, "L")
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("L" to emptyList())),
+                solutions
+            )
+
+            query = "findall"(`_`, "G", `_`)
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            varOf("G")
+                        )
+                    )
+                ),
+                solutions
             )
         }
     }
@@ -227,7 +273,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                ktListOf(query.yes()),
                 solutions
             )
         }
@@ -405,7 +451,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val allDatabasesWithGoalsAndSolutions by lazy {
                 allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        kotlin.collections.listOf(
+                        ktListOf(
                             (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
                             (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
 
@@ -492,7 +538,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                    kotlin.collections.listOf(
+                    ktListOf(
                         "catch"(goal, `_`, false).run {
                             when {
                                 expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException } ->
@@ -540,7 +586,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions
                     .flatMap { (goal, expectedSolutions) ->
-                        kotlin.collections.listOf(
+                        ktListOf(
                             "\\+"(goal).run {
                                 when {
                                     expectedSolutions.first() is Solution.Yes -> hasSolutions(
@@ -562,7 +608,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                         )
                     }
                     .flatMap { (goal, expectedSolutions) ->
-                        kotlin.collections.listOf(
+                        ktListOf(
                             goal to expectedSolutions,
                             goal.replaceAllFunctors("\\+", "not")
                                 .let { it to expectedSolutions.changeQueriesTo(it) }
@@ -613,7 +659,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.no()
                 ), solutions
             )
@@ -636,7 +682,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes("N" to 2)
                 ), solutions
             )
@@ -658,7 +704,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                with(query) { kotlin.collections.listOf(yes("N" to 3), yes("N" to 2)) },
+                with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
                 solutions
             )
         }
@@ -679,7 +725,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes("N" to 2)
                 ), solutions
             )
@@ -701,7 +747,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes("N" to 2)
                 ), solutions
             )
@@ -721,7 +767,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes()
                 ), solutions
             )
@@ -743,7 +789,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes()
                 ), solutions
             )
@@ -763,7 +809,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.yes("N" to 1)
                 ), solutions
             )
@@ -783,7 +829,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                with(query) { kotlin.collections.listOf(yes(), yes()) },
+                with(query) { ktListOf(yes(), yes()) },
                 solutions
             )
         }
@@ -802,7 +848,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solutions = solver.solve(query, maxDuration).toList()
 
             assertSolutionEquals(
-                with(query) { kotlin.collections.listOf(yes("N" to 1), yes("N" to 2)) },
+                with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
                 solutions
             )
 
@@ -816,7 +862,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val constants = kotlin.collections.listOf("a", "b", "c")
+            val constants = ktListOf("a", "b", "c")
             val goal = "member"("X", constants.toTerm())
 
             val solutions = solver.solve(goal, maxDuration).toList()
@@ -824,7 +870,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertSolutionEquals(
                 ktListConcat(
                     constants.map { goal.yes("X" to it) },
-                    kotlin.collections.listOf(goal.no())
+                    ktListOf(goal.no())
                 ),
                 solutions
             )

@@ -45,26 +45,9 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     )
 
     @Test
-    fun entryPointForManualTests() {
-        prolog {
-            val s = solverOf(
-                staticKb = theoryOf(
-                    fact { "a"(1) },
-                    fact { "a"(2) },
-                    fact { "a"(3) }
-                )
-            )
-
-            s.solve("findall"("X", "a"("X"), "Y")).forEach {
-                println(it)
-            }
-
-            s.solve("findall"(("A" and "B"), "a"("A"), "Y")).forEach {
-                println(it)
-            }
-        }
+    override fun testFindAll() {
+        prototype.testFindAll()
     }
-
 
     @Test
     override fun testAssert() {

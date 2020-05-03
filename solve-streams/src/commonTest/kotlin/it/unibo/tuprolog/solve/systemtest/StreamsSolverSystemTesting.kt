@@ -42,6 +42,10 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         warnings: OutputChannel<PrologWarning>
     ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
+    @Test
+    override fun testFindAll() {
+        prototype.testFindAll()
+    }
 
     @Test
     override fun testAssert() {

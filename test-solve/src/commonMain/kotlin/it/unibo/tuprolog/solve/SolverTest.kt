@@ -63,6 +63,8 @@ interface SolverTest {
 
     fun testStandardOutput()
 
+    fun testFindAll()
+
     /** Test `true` goal */
     fun testTrue()
 
