@@ -4,9 +4,9 @@ import it.unibo.tuprolog.core.Term
 
 @Suppress("EqualsOrHashCode")
 internal abstract class TermImpl : Term {
-    protected abstract val hashCode: Int
+    protected abstract val hashCodeCache: Int
 
-    final override fun hashCode(): Int = hashCode
+    final override fun hashCode(): Int = hashCodeCache
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
         throw NotImplementedError("Subclasses should override this method")

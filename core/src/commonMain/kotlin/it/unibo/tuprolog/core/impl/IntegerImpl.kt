@@ -32,7 +32,7 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
         return other is Integer && equalsToInteger(other)
     }
 
-    override val hashCode: Int by lazy { value.hashCode() }
+    override val hashCodeCache: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
         when (other) {

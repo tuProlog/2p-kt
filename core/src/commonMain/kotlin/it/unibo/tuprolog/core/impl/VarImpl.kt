@@ -52,5 +52,5 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         return other is Var && equalsToVar(other, useVarCompleteName)
     }
 
-    override val hashCode: Int by lazy { completeName.hashCode() }
+    override val hashCodeCache: Int by lazy { completeName.hashCode() }
 }

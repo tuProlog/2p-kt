@@ -30,5 +30,5 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
         return other is Real && equalsToReal(other)
     }
 
-    override val hashCode: Int by lazy { value.stripTrailingZeros().hashCode() }
+    override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 }
