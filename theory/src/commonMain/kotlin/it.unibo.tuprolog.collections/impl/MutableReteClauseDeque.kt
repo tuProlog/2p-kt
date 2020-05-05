@@ -12,7 +12,7 @@ internal class MutableReteClauseDeque private constructor(
 ) : MutableClauseDeque, AbstractMutableReteClauseCollection<MutableReteClauseDeque>(rete) {
 
     /** Construct a [MutableReteClauseDeque] from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofList(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
 

@@ -38,5 +38,4 @@ internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection
     override fun iterator(): Iterator<Clause> =
         rete.indexedElements.iterator()
 
-
 }

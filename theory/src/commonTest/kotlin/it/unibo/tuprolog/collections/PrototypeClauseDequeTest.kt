@@ -5,19 +5,13 @@ import it.unibo.tuprolog.core.Clause
 
 internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
 
-    fun dequeHasTheCorrectSize()
-
     fun getWithPresentClauseReturnsTheCorrectSequence()
 
     fun getWithAbsentClauseReturnsAnEmptySequence()
 
-    fun dequeIsEmpty()
-
     fun addFirstPrependsElement()
 
     fun addLastAppendsElement()
-
-    fun dequeIsNotEmptyAfterAddingElements()
 
     fun getFirstRetrievesElementsFromFirstPosition()
 

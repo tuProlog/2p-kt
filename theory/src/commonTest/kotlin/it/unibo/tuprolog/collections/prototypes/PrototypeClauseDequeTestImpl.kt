@@ -3,7 +3,12 @@ package it.unibo.tuprolog.collections.prototypes
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
+import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.testutils.ClauseAssertionUtils
+import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
+import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
+import kotlin.test.assertEquals
 
 internal class PrototypeClauseDequeTestImpl (
     private val emptyGenerator: () -> ClauseDeque,
@@ -37,56 +42,94 @@ internal class PrototypeClauseDequeTestImpl (
             Fact.of(Struct.of("f", Atom.of("f")))
         )
 
+    private val orderSensitiveClauses =
+        listOf(
+            Fact.of(Struct.of("f", Atom.of("a"))),
+            Fact.of(Struct.of("g", Numeric.of(1))),
+            Fact.of(Struct.of("f", Atom.of("b"))),
+            Fact.of(Struct.of("g", Numeric.of(2))),
+            Fact.of(Struct.of("f", Atom.of("c"))),
+            Fact.of(Struct.of("g", Numeric.of(3)))
+        )
+
+    private val numericClauses =
+        listOf(
+            Fact.of(Struct.of("g", Numeric.of(1))),
+            Fact.of(Struct.of("g", Numeric.of(2))),
+            Fact.of(Struct.of("g", Numeric.of(3)))
+        )
+
     private val emptyCollection = emptyGenerator()
 
     private val genericCollection = collectionGenerator(clauses)
 
-    override fun dequeHasTheCorrectSize() {
-        TODO("Not yet implemented")
-    }
-
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
-        TODO("Not yet implemented")
+        val sequence = collectionGenerator(clauses + presentClause)[presentClause]
+
+        assertClausesHaveSameLengthAndContent(
+            listOf(presentClause, presentClause),
+            sequence.toList()
+        )
     }
 
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
-        TODO("Not yet implemented")
-    }
+        val result = genericCollection[absentClause]
 
-    override fun dequeIsEmpty() {
-        TODO("Not yet implemented")
+        assertEquals(emptyList<Clause>(), result.toList())
     }
 
     override fun addFirstPrependsElement() {
-        TODO("Not yet implemented")
+        val prependedCollectionSnapshot = genericCollection.addFirst(newClause)
+
+        prependedCollectionSnapshot.forEach { print(it) }
+
+        assertClausesHaveSameLengthAndContent(
+            collectionGenerator(listOf(newClause) + clauses),
+            prependedCollectionSnapshot
+        )
     }
 
     override fun addLastAppendsElement() {
-        TODO("Not yet implemented")
-    }
+        val appendedCollectionSnapshot = genericCollection.addLast(newClause)
 
-    override fun dequeIsNotEmptyAfterAddingElements() {
-        TODO("Not yet implemented")
+        assertClausesHaveSameLengthAndContent(
+            collectionGenerator(clauses + listOf(newClause)),
+            appendedCollectionSnapshot
+        )
     }
 
     override fun getFirstRetrievesElementsFromFirstPosition() {
-        TODO("Not yet implemented")
+        val result = collectionGenerator(orderSensitiveClauses).getFirst(fFamilySelector)
+
+        assertClausesHaveSameLengthAndContent(clauses, result.asIterable())
     }
 
     override fun getLastRetrievesElementsFromLastPosition() {
-        TODO("Not yet implemented")
+        val result = collectionGenerator(orderSensitiveClauses).getLast(fFamilySelector)
+
+        assertClausesHaveSameLengthAndContent(clauses.asReversed(), result.asIterable())
     }
 
     override fun simpleAddBehavesAsAddLast() {
-        TODO("Not yet implemented")
+        val appendedCollectionSnapshot = genericCollection.add(newClause)
+
+        assertClausesHaveSameLengthAndContent(
+            collectionGenerator(clauses + listOf(newClause)),
+            appendedCollectionSnapshot
+        )
     }
 
     override fun simpleGetBehavesAsGetFirst() {
-        TODO("Not yet implemented")
+        val result = collectionGenerator(orderSensitiveClauses).get(fFamilySelector)
+
+        assertClausesHaveSameLengthAndContent(clauses, result.asIterable())
     }
 
     override fun retrieveFirstRemovesTheFirstUnifyingElement() {
-        TODO("Not yet implemented")
+        val result = genericCollection.retrieveFirst(presentClause) as RetrieveResult.Success
+
+        assertTermsAreEqual(presentClause, result.firstClause)
+        assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
     }
 
     override fun retrieveLastRemovesTheLastUnifyingElement() {
@@ -94,7 +137,10 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun simpleRetrieveBehavesAsRetrieveFirst() {
-        TODO("Not yet implemented")
+        val result = genericCollection.retrieve(presentClause) as RetrieveResult.Success
+
+        assertTermsAreEqual(presentClause, result.firstClause)
+        assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
     }
 
 }

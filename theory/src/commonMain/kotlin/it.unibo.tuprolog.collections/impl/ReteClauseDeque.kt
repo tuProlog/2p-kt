@@ -12,7 +12,7 @@ internal class ReteClauseDeque private constructor(
 ) : ClauseDeque, AbstractReteClauseCollection<ReteClauseDeque>(rete) {
 
     /** Construct a [ReteClauseDeque] from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofList(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
 

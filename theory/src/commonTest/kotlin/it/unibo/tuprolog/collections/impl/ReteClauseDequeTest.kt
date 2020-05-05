@@ -1,10 +1,7 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseDeque
-import it.unibo.tuprolog.collections.PrototypeClauseCollectionTest
 import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
-import it.unibo.tuprolog.core.Clause
 import kotlin.test.Test
 
 internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
@@ -13,11 +10,6 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
         ClauseDeque.Companion::empty,
         ClauseDeque.Companion::of
     )
-
-    @Test
-    override fun dequeHasTheCorrectSize() {
-        prototype.dequeHasTheCorrectSize()
-    }
 
     @Test
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
@@ -30,11 +22,6 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
     }
 
     @Test
-    override fun dequeIsEmpty() {
-        prototype.dequeIsEmpty()
-    }
-
-    @Test
     override fun addFirstPrependsElement() {
         prototype.addFirstPrependsElement()
     }
@@ -42,11 +29,6 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
     @Test
     override fun addLastAppendsElement() {
         prototype.addLastAppendsElement()
-    }
-
-    @Test
-    override fun dequeIsNotEmptyAfterAddingElements() {
-        prototype.dequeIsNotEmptyAfterAddingElements()
     }
 
     @Test

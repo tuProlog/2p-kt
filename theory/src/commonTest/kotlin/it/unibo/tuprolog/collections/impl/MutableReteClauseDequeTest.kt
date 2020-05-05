@@ -14,11 +14,6 @@ internal class MutableReteClauseDequeTest : PrototypeClauseDequeTest {
     )
 
     @Test
-    override fun dequeHasTheCorrectSize() {
-        prototype.dequeHasTheCorrectSize()
-    }
-
-    @Test
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
         prototype.getWithPresentClauseReturnsTheCorrectSequence()
     }
@@ -29,11 +24,6 @@ internal class MutableReteClauseDequeTest : PrototypeClauseDequeTest {
     }
 
     @Test
-    override fun dequeIsEmpty() {
-        prototype.dequeIsEmpty()
-    }
-
-    @Test
     override fun addFirstPrependsElement() {
         prototype.addFirstPrependsElement()
     }
@@ -41,11 +31,6 @@ internal class MutableReteClauseDequeTest : PrototypeClauseDequeTest {
     @Test
     override fun addLastAppendsElement() {
         prototype.addLastAppendsElement()
-    }
-
-    @Test
-    override fun dequeIsNotEmptyAfterAddingElements() {
-        prototype.dequeIsNotEmptyAfterAddingElements()
     }
 
     @Test
