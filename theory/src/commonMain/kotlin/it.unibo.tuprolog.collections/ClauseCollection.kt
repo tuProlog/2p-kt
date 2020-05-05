@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.impl.ReteClauseCollection
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 
@@ -51,7 +50,7 @@ interface ClauseCollection : Iterable<Clause> {
 
         /** Creates a [ClauseCollection] from the given [Iterable] of [Clause] */
         fun of(clauses: Iterable<Clause>): ClauseCollection =
-            ReteClauseCollection(clauses)
+            ClauseMultiset.of(clauses)
     }
 }
 
