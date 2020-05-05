@@ -11,7 +11,7 @@ internal class ReteClauseCollection private constructor(
     private val rete: ReteNode<*, Clause>
 ) : AbstractClauseCollection(rete) {
 
-    /** Construct a Clause database from given clauses */
+    /** Construct a [ReteClauseCollection] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }

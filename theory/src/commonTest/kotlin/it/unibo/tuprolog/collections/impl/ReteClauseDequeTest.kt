@@ -1,4 +1,147 @@
 package it.unibo.tuprolog.collections.impl
 
-class ReteClauseDequeTest {
+import kotlin.test.Test
+
+internal class ReteClauseDequeTest {
+
+    @Test
+    fun dequeHasTheCorrectSize {
+
+    }
+
+    @Test
+    fun getWithPresentClauseReturnsTheCorrectSequence {
+
+    }
+
+    @Test
+    fun getWithAbsentClauseReturnsAnEmptySequence {
+
+    }
+
+    @Test
+    fun dequeIsEmpty {
+
+    }
+
+    @Test
+    fun addFirstPrependsElement {
+
+    }
+
+    @Test
+    fun addLastAppendsElement {
+
+    }
+
+    @Test
+    fun dequeIsNotEmptyAfterAddingElements {
+
+    }
+
+    @Test
+    fun getFirstRetrievesElementsFromFirstPosition {
+
+    }
+
+    @Test
+    fun getLastRetrievesElementsFromLastPosition {
+
+    }
+
+    @Test
+    fun simpleAddBehavesAsAddLast {
+
+    }
+
+    @Test
+    fun simpleGetBehavesAsGetFirst {
+
+    }
+
+    @Test
+    fun retrieveFirstRemovesTheFirstUnifyingElement {
+
+    }
+
+    @Test
+    fun retrieveLastRemovesTheLastUnifyingElement {
+
+    }
+
+    @Test
+    fun simpleRetrieveBehavesAsRetrieveFirst {
+
+    }
+
+    @Test
+    fun dequeIsEmptyAfterRemovingEveryElement {
+
+    }
+
+    @Test
+    fun dequeContainsElement {
+
+    }
+
+    @Test
+    fun dequeDoesNotContainElement {
+
+    }
+
+    @Test
+    fun dequeContainsAllElement {
+
+    }
+
+    @Test
+    fun dequeDoesNotContainAllElement {
+
+    }
+
+    @Test
+    fun singleClauseAdditionToDequeWorksCorrectly {
+
+    }
+
+    @Test
+    fun singleClauseAdditionDoesReturnNewInstance {
+
+    }
+
+    @Test
+    fun multipleClauseAdditionToDequeWorksCorrectly {
+
+    }
+
+    @Test
+    fun multipleClauseAdditionDoesReturnNewInstance {
+
+    }
+
+    @Test
+    fun retrievingPresentSingleClauseRetrievesTheClause {
+
+    }
+
+    @Test
+    fun retrievingAbsentSingleClauseDoesNotAlterDeque {
+
+    }
+
+    @Test
+    fun retrievingPresentClauseWithRetrieveAllWorksCorrectly {
+
+    }
+
+    @Test
+    fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterDeque {
+
+    }
+
+    @Test
+    fun dequeAcceptMalformedClause {
+
+    }
+
 }

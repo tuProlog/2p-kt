@@ -11,6 +11,7 @@ internal class ReteClauseMultiSet private constructor(
     private val rete: ReteNode<*, Clause>
 ) : ClauseMultiSet, AbstractClauseCollection(rete) {
 
+    /** Construct a [ReteClauseMultiSet] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
