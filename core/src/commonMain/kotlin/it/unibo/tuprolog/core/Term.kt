@@ -74,15 +74,6 @@ interface Term : Comparable<Term> {
     val isVariable: Boolean get() = false
 
     /**
-     * This check is always false and it is actually useless
-     */
-    // TODO remove this method
-    @Deprecated("This sort of check is useless given the current architecture of terms and substitutions",
-        ReplaceWith("do not use this property")
-    )
-    val isBound: Boolean get() = false
-
-    /**
      * Checks whether the current term is ground.
      * A term is ground is ground if and only if it does not contain any variable.
      * This method is guaranteed to return `true` if and only if the [variables] property
