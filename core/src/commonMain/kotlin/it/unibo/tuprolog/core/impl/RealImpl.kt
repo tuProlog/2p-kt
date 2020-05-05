@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("EqualsOrHashCode")
 internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
 
     override val decimalValue: BigDecimal = value
@@ -29,5 +30,5 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
         return other is Real && equalsToReal(other)
     }
 
-    override fun hashCode(): Int = value.stripTrailingZeros().hashCode()
+    override val hashCode: Int by lazy { value.stripTrailingZeros().hashCode() }
 }

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import kotlin.jvm.Synchronized
 
+@Suppress("EqualsOrHashCode")
 internal class VarImpl(override val name: String, private val identifier: Int = instanceId()) : TermImpl(), Var {
 
     companion object {
@@ -51,5 +52,5 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         return other is Var && equalsToVar(other, useVarCompleteName)
     }
 
-    override fun hashCode(): Int = completeName.hashCode()
+    override val hashCode: Int by lazy { completeName.hashCode() }
 }

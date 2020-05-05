@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("EqualsOrHashCode")
 internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
 
     override val decimalValue: BigDecimal by lazy {
@@ -31,7 +32,7 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
         return other is Integer && equalsToInteger(other)
     }
 
-    override fun hashCode(): Int = value.hashCode()
+    override val hashCode: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
         when (other) {

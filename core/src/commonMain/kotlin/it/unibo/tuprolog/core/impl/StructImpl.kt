@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
+@Suppress("EqualsOrHashCode")
 internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
@@ -49,10 +50,10 @@ internal open class StructImpl(override val functor: String, override val args: 
         return true
     }
 
-    override fun hashCode(): Int {
+    final override val hashCode: Int by lazy {
         var result = functor.hashCode()
         result = 31 * result + args.contentHashCode()
-        return result
+        result
     }
 
     override fun toString(): String {
