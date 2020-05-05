@@ -9,8 +9,8 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd

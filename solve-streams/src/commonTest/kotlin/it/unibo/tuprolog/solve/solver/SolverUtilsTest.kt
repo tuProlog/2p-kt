@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries

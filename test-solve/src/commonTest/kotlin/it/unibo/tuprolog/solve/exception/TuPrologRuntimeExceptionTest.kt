@@ -27,7 +27,7 @@ internal class TuPrologRuntimeExceptionTest {
 
     @Test
     fun prologStackTraceAccessesContextCorrespondingField() {
-        assertSame(emptySequence(), exception.prologStackTrace)
+        assertSame(emptyList(), exception.prologStackTrace)
     }
 
     @Test

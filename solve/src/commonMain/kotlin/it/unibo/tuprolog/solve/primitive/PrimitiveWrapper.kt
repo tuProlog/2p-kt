@@ -1,15 +1,13 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInstantiated
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -70,16 +68,22 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
-            arguments.withIndex().firstOrNull { it.value is Var }.let { notInstantiated ->
-                notInstantiated?.run {
-                    throw InstantiationError.forArgument(
-                        context,
-                        signature,
-                        notInstantiated.index,
-                        notInstantiated.value as Var
-                    )
-                } ?: this
-            }
+            arguments.withIndex().firstOrNull { it.value is Var }?.let {
+                ensureIsInstantiated(it.value, it.index)
+            } ?: this
+
+        private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(term: Term?, index: Int): Solve.Request<C> =
+            (term as? Var)?.let {
+                throw InstantiationError.forArgument(
+                    context,
+                    signature,
+                    index,
+                    it
+                )
+            } ?: this
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInstantiated(index: Int): Solve.Request<C> =
+            ensureIsInstantiated(arguments[index], index)
 
         // TODO: 16/01/2020 test those below ensure methods
 

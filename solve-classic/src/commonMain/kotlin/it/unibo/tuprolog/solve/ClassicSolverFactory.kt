@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.library.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 object ClassicSolverFactory : SolverFactory {

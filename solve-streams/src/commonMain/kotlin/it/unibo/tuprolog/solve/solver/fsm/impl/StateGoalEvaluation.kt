@@ -7,11 +7,11 @@ import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
-import it.unibo.tuprolog.solve.library.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.solver.newSolveRequest
+import it.unibo.tuprolog.solve.stdlib.primitive.Throw
 
 /**
  * State responsible of solving a selected Goal, if it is a primitive

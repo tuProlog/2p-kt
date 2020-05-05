@@ -22,7 +22,8 @@ open class TuPrologRuntimeException(
 
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     @JsName("prologStackTrace")
-    val prologStackTrace: Sequence<Struct> by lazy { context.prologStackTrace }
+    val prologStackTrace: List<Struct>
+        get() = context.prologStackTrace
 
     /**
      * Creates a new exception instance with context field updated to [newContext].
