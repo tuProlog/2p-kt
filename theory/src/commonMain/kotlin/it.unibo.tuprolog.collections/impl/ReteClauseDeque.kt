@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.AbstractClauseCollection
 import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.ReteNode
@@ -9,7 +8,7 @@ import it.unibo.tuprolog.theory.Theory
 
 internal class ReteClauseDeque private constructor(
     private val rete: ReteNode<*, Clause>
-) : ClauseDeque, AbstractClauseCollection(rete) {
+) : ClauseDeque, AbstractReteClauseCollection<ReteClauseDeque>(rete) {
 
     /** Construct a [ReteClauseDeque] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
@@ -39,45 +38,19 @@ internal class ReteClauseDeque private constructor(
     override fun add(clause: Clause): ReteClauseDeque =
         addLast(clause)
 
-    override fun addAll(clauses: Iterable<Clause>): ReteClauseDeque =
-        ReteClauseDeque(
-            rete.deepCopy().apply {
-                put(Theory.checkClausesCorrect(clauses))
-            }
-        )
-
     override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseDeque> {
-        val newTheory = rete.deepCopy()
-        val retracted = newTheory.remove(clause)
-
-        return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this)
-            else ->
-                RetrieveResult.Success(
-                    ReteClauseDeque(newTheory), retracted.toList()
-                )
-        }
+        return super<AbstractReteClauseCollection>.retrieve(clause)
     }
 
     override fun retrieveLast(clause: Clause): RetrieveResult<out ReteClauseDeque> {
         TODO("Not yet implemented")
     }
 
-    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseDeque> =
-        retrieveFirst(clause)
+    override fun newCollectionBuilder(rete: ReteNode<*, Clause>): ReteClauseDeque {
+        return ReteClauseDeque(rete)
+    }
 
-    override fun retrieveAll(clause: Clause): RetrieveResult<out ReteClauseDeque> {
-        val newTheory = rete.deepCopy()
-        val retracted = newTheory.removeAll(clause)
-
-        return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this)
-            else ->
-                RetrieveResult.Success(
-                    ReteClauseDeque(newTheory), retracted.toList()
-                )
-        }
+    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseDeque> {
+        return super<AbstractReteClauseCollection>.retrieve(clause)
     }
 }
