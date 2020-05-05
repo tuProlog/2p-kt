@@ -30,7 +30,7 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
 
     protected abstract fun computeNext(): State
 
-    private fun currentTime(): TimeInstant =
+    protected fun currentTime(): TimeInstant =
         currentTimeInstant()
 
     protected fun nextStep(): Long = context.step + 1
