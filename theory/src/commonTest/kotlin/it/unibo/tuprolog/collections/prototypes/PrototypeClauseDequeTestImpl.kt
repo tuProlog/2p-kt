@@ -61,8 +61,6 @@ internal class PrototypeClauseDequeTestImpl (
 
     private val emptyCollection = emptyGenerator()
 
-    private val genericCollection = collectionGenerator(clauses)
-
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
         val sequence = collectionGenerator(clauses + presentClause)[presentClause]
 
@@ -73,15 +71,13 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
-        val result = genericCollection[absentClause]
+        val result = collectionGenerator(clauses)[absentClause]
 
         assertEquals(emptyList<Clause>(), result.toList())
     }
 
     override fun addFirstPrependsElement() {
-        val prependedCollectionSnapshot = genericCollection.addFirst(newClause)
-
-        prependedCollectionSnapshot.forEach { print(it) }
+        val prependedCollectionSnapshot = collectionGenerator(clauses).addFirst(newClause)
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(listOf(newClause) + clauses),
@@ -90,7 +86,7 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun addLastAppendsElement() {
-        val appendedCollectionSnapshot = genericCollection.addLast(newClause)
+        val appendedCollectionSnapshot = collectionGenerator(clauses).addLast(newClause)
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(clauses + listOf(newClause)),
@@ -111,7 +107,7 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun simpleAddBehavesAsAddLast() {
-        val appendedCollectionSnapshot = genericCollection.add(newClause)
+        val appendedCollectionSnapshot = collectionGenerator(clauses).add(newClause)
 
         assertClausesHaveSameLengthAndContent(
             collectionGenerator(clauses + listOf(newClause)),
@@ -126,7 +122,8 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun retrieveFirstRemovesTheFirstUnifyingElement() {
-        val result = genericCollection.retrieveFirst(presentClause) as RetrieveResult.Success
+        val result =
+            collectionGenerator(clauses).retrieveFirst(presentClause) as RetrieveResult.Success
 
         assertTermsAreEqual(presentClause, result.firstClause)
         assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
@@ -137,7 +134,8 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun simpleRetrieveBehavesAsRetrieveFirst() {
-        val result = genericCollection.retrieve(presentClause) as RetrieveResult.Success
+        val result =
+            collectionGenerator(clauses).retrieve(presentClause) as RetrieveResult.Success
 
         assertTermsAreEqual(presentClause, result.firstClause)
         assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)

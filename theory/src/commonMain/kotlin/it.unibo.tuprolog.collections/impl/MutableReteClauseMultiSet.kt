@@ -18,7 +18,7 @@ internal class MutableReteClauseMultiSet private constructor(
     }
 
     override fun count(clause: Clause): Long =
-        rete.indexedElements.count().toLong()
+        rete.get(clause).count().toLong()
 
 
     override fun get(clause: Clause): Sequence<Clause> =

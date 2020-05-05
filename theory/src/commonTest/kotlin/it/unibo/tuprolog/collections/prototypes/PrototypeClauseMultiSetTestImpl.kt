@@ -28,10 +28,8 @@ internal class PrototypeClauseMultiSetTestImpl (
 
     private val emptyCollection = emptyGenerator()
 
-    private val genericCollection = collectionGenerator(clauses)
-
     override fun countingOnPresentClauseAnswerTheRightNumber() {
-        val count = genericCollection.count(presentClause)
+        val count = collectionGenerator(clauses).count(presentClause)
         val count2 = collectionGenerator(clauses + presentClause).count(presentClause)
 
         assertEquals(1, count)
@@ -39,7 +37,7 @@ internal class PrototypeClauseMultiSetTestImpl (
     }
 
     override fun countingOnAbsentClauseAnswerZero() {
-        val count = genericCollection.count(absentClause)
+        val count = collectionGenerator(clauses).count(absentClause)
         val count2 = emptyCollection.count(absentClause)
 
         assertEquals(0, count)
@@ -53,7 +51,7 @@ internal class PrototypeClauseMultiSetTestImpl (
     }
 
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
-        val result = genericCollection[absentClause]
+        val result = collectionGenerator(clauses)[absentClause]
 
         assertEquals(emptyList<Clause>(), result.toList())
     }

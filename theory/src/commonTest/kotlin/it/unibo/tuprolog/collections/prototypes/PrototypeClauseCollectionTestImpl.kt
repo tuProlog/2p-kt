@@ -42,11 +42,9 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
     private val emptyCollection = emptyGenerator()
 
-    private val genericCollection = collectionGenerator(clauses)
-
     override fun collectionHasTheCorrectSize() {
         assertEquals(0, emptyCollection.size)
-        assertEquals(clauses.count(), genericCollection.size)
+        assertEquals(clauses.count(), collectionGenerator(clauses).size)
     }
 
     override fun emptyCollectionIsEmpty() {
@@ -54,69 +52,82 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     }
 
     override fun filledCollectionIsNotEmpty() {
-        assertFalse(genericCollection.isEmpty())
+        assertFalse(collectionGenerator(clauses).isEmpty())
     }
 
     override fun collectionIsEmptyAfterRemovingEveryElement() {
-        val emptiedCollection = genericCollection.retrieveAll(fFamilySelector).collection
+        val emptiedCollection =
+            collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
 
         assertTrue(emptiedCollection.isEmpty())
     }
 
     override fun collectionContainsElement() {
-        assertTrue(genericCollection.contains(presentClause))
+        assertTrue(collectionGenerator(clauses).contains(presentClause))
     }
 
     override fun collectionDoesNotContainElement() {
-        assertFalse(genericCollection.contains(absentClause))
+        assertFalse(collectionGenerator(clauses).contains(absentClause))
     }
 
     override fun collectionContainsAllElement() {
-        assertTrue(genericCollection.containsAll(clauses))
+        assertTrue(collectionGenerator(clauses).containsAll(clauses))
     }
 
     override fun collectionDoesNotContainAllElement() {
         val absentClauses = clauses + absentClause
 
-        assertFalse(genericCollection.containsAll(absentClauses))
+        assertFalse(collectionGenerator(clauses).containsAll(absentClauses))
     }
 
     override fun singleClauseAdditionToCollectionWorksCorrectly() {
-        val collectionAfterAddition = genericCollection.add(newClause)
+        val collectionAfterAddition = collectionGenerator(clauses).add(newClause)
 
         assertTrue(collectionAfterAddition.containsAll(clauses))
         assertTrue(collectionAfterAddition.contains(newClause))
     }
 
     override fun multipleClauseAdditionToCollectionWorksCorrectly() {
-        val collectionAfterMultipleAddition = genericCollection.addAll(newClauses)
+        val collectionAfterMultipleAddition = collectionGenerator(clauses).addAll(newClauses)
 
         assertTrue(collectionAfterMultipleAddition.containsAll(clauses + newClauses))
     }
 
     override fun retrievingPresentSingleClauseRetrievesTheClause() {
-        val retrieveResult = genericCollection.retrieve(presentClause) as RetrieveResult.Success
+        val retrieveResult =
+            collectionGenerator(clauses).retrieve(presentClause) as RetrieveResult.Success
 
         assertTermsAreEqual(presentClause, retrieveResult.firstClause)
         assertClausesHaveSameLengthAndContent(listOf(presentClause), retrieveResult.clauses)
     }
 
     override fun retrievingAbsentSingleClauseDoesNotAlterCollection() {
-        val retrieveResult = genericCollection.retrieve(absentClause)
+        val retrieveResult =
+            collectionGenerator(clauses).retrieve(absentClause)
 
-        assertClausesHaveSameLengthAndContent(genericCollection, retrieveResult.collection)
+        assertClausesHaveSameLengthAndContent(
+            collectionGenerator(clauses),
+            retrieveResult.collection
+        )
     }
 
     override fun retrievingPresentClauseWithRetrieveAllWorksCorrectly() {
         val slightlyModifiedGenericCollection = collectionGenerator(clauses + presentClause)
-        val retrieveResult = slightlyModifiedGenericCollection.retrieveAll(presentClause) as RetrieveResult.Success
+        val retrieveResult =
+            slightlyModifiedGenericCollection.retrieveAll(presentClause) as RetrieveResult.Success
 
-        assertClausesHaveSameLengthAndContent(listOf(presentClause, presentClause), retrieveResult.clauses)
-        assertClausesHaveSameLengthAndContent(clauses - presentClause, retrieveResult.collection)
+        assertClausesHaveSameLengthAndContent(
+            listOf(presentClause, presentClause),
+            retrieveResult.clauses
+        )
+        assertClausesHaveSameLengthAndContent(
+            clauses - presentClause,
+            retrieveResult.collection
+        )
     }
 
     override fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection() {
-        val retrieveResult = genericCollection.retrieveAll(absentClause)
+        val retrieveResult = collectionGenerator(clauses).retrieveAll(absentClause)
 
         assertClausesHaveSameLengthAndContent(clauses, retrieveResult.collection)
     }
