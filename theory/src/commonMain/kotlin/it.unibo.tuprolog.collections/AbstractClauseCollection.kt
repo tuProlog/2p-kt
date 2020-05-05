@@ -4,7 +4,9 @@ import it.unibo.tuprolog.collections.rete.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 
-internal abstract class AbstractClauseCollection protected constructor(private val rete: ReteNode<*, Clause>) : ClauseCollection {
+internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
+
+    protected constructor(private val rete: ReteNode<*, Clause>) : ClauseCollection {
 
     constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
         checkClausesCorrect(clauses)
@@ -13,7 +15,6 @@ internal abstract class AbstractClauseCollection protected constructor(private v
     override val size: Int
         get() = rete.indexedElements.count()
 
-
     override fun isEmpty(): Boolean =
         size == 0
 
@@ -21,17 +22,21 @@ internal abstract class AbstractClauseCollection protected constructor(private v
         rete.get(element).any()
 
     override fun containsAll(elements: Iterable<Clause>): Boolean {
-        TODO("whats the correct way of folding over element (can't overturn initial false)")
+        var booleanAccumulator = true
+        elements.forEach { booleanAccumulator = booleanAccumulator && contains(it) }
+        return booleanAccumulator
     }
 
-    abstract override fun add(clause: Clause): ClauseCollection
+    abstract override fun add(clause: Clause): Self
 
-    abstract override fun addAll(clauses: Iterable<Clause>): ClauseCollection
+    abstract override fun addAll(clauses: Iterable<Clause>): Self
 
-    abstract override fun retrieve(clause: Clause): RetrieveResult<out ClauseCollection>
+    abstract override fun retrieve(clause: Clause): RetrieveResult<out Self>
 
-    abstract override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
+    abstract override fun retrieveAll(clause: Clause): RetrieveResult<out Self>
 
     override fun iterator(): Iterator<Clause> =
         rete.indexedElements.iterator()
+
+
 }

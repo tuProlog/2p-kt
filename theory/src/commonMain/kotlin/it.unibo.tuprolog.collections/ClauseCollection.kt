@@ -50,7 +50,7 @@ interface ClauseCollection : Iterable<Clause> {
 
         /** Creates a [ClauseCollection] from the given [Iterable] of [Clause] */
         fun of(clauses: Iterable<Clause>): ClauseCollection =
-            ClauseMultiset.of(clauses)
+            ClauseMultiSet.of(clauses)
     }
 }
 

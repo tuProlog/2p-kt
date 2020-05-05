@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.impl
 
+import it.unibo.tuprolog.collections.AbstractReteClauseCollection
 import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.ReteNode
@@ -23,11 +24,8 @@ internal class ReteClauseDeque private constructor(
         )
 
     override fun addLast(clause: Clause): ReteClauseDeque =
-        ReteClauseDeque(
-            rete.deepCopy().apply {
-                put(Theory.checkClauseCorrect(clause))
-            }
-        )
+        super<AbstractReteClauseCollection>.add(clause)
+
 
     override fun getFirst(clause: Clause): Sequence<Clause> =
         rete.get(clause)
@@ -38,19 +36,17 @@ internal class ReteClauseDeque private constructor(
     override fun add(clause: Clause): ReteClauseDeque =
         addLast(clause)
 
-    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseDeque> {
-        return super<AbstractReteClauseCollection>.retrieve(clause)
-    }
+    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseDeque> =
+        super<AbstractReteClauseCollection>.retrieve(clause)
+
+    override fun retrieveFirst(clause: Clause): RetrieveResult<out ReteClauseDeque> =
+        super<AbstractReteClauseCollection>.retrieve(clause)
 
     override fun retrieveLast(clause: Clause): RetrieveResult<out ReteClauseDeque> {
         TODO("Not yet implemented")
     }
 
-    override fun newCollectionBuilder(rete: ReteNode<*, Clause>): ReteClauseDeque {
-        return ReteClauseDeque(rete)
-    }
+    override fun newCollectionBuilder(rete: ReteNode<*, Clause>): ReteClauseDeque =
+        ReteClauseDeque(rete)
 
-    override fun retrieve(clause: Clause): RetrieveResult<out ReteClauseDeque> {
-        return super<AbstractReteClauseCollection>.retrieve(clause)
-    }
 }

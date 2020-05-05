@@ -1,15 +1,13 @@
-package it.unibo.tuprolog.collections.impl
+package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.AbstractClauseCollection
-import it.unibo.tuprolog.collections.ClauseCollection
-import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
-internal abstract class AbstractReteClauseCollection<Self : ClauseCollection> protected constructor(
-    private val rete: ReteNode<*, Clause>
-) : AbstractClauseCollection(rete) {
+internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
+    protected constructor(
+        private val rete: ReteNode<*, Clause>
+    ) : AbstractClauseCollection<Self>(rete) {
 
     /** Construct a Clause database from given clauses */
     constructor(

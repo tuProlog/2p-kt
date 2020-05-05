@@ -1,147 +1,156 @@
 package it.unibo.tuprolog.collections.impl
 
+import it.unibo.tuprolog.collections.ClauseCollection
+import it.unibo.tuprolog.collections.MutableClauseDeque
+import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
+import it.unibo.tuprolog.core.Clause
 import kotlin.test.Test
 
-internal class MutableReteClauseDequeTest {
+internal class MutableReteClauseDequeTest : PrototypeClauseDequeTest {
+
+    private val prototype = PrototypeClauseDequeTest.prototype(
+        MutableClauseDeque.Companion::empty,
+        MutableClauseDeque.Companion::of
+    )
 
     @Test
-    fun dequeHasTheCorrectSize {
-
+    override fun dequeHasTheCorrectSize() {
+        prototype.dequeHasTheCorrectSize()
     }
 
     @Test
-    fun dequeIsEmpty {
-
+    override fun getWithPresentClauseReturnsTheCorrectSequence() {
+        prototype.getWithPresentClauseReturnsTheCorrectSequence()
     }
 
     @Test
-    fun addFirstPrependsElement {
-
+    override fun getWithAbsentClauseReturnsAnEmptySequence() {
+        prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
 
     @Test
-    fun addLastAppendsElement {
-
+    override fun dequeIsEmpty() {
+        prototype.dequeIsEmpty()
     }
 
     @Test
-    fun dequeIsNotEmptyAfterAddingElements {
-
+    override fun addFirstPrependsElement() {
+        prototype.addFirstPrependsElement()
     }
 
     @Test
-    fun getFirstRetrievesElementsFromFirstPosition {
-
+    override fun addLastAppendsElement() {
+        prototype.addLastAppendsElement()
     }
 
     @Test
-    fun getLastRetrievesElementsFromLastPosition {
-
+    override fun dequeIsNotEmptyAfterAddingElements() {
+        prototype.dequeIsNotEmptyAfterAddingElements()
     }
 
     @Test
-    fun simpleAddBehavesAsAddLast {
-
+    override fun getFirstRetrievesElementsFromFirstPosition() {
+        prototype.getFirstRetrievesElementsFromFirstPosition()
     }
 
     @Test
-    fun simpleGetBehavesAsGetFirst {
-
+    override fun getLastRetrievesElementsFromLastPosition() {
+        prototype.getLastRetrievesElementsFromLastPosition()
     }
 
     @Test
-    fun retrieveFirstRemovesTheFirstUnifyingElement {
-
+    override fun simpleAddBehavesAsAddLast() {
+        prototype.simpleAddBehavesAsAddLast()
     }
 
     @Test
-    fun retrieveLastRemovesTheLastUnifyingElement {
-
+    override fun simpleGetBehavesAsGetFirst() {
+        prototype.simpleGetBehavesAsGetFirst()
     }
 
     @Test
-    fun simpleRetrieveBehavesAsRetrieveFirst {
-
+    override fun retrieveFirstRemovesTheFirstUnifyingElement() {
+        prototype.retrieveFirstRemovesTheFirstUnifyingElement()
     }
 
     @Test
-    fun dequeIsEmptyAfterRemovingEveryElement {
-
+    override fun retrieveLastRemovesTheLastUnifyingElement() {
+        prototype.retrieveLastRemovesTheLastUnifyingElement()
     }
 
     @Test
-    fun dequeContainsElement {
-
+    override fun simpleRetrieveBehavesAsRetrieveFirst() {
+        prototype.simpleRetrieveBehavesAsRetrieveFirst()
     }
 
     @Test
-    fun dequeDoesNotContainElement {
-
+    override fun collectionHasTheCorrectSize() {
+        prototype.collectionHasTheCorrectSize()
     }
 
     @Test
-    fun dequeContainsAllElement {
-
+    override fun emptyCollectionIsEmpty() {
+        prototype.emptyCollectionIsEmpty()
     }
 
     @Test
-    fun getWithPresentClauseReturnsTheCorrectSequence {
-
+    override fun filledCollectionIsNotEmpty() {
+        prototype.filledCollectionIsNotEmpty()
     }
 
     @Test
-    fun getWithAbsentClauseReturnsAnEmptySequence {
-
+    override fun collectionIsEmptyAfterRemovingEveryElement() {
+        prototype.collectionIsEmptyAfterRemovingEveryElement()
     }
 
     @Test
-    fun dequeDoesNotContainAllElement {
-
+    override fun collectionContainsElement() {
+        prototype.collectionContainsElement()
     }
 
     @Test
-    fun singleClauseAdditionToDequeWorksCorrectly {
-
+    override fun collectionDoesNotContainElement() {
+        prototype.collectionDoesNotContainElement()
     }
 
     @Test
-    fun singleClauseAdditionDoesNotReturnNewInstance {
-
+    override fun collectionContainsAllElement() {
+        prototype.collectionContainsAllElement()
     }
 
     @Test
-    fun multipleClauseAdditionToDequeWorksCorrectly {
-
+    override fun collectionDoesNotContainAllElement() {
+        prototype.collectionDoesNotContainAllElement()
     }
 
     @Test
-    fun multipleClauseAdditionDoesNotReturnNewInstance {
-
+    override fun singleClauseAdditionToCollectionWorksCorrectly() {
+        prototype.singleClauseAdditionToCollectionWorksCorrectly()
     }
 
     @Test
-    fun retrievingPresentSingleClauseRetrievesTheClause {
-
+    override fun multipleClauseAdditionToCollectionWorksCorrectly() {
+        prototype.multipleClauseAdditionToCollectionWorksCorrectly()
     }
 
     @Test
-    fun retrievingAbsentSingleClauseDoesNotAlterDeque {
-
+    override fun retrievingPresentSingleClauseRetrievesTheClause() {
+        prototype.retrievingPresentSingleClauseRetrievesTheClause()
     }
 
     @Test
-    fun retrievingPresentClauseWithRetrieveAllWorksCorrectly {
-
+    override fun retrievingAbsentSingleClauseDoesNotAlterCollection() {
+        prototype.retrievingAbsentSingleClauseDoesNotAlterCollection()
     }
 
     @Test
-    fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterDeque {
-
+    override fun retrievingPresentClauseWithRetrieveAllWorksCorrectly() {
+        prototype.retrievingPresentClauseWithRetrieveAllWorksCorrectly()
     }
 
     @Test
-    fun dequeAcceptMalformedClause {
-
+    override fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection() {
+        prototype.retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection()
     }
 
 }

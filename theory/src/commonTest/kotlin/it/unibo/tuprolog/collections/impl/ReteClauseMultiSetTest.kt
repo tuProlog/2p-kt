@@ -1,112 +1,106 @@
 package it.unibo.tuprolog.collections.impl
 
+import it.unibo.tuprolog.collections.ClauseCollection
+import it.unibo.tuprolog.collections.ClauseMultiSet
+import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
+import it.unibo.tuprolog.core.Clause
 import kotlin.test.Test
 
-internal class ReteClauseMultiSetTest {
+internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
+
+    private val prototype = PrototypeClauseMultiSetTest.prototype(
+        ClauseMultiSet.Companion::empty,
+        ClauseMultiSet.Companion::of
+    )
 
     @Test
-    fun countingOnPresentClauseAnswerTheRightNumber {
-
+    override fun collectionHasTheCorrectSize() {
+        prototype.collectionHasTheCorrectSize()
     }
 
     @Test
-    fun countingOnAbsentClauseAnswerZero {
-
+    override fun emptyCollectionIsEmpty() {
+        prototype.emptyCollectionIsEmpty()
     }
 
     @Test
-    fun getWithPresentClauseReturnsTheCorrectSequence {
-
+    override fun filledCollectionIsNotEmpty() {
+        prototype.filledCollectionIsNotEmpty()
     }
 
     @Test
-    fun getWithAbsentClauseReturnsAnEmptySequence {
-
+    override fun collectionIsEmptyAfterRemovingEveryElement() {
+        prototype.collectionIsEmptyAfterRemovingEveryElement()
     }
 
     @Test
-    fun collectionHasTheCorrectSize {
-
+    override fun collectionContainsElement() {
+        prototype.collectionContainsElement()
     }
 
     @Test
-    fun collectionIsEmpty {
-
+    override fun collectionDoesNotContainElement() {
+        prototype.collectionDoesNotContainElement()
     }
 
     @Test
-    fun collectionIsNotEmptyAfterAddingElements {
-
+    override fun collectionContainsAllElement() {
+        prototype.collectionContainsAllElement()
     }
 
     @Test
-    fun collectionIsEmptyAfterRemovingEveryElement {
-
+    override fun collectionDoesNotContainAllElement() {
+        prototype.collectionDoesNotContainAllElement()
     }
 
     @Test
-    fun collectionContainsElement {
-
+    override fun singleClauseAdditionToCollectionWorksCorrectly() {
+        prototype.singleClauseAdditionToCollectionWorksCorrectly()
     }
 
     @Test
-    fun collectionDoesNotContainElement {
-
+    override fun multipleClauseAdditionToCollectionWorksCorrectly() {
+        prototype.multipleClauseAdditionToCollectionWorksCorrectly()
     }
 
     @Test
-    fun collectionContainsAllElement {
-
+    override fun retrievingPresentSingleClauseRetrievesTheClause() {
+        prototype.retrievingPresentSingleClauseRetrievesTheClause()
     }
 
     @Test
-    fun collectionDoesNotContainAllElement {
-
+    override fun retrievingAbsentSingleClauseDoesNotAlterCollection() {
+        prototype.retrievingAbsentSingleClauseDoesNotAlterCollection()
     }
 
     @Test
-    fun singleClauseAdditionToCollectionWorksCorrectly {
-
+    override fun retrievingPresentClauseWithRetrieveAllWorksCorrectly() {
+        prototype.retrievingPresentClauseWithRetrieveAllWorksCorrectly()
     }
 
     @Test
-    fun singleClauseAdditionReturnsNewInstance {
-
+    override fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection() {
+        prototype.retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection()
     }
 
     @Test
-    fun multipleClauseAdditionToCollectionWorksCorrectly {
-
+    override fun countingOnPresentClauseAnswerTheRightNumber() {
+        prototype.countingOnPresentClauseAnswerTheRightNumber()
     }
 
     @Test
-    fun multipleClauseAdditionReturnsNewInstance {
-
+    override fun countingOnAbsentClauseAnswerZero() {
+        prototype.countingOnAbsentClauseAnswerZero()
     }
 
     @Test
-    fun retrievingPresentSingleClauseRetrievesTheClause {
-
+    override fun getWithPresentClauseReturnsTheCorrectSequence() {
+        prototype.getWithPresentClauseReturnsTheCorrectSequence()
     }
 
     @Test
-    fun retrievingAbsentSingleClauseDoesNotAlterCollection {
-
-    }
-
-    @Test
-    fun retrievingPresentClauseWithRetrieveAllWorksCorrectly {
-
-    }
-
-    @Test
-    fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection {
-
-    }
-
-    @Test
-    fun collectionAcceptMalformedClause {
-
+    override fun getWithAbsentClauseReturnsAnEmptySequence() {
+        prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
 
 }

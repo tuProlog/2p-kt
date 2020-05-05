@@ -1,13 +1,14 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.ClauseMultiset
+import it.unibo.tuprolog.collections.AbstractReteClauseCollection
+import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.rete.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal class ReteClauseMultiSet private constructor(
     private val rete: ReteNode<*, Clause>
-) : ClauseMultiset, AbstractReteClauseCollection<ReteClauseMultiSet>(rete) {
+) : ClauseMultiSet, AbstractReteClauseCollection<ReteClauseMultiSet>(rete) {
 
     /** Construct a [ReteClauseMultiSet] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {

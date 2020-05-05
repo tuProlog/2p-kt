@@ -1,113 +1,35 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.core.Struct
-import kotlin.test.*
 
-class PrototypeClauseCollectionTest(
-    private val emptyGenerator: () -> ClauseCollection,
-    private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection
-) {
+internal interface PrototypeClauseCollectionTest {
 
-    private val clauses =
-        listOf(
-            Fact.of(Struct.of("f", Atom.of("a"))),
-            Fact.of(Struct.of("f", Atom.of("b"))),
-            Fact.of(Struct.of("f", Atom.of("c")))
-        )
+    fun collectionHasTheCorrectSize()
 
-    private val emptyCollection = emptyGenerator()
-    private val genericCollection = collectionGenerator(clauses)
+    fun emptyCollectionIsEmpty()
 
-    @Test
-    fun collectionHasTheCorrectSize() {
-        val filledCollection = collectionGenerator(clauses)
+    fun filledCollectionIsNotEmpty()
 
-        assertEquals(0, emptyCollection.size)
-        assertEquals(clauses.count(), genericCollection.size)
-    }
+    fun collectionIsEmptyAfterRemovingEveryElement()
 
-    @Test
-    fun emptyCollectionIsEmpty() {
-        assertTrue(emptyCollection.isEmpty())
-    }
+    fun collectionContainsElement()
 
-    @Test
-    fun filledCollectionIsNotEmpty() {
-        assertFalse(genericCollection.isEmpty())
-    }
+    fun collectionDoesNotContainElement()
 
-    @Test
-    fun collectionIsEmptyAfterRemovingEveryElement() {
-        val
+    fun collectionContainsAllElement()
 
-    }
+    fun collectionDoesNotContainAllElement()
 
-    @Test
-    fun collectionContainsElement() {
+    fun singleClauseAdditionToCollectionWorksCorrectly()
 
-    }
+    fun multipleClauseAdditionToCollectionWorksCorrectly()
 
-    @Test
-    fun collectionDoesNotContainElement() {
+    fun retrievingPresentSingleClauseRetrievesTheClause()
 
-    }
+    fun retrievingAbsentSingleClauseDoesNotAlterCollection()
 
-    @Test
-    fun collectionContainsAllElement() {
+    fun retrievingPresentClauseWithRetrieveAllWorksCorrectly()
 
-    }
-
-    @Test
-    fun collectionDoesNotContainAllElement() {
-
-    }
-
-    @Test
-    fun singleClauseAdditionToCollectionWorksCorrectly() {
-
-    }
-
-    @Test
-    fun singleClauseAdditionReturnsNewInstance() {
-
-    }
-
-    @Test
-    fun multipleClauseAdditionToCollectionWorksCorrectly() {
-
-    }
-
-    @Test
-    fun multipleClauseAdditionReturnsNewInstance() {
-
-    }
-
-    @Test
-    fun retrievingPresentSingleClauseRetrievesTheClause() {
-
-    }
-
-    @Test
-    fun retrievingAbsentSingleClauseDoesNotAlterCollection() {
-
-    }
-
-    @Test
-    fun retrievingPresentClauseWithRetrieveAllWorksCorrectly() {
-
-    }
-
-    @Test
-    fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection() {
-
-    }
-
-    @Test
-    fun collectionAcceptMalformedClause() {
-
-    }
+    fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection()
 
 }

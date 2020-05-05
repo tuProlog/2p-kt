@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.impl.MutableReteClauseDeque
+import it.unibo.tuprolog.collections.impl.ReteClauseDeque
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Scope
 
 interface MutableClauseDeque : ClauseDeque {
 
@@ -27,4 +30,27 @@ interface MutableClauseDeque : ClauseDeque {
 
     /** Retrieves all the occurrences of the given [Clause] from this [MutableClauseDeque] as a [RetrieveResult] **/
     override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseDeque>
+
+    companion object {
+
+        /** Creates an empty [MutableClauseDeque] **/
+        fun empty(): MutableClauseDeque = of(emptyList())
+
+        /** Creates a [MutableClauseDeque] with given clauses */
+        fun of(vararg clause: Clause): MutableClauseDeque = of(clause.asIterable())
+
+        /** Let developers easily create a [MutableClauseDeque] programmatically while avoiding variables names clashing */
+        fun of(vararg clause: Scope.() -> Clause): MutableClauseDeque =
+            of(clause.map {
+                Scope.empty(it)
+            })
+
+        /** Creates a [MutableClauseDeque] from the given [Sequence] of [Clause] */
+        fun of(clauses: Sequence<Clause>): MutableClauseDeque = of(clauses.asIterable())
+
+        /** Creates a [MutableClauseDeque] from the given [Iterable] of [Clause] */
+        fun of(clauses: Iterable<Clause>): MutableClauseDeque =
+            MutableReteClauseDeque(clauses)
+    }
+
 }
