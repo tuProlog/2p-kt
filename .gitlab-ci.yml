@@ -1,11 +1,11 @@
-image: pikalab/ci:jdk13oracle-git-graphviz
+image: pikalab/ci:ubuntu-jdk14-git-gradle-graphviz
 
 variables:
   GOPTS: "--no-daemon --console=plain"
   CI: "true"
   BEFORE_TASK: ""
   AFTER_TASK: ""
-  GCMD: "./gradlew"
+  GCMD: "gradle"
   BUILD_TASK: "assemble"
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
@@ -13,19 +13,20 @@ variables:
   BINTRAY_TASK: "publishAllToBintray"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
+  GITHUB_PUBLISH_TASK: "githubRelease"
   PAGES_TASK: "orchidBuild"
   ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
 
 before_script:
   - chmod +x gradlew
+  - source $HOME/.sdkman/bin/sdkman-init.sh
 
 cache:
   paths:
-    - $HOME/.gradle/caches
-    - $HOME/.gradle/wrapper
-    - $HOME/.gradle/nodejs
+    - $HOME/.gradle/
     - gradle/
     - .gradle/
+    - build/
 
 Compile:
   stage: build
@@ -34,6 +35,9 @@ Compile:
 Test JVM:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JVM_TASK $AFTER_TASK $GOPTS
+  artifacts:
+    reports:
+      junit: "**/build/test-results/jvmTest/*.xml"
 
 Test JS:
   stage: test
@@ -56,6 +60,16 @@ Deploy to NPM:
   environment:
     name: NPM
     url: "https://www.npmjs.com/org/tuprolog"
+  only:
+    - /^(master)|(release)|(develop)$/
+
+Deploy to GitHub:
+  stage: deploy
+  script:
+    - $GCMD $BEFORE_TASK $GITHUB_PUBLISH_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: GitHub
+    url: "https://github.com/tuProlog/2p-kt/releases"
   only:
     - /^(master)|(release)|(develop)$/
 

@@ -19,14 +19,14 @@ abstract class AbstractWrapper<out Wrapped>(@JsName("signature") val signature: 
         )
     )
 
+    /** The wrapped implementation */
+    @JsName("wrappedImplementation")
+    abstract val wrappedImplementation: Wrapped
+
     /** A shorthand to get the signature functor name */
     @JsName("functor")
     val functor: String
         inline get() = signature.name
-
-    /** The wrapped implementation */
-    @JsName("wrappedImplementation")
-    abstract val wrappedImplementation: Wrapped
 
     /** Gets this wrapped primitive description Pair formed by [signature] and wrapped primitive type */
     @JsName("descriptionPair")

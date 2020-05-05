@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.library.stdlib.magic.MagicCut
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ClassicExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 
 internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 

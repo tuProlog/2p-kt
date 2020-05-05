@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TruthImpl
+import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
@@ -36,10 +37,12 @@ interface Truth : Atom {
         val FALSE: Truth = TruthImpl.False
 
         @JvmStatic
+        @JsName("of")
         fun of(truth: Boolean): Truth =
             if (truth) TRUE else FALSE
 
         @JvmStatic
+        @JsName("ofString")
         fun of(string: String): Truth =
             when (string) {
                 TRUE_FUNCTOR -> TRUE

@@ -148,15 +148,25 @@ sealed class Solve {
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = Response(
-                Solution.Halt(query, exception),
-                libraries,
-                flags,
-                staticKb,
-                dynamicKb,
-                sideEffectManager,
-                inputChannels,
-                outputChannels
-            )
+            Solution.Halt(query, exception),
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            sideEffectManager,
+            inputChannels,
+            outputChannels
+        )
+
+        @JsName("subSolver")
+        fun subSolver(): Solver {
+            return context.createSolver()
+        }
+
+        @JsName("solve")
+        fun solve(goal: Struct, maxDuration: TimeDuration = TimeDuration.MAX_VALUE): Sequence<Solution> {
+            return subSolver().solve(goal, maxDuration)
+        }
     }
 
 

@@ -1,3 +1,4 @@
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -19,6 +20,8 @@ object Versions {
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String = "0.2.2"
 
+    const val com_github_breadmoirai_github_release_gradle_plugin: String = "2.2.12"
+
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.72"
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
@@ -31,7 +34,7 @@ object Versions {
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 
-    const val kt_math: String = "0.1.2"
+    const val kt_math: String = "0.1.3"
 
     /**
      * Current version: "6.3"

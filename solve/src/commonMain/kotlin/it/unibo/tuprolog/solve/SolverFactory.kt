@@ -67,8 +67,9 @@ interface SolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
-    ): Solver =
-        solverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): Solver = solverOf(
+        otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
+    )
 
     @JsName("mutableSolverOf")
     fun mutableSolverOf(

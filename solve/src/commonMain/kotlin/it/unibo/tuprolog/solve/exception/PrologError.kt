@@ -59,6 +59,7 @@ abstract class PrologError(
             extraData: Term? = null
         ): PrologError = with(type) {
             when {
+                functor == MetaError.typeFunctor && cause is TuPrologRuntimeException -> MetaError(message, cause, context, extraData)
                 functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)
                 functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)
                 functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->

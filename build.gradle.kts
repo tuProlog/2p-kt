@@ -1,3 +1,5 @@
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import node.Bugs
 import node.NpmPublishExtension
@@ -19,12 +21,14 @@ plugins {
     id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
     id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
+    id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
 }
 
 repositories {
+    maven(Repos.Mirrors.mavenCentralEurope)
     mavenCentral()
     jcenter()
-    maven("https://dl.bintray.com/kotlin/dokka")
+    maven(Repos.dokka)
 }
 
 group = "it.unibo.tuprolog"
@@ -49,6 +53,8 @@ val bintrayRepo: String by project
 val bintrayUserOrg: String by project
 val projectLicense: String by project
 val projectIssues: String by project
+val githubOwner: String by project
+val githubRepo: String by project
 
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
@@ -56,6 +62,8 @@ val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
 val bintrayKey = getPropertyOrWarnForAbsence("bintrayKey")
 val ossrhUsername = getPropertyOrWarnForAbsence("ossrhUsername")
 val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
+val githubToken = getPropertyOrWarnForAbsence("githubToken")
+val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
 val allSubprojects = subprojects.map { it.name }.toSet()
 val jvmSubprojects = setOf("parser-jvm", "examples")
@@ -165,6 +173,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
+    configureUploadToGithub({ "jvm" in it })
 }
 
 jvmSubprojects.forEachProject {
@@ -180,6 +189,7 @@ jvmSubprojects.forEachProject {
     configureUploadToMavenCentral()
     configureUploadToBintray()
     configureSigning()
+    configureUploadToGithub()
 }
 
 jsSubprojects.forEachProject {
@@ -196,6 +206,49 @@ jsSubprojects.forEachProject {
     configureSigning()
 }
 
+configure<GithubReleaseExtension> {
+    if (githubToken != null) {
+        token(githubToken)
+        owner(githubOwner)
+        repo(githubRepo)
+        tagName { version.toString() }
+        releaseName { version.toString() }
+        allowUploadToExisting { true }
+        prerelease { false }
+        draft { false }
+        try {
+            body(
+                """|## CHANGELOG
+                   |${changelog().call()}
+                   """.trimMargin()
+            )
+        } catch (e: NullPointerException) {
+            e.message?.let { warn(it) }
+        }
+    }
+}
+
+fun Project.configureUploadToGithub(
+    jarTaskPositiveFilter: (String) -> Boolean = { "jar" in it },
+    jarTaskNegativeFilter: (String) -> Boolean = { "dokka" in it || "source" in it }
+) {
+    if (githubToken == null) return
+
+    val jarTasks = tasks.withType(Jar::class).asSequence()
+        .filter { jarTaskPositiveFilter(it.name.toLowerCase()) }
+        .filter { !jarTaskNegativeFilter(it.name.toLowerCase()) }
+        .map { it.archiveFile }
+        .toList()
+
+    rootProject.configure<GithubReleaseExtension> {
+        releaseAssets(*(releaseAssets.toList() + jarTasks).toTypedArray())
+    }
+
+    rootProject.tasks.withType(GithubReleaseTask::class) {
+        dependsOn(*jarTasks.toTypedArray())
+    }
+}
+
 fun Project.configureDokka(vararg platforms: String) {
     tasks.withType<DokkaTask> {
         outputDirectory = docDir
@@ -206,10 +259,9 @@ fun Project.configureDokka(vararg platforms: String) {
                 platforms.forEach { registerPlatform(it) }
             }
         }
-
     }
 
-    task<DefaultTask>("packAllDokka") {
+    val packAllDokka: DefaultTask by tasks.creating(DefaultTask::class.java) {
         group = "documentation"
     }
 
@@ -229,7 +281,7 @@ fun Project.configureDokka(vararg platforms: String) {
                 archiveClassifier.set("javadoc")
             }
 
-            tasks.getByName("packAllDokka").dependsOn(packDokkaForPlatform)
+            packAllDokka.dependsOn(packDokkaForPlatform)
         }
     } else {
         val packDokka by tasks.creating(Jar::class) {
@@ -241,7 +293,7 @@ fun Project.configureDokka(vararg platforms: String) {
             archiveClassifier.set("javadoc")
         }
 
-        tasks.getByName("packAllDokka").dependsOn(packDokka)
+        packAllDokka.dependsOn(packDokka)
     }
 }
 
@@ -393,11 +445,9 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
 fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
     apply<NpmPublishPlugin>()
 
-    val npmToken: String by this
-
     configure<NpmPublishExtension> {
         nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
-        token = npmToken
+        token = npmToken ?: ""
         packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
         nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
         jsCompileTask = compileTask

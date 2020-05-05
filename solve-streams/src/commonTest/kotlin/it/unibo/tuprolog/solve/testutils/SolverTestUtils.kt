@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.theory.ClauseDatabase
 
