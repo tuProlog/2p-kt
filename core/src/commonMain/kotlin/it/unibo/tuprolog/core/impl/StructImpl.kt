@@ -37,6 +37,18 @@ internal open class StructImpl(override val functor: String, override val args: 
         return true
     }
 
+    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        if (other !is Struct) return false
+        if (functor != other.functor) return false
+        if (arity != other.arity) return false
+        for (i in args.indices) {
+            if (!args[i].equals(other.args[i], useVarCompleteName)) {
+                return false
+            }
+        }
+        return true
+    }
+
     override fun hashCode(): Int {
         var result = functor.hashCode()
         result = 31 * result + args.contentHashCode()

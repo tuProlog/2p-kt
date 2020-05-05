@@ -22,6 +22,7 @@ interface Term : Comparable<Term> {
      * @see castTo
      */
     @Suppress("UNCHECKED_CAST")
+    @JsName("as")
     fun <T : Term> `as`(): T = this as T
 
     /** Helper method aimed at down-casting [Term]s using a fluent style
@@ -30,6 +31,7 @@ interface Term : Comparable<Term> {
      * @throws ClassCastException if the current term is not of type [T]
      */
     @Suppress("UNCHECKED_CAST")
+    @JsName("castTo")
     fun <T : Term> castTo(): T = this as T
 
     /**
@@ -40,6 +42,29 @@ interface Term : Comparable<Term> {
      */
     override fun compareTo(other: Term): Int =
         TermComparator.DefaultComparator.compare(this, other)
+
+
+    /**
+     * Checks whether an[other] term is _equals_ to the current one or not,
+     * by explicitly letting the client decide whether to rely or not on [Var]riables
+     * complete names for checking equality among two [Var]iables.
+     * If [useVarCompleteName] is `true`, [Var]iables are compared through their
+     * [Var.completeName] property. Otherwise, they are compared through their
+     * [Var.name] property. Other sorts of terms are compared as `Term.equals(Any?)`.
+     *
+     * For example, if [useVarCompleteName] is `true` the following comparison should fail:
+     * ```
+     * Var.of("X") == Var.of("X")
+     * ```
+     * otherwise, it should succeed.
+     *
+     * @param other is the [Term] the current [Term] should be compared with
+     * @param useVarCompleteName indicates whether [Var] should be compared through their
+     * [Var.completeName] property or through their [Var.name] property
+     *
+     * @return `true` if the two terms are equal, or `false`, otherwise
+     */
+    fun equals(other: Term, useVarCompleteName: Boolean): Boolean
 
     /**
      * Checks whether an[other] term is _structurally equals_ to the current one or not.

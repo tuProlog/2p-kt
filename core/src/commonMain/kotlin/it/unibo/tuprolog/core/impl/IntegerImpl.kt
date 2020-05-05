@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -19,7 +20,15 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
         if (this === other) return true
         if (other == null || other !is Integer) return false
 
-        return value.compareTo(other.value) == 0
+        return equalsToInteger(other)
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun equalsToInteger(other: Integer) =
+        value.compareTo(other.value) == 0
+
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        return other is Integer && equalsToInteger(other)
     }
 
     override fun hashCode(): Int = value.hashCode()

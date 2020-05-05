@@ -33,9 +33,22 @@ internal class VarImpl(override val name: String, private val identifier: Int = 
         if (this === other) return true
         if (other == null || other !is Var) return false
 
-        if (completeName != other.completeName) return false
+        return equalsByCompleteName(other)
+    }
 
-        return true
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun equalsByCompleteName(other: Var) =
+        completeName == other.completeName
+
+    private fun equalsToVar(other: Var, useVarCompleteName: Boolean) =
+        if (useVarCompleteName) {
+            completeName == other.completeName
+        } else {
+            name == other.name
+        }
+
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        return other is Var && equalsToVar(other, useVarCompleteName)
     }
 
     override fun hashCode(): Int = completeName.hashCode()

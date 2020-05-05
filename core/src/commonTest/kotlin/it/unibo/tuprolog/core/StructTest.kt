@@ -2,6 +2,9 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.StructImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertNoEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
@@ -10,6 +13,7 @@ import it.unibo.tuprolog.core.testutils.TupleUtils
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
 
 /**
  * Test class for [Struct] companion object
@@ -196,5 +200,36 @@ internal class StructTest {
         )
 
         assertEqualities(arbitraryFoldedStructCorrectInstance, toBeTested)
+    }
+
+    @Test
+    fun equalityOfNonGroundStructsWorksAsExpected() {
+        val f_ = Struct.of("f", Var.anonymous())
+        val g_ = Struct.of("g", Var.anonymous())
+
+        assertEqualities(f_, f_)
+        assertNoEqualities(f_, g_)
+
+        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.of("_")), f_)
+        assertStructurallyEquals(Struct.of("f", Var.of("_")), f_)
+        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.anonymous()), f_)
+        assertStructurallyEquals(Struct.of("f", Var.anonymous()), f_)
+
+        assertNotEquals(Struct.of("f", Var.of("_")), f_)
+        assertNotSame(Struct.of("f", Var.of("_")), f_)
+        assertNotEquals(Struct.of("f", Var.anonymous()), f_)
+        assertNotSame(Struct.of("f", Var.anonymous()), f_)
+
+        val fX = Struct.of("f", Var.of("X"))
+        val gX = Struct.of("g", Var.of("X"))
+
+        assertEqualities(fX, fX)
+        assertNoEqualities(fX, gX)
+
+        assertEqualsUsingVariablesSimpleNames(Struct.of("f", Var.of("X")), fX)
+        assertStructurallyEquals(Struct.of("f", Var.of("X")), fX)
+
+        assertNotEquals(Struct.of("f", Var.of("X")), fX)
+        assertNotSame(Struct.of("f", Var.of("X")), fX)
     }
 }
