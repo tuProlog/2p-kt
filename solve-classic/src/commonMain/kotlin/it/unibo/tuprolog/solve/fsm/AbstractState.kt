@@ -11,9 +11,9 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
         currentTime()
     }
 
-    private val nextCache: State by lazy {
+    override fun next(): State {
         val deltaTime = executionTime - context.startTime
-        if (deltaTime <= context.maxDuration) {
+        return if (deltaTime <= context.maxDuration) {
             computeNext()
         } else {
             StateHalt(
@@ -26,8 +26,6 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
         }
     }
 
-    override fun next(): State = nextCache
-
     protected abstract fun computeNext(): State
 
     protected fun currentTime(): TimeInstant =
@@ -37,6 +35,6 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
 
     protected fun nextDepth(): Int = context.depth + 1
 
-    protected fun previousDepth(): Int = (context.depth - 1).let { require(it >= 0); it }
+    protected fun previousDepth(): Int = context.depth - 1
 }
 
