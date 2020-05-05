@@ -1,4 +1,7 @@
-package it.unibo.tuprolog.utils
+package it.unibo.tuprolog.utils.impl
+
+import it.unibo.tuprolog.utils.Cursor
+import it.unibo.tuprolog.utils.toCursor
 
 internal data class NonLastCursor<T>(val iterator: Iterator<T>) : AbstractCursor<T>() {
 
