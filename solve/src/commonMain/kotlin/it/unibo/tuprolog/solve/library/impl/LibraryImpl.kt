@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.library.impl
 
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.PrologFunction
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.ClauseDatabase
 
 /**

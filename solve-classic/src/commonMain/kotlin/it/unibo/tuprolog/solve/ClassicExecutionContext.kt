@@ -3,10 +3,11 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.utils.Cursor
-
+import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
 data class ClassicExecutionContext(
@@ -56,14 +57,37 @@ data class ClassicExecutionContext(
 
     val interestingVariables: KtSet<Var> by lazy {
         val baseInterestingVars: KtSet<Var> = parent?.interestingVariables ?: query.variables.toSet()
-        val currInterestingVars: KtSet<Var> = if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
+        val currInterestingVars: KtSet<Var> =
+            if (goals.isOver) emptySet() else goals.current?.variables?.toSet() ?: emptySet()
 
         baseInterestingVars + currInterestingVars
     }
 
-    override val prologStackTrace: Sequence<Struct> by lazy {
+    override val prologStackTrace: KtList<Struct> by lazy {
         pathToRoot.filter { it.isActivationRecord }
             .map { it.procedure ?: Struct.of("?-", query) }
+            .toList()
+    }
+
+    override fun createSolver(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKb: ClauseDatabase,
+        dynamicKb: ClauseDatabase,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): Solver {
+        return ClassicSolverFactory.solverOf(
+            libraries,
+            flags,
+            staticKb,
+            dynamicKb,
+            stdIn,
+            stdOut,
+            stdErr
+        )
     }
 
     override fun toString(): String {

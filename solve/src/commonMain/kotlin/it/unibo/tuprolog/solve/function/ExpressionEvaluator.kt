@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.extractSignature
 
 /**
  * A class implementing a visitor that will evaluate expression terms according to context loaded functions

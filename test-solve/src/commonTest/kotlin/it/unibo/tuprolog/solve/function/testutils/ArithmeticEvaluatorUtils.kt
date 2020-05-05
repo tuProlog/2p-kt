@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.function.testutils
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.library.stdlib.CommonBuiltins
+import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
