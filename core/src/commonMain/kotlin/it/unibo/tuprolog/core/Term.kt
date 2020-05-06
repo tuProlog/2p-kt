@@ -64,6 +64,7 @@ interface Term : Comparable<Term> {
      *
      * @return `true` if the two terms are equal, or `false`, otherwise
      */
+    @JsName("equalsUsingVarCompleteNames")
     fun equals(other: Term, useVarCompleteName: Boolean): Boolean
 
     /**
