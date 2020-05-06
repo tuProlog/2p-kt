@@ -9,14 +9,16 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
         require(capacity > 0)
     }
 
-    private val cache = HashMap<K, V>()
+    private val cache = mutableMapOf<K, V>()
     private val insertionOrder = (0 until capacity).map { Optional.empty<K>() }.toTypedArray()
     private val size get() = cache.size
     private var nextFreeIndex = 0
 
-    override fun set(key: K, value: V): K? {
-        val evicted = insertionOrder[nextFreeIndex].value?.also {
-            cache.remove(it)
+    override fun set(key: K, value: V): Optional<out K> {
+        val evicted = insertionOrder[nextFreeIndex].also {
+            if (it is Optional.Some) {
+                cache.remove(it.value)
+            }
         }
         insertionOrder[nextFreeIndex] = Optional.of(key)
         cache[key] = value
@@ -53,23 +55,21 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     }
 
     override fun toSequence(): Sequence<Pair<K, V>> {
-        val lri = leastRecentIndex
-        return (0 until size).asSequence()
-            .map { (it + lri) % capacity }
-            .map { insertionOrder[it] }
-            .take(cache.size)
+        val indexes = if (size < capacity) {
+            (0 until size).asSequence()
+        } else {
+            (0 until capacity).asSequence()
+                .map { (it + nextFreeIndex) % capacity }
+        }
+        return indexes.map { insertionOrder[it] }
             .filterIsInstance<Optional.Some<K>>()
             .map { it.value }
             .map { it to cache[it]!! }
     }
 
     override fun toString(): String {
-        return "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(",")})"
+        return "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
     }
-
-
-    private val leastRecentIndex: Int
-        get() = (nextFreeIndex + capacity + 1) % capacity
 
     //    private fun getKeyToEvict(): K? =
 //        insertionOrder[(nextFreeIndex + size) % capacity].value
