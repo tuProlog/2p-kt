@@ -3,9 +3,16 @@ package it.unibo.tuprolog.utils
 sealed class Optional<T> {
 
     companion object {
-        fun <T> of(value: T): Optional<out T> = Some(value)
+        fun <T> some(value: T): Some<out T> = Some(value)
 
-        fun <T> empty(): Optional<out T> = None
+        fun <T> of(value: T?): Optional<out T> =
+            if (value == null) {
+                none()
+            } else {
+                some(value)
+            }
+
+        fun <T> none(): Optional<out T> = None
     }
 
     data class Some<T>(override val value: T) : Optional<T>() {

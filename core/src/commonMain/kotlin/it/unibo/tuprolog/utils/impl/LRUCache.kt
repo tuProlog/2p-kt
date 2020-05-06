@@ -10,24 +10,33 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     }
 
     private val cache = mutableMapOf<K, V>()
-    private val insertionOrder = (0 until capacity).map { Optional.empty<K>() }.toTypedArray()
-    private val size get() = cache.size
+    private val insertionOrder = (0 until capacity).map { Optional.none<K>() }.toTypedArray()
     private var nextFreeIndex = 0
 
-    override fun set(key: K, value: V): Optional<out K> {
-        val evicted = insertionOrder[nextFreeIndex].also {
-            if (it is Optional.Some) {
-                cache.remove(it.value)
+    override val size get() = cache.size
+
+    override fun set(key: K, value: V): Optional<out Pair<K, V>> {
+        val evicted: Optional<out Pair<K, V>> = insertionOrder[nextFreeIndex].let { evictedKey ->
+            if (evictedKey is Optional.Some) {
+                val evictedValue = cache[evictedKey.value]!!
+                cache.remove(evictedKey.value)
+                Optional.some(evictedKey.value to evictedValue)
+            } else {
+                Optional.none()
             }
         }
-        insertionOrder[nextFreeIndex] = Optional.of(key)
+        insertionOrder[nextFreeIndex] = Optional.some(key)
         cache[key] = value
         nextFreeIndex = (nextFreeIndex + 1) % capacity
         return evicted
     }
 
-    override fun get(key: K): V? =
-        cache[key]
+    override fun get(key: K): Optional<out V> =
+        if (cache.containsKey(key)) {
+            Optional.of(cache[key])
+        } else {
+            Optional.none()
+        }
 
     override fun toMap(): Map<K, V> =
         cache.toMap()

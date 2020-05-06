@@ -11,28 +11,32 @@ internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
 
     private val cache = LinkedHashMap<K, V>()
 
-    override fun set(key: K, value: V): Optional<out K> {
+    override fun set(key: K, value: V): Optional<out Pair<K, V>> {
         val evicted = removeLeastRecentIfNecessary()
         cache[key] = value
         return evicted
     }
 
-    private fun removeLeastRecent(): Optional<out K> {
-        val key = cache.iterator().next().key
-        cache.remove(key)
-        return Optional.of(key)
+    private fun removeLeastRecent(): Optional<out Pair<K, V>> {
+        val entry = cache.iterator().next()
+        cache.remove(entry.key)
+        return Optional.some(entry.toPair())
     }
 
-    private fun removeLeastRecentIfNecessary(): Optional<out K> {
-        return if (cache.size > capacity) {
+    private fun removeLeastRecentIfNecessary(): Optional<out Pair<K, V>> {
+        return if (cache.size >= capacity) {
             removeLeastRecent()
         } else {
-            return Optional.empty()
+            return Optional.none()
         }
     }
 
-    override fun get(key: K): V? =
-        cache[key]
+    override fun get(key: K): Optional<out V> =
+        if (cache.containsKey(key)) {
+            Optional.of(cache[key])
+        } else {
+            Optional.none()
+        }
 
     override fun toMap(): Map<K, V> =
         cache.toMap()
@@ -62,4 +66,7 @@ internal class SimpleLRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     override fun toString(): String {
         return "SimpleLRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
     }
+
+    override val size: Int
+        get() = cache.size
 }
