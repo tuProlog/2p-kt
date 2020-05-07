@@ -7,24 +7,9 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
-import it.unibo.tuprolog.utils.Cache
-import it.unibo.tuprolog.utils.Optional
 import kotlin.jvm.JvmOverloads
 
-private typealias MguRequest = Triple<Term, Term, Boolean>
-
-abstract class AbstractUnificator
-@JvmOverloads
-constructor(
-    override val context: Substitution = empty(),
-    cacheCapacity: Int = DEFAULT_CACHE_CAPACITY
-) : Unificator {
-
-    companion object {
-        private const val DEFAULT_CACHE_CAPACITY = 32
-    }
-
-    private val mguCache: Cache<MguRequest, Substitution> = Cache.simpleLru(cacheCapacity)
+abstract class AbstractUnificator @JvmOverloads constructor(override val context: Substitution = empty()) : Unificator {
 
     /** The context converted to equivalent equations */
     private val contextEquations: Iterable<Equation<Var, Term>> by lazy { context.toEquations() }
@@ -68,7 +53,7 @@ constructor(
         return changed
     }
 
-    private fun mguImpl(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
+    override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
         if (context.isFailed) return failed()
 
         val equations = (contextEquations + equationsFor(term1, term2)).toMutableList()
@@ -107,17 +92,5 @@ constructor(
         }
 
         return equations.filterIsInstance<Assignment<Var, Term>>().toSubstitution()
-    }
-
-    override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
-        val mguRequest = MguRequest(term1, term2, occurCheckEnabled)
-        return when (val cached = mguCache[mguRequest]) {
-            is Optional.Some -> cached.value
-            else -> {
-                val mguResult = mguImpl(term1, term2, occurCheckEnabled)
-                mguCache[mguRequest] = mguResult
-                mguResult
-            }
-        }
     }
 }
