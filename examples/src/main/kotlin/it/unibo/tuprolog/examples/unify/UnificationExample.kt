@@ -3,8 +3,6 @@ package it.unibo.tuprolog.examples.unify
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unificator
 
-// TODO: with/without occurs-check
-
 fun main() {
     val unificator = Unificator.default
 
