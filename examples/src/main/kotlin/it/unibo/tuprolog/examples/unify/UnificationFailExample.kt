@@ -3,6 +3,7 @@ package it.unibo.tuprolog.examples.unify
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator
 
 fun main() {
@@ -11,9 +12,9 @@ fun main() {
     val term = Struct.of("father", Atom.of("abraham"), Atom.of("isaac"))
     val template = Struct.of("father", Atom.of("isaac"), Atom.of("abraham"))
 
-    val substitution = unificator.mgu(term, template)
-    val match = unificator.match(term, template)
-    val unified = unificator.unify(term, template)
+    val substitution: Substitution = unificator.mgu(term, template)
+    val match: Boolean = unificator.match(term, template)
+    val unified: Term? = unificator.unify(term, template)
 
     println(substitution is Substitution.Fail)  // true
     println(substitution.isFailed)              // true
