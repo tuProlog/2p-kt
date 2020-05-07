@@ -47,10 +47,13 @@ interface Unificator {
 
     companion object {
 
-        /** The default unification strategy that uses plain equals to determine [Term]s identity */
+        /**
+         * The default unification strategy that uses plain equals to determine [Term]s identity, and exploits an
+         * LRU cache whose capacity is [DEFAULT_CACHE_CAPACITY]
+         */
         @JvmStatic
         @JsName("default")
-        val default by lazy { strict() }
+        val default by lazy { cached(strict()) }
 
         /** Computes the Most General Unifier, using [default] unification strategy */
         @JvmStatic
@@ -103,5 +106,22 @@ interface Unificator {
         @JsName("strict")
         fun strict(): Unificator =
             strict(Substitution.empty())
+
+        /**
+         * Makes another unification strategy cached, by letting memorising the most recent terms unified through it
+         * @param other is the [Unificator] to be made cached
+         * @param capacity is the maximum amount of items the cache may store
+         * @return a decorated [Unificator]
+         */
+        @JvmStatic
+        @JsName("cached")
+        fun cached(other: Unificator, capacity: Int = DEFAULT_CACHE_CAPACITY): Unificator =
+            if (other is CachedUnificator) {
+                CachedUnificator(other.decorated, capacity)
+            } else {
+                CachedUnificator(other, capacity)
+            }
+
+        const val DEFAULT_CACHE_CAPACITY = 32
     }
 }

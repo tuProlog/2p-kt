@@ -33,6 +33,19 @@ internal object AssertionUtils {
             actual structurallyEquals expected
         )
 
+    /** Asserts mutual equality for two [Term]s, using simple names for [Var]iables */
+    fun assertEqualsUsingVariablesSimpleNames(expected: Term, actual: Term) =
+        assertTrue(
+            expected.equals(actual, false),
+            actual.equals(expected, false)
+        )
+
+    /** Asserts mutual inequality for two [Term]s, using simple names for [Var]iables */
+    fun assertNotEqualsUsingVariablesSimpleNames(expected: Term, actual: Term) =
+        assertFalse(
+            expected.equals(actual, false),
+            actual.equals(expected, false)
+        )
 
     /** Asserts mutual not structural equality for two [Term]s */
     fun assertNotStructurallyEquals(expected: Term, actual: Term) =
@@ -46,12 +59,14 @@ internal object AssertionUtils {
     fun assertEqualities(expected: Term, actual: Term) {
         assertStructurallyEquals(expected, actual)
         assertEquals(expected, actual)
+        assertEqualsUsingVariablesSimpleNames(expected, actual)
     }
 
     /** Asserts not equality of all types (normal, strict and structural) for two [Term]s */
     fun assertNoEqualities(expected: Term, actual: Term) {
         assertNotEquals(expected, actual)
         assertNotStructurallyEquals(expected, actual)
+        assertNotEqualsUsingVariablesSimpleNames(expected, actual)
     }
 
     /** Executes the [function] with corresponding items in order */

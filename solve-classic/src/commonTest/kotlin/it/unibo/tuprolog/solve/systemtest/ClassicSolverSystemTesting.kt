@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel

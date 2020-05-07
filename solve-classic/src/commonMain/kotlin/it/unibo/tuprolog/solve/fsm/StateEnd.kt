@@ -10,7 +10,7 @@ internal data class StateEnd(
 
     override fun computeNext(): State {
         return if (context.hasOpenAlternatives) {
-            StateBacktracking(context.copy(step = nextStep(), startTime = executionTime))
+            StateBacktracking(context.copy(step = nextStep(), startTime = currentTime()))
         } else {
             super.computeNext()
         }

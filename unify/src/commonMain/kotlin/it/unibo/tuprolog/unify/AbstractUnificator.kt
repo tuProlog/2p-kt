@@ -9,9 +9,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
 import kotlin.jvm.JvmOverloads
 
-abstract class AbstractUnificator
-    @JvmOverloads constructor(override val context: Substitution = empty())
-    : Unificator {
+abstract class AbstractUnificator @JvmOverloads constructor(override val context: Substitution = empty()) : Unificator {
 
     /** The context converted to equivalent equations */
     private val contextEquations: Iterable<Equation<Var, Term>> by lazy { context.toEquations() }
@@ -66,7 +64,6 @@ abstract class AbstractUnificator
             val eqIterator = equations.listIterator()
 
             while (eqIterator.hasNext()) {
-
                 eqIterator.next().also { eq ->
                     when (eq) {
                         is Contradiction -> return failed()
