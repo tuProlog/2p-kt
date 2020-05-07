@@ -1,4 +1,6 @@
-package it.unibo.tuprolog.utils
+package it.unibo.tuprolog.utils.impl
+
+import it.unibo.tuprolog.utils.Cursor
 
 internal abstract class AbstractCursor<T> : Cursor<T> {
     override fun toString(): String {
