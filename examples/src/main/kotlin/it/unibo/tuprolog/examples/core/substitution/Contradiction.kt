@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.examples.core
+package it.unibo.tuprolog.examples.core.substitution
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
