@@ -67,7 +67,6 @@ interface Struct : Term {
     @JsName("functor")
     val functor: String
 
-
     @JsName("isFunctorWellFormed")
     val isFunctorWellFormed: Boolean
 
