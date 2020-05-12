@@ -1,22 +1,21 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.index
 
-import it.unibo.tuprolog.collections.rete.nodes.engineered.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.engineered.IndexingLeaf
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
-internal sealed class NumericIndex(private val globalSelector: Struct) : IndexingLeaf {
+internal class NumericIndex(
+    private val ordered: Boolean,
+    private val nestingLevel: Int
+) : IndexingLeaf {
 
-    protected val index: MutableMap<Numeric, MutableList<IndexedClause>> = mutableMapOf()
-    protected val globalIndex: MutableList<IndexedClause> = dequeOf()
+    private val index: MutableMap<Numeric, MutableList<IndexedClause>> = mutableMapOf()
+    private val numerics: MutableList<IndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        if(clause structurallyEquals globalSelector)
-            return globalIndex.asSequence().map { it.innerClause }
-
         return if (clause.firstParameter().isNumber)
             index.getOrElse(clause.asInnerNumeric()){ emptyList() }
                 .asSequence()
@@ -25,12 +24,24 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
         else extractGlobalSequence(clause)
     }
 
+    override fun assertA(clause: IndexedClause) {
+        if(ordered) {
+            clause.asInnerNumeric().let {
+                index.getOrPut(it){ dequeOf() }
+                    .addFirst(clause)
+            }
+            numerics.addFirst(clause)
+        } else {
+            assertZ(clause)
+        }
+    }
+
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerNumeric().let {
             index.getOrPut(it){ dequeOf() }
                 .add(clause)
         }
-        globalIndex.add(clause)
+        numerics.add(clause)
     }
 
     override fun getFirst(clause: Clause): IndexedClause? {
@@ -41,7 +52,7 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
             }
         }
         else {
-            return extractFirst(clause, globalIndex)
+            return extractFirst(clause, numerics)
         }
     }
 
@@ -56,9 +67,6 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
         this.getFirst(clause)
 
     override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
-        if (clause structurallyEquals globalSelector)
-            return globalIndex.asSequence()
-
         return if (clause.firstParameter().isNumber)
             index.getOrElse(clause.asNumeric()){ emptyList() }
                 .asSequence()
@@ -72,15 +80,13 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<IndexedClause> {
-        if (clause structurallyEquals globalSelector)
-            return globalIndex.asSequence()
 
         return if (clause.firstParameter().isNumber){
             val partialIndex = index.getOrElse(clause.asNumeric()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
         }
         else {
-            retractFromMutableList(clause, globalIndex)
+            retractFromMutableList(clause, numerics)
         }
     }
 
@@ -94,7 +100,7 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
         retractAllIndexed(clause).map { it.innerClause }
 
     private fun extractGlobalIndexedSequence(clause: Clause): Sequence<IndexedClause> =
-        globalIndex.asSequence()
+        numerics.asSequence()
             .filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
@@ -110,26 +116,7 @@ internal sealed class NumericIndex(private val globalSelector: Struct) : Indexin
     private fun Clause.asInnerNumeric(): Numeric =
         this as Numeric
 
-    protected fun IndexedClause.asInnerNumeric(): Numeric =
+    private fun IndexedClause.asInnerNumeric(): Numeric =
         this.innerClause.firstParameter() as Numeric
 
-    internal class OrderedIndex(globalSelector: Struct)
-        : NumericIndex(globalSelector) {
-
-        override fun assertA(clause: IndexedClause) {
-            clause.asInnerNumeric().let {
-                index.getOrPut(it){ dequeOf() }
-                    .addFirst(clause)
-            }
-            globalIndex.addFirst(clause)
-        }
-
-    }
-
-    internal class UnorderedIndex(globalSelector: Struct)
-        : NumericIndex(globalSelector) {
-
-        override fun assertA(clause: IndexedClause) =
-            assertZ(clause)
-    }
 }

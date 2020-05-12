@@ -1,19 +1,19 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.index
 
-import it.unibo.tuprolog.collections.rete.nodes.engineered.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.engineered.IndexingLeaf
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
-internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLeaf {
+internal class AtomIndex(
+    private val ordered: Boolean,
+    private val nestingLevel: Int
+) : IndexingLeaf {
 
-    protected val index: MutableMap<Atom, MutableList<IndexedClause>> = mutableMapOf()
-    protected val globalIndex: MutableList<IndexedClause> = dequeOf()
+    private val index: MutableMap<Atom, MutableList<IndexedClause>> = mutableMapOf()
+    private val atoms: MutableList<IndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        if(clause structurallyEquals globalSelector)
-            return globalIndex.asSequence().map { it.innerClause }
-
         return if (clause.firstParameter().isAtom)
             index.getOrElse(clause.asInnerAtom()){ emptyList() }
                 .asSequence()
@@ -22,12 +22,24 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
         else extractGlobalSequence(clause)
     }
 
+    override fun assertA(clause: IndexedClause) {
+        if (ordered) {
+            clause.asInnerAtom().let {
+                index.getOrPut(it){ dequeOf() }
+                    .addFirst(clause)
+            }
+            atoms.addFirst(clause)
+        } else {
+            assertZ(clause)
+        }
+    }
+
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerAtom().let {
             index.getOrPut(it){ dequeOf() }
                 .add(clause)
         }
-        globalIndex.add(clause)
+        atoms.add(clause)
     }
 
     override fun getFirst(clause: Clause): IndexedClause? {
@@ -38,7 +50,7 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
             }
         }
         else {
-            return extractFirst(clause, globalIndex)
+            return extractFirst(clause, atoms)
         }
     }
 
@@ -53,9 +65,6 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
         this.getFirst(clause)
 
     override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
-        if (clause structurallyEquals globalSelector)
-            return globalIndex.asSequence()
-
         return if (clause.firstParameter().isAtom)
             index.getOrElse(clause.asAtom()){ emptyList() }
                 .asSequence()
@@ -69,15 +78,13 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<IndexedClause> {
-        if (clause structurallyEquals globalSelector)
-            return globalIndex.asSequence()
 
         return if (clause.firstParameter().isAtom){
             val partialIndex = index.getOrElse(clause.asAtom()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
         }
         else {
-            retractFromMutableList(clause, globalIndex)
+            retractFromMutableList(clause, atoms)
         }
     }
 
@@ -91,7 +98,7 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
         retractAllIndexed(clause).map { it.innerClause }
 
     private fun extractGlobalIndexedSequence(clause: Clause): Sequence<IndexedClause> =
-        globalIndex.asSequence()
+        atoms.asSequence()
             .filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
@@ -107,26 +114,7 @@ internal sealed class AtomIndex(private val globalSelector: Struct) : IndexingLe
     private fun Clause.asInnerAtom(): Atom =
         this as Atom
 
-    protected fun IndexedClause.asInnerAtom(): Atom =
+    private fun IndexedClause.asInnerAtom(): Atom =
         this.innerClause.firstParameter() as Atom
 
-    internal class OrderedIndex(globalSelector: Struct)
-        : AtomIndex(globalSelector) {
-
-        override fun assertA(clause: IndexedClause) {
-            clause.asInnerAtom().let {
-                index.getOrPut(it){ dequeOf() }
-                    .addFirst(clause)
-            }
-            globalIndex.addFirst(clause)
-        }
-
-    }
-
-    internal class UnorderedIndex(globalSelector: Struct)
-        : AtomIndex(globalSelector) {
-
-        override fun assertA(clause: IndexedClause) =
-            assertZ(clause)
-    }
 }

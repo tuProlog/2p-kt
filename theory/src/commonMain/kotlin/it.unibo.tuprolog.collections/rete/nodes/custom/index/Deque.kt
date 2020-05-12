@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.index
 
 expect fun <T> dequeOf(vararg items: T): MutableList<T>
 

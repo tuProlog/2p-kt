@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered
+package it.unibo.tuprolog.collections.rete.nodes.custom
 
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.DirectiveIndex
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.addFirst
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.dequeOf
+import it.unibo.tuprolog.collections.rete.nodes.custom.index.DirectiveIndex
+import it.unibo.tuprolog.collections.rete.nodes.custom.index.addFirst
+import it.unibo.tuprolog.collections.rete.nodes.custom.index.dequeOf
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
@@ -13,8 +13,7 @@ internal class FamilyRootNode(
 ) : RootNode {
 
     private val children: MutableMap<Functor, ReteNode> = mutableMapOf()
-    private val theory: MutableList<Clause> =
-        dequeOf()
+    private val theory: MutableList<Clause> = dequeOf()
 
     private var lowestIndex: Long = 0
     private var highestIndex: Long = 0
@@ -44,7 +43,6 @@ internal class FamilyRootNode(
     override fun deepCopy(): RootNode =
         FamilyRootNode(theory, operationalOrder)
 
-
     override fun assertA(clause: Clause) {
         val indexed = assignLowerIndex(clause)
 
@@ -60,9 +58,9 @@ internal class FamilyRootNode(
             is Rule -> clause.head.functor.let {
                 theory.addFirst(clause)
                 children.getOrPut(it) {
-                    FamilyFunctorNode(
-                        it,
-                        operationalOrder
+                    FunctorNode(
+                        operationalOrder,
+                        0
                     )
                 }
             }
@@ -85,9 +83,9 @@ internal class FamilyRootNode(
             is Rule -> clause.head.functor.let {
                 theory.add(clause)
                 children.getOrPut(it) {
-                    FamilyFunctorNode(
-                        it,
-                        operationalOrder
+                    FunctorNode(
+                        operationalOrder,
+                        0
                     )
                 }
             }
