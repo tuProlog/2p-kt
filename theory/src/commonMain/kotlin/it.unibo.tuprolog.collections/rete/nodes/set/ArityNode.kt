@@ -13,7 +13,7 @@ internal data class ArityNode(
 ) : AbstractIntermediateReteNode<Term?, Rule>(children) {
 
     init {
-        require(arity >= 0) { "ArityNode arity should be greater than or equal to 0" }
+        require(arity >= 0) { "ArityReteNode arity should be greater than or equal to 0" }
     }
 
     override val header = "Arity($arity)"

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
 actual fun <T> dequeOf(vararg items: T): MutableList<T> {
     return mutableListOf(*items)

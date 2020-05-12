@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
@@ -42,6 +42,10 @@ internal class NumericIndex(
                 .add(clause)
         }
         numerics.add(clause)
+    }
+
+    override fun retractFirst(clause: Clause): Sequence<Clause> {
+        TODO("Not yet implemented")
     }
 
     override fun getFirst(clause: Clause): IndexedClause? {
