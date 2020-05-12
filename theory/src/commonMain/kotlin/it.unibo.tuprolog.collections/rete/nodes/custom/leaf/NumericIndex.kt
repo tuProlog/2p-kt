@@ -6,6 +6,8 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class NumericIndex(
     private val ordered: Boolean,
@@ -17,10 +19,11 @@ internal class NumericIndex(
 
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.firstParameter().isNumber)
-            index.getOrElse(clause.asInnerNumeric()){ emptyList() }
-                .asSequence()
-                .filter { it.innerClause matches clause }
-                .map { it.innerClause }
+            index[clause.asInnerNumeric()]
+                ?.asSequence()
+                ?.filter { it.innerClause matches clause }
+                ?.map { it.innerClause }
+                ?: emptySequence()
         else extractGlobalSequence(clause)
     }
 
@@ -72,9 +75,10 @@ internal class NumericIndex(
 
     override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
         return if (clause.firstParameter().isNumber)
-            index.getOrElse(clause.asNumeric()){ emptyList() }
-                .asSequence()
-                .filter { it.innerClause matches clause }
+            index[clause.asNumeric()]
+                ?.asSequence()
+                ?.filter { it.innerClause matches clause }
+                ?: emptySequence()
         else extractGlobalIndexedSequence(clause)
     }
 

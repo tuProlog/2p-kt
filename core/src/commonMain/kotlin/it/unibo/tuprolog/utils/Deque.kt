@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
+package it.unibo.tuprolog.utils
 
 expect fun <T> dequeOf(vararg items: T): MutableList<T>
 

@@ -4,6 +4,8 @@ import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class AtomIndex(
     private val ordered: Boolean,
@@ -15,10 +17,11 @@ internal class AtomIndex(
 
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.firstParameter().isAtom)
-            index.getOrElse(clause.asInnerAtom()){ emptyList() }
-                .asSequence()
-                .filter { it.innerClause matches clause }
-                .map { it.innerClause }
+            index[clause.asInnerAtom()]
+                ?.asSequence()
+                ?.filter { it.innerClause matches clause }
+                ?.map { it.innerClause }
+                ?: emptySequence()
         else extractGlobalSequence(clause)
     }
 
@@ -70,9 +73,10 @@ internal class AtomIndex(
 
     override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
         return if (clause.firstParameter().isAtom)
-            index.getOrElse(clause.asAtom()){ emptyList() }
-                .asSequence()
-                .filter { it.innerClause matches clause }
+            index[clause.asAtom()]
+                ?.asSequence()
+                ?.filter { it.innerClause matches clause }
+                ?: emptySequence()
         else extractGlobalIndexedSequence(clause)
     }
 

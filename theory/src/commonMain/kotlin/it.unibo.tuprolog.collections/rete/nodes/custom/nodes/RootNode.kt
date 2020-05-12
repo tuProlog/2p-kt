@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.DirectiveIndex
-import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.dequeOf
+import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.core.Clause
 
 internal class RootNode(
