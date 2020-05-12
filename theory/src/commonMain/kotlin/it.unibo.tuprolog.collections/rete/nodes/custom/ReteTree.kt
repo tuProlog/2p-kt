@@ -5,11 +5,18 @@ import it.unibo.tuprolog.core.Clause
 
 internal interface ReteTree {
 
-    val operationalOrder: Boolean
+    val isOrdered: Boolean
 
-    fun allClauses(): Sequence<Clause>
+    val clauses: Sequence<Clause>
+
+    val size: Int
+        get() = clauses.count()
 
     fun get(clause: Clause): Sequence<Clause>
+
+    operator fun contains(clause: Clause): Boolean {
+        return get(clause).any()
+    }
 
     fun assertA(clause: Clause)
 
