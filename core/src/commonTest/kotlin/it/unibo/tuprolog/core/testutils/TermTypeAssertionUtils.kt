@@ -23,7 +23,6 @@ internal object TermTypeAssertionUtils {
         assertTrue(any.isVariable)
 
         assertFalse(
-            any.isBound,
             any.isGround,
             any.isNumber,
             any.isReal,
@@ -66,7 +65,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isClause,
             any.isDirective,
             any.isFact,
@@ -120,7 +118,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,
@@ -173,7 +170,6 @@ internal object TermTypeAssertionUtils {
             any.isRule,
             any.isCons,
             any.isVariable,
-            any.isBound,
             any.isTuple,
             any.isIndicator,
             any is Numeric,
@@ -238,7 +234,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,
@@ -281,7 +276,6 @@ internal object TermTypeAssertionUtils {
         assertFalse(
             any.isTuple,
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,
@@ -323,7 +317,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,
@@ -361,7 +354,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,
@@ -454,7 +446,6 @@ internal object TermTypeAssertionUtils {
 
         assertFalse(
             any.isVariable,
-            any.isBound,
             any.isNumber,
             any.isReal,
             any.isInt,

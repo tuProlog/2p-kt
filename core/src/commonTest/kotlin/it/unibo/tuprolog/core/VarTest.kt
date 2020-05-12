@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
+import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.VarUtils
@@ -36,8 +37,28 @@ internal class VarTest {
 
         assertEqualities(anonymousVarInstance, anonymousVarInstance)
 
+        assertEqualsUsingVariablesSimpleNames(Var.of("_"), anonymousVarInstance)
         assertStructurallyEquals(Var.of("_"), anonymousVarInstance)
+        assertEqualsUsingVariablesSimpleNames(Var.anonymous(), anonymousVarInstance)
+        assertStructurallyEquals(Var.anonymous(), anonymousVarInstance)
+
         assertNotEquals(Var.of("_"), anonymousVarInstance)
         assertNotSame(Var.of("_"), anonymousVarInstance)
+        assertNotEquals(Var.anonymous(), anonymousVarInstance)
+        assertNotSame(Var.anonymous(), anonymousVarInstance)
+    }
+
+    @Test
+    fun namedVarsWorksAsExpected() {
+        val instance = Var.of("X")
+        assertEquals("X", instance.name)
+
+        assertEqualities(instance, instance)
+
+        assertEqualsUsingVariablesSimpleNames(Var.of("X"), instance)
+        assertStructurallyEquals(Var.of("X"), instance)
+
+        assertNotEquals(Var.of("X"), instance)
+        assertNotSame(Var.of("X"), instance)
     }
 }

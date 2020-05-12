@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.utils
 
+import it.unibo.tuprolog.utils.impl.ConjunctionCursor
+import it.unibo.tuprolog.utils.impl.EmptyCursor
+import it.unibo.tuprolog.utils.impl.MapperCursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 

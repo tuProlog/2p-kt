@@ -1,4 +1,6 @@
-package it.unibo.tuprolog.utils
+package it.unibo.tuprolog.utils.impl
+
+import it.unibo.tuprolog.utils.Cursor
 
 internal data class MapperCursor<T, R>(val wrapped: Cursor<out T>, val mapper: (T) -> R) : AbstractCursor<R>() {
     override val next: Cursor<out R> by lazy {

@@ -28,13 +28,13 @@ interface Truth : Atom {
         val FAIL_FUNCTOR = "fail"
 
         @JvmField
-        val TRUE: Truth = TruthImpl.True
+        val TRUE: Truth = TruthImpl(TRUE_FUNCTOR, true)
 
         @JvmField
-        val FAIL: Truth = TruthImpl.Fail
+        val FAIL: Truth = TruthImpl(FAIL_FUNCTOR, false)
 
         @JvmField
-        val FALSE: Truth = TruthImpl.False
+        val FALSE: Truth = TruthImpl(FALSE_FUNCTOR, false)
 
         @JvmStatic
         @JsName("of")

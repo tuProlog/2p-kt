@@ -2,9 +2,11 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("EqualsOrHashCode")
 internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
 
     override val decimalValue: BigDecimal by lazy {
@@ -19,10 +21,18 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
         if (this === other) return true
         if (other == null || other !is Integer) return false
 
-        return value.compareTo(other.value) == 0
+        return equalsToInteger(other)
     }
 
-    override fun hashCode(): Int = value.hashCode()
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun equalsToInteger(other: Integer) =
+        value.compareTo(other.value) == 0
+
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        return other is Integer && equalsToInteger(other)
+    }
+
+    override val hashCodeCache: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
         when (other) {
