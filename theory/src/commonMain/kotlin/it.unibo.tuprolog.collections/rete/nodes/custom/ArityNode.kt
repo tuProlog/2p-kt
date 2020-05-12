@@ -1,26 +1,17 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered
+package it.unibo.tuprolog.collections.rete.nodes.custom
 
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.*
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.AtomIndex
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.CompoundIndex
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.NumericIndex
-import it.unibo.tuprolog.collections.rete.nodes.engineered.index.VariableIndex
+import it.unibo.tuprolog.collections.rete.nodes.custom.index.*
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
-internal sealed class AbstractArityNode(
-    functor: String,
-    arity: Int,
-    private val ordered: Boolean
-) : ArityNode {
+internal sealed class ArityNode(
+    private val ordered: Boolean,
+    private val nestingLevel: Int
+) : ReteNode {
 
-    protected val globalSelector = this.buildGlobalSelector(functor, arity)
-
-    protected val orderedClauses: MutableList<Clause> = dequeOf()
+    protected val orderedClauses: MutableList<IndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        if (clause structurallyEquals globalSelector)
-            return orderedClauses.asSequence()
-
         return if(ordered) {
             mergeSortResults(clause)
         } else {
@@ -37,9 +28,6 @@ internal sealed class AbstractArityNode(
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> {
-        if (clause structurallyEquals globalSelector)
-            return orderedClauses.asSequence()
-
         return if (ordered) {
             retractAllOrdered(clause)
         } else {
@@ -59,42 +47,36 @@ internal sealed class AbstractArityNode(
 
     protected abstract fun retractAllUnordered(clause: Clause): Sequence<Clause>
 
-    protected abstract fun buildGlobalSelector(functor: String, arity: Int): Struct
-
     protected abstract fun retractFirstResult(clause: Clause): Sequence<Clause>
 
     protected abstract fun retractAnyResult(clause: Clause): Sequence<Clause>
 
     internal class FamilyArityNode(
-        functor: String,
-        arity: Int,
-        ordered: Boolean
-    ) : AbstractArityNode(functor, arity, ordered) {
+        ordered: Boolean,
+        nestingLevel: Int
+    ) : ArityNode(ordered, nestingLevel) {
 
         private val numericIndex =
-            if (ordered) NumericIndex.OrderedIndex(globalSelector)
-            else NumericIndex.UnorderedIndex(globalSelector)
+            if (ordered) NumericIndex.OrderedIndex(nestingLevel)
+            else NumericIndex.UnorderedIndex(nestingLevel)
         private val atomicIndex =
-            if (ordered) AtomIndex.OrderedIndex(globalSelector)
-            else AtomIndex.UnorderedIndex(globalSelector)
+            if (ordered) AtomIndex.OrderedIndex(nestingLevel)
+            else AtomIndex.UnorderedIndex(nestingLevel)
         private val variableIndex =
-            if (ordered) VariableIndex.OrderedIndex(globalSelector)
-            else VariableIndex.UnorderedIndex(globalSelector)
+            if (ordered) VariableIndex.OrderedIndex(nestingLevel)
+            else VariableIndex.UnorderedIndex(nestingLevel)
         private val compoundIndex =
-            if (ordered) CompoundIndex.OrderedIndex(globalSelector)
-            else CompoundIndex.UnorderedIndex(globalSelector)
-
-        override fun buildGlobalSelector(functor: String, arity: Int) : Struct =
-            Struct.of(functor, (1 .. arity).map { Var.anonymous() })
+            if (ordered) CompoundIndex.OrderedIndex(nestingLevel + 1)
+            else CompoundIndex.UnorderedIndex(nestingLevel + 1)
 
         override fun assertA(clause: IndexedClause) {
             assertByFirstParameter(clause).assertA(clause)
-            orderedClauses.addFirst(clause.innerClause)
+            orderedClauses.addFirst(clause)
         }
 
         override fun assertZ(clause: IndexedClause) {
             assertByFirstParameter(clause).assertZ(clause)
-            orderedClauses.add(clause.innerClause)
+            orderedClauses.add(clause)
         }
 
         override fun retractAnyResult(clause: Clause): Sequence<Clause> =
@@ -299,24 +281,31 @@ internal sealed class AbstractArityNode(
     }
 
     internal class ZeroArityNode(
-        functor: String,
-        arity: Int,
-        ordered: Boolean
-    ) : AbstractArityNode(functor, arity, ordered) {
+        private val ordered: Boolean,
+        nestingLevel: Int
+    ) : ArityNode(ordered, nestingLevel) {
 
-        override fun buildGlobalSelector(functor: String, arity: Int) : Struct =
-            Struct.of(functor)
-
-        override fun retractFirstResult(clause: Clause): Sequence<Clause> =
-            if (orderedClauses.isEmpty()) emptySequence()
-            else sequenceOf(orderedClauses.removeAt(0))
-        //TODO 
+        override fun retractFirstResult(clause: Clause): Sequence<Clause> {
+            orderedClauses.indexOfFirst { it.innerClause matches clause }.let {
+                return when(it){
+                    -1 -> emptySequence()
+                    else -> {
+                        val result = orderedClauses[it]
+                        orderedClauses.removeAt(it)
+                        sequenceOf(result.innerClause)
+                    }
+                }
+            }
+        }
 
         override fun retractAnyResult(clause: Clause): Sequence<Clause> =
             retractFirst(clause)
 
         override fun get(clause: Clause): Sequence<Clause> =
-            orderedClauses.asSequence()
+            orderedClauses
+                .filter { it.innerClause matches clause }
+                .map { it.innerClause }
+                .asSequence()
 
         override fun mergeSortResults(clause: Clause): Sequence<Clause> =
             this.get(clause)
@@ -325,20 +314,21 @@ internal sealed class AbstractArityNode(
             this.get(clause)
 
         override fun retractAllOrdered(clause: Clause): Sequence<Clause> {
-            val result = orderedClauses.toList()
-            orderedClauses.clear()
-            return result.asSequence()
+            val result = orderedClauses.filter { it.innerClause matches clause }
+            result.forEach { orderedClauses.remove(it) }
+            return result.asSequence().map { it.innerClause }
         }
 
         override fun retractAllUnordered(clause: Clause): Sequence<Clause> =
             retractAllOrdered(clause)
 
         override fun assertA(clause: IndexedClause) {
-            orderedClauses.addFirst(clause.innerClause)
+            if(ordered) orderedClauses.addFirst(clause)
+            else orderedClauses.add(clause)
         }
 
         override fun assertZ(clause: IndexedClause) {
-            orderedClauses.add(clause.innerClause)
+            orderedClauses.add(clause)
         }
     }
 

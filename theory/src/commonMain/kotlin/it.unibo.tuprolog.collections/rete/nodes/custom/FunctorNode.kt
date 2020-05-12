@@ -1,10 +1,11 @@
-package it.unibo.tuprolog.collections.rete.nodes.engineered
+package it.unibo.tuprolog.collections.rete.nodes.custom
 
+import it.unibo.tuprolog.collections.rete.nodes.custom.Nesting.arityOfNestedFirstArgument
 import it.unibo.tuprolog.core.Clause
 
-internal class FamilyFunctorNode(
-    private val functor: String,
-    private val ordered: Boolean
+internal class FunctorNode(
+    private val ordered: Boolean,
+    private val nestingLevel: Int
 ) : ReteNode {
 
     private val children: MutableMap<Arity, ReteNode> = mutableMapOf()
@@ -27,16 +28,16 @@ internal class FamilyFunctorNode(
         selectArity(clause)?.retractAll(clause) ?: emptySequence()
 
     private fun selectArity(clause: Clause) =
-        children[clause.head!!.arity]
+        children[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
 
     private fun chooseAssertionBranch(clause: IndexedClause, op: ReteNode.(IndexedClause) -> Unit) {
-        clause.innerClause.head!!.arity.let {
+        clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
             when(it) {
                 0 -> children.getOrPut(it) {
-                    AbstractArityNode.ZeroArityNode(functor, it, ordered)
+                    ArityNode.ZeroArityNode(ordered, nestingLevel)
                 }
                 else -> children.getOrPut(it) {
-                    AbstractArityNode.FamilyArityNode(functor, it, ordered)
+                    ArityNode.FamilyArityNode(ordered, nestingLevel)
                 }
             }
         }.run { op(clause) }
