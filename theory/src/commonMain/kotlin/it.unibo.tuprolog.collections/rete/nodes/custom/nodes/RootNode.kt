@@ -3,8 +3,8 @@ package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.DirectiveIndex
-import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class RootNode(
     clauses: Iterable<Clause>,
@@ -23,7 +23,7 @@ internal class RootNode(
         clauses.forEach { assertZ(it) }
     }
 
-    override fun theory(): Sequence<Clause> =
+    override fun allClauses(): Sequence<Clause> =
         theory.asSequence()
 
     override fun get(clause: Clause): Sequence<Clause> =

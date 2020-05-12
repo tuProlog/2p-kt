@@ -7,7 +7,7 @@ internal interface ReteTree {
 
     val operationalOrder: Boolean
 
-    fun theory() : Sequence<Clause>
+    fun allClauses(): Sequence<Clause>
 
     fun get(clause: Clause): Sequence<Clause>
 
