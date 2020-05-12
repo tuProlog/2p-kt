@@ -1,14 +1,16 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.Nesting.arityOfNestedFirstArgument
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.arityOfNestedFirstArgument
+import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode
 import it.unibo.tuprolog.core.Clause
 
-internal class FunctorNode(
+internal class FunctorReteNode(
     private val ordered: Boolean,
     private val nestingLevel: Int
 ) : ReteNode {
 
-    private val children: MutableMap<Arity, ReteNode> = mutableMapOf()
+    private val children: MutableMap<Int, ReteNode> = mutableMapOf()
 
     override fun get(clause: Clause): Sequence<Clause> =
         selectArity(clause)?.get(clause) ?: emptySequence()
@@ -34,12 +36,13 @@ internal class FunctorNode(
         clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
             when(it) {
                 0 -> children.getOrPut(it) {
-                    ArityNode.ZeroArityNode(ordered, nestingLevel)
+                    ArityReteNode.ZeroArityReteNode(ordered)
                 }
                 else -> children.getOrPut(it) {
-                    ArityNode.FamilyArityNode(ordered, nestingLevel)
+                    ArityReteNode.FamilyArityReteNode(ordered)
                 }
             }
         }.run { op(clause) }
     }
+
 }

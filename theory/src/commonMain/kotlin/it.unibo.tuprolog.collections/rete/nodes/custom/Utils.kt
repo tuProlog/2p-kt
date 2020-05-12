@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.nodes.custom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
-object Nesting {
+object Utils {
 
     fun Struct.arityOfNestedFirstArgument(nestingLevel: Int): Int {
         this.firstArguments().drop(nestingLevel).first().let {

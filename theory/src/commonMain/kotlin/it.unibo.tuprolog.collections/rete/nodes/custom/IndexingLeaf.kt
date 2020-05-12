@@ -2,21 +2,13 @@ package it.unibo.tuprolog.collections.rete.nodes.custom
 
 import it.unibo.tuprolog.core.Clause
 
-interface IndexingLeaf {
-
-    fun get(clause: Clause): Sequence<Clause>
-
-    fun assertA(clause: IndexedClause)
-
-    fun assertZ(clause: IndexedClause)
+internal interface IndexingLeaf : ReteNode{
 
     fun getFirst(clause: Clause): IndexedClause?
 
     fun getAny(clause: Clause): IndexedClause?
 
     fun getIndexed(clause: Clause): Sequence<IndexedClause>
-
-    fun retractAll(clause: Clause): Sequence<Clause>
 
     fun retractAllIndexed(clause: Clause): Sequence<IndexedClause>
 

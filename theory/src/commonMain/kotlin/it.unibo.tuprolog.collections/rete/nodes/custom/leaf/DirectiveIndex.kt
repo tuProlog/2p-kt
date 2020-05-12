@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.index
+package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode

@@ -1,12 +1,13 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.index.*
+import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.*
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
-internal sealed class ArityNode(
-    private val ordered: Boolean,
-    private val nestingLevel: Int
+internal sealed class ArityReteNode(
+    private val ordered: Boolean
 ) : ReteNode {
 
     protected val orderedClauses: MutableList<IndexedClause> = dequeOf()
@@ -51,23 +52,14 @@ internal sealed class ArityNode(
 
     protected abstract fun retractAnyResult(clause: Clause): Sequence<Clause>
 
-    internal class FamilyArityNode(
-        ordered: Boolean,
-        nestingLevel: Int
-    ) : ArityNode(ordered, nestingLevel) {
+    internal class FamilyArityReteNode(
+        ordered: Boolean
+    ) : ArityReteNode(ordered) {
 
-        private val numericIndex =
-            if (ordered) NumericIndex.OrderedIndex(nestingLevel)
-            else NumericIndex.UnorderedIndex(nestingLevel)
-        private val atomicIndex =
-            if (ordered) AtomIndex.OrderedIndex(nestingLevel)
-            else AtomIndex.UnorderedIndex(nestingLevel)
-        private val variableIndex =
-            if (ordered) VariableIndex.OrderedIndex(nestingLevel)
-            else VariableIndex.UnorderedIndex(nestingLevel)
-        private val compoundIndex =
-            if (ordered) CompoundIndex.OrderedIndex(nestingLevel + 1)
-            else CompoundIndex.UnorderedIndex(nestingLevel + 1)
+        private val numericIndex = NumericIndex(ordered, 0)
+        private val atomicIndex = AtomIndex(ordered, 0)
+        private val variableIndex = VariableIndex(ordered, 0)
+        private val compoundIndex = CompoundIndex(ordered, 1)
 
         override fun assertA(clause: IndexedClause) {
             assertByFirstParameter(clause).assertA(clause)
@@ -218,7 +210,7 @@ internal sealed class ArityNode(
         private fun Clause.firstParameter(): Term =
             this.args[0]
 
-        private fun assertByFirstParameter(clause: IndexedClause) : IndexingLeaf =
+        private fun assertByFirstParameter(clause: IndexedClause) : ReteNode =
             clause.innerClause.firstParameter().let {
                 when(it){
                     is Numeric -> numericIndex
@@ -280,10 +272,9 @@ internal sealed class ArityNode(
         }
     }
 
-    internal class ZeroArityNode(
-        private val ordered: Boolean,
-        nestingLevel: Int
-    ) : ArityNode(ordered, nestingLevel) {
+    internal class ZeroArityReteNode(
+        private val ordered: Boolean
+    ) : ArityReteNode(ordered) {
 
         override fun retractFirstResult(clause: Clause): Sequence<Clause> {
             orderedClauses.indexOfFirst { it.innerClause matches clause }.let {
