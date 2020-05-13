@@ -3,18 +3,18 @@ package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.DirectiveIndex
-import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.dequeOf
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class RootNode(
     clauses: Iterable<Clause>,
-    override val operationalOrder: Boolean
+    override val isOrdered: Boolean
 ) : ReteTree {
 
     private val theory: MutableList<Clause> = dequeOf()
     private val rules: RuleNode =
-        RuleNode(operationalOrder)
-    private val directives: DirectiveIndex = DirectiveIndex(operationalOrder)
+        RuleNode(isOrdered)
+    private val directives: DirectiveIndex = DirectiveIndex(isOrdered)
 
     private var lowestIndex: Long = 0
     private var highestIndex: Long = 0
@@ -23,15 +23,15 @@ internal class RootNode(
         clauses.forEach { assertZ(it) }
     }
 
-    override fun theory(): Sequence<Clause> =
-        theory.asSequence()
+    override val clauses: Sequence<Clause>
+        get() = theory.asSequence()
 
     override fun get(clause: Clause): Sequence<Clause> =
-        if(clause.isDirective) directives.get(clause)
+        if (clause.isDirective) directives.get(clause)
         else rules.get(clause)
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        if(clause.isDirective) directives.retractFirst(clause)
+        if (clause.isDirective) directives.retractFirst(clause)
         else rules.retractFirst(clause)
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
@@ -45,13 +45,13 @@ internal class RootNode(
         else rules.retractAll(clause)
 
     override fun deepCopy(): ReteTree =
-        RootNode(theory, operationalOrder)
+        RootNode(theory, isOrdered)
 
     override fun assertA(clause: Clause) {
         val indexed = assignLowerIndex(clause)
 
-        if(operationalOrder){
-            if(clause.isDirective) directives.assertA(indexed)
+        if (isOrdered) {
+            if (clause.isDirective) directives.assertA(indexed)
             else rules.assertA(indexed)
         } else {
             assertZ(clause)

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.fsm
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.utils.Cursor
-import it.unibo.tuprolog.utils.EmptyCursor
 import it.unibo.tuprolog.utils.cursor
 
 
@@ -41,7 +40,7 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
     val newChoicePointContext = if (rules.hasNext) {
         choicePoints.appendRules(rules.next, this)
     } else {
-        choicePoints.appendRules(EmptyCursor, this)
+        choicePoints.appendRules(Cursor.empty(), this)
     }
 
     return copy(
@@ -54,7 +53,7 @@ fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions:
     val newChoicePointContext = if (primitiveExecutions.hasNext) {
         choicePoints.appendPrimitives(primitiveExecutions.next, this)
     } else {
-        choicePoints.appendPrimitives(EmptyCursor, this)
+        choicePoints.appendPrimitives(Cursor.empty(), this)
     }
 
     return copy(

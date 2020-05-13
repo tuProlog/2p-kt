@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
+@Suppress("EqualsOrHashCode")
 internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
 
     override val decimalValue: BigDecimal = value
@@ -17,9 +19,16 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other !is Real) return false
-
-        return value.compareTo(other.value) == 0
+        return equalsToReal(other)
     }
 
-    override fun hashCode(): Int = value.stripTrailingZeros().hashCode()
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun equalsToReal(other: Real) =
+        value.compareTo(other.value) == 0
+
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+        return other is Real && equalsToReal(other)
+    }
+
+    override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 }

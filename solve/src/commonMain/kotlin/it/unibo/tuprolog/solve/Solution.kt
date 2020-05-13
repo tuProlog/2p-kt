@@ -64,6 +64,15 @@ sealed class Solution {
         }
     }
 
+    val isYes: Boolean
+        get() = this is Yes
+
+    val isNo: Boolean
+        get() = this is No
+
+    val isHalt: Boolean
+        get() = this is Halt
+
     protected companion object {
 
         /** Internal function to check signature validity in constructing Solution instances */

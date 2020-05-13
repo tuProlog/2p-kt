@@ -4,6 +4,8 @@ import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class DirectiveIndex(private val ordered: Boolean) : ReteNode {
 

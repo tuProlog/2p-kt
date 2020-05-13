@@ -1,24 +1,29 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.Indexed
 
-interface IndexedClause : Comparable<IndexedClause>{
-
-    val index: Long
+interface IndexedClause : Indexed<Clause> {
 
     val innerClause: Clause
+        get() = value
 
     companion object {
-        fun of(index: Long, clause: Clause): IndexedClause {
+        fun wrap(indexedClause: Indexed<Clause>): IndexedClause {
             return object : IndexedClause {
                 override val index: Long
-                     get() = index
-                override val innerClause: Clause
-                    get() = clause
+                    get() = indexedClause.index
 
-                override fun compareTo(other: IndexedClause): Int =
-                    (this.index - other.index).toInt()
+                override val value: Clause
+                    get() = indexedClause.value
+
+                override fun <R> map(mapper: (Clause) -> R) =
+                    indexedClause.map(mapper)
             }
+        }
+
+        fun of(index: Long, clause: Clause): IndexedClause {
+            return wrap(Indexed.of(index, clause))
         }
     }
 

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -16,7 +15,8 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
 
     private val prototype = SolverTest.prototype(this)
 
-    override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
+    override val defaultBuiltins: AliasedLibrary
+        get() = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,
