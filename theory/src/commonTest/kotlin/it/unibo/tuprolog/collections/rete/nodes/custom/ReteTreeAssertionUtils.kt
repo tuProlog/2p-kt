@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom
 
 import it.unibo.tuprolog.core.*
+import kotlin.collections.List
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -43,6 +44,84 @@ internal object ReteTreeAssertionUtils {
         assertEquals(0, tree.size)
         assertItemsAreEquals(emptySequence(), tree.clauses)
     }
+
+    private fun <T> interleave(vararg seqs: Sequence<T>): Sequence<T> =
+        TODO()
+
+    private fun Struct.addArgument(term: Term): Struct =
+        Struct.of(functor, *args, term)
+
+    private fun Fact.addArgument(term: Term): Fact =
+        Fact.of(head.addArgument(term))
+
+    private val moreArguments = listOf(
+        Atom.of("a"),
+        Integer.of(2),
+        Real.of(3.4),
+        Var.of("Five"),
+        Struct.of("six", Atom.of("seven"), Integer.of(8), Real.of(9.10), Var.of("Eleven"))
+    )
+
+    private fun List<Fact>.addArguments(args: List<Term>): List<Fact> {
+        return f1Facts.zip(args.shuffled()).map { (f, a) -> f.addArgument(a) }
+    }
+
+    val simpleFacts = listOf("a", "b", "c", "d")
+        .map(Struct.Companion::of)
+        .map(Fact.Companion::of)
+
+    val f1Facts = listOf(
+        Struct.of("f", Integer.of(1)),
+        Struct.of("f", Integer.of(2)),
+        Struct.of("f", Integer.of(3)),
+        Struct.of("f", Integer.of(4)),
+        Struct.of("f", Real.of(1.0)),
+        Struct.of("f", Real.of(2.0)),
+        Struct.of("f", Real.of(3.0)),
+        Struct.of("f", Real.of(4.0))
+    ).map(Fact.Companion::of)
+
+    val g1Facts = listOf(
+        Struct.of("g", Atom.of("a")),
+        Struct.of("g", Atom.of("b")),
+        Struct.of("g", Atom.of("c")),
+        Struct.of("g", Atom.of("d"))
+    ).map(Fact.Companion::of)
+
+    val h1Facts = listOf(
+        Struct.of("h", Var.of("A")),
+        Struct.of("h", Var.of("B")),
+        Struct.of("h", Var.of("C")),
+        Struct.of("h", Var.of("D"))
+    ).map(Fact.Companion::of)
+
+    val i1Facts = f1Facts.map { Fact.of(Struct.of("i", it.head)) }
+
+    val j1Facts = g1Facts.map { Fact.of(Struct.of("j", it.head)) }
+
+    val l1Facts = h1Facts.map { Fact.of(Struct.of("l", it.head)) }
+
+    val m1Facts = i1Facts.map { Fact.of(Struct.of("m", it.head)) }
+
+    val n1Facts = j1Facts.map { Fact.of(Struct.of("n", it.head)) }
+
+    val o1Facts = l1Facts.map { Fact.of(Struct.of("o", it.head)) }
+
+    val f2Facts = f1Facts.addArguments(moreArguments)
+
+    val g2Facts = g1Facts.addArguments(moreArguments)
+
+    val h2Facts = h1Facts.addArguments(moreArguments)
+
+    val i2Facts = i1Facts.addArguments(moreArguments)
+
+    val l2Facts = l1Facts.addArguments(moreArguments)
+
+    val m2Facts = m1Facts.addArguments(moreArguments)
+
+    val n2Facts = n1Facts.addArguments(moreArguments)
+
+    val o2Facts = o1Facts.addArguments(moreArguments)
 
     /** Contains some well-formed facts */
     val facts = listOf(
