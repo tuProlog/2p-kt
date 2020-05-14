@@ -147,7 +147,7 @@ Scope.empty {
 }
 ```
 
-we will get the `father(abraham, isaac)` ground term.
+we will get the `father(abraham, isaac)` ground term as a result.
 
 ### Substitution composition
 
