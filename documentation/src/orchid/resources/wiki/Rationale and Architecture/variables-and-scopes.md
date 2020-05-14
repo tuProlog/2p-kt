@@ -136,7 +136,7 @@ Keep in mind that `Substitution.of` will check for contradictions, and may possi
 
 Substitutions can be applied to terms through the `applyTo(term: Term)` method. Calling this method will return a new Term equivalent to the starting one, but all variables will be replaced according to the provided bindings.
 
-For example, by applying the substitution `{X -> abraham}` on term `father(X, isaac)`:
+For example, by applying the substitution `{X = abraham}` on term `father(X, isaac)`:
 
 ```kotlin
 Scope.empty {
@@ -153,7 +153,7 @@ we will get the `father(abraham, isaac)` ground term as a result.
 
 Substitutions can be composed through the `plus()` method, which is also available as the infix operator `+`.
 
-For example, say we want to compose a substitution `{X -> abraham}` with `{Y -> isaac}` within the same scope. In order to do so, we would write:
+For example, say we want to compose a substitution `{X = abraham}` with `{Y = isaac}` within the same scope. In order to do so, we would write:
 
 ```kotlin
 Scope.empty {
