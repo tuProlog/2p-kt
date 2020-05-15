@@ -1,22 +1,14 @@
 package it.unibo.tuprolog.utils
 
-import it.unibo.tuprolog.utils.impl.IndexedImpl
-
-interface Indexed<T> : Comparable<Indexed<T>> {
-    val index: Long
+interface Indexed<K, T> {
+    val index: K
 
     val value: T
 
-    override fun compareTo(other: Indexed<T>): Int {
-        return (index - other.index).toInt()
-    }
+    operator fun component1(): K = index
 
-    fun <R> map(mapper: (T) -> R): Indexed<R>
+    operator fun component2(): T = value
 
-    companion object {
-        fun <T> of(index: Long, value: T): Indexed<T> {
-            return IndexedImpl(index, value)
-        }
-    }
+    fun <R> map(mapper: (T) -> R): Indexed<K, R>
 }
 

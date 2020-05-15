@@ -4,6 +4,7 @@ import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.utils.mergeSequences
 
 internal object Utils {
 
@@ -30,33 +31,32 @@ internal object Utils {
             yield(currentTerm)
         }
 
-    fun mergeSort(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
-        mergeSort(listOf(*args))
-
-    fun mergeSort(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
-        mergeSort(sequence.asIterable())
-
-    fun mergeSort(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> {
-        TODO("not implemented")
-    }
-
     fun merge(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
-        merge(sequenceOf(*args))
+        merge(listOf(*args))
 
     fun merge(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
-        sequence.flatten()
+        merge(sequence.asIterable())
 
     fun merge(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
-        merge(iterable.asSequence())
+        mergeSequences(iterable, SituatedIndexedClause::compareTo)
 
-    fun merge(vararg args: Sequence<Clause>): Sequence<Clause> =
-        merge(sequenceOf(*args))
+    fun flattenIndexed(vararg args: Sequence<SituatedIndexedClause>): Sequence<SituatedIndexedClause> =
+        flattenIndexed(sequenceOf(*args))
 
-    fun merge(sequence: Sequence<Sequence<Clause>>): Sequence<Clause> =
+    fun flattenIndexed(sequence: Sequence<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
         sequence.flatten()
 
-    fun merge(iterable: Iterable<Sequence<Clause>>): Sequence<Clause> =
-        merge(iterable.asSequence())
+    fun flattenIndexed(iterable: Iterable<Sequence<SituatedIndexedClause>>): Sequence<SituatedIndexedClause> =
+        flattenIndexed(iterable.asSequence())
+
+    fun flatten(vararg args: Sequence<Clause>): Sequence<Clause> =
+        flatten(sequenceOf(*args))
+
+    fun flatten(sequence: Sequence<Sequence<Clause>>): Sequence<Clause> =
+        sequence.flatten()
+
+    fun flatten(iterable: Iterable<Sequence<Clause>>): Sequence<Clause> =
+        flatten(iterable.asSequence())
 
     fun comparePriority(a: SituatedIndexedClause?, b: SituatedIndexedClause?): SituatedIndexedClause? =
         when {

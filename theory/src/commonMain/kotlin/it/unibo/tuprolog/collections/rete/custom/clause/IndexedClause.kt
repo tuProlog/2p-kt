@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.collections.rete.custom.clause
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.utils.Indexed
+import it.unibo.tuprolog.utils.LongIndexed
 
-interface IndexedClause : Indexed<Clause> {
+interface IndexedClause : LongIndexed<Clause> {
 
     val innerClause: Clause
         get() = value
 
     companion object {
-        fun wrap(indexedClause: Indexed<Clause>): IndexedClause {
+        fun wrap(indexedClause: LongIndexed<Clause>): IndexedClause {
             return object : IndexedClause {
                 override val index: Long
                     get() = indexedClause.index
@@ -24,7 +24,7 @@ interface IndexedClause : Indexed<Clause> {
 
         fun of(index: Long, clause: Clause): IndexedClause {
             return wrap(
-                Indexed.of(index, clause)
+                LongIndexed.of(index, clause)
             )
         }
     }

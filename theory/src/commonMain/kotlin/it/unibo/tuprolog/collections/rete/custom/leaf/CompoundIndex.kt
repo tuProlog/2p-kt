@@ -1,14 +1,13 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorNode
-
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 
@@ -22,13 +21,13 @@ internal class CompoundIndex(
     override fun get(clause: Clause): Sequence<Clause> =
         if(clause.isGlobal()){
             if(ordered){
-                Utils.mergeSort(
+                Utils.merge(
                     functors.values.asSequence().flatMap {
                         it.getIndexed(clause)
                     }
                 ).map { it.innerClause }
             } else{
-                Utils.merge(
+                Utils.flatten(
                     functors.values.asSequence().flatMap {
                         it.get(clause)
                     }
@@ -68,7 +67,7 @@ internal class CompoundIndex(
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
         if(clause.isGlobal()) {
-            Utils.mergeSort(
+            Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
                 }
@@ -81,7 +80,7 @@ internal class CompoundIndex(
 
     private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
         if(clause.isGlobal()) {
-            Utils.merge(
+            Utils.flatten(
                 functors.values.map {
                     it.retractAll(clause)
                 }
@@ -94,7 +93,7 @@ internal class CompoundIndex(
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if(clause.isGlobal()) {
-            Utils.mergeSort(
+            Utils.merge(
                 sequenceOf(
                     functors.values.mapNotNull {
                         it.getFirstIndexed(clause)
@@ -108,7 +107,7 @@ internal class CompoundIndex(
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         if(clause.isGlobal()){
-            Utils.mergeSort(
+            Utils.merge(
                 functors.values.map {
                     it.getIndexed(clause)
                 }
@@ -121,7 +120,7 @@ internal class CompoundIndex(
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         if(clause.isGlobal()){
-            Utils.mergeSort(
+            Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
                 }

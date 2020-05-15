@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
 import it.unibo.tuprolog.collections.rete.custom.*
-import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
-import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
-import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.custom.leaf.*
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.custom.leaf.AtomIndex
+import it.unibo.tuprolog.collections.rete.custom.leaf.CompoundIndex
+import it.unibo.tuprolog.collections.rete.custom.leaf.NumericIndex
+import it.unibo.tuprolog.collections.rete.custom.leaf.VariableIndex
 import it.unibo.tuprolog.core.*
 
 internal interface ArityRete: ReteNode, TopLevelReteNode
@@ -75,19 +76,19 @@ internal sealed class ArityNode: ReteNode {
             clause.nestedFirstArgument().let {
                 return when(it) {
                     is Numeric -> {
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             numericIndex.retractAllIndexed(clause)
                         )
                     }
                     is Atom -> {
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             atomicIndex.retractAllIndexed(clause)
                         )
                     }
                     is Var -> {
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             numericIndex.retractAllIndexed(clause),
                             atomicIndex.retractAllIndexed(clause),
@@ -95,7 +96,7 @@ internal sealed class ArityNode: ReteNode {
                         )
                     }
                     else -> {
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             compoundIndex.retractAllIndexed(clause)
                         )
@@ -106,21 +107,21 @@ internal sealed class ArityNode: ReteNode {
         protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             clause.nestedFirstArgument().let {
                 when(it) {
-                    is Numeric -> Utils.merge(
+                    is Numeric -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause)
                     )
-                    is Atom -> Utils.merge(
+                    is Atom -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
                                 atomicIndex.retractAllIndexed(clause)
                     )
-                    is Var -> Utils.merge(
+                    is Var -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
                                 numericIndex.retractAllIndexed(clause) +
                                 atomicIndex.retractAllIndexed(clause) +
                                 compoundIndex.retractAllIndexed(clause)
                     )
-                    else -> Utils.merge(
+                    else -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
                                 compoundIndex.retractAllIndexed(clause)
                     )
@@ -131,24 +132,24 @@ internal sealed class ArityNode: ReteNode {
             clause.nestedFirstArgument().let {
                 when (it) {
                     is Numeric ->
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.getIndexed(clause),
                             numericIndex.getIndexed(clause)
                         )
                     is Atom ->
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.getIndexed(clause),
                             atomicIndex.getIndexed(clause)
                         )
                     is Var ->
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.getIndexed(clause),
                             numericIndex.getIndexed(clause),
                             atomicIndex.getIndexed(clause),
                             compoundIndex.getIndexed(clause)
                         )
                     else ->
-                        Utils.mergeSort(
+                        Utils.merge(
                             variableIndex.getIndexed(clause),
                             compoundIndex.getIndexed(clause)
                         )

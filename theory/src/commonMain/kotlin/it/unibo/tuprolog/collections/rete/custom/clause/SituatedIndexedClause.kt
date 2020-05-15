@@ -3,8 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom.clause
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.core.Clause
 
-internal interface SituatedIndexedClause :
-    IndexedClause {
+internal interface SituatedIndexedClause : IndexedClause {
 
     fun removeFromIndex()
 
