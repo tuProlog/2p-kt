@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 

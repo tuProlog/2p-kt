@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.collections.rete.nodes.set
+package it.unibo.tuprolog.collections.rete.generic.set
 
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
 
 /** An intermediate node indexing by Rules head's functor */
 internal data class FunctorNode(
@@ -24,5 +24,9 @@ internal data class FunctorNode(
     override fun removeWithLimit(element: Rule, limit: Int): Sequence<Rule> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
-    override fun deepCopy(): FunctorNode = FunctorNode(functor, children.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): FunctorNode =
+        FunctorNode(
+            functor,
+            children.deepCopy({ it }, { it.deepCopy() })
+        )
 }

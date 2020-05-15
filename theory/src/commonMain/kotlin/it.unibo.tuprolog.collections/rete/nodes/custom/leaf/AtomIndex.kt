@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.collections.rete.nodes.custom.Retractable
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.dequeOf
@@ -10,10 +14,10 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class AtomIndex(
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingLeaf {
+) : IndexingLeaf, Retractable {
 
-    private val index: MutableMap<Atom, MutableList<IndexedClause>> = mutableMapOf()
-    private val atoms: MutableList<IndexedClause> = dequeOf()
+    private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
+    private val atoms: MutableList<SituatedIndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.firstParameter().isAtom)
@@ -29,9 +33,9 @@ internal class AtomIndex(
         if (ordered) {
             clause.asInnerAtom().let {
                 index.getOrPut(it){ dequeOf() }
-                    .addFirst(clause)
+                    .addFirst(SituatedIndexedClause.of(clause, this))
             }
-            atoms.addFirst(clause)
+            atoms.addFirst(SituatedIndexedClause.of(clause, this))
         } else {
             assertZ(clause)
         }
@@ -40,16 +44,12 @@ internal class AtomIndex(
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerAtom().let {
             index.getOrPut(it){ dequeOf() }
-                .add(clause)
+                .add(SituatedIndexedClause.of(clause, this))
         }
-        atoms.add(clause)
+        atoms.add(SituatedIndexedClause.of(clause, this))
     }
 
-    override fun retractFirst(clause: Clause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getFirst(clause: Clause): IndexedClause? {
+    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
         if (clause.firstParameter().isAtom) {
             index[clause.asInnerAtom()].let {
                 return if(it == null) null
@@ -61,17 +61,14 @@ internal class AtomIndex(
         }
     }
 
-    private fun extractFirst(clause: Clause, index: MutableList<IndexedClause>): IndexedClause? {
+    private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
 
         return if (actualIndex == -1) null
         else index[actualIndex]
     }
 
-    override fun getAny(clause: Clause): IndexedClause? =
-        this.getFirst(clause)
-
-    override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
+    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.firstParameter().isAtom)
             index[clause.asAtom()]
                 ?.asSequence()
@@ -80,13 +77,11 @@ internal class AtomIndex(
         else extractGlobalIndexedSequence(clause)
     }
 
-    override fun retractIndexed(indexed: IndexedClause): Sequence<Clause> {
+    override fun retractIndexed(indexed: SituatedIndexedClause) {
         index[indexed.asInnerAtom()]!!.remove(indexed)
-        return sequenceOf(indexed.innerClause)
     }
 
-    override fun retractAllIndexed(clause: Clause): Sequence<IndexedClause> {
-
+    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.firstParameter().isAtom){
             val partialIndex = index.getOrElse(clause.asAtom()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
@@ -96,7 +91,8 @@ internal class AtomIndex(
         }
     }
 
-    private fun retractFromMutableList(clause: Clause, index: MutableList<IndexedClause>): Sequence<IndexedClause> {
+    private fun retractFromMutableList(clause: Clause, index: MutableList<SituatedIndexedClause>):
+            Sequence<SituatedIndexedClause> {
         val result = index.filter { it.innerClause matches clause }
         result.forEach { index.remove(it) }
         return result.asSequence()
@@ -105,7 +101,7 @@ internal class AtomIndex(
     override fun retractAll(clause: Clause): Sequence<Clause> =
         retractAllIndexed(clause).map { it.innerClause }
 
-    private fun extractGlobalIndexedSequence(clause: Clause): Sequence<IndexedClause> =
+    private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         atoms.asSequence()
             .filter { it.innerClause matches clause }
 
@@ -121,6 +117,9 @@ internal class AtomIndex(
 
     private fun Clause.asInnerAtom(): Atom =
         this as Atom
+
+    private fun SituatedIndexedClause.asInnerAtom(): Atom =
+        this.innerClause.firstParameter() as Atom
 
     private fun IndexedClause.asInnerAtom(): Atom =
         this.innerClause.firstParameter() as Atom

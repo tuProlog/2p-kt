@@ -1,17 +1,14 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom
 
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 
 internal interface IndexingLeaf : ReteNode{
 
-    fun getFirst(clause: Clause): IndexedClause?
+    fun getFirstIndexed(clause: Clause): SituatedIndexedClause?
 
-    fun getAny(clause: Clause): IndexedClause?
+    fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause>
 
-    fun getIndexed(clause: Clause): Sequence<IndexedClause>
-
-    fun retractAllIndexed(clause: Clause): Sequence<IndexedClause>
-
-    fun retractIndexed(indexed: IndexedClause): Sequence<Clause>
+    fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause>
 
 }

@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.collections.rete.nodes.set
+package it.unibo.tuprolog.collections.rete.generic.set
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.collections.rete.ReteNode
-import it.unibo.tuprolog.collections.rete.nodes.DirectiveNode
+import it.unibo.tuprolog.collections.rete.generic.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.DirectiveNode
 
 /** The root node, of the Rete Tree indexing [Clause]s */
 internal data class RootNode(override val children: MutableMap<String?, ReteNode<*, Clause>> = mutableMapOf()) :
@@ -38,5 +38,9 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
     override fun removeWithLimit(element: Clause, limit: Int): Sequence<Clause> =
         selectChildren(element).single()?.remove(element, limit) ?: emptySequence()
 
-    override fun deepCopy(): RootNode = RootNode(children.deepCopy({ it }, { it.deepCopy() }))
+    override fun deepCopy(): RootNode =
+        RootNode(
+            children.deepCopy({ it },
+                { it.deepCopy() })
+        )
 }

@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.collections.rete
+package it.unibo.tuprolog.collections.rete.generic
 
-import it.unibo.tuprolog.collections.rete.nodes.set.RootNode as SetNode
-import it.unibo.tuprolog.collections.rete.nodes.list.RootNode as ListNode
+import it.unibo.tuprolog.collections.rete.generic.set.RootNode as SetNode
+import it.unibo.tuprolog.collections.rete.generic.list.RootNode as ListNode
 import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
 

@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.functorOfNestedFirstArgument
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.custom.TopLevelReteNode
 import it.unibo.tuprolog.core.Clause
 
 internal class RuleNode(
     private val ordered: Boolean
-    ) : ReteNode {
+    ) : TopLevelReteNode {
 
-    private val functors: MutableMap<String, FunctorReteNode> = mutableMapOf()
+    private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
 
     override fun get(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
@@ -18,7 +18,7 @@ internal class RuleNode(
         clause.nestedFunctor().let {
             if(ordered){
                 functors.getOrPut(it){
-                    FunctorReteNode(ordered, 0)
+                    FunctorNode.TopLevelFunctorReteNode(ordered, 0)
                 }.assertA(clause)
             } else{
                 assertZ(clause)
@@ -28,7 +28,7 @@ internal class RuleNode(
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
             functors.getOrPut(it){
-                FunctorReteNode(ordered, 0)
+                FunctorNode.TopLevelFunctorReteNode(ordered, 0)
             }.assertZ(clause)
         }
 
@@ -43,6 +43,5 @@ internal class RuleNode(
 
     private fun IndexedClause.nestedFunctor(): String =
         this.innerClause.head!!.functorOfNestedFirstArgument(0)
-
 
 }

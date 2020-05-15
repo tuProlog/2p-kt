@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.theory.AbstractClauseDatabase
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.RetractResult

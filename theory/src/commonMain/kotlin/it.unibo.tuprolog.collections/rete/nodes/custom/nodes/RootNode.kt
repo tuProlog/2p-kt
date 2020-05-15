@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteNode
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.TopLevelReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class DirectiveIndex(private val ordered: Boolean) : ReteNode {
+internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
 
     private val directives: MutableList<IndexedClause> = dequeOf()
 

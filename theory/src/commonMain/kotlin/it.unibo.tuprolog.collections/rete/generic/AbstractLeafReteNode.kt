@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete
+package it.unibo.tuprolog.collections.rete.generic
 
 import kotlin.math.min
 

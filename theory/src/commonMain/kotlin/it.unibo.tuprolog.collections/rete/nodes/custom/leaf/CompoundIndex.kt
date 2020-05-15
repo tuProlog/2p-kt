@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingNode
 import it.unibo.tuprolog.collections.rete.nodes.custom.Utils
 import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.nestedFirstArgument
-import it.unibo.tuprolog.collections.rete.nodes.custom.nodes.FunctorIndexingNode
+import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.nodes.custom.nodes.FunctorIndexing
+import it.unibo.tuprolog.collections.rete.nodes.custom.nodes.FunctorNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 
@@ -14,16 +16,32 @@ internal class CompoundIndex(
     private val nestingLevel: Int
 ) : IndexingNode{
 
-    private val functors: MutableMap<String, FunctorIndexingNode> = mutableMapOf()
+    private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
 
     override fun get(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
+        if(clause.isGlobal()){
+            if(ordered){
+                Utils.mergeSort(
+                    functors.values.asSequence().flatMap {
+                        it.getIndexed(clause)
+                    }
+                ).map { it.innerClause }
+            } else{
+                Utils.merge(
+                    functors.values.asSequence().flatMap {
+                        it.get(clause)
+                    }
+                )
+            }
+        } else {
+            functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
+        }
 
     override fun assertA(clause: IndexedClause) =
         clause.nestedFunctor().let {
             if(ordered){
                 functors.getOrPut(it){
-                    FunctorIndexingNode(
+                    FunctorNode.FunctorIndexingNode(
                         ordered,
                         nestingLevel
                     )
@@ -36,24 +54,72 @@ internal class CompoundIndex(
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
             functors.getOrPut(it){
-                FunctorIndexingNode(
+                FunctorNode.FunctorIndexingNode(
                     ordered,
                     nestingLevel
                 )
             }.assertZ(clause)
         }
 
-    override fun retractFirst(clause: Clause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retractAll(clause: Clause): Sequence<Clause> {
-        return if(ordered) retractAllOrdered(clause)
+    override fun retractAll(clause: Clause): Sequence<Clause> =
+        if(ordered) retractAllOrdered(clause)
         else retractAllUnordered(clause)
-    }
 
-    override fun retractAllOrdered(clause: Clause): Sequence<Clause> {
-        return if(clause.isGlobal()) {
+    private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
+        if(clause.isGlobal()) {
+            Utils.mergeSort(
+                functors.values.map {
+                    it.retractAllIndexed(clause)
+                }
+            ).map { it.innerClause }
+        } else {
+            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+                ?.retractAll(clause)
+                ?: emptySequence()
+        }
+
+    private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
+        if(clause.isGlobal()) {
+            Utils.merge(
+                functors.values.map {
+                    it.retractAll(clause)
+                }
+            )
+        } else {
+            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+                ?.retractAll(clause)
+                ?: emptySequence()
+        }
+
+    override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
+        if(clause.isGlobal()) {
+            Utils.mergeSort(
+                sequenceOf(
+                    functors.values.mapNotNull {
+                        it.getFirstIndexed(clause)
+                    }.asSequence()
+                )
+            ).firstOrNull()
+        }else {
+            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+                ?.getFirstIndexed(clause)
+        }
+
+    override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        if(clause.isGlobal()){
+            Utils.mergeSort(
+                functors.values.map {
+                    it.getIndexed(clause)
+                }
+            )
+        } else {
+            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+                ?.getIndexed(clause)
+                ?: emptySequence()
+        }
+
+    override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+        if(clause.isGlobal()){
             Utils.mergeSort(
                 functors.values.map {
                     it.retractAllIndexed(clause)
@@ -61,52 +127,9 @@ internal class CompoundIndex(
             )
         } else {
             functors[clause.functorOfNestedFirstArgument(nestingLevel)]
-                ?.retractAll(clause)
+                ?.retractAllIndexed(clause)
                 ?: emptySequence()
         }
-    }
-
-    override fun retractAllUnordered(clause: Clause): Sequence<Clause> {
-        return if(clause.isGlobal()) {
-            Utils.merge(
-                functors.values.map {
-                    it.retractAllUnordered(clause)
-                }
-            )
-        } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
-                ?.retractAll(clause)
-                ?: emptySequence()
-        }
-    }
-
-    override fun retractFirstResult(clause: Clause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retractAnyResult(clause: Clause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getFirst(clause: Clause): IndexedClause? {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAny(clause: Clause): IndexedClause? {
-        TODO("Not yet implemented")
-    }
-
-    override fun getIndexed(clause: Clause): Sequence<IndexedClause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retractAllIndexed(clause: Clause): Sequence<IndexedClause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retractIndexed(indexed: IndexedClause): Sequence<Clause> {
-        TODO("Not yet implemented")
-    }
 
     private fun Clause.nestedFunctor(): String =
         this.head!!.functorOfNestedFirstArgument(nestingLevel)

@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.AbstractClauseCollection
 import it.unibo.tuprolog.collections.AbstractMutableReteClauseCollection
 import it.unibo.tuprolog.collections.MutableClauseMultiSet
-import it.unibo.tuprolog.collections.RetrieveResult
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 

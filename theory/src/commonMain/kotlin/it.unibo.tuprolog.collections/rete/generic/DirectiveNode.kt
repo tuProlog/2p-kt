@@ -1,7 +1,6 @@
-package it.unibo.tuprolog.collections.rete.nodes
+package it.unibo.tuprolog.collections.rete.generic
 
 import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.collections.rete.AbstractLeafReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** A leaf node containing [Directive]s */
@@ -12,5 +11,6 @@ internal data class DirectiveNode(override val leafElements: MutableList<Directi
 
     override fun get(element: Directive): Sequence<Directive> = indexedElements.filter { it matches element }
 
-    override fun deepCopy(): DirectiveNode = DirectiveNode(leafElements.toMutableList())
+    override fun deepCopy(): DirectiveNode =
+        DirectiveNode(leafElements.toMutableList())
 }

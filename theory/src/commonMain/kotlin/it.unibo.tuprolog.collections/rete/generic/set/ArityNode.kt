@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.collections.rete.nodes.set
+package it.unibo.tuprolog.collections.rete.generic.set
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.collections.rete.AbstractIntermediateReteNode
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.AbstractIntermediateReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** An intermediate node indexing by Rules head's arity */
@@ -13,7 +13,7 @@ internal data class ArityNode(
 ) : AbstractIntermediateReteNode<Term?, Rule>(children) {
 
     init {
-        require(arity >= 0) { "ArityReteNode arity should be greater than or equal to 0" }
+        require(arity >= 0) { "ArityNode arity should be greater than or equal to 0" }
     }
 
     override val header = "Arity($arity)"

@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.collections.rete.nodes.list
+package it.unibo.tuprolog.collections.rete.generic.list
 
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.collections.rete.AbstractLeafReteNode
+import it.unibo.tuprolog.collections.rete.generic.AbstractLeafReteNode
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** An intermediate node indexing by Rules head's arity */
@@ -11,7 +11,7 @@ internal data class ArityNode(
 ) : AbstractLeafReteNode<Rule>() {
 
     init {
-        require(arity >= 0) { "ArityReteNode arity should be greater than or equal to 0" }
+        require(arity >= 0) { "ArityNode arity should be greater than or equal to 0" }
     }
 
     override val header = "Arity($arity)"
@@ -20,5 +20,8 @@ internal data class ArityNode(
         indexedElements.filter { it matches element }
 
     override fun deepCopy(): ArityNode =
-        ArityNode(arity, leafElements.toMutableList())
+        ArityNode(
+            arity,
+            leafElements.toMutableList()
+        )
 }

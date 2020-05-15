@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.nodes.custom.clause
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.Indexed
@@ -23,7 +23,9 @@ interface IndexedClause : Indexed<Clause> {
         }
 
         fun of(index: Long, clause: Clause): IndexedClause {
-            return wrap(Indexed.of(index, clause))
+            return wrap(
+                Indexed.of(index, clause)
+            )
         }
     }
 

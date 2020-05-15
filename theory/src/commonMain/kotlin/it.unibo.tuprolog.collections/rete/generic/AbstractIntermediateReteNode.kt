@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.collections.rete
+package it.unibo.tuprolog.collections.rete.generic
 
 /** A non-leaf Rete Node */
 internal abstract class AbstractIntermediateReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
