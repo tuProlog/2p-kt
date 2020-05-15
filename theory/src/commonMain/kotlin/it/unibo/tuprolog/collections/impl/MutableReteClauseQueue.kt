@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.collections.impl
 
 import it.unibo.tuprolog.collections.AbstractMutableReteClauseCollection
-import it.unibo.tuprolog.collections.MutableClauseDeque
+import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
-internal class MutableReteClauseDeque private constructor(
+internal class MutableReteClauseQueue private constructor(
     private val rete: ReteTree
-) : MutableClauseDeque, AbstractMutableReteClauseCollection<MutableReteClauseDeque>(rete) {
+) : MutableClauseQueue, AbstractMutableReteClauseCollection<MutableReteClauseQueue>(rete) {
 
-    /** Construct a [MutableReteClauseDeque] from given clauses */
+    /** Construct a [MutableReteClauseQueue] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.ordered(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
@@ -22,17 +22,17 @@ internal class MutableReteClauseDeque private constructor(
     override fun getLast(clause: Clause): Sequence<Clause> =
         getFirst(clause).toList().asReversed().asSequence()
 
-    override fun addFirst(clause: Clause): MutableReteClauseDeque {
+    override fun addFirst(clause: Clause): MutableReteClauseQueue {
         rete.assertA(clause)
         return this
     }
 
-    override fun addLast(clause: Clause): MutableReteClauseDeque {
+    override fun addLast(clause: Clause): MutableReteClauseQueue {
         rete.assertZ(clause)
         return this
     }
 
-    override fun retrieveFirst(clause: Clause): RetrieveResult<out MutableReteClauseDeque> {
+    override fun retrieveFirst(clause: Clause): RetrieveResult<out MutableReteClauseQueue> {
         val retracted = rete.retractFirst(clause)
 
         return when {
@@ -45,7 +45,7 @@ internal class MutableReteClauseDeque private constructor(
         }
     }
 
-    override fun retrieveLast(clause: Clause): RetrieveResult<out MutableReteClauseDeque> {
+    override fun retrieveLast(clause: Clause): RetrieveResult<out MutableReteClauseQueue> {
         TODO("Not yet implemented")
     }
 }

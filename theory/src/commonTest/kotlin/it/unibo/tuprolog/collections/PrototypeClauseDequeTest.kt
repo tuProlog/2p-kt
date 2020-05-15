@@ -29,8 +29,8 @@ internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
 
     companion object {
         internal fun prototype(
-            emptyGenerator: () -> ClauseDeque,
-            collectionGenerator: (Iterable<Clause>) -> ClauseDeque
+            emptyGenerator: () -> ClauseQueue,
+            collectionGenerator: (Iterable<Clause>) -> ClauseQueue
         ) : PrototypeClauseDequeTest =
                 PrototypeClauseDequeTestImpl(
                     emptyGenerator,
