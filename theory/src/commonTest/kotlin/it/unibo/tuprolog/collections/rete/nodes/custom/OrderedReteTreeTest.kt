@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom
 
+import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertItemsAreEquals
 import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame

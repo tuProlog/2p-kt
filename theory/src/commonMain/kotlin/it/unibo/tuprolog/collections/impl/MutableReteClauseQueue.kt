@@ -44,8 +44,4 @@ internal class MutableReteClauseQueue private constructor(
                 )
         }
     }
-
-    override fun retrieveLast(clause: Clause): RetrieveResult<out MutableReteClauseQueue> {
-        TODO("Not yet implemented")
-    }
 }

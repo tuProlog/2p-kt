@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.collections.rete.nodes.custom
 
+import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.*
-import kotlin.collections.List
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.collections.List as KtList
 
 internal object ReteTreeAssertionUtils {
     fun <T> assertItemsAreEquals(expected: Iterator<T>, actual: Iterator<T>) {
@@ -62,12 +63,12 @@ internal object ReteTreeAssertionUtils {
         Struct.of("six", Atom.of("seven"), Integer.of(8), Real.of(9.10), Var.of("Eleven"))
     )
 
-    private fun List<Fact>.addArguments(args: List<Term>): List<Fact> {
+    private fun KtList<Fact>.addArguments(args: KtList<Term>): KtList<Fact> {
         return f1Facts.zip(args.shuffled()).map { (f, a) -> f.addArgument(a) }
     }
 
     val simpleFacts = listOf("a", "b", "c", "d")
-        .map(Struct.Companion::of)
+        .map(Atom.Companion::of)
         .map(Fact.Companion::of)
 
     val f1Facts = listOf(
