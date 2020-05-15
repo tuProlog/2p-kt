@@ -1,9 +1,9 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
+package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingLeaf
-import it.unibo.tuprolog.collections.rete.nodes.custom.Retractable
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
+import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst

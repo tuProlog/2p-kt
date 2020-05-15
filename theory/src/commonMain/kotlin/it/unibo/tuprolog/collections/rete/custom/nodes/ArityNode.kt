@@ -1,11 +1,11 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
+package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.*
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.TopLevelReteNode
-import it.unibo.tuprolog.collections.rete.nodes.custom.Utils
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.leaf.*
+import it.unibo.tuprolog.collections.rete.custom.*
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.leaf.*
 import it.unibo.tuprolog.core.*
 
 internal interface ArityRete: ReteNode, TopLevelReteNode

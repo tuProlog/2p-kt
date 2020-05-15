@@ -1,8 +1,8 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.nodes
+package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.functorOfNestedFirstArgument
-import it.unibo.tuprolog.collections.rete.nodes.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.core.Clause
 
 internal class RuleNode(

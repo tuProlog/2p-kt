@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.custom
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.core.Clause
 
 internal interface ReteNode {

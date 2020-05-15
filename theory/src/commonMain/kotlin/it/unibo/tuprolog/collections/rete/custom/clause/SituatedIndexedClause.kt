@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.clause
+package it.unibo.tuprolog.collections.rete.custom.clause
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.core.Clause
 
 internal interface SituatedIndexedClause :

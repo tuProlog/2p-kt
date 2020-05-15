@@ -1,13 +1,14 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom.leaf
+package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.IndexingNode
-import it.unibo.tuprolog.collections.rete.nodes.custom.Utils
-import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.functorOfNestedFirstArgument
-import it.unibo.tuprolog.collections.rete.nodes.custom.Utils.nestedFirstArgument
-import it.unibo.tuprolog.collections.rete.nodes.custom.clause.SituatedIndexedClause
-import it.unibo.tuprolog.collections.rete.nodes.custom.nodes.FunctorIndexing
-import it.unibo.tuprolog.collections.rete.nodes.custom.nodes.FunctorNode
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.IndexingNode
+import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
+import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorNode
+
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 
