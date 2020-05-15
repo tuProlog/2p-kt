@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.rete.nodes.list
 
-import it.unibo.tuprolog.collections.rete.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.ReteNode
+import it.unibo.tuprolog.collections.rete.generic.list.RootNode
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected

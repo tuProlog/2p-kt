@@ -1,18 +1,16 @@
 package it.unibo.tuprolog.collections.prototypes
 
-import it.unibo.tuprolog.collections.ClauseCollection
-import it.unibo.tuprolog.collections.ClauseDeque
+import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.testutils.ClauseAssertionUtils
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import kotlin.test.assertEquals
 
 internal class PrototypeClauseDequeTestImpl (
-    private val emptyGenerator: () -> ClauseDeque,
-    private val collectionGenerator: (Iterable<Clause>) -> ClauseDeque
+    private val emptyGenerator: () -> ClauseQueue,
+    private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue
 ) : PrototypeClauseDequeTest,
     PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
 

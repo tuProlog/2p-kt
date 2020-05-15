@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
+import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode

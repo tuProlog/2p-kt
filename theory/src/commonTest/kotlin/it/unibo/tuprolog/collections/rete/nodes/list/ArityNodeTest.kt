@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.nodes.list
 
+import it.unibo.tuprolog.collections.rete.generic.list.ArityNode
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
