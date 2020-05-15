@@ -3,6 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom.leaf
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
@@ -20,7 +21,7 @@ internal class AtomIndex(
     private val atoms: MutableList<SituatedIndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.firstParameter().isAtom)
+        return if (clause.nestedFirstArgument().isAtom)
             index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
@@ -50,7 +51,7 @@ internal class AtomIndex(
     }
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
-        if (clause.firstParameter().isAtom) {
+        if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()].let {
                 return if(it == null) null
                 else extractFirst(clause, it)
@@ -69,7 +70,7 @@ internal class AtomIndex(
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.firstParameter().isAtom)
+        return if (clause.nestedFirstArgument().isAtom)
             index[clause.asAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
@@ -79,10 +80,11 @@ internal class AtomIndex(
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {
         index[indexed.asInnerAtom()]!!.remove(indexed)
+        atoms.remove(indexed)
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.firstParameter().isAtom){
+        return if (clause.nestedFirstArgument().isAtom){
             val partialIndex = index.getOrElse(clause.asAtom()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
         }
@@ -109,19 +111,19 @@ internal class AtomIndex(
         extractGlobalIndexedSequence(clause)
             .map { it.innerClause }
 
-    private fun Clause.firstParameter(): Term =
-        this.args[0]
+    private fun Clause.nestedFirstArgument(): Term =
+        this.head!!.nestedFirstArgument(nestingLevel)
 
     private fun Term.asAtom(): Atom =
         this as Atom
 
     private fun Clause.asInnerAtom(): Atom =
-        this as Atom
+        this.nestedFirstArgument().asAtom()
 
     private fun SituatedIndexedClause.asInnerAtom(): Atom =
-        this.innerClause.firstParameter() as Atom
+        this.innerClause.nestedFirstArgument() as Atom
 
     private fun IndexedClause.asInnerAtom(): Atom =
-        this.innerClause.firstParameter() as Atom
+        this.innerClause.nestedFirstArgument() as Atom
 
 }

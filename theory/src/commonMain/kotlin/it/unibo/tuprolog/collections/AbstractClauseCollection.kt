@@ -1,19 +1,20 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 
-    protected constructor(private val rete: ReteNode<*, Clause>) : ClauseCollection {
+    protected constructor(private val rete: ReteTree) : ClauseCollection {
 
-    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {
         checkClausesCorrect(clauses)
     }
 
     override val size: Int
-        get() = rete.indexedElements.count()
+        get() = rete.clauses.count()
 
     override fun isEmpty(): Boolean =
         size == 0
@@ -36,6 +37,6 @@ internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection
     abstract override fun retrieveAll(clause: Clause): RetrieveResult<out Self>
 
     override fun iterator(): Iterator<Clause> =
-        rete.indexedElements.iterator()
+        rete.clauses.iterator()
 
 }

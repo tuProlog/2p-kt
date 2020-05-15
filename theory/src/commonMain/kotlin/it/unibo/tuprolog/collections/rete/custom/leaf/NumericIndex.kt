@@ -3,6 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom.leaf
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
@@ -20,7 +21,7 @@ internal class NumericIndex(
     private val numerics: MutableList<SituatedIndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.firstParameter().isNumber)
+        return if (clause.nestedFirstArgument().isNumber)
             index[clause.asInnerNumeric()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
@@ -50,7 +51,7 @@ internal class NumericIndex(
     }
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
-        if (clause.firstParameter().isNumber) {
+        if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()].let {
                 return if(it == null) null
                 else extractFirst(clause, it)
@@ -69,7 +70,7 @@ internal class NumericIndex(
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.firstParameter().isNumber)
+        return if (clause.nestedFirstArgument().isNumber)
             index[clause.asNumeric()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
@@ -83,7 +84,7 @@ internal class NumericIndex(
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
 
-        return if (clause.firstParameter().isNumber){
+        return if (clause.nestedFirstArgument().isNumber){
             val partialIndex = index.getOrElse(clause.asNumeric()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
         }
@@ -110,20 +111,19 @@ internal class NumericIndex(
         extractGlobalIndexedSequence(clause)
             .map { it.innerClause }
 
-    private fun Clause.firstParameter(): Term =
-        //TODO("fix first argument access")
-        this.args[0]
+    private fun Clause.nestedFirstArgument(): Term =
+        this.head!!.nestedFirstArgument(nestingLevel)
 
     private fun Term.asNumeric(): Numeric =
-        //TODO("fix first argument access")
         this as Numeric
 
     private fun Clause.asInnerNumeric(): Numeric =
-        //TODO("fix first argument access")
-        this as Numeric
+        this.nestedFirstArgument().asNumeric()
+
+    private fun SituatedIndexedClause.asInnerNumeric(): Numeric =
+        this.innerClause.nestedFirstArgument() as Numeric
 
     private fun IndexedClause.asInnerNumeric(): Numeric =
-        //TODO("fix first argument access")
-        this.innerClause.firstParameter() as Numeric
+        this.innerClause.nestedFirstArgument() as Numeric
 
 }

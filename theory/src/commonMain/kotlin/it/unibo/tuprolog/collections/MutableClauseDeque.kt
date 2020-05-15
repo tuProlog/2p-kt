@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.impl.MutableReteClauseDeque
-import it.unibo.tuprolog.collections.impl.ReteClauseDeque
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 
@@ -21,9 +20,6 @@ interface MutableClauseDeque : ClauseDeque {
 
     /** Retrieves the first [Clause] unifying the given one, searching from the first position **/
     override fun retrieveFirst(clause: Clause): RetrieveResult<out MutableClauseDeque>
-
-    /** Retrieves the first [Clause] unifying the given one, searching from the last position **/
-    override fun retrieveLast(clause: Clause): RetrieveResult<out MutableClauseDeque>
 
     /** Retrieves the first occurrence of the given [Clause] from this [MutableClauseDeque] as a [RetrieveResult] **/
     override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseDeque>

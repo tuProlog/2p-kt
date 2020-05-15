@@ -1,41 +1,44 @@
 package it.unibo.tuprolog.collections
 
+import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
     protected constructor(
-        private val rete: ReteNode<*, Clause>
+        private val rete: ReteTree
     ) : AbstractClauseCollection<Self>(rete) {
 
     /** Construct a Clause database from given clauses */
     constructor(
         clauses: Iterable<Clause>,
-        reteNodeBuilder: (Iterable<Clause>) -> ReteNode<*, Clause>
+        reteNodeBuilder: (Iterable<Clause>) -> ReteTree
     ) : this(reteNodeBuilder(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
 
-    protected abstract fun newCollectionBuilder(rete: ReteNode<*, Clause>): Self
+    protected abstract fun newCollectionBuilder(rete: ReteTree): Self
 
     override fun add(clause: Clause): Self =
         newCollectionBuilder(
             rete.deepCopy().apply {
-                put(Theory.checkClauseCorrect(clause))
+                assertA(Theory.checkClauseCorrect(clause))
             }
         )
 
     override fun addAll(clauses: Iterable<Clause>): Self =
         newCollectionBuilder(
             rete.deepCopy().apply {
-                put(Theory.checkClausesCorrect(clauses))
+                clauses.forEach {
+                    assertZ(Theory.checkClauseCorrect(it))
+                }
             }
         )
 
     override fun retrieve(clause: Clause): RetrieveResult<out Self> {
         val newTheory = rete.deepCopy()
-        val retracted = newTheory.remove(clause)
+        val retracted = newTheory.retractFirst(clause)
 
         @Suppress("UNCHECKED_CAST")
         return when {
@@ -50,7 +53,7 @@ internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCo
 
     override fun retrieveAll(clause: Clause): RetrieveResult<out Self> {
         val newTheory = rete.deepCopy()
-        val retracted = newTheory.removeAll(clause)
+        val retracted = newTheory.retractAll(clause)
 
         @Suppress("UNCHECKED_CAST")
         return when {

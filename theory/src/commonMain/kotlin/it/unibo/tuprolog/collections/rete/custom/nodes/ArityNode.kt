@@ -4,6 +4,7 @@ import it.unibo.tuprolog.collections.rete.custom.*
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.leaf.*
 import it.unibo.tuprolog.core.*
@@ -25,7 +26,7 @@ internal sealed class ArityNode: ReteNode {
         private val compoundIndex: IndexingLeaf = CompoundIndex(ordered, nestingLevel + 1)
 
         override fun retractFirst(clause: Clause): Sequence<Clause> {
-            var result: SituatedIndexedClause?
+            val result: SituatedIndexedClause?
 
             return if(ordered) {
                 result = orderedLookahead(clause)
@@ -71,7 +72,7 @@ internal sealed class ArityNode: ReteNode {
             getUnorderedIndexed(clause).map { it.innerClause }
 
         protected fun retractAllOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.firstParameter().let {
+            clause.nestedFirstArgument().let {
                 return when(it) {
                     is Numeric -> {
                         Utils.mergeSort(
@@ -103,8 +104,8 @@ internal sealed class ArityNode: ReteNode {
             }
 
         protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.firstParameter().let {
-                return when(it) {
+            clause.nestedFirstArgument().let {
+                when(it) {
                     is Numeric -> Utils.merge(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause)
@@ -127,8 +128,8 @@ internal sealed class ArityNode: ReteNode {
             }
 
         protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.firstParameter().let {
-                return when (it) {
+            clause.nestedFirstArgument().let {
+                when (it) {
                     is Numeric ->
                         Utils.mergeSort(
                             variableIndex.getIndexed(clause),
@@ -154,9 +155,9 @@ internal sealed class ArityNode: ReteNode {
                 }
             }
 
-        protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-            clause.firstParameter().let {
-                return when (it) {
+        protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+            clause.nestedFirstArgument().let {
+                when (it) {
                     is Numeric ->
                         variableIndex.getIndexed(clause) +
                         numericIndex.getIndexed(clause)
@@ -173,10 +174,10 @@ internal sealed class ArityNode: ReteNode {
                         compoundIndex.getIndexed(clause)
                 }
             }
-        }
+
 
         protected fun anyLookahead(clause: Clause): SituatedIndexedClause? =
-            when (clause.firstParameter()) {
+            when (clause.nestedFirstArgument()) {
                 is Numeric -> {
                     variableIndex.getFirstIndexed(clause)
                         ?: numericIndex.getFirstIndexed(clause)
@@ -199,7 +200,7 @@ internal sealed class ArityNode: ReteNode {
 
 
         protected fun orderedLookahead(clause: Clause): SituatedIndexedClause? =
-            when (clause.firstParameter()) {
+            when (clause.nestedFirstArgument()) {
                 is Numeric -> {
                     Utils.comparePriority(
                         numericIndex.getFirstIndexed(clause),
@@ -228,15 +229,11 @@ internal sealed class ArityNode: ReteNode {
                 )
             }
 
-        private fun Clause.firstParameter(): Term {
-            TODO("wrong selection of the firts argument")
-            this.args[0]
-        }
+        private fun Clause.nestedFirstArgument(): Term =
+            this.head!!.nestedFirstArgument(nestingLevel)
 
-
-        private fun assertByFirstParameter(clause: IndexedClause) : IndexingLeaf {
-            TODO("wrong selection of the firts argument")
-            clause.innerClause.firstParameter().let {
+        private fun assertByFirstParameter(clause: IndexedClause) : IndexingLeaf =
+            clause.innerClause.nestedFirstArgument().let {
                 when(it){
                     is Numeric -> numericIndex
                     is Atom -> atomicIndex
@@ -244,12 +241,12 @@ internal sealed class ArityNode: ReteNode {
                     else -> compoundIndex
                 }
             }
-        }
+
     }
 
     internal class FamilyArityIndexingNode(
         private val ordered: Boolean,
-        private val nestingLevel: Int
+        nestingLevel: Int
     ) : FamilyArityReteNode(ordered, nestingLevel), ArityIndexing{
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
@@ -267,8 +264,8 @@ internal sealed class ArityNode: ReteNode {
     }
 
     internal open class ZeroArityReteNode(
-        private val ordered: Boolean,
-        private val nestingLevel: Int
+        ordered: Boolean,
+        nestingLevel: Int
     ) : ArityNode(), ArityRete {
 
         protected val atoms: IndexingLeaf = AtomIndex(ordered, nestingLevel)
@@ -298,8 +295,8 @@ internal sealed class ArityNode: ReteNode {
     }
 
     internal class ZeroArityIndexingNode(
-        private val ordered: Boolean,
-        private val nestingLevel: Int
+        ordered: Boolean,
+        nestingLevel: Int
     ) : ZeroArityReteNode(ordered, nestingLevel), ArityIndexing{
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
@@ -310,7 +307,6 @@ internal sealed class ArityNode: ReteNode {
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             atoms.retractAllIndexed(clause)
-
     }
 
 }

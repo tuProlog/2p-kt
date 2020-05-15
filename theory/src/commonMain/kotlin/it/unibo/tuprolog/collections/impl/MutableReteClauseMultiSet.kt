@@ -2,16 +2,16 @@ package it.unibo.tuprolog.collections.impl
 
 import it.unibo.tuprolog.collections.AbstractMutableReteClauseCollection
 import it.unibo.tuprolog.collections.MutableClauseMultiSet
-import it.unibo.tuprolog.collections.rete.generic.ReteNode
+import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal class MutableReteClauseMultiSet private constructor(
-    private val rete: ReteNode<*, Clause>
+    private val rete: ReteTree
 ) : MutableClauseMultiSet, AbstractMutableReteClauseCollection<MutableReteClauseMultiSet>(rete) {
 
     /** Construct a [MutableReteClauseMultiSet] from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ReteNode.ofSet(clauses)) {
+    constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {
         Theory.checkClausesCorrect(clauses)
     }
 

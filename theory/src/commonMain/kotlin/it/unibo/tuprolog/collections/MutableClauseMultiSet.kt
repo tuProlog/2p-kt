@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.impl.MutableReteClauseMultiSet
-import it.unibo.tuprolog.collections.impl.ReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 
