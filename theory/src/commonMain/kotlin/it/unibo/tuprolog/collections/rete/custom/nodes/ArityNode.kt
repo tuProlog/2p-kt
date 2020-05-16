@@ -231,7 +231,7 @@ internal sealed class ArityNode: ReteNode {
             }
 
         private fun Clause.nestedFirstArgument(): Term =
-            this.head!!.nestedFirstArgument(nestingLevel)
+            this.head!!.nestedFirstArgument(nestingLevel + 1)
 
         private fun assertByFirstParameter(clause: IndexedClause) : IndexingLeaf =
             clause.innerClause.nestedFirstArgument().let {

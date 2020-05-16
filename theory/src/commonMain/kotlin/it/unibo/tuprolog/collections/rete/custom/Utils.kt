@@ -21,7 +21,7 @@ internal object Utils {
     fun Struct.nestedFirstArgument(nestingLevel: Int): Term =
         this.firstArguments().drop(nestingLevel).first()
 
-    private fun Struct.firstArguments(): Sequence<Term> =
+    fun Struct.firstArguments(): Sequence<Term> =
         sequence {
             var currentTerm: Term = this@firstArguments
             while (currentTerm is Struct) {

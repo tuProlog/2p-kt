@@ -71,7 +71,7 @@ internal class AtomIndex(
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.nestedFirstArgument().isAtom)
-            index[clause.asAtom()]
+            index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?: emptySequence()
@@ -112,7 +112,7 @@ internal class AtomIndex(
             .map { it.innerClause }
 
     private fun Clause.nestedFirstArgument(): Term =
-        this.head!!.nestedFirstArgument(nestingLevel)
+        this.head!!.nestedFirstArgument(nestingLevel + 1)
 
     private fun Term.asAtom(): Atom =
         this as Atom
