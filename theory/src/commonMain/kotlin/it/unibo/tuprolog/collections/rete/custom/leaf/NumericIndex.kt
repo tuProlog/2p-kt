@@ -86,6 +86,7 @@ internal class NumericIndex(
 
         return if (clause.nestedFirstArgument().isNumber){
             val partialIndex = index.getOrElse(clause.asInnerNumeric()){ mutableListOf() }
+            retractFromMutableList(clause, numerics)
             return retractFromMutableList(clause, partialIndex)
         }
         else {

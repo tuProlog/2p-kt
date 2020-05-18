@@ -86,6 +86,7 @@ internal class AtomIndex(
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.nestedFirstArgument().isAtom){
             val partialIndex = index.getOrElse(clause.asInnerAtom()){ mutableListOf() }
+            retractFromMutableList(clause, atoms)
             return retractFromMutableList(clause, partialIndex)
         }
         else {
@@ -105,7 +106,6 @@ internal class AtomIndex(
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         atoms.asSequence()
-
 
     private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         atoms.asSequence()

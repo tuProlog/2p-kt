@@ -39,6 +39,7 @@ internal sealed class ArityNode: ReteNode {
                 if(result == null)
                     emptySequence()
                 else{
+                    result.removeFromIndex()
                     sequenceOf(result.innerClause).let {
                         invalidCache(it)
                         it
@@ -50,6 +51,7 @@ internal sealed class ArityNode: ReteNode {
                 if(result == null)
                     emptySequence()
                 else {
+                    result.removeFromIndex()
                     sequenceOf(result.innerClause).let {
                         invalidCache(it)
                         it
