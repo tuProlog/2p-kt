@@ -1,16 +1,18 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
-import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
+import it.unibo.tuprolog.theory.Theory
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 
     protected constructor(private val rete: ReteTree) : ClauseCollection {
 
-    constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {
-        checkClausesCorrect(clauses)
+    constructor(
+        clauses: Iterable<Clause>,
+        reteNodeBuilder: (Iterable<Clause>) -> ReteTree
+    ) : this(reteNodeBuilder(clauses)) {
+        Theory.checkClausesCorrect(clauses)
     }
 
     override val size: Int

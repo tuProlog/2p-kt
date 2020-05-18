@@ -32,6 +32,9 @@ internal class VariableIndex(
     override fun retractAll(clause: Clause): Sequence<Clause> =
         retractAllIndexed(clause).map { it.innerClause }
 
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        variables.asSequence()
+
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
         return extractFirst(clause, variables)
     }

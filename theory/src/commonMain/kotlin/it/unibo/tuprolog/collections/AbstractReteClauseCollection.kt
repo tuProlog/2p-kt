@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
-import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
@@ -10,7 +9,6 @@ internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCo
         private val rete: ReteTree
     ) : AbstractClauseCollection<Self>(rete) {
 
-    /** Construct a Clause database from given clauses */
     constructor(
         clauses: Iterable<Clause>,
         reteNodeBuilder: (Iterable<Clause>) -> ReteTree

@@ -9,6 +9,7 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.CompoundIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.NumericIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.VariableIndex
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.utils.dequeOf
 
 internal interface ArityRete: ReteNode, TopLevelReteNode
 
@@ -26,6 +27,9 @@ internal sealed class ArityNode: ReteNode {
         private val variableIndex: IndexingLeaf = VariableIndex(ordered)
         private val compoundIndex: IndexingLeaf = CompoundIndex(ordered, nestingLevel + 1)
 
+        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
+        private var isCacheValid: Boolean = true
+
         override fun retractFirst(clause: Clause): Sequence<Clause> {
             val result: SituatedIndexedClause?
 
@@ -34,15 +38,23 @@ internal sealed class ArityNode: ReteNode {
 
                 if(result == null)
                     emptySequence()
-                else
-                    sequenceOf(result.innerClause)
+                else{
+                    sequenceOf(result.innerClause).let {
+                        invalidCache(it)
+                        it
+                    }
+                }
             } else {
                 result = anyLookahead(clause)
 
                 if(result == null)
                     emptySequence()
-                else
-                    sequenceOf(result.innerClause)
+                else {
+                    sequenceOf(result.innerClause).let {
+                        invalidCache(it)
+                        it
+                    }
+                }
             }
         }
 
@@ -57,8 +69,23 @@ internal sealed class ArityNode: ReteNode {
             assertByFirstParameter(clause).assertZ(clause)
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            if (ordered) retractAllOrdered(clause)
-            else retractAllUnordered(clause)
+            if (ordered) {
+                retractAllOrdered(clause).let {
+                    invalidCache(it)
+                    it
+                }
+            }
+            else {
+                retractAllUnordered(clause).let {
+                    invalidCache(it)
+                    it
+                }
+            }
+
+        override fun getCache(): Sequence<SituatedIndexedClause> {
+            regenerateCache()
+            return cache.asSequence()
+        }
 
         private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
             retractAllOrderedIndexed(clause).map { it.innerClause }
@@ -230,6 +257,36 @@ internal sealed class ArityNode: ReteNode {
                 )
             }
 
+        protected fun invalidCache(result: Sequence<*>) {
+            if (result.any()) {
+                cache.clear()
+                isCacheValid = false
+            }
+        }
+
+        private fun regenerateCache() {
+            if(!isCacheValid) {
+                cache.addAll(
+                    if(ordered) {
+                        Utils.merge(
+                            atomicIndex.getCache(),
+                            numericIndex.getCache(),
+                            variableIndex.getCache(),
+                            compoundIndex.getCache()
+                        )
+                    } else {
+                        Utils.flattenIndexed(
+                            atomicIndex.getCache(),
+                            numericIndex.getCache(),
+                            variableIndex.getCache(),
+                            compoundIndex.getCache()
+                        )
+                    }
+                )
+                isCacheValid = true
+            }
+        }
+
         private fun Clause.nestedFirstArgument(): Term =
             this.head!!.nestedFirstArgument(nestingLevel + 1)
 
@@ -259,8 +316,18 @@ internal sealed class ArityNode: ReteNode {
             else getUnorderedIndexed(clause)
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            if (ordered) retractAllOrderedIndexed(clause)
-            else retractAllUnorderedIndexed(clause)
+            if (ordered) {
+                retractAllOrderedIndexed(clause).let {
+                    invalidCache(it)
+                    it
+                }
+            }
+            else {
+                retractAllUnorderedIndexed(clause).let {
+                    invalidCache(it)
+                    it
+                }
+            }
 
     }
 
@@ -271,13 +338,19 @@ internal sealed class ArityNode: ReteNode {
 
         protected val atoms: IndexingLeaf = AtomIndex(ordered, nestingLevel)
 
+        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
+        private var isCacheValid: Boolean = true
+
         override fun retractFirst(clause: Clause): Sequence<Clause> {
             val result = atoms.getFirstIndexed(clause)
             return if(result == null) {
                 emptySequence()
             } else {
                 result.removeFromIndex()
-                sequenceOf(result.innerClause)
+                sequenceOf(result.innerClause).let {
+                    invalidCache(it)
+                    it
+                }
             }
         }
 
@@ -291,7 +364,31 @@ internal sealed class ArityNode: ReteNode {
             atoms.assertZ(clause)
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            atoms.retractAll(clause)
+            atoms.retractAll(clause).let {
+                invalidCache(it)
+                it
+            }
+
+        override fun getCache(): Sequence<SituatedIndexedClause> {
+            regenerateCache()
+            return cache.asSequence()
+        }
+
+        protected fun invalidCache(result: Sequence<*>) {
+            if (result.any()) {
+                cache.clear()
+                isCacheValid = false
+            }
+        }
+
+        private fun regenerateCache() {
+            if(!isCacheValid) {
+                cache.addAll(
+                    atoms.getCache()
+                )
+                isCacheValid = true
+            }
+        }
 
     }
 
@@ -307,7 +404,10 @@ internal sealed class ArityNode: ReteNode {
             atoms.getIndexed(clause)
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            atoms.retractAllIndexed(clause)
+            atoms.retractAllIndexed(clause).let {
+                invalidCache(it)
+                it
+            }
     }
 
 }

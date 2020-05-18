@@ -24,14 +24,17 @@ internal class ReteClauseQueue private constructor(
         )
 
     override fun addLast(clause: Clause): ReteClauseQueue =
-        super<AbstractReteClauseCollection>.add(clause)
+        ReteClauseQueue(
+            rete.deepCopy().apply {
+                assertZ(Theory.checkClauseCorrect(clause))
+            }
+        )
 
-
-    override fun getFirst(clause: Clause): Sequence<Clause> =
+    override fun getFifoOrdered(clause: Clause): Sequence<Clause> =
         rete.get(clause)
 
-    override fun getLast(clause: Clause): Sequence<Clause> =
-        getFirst(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
+        getFifoOrdered(clause).toList().asReversed().asSequence()
 
     override fun add(clause: Clause): ReteClauseQueue =
         addLast(clause)

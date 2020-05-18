@@ -31,6 +31,8 @@ interface ClauseCollection : Iterable<Clause> {
      *  from this [ClauseCollection] **/
     fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
 
+    override fun iterator(): Iterator<Clause>
+
     companion object {
 
         /** Creates an empty [ClauseCollection] **/

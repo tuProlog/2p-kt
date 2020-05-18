@@ -3,13 +3,18 @@ package it.unibo.tuprolog.collections.rete.custom.nodes
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class RuleNode(
     private val ordered: Boolean
     ) : TopLevelReteNode {
 
     private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
+    private val cache: MutableList<SituatedIndexedClause> = dequeOf()
+    private var isCacheValid: Boolean = true
 
     override fun get(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
@@ -33,15 +38,54 @@ internal class RuleNode(
         }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractFirst(clause) ?: emptySequence()
+        functors[clause.nestedFunctor()]?.retractFirst(clause)?.let {
+            invalidCache(it)
+            it
+        } ?: emptySequence()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractAll(clause) ?: emptySequence()
+        functors[clause.nestedFunctor()]?.retractAll(clause)?.let {
+            invalidCache(it)
+            it
+        } ?: emptySequence()
+
+    override fun getCache(): Sequence<SituatedIndexedClause> {
+        regenerateCache()
+        return cache.asSequence()
+    }
 
     private fun Clause.nestedFunctor(): String =
         this.head!!.functorOfNestedFirstArgument(0)
 
     private fun IndexedClause.nestedFunctor(): String =
         this.innerClause.head!!.functorOfNestedFirstArgument(0)
+
+    private fun invalidCache(result: Sequence<*>) {
+        if (result.any()) {
+            cache.clear()
+            isCacheValid = false
+        }
+    }
+
+    private fun regenerateCache() {
+        if(!isCacheValid) {
+            cache.addAll(
+                if(ordered) {
+                    Utils.merge(
+                        functors.values.map {
+                            it.getCache()
+                        }
+                    )
+                } else {
+                    Utils.flattenIndexed(
+                        functors.values.map { outer ->
+                            outer.getCache()
+                        }
+                    )
+                }
+            )
+            isCacheValid = true
+        }
+    }
 
 }

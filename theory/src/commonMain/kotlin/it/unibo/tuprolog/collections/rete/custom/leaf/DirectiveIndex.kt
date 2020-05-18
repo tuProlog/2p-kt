@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
+import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
+import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
@@ -44,5 +47,18 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
         result.forEach { directives.remove(it) }
         return result.asSequence().map { it.innerClause }
     }
+
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        directives.asSequence().map {
+            SituatedIndexedClause.of(it, object : Retractable{
+                override fun retractIndexed(indexed: SituatedIndexedClause) {
+                    TODO("Directives are adapted as a SituatedIndexedClause, but they are not actually not stored " +
+                         "with this type. Given their particular semantic, try retracting directly with a proper " +
+                         "query, or opening a pull request implementing this indexing class as a proper typed data " +
+                         "structure")
+                }
+
+            })
+        }
 
 }

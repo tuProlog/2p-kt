@@ -57,11 +57,6 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
     }
 
     @Test
-    override fun retrieveLastRemovesTheLastUnifyingElement() {
-        prototype.retrieveLastRemovesTheLastUnifyingElement()
-    }
-
-    @Test
     override fun simpleRetrieveBehavesAsRetrieveFirst() {
         prototype.simpleRetrieveBehavesAsRetrieveFirst()
     }

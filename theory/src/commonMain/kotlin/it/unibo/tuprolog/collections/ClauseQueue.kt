@@ -16,15 +16,15 @@ interface ClauseQueue : ClauseCollection {
 
     /** Produces a [Sequence] of the clauses that would unify over the given [Clause], scanning from data structure from
      *  the first position to the last one **/
-    fun getFirst(clause: Clause): Sequence<Clause>
+    fun getFifoOrdered(clause: Clause): Sequence<Clause>
 
     /** Produces a [Sequence] of the clauses that would unify over the given [Clause], scanning from data structure from
      *  the last position to the first **/
-    fun getLast(clause: Clause): Sequence<Clause>
+    fun getLifoOrdered(clause: Clause): Sequence<Clause>
 
-    /** Produces a [Sequence] of the clauses that would unify over the given [Clause]. Analogous to [getFirst] **/
+    /** Produces a [Sequence] of the clauses that would unify over the given [Clause]. Analogous to [getFifoOrdered] **/
     operator fun get(clause: Clause): Sequence<Clause> =
-        getFirst(clause)
+        getFifoOrdered(clause)
 
     /** Gives a freshly produced [ClauseQueue] including the given [Clause] and the content of this one.
      *  Analogous to [addFirst] **/

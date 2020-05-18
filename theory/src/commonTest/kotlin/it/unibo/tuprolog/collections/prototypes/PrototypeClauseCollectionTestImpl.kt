@@ -83,8 +83,8 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     override fun singleClauseAdditionToCollectionWorksCorrectly() {
         val collectionAfterAddition = collectionGenerator(clauses).add(newClause)
 
-        assertTrue(collectionAfterAddition.containsAll(clauses))
         assertTrue(collectionAfterAddition.contains(newClause))
+        assertTrue(collectionAfterAddition.containsAll(clauses))
     }
 
     override fun multipleClauseAdditionToCollectionWorksCorrectly() {

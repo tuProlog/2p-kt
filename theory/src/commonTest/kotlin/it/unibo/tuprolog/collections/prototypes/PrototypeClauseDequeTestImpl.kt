@@ -93,13 +93,13 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun getFirstRetrievesElementsFromFirstPosition() {
-        val result = collectionGenerator(orderSensitiveClauses).getFirst(fFamilySelector)
+        val result = collectionGenerator(orderSensitiveClauses).getFifoOrdered(fFamilySelector)
 
         assertClausesHaveSameLengthAndContent(clauses, result.asIterable())
     }
 
     override fun getLastRetrievesElementsFromLastPosition() {
-        val result = collectionGenerator(orderSensitiveClauses).getLast(fFamilySelector)
+        val result = collectionGenerator(orderSensitiveClauses).getLifoOrdered(fFamilySelector)
 
         assertClausesHaveSameLengthAndContent(clauses.asReversed(), result.asIterable())
     }
@@ -125,10 +125,6 @@ internal class PrototypeClauseDequeTestImpl (
 
         assertTermsAreEqual(presentClause, result.firstClause)
         assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
-    }
-
-    override fun retrieveLastRemovesTheLastUnifyingElement() {
-        TODO("Not yet implemented")
     }
 
     override fun simpleRetrieveBehavesAsRetrieveFirst() {

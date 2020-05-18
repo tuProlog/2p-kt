@@ -5,8 +5,10 @@ import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.Utils.arityOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.ReteNode
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.dequeOf
 
 internal interface FunctorRete: ReteNode, TopLevelReteNode
 
@@ -20,6 +22,8 @@ internal sealed class FunctorNode : ReteNode {
     ) : FunctorNode(), FunctorRete {
 
         private val children: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
+        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
+        private var isCacheValid: Boolean = true
 
         override fun get(clause: Clause): Sequence<Clause> =
             selectArity(clause)?.get(clause) ?: emptySequence()
@@ -33,10 +37,21 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractFirst(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractFirst(clause) ?: emptySequence()
+            selectArity(clause)?.retractFirst(clause)?.let{
+                invalidCache(it)
+                it
+            } ?: emptySequence()
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractAll(clause) ?: emptySequence()
+            selectArity(clause)?.retractAll(clause)?.let {
+                invalidCache(it)
+                it
+            } ?: emptySequence()
+
+        override fun getCache(): Sequence<SituatedIndexedClause> {
+            regenerateCache()
+            return cache.asSequence()
+        }
 
         private fun selectArity(clause: Clause) =
             children[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
@@ -53,13 +68,44 @@ internal sealed class FunctorNode : ReteNode {
                 }
             }.run { op(clause) }
         }
+
+        private fun invalidCache(result: Sequence<*>) {
+            if (result.any()) {
+                cache.clear()
+                isCacheValid = false
+            }
+        }
+
+        private fun regenerateCache() {
+            if(!isCacheValid) {
+                cache.addAll(
+                    if(ordered) {
+                        Utils.merge(
+                            children.values.map {
+                                it.getCache()
+                            }
+                        )
+                    } else {
+                        Utils.flattenIndexed(
+                            children.values.map { outer ->
+                                outer.getCache()
+                            }
+                        )
+                    }
+                )
+                isCacheValid = true
+            }
+        }
     }
 
     internal class FunctorIndexingNode(
         private val ordered: Boolean,
         private val nestingLevel: Int
     ) : FunctorNode(), FunctorIndexing {
+
         private val arities: MutableMap<Int, ArityIndexing> = mutableMapOf()
+        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
+        private var isCacheValid: Boolean = true
 
         override fun get(clause: Clause): Sequence<Clause> =
             arities[clause.nestedArity()]?.get(clause) ?: emptySequence()
@@ -91,7 +137,15 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            arities[clause.nestedArity()]?.retractAll(clause) ?: emptySequence()
+            arities[clause.nestedArity()]?.retractAll(clause)?.let {
+                invalidCache(it)
+                it
+            } ?: emptySequence()
+
+        override fun getCache(): Sequence<SituatedIndexedClause> {
+            regenerateCache()
+            return cache.asSequence()
+        }
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
@@ -100,13 +154,44 @@ internal sealed class FunctorNode : ReteNode {
             arities[clause.nestedArity()]?.getIndexed(clause) ?: emptySequence()
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            arities[clause.nestedArity()]?.retractAllIndexed(clause) ?: emptySequence()
+            arities[clause.nestedArity()]?.retractAllIndexed(clause)?.let {
+                invalidCache(it)
+                it
+            } ?: emptySequence()
 
         private fun Clause.nestedArity(): Int =
             this.head!!.arityOfNestedFirstArgument(nestingLevel)
 
         private fun IndexedClause.nestedArity(): Int =
             this.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel)
+
+        private fun invalidCache(result: Sequence<*>) {
+            if (result.any()) {
+                cache.clear()
+                isCacheValid = false
+            }
+        }
+
+        private fun regenerateCache() {
+            if(!isCacheValid) {
+                cache.addAll(
+                    if(ordered) {
+                        Utils.merge(
+                            arities.values.map {
+                                it.getCache()
+                            }
+                        )
+                    } else {
+                        Utils.flattenIndexed(
+                            arities.values.map { outer ->
+                                outer.getCache()
+                            }
+                        )
+                    }
+                )
+                isCacheValid = true
+            }
+        }
     }
 
 }

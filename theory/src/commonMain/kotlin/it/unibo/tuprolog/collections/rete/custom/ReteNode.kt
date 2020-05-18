@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.core.Clause
 
-internal interface ReteNode {
+internal interface ReteNode : Cacheable{
 
     fun get(clause: Clause) : Sequence<Clause>
 

@@ -23,8 +23,6 @@ internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
 
     fun retrieveFirstRemovesTheFirstUnifyingElement()
 
-    fun retrieveLastRemovesTheLastUnifyingElement()
-
     fun simpleRetrieveBehavesAsRetrieveFirst()
 
     companion object {

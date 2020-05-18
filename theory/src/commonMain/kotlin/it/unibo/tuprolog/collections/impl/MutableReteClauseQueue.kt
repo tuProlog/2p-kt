@@ -16,11 +16,11 @@ internal class MutableReteClauseQueue private constructor(
         Theory.checkClausesCorrect(clauses)
     }
 
-    override fun getFirst(clause: Clause): Sequence<Clause> =
+    override fun getFifoOrdered(clause: Clause): Sequence<Clause> =
         rete.get(clause)
 
-    override fun getLast(clause: Clause): Sequence<Clause> =
-        getFirst(clause).toList().asReversed().asSequence()
+    override fun getLifoOrdered(clause: Clause): Sequence<Clause> =
+        getFifoOrdered(clause).toList().asReversed().asSequence()
 
     override fun addFirst(clause: Clause): MutableReteClauseQueue {
         rete.assertA(clause)

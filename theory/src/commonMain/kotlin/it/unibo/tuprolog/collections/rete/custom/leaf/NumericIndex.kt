@@ -71,7 +71,7 @@ internal class NumericIndex(
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.nestedFirstArgument().isNumber)
-            index[clause.asNumeric()]
+            index[clause.asInnerNumeric()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?: emptySequence()
@@ -85,7 +85,7 @@ internal class NumericIndex(
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
 
         return if (clause.nestedFirstArgument().isNumber){
-            val partialIndex = index.getOrElse(clause.asNumeric()){ mutableListOf() }
+            val partialIndex = index.getOrElse(clause.asInnerNumeric()){ mutableListOf() }
             return retractFromMutableList(clause, partialIndex)
         }
         else {
@@ -103,6 +103,9 @@ internal class NumericIndex(
     override fun retractAll(clause: Clause): Sequence<Clause> =
         retractAllIndexed(clause).map { it.innerClause }
 
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        numerics.asSequence()
+
     private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         numerics.asSequence()
             .filter { it.innerClause matches clause }
@@ -112,7 +115,7 @@ internal class NumericIndex(
             .map { it.innerClause }
 
     private fun Clause.nestedFirstArgument(): Term =
-        this.head!!.nestedFirstArgument(nestingLevel)
+        this.head!!.nestedFirstArgument(nestingLevel + 1)
 
     private fun Term.asNumeric(): Numeric =
         this as Numeric
