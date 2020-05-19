@@ -135,4 +135,55 @@ internal class PrototypeClauseDequeTestImpl (
         assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
     }
 
+    override fun mixedClausesCrudOperationsTest() {
+        val operationalTheory =
+            listOf(
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("g", Numeric.of(1))),
+                Fact.of(Struct.of("f", Numeric.of(2))),
+                Fact.of(Struct.of("g", Numeric.of(3.14))),
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Atom.of("a"), Numeric.of(2))),
+                Fact.of(Struct.of("h", Struct.of("g", Struct.of("h", Numeric.of(3.14))), Struct.of("h", Var.anonymous()))),
+                Fact.of(Struct.of("h", Var.of("X"))),
+                Fact.of(Struct.of("h", Atom.of("a"))),
+                Fact.of(Struct.of("h", Var.of("Y"))),
+                Fact.of(Struct.of("f", Atom.of("b"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("h", Atom.of("a"), Numeric.of(2)))
+            )
+
+        val expectedOverF1 =
+            listOf(
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Numeric.of(2))),
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Atom.of("b"))),
+                Fact.of(Struct.of("f", Atom.of("c")))
+            )
+
+        val expectedOverH1 =
+            listOf(
+                Fact.of(Struct.of("h", Var.of("X"))),
+                Fact.of(Struct.of("h", Atom.of("a"))),
+                Fact.of(Struct.of("h", Var.of("Y"))),
+                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
+            )
+
+        val isolatedCompound =
+            listOf(
+                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
+            )
+
+        val generatedCollection = collectionGenerator(isolatedCompound)
+
+//        val getResultOverF1 = generatedCollection.get(Fact.of(Struct.of("f", Var.anonymous())))
+        val getResultOverH1 = generatedCollection.get(Fact.of(Struct.of("h", Var.anonymous())))
+//
+//        assertClausesHaveSameLengthAndContent(expectedOverF1, getResultOverF1.toList())
+        assertClausesHaveSameLengthAndContent(isolatedCompound, getResultOverH1.toList())
+    }
+
 }

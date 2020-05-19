@@ -13,6 +13,8 @@ internal interface PrototypeClauseMultiSetTest : PrototypeClauseCollectionTest {
 
     fun getWithAbsentClauseReturnsAnEmptySequence()
 
+    fun mixedClausesCrudOperationsTest()
+
     companion object {
         internal fun prototype(
             emptyGenerator: () -> ClauseMultiSet,

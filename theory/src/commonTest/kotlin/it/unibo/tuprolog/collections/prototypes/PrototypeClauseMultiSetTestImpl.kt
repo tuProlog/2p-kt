@@ -55,4 +55,32 @@ internal class PrototypeClauseMultiSetTestImpl (
 
         assertEquals(emptyList<Clause>(), result.toList())
     }
+
+    override fun mixedClausesCrudOperationsTest() {
+//        val operationalTheory =
+//            listOf(
+//                Fact.of(Struct.of("f", Atom.of("a"))),
+//                Fact.of(Struct.of("g", Numeric.of(1))),
+//                Fact.of(Struct.of("f", Numeric.of(2))),
+//                Fact.of(Struct.of("g", Numeric.of(3.14))),
+//                Fact.of(Struct.of("f", Atom.of("a"))),
+//                Fact.of(Struct.of("f", Atom.of("c"))),
+//                Fact.of(Struct.of("f", Atom.of("a"), Numeric.of(2))),
+//                Fact.of(Struct.of("h", Struct.of("g", Struct.of("h", Numeric.of(3.14))), Struct.of("h", Var.anonymous()))),
+//                Fact.of(Struct.of("h", Var.of("X"))),
+//                Fact.of(Struct.of("h", Atom.of("a"))),
+//                Fact.of(Struct.of("h", Var.of("Y"))),
+//                Fact.of(Struct.of("f", Atom.of("b"))),
+//                Fact.of(Struct.of("f", Atom.of("c"))),
+//                Fact.of(Struct.of("h", Atom.of("a"), Numeric.of(2)))
+//            )
+//
+//        val generatedCollection = collectionGenerator(operationalTheory)
+//
+//        val getResultOverF1 = generatedCollection.
+//
+//        assertClausesHaveSameLengthAndContent()
+    }
+//
+//    over
 }

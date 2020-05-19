@@ -22,6 +22,18 @@ internal class CompoundIndex(
     private val cache: MutableList<SituatedIndexedClause> = dequeOf()
     private var isCacheValid: Boolean = true
 
+    override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        TODO("Not yet implemented")
+    }
+
+    override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        TODO("Not yet implemented")
+    }
+
     override fun get(clause: Clause): Sequence<Clause> =
         if(clause.isGlobal()){
             if(ordered){

@@ -6,8 +6,10 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.arityOfNestedFirstArgumen
 import it.unibo.tuprolog.collections.rete.custom.ReteNode
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
 
 internal interface FunctorRete: ReteNode, TopLevelReteNode
@@ -147,17 +149,38 @@ internal sealed class FunctorNode : ReteNode {
             return cache.asSequence()
         }
 
+        override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
+            TODO("Not yet implemented")
+        }
+
+        override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
+
+        override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
+
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
 
-        override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            arities[clause.nestedArity()]?.getIndexed(clause) ?: emptySequence()
+        override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            return if (clause.isGlobal()){
+                arities[clause.head!!.arityOfNestedFirstArgument(nestingLevel - 1)]
+                    ?.getIndexed(clause) ?: emptySequence()
+            } else {
+                arities[clause.nestedArity()]?.getIndexed(clause) ?: emptySequence()
+            }
+        }
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             arities[clause.nestedArity()]?.retractAllIndexed(clause)?.let {
                 invalidCache(it)
                 it
             } ?: emptySequence()
+
+        private fun Clause.isGlobal(): Boolean =
+            this.head!!.nestedFirstArgument(nestingLevel) is Var
 
         private fun Clause.nestedArity(): Int =
             this.head!!.arityOfNestedFirstArgument(nestingLevel)

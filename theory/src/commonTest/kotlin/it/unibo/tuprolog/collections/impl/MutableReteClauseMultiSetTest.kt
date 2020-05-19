@@ -3,6 +3,7 @@ package it.unibo.tuprolog.collections.impl
 import it.unibo.tuprolog.collections.MutableClauseMultiSet
 import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
 import kotlin.test.Test
+import kotlin.test.todo
 
 internal class MutableReteClauseMultiSetTest : PrototypeClauseMultiSetTest{
 
@@ -101,4 +102,8 @@ internal class MutableReteClauseMultiSetTest : PrototypeClauseMultiSetTest{
         prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
 
+    @Test
+    override fun mixedClausesCrudOperationsTest() {
+        todo { }
+    }
 }

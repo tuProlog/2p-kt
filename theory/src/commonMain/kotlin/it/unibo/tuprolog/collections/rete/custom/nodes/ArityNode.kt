@@ -121,7 +121,7 @@ internal sealed class ArityNode: ReteNode {
                             variableIndex.retractAllIndexed(clause),
                             numericIndex.retractAllIndexed(clause),
                             atomicIndex.retractAllIndexed(clause),
-                            compoundIndex.retractAllIndexed(clause)
+                            (compoundIndex as IndexingNode).retractAllGlobalIndexed(clause)
                         )
                     }
                     else -> {
@@ -142,17 +142,17 @@ internal sealed class ArityNode: ReteNode {
                     )
                     is Atom -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
-                                atomicIndex.retractAllIndexed(clause)
+                        atomicIndex.retractAllIndexed(clause)
                     )
                     is Var -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
-                                numericIndex.retractAllIndexed(clause) +
-                                atomicIndex.retractAllIndexed(clause) +
-                                compoundIndex.retractAllIndexed(clause)
+                        numericIndex.retractAllIndexed(clause) +
+                        atomicIndex.retractAllIndexed(clause) +
+                        (compoundIndex as IndexingNode).retractAllGlobalIndexed(clause)
                     )
                     else -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause) +
-                                compoundIndex.retractAllIndexed(clause)
+                        compoundIndex.retractAllIndexed(clause)
                     )
                 }
             }
@@ -175,7 +175,7 @@ internal sealed class ArityNode: ReteNode {
                             variableIndex.getIndexed(clause),
                             numericIndex.getIndexed(clause),
                             atomicIndex.getIndexed(clause),
-                            compoundIndex.getIndexed(clause)
+                            (compoundIndex as IndexingNode).getGlobalIndexed(clause)
                         )
                     else ->
                         Utils.merge(
@@ -198,7 +198,7 @@ internal sealed class ArityNode: ReteNode {
                         variableIndex.getIndexed(clause) +
                         numericIndex.getIndexed(clause) +
                         atomicIndex.getIndexed(clause) +
-                        compoundIndex.getIndexed(clause)
+                        (compoundIndex as IndexingNode).getGlobalIndexed(clause)
                     else ->
                         variableIndex.getIndexed(clause) +
                         compoundIndex.getIndexed(clause)
@@ -220,7 +220,7 @@ internal sealed class ArityNode: ReteNode {
                     variableIndex.getFirstIndexed(clause)
                         ?: numericIndex.getFirstIndexed(clause)
                         ?: atomicIndex.getFirstIndexed(clause)
-                        ?: compoundIndex.getFirstIndexed(clause)
+                        ?: (compoundIndex as IndexingNode).getGlobalFirstIndexed(clause)
                 }
                 else -> {
                     variableIndex.getFirstIndexed(clause)
@@ -250,7 +250,7 @@ internal sealed class ArityNode: ReteNode {
                     ),
                     Utils.comparePriority(
                         variableIndex.getFirstIndexed(clause),
-                        compoundIndex.getFirstIndexed(clause)
+                        (compoundIndex as IndexingNode).getGlobalFirstIndexed(clause)
                     )
                 )
                 else -> Utils.comparePriority(
@@ -308,6 +308,18 @@ internal sealed class ArityNode: ReteNode {
         private val ordered: Boolean,
         nestingLevel: Int
     ) : FamilyArityReteNode(ordered, nestingLevel), ArityIndexing{
+
+        override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
+            TODO("Not yet implemented")
+        }
+
+        override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
+
+        override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             if(ordered) orderedLookahead(clause)
@@ -398,6 +410,18 @@ internal sealed class ArityNode: ReteNode {
         ordered: Boolean,
         nestingLevel: Int
     ) : ZeroArityReteNode(ordered, nestingLevel), ArityIndexing{
+
+        override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
+            TODO("Not yet implemented")
+        }
+
+        override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
+
+        override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+            TODO("Not yet implemented")
+        }
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             atoms.getFirstIndexed(clause)
