@@ -4,10 +4,6 @@ package it.unibo.tuprolog.utils
 
 import kotlin.jvm.JvmName
 
-fun <T> merge(iterables: Iterable<Iterable<T>>, comparator: (T, T) -> Int): Sequence<T> {
-    return merge(Comparator(comparator), iterables)
-}
-
 fun <T> merge(comparator: Comparator<T>, iterables: Iterable<Iterable<T>>): Sequence<T> {
     return sequence {
         val pipeline = iterables.asSequence().map { it.cursor() }.filterNot { it.isOver }.toMutableList()
@@ -25,6 +21,10 @@ fun <T> merge(comparator: Comparator<T>, iterables: Iterable<Iterable<T>>): Sequ
             }
         }
     }
+}
+
+fun <T> merge(iterables: Iterable<Iterable<T>>, comparator: (T, T) -> Int): Sequence<T> {
+    return merge(Comparator(comparator), iterables)
 }
 
 fun <T> merge(vararg iterables: Iterable<T>, comparator: (T, T) -> Int): Sequence<T> {
@@ -100,8 +100,26 @@ fun <T> interleave(iterables: Iterable<Iterable<T>>): Sequence<T> =
         var nNonEmpty = pipeline.size
         while (nNonEmpty > 0) {
             nNonEmpty = 0
-            for (i in pipeline.indices) {
-                it.
+            for (iter in pipeline) {
+                if (iter.hasNext()) {
+                    nNonEmpty++
+                    yield(iter.next())
+                }
             }
         }
     }
+
+fun <T> interleave(vararg iterables: Iterable<T>): Sequence<T> =
+    interleave(iterables.asIterable())
+
+fun <T> interleave(iterables: Sequence<Iterable<T>>): Sequence<T> =
+    interleave(iterables.asIterable())
+
+fun <T> interleaveSequences(vararg iterables: Sequence<T>): Sequence<T> =
+    interleave(sequenceOf(*iterables).map { it.asIterable() }.asIterable())
+
+fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> =
+    interleave(iterables.map { it.asIterable() }.asIterable())
+
+fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
+    interleave(iterables.map { it.asIterable() })

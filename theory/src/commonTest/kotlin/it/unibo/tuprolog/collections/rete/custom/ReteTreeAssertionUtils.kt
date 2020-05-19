@@ -3,11 +3,15 @@ package it.unibo.tuprolog.collections.rete.custom
 import it.unibo.tuprolog.core.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 import kotlin.collections.List as KtList
 
 internal object ReteTreeAssertionUtils {
     fun <T> assertItemsAreEquals(expected: Iterator<T>, actual: Iterator<T>) {
-        TODO()
+        while (expected.hasNext() && actual.hasNext()) {
+            assertEquals(expected.next(), actual.next())
+        }
+        assertEquals(expected.hasNext(), actual.hasNext())
     }
 
     fun <T> assertItemsAreEquals(expected: Iterable<T>, actual: Iterable<T>) {
@@ -25,7 +29,16 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun <T> assertPartialOrderIsTheSame(expected: Iterator<T>, actual: Iterator<T>) {
-        TODO()
+        while (expected.hasNext()) {
+            val e = expected.next()
+            while (actual.hasNext()) {
+                val a = expected.next()
+                if (e == a) break
+            }
+            if (!actual.hasNext()) {
+                fail("Item $e is out of sequence")
+            }
+        }
     }
 
     fun <T> assertPartialOrderIsTheSame(expected: Iterable<T>, actual: Iterable<T>) {
@@ -59,9 +72,6 @@ internal object ReteTreeAssertionUtils {
             tree.clauses
         )
     }
-
-    private fun <T> interleave(vararg seqs: Sequence<T>): Sequence<T> =
-        TODO()
 
     private fun Struct.addArgument(term: Term): Struct =
         Struct.of(functor, *args, term)
@@ -232,6 +242,47 @@ internal object ReteTreeAssertionUtils {
         Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
         Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
     )
+
+    val simpleFactsAndRules = simpleFacts + simpleRules
+    val f1FactsAndRules = f1Facts + f1Rules
+    val g1FactsAndRules = g1Facts + g1Rules
+    val h1FactsAndRules = h1Facts + h1Rules
+    val i1FactsAndRules = i1Facts + i1Rules
+    val j1FactsAndRules = j1Facts + j1Rules
+    val l1FactsAndRules = l1Facts + l1Rules
+    val m1FactsAndRules = m1Facts + m1Rules
+    val n1FactsAndRules = n1Facts + n1Rules
+    val o1FactsAndRules = o1Facts + o1Rules
+    val f2FactsAndRules = f2Facts + f2Rules
+    val g2FactsAndRules = g2Facts + g2Rules
+    val h2FactsAndRules = h2Facts + h2Rules
+    val i2FactsAndRules = i2Facts + i2Rules
+    val l2FactsAndRules = l2Facts + l2Rules
+    val m2FactsAndRules = m2Facts + m2Rules
+    val n2FactsAndRules = n2Facts + n2Rules
+    val o2FactsAndRules = o2Facts + o2Rules
+
+    val rules = listOf(
+        simpleRules,
+        f1Rules,
+        g1Rules,
+        h1Rules,
+        i1Rules,
+        j1Rules,
+        l1Rules,
+        m1Rules,
+        n1Rules,
+        o1Rules,
+        f2Rules,
+        g2Rules,
+        h2Rules,
+        i2Rules,
+        l2Rules,
+        m2Rules,
+        n2Rules,
+        o2Rules,
+        otherRules
+    ).flatten()
 
     val directives =
         listOf(

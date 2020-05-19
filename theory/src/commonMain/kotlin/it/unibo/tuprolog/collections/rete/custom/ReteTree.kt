@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom
 import it.unibo.tuprolog.collections.rete.custom.nodes.RootNode
 import it.unibo.tuprolog.core.Clause
 
-internal interface ReteTree {
+interface ReteTree {
 
     val isOrdered: Boolean
 
