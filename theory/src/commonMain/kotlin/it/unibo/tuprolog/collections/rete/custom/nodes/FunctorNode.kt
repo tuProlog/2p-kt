@@ -62,7 +62,7 @@ internal sealed class FunctorNode : ReteNode {
             clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
                 when (it) {
                     0 -> children.getOrPut(it) {
-                        ArityNode.ZeroArityReteNode(ordered, nestingLevel)
+                        ArityNode.ZeroArityReteNode(ordered)
                     }
                     else -> children.getOrPut(it) {
                         ArityNode.FamilyArityReteNode(ordered, nestingLevel)
@@ -113,29 +113,15 @@ internal sealed class FunctorNode : ReteNode {
             arities[clause.nestedArity()]?.get(clause) ?: emptySequence()
 
         override fun assertA(clause: IndexedClause) {
-            clause.nestedArity().let {
-                when (it) {
-                    0 -> arities.getOrPut(it) {
-                        ArityNode.ZeroArityIndexingNode(ordered, nestingLevel)
-                    }
-                    else -> arities.getOrPut(it) {
-                        ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
-                    }
-                }.assertA(clause)
-            }
+            arities.getOrPut(clause.nestedArity()) {
+                ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
+            }.assertA(clause)
         }
 
         override fun assertZ(clause: IndexedClause) {
-            clause.nestedArity().let {
-                when (it) {
-                    0 -> arities.getOrPut(it) {
-                        ArityNode.ZeroArityIndexingNode(ordered, nestingLevel)
-                    }
-                    else -> arities.getOrPut(it) {
-                        ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
-                    }
-                }.assertZ(clause)
-            }
+            arities.getOrPut(clause.nestedArity()) {
+                ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
+            }.assertZ(clause)
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
@@ -149,25 +135,16 @@ internal sealed class FunctorNode : ReteNode {
             return cache.asSequence()
         }
 
-        override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
-            TODO("Not yet implemented")
-        }
-
-        override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-            TODO("Not yet implemented")
-        }
-
-        override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-            TODO("Not yet implemented")
-        }
-
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
 
         override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
             return if (clause.isGlobal()) {
-                arities[clause.head!!.arityOfNestedFirstArgument(nestingLevel - 1)]
-                    ?.getIndexed(clause) ?: emptySequence()
+                Utils.merge(
+                    arities.values.map {
+                        it.getIndexed(clause)
+                    }
+                )
             } else {
                 arities[clause.nestedArity()]?.getIndexed(clause) ?: emptySequence()
             }
@@ -178,6 +155,21 @@ internal sealed class FunctorNode : ReteNode {
                 invalidCache(it)
                 it
             } ?: emptySequence()
+
+        override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
+            return if (ordered)
+                Utils.merge(
+                    arities.values.map {
+                        it.extractGlobalIndexedSequence(clause)
+                    }
+                )
+            else
+                Utils.flattenIndexed(
+                    arities.values.map {
+                        it.extractGlobalIndexedSequence(clause)
+                    }
+                )
+        }
 
         private fun Clause.isGlobal(): Boolean =
             this.head!!.nestedFirstArgument(nestingLevel) is Var

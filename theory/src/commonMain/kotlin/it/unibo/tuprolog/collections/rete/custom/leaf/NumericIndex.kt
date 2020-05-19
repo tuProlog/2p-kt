@@ -105,9 +105,8 @@ internal class NumericIndex(
     override fun getCache(): Sequence<SituatedIndexedClause> =
         numerics.asSequence()
 
-    private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        numerics.asSequence()
-            .filter { it.innerClause matches clause }
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+        numerics.asSequence().filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause)

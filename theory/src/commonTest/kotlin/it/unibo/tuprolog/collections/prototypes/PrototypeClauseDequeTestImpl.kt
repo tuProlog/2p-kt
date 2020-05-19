@@ -151,6 +151,8 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("h", Var.of("Y"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
                 Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Struct.of("g", Atom.of("a"), Struct.of("h", Atom.of("b"))))),
+                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2)))),
                 Fact.of(Struct.of("h", Atom.of("a"), Numeric.of(2)))
             )
 
@@ -161,8 +163,9 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("c"))),
                 Fact.of(Struct.of("f", Atom.of("b"))),
-                Fact.of(Struct.of("f", Atom.of("c")))
-            )
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Struct.of("g", Atom.of("a"), Struct.of("h", Atom.of("b")))))
+                )
 
         val expectedOverH1 =
             listOf(
@@ -172,18 +175,15 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
             )
 
-        val isolatedCompound =
-            listOf(
-                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
-            )
+        val generatedCollection = collectionGenerator(operationalTheory)
 
-        val generatedCollection = collectionGenerator(isolatedCompound)
+        val queryH1 = Fact.of(Struct.of("h", Var.anonymous()))
+        val queryF1 = Fact.of(Struct.of("f", Var.anonymous()))
+        val getResultOverH1 = generatedCollection.get(queryH1)
+        val getResultOverF1 = generatedCollection.get(queryF1)
 
-//        val getResultOverF1 = generatedCollection.get(Fact.of(Struct.of("f", Var.anonymous())))
-        val getResultOverH1 = generatedCollection.get(Fact.of(Struct.of("h", Var.anonymous())))
-//
-//        assertClausesHaveSameLengthAndContent(expectedOverF1, getResultOverF1.toList())
-        assertClausesHaveSameLengthAndContent(isolatedCompound, getResultOverH1.toList())
+        assertClausesHaveSameLengthAndContent(expectedOverH1, getResultOverH1.toList())
+        assertClausesHaveSameLengthAndContent(expectedOverF1, getResultOverF1.toList())
     }
 
 }

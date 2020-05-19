@@ -105,9 +105,8 @@ internal class AtomIndex(
     override fun getCache(): Sequence<SituatedIndexedClause> =
         atoms.asSequence()
 
-    private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        atoms.asSequence()
-            .filter { it.innerClause matches clause }
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+        atoms.asSequence().filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause)

@@ -5,10 +5,10 @@ import it.unibo.tuprolog.core.Clause
 
 internal interface IndexingNode : ReteNode, IndexingLeaf {
 
-    fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause?
-
-    fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause>
-
-    fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause>
+//    fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause?
+//
+//    fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause>
+//
+//    fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause>
 
 }

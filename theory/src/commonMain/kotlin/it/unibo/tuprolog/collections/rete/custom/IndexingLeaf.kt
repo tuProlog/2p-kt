@@ -11,4 +11,6 @@ internal interface IndexingLeaf : ReteNode {
 
     fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause>
 
+    fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause>
+
 }
