@@ -31,12 +31,12 @@ internal class IndexedClauseDatabase private constructor(private val queue:Claus
 
     override fun assertA(clause: Clause): ClauseDatabase =
         IndexedClauseDatabase(
-            ClauseQueue.Companion.of(clauses).apply { assertA(clause) }
+            ClauseQueue.Companion.of(clauses).also { it.addFirst(clause) }
         )
 
     override fun assertZ(clause: Clause): ClauseDatabase =
         IndexedClauseDatabase(
-            ClauseQueue.Companion.of(clauses).apply { assertZ(clause) }
+            ClauseQueue.Companion.of(clauses).also { it.addLast(clause) }
         )
 
     override fun retract(clause: Clause): RetractResult {

@@ -22,18 +22,6 @@ internal class CompoundIndex(
     private val cache: MutableList<SituatedIndexedClause> = dequeOf()
     private var isCacheValid: Boolean = true
 
-    override fun getGlobalFirstIndexed(clause: Clause): SituatedIndexedClause? {
-        TODO("Not yet implemented")
-    }
-
-    override fun getGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        TODO("Not yet implemented")
-    }
-
-    override fun retractAllGlobalIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        TODO("Not yet implemented")
-    }
-
     override fun get(clause: Clause): Sequence<Clause> =
         if(clause.isGlobal()){
             if(ordered){
@@ -161,6 +149,21 @@ internal class CompoundIndex(
                 ?.retractAllIndexed(clause)
                 ?: emptySequence()
         }
+
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
+        return if (ordered)
+            Utils.merge(
+                functors.values.map {
+                    it.extractGlobalIndexedSequence(clause)
+                }
+            )
+        else
+            Utils.flattenIndexed(
+                functors.values.map {
+                    it.extractGlobalIndexedSequence(clause)
+                }
+            )
+    }
 
     private fun Clause.nestedFunctor(): String =
         this.head!!.functorOfNestedFirstArgument(nestingLevel)

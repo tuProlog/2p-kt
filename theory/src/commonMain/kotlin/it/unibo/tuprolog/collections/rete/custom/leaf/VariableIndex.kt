@@ -65,7 +65,7 @@ internal class VariableIndex(
         return result.asSequence()
     }
 
-    private fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
+    override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
         variables.asSequence().filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
