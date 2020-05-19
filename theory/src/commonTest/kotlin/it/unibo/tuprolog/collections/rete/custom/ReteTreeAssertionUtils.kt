@@ -1,30 +1,28 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.utils.interleave
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.collections.List as KtList
 
 internal object ReteTreeAssertionUtils {
-    fun <T> assertItemsAreEquals(expected: Iterator<T>, actual: Iterator<T>) {
-        while (expected.hasNext() && actual.hasNext()) {
-            assertEquals(expected.next(), actual.next())
-        }
-        assertEquals(expected.hasNext(), actual.hasNext())
+    fun <T> assertItemsAreEquals(expected: KtList<T>, actual: KtList<T>) {
+        assertEquals(expected, actual)
     }
 
     fun <T> assertItemsAreEquals(expected: Iterable<T>, actual: Iterable<T>) {
         return assertItemsAreEquals(
-            expected.iterator(),
-            actual.iterator()
+            expected.toList(),
+            actual.toList()
         )
     }
 
     fun <T> assertItemsAreEquals(expected: Sequence<T>, actual: Sequence<T>) {
         return assertItemsAreEquals(
-            expected.iterator(),
-            actual.iterator()
+            expected.toList(),
+            actual.toList()
         )
     }
 
@@ -32,7 +30,7 @@ internal object ReteTreeAssertionUtils {
         while (expected.hasNext()) {
             val e = expected.next()
             while (actual.hasNext()) {
-                val a = expected.next()
+                val a = actual.next()
                 if (e == a) break
             }
             if (!actual.hasNext()) {
@@ -187,7 +185,7 @@ internal object ReteTreeAssertionUtils {
         Fact.of(Struct.of("other", Integer.of(1)))
     )
 
-    val facts = listOf(
+    val facts = interleave(
         simpleFacts,
         f1Facts,
         g1Facts,
@@ -207,7 +205,7 @@ internal object ReteTreeAssertionUtils {
         n2Facts,
         o2Facts,
         otherFacts
-    ).flatten()
+    ).toList()
 
     val simpleRules = simpleFacts.addBodies(moreArguments)
     val f1Rules = f1Facts.addBodies(moreArguments)
@@ -262,7 +260,7 @@ internal object ReteTreeAssertionUtils {
     val n2FactsAndRules = n2Facts + n2Rules
     val o2FactsAndRules = o2Facts + o2Rules
 
-    val rules = listOf(
+    val rules = interleave(
         simpleRules,
         f1Rules,
         g1Rules,
@@ -282,7 +280,7 @@ internal object ReteTreeAssertionUtils {
         n2Rules,
         o2Rules,
         otherRules
-    ).flatten()
+    ).toList()
 
     val directives =
         listOf(
@@ -305,5 +303,5 @@ internal object ReteTreeAssertionUtils {
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
         )
 
-    val clauses = facts + rules + directives
+    val clauses = interleave(facts + rules, directives).toList()
 }
