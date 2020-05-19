@@ -116,6 +116,12 @@ interface Struct : Term {
             }
 
         @JvmStatic
+        @JsName("template")
+        fun template(functor: String, arity: Int): Struct {
+            return of(functor, (0 until arity).map { Var.anonymous() })
+        }
+
+        @JvmStatic
         @JsName("ofList")
         fun of(functor: String, args: KtList<Term>): Struct =
             when {

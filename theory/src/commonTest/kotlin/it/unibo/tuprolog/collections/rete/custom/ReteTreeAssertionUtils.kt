@@ -33,7 +33,7 @@ internal object ReteTreeAssertionUtils {
                 val a = actual.next()
                 if (e == a) break
             }
-            if (!actual.hasNext()) {
+            if (!actual.hasNext() && expected.hasNext()) {
                 fail("Item $e is out of sequence")
             }
         }

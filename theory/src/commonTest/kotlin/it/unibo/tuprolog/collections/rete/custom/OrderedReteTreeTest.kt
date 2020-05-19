@@ -17,7 +17,6 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.o1Facts
 import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,11 +46,31 @@ class OrderedReteTreeTest {
     }
 
     @Test
-    fun anOrderedTreePreservesTheTotalOrderOfClauses() {
+    fun anOrderedTreePreservesTheTotalOrderOfClauses1() {
         val tree = reteTreeOf(clauses)
 
         assertEquals(clauses.size, tree.size)
         assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+    }
+
+    @Test
+    fun anOrderedTreePreservesTheTotalOrderOfClauses2() {
+        val tree = reteTreeOf()
+
+        clauses.forEach { tree.assertZ(it) }
+
+        assertEquals(clauses.size, tree.size)
+        assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+    }
+
+    @Test
+    fun anOrderedTreePreservesTheTotalOrderOfClauses3() {
+        val tree = reteTreeOf()
+
+        clauses.forEach { tree.assertA(it) }
+
+        assertEquals(clauses.size, tree.size)
+        assertItemsAreEquals(clauses.asReversed().asSequence(), tree.clauses)
     }
 
     @Test
@@ -131,14 +150,23 @@ class OrderedReteTreeTest {
 
         assertEquals(facts.size, tree.size)
         assertPartialOrderIsTheSame(f1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(f1Facts.asSequence(), tree.get(Fact.template("f", 1)))
         assertPartialOrderIsTheSame(g1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(g1Facts.asSequence(), tree.get(Fact.template("g", 1)))
         assertPartialOrderIsTheSame(h1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(h1Facts.asSequence(), tree.get(Fact.template("h", 1)))
         assertPartialOrderIsTheSame(i1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(i1Facts.asSequence(), tree.get(Fact.template("i", 1)))
         assertPartialOrderIsTheSame(j1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(j1Facts.asSequence(), tree.get(Fact.template("j", 1)))
         assertPartialOrderIsTheSame(l1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(l1Facts.asSequence(), tree.get(Fact.template("l", 1)))
         assertPartialOrderIsTheSame(m1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(m1Facts.asSequence(), tree.get(Fact.template("m", 1)))
         assertPartialOrderIsTheSame(n1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(n1Facts.asSequence(), tree.get(Fact.template("n", 1)))
         assertPartialOrderIsTheSame(o1Facts.asSequence(), tree.clauses)
+        assertItemsAreEquals(o1Facts.asSequence(), tree.get(Fact.template("o", 1)))
     }
 
     @Test
@@ -153,13 +181,22 @@ class OrderedReteTreeTest {
 
         assertEquals(facts.size, tree.size)
         assertPartialOrderIsTheSame(f1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(f1Facts.asReversed().asSequence(), tree.get(Fact.template("f", 1)))
         assertPartialOrderIsTheSame(g1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(g1Facts.asReversed().asSequence(), tree.get(Fact.template("g", 1)))
         assertPartialOrderIsTheSame(h1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(h1Facts.asReversed().asSequence(), tree.get(Fact.template("h", 1)))
         assertPartialOrderIsTheSame(i1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(i1Facts.asReversed().asSequence(), tree.get(Fact.template("i", 1)))
         assertPartialOrderIsTheSame(j1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(j1Facts.asReversed().asSequence(), tree.get(Fact.template("j", 1)))
         assertPartialOrderIsTheSame(l1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(l1Facts.asReversed().asSequence(), tree.get(Fact.template("l", 1)))
         assertPartialOrderIsTheSame(m1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(m1Facts.asReversed().asSequence(), tree.get(Fact.template("m", 1)))
         assertPartialOrderIsTheSame(n1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(n1Facts.asReversed().asSequence(), tree.get(Fact.template("n", 1)))
         assertPartialOrderIsTheSame(o1Facts.asReversed().asSequence(), tree.clauses)
+        assertItemsAreEquals(o1Facts.asReversed().asSequence(), tree.get(Fact.template("o", 1)))
     }
 }

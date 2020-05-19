@@ -20,5 +20,11 @@ interface Fact : Rule {
         @JvmStatic
         @JsName("of")
         fun of(head: Struct): Fact = FactImpl(head)
+
+        @JvmStatic
+        @JsName("template")
+        fun template(functor: String, arity: Int): Fact {
+            return of(Struct.template(functor, arity))
+        }
     }
 }
