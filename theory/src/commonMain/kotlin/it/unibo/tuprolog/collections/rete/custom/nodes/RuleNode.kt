@@ -6,6 +6,7 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgum
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class RuleNode(
@@ -13,8 +14,7 @@ internal class RuleNode(
 ) : TopLevelReteNode {
 
     private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
-    private val cache: MutableList<SituatedIndexedClause> = dequeOf()
-    private var isCacheValid: Boolean = true
+    private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
     override fun get(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
@@ -49,10 +49,8 @@ internal class RuleNode(
             it
         } ?: emptySequence()
 
-    override fun getCache(): Sequence<SituatedIndexedClause> {
-        regenerateCache()
-        return cache.asSequence()
-    }
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        theoryCache.value.asSequence()
 
     private fun Clause.nestedFunctor(): String =
         this.head!!.functorOfNestedFirstArgument(0)
@@ -62,30 +60,25 @@ internal class RuleNode(
 
     private fun invalidCache(result: Sequence<*>) {
         if (result.any()) {
-            cache.clear()
-            isCacheValid = false
+            theoryCache.invalidate()
         }
     }
 
-    private fun regenerateCache() {
-        if (!isCacheValid) {
-            cache.addAll(
-                if (ordered) {
-                    Utils.merge(
-                        functors.values.map {
-                            it.getCache()
-                        }
-                    )
-                } else {
-                    Utils.flattenIndexed(
-                        functors.values.map { outer ->
-                            outer.getCache()
-                        }
-                    )
-                }
-            )
-            isCacheValid = true
-        }
-    }
+    private fun regenerateCache(): MutableList<SituatedIndexedClause> =
+        dequeOf(
+            if (ordered) {
+                Utils.merge(
+                    functors.values.map {
+                        it.getCache()
+                    }
+                )
+            } else {
+                Utils.flattenIndexed(
+                    functors.values.map { outer ->
+                        outer.getCache()
+                    }
+                )
+            }
+        )
 
 }

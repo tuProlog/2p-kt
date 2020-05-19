@@ -10,6 +10,7 @@ import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class CompoundIndex(
@@ -18,9 +19,7 @@ internal class CompoundIndex(
 ) : IndexingNode {
 
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
-
-    private val cache: MutableList<SituatedIndexedClause> = dequeOf()
-    private var isCacheValid: Boolean = true
+    private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
@@ -45,10 +44,7 @@ internal class CompoundIndex(
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
-                    FunctorNode.FunctorIndexingNode(
-                        ordered,
-                        nestingLevel
-                    )
+                    FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
                 }.assertA(clause)
             } else {
                 assertZ(clause)
@@ -58,10 +54,7 @@ internal class CompoundIndex(
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
-                FunctorNode.FunctorIndexingNode(
-                    ordered,
-                    nestingLevel
-                )
+                FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
             }.assertZ(clause)
         }
 
@@ -78,10 +71,8 @@ internal class CompoundIndex(
             }
         }
 
-    override fun getCache(): Sequence<SituatedIndexedClause> {
-        regenerateCache()
-        return cache.asSequence()
-    }
+    override fun getCache(): Sequence<SituatedIndexedClause> =
+        theoryCache.value.asSequence()
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
         if (clause.isGlobal()) {
@@ -91,7 +82,7 @@ internal class CompoundIndex(
                 }
             ).map { it.innerClause }
         } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+            functors[clause.nestedFunctor()]
                 ?.retractAll(clause)
                 ?: emptySequence()
         }
@@ -104,7 +95,7 @@ internal class CompoundIndex(
                 }
             )
         } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+            functors[clause.nestedFunctor()]
                 ?.retractAll(clause)
                 ?: emptySequence()
         }
@@ -119,7 +110,7 @@ internal class CompoundIndex(
                 )
             ).firstOrNull()
         } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+            functors[clause.nestedFunctor()]
                 ?.getFirstIndexed(clause)
         }
 
@@ -131,7 +122,7 @@ internal class CompoundIndex(
                 }
             )
         } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+            functors[clause.nestedFunctor()]
                 ?.getIndexed(clause)
                 ?: emptySequence()
         }
@@ -144,7 +135,7 @@ internal class CompoundIndex(
                 }
             )
         } else {
-            functors[clause.functorOfNestedFirstArgument(nestingLevel)]
+            functors[clause.nestedFunctor()]
                 ?.retractAllIndexed(clause)
                 ?: emptySequence()
         }
@@ -175,30 +166,25 @@ internal class CompoundIndex(
 
     private fun invalidCache(result: Sequence<*>) {
         if (result.any()) {
-            cache.clear()
-            isCacheValid = false
+            theoryCache.invalidate()
         }
     }
 
-    private fun regenerateCache() {
-        if (!isCacheValid) {
-            cache.addAll(
-                if (ordered) {
-                    Utils.merge(
-                        functors.values.map {
-                            it.getCache()
-                        }
-                    )
-                } else {
-                    Utils.flattenIndexed(
-                        functors.values.map { outer ->
-                            outer.getCache()
-                        }
-                    )
-                }
-            )
-            isCacheValid = true
-        }
-    }
+    private fun regenerateCache(): MutableList<SituatedIndexedClause> =
+        dequeOf(
+            if (ordered) {
+                Utils.merge(
+                    functors.values.map {
+                        it.getCache()
+                    }
+                )
+            } else {
+                Utils.flattenIndexed(
+                    functors.values.map { outer ->
+                        outer.getCache()
+                    }
+                )
+            }
+        )
 
 }

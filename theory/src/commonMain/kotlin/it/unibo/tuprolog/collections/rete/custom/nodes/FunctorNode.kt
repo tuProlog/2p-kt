@@ -10,6 +10,7 @@ import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
 internal interface FunctorRete : ReteNode, TopLevelReteNode
@@ -23,9 +24,8 @@ internal sealed class FunctorNode : ReteNode {
         private val nestingLevel: Int
     ) : FunctorNode(), FunctorRete {
 
-        private val children: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
-        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
-        private var isCacheValid: Boolean = true
+        private val arities: MutableMap<Int, TopLevelReteNode> = mutableMapOf()
+        private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
         override fun get(clause: Clause): Sequence<Clause> =
             selectArity(clause)?.get(clause) ?: emptySequence()
@@ -50,21 +50,19 @@ internal sealed class FunctorNode : ReteNode {
                 it
             } ?: emptySequence()
 
-        override fun getCache(): Sequence<SituatedIndexedClause> {
-            regenerateCache()
-            return cache.asSequence()
-        }
+        override fun getCache(): Sequence<SituatedIndexedClause> =
+            theoryCache.value.asSequence()
 
         private fun selectArity(clause: Clause) =
-            children[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
+            arities[clause.head!!.arityOfNestedFirstArgument(nestingLevel)]
 
         private fun chooseAssertionBranch(clause: IndexedClause, op: ReteNode.(IndexedClause) -> Unit) {
             clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
                 when (it) {
-                    0 -> children.getOrPut(it) {
+                    0 -> arities.getOrPut(it) {
                         ArityNode.ZeroArityReteNode(ordered)
                     }
-                    else -> children.getOrPut(it) {
+                    else -> arities.getOrPut(it) {
                         ArityNode.FamilyArityReteNode(ordered, nestingLevel)
                     }
                 }
@@ -73,31 +71,26 @@ internal sealed class FunctorNode : ReteNode {
 
         private fun invalidCache(result: Sequence<*>) {
             if (result.any()) {
-                cache.clear()
-                isCacheValid = false
+                theoryCache.invalidate()
             }
         }
 
-        private fun regenerateCache() {
-            if (!isCacheValid) {
-                cache.addAll(
-                    if (ordered) {
-                        Utils.merge(
-                            children.values.map {
-                                it.getCache()
-                            }
-                        )
-                    } else {
-                        Utils.flattenIndexed(
-                            children.values.map { outer ->
-                                outer.getCache()
-                            }
-                        )
-                    }
-                )
-                isCacheValid = true
-            }
-        }
+        private fun regenerateCache(): MutableList<SituatedIndexedClause> =
+            dequeOf(
+                if (ordered) {
+                    Utils.merge(
+                        arities.values.map {
+                            it.getCache()
+                        }
+                    )
+                } else {
+                    Utils.flattenIndexed(
+                        arities.values.map { outer ->
+                            outer.getCache()
+                        }
+                    )
+                }
+            )
     }
 
     internal class FunctorIndexingNode(
@@ -106,8 +99,7 @@ internal sealed class FunctorNode : ReteNode {
     ) : FunctorNode(), FunctorIndexing {
 
         private val arities: MutableMap<Int, ArityIndexing> = mutableMapOf()
-        private val cache: MutableList<SituatedIndexedClause> = dequeOf()
-        private var isCacheValid: Boolean = true
+        private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
         override fun get(clause: Clause): Sequence<Clause> =
             arities[clause.nestedArity()]?.get(clause) ?: emptySequence()
@@ -130,10 +122,8 @@ internal sealed class FunctorNode : ReteNode {
                 it
             } ?: emptySequence()
 
-        override fun getCache(): Sequence<SituatedIndexedClause> {
-            regenerateCache()
-            return cache.asSequence()
-        }
+        override fun getCache(): Sequence<SituatedIndexedClause> =
+            theoryCache.value.asSequence()
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
@@ -182,31 +172,27 @@ internal sealed class FunctorNode : ReteNode {
 
         private fun invalidCache(result: Sequence<*>) {
             if (result.any()) {
-                cache.clear()
-                isCacheValid = false
+                theoryCache.invalidate()
             }
         }
 
-        private fun regenerateCache() {
-            if (!isCacheValid) {
-                cache.addAll(
-                    if (ordered) {
-                        Utils.merge(
-                            arities.values.map {
-                                it.getCache()
-                            }
-                        )
-                    } else {
-                        Utils.flattenIndexed(
-                            arities.values.map { outer ->
-                                outer.getCache()
-                            }
-                        )
-                    }
-                )
-                isCacheValid = true
-            }
-        }
+        private fun regenerateCache(): MutableList<SituatedIndexedClause> =
+            dequeOf(
+                if (ordered) {
+                    Utils.merge(
+                        arities.values.map {
+                            it.getCache()
+                        }
+                    )
+                } else {
+                    Utils.flattenIndexed(
+                        arities.values.map { outer ->
+                            outer.getCache()
+                        }
+                    )
+                }
+            )
+
     }
 
 }

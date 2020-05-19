@@ -14,7 +14,11 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.l1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.m1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.n1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.o1Facts
+import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -52,6 +56,13 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeIsMutable() {
+//        val astrozzo = Fact.of(Struct.of("i", Struct.of("f", Numeric.of(1))))
+//        astrozzo.let {
+//            println(it.functorOfNestedFirstArgument(0))
+//            println(it.functorOfNestedFirstArgument(1))
+//            println(it.functorOfNestedFirstArgument(2))
+//        }
+
         clauses.forEach { aClause ->
             val tree = reteTreeOf()
 
@@ -59,7 +70,17 @@ class OrderedReteTreeTest {
 
             tree.assertZ(aClause)
             assertEquals(1, tree.size)
-            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+
+
+            println("oooooooooooooo")
+            println(aClause.toString())
+            val getResult = tree.get(aClause)
+            println(getResult.first().toString())
+
+            assertItemsAreEquals(sequenceOf(aClause), getResult)
+
+            val retractResult = tree.retractAll(aClause)
+            assertItemsAreEquals(sequenceOf(aClause), retractResult)
         }
 
     }
