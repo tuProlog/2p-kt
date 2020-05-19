@@ -1,4 +1,4 @@
-@file:JvmName("IterableExtensions")
+@file:JvmName("IterUtils")
 
 package it.unibo.tuprolog.utils
 
@@ -89,4 +89,19 @@ fun <T> Sequence<T>.longIndexed(): Sequence<LongIndexed<T>> =
 fun <T> Sequence<T>.indexed(): Sequence<IntIndexed<T>> =
     zip(IntRange(0, Int.MAX_VALUE).asSequence()) { it, i ->
         IntIndexed.of(i, it)
+    }
+
+fun <T> interleave(iterables: Iterable<Iterable<T>>): Sequence<T> =
+    sequence {
+        val pipeline = iterables.asSequence()
+            .map { it.iterator() }
+            .filter { it.hasNext() }
+            .toList()
+        var nNonEmpty = pipeline.size
+        while (nNonEmpty > 0) {
+            nNonEmpty = 0
+            for (i in pipeline.indices) {
+                it.
+            }
+        }
     }

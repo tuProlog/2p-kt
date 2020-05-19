@@ -1,13 +1,13 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertItemsAreEquals
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.dot2FunctorRules
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.facts
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.other1FunctorRules
-import it.unibo.tuprolog.collections.rete.nodes.custom.ReteTreeAssertionUtils.rules
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertItemsAreEquals
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.dot2FunctorRules
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.facts
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.other1FunctorRules
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.rules
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
@@ -24,14 +24,16 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeIsInitiallyEmptyAndOrdered() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
     }
 
     @Test
     fun aTreeIsMutable() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
 
@@ -44,7 +46,8 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeMayContainSeveralCopiesOfAClause() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
 
@@ -61,7 +64,8 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreePreservesTheInsertionOrderOfSimilarClauses1() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
 
@@ -76,7 +80,8 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreePreservesTheInsertionOrderOfSimilarClauses2() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
 
@@ -91,7 +96,8 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreePreservesTheInsertionOrderOfSimilarClauses3() {
-        val tree = reteTreeOf()
+        val tree =
+            reteTreeOf()
 
         assertIsEmptyAndOrdered(tree)
 

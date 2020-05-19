@@ -1,6 +1,5 @@
-package it.unibo.tuprolog.collections.rete.nodes.custom
+package it.unibo.tuprolog.collections.rete.custom
 
-import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -12,11 +11,17 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun <T> assertItemsAreEquals(expected: Iterable<T>, actual: Iterable<T>) {
-        return assertItemsAreEquals(expected.iterator(), actual.iterator())
+        return assertItemsAreEquals(
+            expected.iterator(),
+            actual.iterator()
+        )
     }
 
     fun <T> assertItemsAreEquals(expected: Sequence<T>, actual: Sequence<T>) {
-        return assertItemsAreEquals(expected.iterator(), actual.iterator())
+        return assertItemsAreEquals(
+            expected.iterator(),
+            actual.iterator()
+        )
     }
 
     fun <T> assertPartialOrderIsTheSame(expected: Iterator<T>, actual: Iterator<T>) {
@@ -24,11 +29,17 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun <T> assertPartialOrderIsTheSame(expected: Iterable<T>, actual: Iterable<T>) {
-        return assertPartialOrderIsTheSame(expected.iterator(), actual.iterator())
+        return assertPartialOrderIsTheSame(
+            expected.iterator(),
+            actual.iterator()
+        )
     }
 
     fun <T> assertPartialOrderIsTheSame(expected: Sequence<T>, actual: Sequence<T>) {
-        return assertPartialOrderIsTheSame(expected.iterator(), actual.iterator())
+        return assertPartialOrderIsTheSame(
+            expected.iterator(),
+            actual.iterator()
+        )
     }
 
     fun assertIsEmptyAndOrdered(tree: ReteTree) {
@@ -43,7 +54,10 @@ internal object ReteTreeAssertionUtils {
 
     fun assertIsEmpty(tree: ReteTree) {
         assertEquals(0, tree.size)
-        assertItemsAreEquals(emptySequence(), tree.clauses)
+        assertItemsAreEquals(
+            emptySequence(),
+            tree.clauses
+        )
     }
 
     private fun <T> interleave(vararg seqs: Sequence<T>): Sequence<T> =
@@ -55,6 +69,19 @@ internal object ReteTreeAssertionUtils {
     private fun Fact.addArgument(term: Term): Fact =
         Fact.of(head.addArgument(term))
 
+    private fun Fact.addBody(term: Term): Rule =
+        Rule.of(head, term)
+
+    private fun KtList<Fact>.addArguments(args: KtList<Term>): KtList<Fact> {
+        return zip(args.shuffled()).map { (f, a) -> f.addArgument(a) }
+    }
+
+    private fun KtList<Fact>.addBodies(bodies: KtList<Term>): KtList<Rule> {
+        return asSequence().flatMap { f ->
+            bodies.asSequence().map { b -> f.addBody(b)  }
+        }.toList()
+    }
+
     private val moreArguments = listOf(
         Atom.of("a"),
         Integer.of(2),
@@ -62,10 +89,6 @@ internal object ReteTreeAssertionUtils {
         Var.of("Five"),
         Struct.of("six", Atom.of("seven"), Integer.of(8), Real.of(9.10), Var.of("Eleven"))
     )
-
-    private fun KtList<Fact>.addArguments(args: KtList<Term>): KtList<Fact> {
-        return f1Facts.zip(args.shuffled()).map { (f, a) -> f.addArgument(a) }
-    }
 
     val simpleFacts = listOf("a", "b", "c", "d")
         .map(Atom.Companion::of)
@@ -108,39 +131,94 @@ internal object ReteTreeAssertionUtils {
 
     val o1Facts = l1Facts.map { Fact.of(Struct.of("o", it.head)) }
 
-    val f2Facts = f1Facts.addArguments(moreArguments)
+    val f2Facts = f1Facts.addArguments(
+        moreArguments
+    )
 
-    val g2Facts = g1Facts.addArguments(moreArguments)
+    val g2Facts = g1Facts.addArguments(
+        moreArguments
+    )
 
-    val h2Facts = h1Facts.addArguments(moreArguments)
+    val h2Facts = h1Facts.addArguments(
+        moreArguments
+    )
 
-    val i2Facts = i1Facts.addArguments(moreArguments)
+    val i2Facts = i1Facts.addArguments(
+        moreArguments
+    )
 
-    val l2Facts = l1Facts.addArguments(moreArguments)
+    val l2Facts = l1Facts.addArguments(
+        moreArguments
+    )
 
-    val m2Facts = m1Facts.addArguments(moreArguments)
+    val m2Facts = m1Facts.addArguments(
+        moreArguments
+    )
 
-    val n2Facts = n1Facts.addArguments(moreArguments)
+    val n2Facts = n1Facts.addArguments(
+        moreArguments
+    )
 
-    val o2Facts = o1Facts.addArguments(moreArguments)
+    val o2Facts = o1Facts.addArguments(
+        moreArguments
+    )
 
-    /** Contains some well-formed facts */
-    val facts = listOf(
+    val otherFacts = listOf(
         Fact.of(Truth.TRUE),
         Fact.of(Truth.FAIL),
-        Fact.of(Atom.of("a")),
+//        Fact.of(Atom.of("a")),
         Fact.of(Atom.of("other")),
         Fact.of(Struct.of("a", Atom.of("other"))),
         Fact.of(Struct.of("other", Integer.of(1))),
         Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
-        Fact.of(Atom.of("a")),
+//        Fact.of(Atom.of("a")),
         Fact.of(Struct.of("other", Integer.of(2))),
         Fact.of(Tuple.of(Var.of("B"), Var.of("A"))),
         Fact.of(Struct.of("other", Integer.of(1)))
     )
 
-    /** Contains some well-formed rules */
-    val rules = facts + listOf(
+    val facts = listOf(
+        simpleFacts,
+        f1Facts,
+        g1Facts,
+        h1Facts,
+        i1Facts,
+        j1Facts,
+        l1Facts,
+        m1Facts,
+        n1Facts,
+        o1Facts,
+        f2Facts,
+        g2Facts,
+        h2Facts,
+        i2Facts,
+        l2Facts,
+        m2Facts,
+        n2Facts,
+        o2Facts,
+        otherFacts
+    ).flatten()
+
+    val simpleRules = simpleFacts.addBodies(moreArguments)
+    val f1Rules = f1Facts.addBodies(moreArguments)
+    val g1Rules = g1Facts.addBodies(moreArguments)
+    val h1Rules = h1Facts.addBodies(moreArguments)
+    val i1Rules = i1Facts.addBodies(moreArguments)
+    val j1Rules = j1Facts.addBodies(moreArguments)
+    val l1Rules = l1Facts.addBodies(moreArguments)
+    val m1Rules = m1Facts.addBodies(moreArguments)
+    val n1Rules = n1Facts.addBodies(moreArguments)
+    val o1Rules = o1Facts.addBodies(moreArguments)
+    val f2Rules = f2Facts.addBodies(moreArguments)
+    val g2Rules = g2Facts.addBodies(moreArguments)
+    val h2Rules = h2Facts.addBodies(moreArguments)
+    val i2Rules = i2Facts.addBodies(moreArguments)
+    val l2Rules = l2Facts.addBodies(moreArguments)
+    val m2Rules = m2Facts.addBodies(moreArguments)
+    val n2Rules = n2Facts.addBodies(moreArguments)
+    val o2Rules = o2Facts.addBodies(moreArguments)
+
+    val otherRules = listOf(
         Rule.of(Atom.of("a"), Atom.of("other")),
         Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
         Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
@@ -155,22 +233,6 @@ internal object ReteTreeAssertionUtils {
         Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
     )
 
-    /** Contains some well-formed rules with no args head */
-    val atomRules = rules.filter { it.head.isAtom }
-
-    /** Contains some well-formed rules with "a" functor */
-    val aFunctorRules = rules.filter { it.head.functor == "a" }
-
-    /** Contains some well-formed rules with "other" functor and 1 arity */
-    val other1FunctorRules = rules.filter { it.head.functor == "other" && it.head.arity == 1 }
-
-    /** Contains some well-formed rules with "other" functor and 2 arity */
-    val dot2FunctorRules = rules.filter { it.head.functor == "." && it.head.arity == 2 }
-
-    /** Contains some well-formed rules with "f" functor */
-    val fFunctorRules = rules.filter { it.head.functor == "f" }
-
-    /** Contains some well-formed directives */
     val directives =
         listOf(
             Directive.of(Truth.TRUE),
@@ -192,6 +254,5 @@ internal object ReteTreeAssertionUtils {
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
         )
 
-    /** Contains well-formed mixed [rules] and [directives] */
-    val clauses = rules + directives
+    val clauses = facts + rules + directives
 }
