@@ -15,7 +15,8 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
 
     private val prototype = SolverTest.prototype(this)
 
-    override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
+    override val defaultBuiltins: AliasedLibrary
+        get() = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,

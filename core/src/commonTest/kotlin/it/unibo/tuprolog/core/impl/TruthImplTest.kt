@@ -14,27 +14,24 @@ import kotlin.test.assertTrue
  */
 internal class TruthImplTest {
 
-    private val `true` = TruthImpl.True
-    private val fail = TruthImpl.Fail
-
-    private val truthInstances = listOf(`true`, fail)
+    private val truthInstances = listOf(Truth.TRUE, Truth.FAIL, Truth.FALSE)
 
     @Test
     fun truthFunctor() {
-        assertEquals("true", `true`.functor)
-        assertEquals("fail", fail.functor)
+        assertEquals("true", Truth.TRUE.functor)
+        assertEquals("fail", Truth.FAIL.functor)
     }
 
     @Test
     fun testIsPropertiesAndTypesForTrue() {
-        TermTypeAssertionUtils.assertIsTruth(`true`)
-        assertTrue(`true`.isTrue)
+        TermTypeAssertionUtils.assertIsTruth(Truth.TRUE)
+        assertTrue(Truth.TRUE.isTrue)
     }
 
     @Test
     fun testIsPropertiesAndTypesForFail() {
-        TermTypeAssertionUtils.assertIsTruth(fail)
-        assertTrue(fail.isFail)
+        TermTypeAssertionUtils.assertIsTruth(Truth.FAIL)
+        assertTrue(Truth.FAIL.isFail)
     }
 
     @Test
