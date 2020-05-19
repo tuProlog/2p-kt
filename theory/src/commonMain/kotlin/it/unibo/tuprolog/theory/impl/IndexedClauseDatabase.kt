@@ -31,12 +31,12 @@ internal class IndexedClauseDatabase private constructor(private val queue:Claus
 
     override fun assertA(clause: Clause): ClauseDatabase =
         IndexedClauseDatabase(
-            ClauseQueue.Companion.of(clauses).also { it.addFirst(clause) }
+            ClauseQueue.Companion.of(listOf(clause) + clauses)
         )
 
     override fun assertZ(clause: Clause): ClauseDatabase =
         IndexedClauseDatabase(
-            ClauseQueue.Companion.of(clauses).also { it.addLast(clause) }
+            ClauseQueue.Companion.of(clauses + clause)
         )
 
     override fun retract(clause: Clause): RetractResult {
@@ -44,11 +44,11 @@ internal class IndexedClauseDatabase private constructor(private val queue:Claus
         val retracted = newTheory.retrieveFirst(clause)
 
         return when (retracted) {
-            is RetrieveResult.Failure -> RetractResult.Failure(this)
+            is RetrieveResult.Failure ->
+                RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedClauseDatabase(
-                    newTheory
-                ), retracted.collection
+                IndexedClauseDatabase(retracted.collection),
+                (retracted as RetrieveResult.Success).clauses
             )
         }
     }
@@ -60,9 +60,8 @@ internal class IndexedClauseDatabase private constructor(private val queue:Claus
         return when (retracted) {
             is RetrieveResult.Failure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedClauseDatabase(
-                    newTheory
-                ), retracted.collection
+                IndexedClauseDatabase(retracted.collection),
+                (retracted as RetrieveResult.Success).clauses
             )
         }
     }

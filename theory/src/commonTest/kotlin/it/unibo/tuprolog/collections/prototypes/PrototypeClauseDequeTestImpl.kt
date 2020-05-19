@@ -7,6 +7,8 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class PrototypeClauseDequeTestImpl (
     private val emptyGenerator: () -> ClauseQueue,
@@ -136,6 +138,12 @@ internal class PrototypeClauseDequeTestImpl (
     }
 
     override fun mixedClausesCrudOperationsTest() {
+
+        val atomicFacts =
+            listOf(
+                Fact.of(Atom.of("a"))
+            )
+
         val operationalTheory =
             listOf(
                 Fact.of(Struct.of("f", Atom.of("a"))),
@@ -175,15 +183,26 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
             )
 
-        val generatedCollection = collectionGenerator(operationalTheory)
+        val queryAtom = Fact.of(Atom.of("a"))
+        val queryAtomb = Fact.of(Atom.of("b"))
+        val generatedCollection = collectionGenerator(atomicFacts)
+        val assertedCollection = generatedCollection.addFirst(queryAtomb)
+        assertTrue(queryAtomb in assertedCollection)
+        assertTrue(queryAtom in generatedCollection)
+        assertFalse(queryAtomb in generatedCollection)
+//        assertFalse(queryAtom in assertedCollection)
 
-        val queryH1 = Fact.of(Struct.of("h", Var.anonymous()))
-        val queryF1 = Fact.of(Struct.of("f", Var.anonymous()))
-        val getResultOverH1 = generatedCollection.get(queryH1)
-        val getResultOverF1 = generatedCollection.get(queryF1)
+//        val getResultOverAtom = generatedCollection.get(queryAtom)
+//        assertClausesHaveSameLengthAndContent(atomicFacts + atomicFacts, getResultOverAtom.toList())
 
-        assertClausesHaveSameLengthAndContent(expectedOverH1, getResultOverH1.toList())
-        assertClausesHaveSameLengthAndContent(expectedOverF1, getResultOverF1.toList())
+
+//        val queryH1 = Fact.of(Struct.of("h", Var.anonymous()))
+//        val queryF1 = Fact.of(Struct.of("f", Var.anonymous()))
+//        val getResultOverH1 = generatedCollection.get(queryH1)
+//        val getResultOverF1 = generatedCollection.get(queryF1)
+//
+//        assertClausesHaveSameLengthAndContent(expectedOverH1, getResultOverH1.toList())
+//        assertClausesHaveSameLengthAndContent(expectedOverF1, getResultOverF1.toList())
     }
 
 }
