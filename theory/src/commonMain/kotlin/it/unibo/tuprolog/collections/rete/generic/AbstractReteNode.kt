@@ -26,7 +26,7 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
                         it.toString(treefy).replace("\n", "\n\t")
                     } + "}"
         else
-            "$header {${children.values.joinToString(","){
+            "$header {${children.values.joinToString(",") {
                 it.toString()
             }}"
 

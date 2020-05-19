@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections.rete.generic.list
 
-import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.collections.rete.generic.AbstractLeafReteNode
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /** An intermediate node indexing by Rules head's arity */

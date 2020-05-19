@@ -15,7 +15,7 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class CompoundIndex(
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingNode{
+) : IndexingNode {
 
     private val functors: MutableMap<String, FunctorIndexing> = mutableMapOf()
 
@@ -35,14 +35,14 @@ internal class CompoundIndex(
     }
 
     override fun get(clause: Clause): Sequence<Clause> =
-        if(clause.isGlobal()){
-            if(ordered){
+        if (clause.isGlobal()) {
+            if (ordered) {
                 Utils.merge(
                     functors.values.asSequence().flatMap {
                         it.getIndexed(clause)
                     }
                 ).map { it.innerClause }
-            } else{
+            } else {
                 Utils.flatten(
                     functors.values.asSequence().flatMap {
                         it.get(clause)
@@ -55,21 +55,21 @@ internal class CompoundIndex(
 
     override fun assertA(clause: IndexedClause) =
         clause.nestedFunctor().let {
-            if(ordered){
-                functors.getOrPut(it){
+            if (ordered) {
+                functors.getOrPut(it) {
                     FunctorNode.FunctorIndexingNode(
                         ordered,
                         nestingLevel
                     )
                 }.assertA(clause)
-            } else{
+            } else {
                 assertZ(clause)
             }
         }
 
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
-            functors.getOrPut(it){
+            functors.getOrPut(it) {
                 FunctorNode.FunctorIndexingNode(
                     ordered,
                     nestingLevel
@@ -78,13 +78,12 @@ internal class CompoundIndex(
         }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        if(ordered) {
+        if (ordered) {
             retractAllOrdered(clause).let {
                 invalidCache(it)
                 it
             }
-        }
-        else {
+        } else {
             retractAllUnordered(clause).let {
                 invalidCache(it)
                 it
@@ -97,7 +96,7 @@ internal class CompoundIndex(
     }
 
     private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
-        if(clause.isGlobal()) {
+        if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
@@ -110,7 +109,7 @@ internal class CompoundIndex(
         }
 
     private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
-        if(clause.isGlobal()) {
+        if (clause.isGlobal()) {
             Utils.flatten(
                 functors.values.map {
                     it.retractAll(clause)
@@ -123,7 +122,7 @@ internal class CompoundIndex(
         }
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
-        if(clause.isGlobal()) {
+        if (clause.isGlobal()) {
             Utils.merge(
                 sequenceOf(
                     functors.values.mapNotNull {
@@ -131,13 +130,13 @@ internal class CompoundIndex(
                     }.asSequence()
                 )
             ).firstOrNull()
-        }else {
+        } else {
             functors[clause.functorOfNestedFirstArgument(nestingLevel)]
                 ?.getFirstIndexed(clause)
         }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        if(clause.isGlobal()){
+        if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
                     it.getIndexed(clause)
@@ -150,7 +149,7 @@ internal class CompoundIndex(
         }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        if(clause.isGlobal()){
+        if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
                     it.retractAllIndexed(clause)
@@ -179,9 +178,9 @@ internal class CompoundIndex(
     }
 
     private fun regenerateCache() {
-        if(!isCacheValid) {
+        if (!isCacheValid) {
             cache.addAll(
-                if(ordered) {
+                if (ordered) {
                     Utils.merge(
                         functors.values.map {
                             it.getCache()

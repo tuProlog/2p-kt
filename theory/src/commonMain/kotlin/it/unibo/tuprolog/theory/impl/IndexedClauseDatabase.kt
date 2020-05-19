@@ -2,16 +2,13 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
-import it.unibo.tuprolog.collections.impl.ReteClauseQueue
-import it.unibo.tuprolog.collections.rete.custom.ReteTree
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractClauseDatabase
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.RetractResult
-import it.unibo.tuprolog.theory.Theory.checkClauseCorrect
 import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
 
-internal class IndexedClauseDatabase private constructor(private val queue:ClauseQueue) : AbstractClauseDatabase() {
+internal class IndexedClauseDatabase private constructor(private val queue: ClauseQueue) : AbstractClauseDatabase() {
 
     /** Construct a Clause database from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ClauseQueue.Companion.of(clauses)) {

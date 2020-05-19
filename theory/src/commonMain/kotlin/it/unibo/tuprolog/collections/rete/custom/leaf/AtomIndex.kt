@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
@@ -33,7 +33,7 @@ internal class AtomIndex(
     override fun assertA(clause: IndexedClause) {
         if (ordered) {
             clause.asInnerAtom().let {
-                index.getOrPut(it){ dequeOf() }
+                index.getOrPut(it) { dequeOf() }
                     .addFirst(SituatedIndexedClause.of(clause, this))
             }
             atoms.addFirst(SituatedIndexedClause.of(clause, this))
@@ -44,7 +44,7 @@ internal class AtomIndex(
 
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerAtom().let {
-            index.getOrPut(it){ dequeOf() }
+            index.getOrPut(it) { dequeOf() }
                 .add(SituatedIndexedClause.of(clause, this))
         }
         atoms.add(SituatedIndexedClause.of(clause, this))
@@ -53,11 +53,10 @@ internal class AtomIndex(
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
         if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()].let {
-                return if(it == null) null
+                return if (it == null) null
                 else extractFirst(clause, it)
             }
-        }
-        else {
+        } else {
             return extractFirst(clause, atoms)
         }
     }
@@ -84,12 +83,11 @@ internal class AtomIndex(
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.nestedFirstArgument().isAtom){
-            val partialIndex = index.getOrElse(clause.asInnerAtom()){ mutableListOf() }
+        return if (clause.nestedFirstArgument().isAtom) {
+            val partialIndex = index.getOrElse(clause.asInnerAtom()) { mutableListOf() }
             retractFromMutableList(clause, atoms)
             return retractFromMutableList(clause, partialIndex)
-        }
-        else {
+        } else {
             retractFromMutableList(clause, atoms)
         }
     }

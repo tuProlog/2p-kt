@@ -5,10 +5,9 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal abstract class AbstractMutableReteClauseCollection<Self : AbstractMutableReteClauseCollection<Self>>
-
-    protected constructor(
-        private val rete: ReteTree
-    ) : MutableClauseCollection, AbstractClauseCollection<Self>(rete) {
+protected constructor(
+    private val rete: ReteTree
+) : MutableClauseCollection, AbstractClauseCollection<Self>(rete) {
 
     /** Construct a [AbstractMutableReteClauseCollection] from given clauses */
     constructor(

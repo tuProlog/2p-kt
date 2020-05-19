@@ -23,7 +23,7 @@ internal interface SituatedIndexedClause : IndexedClause {
                 override fun removeFromIndex() =
                     index.retractIndexed(this)
 
-                override fun equals(other: Any?): Boolean{
+                override fun equals(other: Any?): Boolean {
                     if (this === other) return true
                     if (other !is SituatedIndexedClause) return false
                     if (this.index != other.index) return false

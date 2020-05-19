@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class RuleNode(
     private val ordered: Boolean
-    ) : TopLevelReteNode {
+) : TopLevelReteNode {
 
     private val functors: MutableMap<String, FunctorRete> = mutableMapOf()
     private val cache: MutableList<SituatedIndexedClause> = dequeOf()
@@ -21,18 +21,18 @@ internal class RuleNode(
 
     override fun assertA(clause: IndexedClause) =
         clause.nestedFunctor().let {
-            if(ordered){
-                functors.getOrPut(it){
+            if (ordered) {
+                functors.getOrPut(it) {
                     FunctorNode.TopLevelFunctorReteNode(ordered, 0)
                 }.assertA(clause)
-            } else{
+            } else {
                 assertZ(clause)
             }
         }
 
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
-            functors.getOrPut(it){
+            functors.getOrPut(it) {
                 FunctorNode.TopLevelFunctorReteNode(ordered, 0)
             }.assertZ(clause)
         }
@@ -68,9 +68,9 @@ internal class RuleNode(
     }
 
     private fun regenerateCache() {
-        if(!isCacheValid) {
+        if (!isCacheValid) {
             cache.addAll(
-                if(ordered) {
+                if (ordered) {
                     Utils.merge(
                         functors.values.map {
                             it.getCache()

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.addFirst
@@ -42,8 +42,7 @@ internal class RootNode(
                 invalidCache(it)
                 it
             }
-        }
-        else {
+        } else {
             rules.retractFirst(clause).let {
                 invalidCache(it)
                 it
@@ -51,13 +50,13 @@ internal class RootNode(
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
-        (1 .. limit)
+        (1..limit)
             .map { retractFirst(clause) }
             .asSequence()
             .flatMap { it }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        if(clause.isDirective) {
+        if (clause.isDirective) {
             directives.retractAll(clause).let {
                 invalidCache(it)
                 it
@@ -89,7 +88,7 @@ internal class RootNode(
         val indexed = assignHigherIndex(clause)
 
         theoryCache.add(clause)
-        if(clause.isDirective) directives.assertZ(indexed)
+        if (clause.isDirective) directives.assertZ(indexed)
         else rules.assertZ(indexed)
     }
 
@@ -113,9 +112,9 @@ internal class RootNode(
     }
 
     private fun regenerateCache() {
-        if(!isCacheValid) {
+        if (!isCacheValid) {
             theoryCache.addAll(
-                if(isOrdered) {
+                if (isOrdered) {
                     Utils.merge(
                         directives.getCache(),
                         rules.getCache()

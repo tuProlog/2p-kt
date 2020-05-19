@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
@@ -19,7 +19,7 @@ internal class VariableIndex(
         extractGlobalSequence(clause)
 
     override fun assertA(clause: IndexedClause) =
-        if(ordered){
+        if (ordered) {
             variables.addFirst(SituatedIndexedClause.of(clause, this))
         } else {
             assertZ(clause)

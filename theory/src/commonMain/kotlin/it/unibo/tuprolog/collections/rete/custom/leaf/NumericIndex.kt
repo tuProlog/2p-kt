@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
@@ -31,9 +31,9 @@ internal class NumericIndex(
     }
 
     override fun assertA(clause: IndexedClause) {
-        if(ordered) {
+        if (ordered) {
             clause.asInnerNumeric().let {
-                index.getOrPut(it){ dequeOf() }
+                index.getOrPut(it) { dequeOf() }
                     .addFirst(SituatedIndexedClause.of(clause, this))
             }
             numerics.addFirst(SituatedIndexedClause.of(clause, this))
@@ -44,7 +44,7 @@ internal class NumericIndex(
 
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerNumeric().let {
-            index.getOrPut(it){ dequeOf() }
+            index.getOrPut(it) { dequeOf() }
                 .add(SituatedIndexedClause.of(clause, this))
         }
         numerics.add(SituatedIndexedClause.of(clause, this))
@@ -53,11 +53,10 @@ internal class NumericIndex(
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
         if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()].let {
-                return if(it == null) null
+                return if (it == null) null
                 else extractFirst(clause, it)
             }
-        }
-        else {
+        } else {
             return extractFirst(clause, numerics)
         }
     }
@@ -84,12 +83,11 @@ internal class NumericIndex(
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
 
-        return if (clause.nestedFirstArgument().isNumber){
-            val partialIndex = index.getOrElse(clause.asInnerNumeric()){ mutableListOf() }
+        return if (clause.nestedFirstArgument().isNumber) {
+            val partialIndex = index.getOrElse(clause.asInnerNumeric()) { mutableListOf() }
             retractFromMutableList(clause, numerics)
             return retractFromMutableList(clause, partialIndex)
-        }
-        else {
+        } else {
             retractFromMutableList(clause, numerics)
         }
     }

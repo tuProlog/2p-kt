@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractClauseDatabase
 import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.RetractResult
@@ -10,9 +10,9 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.collections.List as KtList
 
 internal class ListedClauseDatabase
-    private constructor (
-        override val clauses: KtList<Clause>
-    ) : AbstractClauseDatabase() {
+private constructor(
+    override val clauses: KtList<Clause>
+) : AbstractClauseDatabase() {
 
     constructor(clauses: Iterable<Clause>) : this(clauses.toList()) {
         checkClausesCorrect(clauses)
