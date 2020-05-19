@@ -4,6 +4,6 @@ import it.unibo.tuprolog.core.Clause
 
 internal interface TopLevelReteNode : ReteNode {
 
-    fun retractFirst(clause: Clause) : Sequence<Clause>
+    fun retractFirst(clause: Clause): Sequence<Clause>
 
 }

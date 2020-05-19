@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.collections.rete.generic
 
-import it.unibo.tuprolog.collections.rete.generic.set.RootNode as SetNode
-import it.unibo.tuprolog.collections.rete.generic.list.RootNode as ListNode
 import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
+import it.unibo.tuprolog.collections.rete.generic.list.RootNode as ListNode
+import it.unibo.tuprolog.collections.rete.generic.set.RootNode as SetNode
 
 /** A class modeling a Rete Tree Node */
 internal interface ReteNode<K, E> {

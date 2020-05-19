@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -13,10 +14,8 @@ internal class RootNode(
     override val isOrdered: Boolean
 ) : ReteTree {
 
-    private val theoryCache: MutableList<Clause> = dequeOf()
-    private var isCacheValid = true
-    private val rules: RuleNode =
-        RuleNode(isOrdered)
+    private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
+    private val rules: RuleNode = RuleNode(isOrdered)
     private val directives: DirectiveIndex = DirectiveIndex(isOrdered)
 
     private var lowestIndex: Long = 0
@@ -27,10 +26,7 @@ internal class RootNode(
     }
 
     override val clauses: Sequence<Clause>
-        get() = {
-            regenerateCache()
-            theoryCache.asSequence()
-        }()
+        get() = theoryCache.value.asSequence()
 
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) directives.get(clause)
@@ -42,8 +38,7 @@ internal class RootNode(
                 invalidCache(it)
                 it
             }
-        }
-        else {
+        } else {
             rules.retractFirst(clause).let {
                 invalidCache(it)
                 it
@@ -51,13 +46,13 @@ internal class RootNode(
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
-        (1 .. limit)
+        (1..limit)
             .map { retractFirst(clause) }
             .asSequence()
             .flatMap { it }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        if(clause.isDirective) {
+        if (clause.isDirective) {
             directives.retractAll(clause).let {
                 invalidCache(it)
                 it
@@ -76,7 +71,9 @@ internal class RootNode(
         val indexed = assignLowerIndex(clause)
 
         if (isOrdered) {
-            theoryCache.addFirst(clause)
+            theoryCache.ifValid {
+                it.addFirst(clause)
+            }
 
             if (clause.isDirective) directives.assertA(indexed)
             else rules.assertA(indexed)
@@ -88,8 +85,10 @@ internal class RootNode(
     override fun assertZ(clause: Clause) {
         val indexed = assignHigherIndex(clause)
 
-        theoryCache.add(clause)
-        if(clause.isDirective) directives.assertZ(indexed)
+        theoryCache.ifValid {
+            it.add(clause)
+        }
+        if (clause.isDirective) directives.assertZ(indexed)
         else rules.assertZ(indexed)
     }
 
@@ -107,28 +106,24 @@ internal class RootNode(
 
     private fun invalidCache(result: Sequence<*>) {
         if (result.any()) {
-            theoryCache.clear()
-            isCacheValid = false
+            theoryCache.invalidate()
         }
     }
 
-    private fun regenerateCache() {
-        if(!isCacheValid) {
-            theoryCache.addAll(
-                if(isOrdered) {
-                    Utils.merge(
-                        directives.getCache(),
-                        rules.getCache()
-                    ).map { it.innerClause }
-                } else {
-                    Utils.flatten(
-                        directives.getCache().map { it.innerClause },
-                        rules.getCache().map { it.innerClause }
-                    )
-                }
-            )
-            isCacheValid = true
-        }
+    private fun regenerateCache(): MutableList<Clause> {
+        return dequeOf(
+            if (isOrdered) {
+                Utils.merge(
+                    directives.getCache(),
+                    rules.getCache()
+                ).map { it.innerClause }
+            } else {
+                Utils.flatten(
+                    directives.getCache().map { it.innerClause },
+                    rules.getCache().map { it.innerClause }
+                )
+            }
+        )
     }
 
 }

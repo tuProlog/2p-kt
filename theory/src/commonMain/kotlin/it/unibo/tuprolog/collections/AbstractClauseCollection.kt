@@ -5,8 +5,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
-
-    protected constructor(private val rete: ReteTree) : ClauseCollection {
+protected constructor(private val rete: ReteTree) : ClauseCollection {
 
     constructor(
         clauses: Iterable<Clause>,

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom
 import it.unibo.tuprolog.collections.rete.custom.nodes.RootNode
 import it.unibo.tuprolog.core.Clause
 
-internal interface ReteTree {
+interface ReteTree {
 
     val isOrdered: Boolean
 
@@ -31,22 +31,22 @@ internal interface ReteTree {
     fun deepCopy(): ReteTree
 
     companion object {
-        fun emptyUnordered() : ReteTree =
+        fun emptyUnordered(): ReteTree =
             unordered(emptyList())
 
-        fun unordered(clauses: Iterable<Clause>) : ReteTree =
+        fun unordered(clauses: Iterable<Clause>): ReteTree =
             RootNode(clauses, false)
 
-        fun unordered(vararg clauses: Clause) : ReteTree =
+        fun unordered(vararg clauses: Clause): ReteTree =
             unordered(listOf(*clauses))
 
-        fun emptyOrdered() : ReteTree =
+        fun emptyOrdered(): ReteTree =
             ordered(emptyList())
 
-        fun ordered(clauses: Iterable<Clause>) : ReteTree =
+        fun ordered(clauses: Iterable<Clause>): ReteTree =
             RootNode(clauses, true)
 
-        fun ordered(vararg clauses: Clause) : ReteTree =
+        fun ordered(vararg clauses: Clause): ReteTree =
             ordered(listOf(*clauses))
     }
 }

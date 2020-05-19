@@ -5,9 +5,9 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
 internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
-    protected constructor(
-        private val rete: ReteTree
-    ) : AbstractClauseCollection<Self>(rete) {
+protected constructor(
+    private val rete: ReteTree
+) : AbstractClauseCollection<Self>(rete) {
 
     constructor(
         clauses: Iterable<Clause>,

@@ -3,7 +3,7 @@ package it.unibo.tuprolog.collections.rete.custom
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 
-internal interface IndexingLeaf : ReteNode{
+internal interface IndexingLeaf : ReteNode {
 
     fun getFirstIndexed(clause: Clause): SituatedIndexedClause?
 

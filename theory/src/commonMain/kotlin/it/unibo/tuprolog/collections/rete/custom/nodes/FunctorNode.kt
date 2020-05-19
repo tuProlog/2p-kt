@@ -1,20 +1,20 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
 import it.unibo.tuprolog.collections.rete.custom.IndexingNode
-import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
-import it.unibo.tuprolog.collections.rete.custom.Utils.arityOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.ReteNode
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
+import it.unibo.tuprolog.collections.rete.custom.Utils.arityOfNestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
+import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
 
-internal interface FunctorRete: ReteNode, TopLevelReteNode
+internal interface FunctorRete : ReteNode, TopLevelReteNode
 
-internal interface FunctorIndexing: ReteNode, IndexingNode
+internal interface FunctorIndexing : ReteNode, IndexingNode
 
 internal sealed class FunctorNode : ReteNode {
 
@@ -39,7 +39,7 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractFirst(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractFirst(clause)?.let{
+            selectArity(clause)?.retractFirst(clause)?.let {
                 invalidCache(it)
                 it
             } ?: emptySequence()
@@ -60,7 +60,7 @@ internal sealed class FunctorNode : ReteNode {
 
         private fun chooseAssertionBranch(clause: IndexedClause, op: ReteNode.(IndexedClause) -> Unit) {
             clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
-                when(it) {
+                when (it) {
                     0 -> children.getOrPut(it) {
                         ArityNode.ZeroArityReteNode(ordered)
                     }
@@ -79,9 +79,9 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         private fun regenerateCache() {
-            if(!isCacheValid) {
+            if (!isCacheValid) {
                 cache.addAll(
-                    if(ordered) {
+                    if (ordered) {
                         Utils.merge(
                             children.values.map {
                                 it.getCache()
@@ -113,13 +113,13 @@ internal sealed class FunctorNode : ReteNode {
             arities[clause.nestedArity()]?.get(clause) ?: emptySequence()
 
         override fun assertA(clause: IndexedClause) {
-            arities.getOrPut(clause.nestedArity()){
+            arities.getOrPut(clause.nestedArity()) {
                 ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
             }.assertA(clause)
         }
 
         override fun assertZ(clause: IndexedClause) {
-            arities.getOrPut(clause.nestedArity()){
+            arities.getOrPut(clause.nestedArity()) {
                 ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
             }.assertZ(clause)
         }
@@ -139,7 +139,7 @@ internal sealed class FunctorNode : ReteNode {
             arities[clause.nestedArity()]?.getFirstIndexed(clause)
 
         override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-            return if (clause.isGlobal()){
+            return if (clause.isGlobal()) {
                 Utils.merge(
                     arities.values.map {
                         it.getIndexed(clause)
@@ -188,9 +188,9 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         private fun regenerateCache() {
-            if(!isCacheValid) {
+            if (!isCacheValid) {
                 cache.addAll(
-                    if(ordered) {
+                    if (ordered) {
                         Utils.merge(
                             arities.values.map {
                                 it.getCache()
