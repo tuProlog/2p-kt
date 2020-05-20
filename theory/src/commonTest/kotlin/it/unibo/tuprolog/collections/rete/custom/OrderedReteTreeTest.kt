@@ -87,9 +87,6 @@ class OrderedReteTreeTest {
     }
 
     @Test
-<<<<<<< HEAD
-    fun aTreeIsMutable() {
-=======
     fun aClauseCanBeRetractedInSeveralWays1() {
         clauses.forEach { aClause ->
 
@@ -163,7 +160,6 @@ class OrderedReteTreeTest {
 
     @Test
     fun aClauseCanBeRetractedInSeveralTimes1() {
->>>>>>> e30e1258cecb7c3fe508ab5cb67dc0751402df11
         clauses.forEach { aClause ->
 
             val tree = reteTreeOf()
