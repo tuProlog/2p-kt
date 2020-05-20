@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.collections.rete.custom
 
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsNonEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertItemsAreEquals
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.clauses
@@ -14,10 +16,8 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.l1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.m1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.n1Facts
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.o1Facts
-import it.unibo.tuprolog.collections.rete.custom.Utils.functorOfNestedFirstArgument
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
-import it.unibo.tuprolog.core.Struct
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -29,6 +29,7 @@ class OrderedReteTreeTest {
 
         private fun reteTreeOf(clauses: Iterable<Clause>): ReteTree =
             ReteTree.ordered(clauses)
+
     }
 
     @Test
@@ -42,6 +43,7 @@ class OrderedReteTreeTest {
     fun aTreeCanContainAllSortsOfClauses() {
         val tree = reteTreeOf(clauses)
 
+        assertIsNonEmpty(tree)
         assertEquals(clauses.size, tree.size)
     }
 
@@ -49,6 +51,7 @@ class OrderedReteTreeTest {
     fun anOrderedTreePreservesTheTotalOrderOfClauses1() {
         val tree = reteTreeOf(clauses)
 
+        assertIsNonEmpty(tree)
         assertEquals(clauses.size, tree.size)
         assertItemsAreEquals(clauses.asSequence(), tree.clauses)
     }
@@ -57,7 +60,12 @@ class OrderedReteTreeTest {
     fun anOrderedTreePreservesTheTotalOrderOfClauses2() {
         val tree = reteTreeOf()
 
-        clauses.forEach { tree.assertZ(it) }
+        assertIsEmptyAndOrdered(tree)
+
+        clauses.forEach {
+            tree.assertZ(it)
+            assertIsNonEmpty(tree)
+        }
 
         assertEquals(clauses.size, tree.size)
         assertItemsAreEquals(clauses.asSequence(), tree.clauses)
@@ -67,41 +75,208 @@ class OrderedReteTreeTest {
     fun anOrderedTreePreservesTheTotalOrderOfClauses3() {
         val tree = reteTreeOf()
 
-        clauses.forEach { tree.assertA(it) }
+        assertIsEmptyAndOrdered(tree)
+
+        clauses.forEach {
+            tree.assertA(it)
+            assertIsNonEmpty(tree)
+        }
 
         assertEquals(clauses.size, tree.size)
         assertItemsAreEquals(clauses.asReversed().asSequence(), tree.clauses)
     }
 
     @Test
-    fun aTreeIsMutable() {
-//        val astrozzo = Fact.of(Struct.of("i", Struct.of("f", Numeric.of(1))))
-//        astrozzo.let {
-//            println(it.functorOfNestedFirstArgument(0))
-//            println(it.functorOfNestedFirstArgument(1))
-//            println(it.functorOfNestedFirstArgument(2))
-//        }
-
+    fun aClauseCanBeRetractedInSeveralWays1() {
         clauses.forEach { aClause ->
-            val tree = reteTreeOf()
 
+            var tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+
+            // reset
+
+            tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractOnly(aClause, 2))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractOnly(aClause, 2))
+
+            // reset
+
+            tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+        }
+    }
+
+    @Test
+    fun aClauseCanBeRetractedInSeveralWays2() {
+        clauses.forEach { aClause ->
+
+            var tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertZ(aClause)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+
+            // reset
+
+            tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractOnly(aClause, 2))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractOnly(aClause, 2))
+
+            // reset
+
+            tree = reteTreeOf()
+            assertIsEmpty(tree)
+
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+        }
+    }
+
+    @Test
+    fun aClauseCanBeRetractedInSeveralTimes1() {
+        clauses.forEach { aClause ->
+
+            val tree = reteTreeOf()
+            assertIsEmptyAndOrdered(tree)
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractOnly(aClause, 2))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractOnly(aClause, 2))
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+        }
+    }
+
+    @Test
+    fun aClauseCanBeRetractedInSeveralTimes2() {
+        clauses.forEach { aClause ->
+
+            val tree = reteTreeOf()
             assertIsEmptyAndOrdered(tree)
 
             tree.assertZ(aClause)
-            assertEquals(1, tree.size)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
 
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractOnly(aClause, 2))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractOnly(aClause, 2))
 
-            println("oooooooooooooo")
-            println(aClause.toString())
-            val getResult = tree.get(aClause)
-            println(getResult.first().toString())
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+        }
+    }
 
-            assertItemsAreEquals(sequenceOf(aClause), getResult)
+    @Test
+    fun aTreeIsMutable1() {
+        clauses.forEach { aClause ->
 
-            val retractResult = tree.retractAll(aClause)
-            assertItemsAreEquals(sequenceOf(aClause), retractResult)
+            val tree = reteTreeOf()
+            assertIsEmptyAndOrdered(tree)
+
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
         }
 
+    }
+
+    @Test
+    fun aTreeIsMutable2() {
+        clauses.forEach { aClause ->
+
+            val tree = reteTreeOf()
+            assertIsEmptyAndOrdered(tree)
+
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+
+            tree.assertA(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractFirst(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+
+            tree.assertZ(aClause)
+            assertIsNonEmpty(tree)
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
+            assertIsEmpty(tree)
+            assertItemsAreEquals(sequenceOf(), tree.get(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
+            assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
+        }
     }
 
     @Test

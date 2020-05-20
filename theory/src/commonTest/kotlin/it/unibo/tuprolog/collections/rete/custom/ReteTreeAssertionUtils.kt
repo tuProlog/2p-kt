@@ -64,11 +64,17 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun assertIsEmpty(tree: ReteTree) {
-        assertEquals(0, tree.size)
         assertItemsAreEquals(
             emptySequence(),
             tree.clauses
         )
+        assertEquals(0, tree.size)
+    }
+
+    fun assertIsNonEmpty(tree: ReteTree) {
+        val size = tree.size
+        assertTrue { size > 0 }
+        assertEquals(tree.size, tree.clauses.count())
     }
 
     private fun Struct.addArgument(term: Term): Struct =
