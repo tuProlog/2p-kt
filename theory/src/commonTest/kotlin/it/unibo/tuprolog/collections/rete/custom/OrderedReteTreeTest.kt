@@ -75,13 +75,6 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeIsMutable() {
-//        val astrozzo = Fact.of(Struct.of("i", Struct.of("f", Numeric.of(1))))
-//        astrozzo.let {
-//            println(it.functorOfNestedFirstArgument(0))
-//            println(it.functorOfNestedFirstArgument(1))
-//            println(it.functorOfNestedFirstArgument(2))
-//        }
-
         clauses.forEach { aClause ->
             val tree = reteTreeOf()
 
@@ -90,18 +83,12 @@ class OrderedReteTreeTest {
             tree.assertZ(aClause)
             assertEquals(1, tree.size)
 
-
-            println("oooooooooooooo")
-            println(aClause.toString())
             val getResult = tree.get(aClause)
-            println(getResult.first().toString())
-
             assertItemsAreEquals(sequenceOf(aClause), getResult)
 
             val retractResult = tree.retractAll(aClause)
             assertItemsAreEquals(sequenceOf(aClause), retractResult)
         }
-
     }
 
     @Test
