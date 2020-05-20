@@ -5,6 +5,8 @@ import it.unibo.tuprolog.utils.interleave
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import it.unibo.tuprolog.core.List.Companion as LogicList
+import it.unibo.tuprolog.core.Set.Companion as LogicSet
 import kotlin.collections.List as KtList
 
 internal object ReteTreeAssertionUtils {
@@ -177,19 +179,29 @@ internal object ReteTreeAssertionUtils {
         moreArguments
     )
 
-    val otherFacts = listOf(
-        Fact.of(Truth.TRUE),
-        Fact.of(Truth.FAIL),
-//        Fact.of(Atom.of("a")),
-        Fact.of(Atom.of("other")),
-        Fact.of(Struct.of("a", Atom.of("other"))),
-        Fact.of(Struct.of("other", Integer.of(1))),
-        Fact.of(Tuple.of(Var.of("A"), Var.of("B"))),
-//        Fact.of(Atom.of("a")),
-        Fact.of(Struct.of("other", Integer.of(2))),
-        Fact.of(Tuple.of(Var.of("B"), Var.of("A"))),
-        Fact.of(Struct.of("other", Integer.of(1)))
-    )
+    val otherFacts = listOf<Struct>(
+        Truth.TRUE,
+        Truth.FAIL,
+        Truth.FALSE,
+        Empty.set(),
+        Empty.list(),
+        Atom.of("!"),
+        Atom.of("1"),
+        Atom.of(""),
+        Atom.of("a b c"),
+        Atom.of("A"),
+        LogicList.of(Atom.of("a")),
+        LogicList.of(Atom.of("a"), Atom.of("b")),
+        LogicList.of(Atom.of("a"), Atom.of("b"), Atom.of("c")),
+        LogicList.from(Atom.of("a"), last = Var.anonymous()),
+        LogicList.from(Atom.of("a"), Atom.of("b"), last = Var.anonymous()),
+        LogicList.from(Atom.of("a"), Atom.of("b"), Atom.of("c"), last = Var.anonymous()),
+        Tuple.of(Atom.of("a"), Atom.of("b")),
+        Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c")),
+        LogicSet.of(Atom.of("a")),
+        LogicSet.of(Atom.of("a"), Atom.of("b")),
+        LogicSet.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+    ).map(Fact.Companion::of)
 
     val factFamilies = mapOf(
         Fact.template("f", 1) to f1Facts,
@@ -234,6 +246,15 @@ internal object ReteTreeAssertionUtils {
     ).toList()
 
     val simpleRules = simpleFacts.addBodies(moreArguments)
+
+    val a0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("a"), it) }
+
+    val b0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("b"), it) }
+
+    val c0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("c"), it) }
+
+    val d0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("d"), it) }
+
     val f1Rules = f1Facts.addBodies(moreArguments)
     val g1Rules = g1Facts.addBodies(moreArguments)
     val h1Rules = h1Facts.addBodies(moreArguments)
@@ -252,22 +273,16 @@ internal object ReteTreeAssertionUtils {
     val n2Rules = n2Facts.addBodies(moreArguments)
     val o2Rules = o2Facts.addBodies(moreArguments)
 
-    val otherRules = listOf(
-        Rule.of(Atom.of("a"), Atom.of("other")),
-        Rule.of(Tuple.of(Var.of("A"), Var.of("B")), Atom.of("a")),
-        Rule.of(Struct.of("a", Atom.of("other")), Atom.of("a")),
-        Rule.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
-        Rule.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
-        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-        Rule.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
-        Rule.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Empty.set()),
-        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
-        Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())
-    )
-
     val simpleFactsAndRules = simpleFacts + simpleRules
+
+    val a0FactsAndRules = facts.filter { it.head == Atom.of("a") } + d0Rules
+
+    val b0FactsAndRules = facts.filter { it.head == Atom.of("b") } + d0Rules
+
+    val c0FactsAndRules = facts.filter { it.head == Atom.of("c") } + d0Rules
+
+    val d0FactsAndRules = facts.filter { it.head == Atom.of("d") } + d0Rules
+
     val f1FactsAndRules = f1Facts + f1Rules
     val g1FactsAndRules = g1Facts + g1Rules
     val h1FactsAndRules = h1Facts + h1Rules
@@ -304,8 +319,7 @@ internal object ReteTreeAssertionUtils {
         l2Rules,
         m2Rules,
         n2Rules,
-        o2Rules,
-        otherRules
+        o2Rules
     ).toList()
 
     val directives =

@@ -405,4 +405,9 @@ class OrderedReteTreeTest {
             assertItemsAreEquals(emptySequence(), tree.get(template))
         }
     }
+
+    @Test
+    fun anOrderedTreeRetractsPreservesTheOrderOfZeroArityRules() {
+
+    }
 }
