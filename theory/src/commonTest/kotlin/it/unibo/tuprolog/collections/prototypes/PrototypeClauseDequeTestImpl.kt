@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PrototypeClauseDequeTestImpl (
+internal class PrototypeClauseDequeTestImpl(
     private val emptyGenerator: () -> ClauseQueue,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue
 ) : PrototypeClauseDequeTest,
@@ -139,6 +139,7 @@ internal class PrototypeClauseDequeTestImpl (
 
     override fun mixedClausesCrudOperationsTest() {
 
+<<<<<<< HEAD
 //        val atomicFacts =
 //            listOf(
 //                Fact.of(Atom.of("a"))
@@ -190,6 +191,65 @@ internal class PrototypeClauseDequeTestImpl (
 //        assertTrue(queryAtomb in assertedCollection)
 //        assertTrue(queryAtom in generatedCollection)
 //        assertFalse(queryAtomb in generatedCollection)
+=======
+        val atomicFacts =
+            listOf(
+                Fact.of(Atom.of("a"))
+            )
+
+        val operationalTheory =
+            listOf(
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("g", Numeric.of(1))),
+                Fact.of(Struct.of("f", Numeric.of(2))),
+                Fact.of(Struct.of("g", Numeric.of(3.14))),
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Atom.of("a"), Numeric.of(2))),
+                Fact.of(
+                    Struct.of(
+                        "h",
+                        Struct.of("g", Struct.of("h", Numeric.of(3.14))),
+                        Struct.of("h", Var.anonymous())
+                    )
+                ),
+                Fact.of(Struct.of("h", Var.of("X"))),
+                Fact.of(Struct.of("h", Atom.of("a"))),
+                Fact.of(Struct.of("h", Var.of("Y"))),
+                Fact.of(Struct.of("f", Atom.of("b"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Struct.of("g", Atom.of("a"), Struct.of("h", Atom.of("b"))))),
+                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2)))),
+                Fact.of(Struct.of("h", Atom.of("a"), Numeric.of(2)))
+            )
+
+        val expectedOverF1 =
+            listOf(
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Numeric.of(2))),
+                Fact.of(Struct.of("f", Atom.of("a"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Atom.of("b"))),
+                Fact.of(Struct.of("f", Atom.of("c"))),
+                Fact.of(Struct.of("f", Struct.of("g", Atom.of("a"), Struct.of("h", Atom.of("b")))))
+            )
+
+        val expectedOverH1 =
+            listOf(
+                Fact.of(Struct.of("h", Var.of("X"))),
+                Fact.of(Struct.of("h", Atom.of("a"))),
+                Fact.of(Struct.of("h", Var.of("Y"))),
+                Fact.of(Struct.of("h", Struct.of("g", Atom.of("a"), Numeric.of(2))))
+            )
+
+        val queryAtom = Fact.of(Atom.of("a"))
+        val queryAtomb = Fact.of(Atom.of("b"))
+        val generatedCollection = collectionGenerator(atomicFacts)
+        val assertedCollection = generatedCollection.addFirst(queryAtomb)
+        assertTrue(queryAtomb in assertedCollection)
+        assertTrue(queryAtom in generatedCollection)
+        assertFalse(queryAtomb in generatedCollection)
+>>>>>>> e30e1258cecb7c3fe508ab5cb67dc0751402df11
 //        assertFalse(queryAtom in assertedCollection)
 
 //        val getResultOverAtom = generatedCollection.get(queryAtom)
