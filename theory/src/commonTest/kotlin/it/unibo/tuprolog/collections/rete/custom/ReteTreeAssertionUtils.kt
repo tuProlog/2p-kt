@@ -303,6 +303,10 @@ internal object ReteTreeAssertionUtils {
 
     val rules = interleave(
         simpleRules,
+        a0Rules,
+        b0Rules,
+        c0Rules,
+        d0Rules,
         f1Rules,
         g1Rules,
         h1Rules,

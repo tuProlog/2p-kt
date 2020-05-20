@@ -348,7 +348,6 @@ class OrderedReteTreeTest {
 
             facts.forEachIndexed { i, f ->
                 val a = tree.retractFirst(template)
-                println(a.first())
                 assertItemsAreEquals(sequenceOf(f), a)
                 assertItemsAreEquals(facts.asSequence().drop(i + 1), tree.get(template))
             }
@@ -374,6 +373,19 @@ class OrderedReteTreeTest {
 
             assertItemsAreEquals(facts.asSequence(), tree.retractAll(template))
             assertItemsAreEquals(emptySequence(), tree.get(template))
+        }
+    }
+
+    @Test
+    fun aTreeCanAlwaysRetrieveTheClausesItContains() {
+        val tree = reteTreeOf(clauses)
+
+        assertIsNonEmpty(tree)
+        assertEquals(clauses.size, tree.size)
+        assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+
+        for (clause in clauses) {
+            assertPartialOrderIsTheSame(sequenceOf(clause), tree.get(clause))
         }
     }
 
