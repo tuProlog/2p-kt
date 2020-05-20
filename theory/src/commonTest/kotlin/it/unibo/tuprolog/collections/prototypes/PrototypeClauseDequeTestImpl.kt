@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PrototypeClauseDequeTestImpl (
+internal class PrototypeClauseDequeTestImpl(
     private val emptyGenerator: () -> ClauseQueue,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue
 ) : PrototypeClauseDequeTest,
@@ -153,7 +153,13 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("f", Atom.of("a"))),
                 Fact.of(Struct.of("f", Atom.of("c"))),
                 Fact.of(Struct.of("f", Atom.of("a"), Numeric.of(2))),
-                Fact.of(Struct.of("h", Struct.of("g", Struct.of("h", Numeric.of(3.14))), Struct.of("h", Var.anonymous()))),
+                Fact.of(
+                    Struct.of(
+                        "h",
+                        Struct.of("g", Struct.of("h", Numeric.of(3.14))),
+                        Struct.of("h", Var.anonymous())
+                    )
+                ),
                 Fact.of(Struct.of("h", Var.of("X"))),
                 Fact.of(Struct.of("h", Atom.of("a"))),
                 Fact.of(Struct.of("h", Var.of("Y"))),
@@ -173,7 +179,7 @@ internal class PrototypeClauseDequeTestImpl (
                 Fact.of(Struct.of("f", Atom.of("b"))),
                 Fact.of(Struct.of("f", Atom.of("c"))),
                 Fact.of(Struct.of("f", Struct.of("g", Atom.of("a"), Struct.of("h", Atom.of("b")))))
-                )
+            )
 
         val expectedOverH1 =
             listOf(

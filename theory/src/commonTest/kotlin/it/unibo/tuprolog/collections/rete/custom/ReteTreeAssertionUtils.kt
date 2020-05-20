@@ -64,11 +64,17 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun assertIsEmpty(tree: ReteTree) {
-        assertEquals(0, tree.size)
         assertItemsAreEquals(
             emptySequence(),
             tree.clauses
         )
+        assertEquals(0, tree.size)
+    }
+
+    fun assertIsNonEmpty(tree: ReteTree) {
+        val size = tree.size
+        assertTrue { size > 0 }
+        assertEquals(tree.size, tree.clauses.count())
     }
 
     private fun Struct.addArgument(term: Term): Struct =
@@ -183,6 +189,26 @@ internal object ReteTreeAssertionUtils {
         Fact.of(Struct.of("other", Integer.of(2))),
         Fact.of(Tuple.of(Var.of("B"), Var.of("A"))),
         Fact.of(Struct.of("other", Integer.of(1)))
+    )
+
+    val factFamilies = mapOf(
+        Fact.template("f", 1) to f1Facts,
+        Fact.template("g", 1) to g1Facts,
+        Fact.template("h", 1) to h1Facts,
+        Fact.template("i", 1) to i1Facts,
+        Fact.template("j", 1) to j1Facts,
+        Fact.template("l", 1) to l1Facts,
+        Fact.template("m", 1) to m1Facts,
+        Fact.template("n", 1) to n1Facts,
+        Fact.template("o", 1) to o1Facts,
+        Fact.template("f", 2) to f2Facts,
+        Fact.template("g", 2) to g2Facts,
+        Fact.template("h", 2) to h2Facts,
+        Fact.template("i", 2) to i2Facts,
+        Fact.template("l", 2) to l2Facts,
+        Fact.template("m", 2) to m2Facts,
+        Fact.template("n", 2) to n2Facts,
+        Fact.template("o", 2) to o2Facts
     )
 
     val facts = interleave(
