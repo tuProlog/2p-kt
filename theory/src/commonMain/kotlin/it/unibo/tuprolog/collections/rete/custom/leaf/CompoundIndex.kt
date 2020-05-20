@@ -131,12 +131,18 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.retractAllIndexed(clause)
+                    it.retractAllIndexed(clause).let { res ->
+                        invalidCache(res)
+                        res
+                    }
                 }
             )
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAllIndexed(clause)
+                ?.retractAllIndexed(clause)?.let {
+                    invalidCache(it)
+                    it
+                }
                 ?: emptySequence()
         }
 

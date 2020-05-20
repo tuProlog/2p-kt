@@ -2,6 +2,7 @@ package it.unibo.tuprolog.collections.rete.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
@@ -18,7 +19,6 @@ internal class NumericIndex(
 ) : IndexingLeaf, Retractable {
 
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
-    private val numerics: MutableList<SituatedIndexedClause> = dequeOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.nestedFirstArgument().isNumber)
@@ -36,7 +36,6 @@ internal class NumericIndex(
                 index.getOrPut(it) { dequeOf() }
                     .addFirst(SituatedIndexedClause.of(clause, this))
             }
-            numerics.addFirst(SituatedIndexedClause.of(clause, this))
         } else {
             assertZ(clause)
         }
@@ -47,7 +46,6 @@ internal class NumericIndex(
             index.getOrPut(it) { dequeOf() }
                 .add(SituatedIndexedClause.of(clause, this))
         }
-        numerics.add(SituatedIndexedClause.of(clause, this))
     }
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? {
@@ -57,9 +55,14 @@ internal class NumericIndex(
                 else extractFirst(clause, it)
             }
         } else {
-            return extractFirst(clause, numerics)
+            return extractFirst(clause)
         }
     }
+
+    private fun extractFirst(clause: Clause): SituatedIndexedClause? =
+        index.values.mapNotNull {
+            extractFirst(clause, it)
+        }.min()
 
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
@@ -82,13 +85,15 @@ internal class NumericIndex(
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-
         return if (clause.nestedFirstArgument().isNumber) {
             val partialIndex = index.getOrElse(clause.asInnerNumeric()) { mutableListOf() }
-            retractFromMutableList(clause, numerics)
             return retractFromMutableList(clause, partialIndex)
         } else {
-            retractFromMutableList(clause, numerics)
+            Utils.merge(
+                index.values.map {
+                    retractFromMutableList(clause, it)
+                }.toList()
+            )
         }
     }
 
@@ -103,10 +108,10 @@ internal class NumericIndex(
         retractAllIndexed(clause).map { it.innerClause }
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
-        numerics.asSequence()
+        Utils.merge(index.values.asSequence().map { it.asSequence() })
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
-        numerics.asSequence().filter { it.innerClause matches clause }
+        getCache().filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause)

@@ -347,7 +347,9 @@ class OrderedReteTreeTest {
             assertItemsAreEquals(facts.asSequence(), tree.get(template))
 
             facts.forEachIndexed { i, f ->
-                assertItemsAreEquals(sequenceOf(f), tree.retractFirst(template))
+                val a = tree.retractFirst(template)
+                println(a.first())
+                assertItemsAreEquals(sequenceOf(f), a)
                 assertItemsAreEquals(facts.asSequence().drop(i + 1), tree.get(template))
             }
 
@@ -358,9 +360,9 @@ class OrderedReteTreeTest {
             assertPartialOrderIsTheSame(facts.asSequence(), tree.clauses)
             assertItemsAreEquals(facts.asSequence(), tree.get(template))
 
-            assertItemsAreEquals(sequenceOf(facts.subList(0, 2)), tree.retractOnly(template, 2))
+            assertItemsAreEquals(facts.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
             assertItemsAreEquals(facts.asSequence().drop(2), tree.get(template))
-            assertItemsAreEquals(sequenceOf(facts.subList(2, 4)), tree.retractOnly(template, 2))
+            assertItemsAreEquals(facts.subList(2, 4).asSequence(), tree.retractOnly(template, 2))
             assertItemsAreEquals(facts.asSequence().drop(4), tree.get(template))
 
             // reset
@@ -392,7 +394,7 @@ class OrderedReteTreeTest {
             tree.assertA(facts[0])
             assertItemsAreEquals(facts.asSequence(), tree.get(template))
 
-            assertItemsAreEquals(sequenceOf(facts.subList(0, 2)), tree.retractOnly(template, 2))
+            assertItemsAreEquals(facts.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
             assertItemsAreEquals(facts.asSequence().drop(2), tree.get(template))
 
             tree.assertA(facts[0])

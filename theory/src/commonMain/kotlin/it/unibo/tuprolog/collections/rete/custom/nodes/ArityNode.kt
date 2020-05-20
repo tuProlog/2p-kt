@@ -196,19 +196,16 @@ internal sealed class ArityNode : ReteNode {
                         variableIndex.getIndexed(clause),
                         numericIndex.getIndexed(clause)
                     )
-
                     is Atom -> Utils.flattenIndexed(
                         variableIndex.getIndexed(clause),
                         atomicIndex.getIndexed(clause)
                     )
-
                     is Var -> Utils.flattenIndexed(
                         variableIndex.getIndexed(clause),
                         numericIndex.getIndexed(clause),
                         atomicIndex.getIndexed(clause),
                         compoundIndex.getIndexed(clause)
                     )
-
                     else -> Utils.flattenIndexed(
                         variableIndex.getIndexed(clause),
                         compoundIndex.getIndexed(clause)
