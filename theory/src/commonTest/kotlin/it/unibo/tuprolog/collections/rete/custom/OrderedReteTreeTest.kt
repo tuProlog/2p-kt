@@ -397,8 +397,8 @@ class OrderedReteTreeTest {
             assertItemsAreEquals(facts.subList(0, 2).asSequence(), tree.retractOnly(template, 2))
             assertItemsAreEquals(facts.asSequence().drop(2), tree.get(template))
 
-            tree.assertA(facts[0])
             tree.assertA(facts[1])
+            tree.assertA(facts[0])
             assertItemsAreEquals(facts.asSequence(), tree.get(template))
 
             assertItemsAreEquals(facts.asSequence(), tree.retractAll(template))
