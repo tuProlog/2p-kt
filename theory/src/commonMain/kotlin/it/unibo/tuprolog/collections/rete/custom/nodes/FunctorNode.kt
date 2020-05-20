@@ -10,6 +10,7 @@ import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -126,7 +127,14 @@ internal sealed class FunctorNode : ReteNode {
             theoryCache.value.asSequence()
 
         override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
-            arities[clause.nestedArity()]?.getFirstIndexed(clause)
+            if (clause.isGlobal()) {
+                Utils.merge(
+                    arities.values.map {
+                        it.extractGlobalIndexedSequence(clause)
+                    }
+                ).firstOrNull { it.innerClause matches clause }
+            }
+            else arities[clause.nestedArity()]?.getFirstIndexed(clause)
 
         override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
             return if (clause.isGlobal()) {
@@ -141,10 +149,23 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            arities[clause.nestedArity()]?.retractAllIndexed(clause)?.let {
-                invalidCache(it)
-                it
-            } ?: emptySequence()
+            if (clause.isGlobal()) {
+                val partialResult = Utils.merge(
+                    arities.values.map {
+                        it.extractGlobalIndexedSequence(clause)
+                    }
+                ).toList()
+                val filtered = partialResult.filter { it.innerClause matches clause }
+                filtered.asSequence().forEach { it.removeFromIndex() }
+                invalidCache(filtered.asSequence())
+                filtered.asSequence()
+            }
+            else {
+                arities[clause.nestedArity()]?.retractAllIndexed(clause)?.let {
+                    invalidCache(it)
+                    it
+                } ?: emptySequence()
+            }
 
         override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
             return if (ordered)
