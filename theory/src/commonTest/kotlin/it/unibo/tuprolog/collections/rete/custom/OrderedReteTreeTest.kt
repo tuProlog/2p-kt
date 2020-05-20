@@ -204,10 +204,6 @@ class OrderedReteTreeTest {
             assertIsEmpty(tree)
             assertItemsAreEquals(sequenceOf(), tree.retractOnly(aClause, 2))
 
-<<<<<<< HEAD
-            val getResult = tree.get(aClause)
-            assertItemsAreEquals(sequenceOf(aClause), getResult)
-=======
             tree.assertZ(aClause)
             assertIsNonEmpty(tree)
             assertItemsAreEquals(sequenceOf(aClause), tree.retractAll(aClause))
@@ -226,7 +222,6 @@ class OrderedReteTreeTest {
             assertItemsAreEquals(sequenceOf(), tree.get(aClause))
             assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
             assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
->>>>>>> e30e1258cecb7c3fe508ab5cb67dc0751402df11
 
             tree.assertZ(aClause)
             assertIsNonEmpty(tree)
