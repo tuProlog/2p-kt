@@ -20,7 +20,6 @@ class OrderedReteTreeTest {
 
         private fun reteTreeOf(clauses: Iterable<Clause>): ReteTree =
             ReteTree.ordered(clauses)
-
     }
 
     @Test
@@ -234,7 +233,6 @@ class OrderedReteTreeTest {
             assertItemsAreEquals(sequenceOf(), tree.retractFirst(aClause))
             assertItemsAreEquals(sequenceOf(), tree.retractAll(aClause))
         }
-
     }
 
     @Test
