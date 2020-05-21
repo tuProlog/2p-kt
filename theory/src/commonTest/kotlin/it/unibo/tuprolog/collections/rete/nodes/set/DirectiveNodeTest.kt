@@ -1,6 +1,6 @@
-package it.unibo.tuprolog.collections.rete.nodes
+package it.unibo.tuprolog.collections.rete.nodes.set
 
-import it.unibo.tuprolog.collections.rete.generic.DirectiveNode
+import it.unibo.tuprolog.collections.rete.generic.set.DirectiveNode
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var

@@ -62,11 +62,6 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
     }
 
     @Test
-    override fun mixedClausesCrudOperationsTest() {
-        prototype.mixedClausesCrudOperationsTest()
-    }
-
-    @Test
     override fun collectionHasTheCorrectSize() {
         prototype.collectionHasTheCorrectSize()
     }

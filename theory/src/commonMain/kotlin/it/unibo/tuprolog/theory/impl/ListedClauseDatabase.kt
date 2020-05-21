@@ -26,7 +26,6 @@ private constructor(
         )
 
     override fun get(clause: Clause): Sequence<Clause> =
-        //TODO check validity and performances impact
         clauses.filter { it matches clause }.asSequence()
 
     override fun assertA(clause: Clause): ClauseDatabase =
@@ -46,7 +45,6 @@ private constructor(
         )
 
     override fun retract(clause: Clause): RetractResult {
-        //TODO check validity and performances impact
         val retractability = clauses.filter { it matches clause }
 
         return when {
@@ -64,12 +62,10 @@ private constructor(
     }
 
     override fun retractAll(clause: Clause): RetractResult {
-        //TODO check validity and performances impact
         val retractability = clauses.filter { it matches clause }
         return when {
             retractability.none() -> RetractResult.Failure(this)
             else -> {
-                //TODO check validity and performances impact
                 val partitionedClauses = clauses.toList().partition { it matches clause }
                 val newTheory = partitionedClauses.second
                 val toBeActuallyRetracted = partitionedClauses.first

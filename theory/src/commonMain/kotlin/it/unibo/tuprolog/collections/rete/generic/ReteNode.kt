@@ -2,7 +2,6 @@ package it.unibo.tuprolog.collections.rete.generic
 
 import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
-import it.unibo.tuprolog.collections.rete.generic.list.RootNode as ListNode
 import it.unibo.tuprolog.collections.rete.generic.set.RootNode as SetNode
 
 /** A class modeling a Rete Tree Node */
@@ -63,15 +62,5 @@ internal interface ReteNode<K, E> {
         @JvmStatic
         fun ofSet(vararg clauses: Clause): ReteNode<*, Clause> =
             ofSet(listOf(*clauses))
-
-        /** Creates a ReteTree from give clauses */
-        @JvmStatic
-        fun ofList(clauses: Iterable<Clause>): ReteNode<*, Clause> =
-            ListNode().apply { clauses.forEach { put(it) } }
-
-        /** Creates a ReteTree from give clauses */
-        @JvmStatic
-        fun ofList(vararg clauses: Clause): ReteNode<*, Clause> =
-            ofList(listOf(*clauses))
     }
 }

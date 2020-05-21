@@ -101,9 +101,4 @@ internal class MutableReteClauseMultiSetTest : PrototypeClauseMultiSetTest{
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
         prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
-
-    @Test
-    override fun mixedClausesCrudOperationsTest() {
-        todo { }
-    }
 }

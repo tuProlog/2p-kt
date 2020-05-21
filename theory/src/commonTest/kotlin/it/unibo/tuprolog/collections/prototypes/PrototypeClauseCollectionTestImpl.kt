@@ -6,7 +6,6 @@ import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
-import it.unibo.tuprolog.testutils.ClauseDatabaseUtils
 import kotlin.test.*
 
 internal abstract class PrototypeClauseCollectionTestImpl(

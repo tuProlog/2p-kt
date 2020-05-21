@@ -102,9 +102,4 @@ internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
         prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
-
-    override fun mixedClausesCrudOperationsTest() {
-        TODO("Not yet implemented")
-    }
-
 }

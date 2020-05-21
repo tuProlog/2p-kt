@@ -60,12 +60,7 @@ internal class MutableReteClauseDequeTest : PrototypeClauseDequeTest {
     override fun simpleRetrieveBehavesAsRetrieveFirst() {
         prototype.simpleRetrieveBehavesAsRetrieveFirst()
     }
-
-    @Test
-    override fun mixedClausesCrudOperationsTest() {
-        prototype.mixedClausesCrudOperationsTest()
-    }
-
+    
     @Test
     override fun collectionHasTheCorrectSize() {
         prototype.collectionHasTheCorrectSize()
