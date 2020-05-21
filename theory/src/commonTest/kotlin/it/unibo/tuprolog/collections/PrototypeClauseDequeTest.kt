@@ -25,8 +25,6 @@ internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
 
     fun simpleRetrieveBehavesAsRetrieveFirst()
 
-    fun mixedClausesCrudOperationsTest()
-
     companion object {
         internal fun prototype(
             emptyGenerator: () -> ClauseQueue,

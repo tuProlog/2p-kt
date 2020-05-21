@@ -7,7 +7,8 @@ internal object Theory {
     /** Utility method to check clause well-formed property */
     fun checkClauseCorrect(clause: Clause) =
         clause.also {
-            require(clause.isWellFormed) { "ClauseDatabase can contain only well formed clauses: this isn't $clause" }
+            require(clause.isWellFormed) { "ClauseDatabase can contain only well formed clauses: " +
+                    "this isn't $clause" }
         }
 
     /** Utility method to check more than one clause well-formed property */

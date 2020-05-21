@@ -1,5 +1,6 @@
-package it.unibo.tuprolog.collections.rete.generic
+package it.unibo.tuprolog.collections.rete.generic.set
 
+import it.unibo.tuprolog.collections.rete.generic.AbstractLeafReteNode
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 

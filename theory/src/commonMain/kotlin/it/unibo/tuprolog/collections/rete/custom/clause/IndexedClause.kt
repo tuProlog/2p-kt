@@ -5,6 +5,7 @@ import it.unibo.tuprolog.utils.LongIndexed
 
 interface IndexedClause : LongIndexed<Clause> {
 
+    /**Retrieves the decorated [Clause]*/
     val innerClause: Clause
         get() = value
 

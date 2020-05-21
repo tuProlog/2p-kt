@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Clause
 
 internal interface SituatedIndexedClause : IndexedClause {
 
+    /**Effectfully removes this [Clause] from whatever it is situated*/
     fun removeFromIndex()
 
     companion object {

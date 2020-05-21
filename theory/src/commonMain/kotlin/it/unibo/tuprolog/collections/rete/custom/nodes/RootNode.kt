@@ -26,11 +26,8 @@ internal class RootNode(
     }
 
     override val clauses: Sequence<Clause>
-        get() {
-            val validation = theoryCache.isValid
-            val cache = theoryCache.value
-            return cache.asSequence()
-        }
+        get() =
+            theoryCache.value.asSequence()
 
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) directives.get(clause)
