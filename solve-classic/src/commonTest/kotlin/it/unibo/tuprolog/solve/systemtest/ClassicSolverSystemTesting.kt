@@ -60,7 +60,6 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testAssertA() {
         prototype.testAssertA()
     }

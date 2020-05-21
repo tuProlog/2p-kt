@@ -58,7 +58,6 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testAssertA() {
         prototype.testAssertA()
     }
