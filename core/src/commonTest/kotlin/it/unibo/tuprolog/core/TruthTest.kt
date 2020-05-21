@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.TruthImpl
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 /**
@@ -11,28 +12,33 @@ import kotlin.test.assertSame
  */
 internal class TruthTest {
 
+    private val TRUE = TruthImpl(Truth.TRUE_FUNCTOR, true)
+    private val FAIL = TruthImpl(Truth.FAIL_FUNCTOR, false)
+    private val FALSE = TruthImpl(Truth.FALSE_FUNCTOR, false)
+
     @Test
     fun trueTruthCreation() {
-        assertSame(TruthImpl.True, Truth.of(true))
+        assertSame(Truth.TRUE, Truth.of(true))
     }
 
     @Test
     fun trueTruthRetrieval() {
-        assertSame(TruthImpl.True, Truth.TRUE)
+        assertEquals(TRUE, Truth.TRUE)
     }
 
     @Test
     fun falseTruthCreation() {
-        assertSame(TruthImpl.False, Truth.of(false))
-    }
-
-    @Test
-    fun failTruthRetrieval() {
-        assertSame(TruthImpl.Fail, Truth.FAIL)
+        assertSame(Truth.FALSE, Truth.of(false))
     }
 
     @Test
     fun falseTruthRetrieval() {
-        assertSame(TruthImpl.False, Truth.FALSE)
+        assertEquals(FALSE, Truth.FALSE)
     }
+
+    @Test
+    fun failTruthRetrieval() {
+        assertEquals(FAIL, Truth.FAIL)
+    }
+
 }
