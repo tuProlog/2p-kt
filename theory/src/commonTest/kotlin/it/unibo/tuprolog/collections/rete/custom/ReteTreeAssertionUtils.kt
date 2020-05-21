@@ -2,6 +2,8 @@ package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.utils.interleave
+import it.unibo.tuprolog.utils.interleaveSequences
+import it.unibo.tuprolog.utils.subsequences
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -79,20 +81,26 @@ internal object ReteTreeAssertionUtils {
         assertEquals(tree.size, tree.clauses.count())
     }
 
-    private fun Struct.addArgument(term: Term): Struct =
-        Struct.of(functor, *args, term)
+    private fun Struct.addArguments(term: Term, vararg terms: Term): Struct =
+        Struct.of(functor, *args, term, *terms)
 
-    private fun Fact.addArgument(term: Term): Fact =
-        Fact.of(head.addArgument(term))
+    private fun Struct.addArguments(terms: Iterable<Term>): Struct =
+        Struct.of(functor, argsList + terms)
+
+    private fun Fact.addArguments(term: Term, vararg terms: Term): Fact =
+        Fact.of(head.addArguments(term))
+
+    private fun Fact.addArguments(terms: Iterable<Term>): Fact =
+        Fact.of(head.addArguments(terms))
 
     private fun Fact.addBody(term: Term): Rule =
         Rule.of(head, term)
 
-    private fun KtList<Fact>.addArguments(args: KtList<Term>): KtList<Fact> {
-        return zip(args.shuffled()).map { (f, a) -> f.addArgument(a) }
+    private fun KtList<Fact>.addArgumentsRandomlyFrom(args: KtList<Term>): KtList<Fact> {
+        return zip(args.shuffled()).map { (f, a) -> f.addArguments(a) }
     }
 
-    private fun KtList<Fact>.addBodies(bodies: KtList<Term>): KtList<Rule> {
+    private fun KtList<Fact>.addBodyFrom(bodies: KtList<Term>): KtList<Rule> {
         return asSequence().flatMap { f ->
             bodies.asSequence().map { b -> f.addBody(b)  }
         }.toList()
@@ -147,39 +155,31 @@ internal object ReteTreeAssertionUtils {
 
     val o1Facts = l1Facts.map { Fact.of(Struct.of("o", it.head)) }
 
-    val f2Facts = f1Facts.addArguments(
-        moreArguments
-    )
+    val f2Facts = f1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val g2Facts = g1Facts.addArguments(
-        moreArguments
-    )
+    val g2Facts = g1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val h2Facts = h1Facts.addArguments(
-        moreArguments
-    )
+    val h2Facts = h1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val i2Facts = i1Facts.addArguments(
-        moreArguments
-    )
+    val i2Facts = i1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val l2Facts = l1Facts.addArguments(
-        moreArguments
-    )
+    val l2Facts = l1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val m2Facts = m1Facts.addArguments(
-        moreArguments
-    )
+    val m2Facts = m1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val n2Facts = n1Facts.addArguments(
-        moreArguments
-    )
+    val n2Facts = n1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val o2Facts = o1Facts.addArguments(
-        moreArguments
-    )
+    val o2Facts = o1Facts.addArgumentsRandomlyFrom(moreArguments)
 
-    val otherFacts = listOf<Struct>(
+    val higherArityFacts = interleaveSequences(
+            sequenceOf(f2Facts, g2Facts, h2Facts, i2Facts, l2Facts, m2Facts, n2Facts, o2Facts)
+            .flatMap { it.asSequence() }
+            .map { fact ->
+                moreArguments.subsequences().map { fact.addArguments(it.toList()) }
+            }
+        ).toList()
+
+    val otherFacts = listOf(
         Truth.TRUE,
         Truth.FAIL,
         Truth.FALSE,
@@ -242,10 +242,11 @@ internal object ReteTreeAssertionUtils {
         m2Facts,
         n2Facts,
         o2Facts,
-        otherFacts
+        otherFacts,
+        higherArityFacts
     ).toList()
 
-    val simpleRules = simpleFacts.addBodies(moreArguments)
+    val simpleRules = simpleFacts.addBodyFrom(moreArguments)
 
     val a0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("a"), it) }
 
@@ -255,23 +256,25 @@ internal object ReteTreeAssertionUtils {
 
     val d0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("d"), it) }
 
-    val f1Rules = f1Facts.addBodies(moreArguments)
-    val g1Rules = g1Facts.addBodies(moreArguments)
-    val h1Rules = h1Facts.addBodies(moreArguments)
-    val i1Rules = i1Facts.addBodies(moreArguments)
-    val j1Rules = j1Facts.addBodies(moreArguments)
-    val l1Rules = l1Facts.addBodies(moreArguments)
-    val m1Rules = m1Facts.addBodies(moreArguments)
-    val n1Rules = n1Facts.addBodies(moreArguments)
-    val o1Rules = o1Facts.addBodies(moreArguments)
-    val f2Rules = f2Facts.addBodies(moreArguments)
-    val g2Rules = g2Facts.addBodies(moreArguments)
-    val h2Rules = h2Facts.addBodies(moreArguments)
-    val i2Rules = i2Facts.addBodies(moreArguments)
-    val l2Rules = l2Facts.addBodies(moreArguments)
-    val m2Rules = m2Facts.addBodies(moreArguments)
-    val n2Rules = n2Facts.addBodies(moreArguments)
-    val o2Rules = o2Facts.addBodies(moreArguments)
+    val f1Rules = f1Facts.addBodyFrom(moreArguments)
+    val g1Rules = g1Facts.addBodyFrom(moreArguments)
+    val h1Rules = h1Facts.addBodyFrom(moreArguments)
+    val i1Rules = i1Facts.addBodyFrom(moreArguments)
+    val j1Rules = j1Facts.addBodyFrom(moreArguments)
+    val l1Rules = l1Facts.addBodyFrom(moreArguments)
+    val m1Rules = m1Facts.addBodyFrom(moreArguments)
+    val n1Rules = n1Facts.addBodyFrom(moreArguments)
+    val o1Rules = o1Facts.addBodyFrom(moreArguments)
+    val f2Rules = f2Facts.addBodyFrom(moreArguments)
+    val g2Rules = g2Facts.addBodyFrom(moreArguments)
+    val h2Rules = h2Facts.addBodyFrom(moreArguments)
+    val i2Rules = i2Facts.addBodyFrom(moreArguments)
+    val l2Rules = l2Facts.addBodyFrom(moreArguments)
+    val m2Rules = m2Facts.addBodyFrom(moreArguments)
+    val n2Rules = n2Facts.addBodyFrom(moreArguments)
+    val o2Rules = o2Facts.addBodyFrom(moreArguments)
+    val otherRules = otherFacts.addBodyFrom(moreArguments)
+    val higherArityRules = higherArityFacts.addBodyFrom(moreArguments)
 
     val simpleFactsAndRules = simpleFacts + simpleRules
 
@@ -301,6 +304,10 @@ internal object ReteTreeAssertionUtils {
     val n2FactsAndRules = n2Facts + n2Rules
     val o2FactsAndRules = o2Facts + o2Rules
 
+    val otherFactsAndRules = otherFacts + otherRules
+
+    val higherArityFactsAndRules = higherArityFacts + higherArityRules
+
     val rules = interleave(
         simpleRules,
         a0Rules,
@@ -323,7 +330,9 @@ internal object ReteTreeAssertionUtils {
         l2Rules,
         m2Rules,
         n2Rules,
-        o2Rules
+        o2Rules,
+        otherRules,
+        higherArityRules
     ).toList()
 
     val directives =

@@ -123,3 +123,27 @@ fun <T> interleaveSequences(iterables: Sequence<Sequence<T>>): Sequence<T> =
 
 fun <T> interleaveSequences(iterables: Iterable<Sequence<T>>): Sequence<T> =
     interleave(iterables.map { it.asIterable() })
+
+fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
+    return sequence {
+        var maxSize = 1
+        var actualSize = 0
+        while (true) {
+            val sublist = this@subsequences.take(maxSize).toList()
+            yield(sublist.asSequence())
+            if (actualSize >= sublist.size) {
+                break
+            }
+            maxSize++
+            actualSize = sublist.size
+        }
+    }
+}
+
+fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> {
+    return asSequence().subsequences()
+}
+
+fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> {
+    return sequenceOf(*items).subsequences()
+}
