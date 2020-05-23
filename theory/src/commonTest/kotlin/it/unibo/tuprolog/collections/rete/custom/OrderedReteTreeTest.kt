@@ -445,10 +445,11 @@ class OrderedReteTreeTest {
                 val tree = reteTreeOf(clauses)
                 assertIsNonEmpty(tree)
 
+                assertItemsAreEquals(clauses.asSequence(), tree.clauses)
                 assertItemsAreEquals(clauses.asSequence(), tree.get(template))
 
-                for (i in clauses.indices) {
-                    assertItemsAreEquals(sequenceOf(clauses[i]), tree.get(clauses[i]))
+                for (c in clauses) {
+                    assertItemsAreEquals(sequenceOf(c), tree.get(c))
                 }
 
                 for (element in clauses) {
@@ -456,6 +457,8 @@ class OrderedReteTreeTest {
                 }
 
                 assertIsEmpty(tree)
+                assertItemsAreEquals(emptySequence(), tree.get(template))
+                assertItemsAreEquals(emptySequence(), tree.clauses)
 
                 for (i in clauses.size - 1 downTo 0) {
                     tree.assertA(clauses[i])
@@ -464,17 +467,107 @@ class OrderedReteTreeTest {
                     assertItemsAreEquals(clauses.subList(i, clauses.size).asSequence(), tree.get(template))
                 }
 
+                assertIsNonEmpty(tree)
+                assertItemsAreEquals(clauses.asSequence(), tree.get(template))
+                assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+
                 for (element in clauses) {
                     assertItemsAreEquals(sequenceOf(element), tree.retractOnly(template, 1))
                 }
 
                 assertIsEmpty(tree)
+                assertItemsAreEquals(emptySequence(), tree.get(template))
+                assertItemsAreEquals(emptySequence(), tree.clauses)
 
                 for (element in clauses) {
                     tree.assertZ(element)
                 }
 
+                assertIsNonEmpty(tree)
+                assertItemsAreEquals(clauses.asSequence(), tree.get(template))
+                assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+
                 assertItemsAreEquals(clauses.asSequence(), tree.retractAll(template))
+                assertIsEmpty(tree)
+                assertItemsAreEquals(emptySequence(), tree.get(template))
+                assertItemsAreEquals(emptySequence(), tree.clauses)
+            }
+        }
+    }
+
+    @Test
+    // questo ci sta un pò ad andare... e poi fallisce
+    // dopo che lo si fa passare bisogna andarci col profiler per capire perchè ci sta tanto
+    fun nonGroundClausesAreMatchedByGroundQueries() {
+        val groundTerms = clauses.asSequence()
+            .filterIsInstance<Rule>()
+            .flatMap { sequenceOf(it.head) + it.head.argsSequence }
+            .filter { it.isGround }
+            .toSet()
+        val families = clauses.filterIsInstance<Rule>()
+            .map { it.head.functor to it.head.arity }
+            .filter { (_, arity) -> arity > 0 }
+            .toSet()
+
+
+        for ((functor, arity) in families) {
+            for (args in groundTerms.allChunksOfSize(arity)) {
+                for (i in 0 until arity) {
+                    val clauseArgs = args.toMutableList()
+                    clauseArgs[i] = Var.anonymous()
+
+                    val query = Rule.of(Struct.of(functor, args), Var.anonymous())
+
+//                    println("handle query: $query")
+
+                    val clauses = groundTerms.map { Rule.of(Struct.of(functor, clauseArgs), it) }
+
+                    val tree = reteTreeOf(clauses)
+
+                    assertIsNonEmpty(tree)
+                    assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+                    assertItemsAreEquals(clauses.asSequence(), tree.get(query))
+
+                    for (element in clauses) {
+                        assertItemsAreEquals(sequenceOf(element), tree.retractFirst(query))
+                    }
+
+                    assertIsEmpty(tree)
+                    assertItemsAreEquals(emptySequence(), tree.get(query))
+                    assertItemsAreEquals(emptySequence(), tree.clauses)
+
+                    for (j in clauses.size - 1 downTo 0) {
+                        tree.assertA(clauses[j])
+                        assertIsNonEmpty(tree)
+
+                        assertItemsAreEquals(clauses.subList(j, clauses.size).asSequence(), tree.get(query))
+                    }
+
+                    assertIsNonEmpty(tree)
+                    assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+                    assertItemsAreEquals(clauses.asSequence(), tree.get(query))
+
+                    for (element in clauses) {
+                        assertItemsAreEquals(sequenceOf(element), tree.retractOnly(query, 1))
+                    }
+
+                    assertIsEmpty(tree)
+                    assertItemsAreEquals(emptySequence(), tree.get(query))
+                    assertItemsAreEquals(emptySequence(), tree.clauses)
+
+                    for (element in clauses) {
+                        tree.assertZ(element)
+                    }
+
+                    assertIsNonEmpty(tree)
+                    assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+                    assertItemsAreEquals(clauses.asSequence(), tree.get(query))
+
+                    assertItemsAreEquals(clauses.asSequence(), tree.retractAll(query))
+                    assertIsEmpty(tree)
+                    assertItemsAreEquals(emptySequence(), tree.get(query))
+                    assertItemsAreEquals(emptySequence(), tree.clauses)
+                }
             }
         }
     }

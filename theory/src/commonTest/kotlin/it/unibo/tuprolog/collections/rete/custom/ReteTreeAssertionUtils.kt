@@ -208,7 +208,7 @@ internal object ReteTreeAssertionUtils {
 
     fun <T> Iterable<T>.allChunksOfSize(size: Int): KtList<KtList<T>> {
         return if (size == 0) {
-            emptyList()
+            listOf(emptyList())
         } else {
             chunked(size).filter { it.size == size }
         }
