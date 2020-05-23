@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.interleave
 import it.unibo.tuprolog.utils.interleaveSequences
 import it.unibo.tuprolog.utils.subsequences
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
@@ -81,6 +83,18 @@ internal object ReteTreeAssertionUtils {
         assertEquals(tree.size, tree.clauses.count())
     }
 
+    fun assertMatches(expected: Term, actual: Term) {
+        assertTrue("$actual should match $expected") {
+            expected matches actual
+        }
+    }
+
+    fun assertDoesNotMatch(expected: Term, actual: Term) {
+        assertFalse("$actual should not match $expected") {
+            expected matches actual
+        }
+    }
+
     private fun Struct.addArguments(term: Term, vararg terms: Term): Struct =
         Struct.of(functor, *args, term, *terms)
 
@@ -102,7 +116,7 @@ internal object ReteTreeAssertionUtils {
 
     private fun KtList<Fact>.addBodyFrom(bodies: KtList<Term>): KtList<Rule> {
         return asSequence().flatMap { f ->
-            bodies.asSequence().map { b -> f.addBody(b)  }
+            bodies.asSequence().map { b -> f.addBody(b) }
         }.toList()
     }
 
@@ -172,12 +186,12 @@ internal object ReteTreeAssertionUtils {
     val o2Facts = o1Facts.addArgumentsRandomlyFrom(moreArguments)
 
     val higherArityFacts = interleaveSequences(
-            sequenceOf(f2Facts, g2Facts, h2Facts, i2Facts, l2Facts, m2Facts, n2Facts, o2Facts)
+        sequenceOf(f2Facts, g2Facts, h2Facts, i2Facts, l2Facts, m2Facts, n2Facts, o2Facts)
             .flatMap { it.asSequence() }
             .map { fact ->
                 moreArguments.subsequences().map { fact.addArguments(it.toList()) }
             }
-        ).toList()
+    ).toList()
 
     val otherFacts = listOf(
         Truth.TRUE,
@@ -203,26 +217,6 @@ internal object ReteTreeAssertionUtils {
         LogicSet.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
     ).map(Fact.Companion::of)
 
-    val factFamilies = mapOf(
-        Fact.template("f", 1) to f1Facts,
-        Fact.template("g", 1) to g1Facts,
-        Fact.template("h", 1) to h1Facts,
-        Fact.template("i", 1) to i1Facts,
-        Fact.template("j", 1) to j1Facts,
-        Fact.template("l", 1) to l1Facts,
-        Fact.template("m", 1) to m1Facts,
-        Fact.template("n", 1) to n1Facts,
-        Fact.template("o", 1) to o1Facts,
-        Fact.template("f", 2) to f2Facts,
-        Fact.template("g", 2) to g2Facts,
-        Fact.template("h", 2) to h2Facts,
-        Fact.template("i", 2) to i2Facts,
-        Fact.template("l", 2) to l2Facts,
-        Fact.template("m", 2) to m2Facts,
-        Fact.template("n", 2) to n2Facts,
-        Fact.template("o", 2) to o2Facts
-    )
-
     val facts = interleave(
         simpleFacts,
         f1Facts,
@@ -246,6 +240,30 @@ internal object ReteTreeAssertionUtils {
         higherArityFacts
     ).toList()
 
+    val factFamilies = mapOf(
+        Fact.template("a", 0) to facts.filter { it.head.functor == "a" && it.head.arity == 0 },
+        Fact.template("b", 0) to facts.filter { it.head.functor == "b" && it.head.arity == 0 },
+        Fact.template("c", 0) to facts.filter { it.head.functor == "c" && it.head.arity == 0 },
+        Fact.template("d", 0) to facts.filter { it.head.functor == "d" && it.head.arity == 0 },
+        Fact.template("f", 1) to facts.filter { it.head.functor == "f" && it.head.arity == 1 },
+        Fact.template("g", 1) to facts.filter { it.head.functor == "g" && it.head.arity == 1 },
+        Fact.template("h", 1) to facts.filter { it.head.functor == "h" && it.head.arity == 1 },
+        Fact.template("i", 1) to facts.filter { it.head.functor == "i" && it.head.arity == 1 },
+        Fact.template("j", 1) to facts.filter { it.head.functor == "j" && it.head.arity == 1 },
+        Fact.template("l", 1) to facts.filter { it.head.functor == "l" && it.head.arity == 1 },
+        Fact.template("m", 1) to facts.filter { it.head.functor == "m" && it.head.arity == 1 },
+        Fact.template("n", 1) to facts.filter { it.head.functor == "n" && it.head.arity == 1 },
+        Fact.template("o", 1) to facts.filter { it.head.functor == "o" && it.head.arity == 1 },
+        Fact.template("f", 2) to facts.filter { it.head.functor == "f" && it.head.arity == 2 },
+        Fact.template("g", 2) to facts.filter { it.head.functor == "g" && it.head.arity == 2 },
+        Fact.template("h", 2) to facts.filter { it.head.functor == "h" && it.head.arity == 2 },
+        Fact.template("i", 2) to facts.filter { it.head.functor == "i" && it.head.arity == 2 },
+        Fact.template("l", 2) to facts.filter { it.head.functor == "l" && it.head.arity == 2 },
+        Fact.template("m", 2) to facts.filter { it.head.functor == "m" && it.head.arity == 2 },
+        Fact.template("n", 2) to facts.filter { it.head.functor == "n" && it.head.arity == 2 },
+        Fact.template("o", 2) to facts.filter { it.head.functor == "o" && it.head.arity == 2 }
+    )
+
     val simpleRules = simpleFacts.addBodyFrom(moreArguments)
 
     val a0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("a"), it) }
@@ -255,7 +273,6 @@ internal object ReteTreeAssertionUtils {
     val c0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("c"), it) }
 
     val d0Rules = moreArguments.shuffled().map { Rule.of(Atom.of("d"), it) }
-
     val f1Rules = f1Facts.addBodyFrom(moreArguments)
     val g1Rules = g1Facts.addBodyFrom(moreArguments)
     val h1Rules = h1Facts.addBodyFrom(moreArguments)
@@ -274,39 +291,8 @@ internal object ReteTreeAssertionUtils {
     val n2Rules = n2Facts.addBodyFrom(moreArguments)
     val o2Rules = o2Facts.addBodyFrom(moreArguments)
     val otherRules = otherFacts.addBodyFrom(moreArguments)
+
     val higherArityRules = higherArityFacts.addBodyFrom(moreArguments)
-
-    val simpleFactsAndRules = simpleFacts + simpleRules
-
-    val a0FactsAndRules = facts.filter { it.head == Atom.of("a") } + d0Rules
-
-    val b0FactsAndRules = facts.filter { it.head == Atom.of("b") } + d0Rules
-
-    val c0FactsAndRules = facts.filter { it.head == Atom.of("c") } + d0Rules
-
-    val d0FactsAndRules = facts.filter { it.head == Atom.of("d") } + d0Rules
-
-    val f1FactsAndRules = f1Facts + f1Rules
-    val g1FactsAndRules = g1Facts + g1Rules
-    val h1FactsAndRules = h1Facts + h1Rules
-    val i1FactsAndRules = i1Facts + i1Rules
-    val j1FactsAndRules = j1Facts + j1Rules
-    val l1FactsAndRules = l1Facts + l1Rules
-    val m1FactsAndRules = m1Facts + m1Rules
-    val n1FactsAndRules = n1Facts + n1Rules
-    val o1FactsAndRules = o1Facts + o1Rules
-    val f2FactsAndRules = f2Facts + f2Rules
-    val g2FactsAndRules = g2Facts + g2Rules
-    val h2FactsAndRules = h2Facts + h2Rules
-    val i2FactsAndRules = i2Facts + i2Rules
-    val l2FactsAndRules = l2Facts + l2Rules
-    val m2FactsAndRules = m2Facts + m2Rules
-    val n2FactsAndRules = n2Facts + n2Rules
-    val o2FactsAndRules = o2Facts + o2Rules
-
-    val otherFactsAndRules = otherFacts + otherRules
-
-    val higherArityFactsAndRules = higherArityFacts + higherArityRules
 
     val rules = interleave(
         simpleRules,
@@ -335,6 +321,30 @@ internal object ReteTreeAssertionUtils {
         higherArityRules
     ).toList()
 
+    val ruleFamilies = mapOf(
+        Rule.template("a", 0) to rules.filter { it.head.functor == "a" && it.head.arity == 0 },
+        Rule.template("b", 0) to rules.filter { it.head.functor == "b" && it.head.arity == 0 },
+        Rule.template("c", 0) to rules.filter { it.head.functor == "c" && it.head.arity == 0 },
+        Rule.template("d", 0) to rules.filter { it.head.functor == "d" && it.head.arity == 0 },
+        Rule.template("f", 1) to rules.filter { it.head.functor == "f" && it.head.arity == 1 },
+        Rule.template("g", 1) to rules.filter { it.head.functor == "g" && it.head.arity == 1 },
+        Rule.template("h", 1) to rules.filter { it.head.functor == "h" && it.head.arity == 1 },
+        Rule.template("i", 1) to rules.filter { it.head.functor == "i" && it.head.arity == 1 },
+        Rule.template("j", 1) to rules.filter { it.head.functor == "j" && it.head.arity == 1 },
+        Rule.template("l", 1) to rules.filter { it.head.functor == "l" && it.head.arity == 1 },
+        Rule.template("m", 1) to rules.filter { it.head.functor == "m" && it.head.arity == 1 },
+        Rule.template("n", 1) to rules.filter { it.head.functor == "n" && it.head.arity == 1 },
+        Rule.template("o", 1) to rules.filter { it.head.functor == "o" && it.head.arity == 1 },
+        Rule.template("f", 2) to rules.filter { it.head.functor == "f" && it.head.arity == 2 },
+        Rule.template("g", 2) to rules.filter { it.head.functor == "g" && it.head.arity == 2 },
+        Rule.template("h", 2) to rules.filter { it.head.functor == "h" && it.head.arity == 2 },
+        Rule.template("i", 2) to rules.filter { it.head.functor == "i" && it.head.arity == 2 },
+        Rule.template("l", 2) to rules.filter { it.head.functor == "l" && it.head.arity == 2 },
+        Rule.template("m", 2) to rules.filter { it.head.functor == "m" && it.head.arity == 2 },
+        Rule.template("n", 2) to rules.filter { it.head.functor == "n" && it.head.arity == 2 },
+        Rule.template("o", 2) to rules.filter { it.head.functor == "o" && it.head.arity == 2 }
+    )
+
     val directives =
         listOf(
             Directive.of(Truth.TRUE),
@@ -357,4 +367,52 @@ internal object ReteTreeAssertionUtils {
         )
 
     val clauses = interleave(facts + rules, directives).toList()
+
+    val factsAndRules = clauses.filterIsInstance<Rule>()
+
+    val a0FactsAndRules = factsAndRules.filter { it.head.functor == "a" && it.head.arity == 0 }
+    val b0FactsAndRules = factsAndRules.filter { it.head.functor == "b" && it.head.arity == 0 }
+    val c0FactsAndRules = factsAndRules.filter { it.head.functor == "c" && it.head.arity == 0 }
+    val d0FactsAndRules = factsAndRules.filter { it.head.functor == "d" && it.head.arity == 0 }
+    val f1FactsAndRules = factsAndRules.filter { it.head.functor == "f" && it.head.arity == 1 }
+    val g1FactsAndRules = factsAndRules.filter { it.head.functor == "g" && it.head.arity == 1 }
+    val h1FactsAndRules = factsAndRules.filter { it.head.functor == "h" && it.head.arity == 1 }
+    val i1FactsAndRules = factsAndRules.filter { it.head.functor == "i" && it.head.arity == 1 }
+    val j1FactsAndRules = factsAndRules.filter { it.head.functor == "j" && it.head.arity == 1 }
+    val l1FactsAndRules = factsAndRules.filter { it.head.functor == "l" && it.head.arity == 1 }
+    val m1FactsAndRules = factsAndRules.filter { it.head.functor == "m" && it.head.arity == 1 }
+    val n1FactsAndRules = factsAndRules.filter { it.head.functor == "n" && it.head.arity == 1 }
+    val o1FactsAndRules = factsAndRules.filter { it.head.functor == "o" && it.head.arity == 1 }
+    val f2FactsAndRules = factsAndRules.filter { it.head.functor == "f" && it.head.arity == 2 }
+    val g2FactsAndRules = factsAndRules.filter { it.head.functor == "g" && it.head.arity == 2 }
+    val h2FactsAndRules = factsAndRules.filter { it.head.functor == "h" && it.head.arity == 2 }
+    val i2FactsAndRules = factsAndRules.filter { it.head.functor == "i" && it.head.arity == 2 }
+    val l2FactsAndRules = factsAndRules.filter { it.head.functor == "l" && it.head.arity == 2 }
+    val m2FactsAndRules = factsAndRules.filter { it.head.functor == "m" && it.head.arity == 2 }
+    val n2FactsAndRules = factsAndRules.filter { it.head.functor == "n" && it.head.arity == 2 }
+    val o2FactsAndRules = factsAndRules.filter { it.head.functor == "o" && it.head.arity == 2 }
+
+    val factsAndRulesFamilies = mapOf(
+        Rule.template("a", 0) to a0FactsAndRules,
+        Rule.template("b", 0) to b0FactsAndRules,
+        Rule.template("c", 0) to c0FactsAndRules,
+        Rule.template("d", 0) to d0FactsAndRules,
+        Rule.template("f", 1) to f1FactsAndRules,
+        Rule.template("g", 1) to g1FactsAndRules,
+        Rule.template("h", 1) to h1FactsAndRules,
+        Rule.template("i", 1) to i1FactsAndRules,
+        Rule.template("j", 1) to j1FactsAndRules,
+        Rule.template("l", 1) to l1FactsAndRules,
+        Rule.template("m", 1) to m1FactsAndRules,
+        Rule.template("n", 1) to n1FactsAndRules,
+        Rule.template("o", 1) to o1FactsAndRules,
+        Rule.template("f", 2) to f2FactsAndRules,
+        Rule.template("g", 2) to g2FactsAndRules,
+        Rule.template("h", 2) to h2FactsAndRules,
+        Rule.template("i", 2) to i2FactsAndRules,
+        Rule.template("l", 2) to l2FactsAndRules,
+        Rule.template("m", 2) to m2FactsAndRules,
+        Rule.template("n", 2) to n2FactsAndRules,
+        Rule.template("o", 2) to o2FactsAndRules
+    )
 }
