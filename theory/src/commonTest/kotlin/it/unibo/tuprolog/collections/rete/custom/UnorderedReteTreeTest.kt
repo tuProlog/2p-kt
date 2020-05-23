@@ -410,16 +410,12 @@ class UnorderedReteTreeTest {
     @Test
     fun anUnorderedTreeRetractsClausesInAOrderInsensitiveWay2() {
         val tree = reteTreeOf(factsAndRules)
-
         assertIsNonEmpty(tree)
         assertEquals(factsAndRules.size, tree.size)
 
         for ((template, factsAndRules) in factsAndRulesFamilies) {
             assertSubMultisetOf(factsAndRules.asSequence(), tree.clauses)
             assertItemMultisetsAreEqual(factsAndRules.asSequence(), tree.get(template))
-
-            println(factsAndRules.count())
-            println(HashSet(tree.clauses.toList()).count())
 
             val firstRetracted = tree.retractFirst(template).toList()
             assertSubMultisetOf(firstRetracted, factsAndRules)
