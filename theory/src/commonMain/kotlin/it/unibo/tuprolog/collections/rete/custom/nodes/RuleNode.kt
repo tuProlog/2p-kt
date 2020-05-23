@@ -38,16 +38,12 @@ internal class RuleNode(
         }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractFirst(clause)?.let {
-            invalidCache(it)
-            it
-        } ?: emptySequence()
+        functors[clause.nestedFunctor()]?.retractFirst(clause)?.invalidatingCacheIfNonEmpty()
+            ?: emptySequence()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractAll(clause)?.let {
-            invalidCache(it)
-            it
-        } ?: emptySequence()
+        functors[clause.nestedFunctor()]?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+            ?: emptySequence()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         theoryCache.value.asSequence()
@@ -58,10 +54,8 @@ internal class RuleNode(
     private fun IndexedClause.nestedFunctor(): String =
         this.innerClause.head!!.functorOfNestedFirstArgument(0)
 
-    private fun invalidCache(result: Sequence<*>) {
-        if (result.any()) {
-            theoryCache.invalidate()
-        }
+    override fun invalidateCache() {
+        theoryCache.invalidate()
     }
 
     private fun regenerateCache(): MutableList<SituatedIndexedClause> =
@@ -80,5 +74,4 @@ internal class RuleNode(
                 )
             }
         )
-
 }

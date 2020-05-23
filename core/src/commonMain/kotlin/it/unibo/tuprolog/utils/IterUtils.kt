@@ -147,3 +147,7 @@ fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> {
 fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> {
     return sequenceOf(*items).subsequences()
 }
+
+fun <T> Sequence<T>.buffered(): Sequence<T> {
+    return this
+}

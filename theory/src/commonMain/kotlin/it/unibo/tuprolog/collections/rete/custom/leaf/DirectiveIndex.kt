@@ -62,4 +62,10 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
             })
         }
 
+    override fun invalidateCache() {
+        /* do nothing */
+    }
+
+
+
 }

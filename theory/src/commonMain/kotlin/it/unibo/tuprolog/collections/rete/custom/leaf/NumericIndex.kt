@@ -16,7 +16,7 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class NumericIndex(
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingLeaf, Retractable {
+) : AbstractIndexingLeaf(), Retractable {
 
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
 

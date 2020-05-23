@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.custom.*
+import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
+import it.unibo.tuprolog.collections.rete.custom.ReteNode
+import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
@@ -13,10 +16,6 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.dequeOf
-
-internal interface ArityRete : ReteNode, TopLevelReteNode
-
-internal interface ArityIndexing : ReteNode, IndexingNode
 
 internal sealed class ArityNode : ReteNode {
 
@@ -79,15 +78,9 @@ internal sealed class ArityNode : ReteNode {
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
             if (ordered) {
-                retractAllOrdered(clause).let {
-                    invalidCache(it)
-                    it
-                }
+                retractAllOrdered(clause).invalidatingCacheIfNonEmpty()
             } else {
-                retractAllUnordered(clause).let {
-                    invalidCache(it)
-                    it
-                }
+                retractAllUnordered(clause).invalidatingCacheIfNonEmpty()
             }
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
@@ -267,10 +260,8 @@ internal sealed class ArityNode : ReteNode {
                 )
             }
 
-        protected fun invalidCache(result: Sequence<*>) {
-            if (result.any()) {
-                theoryCache.invalidate()
-            }
+        override fun invalidateCache() {
+            theoryCache.invalidate()
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =
@@ -325,15 +316,9 @@ internal sealed class ArityNode : ReteNode {
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             if (ordered) {
-                retractAllOrderedIndexed(clause).let {
-                    invalidCache(it)
-                    it
-                }
+                retractAllOrderedIndexed(clause).invalidatingCacheIfNonEmpty()
             } else {
-                retractAllUnorderedIndexed(clause).let {
-                    invalidCache(it)
-                    it
-                }
+                retractAllUnorderedIndexed(clause).invalidatingCacheIfNonEmpty()
             }
 
         override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
@@ -397,6 +382,10 @@ internal sealed class ArityNode : ReteNode {
 
         override fun getCache(): Sequence<SituatedIndexedClause> {
             return atoms.asSequence()
+        }
+
+        override fun invalidateCache() {
+            /* do nothing */
         }
 
         override fun retractIndexed(indexed: SituatedIndexedClause) {

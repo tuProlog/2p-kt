@@ -11,7 +11,7 @@ import it.unibo.tuprolog.utils.dequeOf
 
 internal class VariableIndex(
     private val ordered: Boolean
-) : IndexingLeaf, Retractable {
+) : AbstractIndexingLeaf(), Retractable {
 
     private val variables: MutableList<SituatedIndexedClause> = dequeOf()
 

@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
+import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 
 /**A data structure to manage the basic behaviour of the [ReteTree]*/
-internal interface ReteNode : Cacheable {
+internal interface ReteNode : Cacheable<SituatedIndexedClause> {
 
     /**Reads all the clauses matching the given [Clause]*/
     fun get(clause: Clause): Sequence<Clause>

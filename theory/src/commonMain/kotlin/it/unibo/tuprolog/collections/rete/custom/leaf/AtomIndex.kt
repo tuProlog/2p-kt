@@ -16,7 +16,7 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class AtomIndex(
     private val ordered: Boolean,
     private val nestingLevel: Int
-) : IndexingLeaf, Retractable {
+) : AbstractIndexingLeaf(), Retractable {
 
     private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
 

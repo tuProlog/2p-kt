@@ -60,15 +60,9 @@ internal class CompoundIndex(
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (ordered) {
-            retractAllOrdered(clause).let {
-                invalidCache(it)
-                it
-            }
+            retractAllOrdered(clause).invalidatingCacheIfNonEmpty()
         } else {
-            retractAllUnordered(clause).let {
-                invalidCache(it)
-                it
-            }
+            retractAllUnordered(clause).invalidatingCacheIfNonEmpty()
         }
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
@@ -131,18 +125,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.retractAllIndexed(clause).let { res ->
-                        invalidCache(res)
-                        res
-                    }
+                    it.retractAllIndexed(clause).invalidatingCacheIfNonEmpty()
                 }
             )
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAllIndexed(clause)?.let {
-                    invalidCache(it)
-                    it
-                }
+                ?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
                 ?: emptySequence()
         }
 
@@ -170,10 +158,8 @@ internal class CompoundIndex(
     private fun Clause.isGlobal(): Boolean =
         this.head!!.nestedFirstArgument(nestingLevel) is Var
 
-    private fun invalidCache(result: Sequence<*>) {
-        if (result.any()) {
-            theoryCache.invalidate()
-        }
+    override fun invalidateCache() {
+        theoryCache.invalidate()
     }
 
     private fun regenerateCache(): MutableList<SituatedIndexedClause> =

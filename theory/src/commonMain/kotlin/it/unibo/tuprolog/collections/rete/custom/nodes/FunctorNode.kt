@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
-import it.unibo.tuprolog.collections.rete.custom.IndexingNode
 import it.unibo.tuprolog.collections.rete.custom.ReteNode
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
 import it.unibo.tuprolog.collections.rete.custom.Utils
@@ -12,11 +11,8 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
-
-internal interface FunctorRete : ReteNode, TopLevelReteNode
-
-internal interface FunctorIndexing : ReteNode, IndexingNode
 
 internal sealed class FunctorNode : ReteNode {
 
@@ -40,16 +36,12 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractFirst(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractFirst(clause)?.let {
-                invalidCache(it)
-                it
-            } ?: emptySequence()
+            selectArity(clause)?.retractFirst(clause)?.invalidatingCacheIfNonEmpty()
+                ?: emptySequence()
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractAll(clause)?.let {
-                invalidCache(it)
-                it
-            } ?: emptySequence()
+            selectArity(clause)?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+                ?: emptySequence()
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()
@@ -70,10 +62,8 @@ internal sealed class FunctorNode : ReteNode {
             }.run { op(clause) }
         }
 
-        private fun invalidCache(result: Sequence<*>) {
-            if (result.any()) {
-                theoryCache.invalidate()
-            }
+        override fun invalidateCache() {
+            theoryCache.invalidate()
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =
@@ -118,10 +108,8 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            arities[clause.nestedArity()]?.retractAll(clause)?.let {
-                invalidCache(it)
-                it
-            } ?: emptySequence()
+            arities[clause.nestedArity()]?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+                ?: emptySequence()
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()
@@ -150,21 +138,17 @@ internal sealed class FunctorNode : ReteNode {
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             if (clause.isGlobal()) {
-                val partialResult = Utils.merge(
+                Utils.merge(
                     arities.values.map {
                         it.extractGlobalIndexedSequence(clause)
-                    }
-                ).toList()
-                val filtered = partialResult.filter { it.innerClause matches clause }
-                filtered.asSequence().forEach { it.removeFromIndex() }
-                invalidCache(filtered.asSequence())
-                filtered.asSequence()
+                    })
+                    .filter { it.innerClause matches clause }
+                    .map { it.removeFromIndex(); it }
+                    .buffered()
             }
             else {
-                arities[clause.nestedArity()]?.retractAllIndexed(clause)?.let {
-                    invalidCache(it)
-                    it
-                } ?: emptySequence()
+                arities[clause.nestedArity()]?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
+                    ?: emptySequence()
             }
 
         override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
@@ -191,10 +175,8 @@ internal sealed class FunctorNode : ReteNode {
         private fun IndexedClause.nestedArity(): Int =
             this.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel)
 
-        private fun invalidCache(result: Sequence<*>) {
-            if (result.any()) {
-                theoryCache.invalidate()
-            }
+        override fun invalidateCache() {
+            theoryCache.invalidate()
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =

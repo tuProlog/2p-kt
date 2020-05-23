@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.custom.nodes
 
+import it.unibo.tuprolog.collections.rete.custom.Cacheable
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
@@ -12,7 +13,7 @@ import it.unibo.tuprolog.utils.dequeOf
 internal class RootNode(
     clauses: Iterable<Clause>,
     override val isOrdered: Boolean
-) : ReteTree {
+) : ReteTree, Cacheable<Clause> {
 
     private val theoryCache: Cached<MutableList<Clause>> = Cached.of(this::regenerateCache)
     private val rules: RuleNode = RuleNode(isOrdered)
@@ -35,15 +36,9 @@ internal class RootNode(
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractFirst(clause).let {
-                invalidCache(it)
-                it
-            }
+            directives.retractFirst(clause).invalidatingCacheIfNonEmpty()
         } else {
-            rules.retractFirst(clause).let {
-                invalidCache(it)
-                it
-            }
+            rules.retractFirst(clause).invalidatingCacheIfNonEmpty()
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
@@ -54,15 +49,9 @@ internal class RootNode(
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractAll(clause).let {
-                invalidCache(it)
-                it
-            }
+            directives.retractAll(clause).invalidatingCacheIfNonEmpty()
         } else {
-            rules.retractAll(clause).let {
-                invalidCache(it)
-                it
-            }
+            rules.retractAll(clause).invalidatingCacheIfNonEmpty()
         }
 
     override fun deepCopy(): ReteTree =
@@ -105,12 +94,6 @@ internal class RootNode(
             clause
         )
 
-    private fun invalidCache(result: Sequence<*>) {
-        if (result.any()) {
-            theoryCache.invalidate()
-        }
-    }
-
     private fun regenerateCache(): MutableList<Clause> {
         return dequeOf(
             if (isOrdered) {
@@ -127,4 +110,11 @@ internal class RootNode(
         )
     }
 
+    override fun getCache(): Sequence<Clause> {
+        return theoryCache.value.asSequence()
+    }
+
+    override fun invalidateCache() {
+        theoryCache.invalidate()
+    }
 }
