@@ -12,27 +12,52 @@ import kotlin.test.fail
 import it.unibo.tuprolog.core.List.Companion as LogicList
 import it.unibo.tuprolog.core.Set.Companion as LogicSet
 import kotlin.collections.List as KtList
+import kotlin.collections.Set as KtSet
 
 internal object ReteTreeAssertionUtils {
-    fun <T> assertItemsAreEquals(expected: KtList<T>, actual: KtList<T>) {
-        assertEquals(expected, actual)
+    fun <T> assertItemsAreEquals(expected: KtList<T>, actual: KtList<T>, message: (() -> String)? = null) {
+        assertEquals(expected, actual, message?.invoke())
     }
 
-    fun <T> assertItemsAreEquals(expected: Iterable<T>, actual: Iterable<T>) {
+    fun <T> assertItemMultisetsAreEqual(expected: KtSet<T>, actual: KtSet<T>, message: (() -> String)? = null) {
+        assertEquals(expected, actual, message?.invoke())
+    }
+
+    fun <T> assertItemsAreEquals(expected: Iterable<T>, actual: Iterable<T>, message: (() -> String)? = null) {
         return assertItemsAreEquals(
             expected.toList(),
-            actual.toList()
+            actual.toList(),
+            message
         )
     }
 
-    fun <T> assertItemsAreEquals(expected: Sequence<T>, actual: Sequence<T>) {
-        return assertItemsAreEquals(
-            expected.toList(),
-            actual.toList()
+    fun <T> assertItemMultisetsAreEqual(expected: Iterable<T>, actual: Iterable<T>, message: (() -> String)? = null) {
+        assertEquals(expected.count(), actual.count())
+        return assertItemMultisetsAreEqual(
+            expected.toSet(),
+            actual.toSet(),
+            message
         )
     }
 
-    fun <T> assertPartialOrderIsTheSame(expected: Iterator<T>, actual: Iterator<T>) {
+    fun <T> assertItemsAreEquals(expected: Sequence<T>, actual: Sequence<T>, message: (() -> String)? = null) {
+        return assertItemsAreEquals(
+            expected.toList(),
+            actual.toList(),
+            message
+        )
+    }
+
+    fun <T> assertItemMultisetsAreEqual(expected: Sequence<T>, actual: Sequence<T>, message: (() -> String)? = null) {
+        assertEquals(expected.count(), actual.count())
+        return assertItemMultisetsAreEqual(
+            expected.toSet(),
+            actual.toSet(),
+            message
+        )
+    }
+
+    fun <T> assertPartialOrderIsTheSame(expected: Iterator<T>, actual: Iterator<T>, message: ((T) -> String)? = null) {
         while (expected.hasNext()) {
             val e = expected.next()
             while (actual.hasNext()) {
@@ -40,22 +65,83 @@ internal object ReteTreeAssertionUtils {
                 if (e == a) break
             }
             if (!actual.hasNext() && expected.hasNext()) {
-                fail("Item $e is out of sequence")
+                fail(message?.invoke(e) ?: "Item $e is out of sequence")
             }
         }
     }
 
-    fun <T> assertPartialOrderIsTheSame(expected: Iterable<T>, actual: Iterable<T>) {
+    fun <T> assertPartialOrderIsTheSame(expected: Iterable<T>, actual: Iterable<T>, message: ((T) -> String)? = null) {
         return assertPartialOrderIsTheSame(
             expected.iterator(),
-            actual.iterator()
+            actual.iterator(),
+            message
         )
     }
 
-    fun <T> assertPartialOrderIsTheSame(expected: Sequence<T>, actual: Sequence<T>) {
+    fun <T> assertPartialOrderIsTheSame(expected: Sequence<T>, actual: Sequence<T>, message: ((T) -> String)? = null) {
         return assertPartialOrderIsTheSame(
             expected.iterator(),
-            actual.iterator()
+            actual.iterator(),
+            message
+        )
+    }
+
+    fun <T> assertSubMultisetOf(expected: MutableList<T>, actual: MutableList<T>, message: ((T) -> String)? = null) {
+        val i = expected.listIterator()
+        while (i.hasNext()) {
+            val e = i.next()
+            val j = actual.listIterator()
+            while (j.hasNext()) {
+                val a = j.next()
+                if (a == e) {
+                    i.remove()
+                    j.remove()
+                    break
+                }
+            }
+            if (!j.hasNext() && i.hasNext()) {
+                fail(message?.invoke(e) ?: "Item $e is not present")
+            }
+        }
+    }
+
+    fun <T> assertSubMultisetOf(expected: Sequence<T>, actual: Sequence<T>, message: ((T) -> String)? = null) {
+        return assertSubMultisetOf(
+            expected.toMutableList(),
+            actual.toMutableList(),
+            message
+        )
+    }
+
+    fun <T> assertSubMultisetOf(expected: Iterable<T>, actual: Iterable<T>, message: ((T) -> String)? = null) {
+        return assertSubMultisetOf(
+            expected.toMutableList(),
+            actual.toMutableList(),
+            message
+        )
+    }
+
+    fun <T> assertNotContainedIn(contained: KtList<T>, container: KtList<T>, message: ((T) -> String)? = null) {
+        for (clause in contained) {
+            if (container.any { it == clause }) {
+                fail(message?.invoke(clause) ?: "Item $clause is already present")
+            }
+        }
+    }
+
+    fun <T> assertNotContainedIn(contained: Sequence<T>, container: Sequence<T>, message: ((T) -> String)? = null) {
+        return assertNotContainedIn(
+            contained.toList(),
+            container.toList(),
+            message
+        )
+    }
+
+    fun <T> assertNotContainedIn(contained: Iterable<T>, container: Iterable<T>, message: ((T) -> String)? = null) {
+        return assertNotContainedIn(
+            contained.toList(),
+            container.toList(),
+            message
         )
     }
 
@@ -65,7 +151,7 @@ internal object ReteTreeAssertionUtils {
     }
 
     fun assertIsEmptyAndUnordered(tree: ReteTree) {
-        assertTrue(tree.isOrdered)
+        assertFalse(tree.isOrdered)
         assertIsEmpty(tree)
     }
 
