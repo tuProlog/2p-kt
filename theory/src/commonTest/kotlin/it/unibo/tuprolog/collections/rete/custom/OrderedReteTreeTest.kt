@@ -9,10 +9,7 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPa
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.clauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -496,8 +493,6 @@ class OrderedReteTreeTest {
     }
 
     @Test
-    // questo ci sta un pò ad andare... e poi fallisce
-    // dopo che lo si fa passare bisogna andarci col profiler per capire perchè ci sta tanto
     fun nonGroundClausesAreMatchedByGroundQueries() {
         val groundTerms = clauses.asSequence()
             .filterIsInstance<Rule>()
@@ -520,7 +515,7 @@ class OrderedReteTreeTest {
 
 //                    println("handle query: $query")
 
-                    val clauses = groundTerms.map { Rule.of(Struct.of(functor, clauseArgs), it) }
+                    val clauses = (0..4).map { Rule.of(Struct.of(functor, clauseArgs), Integer.of(it)) }
 
                     val tree = reteTreeOf(clauses)
 

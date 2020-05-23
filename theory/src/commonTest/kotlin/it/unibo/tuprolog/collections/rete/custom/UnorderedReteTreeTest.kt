@@ -11,10 +11,7 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertSu
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.clauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -465,18 +462,20 @@ class UnorderedReteTreeTest {
 
                 val tree = reteTreeOf(clauses)
                 assertIsNonEmpty(tree)
-
                 assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(template))
+                assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
 
-                for (i in clauses.indices) {
-                    assertItemMultisetsAreEqual(sequenceOf(clauses[i]), tree.get(clauses[i]))
+                for (c in clauses) {
+                    assertItemMultisetsAreEqual(sequenceOf(c), tree.get(c))
                 }
 
-                for (element in clauses) {
-                    assertItemMultisetsAreEqual(sequenceOf(element), tree.retractFirst(template))
+                for (c in clauses) {
+                    assertItemMultisetsAreEqual(sequenceOf(c), tree.retractFirst(template))
                 }
 
                 assertIsEmpty(tree)
+                assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
+                assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
 
                 for (i in clauses.size - 1 downTo 0) {
                     tree.assertA(clauses[i])
@@ -485,17 +484,109 @@ class UnorderedReteTreeTest {
                     assertItemMultisetsAreEqual(clauses.subList(i, clauses.size).asSequence(), tree.get(template))
                 }
 
+                assertIsNonEmpty(tree)
+                assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(template))
+                assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
+
                 for (element in clauses) {
                     assertItemMultisetsAreEqual(sequenceOf(element), tree.retractOnly(template, 1))
                 }
 
                 assertIsEmpty(tree)
+                assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
+                assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
 
                 for (element in clauses) {
                     tree.assertZ(element)
                 }
 
+                assertIsNonEmpty(tree)
+                assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(template))
+                assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
+
                 assertItemMultisetsAreEqual(clauses.asSequence(), tree.retractAll(template))
+                assertIsEmpty(tree)
+                assertItemMultisetsAreEqual(emptySequence(), tree.get(template))
+                assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
+            }
+        }
+    }
+
+    @Test
+    fun nonGroundClausesAreMatchedByGroundQueries() {
+        val groundTerms = clauses.asSequence()
+            .filterIsInstance<Rule>()
+            .flatMap { sequenceOf(it.head) + it.head.argsSequence }
+            .filter { it.isGround }
+            .toSet()
+        val families = clauses.filterIsInstance<Rule>()
+            .map { it.head.functor to it.head.arity }
+            .filter { (_, arity) -> arity > 0 }
+            .toSet()
+
+
+        for ((functor, arity) in families) {
+            for (args in groundTerms.allChunksOfSize(arity)) {
+                for (i in 0 until arity) {
+                    val clauseArgs = args.toMutableList()
+                    clauseArgs[i] = Var.anonymous()
+
+                    val query = Rule.of(Struct.of(functor, args), Var.anonymous())
+
+//                    println("handle query: $query")
+
+                    val clauses = (0..4).map { Rule.of(Struct.of(functor, clauseArgs), Integer.of(it)) }
+
+                    val tree = reteTreeOf(clauses)
+
+                    assertIsNonEmpty(tree)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(query))
+
+                    for (j in clauses.indices) {
+                        assertSubMultisetOf(tree.retractFirst(query), clauses.asSequence())
+
+                        assertEquals(clauses.size - j - 1, tree.size)
+                    }
+
+                    assertIsEmpty(tree)
+                    assertItemMultisetsAreEqual(emptySequence(), tree.get(query))
+                    assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
+
+                    for (j in clauses.size - 1 downTo 0) {
+                        tree.assertA(clauses[j])
+                        assertIsNonEmpty(tree)
+
+                        assertItemMultisetsAreEqual(clauses.subList(j, clauses.size).asSequence(), tree.get(query))
+                    }
+
+                    assertIsNonEmpty(tree)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(query))
+
+                    for (j in clauses.indices) {
+                        assertSubMultisetOf(tree.retractOnly(query, 1), clauses.asSequence())
+
+                        assertEquals(clauses.size - j - 1, tree.size)
+                    }
+
+                    assertIsEmpty(tree)
+                    assertItemMultisetsAreEqual(emptySequence(), tree.get(query))
+                    assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
+
+                    for (c in clauses) {
+                        tree.assertZ(c)
+                    }
+
+                    assertIsNonEmpty(tree)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(query))
+
+                    assertItemMultisetsAreEqual(clauses.asSequence(), tree.retractAll(query))
+                    assertIsEmpty(tree)
+                    assertItemMultisetsAreEqual(emptySequence(), tree.get(query))
+                    assertItemMultisetsAreEqual(emptySequence(), tree.clauses)
+                }
             }
         }
     }
