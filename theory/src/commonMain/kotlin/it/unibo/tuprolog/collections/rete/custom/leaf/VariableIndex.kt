@@ -32,6 +32,8 @@ internal class VariableIndex(
     override fun retractAll(clause: Clause): Sequence<Clause> =
         retractAllIndexed(clause).map { it.innerClause }
 
+    override fun invalidateCache() {}
+
     override fun getCache(): Sequence<SituatedIndexedClause> =
         variables.asSequence()
 

@@ -42,7 +42,7 @@ internal sealed class ArityNode : ReteNode {
                 emptySequence()
             } else {
                 result.removeFromIndex()
-                theoryCache.invalidate()
+                invalidateCache()
                 sequenceOf(result.innerClause)
             }
         }
@@ -90,17 +90,31 @@ internal sealed class ArityNode : ReteNode {
                 }
             }
 
+        override fun invalidateCache() {
+            theoryCache.invalidate()
+            numericIndex.invalidateCache()
+            atomicIndex.invalidateCache()
+            variableIndex.invalidateCache()
+            compoundIndex.invalidateCache()
+        }
+
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()
 
         private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
-            retractAllOrderedIndexed(clause).map { it.innerClause }
+            retractAllOrderedIndexed(clause).map { it.innerClause }.let {
+                invalidCache(it)
+                it
+            }
 
         private fun getOrdered(clause: Clause): Sequence<Clause> =
             getOrderedIndexed(clause).map { it.innerClause }
 
         private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
-            retractAllUnorderedIndexed(clause).map { it.innerClause }
+            retractAllUnorderedIndexed(clause).map { it.innerClause }.let {
+                invalidCache(it)
+                it
+            }
 
         private fun getUnordered(clause: Clause): Sequence<Clause> =
             getUnorderedIndexed(clause).map { it.innerClause }
@@ -112,13 +126,19 @@ internal sealed class ArityNode : ReteNode {
                         Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             numericIndex.retractAllIndexed(clause)
-                        )
+                        ).let { res ->
+                            invalidCache(res)
+                            res
+                        }
                     }
                     is Atom -> {
                         Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             atomicIndex.retractAllIndexed(clause)
-                        )
+                        ).let { res ->
+                            invalidCache(res)
+                            res
+                        }
                     }
                     is Var -> {
                         Utils.merge(
@@ -126,13 +146,19 @@ internal sealed class ArityNode : ReteNode {
                             numericIndex.retractAllIndexed(clause),
                             atomicIndex.retractAllIndexed(clause),
                             compoundIndex.retractAllIndexed(clause)
-                        )
+                        ).let { res ->
+                            invalidCache(res)
+                            res
+                        }
                     }
                     else -> {
                         Utils.merge(
                             variableIndex.retractAllIndexed(clause),
                             compoundIndex.retractAllIndexed(clause)
-                        )
+                        ).let { res ->
+                            invalidCache(res)
+                            res
+                        }
                     }
                 }
             }
@@ -143,21 +169,33 @@ internal sealed class ArityNode : ReteNode {
                     is Numeric -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause)
-                    )
+                    ).let { res ->
+                        invalidCache(res)
+                        res
+                    }
                     is Atom -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause),
                         atomicIndex.retractAllIndexed(clause)
-                    )
+                    ).let { res ->
+                        invalidCache(res)
+                        res
+                    }
                     is Var -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause),
                         atomicIndex.retractAllIndexed(clause),
                         compoundIndex.retractAllIndexed(clause)
-                    )
+                    ).let { res ->
+                        invalidCache(res)
+                        res
+                    }
                     else -> Utils.flattenIndexed(
                         variableIndex.retractAllIndexed(clause),
                         compoundIndex.retractAllIndexed(clause)
-                    )
+                    ).let { res ->
+                        invalidCache(res)
+                        res
+                    }
                 }
             }
 
@@ -394,6 +432,8 @@ internal sealed class ArityNode : ReteNode {
             result.forEach { atoms.remove(it) }
             return result.map { it.innerClause }.asSequence()
         }
+
+        override fun invalidateCache() {}
 
         override fun getCache(): Sequence<SituatedIndexedClause> {
             return atoms.asSequence()

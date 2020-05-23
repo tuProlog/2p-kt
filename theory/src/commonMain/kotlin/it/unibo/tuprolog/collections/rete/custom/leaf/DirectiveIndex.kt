@@ -47,6 +47,8 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
         return result.asSequence().map { it.innerClause }
     }
 
+    override fun invalidateCache() {}
+
     override fun getCache(): Sequence<SituatedIndexedClause> =
         directives.asSequence().map {
             SituatedIndexedClause.of(it, object : Retractable {

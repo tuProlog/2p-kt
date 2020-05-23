@@ -51,6 +51,11 @@ internal sealed class FunctorNode : ReteNode {
                 it
             } ?: emptySequence()
 
+        override fun invalidateCache() {
+            theoryCache.invalidate()
+            arities.values.forEach { it.invalidateCache() }
+        }
+
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()
 
@@ -122,6 +127,11 @@ internal sealed class FunctorNode : ReteNode {
                 invalidCache(it)
                 it
             } ?: emptySequence()
+
+        override fun invalidateCache() {
+            theoryCache.invalidate()
+            arities.values.forEach { it.invalidateCache() }
+        }
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()

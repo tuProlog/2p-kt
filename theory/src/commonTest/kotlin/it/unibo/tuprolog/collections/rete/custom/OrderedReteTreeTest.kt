@@ -6,7 +6,7 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIs
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsNonEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertItemsAreEquals
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame
-import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.clauses
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.defaultClauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
 import it.unibo.tuprolog.core.*
@@ -32,19 +32,19 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeCanContainAllSortsOfClauses() {
-        val tree = reteTreeOf(clauses)
+        val tree = reteTreeOf(defaultClauses)
 
         assertIsNonEmpty(tree)
-        assertEquals(clauses.size, tree.size)
+        assertEquals(defaultClauses.size, tree.size)
     }
 
     @Test
     fun anOrderedTreePreservesTheTotalOrderOfClauses1() {
-        val tree = reteTreeOf(clauses)
+        val tree = reteTreeOf(defaultClauses)
 
         assertIsNonEmpty(tree)
-        assertEquals(clauses.size, tree.size)
-        assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+        assertEquals(defaultClauses.size, tree.size)
+        assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
     }
 
     @Test
@@ -53,13 +53,13 @@ class OrderedReteTreeTest {
 
         assertIsEmptyAndOrdered(tree)
 
-        clauses.forEach {
+        defaultClauses.forEach {
             tree.assertZ(it)
             assertIsNonEmpty(tree)
         }
 
-        assertEquals(clauses.size, tree.size)
-        assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+        assertEquals(defaultClauses.size, tree.size)
+        assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
     }
 
     @Test
@@ -68,18 +68,18 @@ class OrderedReteTreeTest {
 
         assertIsEmptyAndOrdered(tree)
 
-        clauses.forEach {
+        defaultClauses.forEach {
             tree.assertA(it)
             assertIsNonEmpty(tree)
         }
 
-        assertEquals(clauses.size, tree.size)
-        assertItemsAreEquals(clauses.asReversed().asSequence(), tree.clauses)
+        assertEquals(defaultClauses.size, tree.size)
+        assertItemsAreEquals(defaultClauses.asReversed().asSequence(), tree.clauses)
     }
 
     @Test
     fun aClauseCanBeRetractedInSeveralWays1() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             var tree = reteTreeOf()
             assertIsEmpty(tree)
@@ -116,7 +116,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aClauseCanBeRetractedInSeveralWays2() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             var tree = reteTreeOf()
             assertIsEmpty(tree)
@@ -151,7 +151,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aClauseCanBeRetractedSeveralTimes1() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             val tree = reteTreeOf()
             assertIsEmptyAndOrdered(tree)
@@ -178,7 +178,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aClauseCanBeRetractedSeveralTimes2() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             val tree = reteTreeOf()
             assertIsEmptyAndOrdered(tree)
@@ -205,7 +205,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeIsMutable1() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             val tree = reteTreeOf()
             assertIsEmptyAndOrdered(tree)
@@ -238,7 +238,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeIsMutable2() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
 
             val tree = reteTreeOf()
             assertIsEmptyAndOrdered(tree)
@@ -271,7 +271,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeMayContainSeveralCopiesOfAClause1() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndOrdered(tree)
@@ -288,7 +288,7 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeMayContainSeveralCopiesOfAClause2() {
-        clauses.forEach { aClause ->
+        defaultClauses.forEach { aClause ->
             val tree = reteTreeOf()
 
             assertIsEmptyAndOrdered(tree)
@@ -309,11 +309,11 @@ class OrderedReteTreeTest {
 
         assertIsEmptyAndOrdered(tree)
 
-        for (fact in clauses) {
+        for (fact in defaultClauses) {
             tree.assertZ(fact)
         }
 
-        assertEquals(clauses.size, tree.size)
+        assertEquals(defaultClauses.size, tree.size)
 
         for ((template, factsAndRules) in factsAndRulesFamilies) {
             assertPartialOrderIsTheSame(factsAndRules.asSequence(), tree.clauses)
@@ -382,13 +382,13 @@ class OrderedReteTreeTest {
 
     @Test
     fun aTreeCanAlwaysRetrieveTheClausesItContains() {
-        val tree = reteTreeOf(clauses)
+        val tree = reteTreeOf(defaultClauses)
 
         assertIsNonEmpty(tree)
-        assertEquals(clauses.size, tree.size)
-        assertItemsAreEquals(clauses.asSequence(), tree.clauses)
+        assertEquals(defaultClauses.size, tree.size)
+        assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
 
-        for (clause in clauses) {
+        for (clause in defaultClauses) {
             assertPartialOrderIsTheSame(sequenceOf(clause), tree.get(clause))
         }
     }
@@ -424,16 +424,14 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreeFiltersClausesByBodyAsWell() {
-        val groundTerms = clauses.asSequence()
+        val groundTerms = defaultClauses.asSequence()
             .filterIsInstance<Rule>()
             .flatMap { sequenceOf(it.head) + it.head.argsSequence }
             .filter { it.isGround }
             .toSet()
-        val families = clauses.filterIsInstance<Rule>().map { it.head.functor to it.head.arity }.toSet()
-
+        val families = defaultClauses.filterIsInstance<Rule>().map { it.head.functor to it.head.arity }.toSet()
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {
-
                 val head = Struct.of(functor, args)
                 val template = Rule.of(head, Var.anonymous())
 
@@ -494,12 +492,12 @@ class OrderedReteTreeTest {
 
     @Test
     fun nonGroundClausesAreMatchedByGroundQueries() {
-        val groundTerms = clauses.asSequence()
+        val groundTerms = defaultClauses.asSequence()
             .filterIsInstance<Rule>()
             .flatMap { sequenceOf(it.head) + it.head.argsSequence }
             .filter { it.isGround }
             .toSet()
-        val families = clauses.filterIsInstance<Rule>()
+        val families = defaultClauses.filterIsInstance<Rule>()
             .map { it.head.functor to it.head.arity }
             .filter { (_, arity) -> arity > 0 }
             .toSet()

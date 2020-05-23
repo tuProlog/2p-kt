@@ -49,6 +49,11 @@ internal class RuleNode(
             it
         } ?: emptySequence()
 
+    override fun invalidateCache() {
+        theoryCache.invalidate()
+        functors.values.forEach { it.invalidateCache() }
+    }
+
     override fun getCache(): Sequence<SituatedIndexedClause> =
         theoryCache.value.asSequence()
 
