@@ -1,21 +1,20 @@
 package it.unibo.tuprolog.collections.rete.custom
 
-import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertDoesNotMatch
+import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.allChunksOfSize
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsNonEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertItemsAreEquals
-import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertMatches
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPartialOrderIsTheSame
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.clauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class OrderedReteTreeTest {
 
@@ -428,8 +427,55 @@ class OrderedReteTreeTest {
 
     @Test
     fun anOrderedTreeFiltersClausesByBodyAsWell() {
-        for (factOrRule in factsAndRules) {
-            val ruleList = factOrRule
+        val groundTerms = clauses.asSequence()
+            .filterIsInstance<Rule>()
+            .flatMap { sequenceOf(it.head) + it.head.argsSequence }
+            .filter { it.isGround }
+            .toSet()
+        val families = clauses.filterIsInstance<Rule>().map { it.head.functor to it.head.arity }.toSet()
+
+        for ((functor, arity) in families) {
+            for (args in groundTerms.allChunksOfSize(arity)) {
+
+                val head = Struct.of(functor, args)
+                val template = Rule.of(head, Var.anonymous())
+
+                val clauses = groundTerms.map { Rule.of(head, it) }
+
+                val tree = reteTreeOf(clauses)
+                assertIsNonEmpty(tree)
+
+                assertItemsAreEquals(clauses.asSequence(), tree.get(template))
+
+                for (i in clauses.indices) {
+                    assertItemsAreEquals(sequenceOf(clauses[i]), tree.get(clauses[i]))
+                }
+
+                for (element in clauses) {
+                    assertItemsAreEquals(sequenceOf(element), tree.retractFirst(template))
+                }
+
+                assertIsEmpty(tree)
+
+                for (i in clauses.size - 1 downTo 0) {
+                    tree.assertA(clauses[i])
+                    assertIsNonEmpty(tree)
+
+                    assertItemsAreEquals(clauses.subList(i, clauses.size).asSequence(), tree.get(template))
+                }
+
+                for (element in clauses) {
+                    assertItemsAreEquals(sequenceOf(element), tree.retractOnly(template, 1))
+                }
+
+                assertIsEmpty(tree)
+
+                for (element in clauses) {
+                    tree.assertZ(element)
+                }
+
+                assertItemsAreEquals(clauses.asSequence(), tree.retractAll(template))
+            }
         }
     }
 }

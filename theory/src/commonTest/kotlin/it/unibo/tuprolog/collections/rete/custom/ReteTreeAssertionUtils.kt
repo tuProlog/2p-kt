@@ -120,6 +120,14 @@ internal object ReteTreeAssertionUtils {
         }.toList()
     }
 
+    fun <T> Iterable<T>.allChunksOfSize(size: Int): KtList<KtList<T>> {
+        return if (size == 0) {
+            emptyList()
+        } else {
+            chunked(size).filter { it.size == size }
+        }
+    }
+
     private val moreArguments = listOf(
         Atom.of("a"),
         Integer.of(2),
