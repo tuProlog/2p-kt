@@ -11,7 +11,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
-import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal sealed class FunctorNode : ReteNode {
@@ -138,13 +137,17 @@ internal sealed class FunctorNode : ReteNode {
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             if (clause.isGlobal()) {
-                Utils.merge(
+                val partialResult = Utils.merge(
                     arities.values.map {
                         it.extractGlobalIndexedSequence(clause)
                     })
                     .filter { it.innerClause matches clause }
-                    .map { it.removeFromIndex(); it }
-                    .buffered()
+                    .toList()
+                if (partialResult.isNotEmpty()) {
+                    invalidateCache()
+                    partialResult.forEach { it.removeFromIndex() }
+                }
+                partialResult.asSequence()
             }
             else {
                 arities[clause.nestedArity()]?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
