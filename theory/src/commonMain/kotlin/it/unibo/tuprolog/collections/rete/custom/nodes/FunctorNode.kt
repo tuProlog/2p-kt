@@ -53,10 +53,10 @@ internal sealed class FunctorNode : ReteNode {
             clause.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel).let {
                 when (it) {
                     0 -> arities.getOrPut(it) {
-                        ArityNode.ZeroArityReteNode(ordered)
+                        ZeroArityReteNode(ordered)
                     }
                     else -> arities.getOrPut(it) {
-                        ArityNode.FamilyArityReteNode(ordered, nestingLevel)
+                        FamilyArityReteNode(ordered, nestingLevel)
                     }
                 }
             }.op(clause)
@@ -98,13 +98,13 @@ internal sealed class FunctorNode : ReteNode {
 
         override fun assertA(clause: IndexedClause) {
             arities.getOrPut(clause.nestedArity()) {
-                ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
+                FamilyArityIndexingNode(ordered, nestingLevel)
             }.assertA(clause + this)
         }
 
         override fun assertZ(clause: IndexedClause) {
             arities.getOrPut(clause.nestedArity()) {
-                ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
+                FamilyArityIndexingNode(ordered, nestingLevel)
             }.assertZ(clause + this)
         }
 
