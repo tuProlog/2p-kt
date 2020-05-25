@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.rete.custom.clause
 
+import it.unibo.tuprolog.collections.rete.custom.Cacheable
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.core.Clause
 
@@ -10,8 +11,7 @@ internal interface SituatedIndexedClause : IndexedClause {
 
     companion object {
         fun of(indexed: IndexedClause, index: Retractable): SituatedIndexedClause {
-            return object :
-                SituatedIndexedClause {
+            return object : SituatedIndexedClause {
                 override val index: Long
                     get() = indexed.index
 
@@ -21,8 +21,13 @@ internal interface SituatedIndexedClause : IndexedClause {
                 override fun <R> map(mapper: (Clause) -> R) =
                     indexed.map(mapper)
 
-                override fun removeFromIndex() =
+                override fun removeFromIndex() {
                     index.retractIndexed(this)
+                    traversedCacheables.forEach { it.invalidateCache() }
+                }
+
+                override val traversedCacheables: List<Cacheable<*>>
+                    get() = indexed.traversedCacheables
 
                 override fun equals(other: Any?): Boolean {
                     if (this === other) return true

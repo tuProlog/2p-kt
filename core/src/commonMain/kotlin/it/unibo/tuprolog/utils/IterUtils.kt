@@ -149,5 +149,5 @@ fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> {
 }
 
 fun <T> Sequence<T>.buffered(): Sequence<T> {
-    return this
+    return this.toList().asSequence()
 }

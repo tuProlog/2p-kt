@@ -49,16 +49,14 @@ internal class VariableIndex(
         retractFromMutableList(clause, variables)
 
 
-    private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>)
-            : SituatedIndexedClause? {
+    private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
 
         return if (actualIndex == -1) null
         else index[actualIndex]
     }
 
-    private fun retractFromMutableList(clause: Clause, index: MutableList<SituatedIndexedClause>)
-            : Sequence<SituatedIndexedClause> {
+    private fun retractFromMutableList(clause: Clause, index: MutableList<SituatedIndexedClause>): Sequence<SituatedIndexedClause> {
         val result = index.filter { it.innerClause matches clause }
         result.forEach { index.remove(it) }
         return result.asSequence()

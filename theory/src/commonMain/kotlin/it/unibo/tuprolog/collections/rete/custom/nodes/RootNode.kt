@@ -8,6 +8,7 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.DirectiveIndex
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class RootNode(
@@ -27,8 +28,7 @@ internal class RootNode(
     }
 
     override val clauses: Sequence<Clause>
-        get() =
-            theoryCache.value.asSequence()
+        get() = theoryCache.value.asSequence()
 
     override fun get(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) directives.get(clause)
@@ -42,10 +42,7 @@ internal class RootNode(
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
-        (1..limit)
-            .map { retractFirst(clause) }
-            .asSequence()
-            .flatMap { it }
+        (1 .. limit).asSequence().flatMap { retractFirst(clause) }.buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
@@ -55,7 +52,7 @@ internal class RootNode(
         }
 
     override fun deepCopy(): ReteTree =
-        RootNode(clauses.toList(), isOrdered)
+        RootNode(clauses.asIterable(), isOrdered)
 
     override fun assertA(clause: Clause) {
         val indexed = assignLowerIndex(clause)
@@ -78,8 +75,11 @@ internal class RootNode(
         theoryCache.ifValid {
             it.add(clause)
         }
-        if (clause.isDirective) directives.assertZ(indexed)
-        else rules.assertZ(indexed)
+        if (clause.isDirective) {
+            directives.assertZ(indexed)
+        } else {
+            rules.assertZ(indexed)
+        }
     }
 
     private fun assignHigherIndex(clause: Clause): IndexedClause =

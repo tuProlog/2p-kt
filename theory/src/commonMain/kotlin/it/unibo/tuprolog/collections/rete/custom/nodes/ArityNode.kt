@@ -15,6 +15,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal sealed class ArityNode : ReteNode {
@@ -322,14 +323,14 @@ internal sealed class ArityNode : ReteNode {
             }
 
         override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
-            return if (ordered)
+            return if (ordered) {
                 Utils.merge(
                     atomicIndex.extractGlobalIndexedSequence(clause),
                     numericIndex.extractGlobalIndexedSequence(clause),
                     variableIndex.extractGlobalIndexedSequence(clause),
                     compoundIndex.extractGlobalIndexedSequence(clause)
                 )
-            else {
+            } else {
                 Utils.flattenIndexed(
                     atomicIndex.extractGlobalIndexedSequence(clause),
                     numericIndex.extractGlobalIndexedSequence(clause),
@@ -350,8 +351,9 @@ internal sealed class ArityNode : ReteNode {
         override fun retractFirst(clause: Clause): Sequence<Clause> {
             val actualIndex = atoms.indexOfFirst { it.innerClause matches clause }
 
-            return if (actualIndex == -1) emptySequence()
-            else {
+            return if (actualIndex == -1) {
+                emptySequence()
+            } else {
                 atoms[actualIndex].let {
                     atoms.removeAt(actualIndex)
                     sequenceOf(it.innerClause)
@@ -374,11 +376,23 @@ internal sealed class ArityNode : ReteNode {
             atoms.add(SituatedIndexedClause.of(clause, this))
         }
 
-        override fun retractAll(clause: Clause): Sequence<Clause> {
-            val result = atoms.filter { it.innerClause matches clause }
-            result.forEach { atoms.remove(it) }
-            return result.map { it.innerClause }.asSequence()
-        }
+        override fun retractAll(clause: Clause): Sequence<Clause> =
+            sequence {
+                val iter = atoms.iterator()
+                while (iter.hasNext()) {
+                    val it = iter.next()
+                    val innerClause = it.innerClause
+                    if (innerClause matches clause) {
+                        iter.remove()
+                        yield(innerClause)
+                    }
+                }
+            }.buffered()
+//        {
+//            val result = atoms.filter { it.innerClause matches clause }
+//            result.forEach { atoms.remove(it) }
+//            return result.map { it.innerClause }.asSequence()
+//        }
 
         override fun getCache(): Sequence<SituatedIndexedClause> {
             return atoms.asSequence()

@@ -8,6 +8,7 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.Cached
@@ -171,10 +172,11 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         private fun Clause.isGlobal(): Boolean =
-            this.head!!.nestedFirstArgument(nestingLevel) is Var
+            this is Rule && this.head.nestedFirstArgument(nestingLevel) is Var
 
         private fun Clause.nestedArity(): Int =
-            this.head!!.arityOfNestedFirstArgument(nestingLevel)
+            (this as? Rule)?.head?.arityOfNestedFirstArgument(nestingLevel)
+                ?: error("The nestedArity method cannot be invoked on non-rule clauses")
 
         private fun IndexedClause.nestedArity(): Int =
             this.innerClause.head!!.arityOfNestedFirstArgument(nestingLevel)

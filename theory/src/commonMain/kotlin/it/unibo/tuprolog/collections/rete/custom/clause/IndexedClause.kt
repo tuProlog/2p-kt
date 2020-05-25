@@ -1,16 +1,22 @@
 package it.unibo.tuprolog.collections.rete.custom.clause
 
+import it.unibo.tuprolog.collections.rete.custom.Cacheable
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.utils.LongIndexed
 
-interface IndexedClause : LongIndexed<Clause> {
+internal interface IndexedClause : LongIndexed<Clause> {
 
     /**Retrieves the decorated [Clause]*/
     val innerClause: Clause
         get() = value
 
+    val traversedCacheables: List<Cacheable<*>>
+
+    operator fun plus(traversed: Cacheable<*>): IndexedClause =
+        of(index, innerClause, traversedCacheables + traversed)
+
     companion object {
-        fun wrap(indexedClause: LongIndexed<Clause>): IndexedClause {
+        fun wrap(indexedClause: LongIndexed<Clause>, vararg traversed: Cacheable<*>): IndexedClause {
             return object : IndexedClause {
                 override val index: Long
                     get() = indexedClause.index
@@ -18,14 +24,24 @@ interface IndexedClause : LongIndexed<Clause> {
                 override val value: Clause
                     get() = indexedClause.value
 
+                override val traversedCacheables: List<Cacheable<*>> = listOf(*traversed)
+
                 override fun <R> map(mapper: (Clause) -> R) =
                     indexedClause.map(mapper)
             }
         }
 
-        fun of(index: Long, clause: Clause): IndexedClause {
+        fun of(index: Long, clause: Clause, vararg traversed: Cacheable<*>): IndexedClause {
             return wrap(
-                LongIndexed.of(index, clause)
+                LongIndexed.of(index, clause),
+                *traversed
+            )
+        }
+
+        fun of(index: Long, clause: Clause, traversed: List<Cacheable<*>>): IndexedClause {
+            return wrap(
+                LongIndexed.of(index, clause),
+                *traversed.toTypedArray()
             )
         }
     }
