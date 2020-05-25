@@ -453,7 +453,7 @@ class UnorderedReteTreeTest {
                 val head = Struct.of(functor, args)
                 val template = Rule.of(head, Var.anonymous())
 
-                val clauses = groundTerms.map { Rule.of(head, it) }
+                val clauses = (0..4).map { Rule.of(Struct.of(functor, args), Integer.of(it)) }
 
                 val tree = reteTreeOf(clauses)
                 assertIsNonEmpty(tree)
@@ -483,9 +483,9 @@ class UnorderedReteTreeTest {
                 assertItemMultisetsAreEqual(clauses.asSequence(), tree.get(template))
                 assertItemMultisetsAreEqual(clauses.asSequence(), tree.clauses)
 
-                for (element in clauses) {
+                for (i in clauses.indices) {
                     tree.retractOnly(template, 1)
-//                    assertItemMultisetsAreEqual(sequenceOf(element), tree.retractOnly(template, 1))
+                    assertEquals(clauses.size - i - 1, tree.size)
                 }
 
                 assertIsEmpty(tree)
@@ -528,8 +528,6 @@ class UnorderedReteTreeTest {
                     clauseArgs[i] = Var.anonymous()
 
                     val query = Rule.of(Struct.of(functor, args), Var.anonymous())
-
-//                    println("handle query: $query")
 
                     val clauses = (0..4).map { Rule.of(Struct.of(functor, clauseArgs), Integer.of(it)) }
 

@@ -96,8 +96,8 @@ internal class AtomIndex(
                 index.values.asSequence().map {
                     Utils.removeAllLazily(it, clause)
                 }
-            ).buffered()
-        }
+            )
+        }.buffered()
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
