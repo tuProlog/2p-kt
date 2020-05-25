@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.core.Clause
-
 internal interface PrototypeClauseCollectionTest {
 
     fun collectionHasTheCorrectSize()

@@ -21,7 +21,7 @@ protected constructor(
     override fun add(clause: Clause): Self =
         newCollectionBuilder(
             rete.deepCopy().apply {
-                assertA(Theory.checkClauseCorrect(clause))
+                assertZ(Theory.checkClauseCorrect(clause))
             }
         )
 
