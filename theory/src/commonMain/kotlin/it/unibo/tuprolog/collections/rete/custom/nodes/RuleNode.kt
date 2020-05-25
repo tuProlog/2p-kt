@@ -56,6 +56,7 @@ internal class RuleNode(
 
     override fun invalidateCache() {
         theoryCache.invalidate()
+//        functors.values.forEach { it.invalidateCache() }
     }
 
     private fun regenerateCache(): MutableList<SituatedIndexedClause> =

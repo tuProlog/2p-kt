@@ -32,16 +32,17 @@ internal sealed class ArityNode : ReteNode {
         private val theoryCache: Cached<MutableList<SituatedIndexedClause>> = Cached.of(this::regenerateCache)
 
         override fun retractFirst(clause: Clause): Sequence<Clause> {
-            val result = if (ordered)
+            val result = if (ordered) {
                 orderedLookahead(clause)
-            else
+            } else {
                 anyLookahead(clause)
+            }
 
-            return if (result == null){
+            return if (result == null) {
                 emptySequence()
             } else {
                 result.removeFromIndex()
-                theoryCache.invalidate()
+                invalidateCache()
                 sequenceOf(result.innerClause)
             }
         }
@@ -49,20 +50,21 @@ internal sealed class ArityNode : ReteNode {
 
         override fun get(clause: Clause): Sequence<Clause> {
             return if (clause.isGlobal()) {
-                if (ordered)
+                if (ordered) {
                     Utils.merge(
                         atomicIndex.extractGlobalIndexedSequence(clause),
                         variableIndex.extractGlobalIndexedSequence(clause),
                         numericIndex.extractGlobalIndexedSequence(clause),
                         compoundIndex.extractGlobalIndexedSequence(clause)
                     ).map { it.innerClause }
-                else
+                } else {
                     Utils.flattenIndexed(
                         atomicIndex.extractGlobalIndexedSequence(clause),
                         variableIndex.extractGlobalIndexedSequence(clause),
                         numericIndex.extractGlobalIndexedSequence(clause),
                         compoundIndex.extractGlobalIndexedSequence(clause)
                     ).map { it.innerClause }
+                }
             } else {
                 if (ordered) getOrdered(clause)
                 else getUnordered(clause)
@@ -87,123 +89,117 @@ internal sealed class ArityNode : ReteNode {
             theoryCache.value.asSequence()
 
         private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
-            retractAllOrderedIndexed(clause).map { it.innerClause }
+            retractAllOrderedIndexed(clause).map { it.innerClause }.invalidatingCacheIfNonEmpty()
 
         private fun getOrdered(clause: Clause): Sequence<Clause> =
             getOrderedIndexed(clause).map { it.innerClause }
 
         private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
-            retractAllUnorderedIndexed(clause).map { it.innerClause }
+            retractAllUnorderedIndexed(clause).map { it.innerClause }.invalidatingCacheIfNonEmpty()
 
         private fun getUnordered(clause: Clause): Sequence<Clause> =
             getUnorderedIndexed(clause).map { it.innerClause }
 
         protected fun retractAllOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.nestedFirstArgument().let {
-                return when (it) {
-                    is Numeric -> {
-                        Utils.merge(
-                            variableIndex.retractAllIndexed(clause),
-                            numericIndex.retractAllIndexed(clause)
-                        )
-                    }
-                    is Atom -> {
-                        Utils.merge(
-                            variableIndex.retractAllIndexed(clause),
-                            atomicIndex.retractAllIndexed(clause)
-                        )
-                    }
-                    is Var -> {
-                        Utils.merge(
-                            variableIndex.retractAllIndexed(clause),
-                            numericIndex.retractAllIndexed(clause),
-                            atomicIndex.retractAllIndexed(clause),
-                            compoundIndex.retractAllIndexed(clause)
-                        )
-                    }
-                    else -> {
-                        Utils.merge(
-                            variableIndex.retractAllIndexed(clause),
-                            compoundIndex.retractAllIndexed(clause)
-                        )
-                    }
-                }
-            }
-
-        protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.nestedFirstArgument().let {
-                when (it) {
-                    is Numeric -> Utils.flattenIndexed(
+            when (clause.nestedFirstArgument()) {
+                is Numeric -> {
+                    Utils.merge(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause)
                     )
-                    is Atom -> Utils.flattenIndexed(
+                }
+                is Atom -> {
+                    Utils.merge(
                         variableIndex.retractAllIndexed(clause),
                         atomicIndex.retractAllIndexed(clause)
                     )
-                    is Var -> Utils.flattenIndexed(
+                }
+                is Var -> {
+                    Utils.merge(
                         variableIndex.retractAllIndexed(clause),
                         numericIndex.retractAllIndexed(clause),
                         atomicIndex.retractAllIndexed(clause),
                         compoundIndex.retractAllIndexed(clause)
                     )
-                    else -> Utils.flattenIndexed(
+                }
+                else -> {
+                    Utils.merge(
                         variableIndex.retractAllIndexed(clause),
                         compoundIndex.retractAllIndexed(clause)
                     )
                 }
-            }
+            }.invalidatingCacheIfNonEmpty()
+
+        protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+            when (clause.nestedFirstArgument()) {
+                is Numeric -> Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    numericIndex.retractAllIndexed(clause)
+                )
+                is Atom -> Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    atomicIndex.retractAllIndexed(clause)
+                )
+                is Var -> Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    numericIndex.retractAllIndexed(clause),
+                    atomicIndex.retractAllIndexed(clause),
+                    compoundIndex.retractAllIndexed(clause)
+                )
+                else -> Utils.flattenIndexed(
+                    variableIndex.retractAllIndexed(clause),
+                    compoundIndex.retractAllIndexed(clause)
+                )
+            }.invalidatingCacheIfNonEmpty()
+
 
         protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.nestedFirstArgument().let {
-                when (it) {
-                    is Numeric ->
-                        Utils.merge(
-                            variableIndex.getIndexed(clause),
-                            numericIndex.getIndexed(clause)
-                        )
-                    is Atom ->
-                        Utils.merge(
-                            variableIndex.getIndexed(clause),
-                            atomicIndex.getIndexed(clause)
-                        )
-                    is Var ->
-                        Utils.merge(
-                            variableIndex.getIndexed(clause),
-                            numericIndex.getIndexed(clause),
-                            atomicIndex.getIndexed(clause),
-                            compoundIndex.getIndexed(clause)
-                        )
-                    else ->
-                        Utils.merge(
-                            variableIndex.getIndexed(clause),
-                            compoundIndex.getIndexed(clause)
-                        )
-                }
-            }
-
-        protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-            clause.nestedFirstArgument().let {
-                when (it) {
-                    is Numeric -> Utils.flattenIndexed(
+            when (clause.nestedFirstArgument()) {
+                is Numeric ->
+                    Utils.merge(
                         variableIndex.getIndexed(clause),
                         numericIndex.getIndexed(clause)
                     )
-                    is Atom -> Utils.flattenIndexed(
+                is Atom ->
+                    Utils.merge(
                         variableIndex.getIndexed(clause),
                         atomicIndex.getIndexed(clause)
                     )
-                    is Var -> Utils.flattenIndexed(
+                is Var ->
+                    Utils.merge(
                         variableIndex.getIndexed(clause),
                         numericIndex.getIndexed(clause),
                         atomicIndex.getIndexed(clause),
                         compoundIndex.getIndexed(clause)
                     )
-                    else -> Utils.flattenIndexed(
+                else ->
+                    Utils.merge(
                         variableIndex.getIndexed(clause),
                         compoundIndex.getIndexed(clause)
                     )
-                }
+            }
+
+
+        protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
+            when (clause.nestedFirstArgument()) {
+                is Numeric -> Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    numericIndex.getIndexed(clause)
+                )
+                is Atom -> Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    atomicIndex.getIndexed(clause)
+                )
+                is Var -> Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    numericIndex.getIndexed(clause),
+                    atomicIndex.getIndexed(clause),
+                    compoundIndex.getIndexed(clause)
+                )
+                else -> Utils.flattenIndexed(
+                    variableIndex.getIndexed(clause),
+                    compoundIndex.getIndexed(clause)
+                )
             }
 
 
@@ -262,6 +258,10 @@ internal sealed class ArityNode : ReteNode {
 
         override fun invalidateCache() {
             theoryCache.invalidate()
+//            numericIndex.invalidateCache()
+//            atomicIndex.invalidateCache()
+//            variableIndex.invalidateCache()
+//            compoundIndex.invalidateCache()
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =

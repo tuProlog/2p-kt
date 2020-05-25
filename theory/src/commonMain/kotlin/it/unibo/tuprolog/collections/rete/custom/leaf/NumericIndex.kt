@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
@@ -97,8 +96,10 @@ internal class NumericIndex(
         }
     }
 
-    private fun retractFromMutableList(clause: Clause, index: MutableList<SituatedIndexedClause>)
-            : Sequence<SituatedIndexedClause> {
+    private fun retractFromMutableList(
+        clause: Clause,
+        index: MutableList<SituatedIndexedClause>
+    ): Sequence<SituatedIndexedClause> {
         val result = index.filter { it.innerClause matches clause }
         result.forEach { index.remove(it) }
         return result.asSequence()

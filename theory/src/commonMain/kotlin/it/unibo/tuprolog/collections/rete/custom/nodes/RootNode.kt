@@ -68,7 +68,7 @@ internal class RootNode(
             if (clause.isDirective) directives.assertA(indexed)
             else rules.assertA(indexed)
         } else {
-            assertZ(clause)
+            throw UnsupportedOperationException("An unordered ReteTree cannot perform the assertA operation.")
         }
     }
 

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
-import it.unibo.tuprolog.collections.rete.custom.IndexingLeaf
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause

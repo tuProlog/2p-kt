@@ -188,7 +188,7 @@ internal object ReteTreeAssertionUtils {
         Struct.of(functor, argsList + terms)
 
     private fun Fact.addArguments(term: Term, vararg terms: Term): Fact =
-        Fact.of(head.addArguments(term))
+        Fact.of(head.addArguments(term, *terms))
 
     private fun Fact.addArguments(terms: Iterable<Term>): Fact =
         Fact.of(head.addArguments(terms))
@@ -460,9 +460,9 @@ internal object ReteTreeAssertionUtils {
             Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous())
         )
 
-    val clauses = interleave(facts + rules, directives).toList()
+    val defaultClauses = interleave(facts + rules, directives).toList()
 
-    val factsAndRules = clauses.filterIsInstance<Rule>()
+    val factsAndRules = defaultClauses.filterIsInstance<Rule>()
 
     val a0FactsAndRules = factsAndRules.filter { it.head.functor == "a" && it.head.arity == 0 }
     val b0FactsAndRules = factsAndRules.filter { it.head.functor == "b" && it.head.arity == 0 }

@@ -63,6 +63,7 @@ internal sealed class FunctorNode : ReteNode {
 
         override fun invalidateCache() {
             theoryCache.invalidate()
+            // arities.values.forEach { it.invalidateCache() }
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =
@@ -180,6 +181,7 @@ internal sealed class FunctorNode : ReteNode {
 
         override fun invalidateCache() {
             theoryCache.invalidate()
+//            arities.values.forEach { it.invalidateCache() }
         }
 
         private fun regenerateCache(): MutableList<SituatedIndexedClause> =

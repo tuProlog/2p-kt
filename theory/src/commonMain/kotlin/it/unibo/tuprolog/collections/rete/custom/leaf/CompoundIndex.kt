@@ -65,6 +65,7 @@ internal class CompoundIndex(
             retractAllUnordered(clause).invalidatingCacheIfNonEmpty()
         }
 
+
     override fun getCache(): Sequence<SituatedIndexedClause> =
         theoryCache.value.asSequence()
 
@@ -72,12 +73,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.retractAllIndexed(clause)
+                    it.retractAllIndexed(clause).invalidatingCacheIfNonEmpty()
                 }
             ).map { it.innerClause }
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAll(clause)
+                ?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
                 ?: emptySequence()
         }
 
@@ -85,12 +86,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.flatten(
                 functors.values.map {
-                    it.retractAll(clause)
+                    it.retractAll(clause).invalidatingCacheIfNonEmpty()
                 }
             )
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAll(clause)
+                ?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
                 ?: emptySequence()
         }
 
@@ -160,6 +161,7 @@ internal class CompoundIndex(
 
     override fun invalidateCache() {
         theoryCache.invalidate()
+//        functors.values.forEach { it.invalidateCache() }
     }
 
     private fun regenerateCache(): MutableList<SituatedIndexedClause> =
