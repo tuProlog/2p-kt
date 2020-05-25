@@ -36,9 +36,9 @@ internal class RootNode(
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractFirst(clause).invalidatingCacheIfNonEmpty()
+            directives.retractFirst(clause)
         } else {
-            rules.retractFirst(clause).invalidatingCacheIfNonEmpty()
+            rules.retractFirst(clause)
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
@@ -46,9 +46,9 @@ internal class RootNode(
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {
-            directives.retractAll(clause).invalidatingCacheIfNonEmpty()
+            directives.retractAll(clause)
         } else {
-            rules.retractAll(clause).invalidatingCacheIfNonEmpty()
+            rules.retractAll(clause)
         }
 
     override fun deepCopy(): ReteTree =

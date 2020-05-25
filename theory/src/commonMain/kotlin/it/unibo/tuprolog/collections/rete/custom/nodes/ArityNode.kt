@@ -346,18 +346,8 @@ internal sealed class ArityNode : ReteNode {
 
         private val atoms: MutableList<SituatedIndexedClause> = dequeOf()
 
-        override fun retractFirst(clause: Clause): Sequence<Clause> {
-            val actualIndex = atoms.indexOfFirst { it.innerClause matches clause }
-
-            return if (actualIndex == -1) {
-                emptySequence()
-            } else {
-                atoms[actualIndex].let {
-                    atoms.removeAt(actualIndex)
-                    sequenceOf(it.innerClause)
-                }
-            }
-        }
+        override fun retractFirst(clause: Clause): Sequence<Clause> =
+            Utils.removeAllLazily(atoms, clause).map { it.innerClause }.take(1).buffered()
 
         override fun get(clause: Clause): Sequence<Clause> =
             atoms.asSequence().filter { it.innerClause matches clause }.map { it.innerClause }
@@ -375,22 +365,7 @@ internal sealed class ArityNode : ReteNode {
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            sequence {
-                val iter = atoms.iterator()
-                while (iter.hasNext()) {
-                    val it = iter.next()
-                    val innerClause = it.innerClause
-                    if (innerClause matches clause) {
-                        iter.remove()
-                        yield(innerClause)
-                    }
-                }
-            }.buffered()
-//        {
-//            val result = atoms.filter { it.innerClause matches clause }
-//            result.forEach { atoms.remove(it) }
-//            return result.map { it.innerClause }.asSequence()
-//        }
+            Utils.removeAllLazily(atoms, clause).map { it.innerClause }.buffered()
 
         override fun getCache(): Sequence<SituatedIndexedClause> {
             return atoms.asSequence()

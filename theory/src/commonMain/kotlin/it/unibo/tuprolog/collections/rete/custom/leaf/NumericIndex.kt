@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class NumericIndex(
@@ -86,24 +87,17 @@ internal class NumericIndex(
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
         return if (clause.nestedFirstArgument().isNumber) {
-            val partialIndex = index.getOrElse(clause.asInnerNumeric()) { mutableListOf() }
-            return retractFromMutableList(clause, partialIndex)
+            when (val partialIndex = index[clause.asInnerNumeric()]) {
+                null -> emptySequence()
+                else -> Utils.removeAllLazily(partialIndex, clause).buffered()
+            }
         } else {
             Utils.merge(
-                index.values.map {
-                    retractFromMutableList(clause, it)
-                }.toList()
-            )
+                index.values.asSequence().map {
+                    Utils.removeAllLazily(it, clause)
+                }
+            ).buffered()
         }
-    }
-
-    private fun retractFromMutableList(
-        clause: Clause,
-        index: MutableList<SituatedIndexedClause>
-    ): Sequence<SituatedIndexedClause> {
-        val result = index.filter { it.innerClause matches clause }
-        result.forEach { index.remove(it) }
-        return result.asSequence()
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
@@ -116,8 +110,7 @@ internal class NumericIndex(
         getCache().filter { it.innerClause matches clause }
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
-        extractGlobalIndexedSequence(clause)
-            .map { it.innerClause }
+        extractGlobalIndexedSequence(clause).map { it.innerClause }
 
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)

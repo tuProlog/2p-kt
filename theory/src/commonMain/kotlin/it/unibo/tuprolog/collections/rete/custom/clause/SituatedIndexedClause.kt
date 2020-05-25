@@ -23,11 +23,15 @@ internal interface SituatedIndexedClause : IndexedClause {
 
                 override fun removeFromIndex() {
                     index.retractIndexed(this)
-                    traversedCacheables.forEach { it.invalidateCache() }
+                    invalidateAllCaches()
                 }
 
                 override val traversedCacheables: List<Cacheable<*>>
                     get() = indexed.traversedCacheables
+
+                override fun invalidateAllCaches() {
+                    indexed.invalidateAllCaches()
+                }
 
                 override fun equals(other: Any?): Boolean {
                     if (this === other) return true

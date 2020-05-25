@@ -71,8 +71,8 @@ internal class RuleNode(
                 )
             } else {
                 Utils.flattenIndexed(
-                    functors.values.map { outer ->
-                        outer.getCache()
+                    functors.values.map {
+                        it.getCache()
                     }
                 )
             }

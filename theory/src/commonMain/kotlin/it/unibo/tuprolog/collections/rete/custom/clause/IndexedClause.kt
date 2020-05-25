@@ -12,6 +12,8 @@ internal interface IndexedClause : LongIndexed<Clause> {
 
     val traversedCacheables: List<Cacheable<*>>
 
+    fun invalidateAllCaches()
+
     operator fun plus(traversed: Cacheable<*>): IndexedClause =
         of(index, innerClause, traversedCacheables + traversed)
 
@@ -25,6 +27,10 @@ internal interface IndexedClause : LongIndexed<Clause> {
                     get() = indexedClause.value
 
                 override val traversedCacheables: List<Cacheable<*>> = listOf(*traversed)
+
+                override fun invalidateAllCaches() {
+                    traversedCacheables.forEach { it.invalidateCache() }
+                }
 
                 override fun <R> map(mapper: (Clause) -> R) =
                     indexedClause.map(mapper)

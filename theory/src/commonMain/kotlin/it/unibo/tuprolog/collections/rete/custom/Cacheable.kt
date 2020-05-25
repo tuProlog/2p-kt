@@ -24,7 +24,7 @@ internal interface Cacheable<T> {
             }
         }
 
-    fun <U> Sequence<U>.invalidatingCacheIfNonEmpty(): Sequence<U> =
-        invalidateCacheIfNonEmpty(this)
-    
+    fun <U> Sequence<U>.invalidatingCacheIfNonEmpty(): Sequence<U> = this
+//        invalidateCacheIfNonEmpty(this)
+
 }

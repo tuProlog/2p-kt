@@ -2,11 +2,13 @@ package it.unibo.tuprolog.collections.rete.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.custom.Retractable
 import it.unibo.tuprolog.collections.rete.custom.TopLevelReteNode
+import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
@@ -32,22 +34,11 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
     }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> {
-        directives.indexOfFirst { it.innerClause matches clause }.let {
-            return when (it) {
-                -1 -> emptySequence()
-                else -> {
-                    val result = directives[it]
-                    directives.removeAt(it)
-                    sequenceOf(result.innerClause)
-                }
-            }
-        }
+        return Utils.removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> {
-        val result = directives.filter { it.innerClause matches clause }
-        result.forEach { directives.remove(it) }
-        return result.asSequence().map { it.innerClause }
+        return Utils.removeAllLazily(directives, clause).map { it.innerClause }.buffered()
     }
 
     override fun getCache(): Sequence<SituatedIndexedClause> =

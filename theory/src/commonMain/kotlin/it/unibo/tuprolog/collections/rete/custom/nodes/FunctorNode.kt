@@ -150,8 +150,7 @@ internal sealed class FunctorNode : ReteNode {
                     partialResult.forEach { it.removeFromIndex() }
                 }
                 partialResult.asSequence()
-            }
-            else {
+            } else {
                 arities[clause.nestedArity()]?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
                     ?: emptySequence()
             }

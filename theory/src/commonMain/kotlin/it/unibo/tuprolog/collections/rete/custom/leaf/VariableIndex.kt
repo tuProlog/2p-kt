@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.collections.rete.custom.leaf
 
 import it.unibo.tuprolog.collections.rete.custom.Retractable
+import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
 internal class VariableIndex(
@@ -46,20 +48,17 @@ internal class VariableIndex(
     }
 
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        retractFromMutableList(clause, variables)
+        Utils.removeAllLazily(variables, clause).buffered()
 
 
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
 
-        return if (actualIndex == -1) null
-        else index[actualIndex]
-    }
-
-    private fun retractFromMutableList(clause: Clause, index: MutableList<SituatedIndexedClause>): Sequence<SituatedIndexedClause> {
-        val result = index.filter { it.innerClause matches clause }
-        result.forEach { index.remove(it) }
-        return result.asSequence()
+        return if (actualIndex == -1) {
+            null
+        } else {
+            index[actualIndex]
+        }
     }
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> =
