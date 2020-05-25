@@ -40,11 +40,11 @@ internal class RuleNode(
     }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractFirst(clause)?.invalidatingCacheIfNonEmpty()
+        functors[clause.nestedFunctor()]?.retractFirst(clause)
             ?: emptySequence()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
-        functors[clause.nestedFunctor()]?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+        functors[clause.nestedFunctor()]?.retractAll(clause)
             ?: emptySequence()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =

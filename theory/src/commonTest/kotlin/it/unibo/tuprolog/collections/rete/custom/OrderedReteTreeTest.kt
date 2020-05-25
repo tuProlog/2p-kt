@@ -435,8 +435,6 @@ class OrderedReteTreeTest {
                 val head = Struct.of(functor, args)
                 val template = Rule.of(head, Var.anonymous())
 
-                println(template)
-
                 val clauses = (0..4).map { Rule.of(head, Integer.of(it)) }
 
                 val tree = reteTreeOf(clauses)

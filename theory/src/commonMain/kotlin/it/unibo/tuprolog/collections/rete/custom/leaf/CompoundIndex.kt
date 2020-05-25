@@ -60,9 +60,9 @@ internal class CompoundIndex(
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (ordered) {
-            retractAllOrdered(clause).invalidatingCacheIfNonEmpty()
+            retractAllOrdered(clause)
         } else {
-            retractAllUnordered(clause).invalidatingCacheIfNonEmpty()
+            retractAllUnordered(clause)
         }
 
 
@@ -73,12 +73,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.retractAllIndexed(clause).invalidatingCacheIfNonEmpty()
+                    it.retractAllIndexed(clause)
                 }
             ).map { it.innerClause }
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+                ?.retractAll(clause)
                 ?: emptySequence()
         }
 
@@ -86,12 +86,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.flatten(
                 functors.values.map {
-                    it.retractAll(clause).invalidatingCacheIfNonEmpty()
+                    it.retractAll(clause)
                 }
             )
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+                ?.retractAll(clause)
                 ?: emptySequence()
         }
 
@@ -126,12 +126,12 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.retractAllIndexed(clause).invalidatingCacheIfNonEmpty()
+                    it.retractAllIndexed(clause)
                 }
             )
         } else {
             functors[clause.nestedFunctor()]
-                ?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
+                ?.retractAllIndexed(clause)
                 ?: emptySequence()
         }
 

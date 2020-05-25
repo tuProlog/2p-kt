@@ -81,22 +81,22 @@ internal sealed class ArityNode : ReteNode {
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
             if (ordered) {
-                retractAllOrdered(clause).invalidatingCacheIfNonEmpty()
+                retractAllOrdered(clause)
             } else {
-                retractAllUnordered(clause).invalidatingCacheIfNonEmpty()
+                retractAllUnordered(clause)
             }
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
             theoryCache.value.asSequence()
 
         private fun retractAllOrdered(clause: Clause): Sequence<Clause> =
-            retractAllOrderedIndexed(clause).map { it.innerClause }.invalidatingCacheIfNonEmpty()
+            retractAllOrderedIndexed(clause).map { it.innerClause }
 
         private fun getOrdered(clause: Clause): Sequence<Clause> =
             getOrderedIndexed(clause).map { it.innerClause }
 
         private fun retractAllUnordered(clause: Clause): Sequence<Clause> =
-            retractAllUnorderedIndexed(clause).map { it.innerClause }.invalidatingCacheIfNonEmpty()
+            retractAllUnorderedIndexed(clause).map { it.innerClause }
 
         private fun getUnordered(clause: Clause): Sequence<Clause> =
             getUnorderedIndexed(clause).map { it.innerClause }
@@ -129,7 +129,7 @@ internal sealed class ArityNode : ReteNode {
                         compoundIndex.retractAllIndexed(clause)
                     )
                 }
-            }.invalidatingCacheIfNonEmpty()
+            }
 
         protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             when (clause.nestedFirstArgument()) {
@@ -151,7 +151,7 @@ internal sealed class ArityNode : ReteNode {
                     variableIndex.retractAllIndexed(clause),
                     compoundIndex.retractAllIndexed(clause)
                 )
-            }.invalidatingCacheIfNonEmpty()
+            }
 
 
         protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
@@ -315,9 +315,9 @@ internal sealed class ArityNode : ReteNode {
 
         override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
             if (ordered) {
-                retractAllOrderedIndexed(clause).invalidatingCacheIfNonEmpty()
+                retractAllOrderedIndexed(clause)
             } else {
-                retractAllUnorderedIndexed(clause).invalidatingCacheIfNonEmpty()
+                retractAllUnorderedIndexed(clause)
             }
 
         override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {

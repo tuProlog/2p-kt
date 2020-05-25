@@ -36,11 +36,11 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractFirst(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractFirst(clause)?.invalidatingCacheIfNonEmpty()
+            selectArity(clause)?.retractFirst(clause)
                 ?: emptySequence()
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            selectArity(clause)?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+            selectArity(clause)?.retractAll(clause)
                 ?: emptySequence()
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
@@ -109,7 +109,7 @@ internal sealed class FunctorNode : ReteNode {
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
-            arities[clause.nestedArity()]?.retractAll(clause)?.invalidatingCacheIfNonEmpty()
+            arities[clause.nestedArity()]?.retractAll(clause)
                 ?: emptySequence()
 
         override fun getCache(): Sequence<SituatedIndexedClause> =
@@ -151,7 +151,7 @@ internal sealed class FunctorNode : ReteNode {
                 }
                 partialResult.asSequence()
             } else {
-                arities[clause.nestedArity()]?.retractAllIndexed(clause)?.invalidatingCacheIfNonEmpty()
+                arities[clause.nestedArity()]?.retractAllIndexed(clause)
                     ?: emptySequence()
             }
 

@@ -11,20 +11,4 @@ internal interface Cacheable<T> {
     /**Forcefully invalidate the node cache and all of its subtree cache*/
     fun invalidateCache()
 
-    fun <U> invalidateCacheIfNonEmpty(seq: Sequence<U>): Sequence<U> =
-        sequence {
-            val i = seq.iterator()
-
-            if (i.hasNext()) {
-                invalidateCache()
-                yield(i.next())
-            }
-            while (i.hasNext()) {
-                yield(i.next())
-            }
-        }
-
-    fun <U> Sequence<U>.invalidatingCacheIfNonEmpty(): Sequence<U> = this
-//        invalidateCacheIfNonEmpty(this)
-
 }
