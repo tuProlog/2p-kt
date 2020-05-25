@@ -7,7 +7,7 @@ import it.unibo.tuprolog.collections.rete.custom.Utils.nestedFirstArgument
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
-import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorNode
+import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexingNode
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.Cached
@@ -44,7 +44,7 @@ internal class CompoundIndex(
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
-                    FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
+                    FunctorIndexingNode(ordered, nestingLevel)
                 }.assertA(clause + this)
             } else {
                 assertZ(clause)
@@ -54,7 +54,7 @@ internal class CompoundIndex(
     override fun assertZ(clause: IndexedClause) =
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
-                FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
+                FunctorIndexingNode(ordered, nestingLevel)
             }.assertZ(clause + this)
         }
 

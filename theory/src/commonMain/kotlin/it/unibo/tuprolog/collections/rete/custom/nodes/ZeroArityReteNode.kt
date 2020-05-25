@@ -10,9 +10,7 @@ import it.unibo.tuprolog.utils.addFirst
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class ZeroArityReteNode(private val ordered: Boolean) : ArityNode(),
-    ArityRete,
-    Retractable {
+internal class ZeroArityReteNode(private val ordered: Boolean) : ArityNode(), ArityRete, Retractable {
 
     private val atoms: MutableList<SituatedIndexedClause> =
         dequeOf()

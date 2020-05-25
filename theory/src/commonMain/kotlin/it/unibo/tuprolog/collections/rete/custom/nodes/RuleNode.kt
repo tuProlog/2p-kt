@@ -23,7 +23,7 @@ internal class RuleNode(
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
-                    FunctorNode.TopLevelFunctorReteNode(ordered, 0)
+                    TopLevelFunctorReteNode(ordered, 0)
                 }.assertA(clause + this)
             } else {
                 assertZ(clause)
@@ -34,7 +34,7 @@ internal class RuleNode(
     override fun assertZ(clause: IndexedClause) {
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
-                FunctorNode.TopLevelFunctorReteNode(ordered, 0)
+                TopLevelFunctorReteNode(ordered, 0)
             }.assertZ(clause + this)
         }
     }

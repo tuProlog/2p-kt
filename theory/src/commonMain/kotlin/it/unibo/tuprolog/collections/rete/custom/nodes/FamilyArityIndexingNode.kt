@@ -4,9 +4,10 @@ import it.unibo.tuprolog.collections.rete.custom.Utils
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.core.Clause
 
-internal class FamilyArityIndexingNode(private val ordered: Boolean, nestingLevel: Int) :
-    FamilyArityReteNode(ordered, nestingLevel),
-    ArityIndexing {
+internal class FamilyArityIndexingNode(
+    private val ordered: Boolean,
+    nestingLevel: Int
+) : FamilyArityReteNode(ordered, nestingLevel), ArityIndexing {
 
     override fun getFirstIndexed(clause: Clause): SituatedIndexedClause? =
         if (ordered) orderedLookahead(clause)

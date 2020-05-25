@@ -13,9 +13,10 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
-internal open class FamilyArityReteNode(private val ordered: Boolean, private val nestingLevel: Int) :
-    ArityNode(),
-    ArityRete {
+internal open class FamilyArityReteNode(
+    private val ordered: Boolean,
+    private val nestingLevel: Int
+) : ArityNode(), ArityRete {
 
     protected val numericIndex: IndexingLeaf =
         NumericIndex(ordered, nestingLevel)
