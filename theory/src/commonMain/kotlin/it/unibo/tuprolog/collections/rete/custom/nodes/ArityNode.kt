@@ -74,10 +74,10 @@ internal sealed class ArityNode : ReteNode {
 
 
         override fun assertA(clause: IndexedClause) =
-            assertByFirstParameter(clause).assertA(clause)
+            assertByFirstParameter(clause).assertA(clause + this)
 
         override fun assertZ(clause: IndexedClause) =
-            assertByFirstParameter(clause).assertZ(clause)
+            assertByFirstParameter(clause).assertZ(clause + this)
 
         override fun retractAll(clause: Clause): Sequence<Clause> =
             if (ordered) {
@@ -288,13 +288,11 @@ internal sealed class ArityNode : ReteNode {
             this.head!!.nestedFirstArgument(nestingLevel + 1)
 
         private fun assertByFirstParameter(clause: IndexedClause): IndexingLeaf =
-            clause.innerClause.nestedFirstArgument().let {
-                when (it) {
-                    is Numeric -> numericIndex
-                    is Atom -> atomicIndex
-                    is Var -> variableIndex
-                    else -> compoundIndex
-                }
+            when (clause.innerClause.nestedFirstArgument()) {
+                is Numeric -> numericIndex
+                is Atom -> atomicIndex
+                is Var -> variableIndex
+                else -> compoundIndex
             }
 
         private fun Clause.isGlobal(): Boolean =
@@ -366,14 +364,14 @@ internal sealed class ArityNode : ReteNode {
 
         override fun assertA(clause: IndexedClause) {
             if (ordered) {
-                atoms.addFirst(SituatedIndexedClause.of(clause, this))
+                atoms.addFirst(SituatedIndexedClause.of(clause + this, this))
             } else {
                 assertZ(clause)
             }
         }
 
         override fun assertZ(clause: IndexedClause) {
-            atoms.add(SituatedIndexedClause.of(clause, this))
+            atoms.add(SituatedIndexedClause.of(clause + this, this))
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =

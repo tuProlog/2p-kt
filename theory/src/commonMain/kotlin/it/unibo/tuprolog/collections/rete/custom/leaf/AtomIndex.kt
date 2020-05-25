@@ -32,8 +32,7 @@ internal class AtomIndex(
     override fun assertA(clause: IndexedClause) {
         if (ordered) {
             clause.asInnerAtom().let {
-                index.getOrPut(it) { dequeOf() }
-                    .addFirst(SituatedIndexedClause.of(clause, this))
+                index.getOrPut(it) { dequeOf() }.addFirst(SituatedIndexedClause.of(clause + this, this))
             }
         } else {
             assertZ(clause)
@@ -42,8 +41,7 @@ internal class AtomIndex(
 
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerAtom().let {
-            index.getOrPut(it) { dequeOf() }
-                .add(SituatedIndexedClause.of(clause, this))
+            index.getOrPut(it) { dequeOf() }.add(SituatedIndexedClause.of(clause + this, this))
         }
     }
 

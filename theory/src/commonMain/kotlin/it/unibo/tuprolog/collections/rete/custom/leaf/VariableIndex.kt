@@ -19,13 +19,13 @@ internal class VariableIndex(
 
     override fun assertA(clause: IndexedClause) =
         if (ordered) {
-            variables.addFirst(SituatedIndexedClause.of(clause, this))
+            variables.addFirst(SituatedIndexedClause.of(clause + this, this))
         } else {
             assertZ(clause)
         }
 
     override fun assertZ(clause: IndexedClause) {
-        variables.add(SituatedIndexedClause.of(clause, this))
+        variables.add(SituatedIndexedClause.of(clause + this, this))
     }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =

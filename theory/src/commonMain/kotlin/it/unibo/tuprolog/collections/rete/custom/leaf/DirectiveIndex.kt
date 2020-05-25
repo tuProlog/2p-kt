@@ -20,12 +20,15 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
             .asSequence()
 
     override fun assertA(clause: IndexedClause) {
-        if (ordered) directives.addFirst(clause)
-        else assertZ(clause)
+        if (ordered) {
+            directives.addFirst(clause + this)
+        } else {
+            assertZ(clause)
+        }
     }
 
     override fun assertZ(clause: IndexedClause) {
-        directives.add(clause)
+        directives.add(clause + this)
     }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> {

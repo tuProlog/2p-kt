@@ -19,23 +19,25 @@ internal class RuleNode(
     override fun get(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.get(clause) ?: emptySequence()
 
-    override fun assertA(clause: IndexedClause) =
+    override fun assertA(clause: IndexedClause) {
         clause.nestedFunctor().let {
             if (ordered) {
                 functors.getOrPut(it) {
                     FunctorNode.TopLevelFunctorReteNode(ordered, 0)
-                }.assertA(clause)
+                }.assertA(clause + this)
             } else {
                 assertZ(clause)
             }
         }
+    }
 
-    override fun assertZ(clause: IndexedClause) =
+    override fun assertZ(clause: IndexedClause) {
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
                 FunctorNode.TopLevelFunctorReteNode(ordered, 0)
-            }.assertZ(clause)
+            }.assertZ(clause + this)
         }
+    }
 
     override fun retractFirst(clause: Clause): Sequence<Clause> =
         functors[clause.nestedFunctor()]?.retractFirst(clause)?.invalidatingCacheIfNonEmpty()
@@ -52,7 +54,7 @@ internal class RuleNode(
         this.head!!.functorOfNestedFirstArgument(0)
 
     private fun IndexedClause.nestedFunctor(): String =
-        this.innerClause.head!!.functorOfNestedFirstArgument(0)
+        this.innerClause.nestedFunctor()
 
     override fun invalidateCache() {
         theoryCache.invalidate()

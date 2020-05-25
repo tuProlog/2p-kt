@@ -83,16 +83,10 @@ internal class RootNode(
     }
 
     private fun assignHigherIndex(clause: Clause): IndexedClause =
-        IndexedClause.of(
-            ++highestIndex,
-            clause
-        )
+        IndexedClause.of(++highestIndex, clause, this)
 
     private fun assignLowerIndex(clause: Clause): IndexedClause =
-        IndexedClause.of(
-            --lowestIndex,
-            clause
-        )
+        IndexedClause.of(--lowestIndex, clause, this)
 
     private fun regenerateCache(): MutableList<Clause> {
         return dequeOf(

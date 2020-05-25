@@ -32,8 +32,7 @@ internal class NumericIndex(
     override fun assertA(clause: IndexedClause) {
         if (ordered) {
             clause.asInnerNumeric().let {
-                index.getOrPut(it) { dequeOf() }
-                    .addFirst(SituatedIndexedClause.of(clause, this))
+                index.getOrPut(it) { dequeOf() }.addFirst(SituatedIndexedClause.of(clause + this, this))
             }
         } else {
             assertZ(clause)
@@ -42,8 +41,7 @@ internal class NumericIndex(
 
     override fun assertZ(clause: IndexedClause) {
         clause.asInnerNumeric().let {
-            index.getOrPut(it) { dequeOf() }
-                .add(SituatedIndexedClause.of(clause, this))
+            index.getOrPut(it) { dequeOf() }.add(SituatedIndexedClause.of(clause + this, this))
         }
     }
 
@@ -66,8 +64,11 @@ internal class NumericIndex(
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
 
-        return if (actualIndex == -1) null
-        else index[actualIndex]
+        return if (actualIndex == -1) {
+            null
+        } else {
+            index[actualIndex]
+        }
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {

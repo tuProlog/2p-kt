@@ -28,11 +28,11 @@ internal sealed class FunctorNode : ReteNode {
             selectArity(clause)?.get(clause) ?: emptySequence()
 
         override fun assertA(clause: IndexedClause) {
-            chooseAssertionBranch(clause, ReteNode::assertA)
+            chooseAssertionBranch(clause + this, ReteNode::assertA)
         }
 
         override fun assertZ(clause: IndexedClause) {
-            chooseAssertionBranch(clause, ReteNode::assertZ)
+            chooseAssertionBranch(clause + this, ReteNode::assertZ)
         }
 
         override fun retractFirst(clause: Clause): Sequence<Clause> =
@@ -59,7 +59,7 @@ internal sealed class FunctorNode : ReteNode {
                         ArityNode.FamilyArityReteNode(ordered, nestingLevel)
                     }
                 }
-            }.run { op(clause) }
+            }.op(clause)
         }
 
         override fun invalidateCache() {
@@ -99,13 +99,13 @@ internal sealed class FunctorNode : ReteNode {
         override fun assertA(clause: IndexedClause) {
             arities.getOrPut(clause.nestedArity()) {
                 ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
-            }.assertA(clause)
+            }.assertA(clause + this)
         }
 
         override fun assertZ(clause: IndexedClause) {
             arities.getOrPut(clause.nestedArity()) {
                 ArityNode.FamilyArityIndexingNode(ordered, nestingLevel)
-            }.assertZ(clause)
+            }.assertZ(clause + this)
         }
 
         override fun retractAll(clause: Clause): Sequence<Clause> =

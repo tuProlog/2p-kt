@@ -45,7 +45,7 @@ internal class CompoundIndex(
             if (ordered) {
                 functors.getOrPut(it) {
                     FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
-                }.assertA(clause)
+                }.assertA(clause + this)
             } else {
                 assertZ(clause)
             }
@@ -55,7 +55,7 @@ internal class CompoundIndex(
         clause.nestedFunctor().let {
             functors.getOrPut(it) {
                 FunctorNode.FunctorIndexingNode(ordered, nestingLevel)
-            }.assertZ(clause)
+            }.assertZ(clause + this)
         }
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
