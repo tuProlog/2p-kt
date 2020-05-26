@@ -102,57 +102,84 @@ interface Theory : Iterable<Clause> {
         private val EMPTY: Theory =
             indexedOf(emptySequence())
 
-        /** Creates an empty ClauseDatabase */
+        /** Creates an empty [Theory] */
         @JvmStatic
         @JsName("empty")
         fun empty(): Theory =
             EMPTY
 
-        /** Creates an empty ClauseDatabase */
+        /** Creates a [Theory], containing the given clauses */
+        @JvmStatic
+        @JsName("of")
+        fun of(vararg clause: Clause): Theory =
+            indexedOf(*clause)
+
+        /** Creates a [Theory], containing the given clauses */
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(clauses: Iterable<Clause>): Theory =
+            indexedOf(clauses)
+
+        /** Creates a [Theory], containing the given clauses */
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(clauses: Sequence<Clause>): Theory =
+            indexedOf(clauses)
+
+        /** Let developers easily create a [Theory], while avoiding variables names clashing by using a
+         * different [Scope] for each [Clause] */
+        @JvmStatic
+        @JsName("ofScopes")
+        fun of(vararg clauses: Scope.() -> Clause): Theory =
+            indexedOf(*clauses)
+
+        /** Creates an empty [Theory] backed by an indexed data structure */
         @JvmStatic
         @JsName("emptyIndexed")
         fun emptyIndexed(): Theory =
             indexedOf(emptyList())
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOf")
         fun indexedOf(vararg clause: Clause): Theory =
             indexedOf(clause.asIterable())
 
-        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        /** Let developers easily create a [Theory] backed by an indexed data structure, while avoiding variables names
+         * clashing by using a different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("indexedOfScopes")
-        fun indexedOf(vararg clause: Scope.() -> Clause): Theory =
-            indexedOf(clause.map {
+        fun indexedOf(vararg clauses: Scope.() -> Clause): Theory =
+            indexedOf(clauses.map {
                 Scope.empty(it)
             })
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOfSequence")
         fun indexedOf(clauses: Sequence<Clause>): Theory =
             indexedOf(clauses.asIterable())
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
         @JsName("indexedOfIterable")
         fun indexedOf(clauses: Iterable<Clause>): Theory =
             IndexedTheory(clauses)
 
-        /** Creates an empty ClauseDatabase */
+        /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("emptyListed")
         fun emptyListed(): Theory =
             listedOf(emptySequence())
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOf")
         fun listedOf(vararg clause: Clause): Theory =
             listedOf(clause.asIterable())
 
-        /** Let developers easily create a ClauseDatabase programmatically while avoiding variables names clashing */
+        /** Let developers easily create a [Theory] backed by a list, while avoiding variables names
+         * clashing by using a different [Scope] for each [Clause] */
         @JvmStatic
         @JsName("listedOfScopes")
         fun listedOf(vararg clause: Scope.() -> Clause): Theory =
@@ -160,13 +187,13 @@ interface Theory : Iterable<Clause> {
                 Scope.empty(it)
             })
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOfSequence")
         fun listedOf(clauses: Sequence<Clause>): Theory =
             listedOf(clauses.asIterable())
 
-        /** Creates a ClauseDatabase with given clauses */
+        /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic
         @JsName("listedOfIterable")
         fun listedOf(clauses: Iterable<Clause>): Theory =
