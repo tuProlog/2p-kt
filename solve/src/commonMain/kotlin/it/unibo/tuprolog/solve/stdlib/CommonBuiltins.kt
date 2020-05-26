@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 object CommonBuiltins : AliasedLibrary by Library.of(
     alias = "prolog.lang",
     operatorSet = OperatorSet.DEFAULT,
-    theory = CommonRules.clauseDb,
+    theory = CommonRules.theory,
     primitives = sequenceOf<PrimitiveWrapper<*>>(
         ArithmeticEqual,
         ArithmeticGreaterThan,

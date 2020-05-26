@@ -20,6 +20,6 @@ object CommonRules {
         Member.Recursive
     )
 
-    val clauseDb: Theory
+    val theory: Theory
         get() = Theory.indexedOf(wrappers.map { it.wrappedImplementation })
 }

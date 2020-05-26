@@ -26,7 +26,7 @@ class TestClausesParser {
     }
 
     @Test
-    fun testClauseDbParsing() {
+    fun testTheoryParsing() {
         val db = with(ClausesParser.withStandardOperators) {
             parseTheory("f(1).\nf(2).\n:- f(X), g(X).\nf(X) :- g(X).")
         }
@@ -47,7 +47,7 @@ class TestClausesParser {
     }
 
     @Test
-    fun testClauseDbParsingError() {
+    fun testTheoryParsingError() {
         val input = "f(a).\nf(b)"
         try {
             with(ClausesParser.withStandardOperators) {
