@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.theory.ClauseDatabase
-import it.unibo.tuprolog.theory.PrototypeClauseDatabaseTest
+import it.unibo.tuprolog.theory.PrototypeTheoryTest
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class ListedClauseDatabaseTest {
+internal class IndexedTheoryTest {
 
-    private val prototype = PrototypeClauseDatabaseTest(
-        ClauseDatabase.Companion::emptyListed,
-        ClauseDatabase.Companion::listedOf
+    private val prototype = PrototypeTheoryTest(
+        Theory.Companion::emptyIndexed,
+        Theory.Companion::indexedOf
     )
 
     @BeforeTest
@@ -18,8 +18,8 @@ internal class ListedClauseDatabaseTest {
     }
 
     @Test
-    fun clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction() {
-        prototype.clauseDatabaseComplainsIFProvidingNotWellFormedClausesUponConstruction()
+    fun theoryComplainsIFProvidingNotWellFormedClausesUponConstruction() {
+        prototype.theoryComplainsIFProvidingNotWellFormedClausesUponConstruction()
     }
 
     @Test
@@ -38,13 +38,13 @@ internal class ListedClauseDatabaseTest {
     }
 
     @Test
-    fun plusClauseDatabasePreservesOrder() {
-        prototype.plusClauseDatabasePreservesOrder()
+    fun plusTheoryPreservesOrder() {
+        prototype.plusTheoryPreservesOrder()
     }
 
     @Test
-    fun plusClauseDatabaseFailsOnBadDatabase() {
-        prototype.plusClauseDatabaseFailsOnBadDatabase()
+    fun plusTheoryFailsOnBadTheory() {
+        prototype.plusTheoryFailsOnBadTheory()
     }
 
     @Test
@@ -58,8 +58,8 @@ internal class ListedClauseDatabaseTest {
     }
 
     @Test
-    fun plusClauseReturnsNewUnlinkedClauseDatabaseInstance() {
-        prototype.plusClauseReturnsNewUnlinkedClauseDatabaseInstance()
+    fun plusClauseReturnsNewUnlinkedTheoryInstance() {
+        prototype.plusClauseReturnsNewUnlinkedTheoryInstance()
     }
 
     @Test
@@ -188,8 +188,8 @@ internal class ListedClauseDatabaseTest {
     }
 
     @Test
-    fun retractReturnsSameClauseDatabaseOnFailure() {
-        prototype.retractReturnsSameClauseDatabaseOnFailure()
+    fun retractReturnsSameTheoryOnFailure() {
+        prototype.retractReturnsSameTheoryOnFailure()
     }
 
     @Test
@@ -218,8 +218,8 @@ internal class ListedClauseDatabaseTest {
     }
 
     @Test
-    fun retractAllReturnsSameClauseDatabaseOnFailure() {
-        prototype.retractAllReturnsSameClauseDatabaseOnFailure()
+    fun retractAllReturnsSameTheoryOnFailure() {
+        prototype.retractAllReturnsSameTheoryOnFailure()
     }
 
     @Test

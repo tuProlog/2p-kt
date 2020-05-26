@@ -6,12 +6,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -73,7 +73,7 @@ internal class LibraryImplTest {
     @Test
     fun containsSignatureDiscardsVarargSignatures() {
         val library =
-            LibraryImpl(OperatorSet(), ClauseDatabase.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
+            LibraryImpl(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
 
         assertTrue { Signature("f", 1, false) in library }
         assertFalse { Signature("f", 1, true) in library }

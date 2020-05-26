@@ -3,12 +3,12 @@ package it.unibo.tuprolog.theory.impl
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.AbstractClauseDatabase
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.RetractResult
-import it.unibo.tuprolog.theory.Theory.checkClausesCorrect
+import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
-internal class IndexedClauseDatabase private constructor(private val queue: ClauseQueue) : AbstractClauseDatabase() {
+internal class IndexedTheory private constructor(private val queue: ClauseQueue) : AbstractTheory() {
 
     /** Construct a Clause database from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ClauseQueue.of(clauses)) {
@@ -17,22 +17,22 @@ internal class IndexedClauseDatabase private constructor(private val queue: Clau
 
     override val clauses: Iterable<Clause> by lazy { queue.toList() }
 
-    override fun plus(clauseDatabase: ClauseDatabase): ClauseDatabase =
-        IndexedClauseDatabase(
+    override fun plus(theory: Theory): Theory =
+        IndexedTheory(
             clauses + checkClausesCorrect(
-                clauseDatabase.clauses
+                theory.clauses
             )
         )
 
     override fun get(clause: Clause): Sequence<Clause> = queue[clause]
 
-    override fun assertA(clause: Clause): ClauseDatabase =
-        IndexedClauseDatabase(
+    override fun assertA(clause: Clause): Theory =
+        IndexedTheory(
             ClauseQueue.of(listOf(clause) + clauses)
         )
 
-    override fun assertZ(clause: Clause): ClauseDatabase =
-        IndexedClauseDatabase(
+    override fun assertZ(clause: Clause): Theory =
+        IndexedTheory(
             ClauseQueue.of(clauses + clause)
         )
 
@@ -44,7 +44,7 @@ internal class IndexedClauseDatabase private constructor(private val queue: Clau
             is RetrieveResult.Failure ->
                 RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedClauseDatabase(retracted.collection),
+                IndexedTheory(retracted.collection),
                 (retracted as RetrieveResult.Success).clauses
             )
         }
@@ -57,7 +57,7 @@ internal class IndexedClauseDatabase private constructor(private val queue: Clau
         return when (retracted) {
             is RetrieveResult.Failure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedClauseDatabase(retracted.collection),
+                IndexedTheory(retracted.collection),
                 (retracted as RetrieveResult.Success).clauses
             )
         }

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
-object CustomDatabases {
+object CustomTheories {
 
-    val ifThenDatabase1: ClauseDatabase by lazy {
+    val ifThenTheory1: Theory by lazy {
         prolog {
             theoryOf(
                 fact { "a"(1) },
@@ -17,7 +17,7 @@ object CustomDatabases {
         }
     }
 
-    val ifThenDatabase2: ClauseDatabase by lazy {
+    val ifThenTheory2: Theory by lazy {
         prolog {
             theoryOf(
                 fact { "a"(2) },

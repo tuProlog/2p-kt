@@ -5,13 +5,13 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -19,7 +19,7 @@ import kotlin.collections.listOf as ktListOf
  *
  * @author Enrico
  */
-object TestingClauseDatabases {
+object TestingClauseTheories {
 
     internal val aContext = DummyInstances.executionContext
 
@@ -58,7 +58,7 @@ object TestingClauseDatabases {
      * h(c).
      * ```
      */
-    val simpleFactDatabase by lazy {
+    val simpleFactTheory by lazy {
         prolog {
             theory(
                 { "f"("a") },
@@ -72,14 +72,14 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [simpleFactDatabase] request goals and respective expected [Solution]s
+     * Notable [simpleFactTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- f(A).
      * ?- g(A).
      * ?- h(A).
      * ```
      */
-    val simpleFactDatabaseNotableGoalToSolutions by lazy {
+    val simpleFactTheoryNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
                 "f"("A").hasSolutions(
@@ -116,7 +116,7 @@ object TestingClauseDatabases {
      * d(d).
      * ```
      */
-    val simpleCutDatabase = prolog {
+    val simpleCutTheory = prolog {
         theory(
             { "f"("only") `if` "!" },
             { "f"("a") },
@@ -135,14 +135,14 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [simpleCutDatabase] request goals and respective expected [Solution]s
+     * Notable [simpleCutTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- f(A).
      * ?- g(A).
      * ?- h(A).
      * ```
      */
-    val simpleCutDatabaseNotableGoalToSolutions by lazy {
+    val simpleCutTheoryNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
                 "f"("A").hasSolutions(
@@ -172,7 +172,7 @@ object TestingClauseDatabases {
      * r(b1).
      * ```
      */
-    val simpleCutAndConjunctionDatabase = prolog {
+    val simpleCutAndConjunctionTheory = prolog {
         theory(
             { "f"("X", "Y") `if` ("q"("X") and "!" and "r"("Y")) },
             { "f"("X", "Y") `if` "r"("X") },
@@ -184,12 +184,12 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [simpleCutAndConjunctionDatabase] request goals and respective expected [Solution]s
+     * Notable [simpleCutAndConjunctionTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- f(A, B).
      * ```
      */
-    val simpleCutAndConjunctionDatabaseNotableGoalToSolutions by lazy {
+    val simpleCutAndConjunctionTheoryNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
                 "f"("A", "B").hasSolutions(
@@ -215,7 +215,7 @@ object TestingClauseDatabases {
      * d(3).
      * ```
      */
-    val cutConjunctionAndBacktrackingDatabase = prolog {
+    val cutConjunctionAndBacktrackingTheory = prolog {
         theory(
             { "a"("X") `if` "b"("X") },
             { "a"(6) },
@@ -231,12 +231,12 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [cutConjunctionAndBacktrackingDatabase] request goals and respective expected [Solution]s
+     * Notable [cutConjunctionAndBacktrackingTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- a(X).
      * ```
      */
-    val cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions by lazy {
+    val cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions by lazy {
         prolog {
             ktListOf(
                 "a"("X").hasSolutions(
@@ -255,7 +255,7 @@ object TestingClauseDatabases {
      * b :- a.
      * ```
      */
-    val infiniteComputationDatabase = prolog {
+    val infiniteComputationTheory = prolog {
         theory(
             { "a" `if` "b" },
             { "b" `if` "a" }
@@ -263,12 +263,12 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [infiniteComputationDatabase] request goals and respective expected [Solution]s
+     * Notable [infiniteComputationTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- a(X).
      * ```
      */
-    val infiniteComputationDatabaseNotableGoalToSolution by lazy {
+    val infiniteComputationTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 atomOf("a").hasSolutions({ halt(timeOutException) })
@@ -286,7 +286,7 @@ object TestingClauseDatabases {
      * my_rev([X | Xs], L2, Acc) :- my_rev(Xs, L2, [X | Acc]).
      * ```
      */
-    val customReverseListDatabase by lazy {
+    val customReverseListTheory by lazy {
         prolog {
             theory(
                 { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
@@ -300,12 +300,12 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [customReverseListDatabase] request goals and respective expected [Solution]s
+     * Notable [customReverseListTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- my_reverse([1, 2, 3, 4], L).
      * ```
      */
-    val customReverseListDatabaseNotableGoalToSolution by lazy {
+    val customReverseListTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "my_reverse"(listOf(1, 2, 3, 4), "L").hasSolutions(
@@ -326,7 +326,7 @@ object TestingClauseDatabases {
      *       range(M1, N, Ns).
      * ```
      */
-    val customRangeListGeneratorDatabase by lazy {
+    val customRangeListGeneratorTheory by lazy {
         prolog {
             theory(
                 { ("range"("N", "N", listOf("N")) `if` "!") },
@@ -342,7 +342,7 @@ object TestingClauseDatabases {
     }
 
     /**
-     * Notable [customRangeListGeneratorDatabase] request goals and respective expected [Solution]s
+     * Notable [customRangeListGeneratorTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- range(1, 4, [1, 2, 3, 4]).
      * ?- range(1, 4, [1, 2, 3, 4, 5]).
@@ -353,7 +353,7 @@ object TestingClauseDatabases {
      * ?- range(2, A, [2, 3, 4]).
      * ```
      */
-    val customRangeListGeneratorDatabaseNotableGoalToSolution by lazy {
+    val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
@@ -447,16 +447,16 @@ object TestingClauseDatabases {
     }
 
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
-    val allPrologTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
+    val allPrologTestingTheoriesToRespectiveGoalsAndSolutions by lazy {
         mapOf(
-            simpleFactDatabase to simpleFactDatabaseNotableGoalToSolutions,
-            simpleCutDatabase to simpleCutDatabaseNotableGoalToSolutions,
-            simpleCutAndConjunctionDatabase to simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
-            cutConjunctionAndBacktrackingDatabase to cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
-            customReverseListDatabase to customReverseListDatabaseNotableGoalToSolution,
-            ClauseDatabase.empty() to callTestingGoalsToSolutions,
-            ClauseDatabase.empty() to catchTestingGoalsToSolutions,
-            ClauseDatabase.empty() to haltTestingGoalsToSolutions
-        ) + allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions
+            simpleFactTheory to simpleFactTheoryNotableGoalToSolutions,
+            simpleCutTheory to simpleCutTheoryNotableGoalToSolutions,
+            simpleCutAndConjunctionTheory to simpleCutAndConjunctionTheoryNotableGoalToSolutions,
+            cutConjunctionAndBacktrackingTheory to cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
+            customReverseListTheory to customReverseListTheoryNotableGoalToSolution,
+            Theory.empty() to callTestingGoalsToSolutions,
+            Theory.empty() to catchTestingGoalsToSolutions,
+            Theory.empty() to haltTestingGoalsToSolutions
+        ) + allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
     }
 }

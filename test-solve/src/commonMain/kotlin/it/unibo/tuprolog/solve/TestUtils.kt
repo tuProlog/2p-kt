@@ -130,7 +130,7 @@ fun assertSolverSolutionsCorrect(
     maxDuration: TimeDuration
 ) {
     goalToSolutions.forEach { (goal, solutionList) ->
-        if (loggingOn) solver.logDatabases()
+        if (loggingOn) solver.logKBs()
 
         val solutions = solver.solve(goal, maxDuration).toList()
         assertSolutionEquals(solutionList, solutions)
@@ -160,7 +160,7 @@ fun Solver.assertHasPredicateInAPI(functor: String, arity: Int, vararg: Boolean 
 }
 
 /** Utility function to log loaded Solver databases */
-fun Solver.logDatabases() {
+fun Solver.logKBs() {
     println(if (staticKb.clauses.any()) staticKb.toString(true) else "")
     println(if (dynamicKb.clauses.any()) dynamicKb.toString(true) else "")
 }

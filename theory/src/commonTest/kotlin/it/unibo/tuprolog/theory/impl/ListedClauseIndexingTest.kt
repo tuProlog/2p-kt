@@ -1,53 +1,53 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.PrototypeProperIndexingTest
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class ListedClauseIndexingTest {
 
     private val prototype = PrototypeProperIndexingTest(
-        ClauseDatabase.Companion::listedOf
+        Theory.Companion::listedOf
     )
 
     @Test
-    fun correctIndexingOverDedicatedClauseDatabaseForF1Family() {
-        prototype.correctIndexingOverDedicatedClauseDatabaseForF1Family()
+    fun correctIndexingOverDedicatedTheoryForF1Family() {
+        prototype.correctIndexingOverDedicatedTheoryForF1Family()
     }
 
     @Test
-    fun correctIndexingOverDedicatedClauseDatabaseForF2Family() {
-        prototype.correctIndexingOverDedicatedClauseDatabaseForF2Family()
+    fun correctIndexingOverDedicatedTheoryForF2Family() {
+        prototype.correctIndexingOverDedicatedTheoryForF2Family()
     }
 
     @Test
-    fun correctIndexingOverDedicatedClauseDatabaseG1Family() {
-        prototype.correctIndexingOverDedicatedClauseDatabaseG1Family()
+    fun correctIndexingOverDedicatedTheoryG1Family() {
+        prototype.correctIndexingOverDedicatedTheoryG1Family()
     }
 
     @Test
-    fun correctIndexingOverDedicatedClauseDatabaseG2Family() {
-        prototype.correctIndexingOverDedicatedClauseDatabaseG2Family()
+    fun correctIndexingOverDedicatedTheoryG2Family() {
+        prototype.correctIndexingOverDedicatedTheoryG2Family()
     }
 
     @Test
-    fun correctIndexingAfterClauseDatabasesConcatenationForF1Family() {
-        prototype.correctIndexingAfterClauseDatabasesConcatenationForF1Family()
+    fun correctIndexingAfterTheoriesConcatenationForF1Family() {
+        prototype.correctIndexingAfterTheoriesConcatenationForF1Family()
     }
 
     @Test
-    fun correctIndexingAfterClauseDatabasesConcatenationForF2Family() {
-        prototype.correctIndexingAfterClauseDatabasesConcatenationForF2Family()
+    fun correctIndexingAfterTheoriesConcatenationForF2Family() {
+        prototype.correctIndexingAfterTheoriesConcatenationForF2Family()
     }
 
     @Test
-    fun correctIndexingAfterClauseDatabasesConcatenationForG1Family() {
-        prototype.correctIndexingAfterClauseDatabasesConcatenationForG1Family()
+    fun correctIndexingAfterTheoriesConcatenationForG1Family() {
+        prototype.correctIndexingAfterTheoriesConcatenationForG1Family()
     }
 
     @Test
-    fun correctIndexingAfterClauseDatabasesConcatenationForG2Family() {
-        prototype.correctIndexingAfterClauseDatabasesConcatenationForG2Family()
+    fun correctIndexingAfterTheoriesConcatenationForG2Family() {
+        prototype.correctIndexingAfterTheoriesConcatenationForG2Family()
     }
 
     @Test

@@ -2,10 +2,9 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
 
-internal abstract class AbstractClauseDatabase :
-    ClauseDatabase {
+internal abstract class AbstractTheory : Theory {
 
-    override fun plus(clause: Clause): ClauseDatabase = super.plus(Theory.checkClauseCorrect(clause))
+    override fun plus(clause: Clause): Theory = super.plus(TheoryUtils.checkClauseCorrect(clause))
 
     override fun contains(clause: Clause): Boolean = get(clause).any()
 
@@ -38,7 +37,7 @@ internal abstract class AbstractClauseDatabase :
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
-        if (other !is ClauseDatabase) return false
+        if (other !is Theory) return false
 
         val i = clauses.iterator()
         val j = other.clauses.iterator()

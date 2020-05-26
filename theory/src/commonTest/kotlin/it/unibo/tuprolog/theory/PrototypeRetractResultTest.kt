@@ -13,8 +13,8 @@ import kotlin.test.assertFailsWith
  * @author Enrico
  */
 internal class PrototypeRetractResultTest(
-    private val emptyClauseDbGenerator: () -> ClauseDatabase,
-    private val clauseDbGenerator: (Iterable<Clause>) -> ClauseDatabase
+    private val emptyTheoryGenerator: () -> Theory,
+    private val theoryGenerator: (Iterable<Clause>) -> Theory
 ) {
 
     private val clause1 = Clause.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous()))
@@ -22,13 +22,13 @@ internal class PrototypeRetractResultTest(
 
     private val clauses = listOf(clause1, clause2)
 
-    private val clauseDatabase: ClauseDatabase = clauseDbGenerator(clauses)
+    private val theory: Theory = theoryGenerator(clauses)
 
-    private val toTestSuccess = RetractResult.Success(clauseDatabase, clauses)
-    private val toTestFailure = RetractResult.Failure(clauseDatabase)
+    private val toTestSuccess = RetractResult.Success(theory, clauses)
+    private val toTestFailure = RetractResult.Failure(theory)
 
-    fun successClauseDatabaseCorrect() {
-        assertEquals(clauseDatabase, toTestSuccess.clauseDatabase)
+    fun successTheoryCorrect() {
+        assertEquals(theory, toTestSuccess.theory)
     }
 
     fun successClausesListCorrect() {
@@ -41,11 +41,11 @@ internal class PrototypeRetractResultTest(
 
     fun successFirstClauseWithEmptyClauseListThrowsException() {
         assertFailsWith<NoSuchElementException> {
-            RetractResult.Success(clauseDatabase, emptyList()).firstClause
+            RetractResult.Success(theory, emptyList()).firstClause
         }
     }
 
-    fun failClauseDatabaseCorrect() {
-        assertEquals(clauseDatabase, toTestFailure.clauseDatabase)
+    fun failTheoryCorrect() {
+        assertEquals(theory, toTestFailure.theory)
     }
 }

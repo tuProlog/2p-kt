@@ -2,7 +2,7 @@ package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 protected constructor(private val rete: ReteTree) : ClauseCollection {
@@ -11,7 +11,7 @@ protected constructor(private val rete: ReteTree) : ClauseCollection {
         clauses: Iterable<Clause>,
         reteNodeBuilder: (Iterable<Clause>) -> ReteTree
     ) : this(reteNodeBuilder(clauses)) {
-        Theory.checkClausesCorrect(clauses)
+        TheoryUtils.checkClausesCorrect(clauses)
     }
 
     override val size: Int

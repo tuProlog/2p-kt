@@ -2,7 +2,7 @@ package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils
 
 internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
 protected constructor(
@@ -13,7 +13,7 @@ protected constructor(
         clauses: Iterable<Clause>,
         reteNodeBuilder: (Iterable<Clause>) -> ReteTree
     ) : this(reteNodeBuilder(clauses)) {
-        Theory.checkClausesCorrect(clauses)
+        TheoryUtils.checkClausesCorrect(clauses)
     }
 
     protected abstract fun newCollectionBuilder(rete: ReteTree): Self
@@ -21,7 +21,7 @@ protected constructor(
     override fun add(clause: Clause): Self =
         newCollectionBuilder(
             rete.deepCopy().apply {
-                assertZ(Theory.checkClauseCorrect(clause))
+                assertZ(TheoryUtils.checkClauseCorrect(clause))
             }
         )
 
@@ -29,7 +29,7 @@ protected constructor(
         newCollectionBuilder(
             rete.deepCopy().apply {
                 clauses.forEach {
-                    assertZ(Theory.checkClauseCorrect(it))
+                    assertZ(TheoryUtils.checkClauseCorrect(it))
                 }
             }
         )

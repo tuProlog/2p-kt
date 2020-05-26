@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateInit
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree in a purely functional way
@@ -17,8 +17,8 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal class StreamsSolver constructor(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKb: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: Theory = Theory.empty(),
+    dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
@@ -61,10 +61,10 @@ internal class StreamsSolver constructor(
     override val flags: PrologFlags
         get() = executionContext.flags
 
-    override val staticKb: ClauseDatabase
+    override val staticKb: Theory
         get() = executionContext.staticKb
 
-    override val dynamicKb: ClauseDatabase
+    override val dynamicKb: Theory
         get() = executionContext.dynamicKb
 
     override val inputChannels: PrologInputChannels<*>

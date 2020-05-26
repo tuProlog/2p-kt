@@ -1,20 +1,20 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.PrototypeRetractResultTest
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 internal class ListedRetractResultTest {
 
     private val prototype: PrototypeRetractResultTest =
         PrototypeRetractResultTest(
-            ClauseDatabase.Companion::emptyListed,
-            ClauseDatabase.Companion::listedOf
+            Theory.Companion::emptyListed,
+            Theory.Companion::listedOf
         )
 
     @Test
-    fun successClauseDatabaseCorrect() {
-        prototype.successClauseDatabaseCorrect()
+    fun successTheoryCorrect() {
+        prototype.successTheoryCorrect()
     }
 
     @Test
@@ -33,7 +33,7 @@ internal class ListedRetractResultTest {
     }
 
     @Test
-    fun failClauseDatabaseCorrect() {
-        prototype.failClauseDatabaseCorrect()
+    fun failTheoryCorrect() {
+        prototype.failTheoryCorrect()
     }
 }

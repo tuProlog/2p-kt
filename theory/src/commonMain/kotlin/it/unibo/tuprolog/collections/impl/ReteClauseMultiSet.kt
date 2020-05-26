@@ -4,7 +4,7 @@ import it.unibo.tuprolog.collections.AbstractReteClauseCollection
 import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils
 
 internal class ReteClauseMultiSet private constructor(
     private val rete: ReteTree
@@ -12,7 +12,7 @@ internal class ReteClauseMultiSet private constructor(
 
     /** Construct a [ReteClauseMultiSet] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {
-        Theory.checkClausesCorrect(clauses)
+        TheoryUtils.checkClausesCorrect(clauses)
     }
 
     override fun count(clause: Clause): Long =

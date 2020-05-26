@@ -1,31 +1,31 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse1ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse2ToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenElseStandardExampleNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.callTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.catchTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customRangeListGeneratorDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.haltTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThenElse1ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThenElse2ToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheoryGoalsToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExampleNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.conjunctionStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.ifThenElseStandardExampleNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.ifThenStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.customRangeListGeneratorTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.haltTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1100MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
 interface SolverTest {
@@ -92,43 +92,43 @@ interface SolverTest {
     /** Test with [ifThen2ToSolution] */
     fun testIfThen2()
 
-    /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleFactTheoryNotableGoalToSolutions] */
     fun testUnification()
 
-    /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleCutTheoryNotableGoalToSolutions] */
     fun testSimpleCutAlternatives()
 
-    /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleCutAndConjunctionTheoryNotableGoalToSolutions] */
     fun testCutAndConjunction()
 
-    /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
+    /** Test with [cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions] */
     fun testCutConjunctionAndBacktracking()
 
-    /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
+    /** Test with [infiniteComputationTheoryNotableGoalToSolution] */
     fun testMaxDurationParameterAndTimeOutException()
 
-    /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
+    /** Test with [prologStandardExampleTheoryNotableGoalToSolution] */
     fun testPrologStandardSearchTreeExample()
 
-    /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
+    /** Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution] */
     fun testPrologStandardSearchTreeWithCutExample()
 
-    /** Test with [customReverseListDatabaseNotableGoalToSolution] */
+    /** Test with [customReverseListTheoryNotableGoalToSolution] */
     fun testBacktrackingWithCustomReverseListImplementation()
 
-    /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
+    /** Test with [conjunctionStandardExampleTheoryNotableGoalToSolution] */
     fun testWithPrologStandardConjunctionExamples()
 
     /** A test with all goals used in conjunction with `true` or `fail` to test Conjunction properties */
     fun testConjunctionProperties()
 
-    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
+    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleTheoryGoalsToSolution] */
     fun testCallPrimitive()
 
     /** A test in which all testing goals are called through the Call primitive */
     fun testCallPrimitiveTransparency()
 
-    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
+    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowTheoryExampleNotableGoalToSolution] */
     fun testCatchPrimitive()
 
     /** A test in which all testing goals are called through the Catch primitive */
@@ -137,19 +137,19 @@ interface SolverTest {
     /** Halt primitive testing with [haltTestingGoalsToSolutions] */
     fun testHaltPrimitive()
 
-    /** Not rule testing with [notStandardExampleDatabaseNotableGoalToSolution] */
+    /** Not rule testing with [notStandardExampleTheoryNotableGoalToSolution] */
     fun testNotPrimitive()
 
     /** A test in which all testing goals are called through the Not rule */
     fun testNotModularity()
 
-    /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
+    /** If-Then rule testing with [ifThenStandardExampleTheoryNotableGoalToSolution] */
     fun testIfThenRule()
 
     /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
     fun testIfThenElseRule()
 
-    /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
+    /** Test with [customRangeListGeneratorTheoryNotableGoalToSolution] */
     fun testNumbersRangeListGeneration()
     fun testFailure()
     fun testBasicBacktracking1()

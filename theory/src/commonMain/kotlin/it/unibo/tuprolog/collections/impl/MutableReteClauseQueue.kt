@@ -5,7 +5,7 @@ import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils
 
 internal class MutableReteClauseQueue private constructor(
     private val rete: ReteTree
@@ -13,7 +13,7 @@ internal class MutableReteClauseQueue private constructor(
 
     /** Construct a [MutableReteClauseQueue] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.ordered(clauses)) {
-        Theory.checkClausesCorrect(clauses)
+        TheoryUtils.checkClausesCorrect(clauses)
     }
 
     override fun getFifoOrdered(clause: Clause): Sequence<Clause> =

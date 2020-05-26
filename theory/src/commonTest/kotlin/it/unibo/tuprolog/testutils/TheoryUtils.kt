@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
- * Utils singleton for testing [ClauseDatabase]
+ * Utils singleton for testing [Theory]
  *
  * @author Enrico
  */
-internal object ClauseDatabaseUtils {
+internal object TheoryUtils {
 
     /** Contains well formed clauses (the head is a [Struct] and the body doesn't contain [Numeric] values) */
     internal val wellFormedClauses get() = ReteNodeUtils.mixedClauses

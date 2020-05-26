@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.instantiationError
-import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
-import it.unibo.tuprolog.solve.TestingClauseDatabases.systemError
-import it.unibo.tuprolog.solve.TestingClauseDatabases.timeOutException
-import it.unibo.tuprolog.solve.TestingClauseDatabases.typeError
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.instantiationError
+import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
+import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
+import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
+import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
+import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -15,7 +15,7 @@ import kotlin.collections.listOf as ktListOf
  *
  * @author Enrico
  */
-object PrologStandardExampleDatabases {
+object PrologStandardExampleTheories {
 
     /**
      * The clause database used in Prolog Standard reference manual, when explaining solver functionality and search-trees
@@ -31,7 +31,7 @@ object PrologStandardExampleDatabases {
      * r(c, c1).
      * ```
      */
-    val prologStandardExampleDatabase by lazy {
+    val prologStandardExampleTheory by lazy {
         prolog {
             theory(
                 { "p"("X", "Y") `if` ("q"("X") and "r"("X", "Y")) },
@@ -47,12 +47,12 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Notable [prologStandardExampleDatabase] request goals and respective expected [Solution]s
+     * Notable [prologStandardExampleTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- p(U, V).
      * ```
      */
-    val prologStandardExampleDatabaseNotableGoalToSolution by lazy {
+    val prologStandardExampleTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "p"("U", "V").hasSolutions(
@@ -65,7 +65,7 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Same as [prologStandardExampleDatabase] but first clause contains cut
+     * Same as [prologStandardExampleTheory] but first clause contains cut
      *
      * ```prolog
      * p(X, Y) :- q(X), !, r(X, Y).
@@ -78,20 +78,20 @@ object PrologStandardExampleDatabases {
      * r(c, c1).
      * ```
      */
-    val prologStandardExampleWithCutDatabase by lazy {
+    val prologStandardExampleWithCutTheory by lazy {
         prolog {
             theory({ "p"("X", "Y") `if` ("q"("X") and "!" and "r"("X", "Y")) }) +
-                    theoryOf(*prologStandardExampleDatabase.clauses.drop(1).toTypedArray())
+                    theoryOf(*prologStandardExampleTheory.clauses.drop(1).toTypedArray())
         }
     }
 
     /**
-     * Notable [prologStandardExampleWithCutDatabase] request goals and respective expected [Solution]s
+     * Notable [prologStandardExampleWithCutTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- p(U, V).
      * ```
      */
-    val prologStandardExampleWithCutDatabaseNotableGoalToSolution by lazy {
+    val prologStandardExampleWithCutTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "p"("U", "V").hasSolutions({ no() })
@@ -109,7 +109,7 @@ object PrologStandardExampleDatabases {
      * fly(bee).
      * ```
      */
-    val conjunctionStandardExampleDatabase by lazy {
+    val conjunctionStandardExampleTheory by lazy {
         prolog {
             theory(
                 { "legs"("A", 6) `if` "insect"("A") },
@@ -122,12 +122,12 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Notable [conjunctionStandardExampleDatabase] request goals and respective expected [Solution]s
+     * Notable [conjunctionStandardExampleTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- (insect(X) ; legs(X, 6)) , fly(X).
      * ```
      */
-    val conjunctionStandardExampleDatabaseNotableGoalToSolution by lazy {
+    val conjunctionStandardExampleTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 (("insect"("X") or "legs"("X", 6)) and "fly"("X")).hasSolutions(
@@ -151,7 +151,7 @@ object PrologStandardExampleDatabases {
      * a(2).
      * ```
      */
-    val callStandardExampleDatabase by lazy {
+    val callStandardExampleTheory by lazy {
         prolog {
             theory(
                 { "a"(1) },
@@ -161,7 +161,7 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Prolog Standard examples to test call primitive with [callStandardExampleDatabase]
+     * Prolog Standard examples to test call primitive with [callStandardExampleTheory]
      * ```prolog
      * ?- call('!') ; true.
      * ?- Z = !, call( (Z = !, a(X), Z) ).
@@ -171,7 +171,7 @@ object PrologStandardExampleDatabases {
      * ?- call(true, fail, 1).
      * ```
      */
-    val callStandardExampleDatabaseGoalsToSolution by lazy {
+    val callStandardExampleTheoryGoalsToSolution by lazy {
         prolog {
             ktListOf(
                 ("call"("!") or true).hasSolutions({ yes() }, { yes() }),
@@ -198,7 +198,7 @@ object PrologStandardExampleDatabases {
      * q :- catch(p, B, true), r(c).
      * ```
      */
-    val catchAndThrowStandardExampleDatabase by lazy {
+    val catchAndThrowTheoryExample by lazy {
         prolog {
             theory(
                 { "p" },
@@ -210,7 +210,7 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Notable [catchAndThrowStandardExampleDatabase] request goals and respective expected [Solution]s
+     * Notable [catchAndThrowTheoryExample] request goals and respective expected [Solution]s
      * ```prolog
      * ?- catch(p, X, true).
      * ?- catch(q, C, true).
@@ -222,7 +222,7 @@ object PrologStandardExampleDatabases {
      * ?- catch(throw(fail), true, G).
      * ```
      */
-    val catchAndThrowStandardExampleDatabaseNotableGoalToSolution by lazy {
+    val catchAndThrowTheoryExampleNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "catch"("p", "X", true).hasSolutions(
@@ -255,7 +255,7 @@ object PrologStandardExampleDatabases {
      * q2 :- true.
      * ```
      */
-    val notStandardExampleDatabase by lazy {
+    val notStandardExampleTheory by lazy {
         prolog {
             theory(
                 { "shave"("barber", "X") `if` "not"("shave"("X", "X")) },
@@ -273,7 +273,7 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Notable [notStandardExampleDatabase] request goals and respective expected [Solution]s
+     * Notable [notStandardExampleTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- X = 3, \+((X = 1 ; X = 2)).
      * ?- \+(fail).
@@ -293,7 +293,7 @@ object PrologStandardExampleDatabases {
      * ?- p2.
      * ```
      */
-    val notStandardExampleDatabaseNotableGoalToSolution by lazy {
+    val notStandardExampleTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
@@ -330,7 +330,7 @@ object PrologStandardExampleDatabases {
      * insect(ant).
      * ```
      */
-    val ifThenStandardExampleDatabase by lazy {
+    val ifThenStandardExampleTheory by lazy {
         prolog {
             theory(
                 { "legs"("A", 6) `if` "insect"("A") },
@@ -342,7 +342,7 @@ object PrologStandardExampleDatabases {
     }
 
     /**
-     * Notable [ifThenStandardExampleDatabase] request goals and respective expected [Solution]s
+     * Notable [ifThenStandardExampleTheory] request goals and respective expected [Solution]s
      * ```prolog
      * ?- X = 0 -> true.
      * ?- legs(A, 6) -> true.
@@ -350,7 +350,7 @@ object PrologStandardExampleDatabases {
      * ?- fail -> (true ; true).
      * ```
      */
-    val ifThenStandardExampleDatabaseNotableGoalToSolution by lazy {
+    val ifThenStandardExampleTheoryNotableGoalToSolution by lazy {
         prolog {
             ktListOf(
                 ("->"("X" equalsTo 0, true)).hasSolutions({ yes("X" to 0) }),
@@ -384,16 +384,16 @@ object PrologStandardExampleDatabases {
     }
 
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
-    val allPrologStandardTestingDatabasesToRespectiveGoalsAndSolutions by lazy {
+    val allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions by lazy {
         mapOf(
-            prologStandardExampleDatabase to prologStandardExampleDatabaseNotableGoalToSolution,
-            prologStandardExampleWithCutDatabase to prologStandardExampleWithCutDatabaseNotableGoalToSolution,
-            conjunctionStandardExampleDatabase to conjunctionStandardExampleDatabaseNotableGoalToSolution,
-            callStandardExampleDatabase to callStandardExampleDatabaseGoalsToSolution,
-            catchAndThrowStandardExampleDatabase to catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
-            notStandardExampleDatabase to notStandardExampleDatabaseNotableGoalToSolution,
-            ifThenStandardExampleDatabase to ifThenStandardExampleDatabaseNotableGoalToSolution,
-            ClauseDatabase.empty() to ifThenElseStandardExampleNotableGoalToSolution
+            prologStandardExampleTheory to prologStandardExampleTheoryNotableGoalToSolution,
+            prologStandardExampleWithCutTheory to prologStandardExampleWithCutTheoryNotableGoalToSolution,
+            conjunctionStandardExampleTheory to conjunctionStandardExampleTheoryNotableGoalToSolution,
+            callStandardExampleTheory to callStandardExampleTheoryGoalsToSolution,
+            catchAndThrowTheoryExample to catchAndThrowTheoryExampleNotableGoalToSolution,
+            notStandardExampleTheory to notStandardExampleTheoryNotableGoalToSolution,
+            ifThenStandardExampleTheory to ifThenStandardExampleTheoryNotableGoalToSolution,
+            Theory.empty() to ifThenElseStandardExampleNotableGoalToSolution
         )
     }
 }

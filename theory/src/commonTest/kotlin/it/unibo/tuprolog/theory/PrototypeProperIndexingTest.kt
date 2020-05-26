@@ -7,7 +7,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 
 class PrototypeProperIndexingTest(
-    private val clauseDatabaseGenerator: (Iterable<Clause>) -> ClauseDatabase
+    private val theoryGenerator: (Iterable<Clause>) -> Theory
 ) {
 
     private val mixedClausesTheory =
@@ -33,7 +33,7 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Numeric.of(1)))
         )
 
-    private val clauseDatabase = clauseDatabaseGenerator(mixedClausesTheory)
+    private val theory = theoryGenerator(mixedClausesTheory)
 
     private val expectedIndexingOverF1 =
         listOf(
@@ -87,65 +87,77 @@ class PrototypeProperIndexingTest(
     private val anonymousG1Clause = Fact.of(Struct.of("g", Var.anonymous()))
     private val anonymousG2Clause = Fact.of(Struct.of("g", Var.anonymous(), Var.anonymous()))
 
-    fun correctIndexingOverDedicatedClauseDatabaseForF1Family() {
+    fun correctIndexingOverDedicatedTheoryForF1Family() {
         val generatedIndexingOverF1Family =
-            clauseDatabase.clauses.toList().filter { it matches anonymousF1Clause }
+            theory.clauses.toList().filter { it matches anonymousF1Clause }
 
         assertClausesHaveSameLengthAndContent(expectedIndexingOverF1, generatedIndexingOverF1Family)
     }
 
-    fun correctIndexingOverDedicatedClauseDatabaseForF2Family() {
+    fun correctIndexingOverDedicatedTheoryForF2Family() {
         val generatedIndexingOverF2Family =
-            clauseDatabase.clauses.toList().filter { it matches anonymousF2Clause }
+            theory.clauses.toList().filter { it matches anonymousF2Clause }
 
         assertClausesHaveSameLengthAndContent(expectedIndexingOverF2, generatedIndexingOverF2Family)
     }
 
-    fun correctIndexingOverDedicatedClauseDatabaseG1Family() {
+    fun correctIndexingOverDedicatedTheoryG1Family() {
         val generatedIndexingOverG1Family =
-            clauseDatabase.clauses.toList().filter { it matches anonymousG1Clause }
+            theory.clauses.toList().filter { it matches anonymousG1Clause }
 
         assertClausesHaveSameLengthAndContent(expectedIndexingOverG1, generatedIndexingOverG1Family)
     }
 
-    fun correctIndexingOverDedicatedClauseDatabaseG2Family() {
+    fun correctIndexingOverDedicatedTheoryG2Family() {
         val generatedIndexingOverG2Family =
-            clauseDatabase.clauses.toList().filter { it matches anonymousG2Clause }
+            theory.clauses.toList().filter { it matches anonymousG2Clause }
 
         assertClausesHaveSameLengthAndContent(expectedIndexingOverG2, generatedIndexingOverG2Family)
     }
 
-    fun correctIndexingAfterClauseDatabasesConcatenationForF1Family() {
+    fun correctIndexingAfterTheoriesConcatenationForF1Family() {
         val generatedIndexingOverDoubledDatabaseForF1Family =
-            (clauseDatabase + clauseDatabase).clauses.toList().filter { it matches anonymousF1Clause }
+            (theory + theory).clauses.toList().filter { it matches anonymousF1Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + expectedIndexingOverF1, generatedIndexingOverDoubledDatabaseForF1Family)
+        assertClausesHaveSameLengthAndContent(
+            expectedIndexingOverF1 + expectedIndexingOverF1,
+            generatedIndexingOverDoubledDatabaseForF1Family
+        )
     }
 
-    fun correctIndexingAfterClauseDatabasesConcatenationForF2Family() {
+    fun correctIndexingAfterTheoriesConcatenationForF2Family() {
         val generatedIndexingOverDoubledDatabaseForF2Family =
-            (clauseDatabase + clauseDatabase).clauses.toList().filter { it matches anonymousF2Clause }
+            (theory + theory).clauses.toList().filter { it matches anonymousF2Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + expectedIndexingOverF2, generatedIndexingOverDoubledDatabaseForF2Family)
+        assertClausesHaveSameLengthAndContent(
+            expectedIndexingOverF2 + expectedIndexingOverF2,
+            generatedIndexingOverDoubledDatabaseForF2Family
+        )
     }
 
-    fun correctIndexingAfterClauseDatabasesConcatenationForG1Family() {
+    fun correctIndexingAfterTheoriesConcatenationForG1Family() {
         val generatedIndexingOverDoubledDatabaseForG1Family =
-            (clauseDatabase + clauseDatabase).clauses.toList().filter { it matches anonymousG1Clause }
+            (theory + theory).clauses.toList().filter { it matches anonymousG1Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverG1 + expectedIndexingOverG1, generatedIndexingOverDoubledDatabaseForG1Family)
+        assertClausesHaveSameLengthAndContent(
+            expectedIndexingOverG1 + expectedIndexingOverG1,
+            generatedIndexingOverDoubledDatabaseForG1Family
+        )
     }
 
-    fun correctIndexingAfterClauseDatabasesConcatenationForG2Family() {
+    fun correctIndexingAfterTheoriesConcatenationForG2Family() {
         val generatedIndexingOverDoubledDatabaseForG2Family =
-            (clauseDatabase + clauseDatabase).clauses.toList().filter { it matches anonymousG2Clause }
+            (theory + theory).clauses.toList().filter { it matches anonymousG2Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverG2 + expectedIndexingOverG2, generatedIndexingOverDoubledDatabaseForG2Family)
+        assertClausesHaveSameLengthAndContent(
+            expectedIndexingOverG2 + expectedIndexingOverG2,
+            generatedIndexingOverDoubledDatabaseForG2Family
+        )
     }
 
     fun correctIndexingAfterOneArityAtomClauseAssertionA() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertA(newF1AtomClause)
+            theory.assertA(newF1AtomClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF1Clause }
@@ -156,7 +168,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterOneArityVariableClauseAssertionA() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertA(newF1VarClause)
+            theory.assertA(newF1VarClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF1Clause }
@@ -167,7 +179,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityAtomClauseAssertionA() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertA(newF2AtomClause)
+            theory.assertA(newF2AtomClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }
@@ -178,7 +190,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityVarClauseAssertionA() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertA(newF2VarClause)
+            theory.assertA(newF2VarClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }
@@ -189,7 +201,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityMixedClauseAssertionA() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertA(newF2MixedClause)
+            theory.assertA(newF2MixedClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }
@@ -200,7 +212,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterOneArityAtomClauseAssertionZ() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertZ(newF1AtomClause)
+            theory.assertZ(newF1AtomClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF1Clause }
@@ -211,7 +223,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterOneArityVariableClauseAssertionZ() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertZ(newF1VarClause)
+            theory.assertZ(newF1VarClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF1Clause }
@@ -222,7 +234,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityAtomClauseAssertionZ() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertZ(newF2AtomClause)
+            theory.assertZ(newF2AtomClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }
@@ -233,7 +245,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityVariableClauseAssertionZ() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertZ(newF2VarClause)
+            theory.assertZ(newF2VarClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }
@@ -244,7 +256,7 @@ class PrototypeProperIndexingTest(
 
     fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
         val generatedIndexingAfterAssertionA =
-            clauseDatabase.assertZ(newF2MixedClause)
+            theory.assertZ(newF2MixedClause)
                 .clauses
                 .toList()
                 .filter { it matches anonymousF2Clause }

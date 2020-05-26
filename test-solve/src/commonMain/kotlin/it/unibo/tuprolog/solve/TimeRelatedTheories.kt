@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
-object TimeRelatedDatabases {
+object TimeRelatedTheories {
     internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
 
     /**
@@ -18,7 +18,7 @@ object TimeRelatedDatabases {
      * b(700) :- sleep(700).
      * ```
      */
-    val timeRelatedDatabase: ClauseDatabase by lazy {
+    val timeRelatedTheory: Theory by lazy {
         prolog {
             theoryOf(
                 rule { "a"("X") `if` "b"("X") },
@@ -30,7 +30,7 @@ object TimeRelatedDatabases {
     }
 
     /**
-     * Notable request goal over [timeRelatedDatabase] and respective expected [Solution]s.
+     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
      * In particular the requested goal assumes the resolution terminates in less than 500 ms,
      * thus a [TimeOutException] is returned as the first solution
      */
@@ -45,7 +45,7 @@ object TimeRelatedDatabases {
     }
 
     /**
-     * Notable request goal over [timeRelatedDatabase] and respective expected [Solution]s.
+     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
      * In particular the requested goal assumes the resolution terminates in slightly more than 500 ms
      * (and, in any case, within 1100 ms),
      * thus a [TimeOutException] is returned as the second solution
@@ -62,7 +62,7 @@ object TimeRelatedDatabases {
     }
 
     /**
-     * Notable request goal over [timeRelatedDatabase] and respective expected [Solution]s.
+     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
      * In particular the requested goal assumes the resolution terminates in slightly more than 1100 ms
      * (and, in any case, within 1800 ms),
      * thus a [TimeOutException] is returned as the third solution
@@ -80,7 +80,7 @@ object TimeRelatedDatabases {
     }
 
     /**
-     * Notable request goal over [timeRelatedDatabase] and respective expected [Solution]s.
+     * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
      * In particular the requested goal assumes the resolution terminates in slightly more than 1800 ms,
      * thus no [TimeOutException] is returned and 3 positive solutions are returned instead
      */
