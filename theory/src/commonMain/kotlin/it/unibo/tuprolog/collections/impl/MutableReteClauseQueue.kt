@@ -8,8 +8,12 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
 internal class MutableReteClauseQueue private constructor(
-    private val rete: ReteTree
+    rete: ReteTree
 ) : MutableClauseQueue, AbstractMutableReteClauseCollection<MutableReteClauseQueue>(rete) {
+
+    init {
+        require(rete.isOrdered)
+    }
 
     /** Construct a [MutableReteClauseQueue] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.ordered(clauses)) {

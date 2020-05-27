@@ -52,7 +52,7 @@ internal abstract class AbstractTheory : Theory {
     }
 
     override fun hashCode(): Int {
-        val base = "AbstractClauseDatabase".hashCode()
+        val base = AbstractTheory::class.simpleName.hashCode()
         var result = (base xor (base ushr 32))
         for (clause in clauses) {
             result = 31 * result + clause.hashCode()

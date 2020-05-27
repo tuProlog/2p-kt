@@ -8,8 +8,12 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
 internal class ReteClauseQueue private constructor(
-    private val rete: ReteTree
+    rete: ReteTree
 ) : ClauseQueue, AbstractReteClauseCollection<ReteClauseQueue>(rete) {
+
+    init {
+        require(rete.isOrdered)
+    }
 
     /** Construct a [ReteClauseQueue] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.ordered(clauses)) {
@@ -22,6 +26,10 @@ internal class ReteClauseQueue private constructor(
                 assertA(TheoryUtils.checkClauseCorrect(clause))
             }
         )
+
+    override fun retrieveAll(clause: Clause): RetrieveResult<out ReteClauseQueue> {
+        return super.retrieveAll(clause)
+    }
 
     override fun addLast(clause: Clause): ReteClauseQueue =
         ReteClauseQueue(

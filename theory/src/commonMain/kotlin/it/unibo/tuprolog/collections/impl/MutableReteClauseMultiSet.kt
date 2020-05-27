@@ -7,8 +7,12 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
 internal class MutableReteClauseMultiSet private constructor(
-    private val rete: ReteTree
+    rete: ReteTree
 ) : MutableClauseMultiSet, AbstractMutableReteClauseCollection<MutableReteClauseMultiSet>(rete) {
+
+    init {
+        require(!rete.isOrdered)
+    }
 
     /** Construct a [MutableReteClauseMultiSet] from given clauses */
     constructor(clauses: Iterable<Clause>) : this(ReteTree.unordered(clauses)) {

@@ -6,15 +6,8 @@ import it.unibo.tuprolog.theory.TheoryUtils
 
 internal abstract class AbstractReteClauseCollection<Self : AbstractReteClauseCollection<Self>>
 protected constructor(
-    private val rete: ReteTree
+    rete: ReteTree
 ) : AbstractClauseCollection<Self>(rete) {
-
-    constructor(
-        clauses: Iterable<Clause>,
-        reteNodeBuilder: (Iterable<Clause>) -> ReteTree
-    ) : this(reteNodeBuilder(clauses)) {
-        TheoryUtils.checkClausesCorrect(clauses)
-    }
 
     protected abstract fun newCollectionBuilder(rete: ReteTree): Self
 

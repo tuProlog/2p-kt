@@ -5,14 +5,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
 
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
-protected constructor(private val rete: ReteTree) : ClauseCollection {
-
-    constructor(
-        clauses: Iterable<Clause>,
-        reteNodeBuilder: (Iterable<Clause>) -> ReteTree
-    ) : this(reteNodeBuilder(clauses)) {
-        TheoryUtils.checkClausesCorrect(clauses)
-    }
+protected constructor(protected val rete: ReteTree) : ClauseCollection {
 
     override val size: Int
         get() = rete.clauses.count()
@@ -23,11 +16,8 @@ protected constructor(private val rete: ReteTree) : ClauseCollection {
     override fun contains(element: Clause): Boolean =
         rete.get(element).any()
 
-    override fun containsAll(elements: Iterable<Clause>): Boolean {
-        var booleanAccumulator = true
-        elements.forEach { booleanAccumulator = booleanAccumulator && contains(it) }
-        return booleanAccumulator
-    }
+    override fun containsAll(elements: Iterable<Clause>): Boolean =
+        elements.all { it in this }
 
     abstract override fun add(clause: Clause): Self
 
