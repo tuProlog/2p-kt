@@ -26,11 +26,11 @@ interface Theory : Iterable<Clause> {
     @JsName("size")
     val size: Long
 
-    /** Adds given ClauseDatabase to this */
+    /** Adds given [Theory] to this */
     @JsName("plusTheory")
     operator fun plus(theory: Theory): Theory
 
-    /** Adds given Clause to this ClauseDatabase */
+    /** Adds given Clause to this [Theory] */
     @JsName("plus")
     operator fun plus(clause: Clause): Theory = assertZ(clause)
 
