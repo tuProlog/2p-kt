@@ -30,4 +30,9 @@ protected constructor(protected val rete: ReteTree) : ClauseCollection {
     override fun iterator(): Iterator<Clause> =
         rete.clauses.iterator()
 
+    override fun toString(): String {
+        return "${this::class.simpleName}(${this.joinToString(", ")})"
+    }
+
+
 }

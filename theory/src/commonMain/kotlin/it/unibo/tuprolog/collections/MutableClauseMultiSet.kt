@@ -3,6 +3,9 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.TermComparator
+import it.unibo.tuprolog.utils.itemWiseEquals
+import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -50,6 +53,21 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): MutableClauseMultiSet =
             MutableReteClauseMultiSet(clauses)
+
+        @JvmStatic
+        @JsName("equals")
+        fun equals(multiSet1: MutableClauseMultiSet, multiSet2: MutableClauseMultiSet): Boolean {
+            return ClauseMultiSet.equals(multiSet1, multiSet2)
+        }
+
+        @JvmStatic
+        @JsName("hashCode")
+        fun hashCode(multiSet: MutableClauseMultiSet): Int {
+            return itemWiseHashCode(
+                MutableClauseMultiSet::class,
+                multiSet.sortedWith(TermComparator.DefaultComparator)
+            )
+        }
     }
 
 }

@@ -140,6 +140,46 @@ fun <T> Sequence<T>.subsequences(): Sequence<Sequence<T>> {
     }
 }
 
+fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>, comparator: (T, T) -> Boolean): Boolean {
+    val i = iterable1.iterator()
+    val j = iterable2.iterator()
+    while (i.hasNext() && j.hasNext()) {
+        if (!comparator(i.next(), j.next())) {
+            return false
+        }
+    }
+    return i.hasNext() == j.hasNext()
+}
+
+fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>): Boolean =
+    itemWiseEquals(iterable1, iterable2) { a, b -> a == b }
+
+fun <T> itemWiseEquals(sequence1: Sequence<T>, sequence2: Sequence<T>, comparator: (T, T) -> Boolean): Boolean {
+    return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable(), comparator)
+}
+
+fun <T> itemWiseEquals(sequence1: Sequence<T>, sequence2: Sequence<T>): Boolean {
+    return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable())
+}
+
+fun <T> itemWiseHashCode(vararg items: T): Int {
+    return itemWiseHashCode(items.asIterable())
+}
+
+fun <T> itemWiseHashCode(iterable: Iterable<T>): Int {
+    var hash = 13
+    val i = iterable.iterator()
+    while (i.hasNext()) {
+        hash = 31 * hash + (i.next()?.hashCode() ?: 0)
+    }
+    return hash
+}
+
+fun <T> itemWiseHashCode(sequence: Sequence<T>): Int {
+    return itemWiseHashCode(sequence.asIterable())
+}
+
+
 fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> {
     return asSequence().subsequences()
 }

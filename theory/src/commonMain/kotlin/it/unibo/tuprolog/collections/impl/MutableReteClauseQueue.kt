@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.impl
 
 import it.unibo.tuprolog.collections.AbstractMutableReteClauseCollection
+import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
@@ -47,5 +48,17 @@ internal class MutableReteClauseQueue private constructor(
                     this, retracted.toList()
                 )
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is MutableClauseQueue) {
+            MutableClauseQueue.equals(this, other)
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return MutableClauseQueue.hashCode(this)
     }
 }

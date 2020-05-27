@@ -3,6 +3,8 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseQueue
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.utils.itemWiseEquals
+import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -59,6 +61,21 @@ interface MutableClauseQueue : ClauseQueue {
         @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): MutableClauseQueue =
             MutableReteClauseQueue(clauses)
+
+        @JvmStatic
+        @JsName("equals")
+        fun equals(queue1: MutableClauseQueue, queue2: MutableClauseQueue): Boolean {
+            return ClauseQueue.equals(queue1, queue2)
+        }
+
+        @JvmStatic
+        @JsName("hashCode")
+        fun hashCode(queue: MutableClauseQueue): Int {
+            return itemWiseHashCode(
+                MutableClauseQueue::class,
+                itemWiseHashCode(queue)
+            )
+        }
     }
 
 }
