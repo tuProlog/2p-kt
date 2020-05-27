@@ -3,10 +3,13 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.ReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface ClauseMultiSet : ClauseCollection {
 
     /** Gives the number of [Clause] that would unify over the given clause. **/
+    @JsName("count")
     fun count(clause: Clause): Long
 
     /** Produces a [Sequence] of the clauses that would unify over the given [Clause]. **/
@@ -29,21 +32,31 @@ interface ClauseMultiSet : ClauseCollection {
     companion object {
 
         /** Creates an empty [ClauseMultiSet] **/
+        @JvmStatic
+        @JsName("empty")
         fun empty(): ClauseMultiSet = of(emptyList())
 
         /** Creates a [ClauseMultiSet] with given clauses */
+        @JvmStatic
+        @JsName("of")
         fun of(vararg clause: Clause): ClauseMultiSet = of(clause.asIterable())
 
         /** Let developers easily create a [ClauseMultiSet] programmatically while avoiding variables names clashing */
+        @JvmStatic
+        @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): ClauseMultiSet =
             of(clause.map {
                 Scope.empty(it)
             })
 
         /** Creates a [ClauseMultiSet] from the given [Sequence] of [Clause] */
+        @JvmStatic
+        @JsName("ofSequence")
         fun of(clauses: Sequence<Clause>): ClauseMultiSet = of(clauses.asIterable())
 
         /** Creates a [ClauseMultiSet] from the given [Iterable] of [Clause] */
+        @JvmStatic
+        @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): ClauseMultiSet =
             ReteClauseMultiSet(clauses)
     }

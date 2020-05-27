@@ -3,6 +3,8 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseQueue
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface MutableClauseQueue : ClauseQueue {
 
@@ -30,21 +32,31 @@ interface MutableClauseQueue : ClauseQueue {
     companion object {
 
         /** Creates an empty [MutableClauseQueue] **/
+        @JvmStatic
+        @JsName("empty")
         fun empty(): MutableClauseQueue = of(emptyList())
 
         /** Creates a [MutableClauseQueue] with given clauses */
+        @JvmStatic
+        @JsName("of")
         fun of(vararg clause: Clause): MutableClauseQueue = of(clause.asIterable())
 
         /** Let developers easily create a [MutableClauseQueue] programmatically while avoiding variables names clashing */
+        @JvmStatic
+        @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): MutableClauseQueue =
             of(clause.map {
                 Scope.empty(it)
             })
 
         /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
+        @JvmStatic
+        @JsName("ofSequence")
         fun of(clauses: Sequence<Clause>): MutableClauseQueue = of(clauses.asIterable())
 
         /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
+        @JvmStatic
+        @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): MutableClauseQueue =
             MutableReteClauseQueue(clauses)
     }

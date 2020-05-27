@@ -3,6 +3,8 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface MutableClauseMultiSet : ClauseMultiSet {
 
@@ -21,21 +23,31 @@ interface MutableClauseMultiSet : ClauseMultiSet {
     companion object {
 
         /** Creates an empty [MutableClauseMultiSet] **/
+        @JvmStatic
+        @JsName("empty")
         fun empty(): MutableClauseMultiSet = of(emptyList())
 
         /** Creates a [MutableClauseMultiSet] with given clauses */
+        @JvmStatic
+        @JsName("of")
         fun of(vararg clause: Clause): MutableClauseMultiSet = of(clause.asIterable())
 
         /** Let developers easily create a [MutableClauseMultiSet] programmatically while avoiding variables names clashing */
+        @JvmStatic
+        @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): MutableClauseMultiSet =
             of(clause.map {
                 Scope.empty(it)
             })
 
         /** Creates a [MutableClauseMultiSet] from the given [Sequence] of [Clause] */
+        @JvmStatic
+        @JsName("ofSequence")
         fun of(clauses: Sequence<Clause>): MutableClauseMultiSet = of(clauses.asIterable())
 
         /** Creates a [MutableClauseMultiSet] from the given [Iterable] of [Clause] */
+        @JvmStatic
+        @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): MutableClauseMultiSet =
             MutableReteClauseMultiSet(clauses)
     }
