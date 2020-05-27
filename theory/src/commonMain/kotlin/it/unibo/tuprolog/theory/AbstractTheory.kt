@@ -25,7 +25,7 @@ internal abstract class AbstractTheory : Theory {
         ).map { it as Rule }
     }
 
-    override fun toString(): String = "ClauseDatabase(clauses=$clauses)"
+    override fun toString(): String = "${Theory::class.simpleName}(clauses=$clauses)"
 
     override fun toString(asPrologText: Boolean): String = when (asPrologText) {
         true -> clauses.joinToString(".\n", "", ".\n")
