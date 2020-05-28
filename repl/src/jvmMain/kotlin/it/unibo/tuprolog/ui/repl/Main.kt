@@ -1,4 +1,4 @@
-@file:JvmName("Repl")
+@file:JvmName("Main")
 
 package it.unibo.tuprolog.ui.repl
 

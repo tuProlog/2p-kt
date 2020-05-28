@@ -24,6 +24,8 @@ object Versions {
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.72"
 
+    const val com_github_johnrengelman_shadow_gradle_plugin: String = "5.2.0"
+
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.20.0"
