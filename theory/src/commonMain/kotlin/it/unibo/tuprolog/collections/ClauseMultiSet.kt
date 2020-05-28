@@ -64,7 +64,7 @@ interface ClauseMultiSet : ClauseCollection {
             ReteClauseMultiSet(clauses)
 
         @JvmStatic
-        @JsName("equals")
+        @JsName("areEquals")
         fun equals(multiSet1: ClauseMultiSet, multiSet2: ClauseMultiSet): Boolean {
             return itemWiseEquals(
                 multiSet1.sortedWith(TermComparator.DefaultComparator),
@@ -73,7 +73,7 @@ interface ClauseMultiSet : ClauseCollection {
         }
 
         @JvmStatic
-        @JsName("hashCode")
+        @JsName("computeHashCode")
         fun hashCode(multiSet: ClauseMultiSet): Int {
             return itemWiseHashCode(
                 ClauseMultiSet::class,

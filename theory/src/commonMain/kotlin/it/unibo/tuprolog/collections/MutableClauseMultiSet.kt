@@ -55,13 +55,13 @@ interface MutableClauseMultiSet : ClauseMultiSet {
             MutableReteClauseMultiSet(clauses)
 
         @JvmStatic
-        @JsName("equals")
+        @JsName("areEquals")
         fun equals(multiSet1: MutableClauseMultiSet, multiSet2: MutableClauseMultiSet): Boolean {
             return ClauseMultiSet.equals(multiSet1, multiSet2)
         }
 
         @JvmStatic
-        @JsName("hashCode")
+        @JsName("computeHashCode")
         fun hashCode(multiSet: MutableClauseMultiSet): Int {
             return itemWiseHashCode(
                 MutableClauseMultiSet::class,

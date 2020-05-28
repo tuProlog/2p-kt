@@ -63,13 +63,13 @@ interface MutableClauseQueue : ClauseQueue {
             MutableReteClauseQueue(clauses)
 
         @JvmStatic
-        @JsName("equals")
+        @JsName("areEquals")
         fun equals(queue1: MutableClauseQueue, queue2: MutableClauseQueue): Boolean {
             return ClauseQueue.equals(queue1, queue2)
         }
 
         @JvmStatic
-        @JsName("hashCode")
+        @JsName("computeHashCode")
         fun hashCode(queue: MutableClauseQueue): Int {
             return itemWiseHashCode(
                 MutableClauseQueue::class,

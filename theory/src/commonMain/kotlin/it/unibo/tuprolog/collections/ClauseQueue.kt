@@ -85,13 +85,13 @@ interface ClauseQueue : ClauseCollection {
             ReteClauseQueue(clauses)
 
         @JvmStatic
-        @JsName("equals")
+        @JsName("areEquals")
         fun equals(queue1: ClauseQueue, queue2: ClauseQueue): Boolean {
             return itemWiseEquals(queue1, queue2)
         }
 
         @JvmStatic
-        @JsName("hashCode")
+        @JsName("computeHashCode")
         fun hashCode(queue: ClauseQueue): Int {
             return itemWiseHashCode(
                 ClauseQueue::class,
