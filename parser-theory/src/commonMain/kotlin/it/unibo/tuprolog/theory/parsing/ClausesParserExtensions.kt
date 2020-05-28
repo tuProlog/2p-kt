@@ -4,7 +4,7 @@ package it.unibo.tuprolog.theory.parsing
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
@@ -12,21 +12,21 @@ internal expect fun clausesParserWithOperators(operators: OperatorSet): ClausesP
 
 private val defaultParser = ClausesParser.withDefaultOperators
 
-@JsName("parseClauseDatabaseWithOperators")
-fun ClauseDatabase.Companion.parse(input: String, operators: OperatorSet): ClauseDatabase =
-    defaultParser.parseClauseDatabase(input, operators)
+@JsName("parseTheoryWithOperators")
+fun Theory.Companion.parse(input: String, operators: OperatorSet): Theory =
+    defaultParser.parseTheory(input, operators)
 
-@JsName("parseClauseDatabase")
-fun ClauseDatabase.Companion.parse(input: String): ClauseDatabase =
-    defaultParser.parseClauseDatabase(input)
+@JsName("parseTheory")
+fun Theory.Companion.parse(input: String): Theory =
+    defaultParser.parseTheory(input)
 
-@JsName("parseAsClauseDatabaseWithOperators")
-fun String.parseAsClauseDatabase(operators: OperatorSet): ClauseDatabase =
-    defaultParser.parseClauseDatabase(this, operators)
+@JsName("parseAsTheoryWithOperators")
+fun String.parseAsTheory(operators: OperatorSet): Theory =
+    defaultParser.parseTheory(this, operators)
 
-@JsName("parseAsClauseDatabase")
-fun String.parseAsClauseDatabase(): ClauseDatabase =
-    defaultParser.parseClauseDatabase(this)
+@JsName("parseAsTheory")
+fun String.parseAsTheory(): Theory =
+    defaultParser.parseTheory(this)
 
 @JsName("parseAsClausesWithOperators")
 fun String.parseAsClauses(operators: OperatorSet): List<Clause> =

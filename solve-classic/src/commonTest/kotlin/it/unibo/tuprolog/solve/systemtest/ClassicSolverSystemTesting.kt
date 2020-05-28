@@ -7,8 +7,7 @@ import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.ClauseDatabase
-import kotlin.test.Ignore
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
 class ClassicSolverSystemTesting : SolverFactory, SolverTest {
@@ -21,8 +20,8 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -34,8 +33,8 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     override fun mutableSolverOf(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -60,7 +59,6 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testAssertA() {
         prototype.testAssertA()
     }

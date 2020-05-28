@@ -33,5 +33,11 @@ interface Rule : Clause {
                 body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)
                 else -> RuleImpl(head, Tuple.wrapIfNeeded(*body))
             }
+
+        @JvmStatic
+        @JsName("template")
+        fun template(functor: String, arity: Int): Rule {
+            return of(Struct.template(functor, arity), Var.anonymous())
+        }
     }
 }

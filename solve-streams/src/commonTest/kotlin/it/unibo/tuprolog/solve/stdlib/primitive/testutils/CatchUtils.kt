@@ -1,17 +1,17 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExample
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExampleNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.catchTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.changeQueriesTo
+import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.stdlib.primitive.Call
 import it.unibo.tuprolog.solve.stdlib.primitive.Catch
 import it.unibo.tuprolog.solve.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.solve.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.yes
 import kotlin.collections.listOf as ktListOf
 
@@ -72,7 +72,7 @@ internal object CatchUtils {
     /**
      * Prolog standard examples for `catch/3` primitive
      *
-     * Contains those requests against [catchAndThrowStandardExampleDatabase]:
+     * Contains those requests against [catchAndThrowTheoryExample]:
      *
      * - `catch(p, X, true)` **will result in** `Yes(), Yes(X -> b)`
      * - `catch(q, C, true)` **will result in** `Yes(C -> c)`
@@ -81,7 +81,7 @@ internal object CatchUtils {
      * - `catch(throw(fail), X, X).` **will result in** `No()`
      */
     internal val prologStandardCatchExamples by lazy {
-        catchAndThrowStandardExampleDatabaseNotableGoalToSolution
+        catchAndThrowTheoryExampleNotableGoalToSolution
             .filter { (_, solutionList) -> solutionList.none { it is Solution.Halt } }
             .map { (goal, solutionList) ->
                 createSolveRequest(
@@ -89,7 +89,7 @@ internal object CatchUtils {
                     primitives = mapOf(
                         *ktListOf(Call, Catch, Conjunction, Throw).map { it.descriptionPair }.toTypedArray()
                     ),
-                    database = catchAndThrowStandardExampleDatabase
+                    database = catchAndThrowTheoryExample
                 ) to solutionList
             }
     }

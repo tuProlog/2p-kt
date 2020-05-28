@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Default implementation class of [AliasedLibrary]
@@ -14,7 +14,7 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  */
 open class LibraryAliasedImpl(
     override val operators: OperatorSet,
-    override val theory: ClauseDatabase,
+    override val theory: Theory,
     override val primitives: Map<Signature, Primitive>,
     override val functions: Map<Signature, PrologFunction>,
     override val alias: String

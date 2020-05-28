@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Utils singleton that contains dummy instances, to be used when in a test something is not important
@@ -32,8 +32,8 @@ object DummyInstances {
         override fun createSolver(
             libraries: Libraries,
             flags: PrologFlags,
-            staticKb: ClauseDatabase,
-            dynamicKb: ClauseDatabase,
+            staticKb: Theory,
+            dynamicKb: Theory,
             stdIn: InputChannel<String>,
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,

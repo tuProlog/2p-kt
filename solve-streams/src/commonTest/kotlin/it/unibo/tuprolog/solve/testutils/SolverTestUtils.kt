@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Utils singleton for helping test [Solver] behaviour
@@ -21,7 +21,7 @@ internal object SolverTestUtils {
     /** Creates a Solve.Request with provided goal, against provided database as library theory, loading given primitives */
     internal fun createSolveRequest(
         query: Struct,
-        database: ClauseDatabase = ClauseDatabase.empty(),
+        database: Theory = Theory.empty(),
         primitives: Map<Signature, Primitive> = mapOf()
     ) = Solve.Request(
         query.extractSignature(),

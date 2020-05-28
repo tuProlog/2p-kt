@@ -1,4 +1,3 @@
-// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {
@@ -32,7 +31,8 @@ kotlin {
 
         js {
 
-            val main = compilations["main"]
+
+        val main = compilations["main"]
             val test = compilations["test"]
 
             main.defaultSourceSet {

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** A class representing an agglomerate of libraries with an alias */
@@ -28,8 +28,8 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
     }
 
-    override val theory: ClauseDatabase by lazy {
-        ClauseDatabase.of(libraries.flatMap { it.theory.clauses.asSequence() })
+    override val theory: Theory by lazy {
+        Theory.indexedOf(libraries.flatMap { it.theory.clauses.asSequence() })
     }
 
     override val primitives: Map<Signature, Primitive> by lazy {

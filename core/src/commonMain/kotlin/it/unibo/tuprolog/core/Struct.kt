@@ -67,7 +67,6 @@ interface Struct : Term {
     @JsName("functor")
     val functor: String
 
-
     @JsName("isFunctorWellFormed")
     val isFunctorWellFormed: Boolean
 
@@ -115,6 +114,12 @@ interface Struct : Term {
             } else {
                 escapeFunctor(string)
             }
+
+        @JvmStatic
+        @JsName("template")
+        fun template(functor: String, arity: Int): Struct {
+            return of(functor, (0 until arity).map { Var.anonymous() })
+        }
 
         @JvmStatic
         @JsName("ofList")

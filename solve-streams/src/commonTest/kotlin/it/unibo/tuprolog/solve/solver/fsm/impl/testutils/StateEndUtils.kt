@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -35,13 +35,13 @@ internal object StateEndUtils {
     internal val aSubstitution = Substitution.of("A", Truth.FAIL)
     internal val someLibraries = Libraries(Library.of(alias = "stateEnd.test", operatorSet = OperatorSet.DEFAULT))
     internal val someFlags = mapOf(Atom.of("function1") to Atom.of("off"))
-    internal val aStaticKb = ClauseDatabase.of({ factOf(atomOf("myStaticFact")) })
-    internal val aDynamicKb = ClauseDatabase.of({ factOf(atomOf("myDynamicFact")) })
+    internal val aStaticKb = Theory.indexedOf({ factOf(atomOf("myStaticFact")) })
+    internal val aDynamicKb = Theory.indexedOf({ factOf(atomOf("myDynamicFact")) })
 
     internal val defaultLibraries = Libraries()
     internal val defaultFlags = mapOf<Atom, Term>()
-    internal val defaultStaticKb = ClauseDatabase.empty()
-    internal val defaultDynamicKb = ClauseDatabase.empty()
+    internal val defaultStaticKb = Theory.empty()
+    internal val defaultDynamicKb = Theory.empty()
 
     internal val aMinimalYesResponse by lazy { Solve.Response(aQuery.yes()) }
     internal val aMinimalNoResponse by lazy { Solve.Response(aQuery.no()) }
@@ -75,8 +75,8 @@ internal object StateEndUtils {
     internal fun assertStateContentsCorrect(
         expectedLibraries: Libraries?,
         expectedFlags: PrologFlags?,
-        expectedStaticKB: ClauseDatabase?,
-        expectedDynamicKB: ClauseDatabase?,
+        expectedStaticKB: Theory?,
+        expectedDynamicKB: Theory?,
         expectedSideEffectManager: SideEffectManager?,
         actualStateEnd: StateEnd
     ) = with(actualStateEnd.solve) {

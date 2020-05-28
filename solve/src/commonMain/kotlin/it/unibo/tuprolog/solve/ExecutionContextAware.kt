@@ -4,7 +4,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -49,11 +49,11 @@ interface ExecutionContextAware {
 
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
     @JsName("staticKb")
-    val staticKb: ClauseDatabase
+    val staticKb: Theory
 
     /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
     @JsName("dynamicKb")
-    val dynamicKb: ClauseDatabase
+    val dynamicKb: Theory
 
     /** The currently open input channels */
     @JsName("inputChannels")

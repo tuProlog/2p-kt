@@ -1,12 +1,11 @@
 package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList
 
@@ -19,8 +18,8 @@ internal object SolveUtils {
 
     internal val someLibraries = Libraries()
     internal val someFlags = emptyMap<Atom, Term>()
-    internal val aStaticKB = ClauseDatabase.empty()
-    internal val aDynamicKB = ClauseDatabase.empty()
+    internal val aStaticKB = Theory.empty()
+    internal val aDynamicKB = Theory.empty()
 
     // Request parameters
     internal val aSignature = Signature("ciao", 2)
@@ -39,10 +38,10 @@ internal object SolveUtils {
         mapOf<Atom, Term>(Truth.TRUE to Truth.FAIL).also { assertNotEquals(it, someFlags) }
     }
     internal val differentStaticKB by lazy {
-        ClauseDatabase.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
+        Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
     }
     internal val differentDynamicKB by lazy {
-        ClauseDatabase.of(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
+        Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aDynamicKB) }
     }
 
     internal val solutionSubstitution = Substitution.of("A", Truth.TRUE)

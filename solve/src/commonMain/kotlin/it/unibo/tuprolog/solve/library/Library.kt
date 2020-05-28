@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** Represents a Prolog library */
@@ -19,7 +19,7 @@ interface Library {
 
     /** The library theory clauses */
     @JsName("theory")
-    val theory: ClauseDatabase
+    val theory: Theory
 
     /** The library primitives, identified by their signatures */
     @JsName("primitives")
@@ -56,7 +56,7 @@ interface Library {
         /** Creates an instance of [Library] with given parameters */
         fun of(
             operatorSet: OperatorSet = OperatorSet(),
-            theory: ClauseDatabase = ClauseDatabase.empty(),
+            theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
             functions: Map<Signature, PrologFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
@@ -64,7 +64,7 @@ interface Library {
         /** Creates an instance of [AliasedLibrary] with given parameters */
         fun of(
             operatorSet: OperatorSet = OperatorSet(),
-            theory: ClauseDatabase = ClauseDatabase.empty(),
+            theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
             functions: Map<Signature, PrologFunction> = emptyMap(),
             alias: String

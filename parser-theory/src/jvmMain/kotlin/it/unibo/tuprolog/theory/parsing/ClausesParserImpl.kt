@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.PrologExpressionVisitor
 import it.unibo.tuprolog.core.parsing.PrologParserFactory
 import it.unibo.tuprolog.core.parsing.toClause
-import it.unibo.tuprolog.theory.ClauseDatabase
 
 class ClausesParserImpl(override val defaultOperatorSet: OperatorSet) : ClausesParser {
 

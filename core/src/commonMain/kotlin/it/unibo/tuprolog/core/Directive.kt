@@ -34,5 +34,12 @@ interface Directive : Clause {
         @JsName("of")
         fun of(body1: Term, vararg body: Term): Directive =
             of(listOf(body1, *body))
+
+        @JvmStatic
+        @JsName("template")
+        fun template(length: Int = 1): Directive {
+            require(length > 0)
+            return of((0 until length).map { Var.anonymous() })
+        }
     }
 }

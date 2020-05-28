@@ -2,51 +2,51 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.CustomDatabases.ifThen1ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThen2ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase1
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenDatabase2
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse1ToSolution
-import it.unibo.tuprolog.solve.CustomDatabases.ifThenElse2ToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.callStandardExampleDatabaseGoalsToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.catchAndThrowStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.conjunctionStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenElseStandardExampleNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.ifThenStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.notStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.allPrologTestingDatabasesToRespectiveGoalsAndSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.callTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.catchTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customRangeListGeneratorDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customRangeListGeneratorDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.haltTestingGoalsToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.replaceAllFunctors
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThenElse1ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThenElse2ToSolution
+import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory1
+import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory2
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheoryGoalsToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExample
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExampleNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.conjunctionStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.conjunctionStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.ifThenElseStandardExampleNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.ifThenStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.ifThenStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.customRangeListGeneratorTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.customRangeListGeneratorTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.haltTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedDatabases.timeRelatedDatabase
+import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1100MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.library.Libraries
@@ -283,7 +283,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout1() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedDatabase,
+                staticKb = timeRelatedTheory,
                 otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = lessThan500MsGoalToSolution,
@@ -295,7 +295,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout2() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedDatabase,
+                staticKb = timeRelatedTheory,
                 otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
@@ -307,7 +307,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout3() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedDatabase,
+                staticKb = timeRelatedTheory,
                 otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
@@ -319,7 +319,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout4() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedDatabase,
+                staticKb = timeRelatedTheory,
                 otherLibraries = Libraries(timeLibrary)
             ),
             goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
@@ -330,7 +330,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** Test with [ifThen1ToSolution] */
     override fun testIfThen1() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase1),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThen1ToSolution,
             maxDuration = maxDuration
         )
@@ -339,7 +339,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** Test with [ifThenElse1ToSolution] */
     override fun testIfThenElse1() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase1),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThenElse1ToSolution,
             maxDuration = maxDuration
         )
@@ -348,7 +348,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** Test with [ifThenElse2ToSolution] */
     override fun testIfThenElse2() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase2),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThenElse2ToSolution,
             maxDuration = maxDuration
         )
@@ -357,90 +357,90 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** Test with [ifThen2ToSolution] */
     override fun testIfThen2() {
         assertSolverSolutionsCorrect(
-            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenDatabase2),
+            solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThen2ToSolution,
             maxDuration = maxDuration
         )
     }
 
-    /** Test with [simpleFactDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleFactTheoryNotableGoalToSolutions] */
     override fun testUnification() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactDatabase),
-            simpleFactDatabaseNotableGoalToSolutions,
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactTheory),
+            simpleFactTheoryNotableGoalToSolutions,
             maxDuration
         )
     }
 
 
-    /** Test with [simpleCutDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleCutTheoryNotableGoalToSolutions] */
     override fun testSimpleCutAlternatives() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutDatabase),
-            simpleCutDatabaseNotableGoalToSolutions,
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutTheory),
+            simpleCutTheoryNotableGoalToSolutions,
             maxDuration
         )
     }
 
-    /** Test with [simpleCutAndConjunctionDatabaseNotableGoalToSolutions] */
+    /** Test with [simpleCutAndConjunctionTheoryNotableGoalToSolutions] */
     override fun testCutAndConjunction() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionDatabase),
-            simpleCutAndConjunctionDatabaseNotableGoalToSolutions,
+            solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionTheory),
+            simpleCutAndConjunctionTheoryNotableGoalToSolutions,
             maxDuration
         )
     }
 
-    /** Test with [cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions] */
+    /** Test with [cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions] */
     override fun testCutConjunctionAndBacktracking() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingDatabase),
-            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
+            solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingTheory),
+            cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
             maxDuration
         )
     }
 
-    /** Test with [infiniteComputationDatabaseNotableGoalToSolution] */
+    /** Test with [infiniteComputationTheoryNotableGoalToSolution] */
     override fun testMaxDurationParameterAndTimeOutException() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationDatabase),
-            infiniteComputationDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationTheory),
+            infiniteComputationTheoryNotableGoalToSolution,
             shortDuration
         )
     }
 
-    /** Test with [prologStandardExampleDatabaseNotableGoalToSolution] */
+    /** Test with [prologStandardExampleTheoryNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeExample() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleDatabase),
-            prologStandardExampleDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleTheory),
+            prologStandardExampleTheoryNotableGoalToSolution,
             maxDuration
         )
     }
 
-    /** Test with [prologStandardExampleWithCutDatabaseNotableGoalToSolution] */
+    /** Test with [prologStandardExampleWithCutTheoryNotableGoalToSolution] */
     override fun testPrologStandardSearchTreeWithCutExample() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase),
-            prologStandardExampleWithCutDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
+            prologStandardExampleWithCutTheoryNotableGoalToSolution,
             maxDuration
         )
     }
 
-    /** Test with [customReverseListDatabaseNotableGoalToSolution] */
+    /** Test with [customReverseListTheoryNotableGoalToSolution] */
     override fun testBacktrackingWithCustomReverseListImplementation() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListDatabase),
-            customReverseListDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListTheory),
+            customReverseListTheoryNotableGoalToSolution,
             maxDuration
         )
     }
 
-    /** Test with [conjunctionStandardExampleDatabaseNotableGoalToSolution] */
+    /** Test with [conjunctionStandardExampleTheoryNotableGoalToSolution] */
     override fun testWithPrologStandardConjunctionExamples() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleDatabase),
-            conjunctionStandardExampleDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleTheory),
+            conjunctionStandardExampleTheoryNotableGoalToSolution,
             maxDuration
         )
     }
@@ -449,7 +449,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testConjunctionProperties() {
         prolog {
             val allDatabasesWithGoalsAndSolutions by lazy {
-                allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+                allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                     listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                         ktListOf(
                             (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
@@ -479,11 +479,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
-    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleDatabaseGoalsToSolution] */
+    /** Call primitive testing with [callTestingGoalsToSolutions] and [callStandardExampleTheoryGoalsToSolution] */
     override fun testCallPrimitive() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleDatabase),
-            callStandardExampleDatabaseGoalsToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleTheory),
+            callStandardExampleTheoryGoalsToSolution,
             maxDuration
         )
 
@@ -497,7 +497,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** A test in which all testing goals are called through the Call primitive */
     override fun testCallPrimitiveTransparency() {
         prolog {
-            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.map { (goal, expectedSolutions) ->
                     "call"(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
                 }
@@ -511,11 +511,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
-    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowStandardExampleDatabaseNotableGoalToSolution] */
+    /** Call primitive testing with [catchTestingGoalsToSolutions] and [catchAndThrowTheoryExampleNotableGoalToSolution] */
     override fun testCatchPrimitive() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowStandardExampleDatabase),
-            catchAndThrowStandardExampleDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowTheoryExample),
+            catchAndThrowTheoryExampleNotableGoalToSolution,
             maxDuration
         )
 
@@ -536,7 +536,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                     .any { it.containsHaltPrimitive() }
             }
 
-            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
                         "catch"(goal, `_`, false).run {
@@ -571,11 +571,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         )
     }
 
-    /** Not rule testing with [notStandardExampleDatabaseNotableGoalToSolution] */
+    /** Not rule testing with [notStandardExampleTheoryNotableGoalToSolution] */
     override fun testNotPrimitive() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleDatabase),
-            notStandardExampleDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleTheory),
+            notStandardExampleTheoryNotableGoalToSolution,
             maxDuration
         )
     }
@@ -583,7 +583,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     /** A test in which all testing goals are called through the Not rule */
     override fun testNotModularity() {
         prolog {
-            allPrologTestingDatabasesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions
                     .flatMap { (goal, expectedSolutions) ->
                         ktListOf(
@@ -624,11 +624,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
-    /** If-Then rule testing with [ifThenStandardExampleDatabaseNotableGoalToSolution] */
+    /** If-Then rule testing with [ifThenStandardExampleTheoryNotableGoalToSolution] */
     override fun testIfThenRule() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleDatabase),
-            ifThenStandardExampleDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleTheory),
+            ifThenStandardExampleTheoryNotableGoalToSolution,
             maxDuration
         )
     }
@@ -642,11 +642,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         )
     }
 
-    /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
+    /** Test with [customRangeListGeneratorTheoryNotableGoalToSolution] */
     override fun testNumbersRangeListGeneration() {
         assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorDatabase),
-            customRangeListGeneratorDatabaseNotableGoalToSolution,
+            solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorTheory),
+            customRangeListGeneratorTheoryNotableGoalToSolution,
             maxDuration
         )
     }

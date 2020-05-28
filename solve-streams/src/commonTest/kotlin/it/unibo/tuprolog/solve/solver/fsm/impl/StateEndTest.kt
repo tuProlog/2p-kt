@@ -32,7 +32,7 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someFlags
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.someLibraries
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theIntermediateStateRequest
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateEndUtils.theRequestSideEffectManager
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.*
 
 /**
@@ -86,8 +86,8 @@ internal class StateEndTest {
         minimalResponseStateEndInstances.forEach {
             assertEquals(Libraries(), it.context.libraries)
             assertEquals(mapOf(), it.context.flags)
-            assertEquals(ClauseDatabase.empty(), it.context.dynamicKb)
-            assertEquals(ClauseDatabase.empty(), it.context.staticKb)
+            assertEquals(Theory.empty(), it.context.dynamicKb)
+            assertEquals(Theory.empty(), it.context.staticKb)
         }
     }
 

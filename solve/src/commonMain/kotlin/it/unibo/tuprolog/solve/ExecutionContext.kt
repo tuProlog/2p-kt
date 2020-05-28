@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
@@ -28,8 +28,8 @@ interface ExecutionContext : ExecutionContextAware {
     fun createSolver(
         libraries: Libraries = this.libraries,
         flags: PrologFlags = this.flags,
-        staticKb: ClauseDatabase = this.staticKb,
-        dynamicKb: ClauseDatabase = this.dynamicKb,
+        staticKb: Theory = this.staticKb,
+        dynamicKb: Theory = this.dynamicKb,
         stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
         stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
