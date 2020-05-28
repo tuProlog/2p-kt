@@ -32,11 +32,11 @@ object Versions {
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
+    const val clikt_multiplatform: String = "2.7.1"
+
     const val plantuml: String = "1.2020.2" // available: "8059"
 
     const val kt_math: String = "0.1.3"
-
-    const val clikt: String = "2.7.1"
 
     /**
      * Current version: "6.4.1"

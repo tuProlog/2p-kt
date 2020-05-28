@@ -108,15 +108,21 @@ object Libs {
 
     const val com_eden_orchidplugin_gradle_plugin: String =
             "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
-            Versions.com_eden_orchidplugin_gradle_plugin
+                    Versions.com_eden_orchidplugin_gradle_plugin
 
     const val org_jetbrains_dokka_gradle_plugin: String =
-            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
-            Versions.org_jetbrains_dokka_gradle_plugin
+        "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
+                Versions.org_jetbrains_dokka_gradle_plugin
 
     const val com_jfrog_bintray_gradle_plugin: String =
-            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
-            Versions.com_jfrog_bintray_gradle_plugin
+        "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
+                Versions.com_jfrog_bintray_gradle_plugin
+
+    /**
+     * 2.7.1
+     */
+    const val clikt_multiplatform: String = "com.github.ajalt:clikt-multiplatform:" +
+            Versions.clikt_multiplatform
 
     /**
      * http://plantuml.sourceforge.net
@@ -127,9 +133,4 @@ object Libs {
      * 0.1.3
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
-
-    /**
-     * 2.7.1
-     */
-    const val clikt: String = "com.github.ajalt:clikt:" + Versions.clikt
 }
