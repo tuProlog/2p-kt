@@ -16,5 +16,6 @@ include("parser-core")
 include("parser-jvm")
 include("parser-js")
 include("parser-theory")
+include("repl")
 
 include("examples")

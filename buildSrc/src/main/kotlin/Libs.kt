@@ -127,4 +127,9 @@ object Libs {
      * 0.1.3
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
+
+    /**
+     * 2.7.1
+     */
+    const val clikt: String = "com.github.ajalt:clikt:" + Versions.clikt
 }

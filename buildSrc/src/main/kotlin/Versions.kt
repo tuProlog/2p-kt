@@ -36,12 +36,14 @@ object Versions {
 
     const val kt_math: String = "0.1.3"
 
+    const val clikt: String = "2.7.1"
+
     /**
-     * Current version: "6.3"
+     * Current version: "6.4.1"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.3"
+    const val gradleLatestVersion: String = "6.4.1"
 }
 
 /**
