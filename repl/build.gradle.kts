@@ -20,8 +20,6 @@ kotlin {
 
 val mainClass = "it.unibo.tuprolog.ui.repl.Main"
 
-configurations.names.forEach { println(it) }
-
 val shadowJar by tasks.creating(ShadowJar::class.java) {
     dependsOn("jvmMainClasses")
     archiveClassifier.set("redist")

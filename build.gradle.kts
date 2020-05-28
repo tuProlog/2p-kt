@@ -173,7 +173,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub({ "jvm" in it })
+    configureUploadToGithub({ "jvm" in it || "shadow" in it })
 }
 
 jvmSubprojects.forEachProject {
