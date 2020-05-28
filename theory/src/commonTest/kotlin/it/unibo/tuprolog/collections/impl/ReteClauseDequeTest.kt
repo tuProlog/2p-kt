@@ -131,4 +131,13 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
         prototype.retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection()
     }
 
+    @Test
+    override fun equalsIsOrderDependent() {
+        prototype.equalsIsOrderDependent()
+    }
+
+    @Test
+    override fun hashCodeIsOrderDependent() {
+        prototype.hashCodeIsOrderDependent()
+    }
 }

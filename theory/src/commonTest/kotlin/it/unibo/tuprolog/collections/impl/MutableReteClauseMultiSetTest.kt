@@ -101,4 +101,14 @@ internal class MutableReteClauseMultiSetTest : PrototypeClauseMultiSetTest{
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
         prototype.getWithAbsentClauseReturnsAnEmptySequence()
     }
+
+    @Test
+    override fun equalsIsOrderIndependent() {
+        prototype.equalsIsOrderIndependent()
+    }
+
+    @Test
+    override fun hashCodeIsOrderIndependent() {
+        prototype.hashCodeIsOrderIndependent()
+    }
 }

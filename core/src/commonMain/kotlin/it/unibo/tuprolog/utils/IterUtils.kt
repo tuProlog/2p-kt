@@ -191,3 +191,43 @@ fun <T> subsequences(vararg items: T): Sequence<Sequence<T>> {
 fun <T> Sequence<T>.buffered(): Sequence<T> {
     return this.toList().asSequence()
 }
+
+fun <T> Sequence<T>.skipIndex(index: Int): Sequence<T> {
+    require(index >= 0)
+    return sequence {
+        var i = 0
+        val iter = iterator()
+        while (i < index && iter.hasNext()) {
+            yield(iter.next())
+            i++
+        }
+        if (iter.hasNext()) iter.next()
+        while (iter.hasNext()) {
+            yield(iter.next())
+        }
+    }
+}
+
+fun <T> permutations(vararg items: T): Sequence<List<T>> =
+    items.toList().permutations()
+
+fun <T> Iterable<T>.permutations(): Sequence<List<T>> =
+    toList().permutations()
+
+fun <T> Sequence<T>.permutations(): Sequence<List<T>> =
+    toList().permutations()
+
+fun <T> List<T>.permutations(): Sequence<List<T>> =
+    when (size) {
+        0, 1 -> sequenceOf(this)
+        2 -> sequenceOf(this, asReversed())
+        else -> {
+            asSequence().indexed().flatMap { (i, head) ->
+                this@permutations.asSequence()
+                    .skipIndex(i)
+                    .toList()
+                    .permutations()
+                    .map { listOf(head) + it }
+            }
+        }
+    }

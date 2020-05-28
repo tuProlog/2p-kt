@@ -25,14 +25,18 @@ internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
 
     fun simpleRetrieveBehavesAsRetrieveFirst()
 
+    fun equalsIsOrderDependent()
+
+    fun hashCodeIsOrderDependent()
+
     companion object {
         internal fun prototype(
             emptyGenerator: () -> ClauseQueue,
             collectionGenerator: (Iterable<Clause>) -> ClauseQueue
-        ) : PrototypeClauseDequeTest =
-                PrototypeClauseDequeTestImpl(
-                    emptyGenerator,
-                    collectionGenerator
-                )
+        ): PrototypeClauseDequeTest =
+            PrototypeClauseDequeTestImpl(
+                emptyGenerator,
+                collectionGenerator
+            )
     }
 }

@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
-import it.unibo.tuprolog.core.Clause
 import kotlin.test.Test
 
 internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
@@ -101,5 +99,15 @@ internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
     @Test
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
         prototype.getWithAbsentClauseReturnsAnEmptySequence()
+    }
+
+    @Test
+    override fun equalsIsOrderIndependent() {
+        prototype.equalsIsOrderIndependent()
+    }
+
+    @Test
+    override fun hashCodeIsOrderIndependent() {
+        prototype.hashCodeIsOrderIndependent()
     }
 }

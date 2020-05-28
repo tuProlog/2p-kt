@@ -5,7 +5,9 @@ import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
+import it.unibo.tuprolog.utils.permutations
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 internal class PrototypeClauseMultiSetTestImpl (
     private val emptyGenerator: () -> ClauseMultiSet,
@@ -53,7 +55,33 @@ internal class PrototypeClauseMultiSetTestImpl (
     override fun getWithAbsentClauseReturnsAnEmptySequence() {
         val result = collectionGenerator(clauses)[absentClause]
 
-        assertEquals(emptyList<Clause>(), result.toList())
+        assertEquals(emptyList(), result.toList())
+    }
+
+    override fun equalsIsOrderIndependent() {
+        val actualClauses = clauses + clauses[0]
+
+        val tester = collectionGenerator(actualClauses)
+
+        val perm = actualClauses.permutations().iterator()
+
+        assertEquals(tester, collectionGenerator(perm.next()))
+
+        while (perm.hasNext()) {
+            assertEquals(tester, collectionGenerator(perm.next()))
+        }
+    }
+
+
+    override fun hashCodeIsOrderIndependent() {
+        val actualClauses = clauses + clauses[0]
+
+        val permutations = actualClauses.permutations().toList()
+
+        assertEquals(
+            1,
+            permutations.map { collectionGenerator(it) }.toSet().size
+        )
     }
 
 }

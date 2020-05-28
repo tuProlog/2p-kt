@@ -13,11 +13,15 @@ internal interface PrototypeClauseMultiSetTest : PrototypeClauseCollectionTest {
 
     fun getWithAbsentClauseReturnsAnEmptySequence()
 
+    fun equalsIsOrderIndependent()
+
+    fun hashCodeIsOrderIndependent()
+
     companion object {
         internal fun prototype(
             emptyGenerator: () -> ClauseMultiSet,
             collectionGenerator: (Iterable<Clause>) -> ClauseMultiSet
-        ) : PrototypeClauseMultiSetTest =
+        ): PrototypeClauseMultiSetTest =
             PrototypeClauseMultiSetTestImpl(
                 emptyGenerator,
                 collectionGenerator

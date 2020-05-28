@@ -6,8 +6,10 @@ import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
+import it.unibo.tuprolog.utils.permutations
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class PrototypeClauseDequeTestImpl(
@@ -137,4 +139,28 @@ internal class PrototypeClauseDequeTestImpl(
         assertClausesHaveSameLengthAndContent(clauses - listOf(presentClause), result.collection)
     }
 
+    override fun equalsIsOrderDependent() {
+        val actualClauses = clauses
+
+        val tester = collectionGenerator(actualClauses)
+
+        val perm = actualClauses.permutations().iterator()
+
+        assertEquals(tester, collectionGenerator(perm.next()))
+
+        while (perm.hasNext()) {
+            assertNotEquals(tester, collectionGenerator(perm.next()))
+        }
+    }
+
+    override fun hashCodeIsOrderDependent() {
+        val actualClauses = clauses
+
+        val permutations = actualClauses.permutations().toList()
+
+        assertEquals(
+            permutations.size,
+            permutations.map { collectionGenerator(it) }.toSet().size
+        )
+    }
 }
