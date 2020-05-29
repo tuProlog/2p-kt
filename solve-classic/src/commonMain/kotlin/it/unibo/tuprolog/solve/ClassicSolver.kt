@@ -38,15 +38,7 @@ internal open class ClassicSolver(
         }
     }
 
-    private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
-        return filter { _, term -> term !is Var }
-    }
-
-    private fun Solution.Yes.cleanUp(): Solution.Yes {
-        return copy(substitution = substitution.cleanUp())
-    }
-
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
+    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
         val initialContext = ClassicExecutionContext(
             query = goal,
             libraries = libraries,
@@ -60,25 +52,12 @@ internal open class ClassicSolver(
         )
 
         state = StateInit(initialContext)
-        var step: Long = 0
 
-        while (true) {
-            require(state.context.step == step)
-            state = state.next()
-            step += 1
+        return SolutionIterator(state) { newState, newStep ->
+            require(newState.context.step == newStep)
+            state = newState
+        }.asSequence()
 
-            if (state is EndState) {
-                val endState = state as EndState
-                yield(
-                    when (val sol = endState.solution) {
-                        is Solution.Yes -> sol.cleanUp()
-                        else -> sol
-                    }
-                )
-
-                if (!endState.hasOpenAlternatives) break
-            }
-        }
     }
 
     override val libraries: Libraries
