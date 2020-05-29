@@ -21,7 +21,7 @@ kotlin {
 }
 
 val githubToken: String? by project
-val mainClass = "it.unibo.tuprolog.ui.repl.Main"
+val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
 val shadowJar by tasks.creating(ShadowJar::class.java) {
     dependsOn("jvmMainClasses")
@@ -31,8 +31,19 @@ val shadowJar by tasks.creating(ShadowJar::class.java) {
     )
     from(kotlin.jvm().compilations.getByName("main").output)
     manifest {
-        attributes("Main-Class" to mainClass)
+        attributes("Main-Class" to mainKlass)
     }
+}
+
+tasks.create("run", JavaExec::class.java) {
+    group = "application"
+    dependsOn("jvmMainClasses")
+    classpath = files(
+        kotlin.jvm().compilations.getByName("main").output,
+        kotlin.jvm().compilations.getByName("main").compileDependencyFiles
+    )
+    standardInput = System.`in`
+    main = mainKlass
 }
 
 if (githubToken != null) {
