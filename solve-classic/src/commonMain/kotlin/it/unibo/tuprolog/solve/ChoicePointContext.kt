@@ -56,7 +56,7 @@ sealed class ChoicePointContext(
 
     protected abstract val typeName: String
 
-    abstract fun backtrack(nextStep: Long): ClassicExecutionContext
+    abstract fun backtrack(nextStep: Long, startTime: Long): ClassicExecutionContext
 
     data class Primitives(
         override val alternatives: Cursor<out Solve.Response>,
@@ -72,10 +72,11 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Primitives"
 
-        override fun backtrack(nextStep: Long): ClassicExecutionContext {
+        override fun backtrack(nextStep: Long, startTime: Long): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 primitives = alternatives,
-                step = nextStep
+                step = nextStep,
+                startTime = startTime
             )
 
             val nextChoicePointContext = copy(
@@ -101,10 +102,11 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Rules"
 
-        override fun backtrack(nextStep: Long): ClassicExecutionContext {
+        override fun backtrack(nextStep: Long, startTime: Long): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 rules = alternatives,
-                step = nextStep
+                step = nextStep,
+                startTime = startTime
             )
 
             val nextChoicePointContext = copy(

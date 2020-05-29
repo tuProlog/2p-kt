@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.ui.repl
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.multiple
@@ -18,7 +17,7 @@ import it.unibo.tuprolog.theory.Theory
 class TuPrologCmd : CliktCommand(invokeWithoutSubcommand = true, allowMultipleSubcommands = true) {
 
     companion object {
-        const val DEFAULT_TIMEOUT: Int = 10000 // 10 s
+        const val DEFAULT_TIMEOUT: Int = 1000 // 1 s
     }
 
     private val files: List<String> by option("-f", "--file", help = "The file name").multiple()
