@@ -1,3 +1,5 @@
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
+import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
@@ -18,6 +20,7 @@ kotlin {
     }
 }
 
+val githubToken: String? by project
 val mainClass = "it.unibo.tuprolog.ui.repl.Main"
 
 val shadowJar by tasks.creating(ShadowJar::class.java) {
@@ -29,5 +32,15 @@ val shadowJar by tasks.creating(ShadowJar::class.java) {
     from(kotlin.jvm().compilations.getByName("main").output)
     manifest {
         attributes("Main-Class" to mainClass)
+    }
+}
+
+if (githubToken != null) {
+    rootProject.configure<GithubReleaseExtension> {
+        releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
+    }
+
+    rootProject.tasks.withType(GithubReleaseTask::class) {
+        dependsOn(shadowJar)
     }
 }
