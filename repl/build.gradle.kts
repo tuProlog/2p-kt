@@ -25,6 +25,7 @@ val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
 val shadowJar by tasks.creating(ShadowJar::class.java) {
     dependsOn("jvmMainClasses")
+    archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveClassifier.set("redist")
     configurations = listOf(
         kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration
