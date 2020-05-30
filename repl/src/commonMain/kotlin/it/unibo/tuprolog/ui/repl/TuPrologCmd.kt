@@ -14,14 +14,26 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 
-class TuPrologCmd : CliktCommand(invokeWithoutSubcommand = true, allowMultipleSubcommands = true) {
+class TuPrologCmd : CliktCommand(
+    invokeWithoutSubcommand = true,
+    allowMultipleSubcommands = true,
+    name = "java -jar 2p-repl.jar",
+    help = "Start a Prolog Read-Eval-Print loop"
+) {
 
     companion object {
         const val DEFAULT_TIMEOUT: Int = 1000 // 1 s
     }
 
-    private val files: List<String> by option("-f", "--file", help = "The file name").multiple()
-    private val timeout by option("-t", "--timeout", help = "duration of the solution").int().default(DEFAULT_TIMEOUT)
+    private val files: List<String> by option("-T", "--theory", help = "Path of theory file to be loaded")
+        .multiple()
+    private val timeout by option(
+        "-t",
+        "--timeout",
+        help = "Maximum amount of time for computing a solution (default: $DEFAULT_TIMEOUT ms)"
+    )
+        .int()
+        .default(DEFAULT_TIMEOUT)
 
     override fun run() {
         val solve: Solver = getSolver()

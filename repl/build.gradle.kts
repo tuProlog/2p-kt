@@ -21,6 +21,7 @@ kotlin {
 }
 
 val githubToken: String? by project
+val arguments: String? by project
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
 val shadowJar by tasks.creating(ShadowJar::class.java) {
@@ -45,6 +46,11 @@ tasks.create("run", JavaExec::class.java) {
     )
     standardInput = System.`in`
     main = mainKlass
+    arguments.let {
+        if (it != null) {
+            args = it.split("\\s+".toRegex()).filterNot { a -> a.isBlank() }
+        }
+    }
 }
 
 if (githubToken != null) {
