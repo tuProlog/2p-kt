@@ -47,7 +47,7 @@ object TimeRelatedTheories {
     /**
      * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
      * In particular the requested goal assumes the resolution terminates in slightly more than 500 ms
-     * (and, in any case, within 1100 ms),
+     * (and, in any case, within 600 ms),
      * thus a [TimeOutException] is returned as the second solution
      */
     val slightlyMoreThan500MsGoalToSolution by lazy {
@@ -63,11 +63,11 @@ object TimeRelatedTheories {
 
     /**
      * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in slightly more than 1100 ms
-     * (and, in any case, within 1800 ms),
+     * In particular the requested goal assumes the resolution terminates in slightly more than 600 ms
+     * (and, in any case, within 700 ms),
      * thus a [TimeOutException] is returned as the third solution
      */
-    val slightlyMoreThan1100MsGoalToSolution by lazy {
+    val slightlyMoreThan600MsGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "a"("X").hasSolutions(
@@ -81,10 +81,10 @@ object TimeRelatedTheories {
 
     /**
      * Notable request goal over [timeRelatedTheory] and respective expected [Solution]s.
-     * In particular the requested goal assumes the resolution terminates in slightly more than 1800 ms,
+     * In particular the requested goal assumes the resolution terminates in slightly more than 700 ms,
      * thus no [TimeOutException] is returned and 3 positive solutions are returned instead
      */
-    val slightlyMoreThan1800MsGoalToSolution by lazy {
+    val slightlyMoreThan700MsGoalToSolution by lazy {
         prolog {
             ktListOf(
                 "a"("X").hasSolutions(

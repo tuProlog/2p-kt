@@ -23,8 +23,8 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheo
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1100MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
@@ -74,10 +74,10 @@ interface SolverTest {
     /** Test with [slightlyMoreThan500MsGoalToSolution] */
     fun testTimeout2()
 
-    /** Test with [slightlyMoreThan1100MsGoalToSolution] */
+    /** Test with [slightlyMoreThan600MsGoalToSolution] */
     fun testTimeout3()
 
-    /** Test with [slightlyMoreThan1800MsGoalToSolution] */
+    /** Test with [slightlyMoreThan700MsGoalToSolution] */
     fun testTimeout4()
 
     /** Test with [ifThen1ToSolution] */

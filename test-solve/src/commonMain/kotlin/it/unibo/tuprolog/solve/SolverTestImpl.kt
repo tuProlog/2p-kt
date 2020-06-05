@@ -41,10 +41,9 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1100MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan1800MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -283,8 +282,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout1() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory,
-                otherLibraries = Libraries(timeLibrary)
+                staticKb = timeRelatedTheory
             ),
             goalToSolutions = lessThan500MsGoalToSolution,
             maxDuration = 400L
@@ -295,35 +293,32 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testTimeout2() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory,
-                otherLibraries = Libraries(timeLibrary)
+                staticKb = timeRelatedTheory
             ),
             goalToSolutions = slightlyMoreThan500MsGoalToSolution,
-            maxDuration = 1000L
+            maxDuration = 599L
         )
     }
 
-    /** Test with [slightlyMoreThan1100MsGoalToSolution] */
+    /** Test with [slightlyMoreThan600MsGoalToSolution] */
     override fun testTimeout3() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory,
-                otherLibraries = Libraries(timeLibrary)
+                staticKb = timeRelatedTheory
             ),
-            goalToSolutions = slightlyMoreThan1100MsGoalToSolution,
-            maxDuration = 1700L
+            goalToSolutions = slightlyMoreThan600MsGoalToSolution,
+            maxDuration = 699L
         )
     }
 
-    /** Test with [slightlyMoreThan1800MsGoalToSolution] */
+    /** Test with [slightlyMoreThan700MsGoalToSolution] */
     override fun testTimeout4() {
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(
-                staticKb = timeRelatedTheory,
-                otherLibraries = Libraries(timeLibrary)
+                staticKb = timeRelatedTheory
             ),
-            goalToSolutions = slightlyMoreThan1800MsGoalToSolution,
-            maxDuration = 2000L
+            goalToSolutions = slightlyMoreThan700MsGoalToSolution,
+            maxDuration = 799L
         )
     }
 
