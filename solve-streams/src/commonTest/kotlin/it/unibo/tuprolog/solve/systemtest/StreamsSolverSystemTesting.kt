@@ -113,13 +113,11 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testTimeout3() {
         prototype.testTimeout3()
     }
 
     @Test
-    @Ignore
     override fun testTimeout4() {
         prototype.testTimeout4()
     }
