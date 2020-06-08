@@ -927,4 +927,21 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertEquals(0L, solver.dynamicKb.size)
         }
     }
+
+    override fun testNatural() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = "natural"("X") and "natural"("X")
+
+            val n = 100
+
+            val solutions = solver.solve(query, maxDuration).take(n).toList()
+
+            assertSolutionEquals(
+                (0 until n).map { query.yes("X" to it) },
+                solutions
+            )
+        }
+    }
 }

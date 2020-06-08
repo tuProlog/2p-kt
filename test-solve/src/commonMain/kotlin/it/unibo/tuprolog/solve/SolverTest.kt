@@ -164,5 +164,6 @@ interface SolverTest {
     fun testMember()
     fun testAssertRules()
     fun testRetract()
+    fun testNatural()
 }
 

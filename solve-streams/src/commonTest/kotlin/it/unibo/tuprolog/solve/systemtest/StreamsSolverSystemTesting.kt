@@ -293,4 +293,9 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     override fun testRetract() {
         prototype.testRetract()
     }
+
+    @Test
+    override fun testNatural() {
+        prototype.testNatural()
+    }
 }
