@@ -104,6 +104,8 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(NonVar)
                 assertHasPredicateInAPI(NotUnifiableWith)
                 assertHasPredicateInAPI(Number)
+                assertHasPredicateInAPI(Retract)
+                assertHasPredicateInAPI(Sleep)
                 assertHasPredicateInAPI(TermIdentical)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)
