@@ -278,4 +278,14 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     override fun testBasicBacktracking4() {
         prototype.testBasicBacktracking4()
     }
+
+    @Test
+    override fun testAssertRules() {
+        prototype.testAssertRules()
+    }
+
+    @Test
+    override fun testRetract() {
+        prototype.testRetract()
+    }
 }
