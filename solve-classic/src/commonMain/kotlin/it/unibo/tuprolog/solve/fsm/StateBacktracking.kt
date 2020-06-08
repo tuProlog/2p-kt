@@ -5,15 +5,19 @@ import it.unibo.tuprolog.solve.Solution
 
 internal data class StateBacktracking(override val context: ClassicExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
-        return with(context) {
-            if (choicePoints === null || !choicePoints.hasOpenAlternatives) {
-                StateEnd(
-                    solution = Solution.No(query),
-                    context = copy(step = nextStep())
-                )
+        val choicePoints = context.choicePoints
+        return if (choicePoints.let { it === null || !it.hasOpenAlternatives }) {
+            StateEnd(
+                solution = Solution.No(context.query),
+                context = context.copy(step = nextStep())
+            )
+        } else {
+            val choicePointContext = choicePoints!!.pathToRoot.first { it.alternatives.hasNext }
+            val nextContext = choicePointContext.backtrack(nextStep(), context.startTime)
+            if (nextContext.primitives.hasNext) {
+                StatePrimitiveExecution(nextContext)
             } else {
-                val choicePointContext = choicePoints.pathToRoot.first { it.alternatives.hasNext }
-                StateRuleExecution(choicePointContext.backtrack(nextStep(), context.startTime))
+                StateRuleExecution(nextContext)
             }
         }
     }
