@@ -38,6 +38,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         NonVar,
         NotUnifiableWith,
         Number,
+        Retract,
         Sleep,
         TermIdentical,
         TermNotIdentical,
