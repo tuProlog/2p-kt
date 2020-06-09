@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateRuleSelection
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -18,10 +18,10 @@ internal object StateRuleSelectionUtils {
     private val emptyUnifier = Substitution.empty()
 
     /** Utility function to create a Solve.Request of given query against given rule database */
-    internal fun createRequest(query: Struct, ruleDatabase: ClauseDatabase) = createSolveRequest(query, ruleDatabase)
+    internal fun createRequest(query: Struct, ruleDatabase: Theory) = createSolveRequest(query, ruleDatabase)
 
     /** Test data in the form (query Struct, a database with no query matches) */
-    internal val queryToNoMatchesDatabaseMap by lazy {
+    internal val queryToNoMatchesTheoryMap by lazy {
         prolog {
             mapOf(
                 atomOf("a") to theoryOf(),
@@ -31,7 +31,7 @@ internal object StateRuleSelectionUtils {
     }
 
     /** Test data in the form (query struct, a database with one fact that matches, the resulting Substitution) */
-    internal val queryToOneMatchFactDatabaseAndSubstitution by lazy {
+    internal val queryToOneMatchFactTheoryAndSubstitution by lazy {
         prolog {
             ktListOf(
                 Triple(atomOf("a"), theory({ "a" }), emptyUnifier),
@@ -50,7 +50,7 @@ internal object StateRuleSelectionUtils {
     }
 
     /** Test data in the form (query struct, a database with one rule that matches, the resulting Substitution) */
-    internal val queryToOneMatchRuleDatabaseAndSubstitution by lazy {
+    internal val queryToOneMatchRuleTheoryAndSubstitution by lazy {
         prolog {
             ktListOf(
                 Triple(atomOf("a"), theory({ "a" impliedBy "b" }), Substitution.failed()),
@@ -68,7 +68,7 @@ internal object StateRuleSelectionUtils {
     }
 
     /** Test data in the form (query struct, a database with multiple matches, the result Substitutions in order) */
-    internal val queryToMultipleMatchesDatabaseAndSubstitution by lazy {
+    internal val queryToMultipleMatchesTheoryAndSubstitution by lazy {
         prolog {
             ktListOf(
                 Triple(

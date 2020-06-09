@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.*
 
 /**
@@ -15,8 +15,8 @@ import kotlin.test.*
 internal class SolverUtilsTest {
 
     private val aContext = StreamsExecutionContext(
-        dynamicKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
-        staticKb = ClauseDatabase.of({ factOf(atomOf("a")) }),
+        dynamicKb = Theory.indexedOf({ factOf(atomOf("a")) }),
+        staticKb = Theory.indexedOf({ factOf(atomOf("a")) }),
         flags = mapOf()
     )
 
@@ -134,7 +134,7 @@ internal class SolverUtilsTest {
     fun newSolveRequestPropagatesCorrectlyContextFields() {
         val aClause = Clause.of(Atom.of("ddd"), Atom.of("ccc"))
         val modifiedContext = aContext.copy(
-            dynamicKb = ClauseDatabase.empty(),
+            dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
             flags = mapOf(Atom.of("someFlag") to Atom.of("someFlagValue")),
             libraries = Libraries()

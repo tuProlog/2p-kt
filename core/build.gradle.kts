@@ -5,13 +5,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("io.github.gciatto:kt-math:${Versions.kt_math}")
+                api(Libs.kt_math)
             }
         }
     }
 }
-
-//tasks.getByName<KotlinPackageJsonTask>("jsPackageJson") {
-//    println(this::class.java)
-//    this.
-//}

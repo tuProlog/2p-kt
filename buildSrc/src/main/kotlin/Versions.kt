@@ -24,6 +24,8 @@ object Versions {
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.72"
 
+    const val com_github_johnrengelman_shadow_gradle_plugin: String = "5.2.0"
+
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.20.0"
@@ -32,16 +34,18 @@ object Versions {
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
+    const val clikt_multiplatform: String = "2.7.1"
+
     const val plantuml: String = "1.2020.2" // available: "8059"
 
     const val kt_math: String = "0.1.3"
 
     /**
-     * Current version: "6.3"
+     * Current version: "6.4.1"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.3"
+    const val gradleLatestVersion: String = "6.4.1"
 }
 
 /**

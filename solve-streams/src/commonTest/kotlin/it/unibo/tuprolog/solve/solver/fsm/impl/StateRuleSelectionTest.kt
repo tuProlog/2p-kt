@@ -9,10 +9,10 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.createRequest
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToMultipleMatchesDatabaseAndSubstitution
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToNoMatchesDatabaseMap
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToOneMatchFactDatabaseAndSubstitution
-import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToOneMatchRuleDatabaseAndSubstitution
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToMultipleMatchesTheoryAndSubstitution
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToNoMatchesTheoryMap
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToOneMatchFactTheoryAndSubstitution
+import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.queryToOneMatchRuleTheoryAndSubstitution
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertCorrectQueryAndSubstitution
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOneNextState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
@@ -45,7 +45,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun noMatchingRulesFoundMakeItGoIntoFalseState() {
-        queryToNoMatchesDatabaseMap.forEach { (queryStruct, noMatchesDB) ->
+        queryToNoMatchesTheoryMap.forEach { (queryStruct, noMatchesDB) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, noMatchesDB)).behave()
 
             assertOnlyOneNextState<StateEnd.False>(nextStates)
@@ -54,7 +54,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun oneMatchingRuleFoundUnifiesCorrectlyAndGivesSolution() {
-        queryToOneMatchFactDatabaseAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
+        queryToOneMatchFactTheoryAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave().toList()
 
             assertOverState<StateEnd.True>(nextStates.last()) {
@@ -65,7 +65,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun oneMatchingRuleFoundExecutesTheRuleBodyAndFindsSolutions() {
-        queryToOneMatchRuleDatabaseAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
+        queryToOneMatchRuleTheoryAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave().toList()
 
             assertOverState<StateEnd>(nextStates.last()) {
@@ -76,7 +76,7 @@ internal class StateRuleSelectionTest {
 
     @Test
     fun stateRuleSelectionFindsCorrectlyMultipleSolutions() {
-        queryToMultipleMatchesDatabaseAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
+        queryToMultipleMatchesTheoryAndSubstitution.forEach { (queryStruct, oneMatchDB, expectedSubstitution) ->
             val nextStates = StateRuleSelection(createRequest(queryStruct, oneMatchDB)).behave()
 
             assertOverFilteredStateInstances<FinalState>(nextStates) { index, finalState ->

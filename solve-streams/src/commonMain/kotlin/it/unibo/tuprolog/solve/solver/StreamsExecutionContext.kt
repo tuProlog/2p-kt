@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * The execution context implementation for [StreamsSolver]
@@ -17,8 +17,8 @@ import it.unibo.tuprolog.theory.ClauseDatabase
 internal data class StreamsExecutionContext(
     override val libraries: Libraries = Libraries(),
     override val flags: PrologFlags = emptyMap(),
-    override val staticKb: ClauseDatabase = ClauseDatabase.empty(),
-    override val dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
+    override val staticKb: Theory = Theory.empty(),
+    override val dynamicKb: Theory = Theory.empty(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
@@ -38,8 +38,8 @@ internal data class StreamsExecutionContext(
     override fun createSolver(
         libraries: Libraries,
         flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,

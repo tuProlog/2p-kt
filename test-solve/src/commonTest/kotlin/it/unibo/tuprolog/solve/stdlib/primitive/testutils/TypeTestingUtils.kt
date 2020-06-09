@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.testutils.squared
+import it.unibo.tuprolog.utils.squared
 import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith

@@ -66,7 +66,7 @@ val githubToken = getPropertyOrWarnForAbsence("githubToken")
 val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
 val allSubprojects = subprojects.map { it.name }.toSet()
-val jvmSubprojects = setOf("parser-jvm")
+val jvmSubprojects = setOf("parser-jvm", "examples")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
 
@@ -173,7 +173,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub({ "jvm" in it })
+    configureUploadToGithub({ "jvm" in it || "shadow" in it })
 }
 
 jvmSubprojects.forEachProject {

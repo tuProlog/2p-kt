@@ -8,13 +8,13 @@ import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.solve.fsm.clone
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
     flags: PrologFlags = emptyMap(),
-    staticKb: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
+    staticKb: Theory = Theory.empty(),
+    dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
@@ -38,15 +38,7 @@ internal open class ClassicSolver(
         }
     }
 
-    private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
-        return filter { _, term -> term !is Var }
-    }
-
-    private fun Solution.Yes.cleanUp(): Solution.Yes {
-        return copy(substitution = substitution.cleanUp())
-    }
-
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> = sequence {
+    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
         val initialContext = ClassicExecutionContext(
             query = goal,
             libraries = libraries,
@@ -60,25 +52,12 @@ internal open class ClassicSolver(
         )
 
         state = StateInit(initialContext)
-        var step: Long = 0
 
-        while (true) {
-            require(state.context.step == step)
-            state = state.next()
-            step += 1
+        return SolutionIterator(state) { newState, newStep ->
+            require(newState.context.step == newStep)
+            state = newState
+        }.asSequence()
 
-            if (state is EndState) {
-                val endState = state as EndState
-                yield(
-                    when (val sol = endState.solution) {
-                        is Solution.Yes -> sol.cleanUp()
-                        else -> sol
-                    }
-                )
-
-                if (!endState.hasOpenAlternatives) break
-            }
-        }
     }
 
     override val libraries: Libraries
@@ -87,10 +66,10 @@ internal open class ClassicSolver(
     override val flags: PrologFlags
         get() = state.context.flags
 
-    override val staticKb: ClauseDatabase
+    override val staticKb: Theory
         get() = state.context.staticKb
 
-    override val dynamicKb: ClauseDatabase
+    override val dynamicKb: Theory
         get() = state.context.dynamicKb
 
     override val inputChannels: PrologInputChannels<*>

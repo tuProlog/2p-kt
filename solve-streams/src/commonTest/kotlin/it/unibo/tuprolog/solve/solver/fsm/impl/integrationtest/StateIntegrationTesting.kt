@@ -3,24 +3,24 @@ package it.unibo.tuprolog.solve.solver.fsm.impl.integrationtest
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabase
-import it.unibo.tuprolog.solve.PrologStandardExampleDatabases.prologStandardExampleWithCutDatabaseNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheory
+import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.customReverseListDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.infiniteComputationDatabaseNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutAndConjunctionDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
-import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
+import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
@@ -35,7 +35,7 @@ import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOnlyOn
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateUtils.assertOverFilteredStateInstances
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -53,7 +53,7 @@ internal class StateIntegrationTesting {
     /** Utility function to test correct states behaviour inside this class */
     private fun assertSolutionsCorrect(
         querySolutionsMap: List<Pair<Struct, List<Solution>>>,
-        database: ClauseDatabase
+        database: Theory
     ) {
         querySolutionsMap.forEach { (goal, solutionList) ->
             val nextStates = createSolveRequest(goal, database, DefaultBuiltins.primitives).executeFSM()
@@ -95,35 +95,35 @@ internal class StateIntegrationTesting {
 
     @Test
     fun simpleQueriesWithVariableInstantiationWork() {
-        assertSolutionsCorrect(simpleFactDatabaseNotableGoalToSolutions, simpleFactDatabase)
+        assertSolutionsCorrect(simpleFactTheoryNotableGoalToSolutions, simpleFactTheory)
     }
 
     @Test
-    fun simpleQueriesWithDatabaseContainingCutWorksAsExpected() {
-        assertSolutionsCorrect(simpleCutDatabaseNotableGoalToSolutions, simpleCutDatabase)
+    fun simpleQueriesWithTheoryContainingCutWorksAsExpected() {
+        assertSolutionsCorrect(simpleCutTheoryNotableGoalToSolutions, simpleCutTheory)
     }
 
     @Test
-    fun simpleQueriesWithCutAndConjunctionDatabase() {
-        assertSolutionsCorrect(simpleCutAndConjunctionDatabaseNotableGoalToSolutions, simpleCutAndConjunctionDatabase)
+    fun simpleQueriesWithCutAndConjunctionTheory() {
+        assertSolutionsCorrect(simpleCutAndConjunctionTheoryNotableGoalToSolutions, simpleCutAndConjunctionTheory)
     }
 
     @Test
-    fun queriesWithCutConjunctionAndBacktrackingDatabase() {
+    fun queriesWithCutConjunctionAndBacktrackingTheory() {
         assertSolutionsCorrect(
-            cutConjunctionAndBacktrackingDatabaseNotableGoalToSolutions,
-            cutConjunctionAndBacktrackingDatabase
+            cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
+            cutConjunctionAndBacktrackingTheory
         )
     }
 
     @Test
     fun timeoutExceptionCorrectlyThrown() {
-        infiniteComputationDatabaseNotableGoalToSolution.forEach { (goal, solutionList) ->
+        infiniteComputationTheoryNotableGoalToSolution.forEach { (goal, solutionList) ->
             val maxDuration = 100L
             val request = Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
-                StreamsExecutionContext(staticKb = infiniteComputationDatabase),
+                StreamsExecutionContext(staticKb = infiniteComputationTheory),
                 executionMaxDuration = maxDuration
             )
             val nextStates = request.executeFSM()
@@ -139,19 +139,19 @@ internal class StateIntegrationTesting {
 
     @Test
     fun prologStandardSearchTreeExample() {
-        assertSolutionsCorrect(prologStandardExampleDatabaseNotableGoalToSolution, prologStandardExampleDatabase)
+        assertSolutionsCorrect(prologStandardExampleTheoryNotableGoalToSolution, prologStandardExampleTheory)
     }
 
     @Test
     fun prologStandardSearchTreeWithCutExample() {
         assertSolutionsCorrect(
-            prologStandardExampleWithCutDatabaseNotableGoalToSolution,
-            prologStandardExampleWithCutDatabase
+            prologStandardExampleWithCutTheoryNotableGoalToSolution,
+            prologStandardExampleWithCutTheory
         )
     }
 
     @Test
     fun testBacktrackingWithCustomReverseListImplementation() {
-        assertSolutionsCorrect(customReverseListDatabaseNotableGoalToSolution, customReverseListDatabase)
+        assertSolutionsCorrect(customReverseListTheoryNotableGoalToSolution, customReverseListTheory)
     }
 }

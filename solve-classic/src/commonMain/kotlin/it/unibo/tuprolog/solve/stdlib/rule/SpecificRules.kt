@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.rule
 
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 object SpecificRules {
     val wrappers = sequenceOf(
@@ -12,7 +12,7 @@ object SpecificRules {
         NegationAsFailure.Success
     )
 
-    val clauseDb: ClauseDatabase = ClauseDatabase.of(
+    val theory: Theory = Theory.indexedOf(
         wrappers.map { it.wrappedImplementation }
     )
 }

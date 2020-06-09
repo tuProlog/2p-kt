@@ -7,13 +7,12 @@ import kotlin.js.JsName
 sealed class RetractResult {
 
     /** The result always present value, is the clause database resulting from the operation execution */
-    @JsName("clauseDatabase")
-    abstract val clauseDatabase: ClauseDatabase
+    @JsName("theory")
+    abstract val theory: Theory
 
-    /** A successful "retract" operation result, carrying the new [clauseDatabase] and removed [clauses] */
-    // TODO use lists in place of Iterables
+    /** A successful "retract" operation result, carrying the new [theory] and removed [clauses] */
     data class Success(
-        override val clauseDatabase: ClauseDatabase,
+        override val theory: Theory,
         @JsName("clauses") val clauses: Iterable<Clause>
     ) : RetractResult() {
 
@@ -23,6 +22,6 @@ sealed class RetractResult {
             get() = clauses.first()
     }
 
-    /** A failed "retract" operation result, carrying the unchanged [clauseDatabase] */
-    data class Failure(override val clauseDatabase: ClauseDatabase) : RetractResult()
+    /** A failed "retract" operation result, carrying the unchanged [theory] */
+    data class Failure(override val theory: Theory) : RetractResult()
 }

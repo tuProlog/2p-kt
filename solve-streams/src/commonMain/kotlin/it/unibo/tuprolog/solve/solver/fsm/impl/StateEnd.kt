@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Base class of states representing the computation end
@@ -29,8 +29,8 @@ internal sealed class StateEnd(override val solve: Solve.Response) : AbstractSta
             StreamsExecutionContext(
                 libraries ?: Libraries(),
                 flags ?: emptyMap(),
-                staticKb ?: ClauseDatabase.empty(),
-                dynamicKb ?: ClauseDatabase.empty(),
+                staticKb ?: Theory.empty(),
+                dynamicKb ?: Theory.empty(),
                 inputChannels ?: ExecutionContextAware.defaultInputChannels(),
                 outputChannels ?: ExecutionContextAware.defaultOutputChannels(),
                 solution.substitution as? Substitution.Unifier ?: Substitution.empty()
@@ -67,8 +67,8 @@ internal fun IntermediateState.stateEndTrue(
     substitution: Substitution.Unifier = Substitution.empty(),
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKb: ClauseDatabase? = null,
-    dynamicKb: ClauseDatabase? = null,
+    staticKb: Theory? = null,
+    dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -89,8 +89,8 @@ internal fun IntermediateState.stateEndTrue(
 internal fun IntermediateState.stateEndFalse(
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKb: ClauseDatabase? = null,
-    dynamicKb: ClauseDatabase? = null,
+    staticKb: Theory? = null,
+    dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -111,8 +111,8 @@ internal fun IntermediateState.stateEndHalt(
     exception: TuPrologRuntimeException,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKb: ClauseDatabase? = null,
-    dynamicKb: ClauseDatabase? = null,
+    staticKb: Theory? = null,
+    dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
@@ -136,8 +136,8 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     libraries: Libraries? = null,
     flags: PrologFlags? = null,
-    staticKb: ClauseDatabase? = null,
-    dynamicKb: ClauseDatabase? = null,
+    staticKb: Theory? = null,
+    dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null

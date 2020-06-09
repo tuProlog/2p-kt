@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
@@ -52,8 +52,8 @@ sealed class Solve {
             solution: Solution,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKb: ClauseDatabase? = null,
-            dynamicKb: ClauseDatabase? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -75,8 +75,8 @@ sealed class Solve {
             condition: Boolean,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKb: ClauseDatabase? = null,
-            dynamicKb: ClauseDatabase? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -99,8 +99,8 @@ sealed class Solve {
             substitution: Substitution.Unifier = Substitution.empty(),
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKb: ClauseDatabase? = null,
-            dynamicKb: ClauseDatabase? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -120,8 +120,8 @@ sealed class Solve {
         fun replyFail(
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKb: ClauseDatabase? = null,
-            dynamicKb: ClauseDatabase? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -142,8 +142,8 @@ sealed class Solve {
             exception: TuPrologRuntimeException,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,
-            staticKb: ClauseDatabase? = null,
-            dynamicKb: ClauseDatabase? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
@@ -183,10 +183,10 @@ sealed class Solve {
         val flags: PrologFlags? = null,
         /** The Static KB after request execution (use `null` in case nothing changed) */
         @JsName("staticKb")
-        val staticKb: ClauseDatabase? = null,
+        val staticKb: Theory? = null,
         /** The Dynamic KB after request execution (use `null` in case nothing changed) */
         @JsName("dynamicKb")
-        val dynamicKb: ClauseDatabase? = null,
+        val dynamicKb: Theory? = null,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
         @JsName("sideEffectManager")
         val sideEffectManager: SideEffectManager? = null,
