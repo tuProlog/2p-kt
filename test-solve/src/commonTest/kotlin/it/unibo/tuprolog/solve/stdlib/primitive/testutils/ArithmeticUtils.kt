@@ -2,15 +2,16 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.ArithmeticRelation
+import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -65,7 +66,7 @@ internal object ArithmeticUtils {
                 ArithmeticEqual.functor("*"(3, 2), "-"(7, 1)) to true,
                 ArithmeticEqual.functor(0.333, "/"(1, 3)) to false,
                 ArithmeticEqual.functor(0, 1) to false,
-                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
+                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to TypeError::class
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }

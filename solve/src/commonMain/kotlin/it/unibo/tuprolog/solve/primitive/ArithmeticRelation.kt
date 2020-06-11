@@ -4,15 +4,20 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
 
 /** Base class for implementing arithmetic relation between [Numeric] terms */
 abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation.Predicative<E>(operator) {
 
-    override fun Solve.Request<E>.compute(first: Term, second: Term): Boolean {
-        ensuringArgumentIsNumeric(1)
-        ensuringArgumentIsNumeric(2)
-        return arithmeticRelation(first as Numeric, second as Numeric)
+    final override fun Solve.Request<E>.compute(first: Term, second: Term): Boolean {
+        ensuringAllArgumentsAreInstantiated().ensuringArgumentIsNumeric(0).ensuringArgumentIsNumeric(1)
+        return evaluateAndCompute(first, second as Numeric)
     }
 
-    abstract fun arithmeticRelation(x: Numeric, y: Numeric): Boolean
+    private fun Solve.Request<E>.evaluateAndCompute(x: Term, y: Term): Boolean =
+        ArithmeticEvaluator(context).let {
+            computeNumeric(x.accept(it) as Numeric, y.accept(it) as Numeric)
+        }
+
+    abstract fun computeNumeric(x: Numeric, y: Numeric): Boolean
 }
