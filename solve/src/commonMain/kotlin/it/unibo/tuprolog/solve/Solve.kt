@@ -49,6 +49,35 @@ sealed class Solve {
         /** Creates a new [Response] to this Request */
         @JsName("replyWith")
         fun replyWith(
+            substitution: Substitution,
+            libraries: Libraries? = null,
+            flags: PrologFlags? = null,
+            staticKb: Theory? = null,
+            dynamicKb: Theory? = null,
+            sideEffectManager: SideEffectManager? = null,
+            inputChannels: PrologInputChannels<*>? = null,
+            outputChannels: PrologOutputChannels<*>? = null
+        ) = when (substitution) {
+            is Substitution.Unifier -> {
+                replySuccess(
+                    substitution,
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    inputChannels,
+                    outputChannels
+                )
+            }
+            else -> {
+                replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
+            }
+        }
+
+        /** Creates a new [Response] to this Request */
+        @JsName("replyWithSolution")
+        fun replyWith(
             solution: Solution,
             libraries: Libraries? = null,
             flags: PrologFlags? = null,

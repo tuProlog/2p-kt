@@ -8,12 +8,58 @@ import it.unibo.tuprolog.solve.Solve
 /** Base class to implement primitives that relate two [Term]s and provide a single response */
 abstract class BinaryRelation<E : ExecutionContext>(operator: String) : PrimitiveWrapper<E>(operator, 2) {
 
-    /** Template method that should compute the response of the [Term] relation application  */
-    protected abstract fun Solve.Request<E>.computeSingleResponse(): Solve.Response
+    /** Template method aimed at computing the application of this relation to three [Term]s */
+    protected abstract fun Solve.Request<E>.computeAll(
+        first: Term,
+        second: Term
+    ): Sequence<Solve.Response>
 
-    /** Template method that should be implemented and called in BinaryRelations without side effects */
-    protected open fun relationWithoutSideEffects(x: Term, y: Term): Boolean = throw NotImplementedError()
+    final override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> {
+        return request.computeAll(request.arguments[0], request.arguments[1])
+    }
 
-    /** Template method that should be implemented and called in BinaryRelations with side effects */
-    protected open fun relationWithSideEffects(x: Term, y: Term): Substitution = throw NotImplementedError()
+    abstract class WithoutSideEffects<E : ExecutionContext>(operator: String) : BinaryRelation<E>(operator) {
+        protected abstract fun Solve.Request<E>.computeAllSubstitutions(
+            first: Term,
+            second: Term
+        ): Sequence<Substitution>
+
+        final override fun Solve.Request<E>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
+            return computeAllSubstitutions(first, second).map { replyWith(it) }
+        }
+    }
+
+    abstract class NonBacktrackable<E : ExecutionContext>(operator: String) : BinaryRelation<E>(operator) {
+        protected abstract fun Solve.Request<E>.computeOne(
+            first: Term,
+            second: Term
+        ): Solve.Response
+
+        final override fun Solve.Request<E>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
+            return sequenceOf(computeOne(first, second))
+        }
+
+    }
+
+    abstract class Functional<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {
+        protected abstract fun Solve.Request<E>.computeOneSubstitution(
+            first: Term,
+            second: Term
+        ): Substitution
+
+        final override fun Solve.Request<E>.computeOne(first: Term, second: Term): Solve.Response {
+            return replyWith(computeOneSubstitution(first, second))
+        }
+    }
+
+    abstract class Predicative<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {
+        protected abstract fun Solve.Request<E>.compute(
+            first: Term,
+            second: Term
+        ): Boolean
+
+        final override fun Solve.Request<E>.computeOne(first: Term, second: Term): Solve.Response {
+            return if (compute(first, second)) replySuccess() else replyFail()
+        }
+    }
 }

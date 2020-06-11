@@ -4,25 +4,15 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
 
 /** Base class for implementing arithmetic relation between [Numeric] terms */
-abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation<E>(operator) {
+abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation.Predicative<E>(operator) {
 
-    override fun uncheckedImplementation(request: Solve.Request<E>): Sequence<Solve.Response> =
-        sequenceOf(
-            request.ensuringAllArgumentsAreInstantiated()
-                .computeSingleResponse()
-        )
+    override fun Solve.Request<E>.compute(first: Term, second: Term): Boolean {
+        ensuringArgumentIsNumeric(1)
+        ensuringArgumentIsNumeric(2)
+        return arithmeticRelation(first as Numeric, second as Numeric)
+    }
 
-    override fun Solve.Request<E>.computeSingleResponse(): Solve.Response =
-        ArithmeticEvaluator(context).let {
-            replyWith(relationWithoutSideEffects(arguments[0].accept(it), arguments[1].accept(it)))
-        }
-
-    override fun relationWithoutSideEffects(x: Term, y: Term): Boolean =
-        arithmeticRelation(x as Numeric, y as Numeric)
-
-    /** Template method that should implement the arithmetic relation between [x] and [y] */
-    protected abstract fun arithmeticRelation(x: Numeric, y: Numeric): Boolean
+    abstract fun arithmeticRelation(x: Numeric, y: Numeric): Boolean
 }
