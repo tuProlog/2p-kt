@@ -108,3 +108,71 @@ meaning that, if more variables exists within the to-be-copied `Term`, which hav
 then all fresh copies of such variables will have the same complete name.
 Thus, for instance, a fresh copy of the `f(X, g(X))` would be something like `f(X_1, g(X_1))` 
 instead of `f(X_1, g(X_2))`.
+
+## Substitutions
+
+Substitutions represent variable bindings, and are obtained through unification operations (see [Unification](substitutions-and-unification)). Indeed, Substitution is actually a subclass of Map<Var, Term>, and its methods are implemented by delegating to a Map instance.
+
+Substitution has two types: Unifier and Fail. The former is a type representing a substitution as described in the Prolog standard, while the latter is a singleton instance used where a unifier cannot be found.
+
+### Substitution creation
+
+Substitution instances can be created using the `Substitution.of` factory method. Although these instances are usually obtained as a result of unification operations, it still may be useful to be aware of this simple implementation detail.
+
+For example, Substitution instances can be created by specifying a series of variable-term pairs:
+
+```kotlin
+Scope.empty {
+    val substitution = Substitution.of(
+        varOf("X") to atomOf("abraham"),
+        varOf("Y") to atomOf("isaac"),
+    )
+}
+```
+
+Keep in mind that `Substitution.of` will check for contradictions, and may possibly return Fail objects.
+
+### Substitution application
+
+Substitutions can be applied to terms through the `applyTo(term: Term)` method. Calling this method will return a new Term equivalent to the starting one, but all variables will be replaced according to the provided bindings.
+
+For example, by applying the substitution `{X = abraham}` on term `father(X, isaac)`:
+
+```kotlin
+Scope.empty {
+    val term = structOf("father", varOf("X"), atomOf("isaac"))
+    val substitution = Substitution.of(varOf("X") to atomOf("abraham"))
+
+    val result = substitution.applyTo(term)
+}
+```
+
+we will get the `father(abraham, isaac)` ground term as a result.
+
+### Substitution composition
+
+Substitutions can be composed through the `plus()` method, which is also available as the infix operator `+`.
+
+For example, say we want to compose a substitution `{X = abraham}` with `{Y = isaac}` within the same scope. In order to do so, we would write:
+
+```kotlin
+Scope.empty {
+    val sub1 = Substitution.of(varOf("X"), atomOf("abraham"))
+    val sub2 = Substitution.of(varOf("Y"), atomOf("isaac"))
+
+    val substitution = sub1 + sub2
+}
+```
+
+In 2P-Kt, unlike in the Prolog standard, composing two contradicting substitution will lead to a failure, yielding the Fail singleton object. For example, if we tried to bind a variable `X` with two different atoms:
+
+```kotlin
+Scope.empty {
+    val sub1 = Substitution.of(varOf("X"), atomOf("abraham"))
+    val sub2 = Substitution.of(varOf("X"), atomOf("nahor"))
+
+    val substitution = sub1 + sub2 // contradiction!
+}
+```
+
+we would cause a contradiction, and the composition would fail.
