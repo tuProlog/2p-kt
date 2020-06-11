@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.BacktrackableSideEffect1
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.stdlib.primitive
+package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve

@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.utils.squared
 import kotlin.collections.List

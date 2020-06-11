@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.error.MetaError
+import it.unibo.tuprolog.solve.primitive.NonBacktrackableTernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object FindAll : NonBacktrackableTernaryRelation<ExecutionContext>("findall") {

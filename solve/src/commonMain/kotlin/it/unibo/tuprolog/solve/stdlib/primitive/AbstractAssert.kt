@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.SideEffect1
 
 abstract class AbstractAssert(suffix: String, private val before: Boolean) : SideEffect1<ExecutionContext>("assert$suffix") {
     override fun accept(request: Solve.Request<ExecutionContext>, term: Term): Solve.Response =

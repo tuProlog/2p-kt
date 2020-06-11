@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.SideEffect1
 
 object Write : SideEffect1<ExecutionContext>("write") {
     override fun accept(request: Solve.Request<ExecutionContext>, term: Term): Solve.Response {
