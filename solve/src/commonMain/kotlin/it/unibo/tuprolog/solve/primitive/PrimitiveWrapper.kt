@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInstantiated
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -89,34 +88,19 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Numeric -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.NUMBER}",
-                    context = context,
-                    expectedType = TypeError.Expected.NUMBER,
-                    actualValue = arg
-                )
+                !is Numeric -> throw TypeError.forArgument(context, signature, TypeError.Expected.NUMBER, arg, index)
                 else -> this
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Struct -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.COMPOUND}",
-                    context = context,
-                    expectedType = TypeError.Expected.COMPOUND,
-                    actualValue = arg
-                )
+                !is Struct -> throw TypeError.forArgument(context, signature, TypeError.Expected.COMPOUND, arg, index)
                 else -> this
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Integer -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.INTEGER}",
-                    context = context,
-                    expectedType = TypeError.Expected.INTEGER,
-                    actualValue = arg
-                )
+                !is Integer -> throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, arg, index)
                 else -> this
             }
     }

@@ -45,7 +45,7 @@ class InstantiationError(
 
         fun forArgument(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) =
             InstantiationError(
-                message = "Argument ${index ?: ""} `${variable ?: ""}` of $procedure is unexpectedly not instantiated",
+                message = "Argument ${index ?: ""} `${variable ?: ""}` of ${procedure.toIndicator()} is unexpectedly not instantiated",
                 context = context,
                 extraData = variable
             )
