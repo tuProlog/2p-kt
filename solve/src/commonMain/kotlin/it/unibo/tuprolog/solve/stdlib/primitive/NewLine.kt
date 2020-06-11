@@ -2,16 +2,16 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.primitive.SideEffect0
+import it.unibo.tuprolog.solve.primitive.PredicateWithoutArguments
 
-object NewLine : SideEffect0<ExecutionContext>("nl") {
-    override fun accept(request: Solve.Request<ExecutionContext>): Solve.Response {
-        return request.context.standardOutput.let {
+object NewLine : PredicateWithoutArguments.NonBacktrackable<ExecutionContext>("nl") {
+    override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response {
+        return context.standardOutput.let {
             if (it == null) {
-                request.replyFail()
+                replyFail()
             } else {
                 it.write("\n")
-                request.replySuccess()
+                replySuccess()
             }
         }
     }

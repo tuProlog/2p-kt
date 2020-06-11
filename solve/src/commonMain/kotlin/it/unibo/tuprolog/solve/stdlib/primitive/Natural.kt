@@ -11,23 +11,15 @@ import org.gciatto.kt.math.BigInteger
 
 // TODO doc
 object Natural : UnaryPredicate<ExecutionContext>("natural") {
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-        when (val x = request.arguments[0]) {
-            is Var -> generateValues(x).map { request.replySuccess(Substitution.of(x, it)) }
-            is Integer -> sequenceOf(request.replyWith(checkValue(x)))
-            else -> sequenceOf(request.replyFail())
+    override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
+        when (first) {
+            is Var -> generateValues().map { replySuccess(Substitution.of(first, it)) }
+            is Integer -> sequenceOf(replyWith(checkValue(first)))
+            else -> sequenceOf(replyFail())
         }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun generateValues(variable: Var): Sequence<Term> = sequence {
-        var i = BigInteger.ZERO
-
-        while (true) {
-            yield(Integer.of(i))
-
-            i += BigInteger.ONE
-        }
-    }
+    private fun generateValues(): Sequence<Term> =
+        generateSequence(BigInteger.ZERO) { it + BigInteger.ONE }.map { Integer.of(it) }
 
     private fun checkValue(value: Integer): Boolean =
         value.intValue.signum >= 0

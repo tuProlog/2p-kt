@@ -4,20 +4,20 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.primitive.SideEffect1
+import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
-object Write : SideEffect1<ExecutionContext>("write") {
-    override fun accept(request: Solve.Request<ExecutionContext>, term: Term): Solve.Response {
-        return request.context.standardOutput.let {
+object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
+    override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
+        return context.standardOutput.let {
             if (it == null) {
-                request.replyFail()
+                replyFail()
             } else {
-                val string = when (term) {
-                    is Atom -> term.value
-                    else -> term.toString()
+                val string = when (first) {
+                    is Atom -> first.value
+                    else -> first.toString()
                 }
                 it.write(string)
-                request.replySuccess()
+                replySuccess()
             }
         }
     }
