@@ -26,6 +26,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         Atomic,
         Callable,
         Compound,
+        CurrentOp,
         EnsureExecutable,
         FindAll,
         FloatPrimitive,
