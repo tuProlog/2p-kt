@@ -124,4 +124,6 @@ open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int)
     val start: Token?
 
     val stop: Token?
+
+    val exception: dynamic
 }
