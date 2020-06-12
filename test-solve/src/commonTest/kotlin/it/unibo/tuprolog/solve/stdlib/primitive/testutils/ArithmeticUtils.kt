@@ -66,7 +66,7 @@ internal object ArithmeticUtils {
                 ArithmeticEqual.functor("*"(3, 2), "-"(7, 1)) to true,
                 ArithmeticEqual.functor(0.333, "/"(1, 3)) to false,
                 ArithmeticEqual.functor(0, 1) to false,
-                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to TypeError::class
+                ArithmeticEqual.functor(1, "+"("N", "/"(3, 0))) to InstantiationError::class
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }

@@ -10,8 +10,8 @@ import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
 abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation.Predicative<E>(operator) {
 
     final override fun Solve.Request<E>.compute(first: Term, second: Term): Boolean {
-        ensuringAllArgumentsAreInstantiated().ensuringArgumentIsNumeric(0).ensuringArgumentIsNumeric(1)
-        return evaluateAndCompute(first, second as Numeric)
+        ensuringAllArgumentsAreInstantiated()
+        return evaluateAndCompute(first, second)
     }
 
     private fun Solve.Request<E>.evaluateAndCompute(x: Term, y: Term): Boolean =
