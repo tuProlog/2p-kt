@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -55,6 +56,7 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = when (substitution) {
@@ -66,12 +68,22 @@ sealed class Solve {
                     staticKb,
                     dynamicKb,
                     sideEffectManager,
+                    operators,
                     inputChannels,
                     outputChannels
                 )
             }
             else -> {
-                replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
+                replyFail(
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    operators,
+                    inputChannels,
+                    outputChannels
+                )
             }
         }
 
@@ -84,18 +96,48 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = when (solution) {
-            is Solution.Yes -> replySuccess(
-                solution.substitution,
-                libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels
-            )
-            is Solution.No -> replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
-            is Solution.Halt -> replyException(
-                solution.exception,
-                libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels
-            )
+            is Solution.Yes -> {
+                replySuccess(
+                    solution.substitution,
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    operators,
+                    inputChannels,
+                    outputChannels
+                )
+            }
+            is Solution.No -> {
+                replyFail(
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    operators,
+                    inputChannels,
+                    outputChannels
+                )
+            }
+            is Solution.Halt -> {
+                replyException(
+                    solution.exception,
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    operators,
+                    inputChannels,
+                    outputChannels
+                )
+            }
         }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
@@ -107,19 +149,34 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = when (condition) {
-            true -> replySuccess(
-                libraries = libraries,
-                flags = flags,
-                staticKb = staticKb,
-                dynamicKb = dynamicKb,
-                sideEffectManager = sideEffectManager,
-                inputChannels = inputChannels,
-                outputChannels = outputChannels
-            )
-            false -> replyFail(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
+            true -> {
+                replySuccess(
+                    libraries = libraries,
+                    flags = flags,
+                    staticKb = staticKb,
+                    dynamicKb = dynamicKb,
+                    sideEffectManager = sideEffectManager,
+                    operators = operators,
+                    inputChannels = inputChannels,
+                    outputChannels = outputChannels
+                )
+            }
+            false -> {
+                replyFail(
+                    libraries,
+                    flags,
+                    staticKb,
+                    dynamicKb,
+                    sideEffectManager,
+                    operators,
+                    inputChannels,
+                    outputChannels
+                )
+            }
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
@@ -131,6 +188,7 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = Response(
@@ -140,6 +198,7 @@ sealed class Solve {
                 staticKb,
                 dynamicKb,
                 sideEffectManager,
+                operators,
                 inputChannels,
                 outputChannels
             )
@@ -152,6 +211,7 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = Response(
@@ -161,6 +221,7 @@ sealed class Solve {
                 staticKb,
                 dynamicKb,
                 sideEffectManager,
+                operators,
                 inputChannels,
                 outputChannels
             )
@@ -174,6 +235,7 @@ sealed class Solve {
             staticKb: Theory? = null,
             dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
+            operators: OperatorSet? = null,
             inputChannels: PrologInputChannels<*>? = null,
             outputChannels: PrologOutputChannels<*>? = null
         ) = Response(
@@ -183,6 +245,7 @@ sealed class Solve {
             staticKb,
             dynamicKb,
             sideEffectManager,
+            operators,
             inputChannels,
             outputChannels
         )
@@ -219,6 +282,9 @@ sealed class Solve {
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
         @JsName("sideEffectManager")
         val sideEffectManager: SideEffectManager? = null,
+        /** The set of loaded operators after request execution (use `null` in case nothing changed) */
+        @JsName("operators")
+        val operators: OperatorSet? = null,
         /** The input channels modification after request execution (use `null` in case nothing changed) */
         @JsName("inputChannels")
         val inputChannels: PrologInputChannels<*>? = null,

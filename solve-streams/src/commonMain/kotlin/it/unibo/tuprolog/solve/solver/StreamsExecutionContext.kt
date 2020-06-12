@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -19,6 +20,7 @@ internal data class StreamsExecutionContext(
     override val flags: PrologFlags = emptyMap(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
+    override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
@@ -44,17 +46,15 @@ internal data class StreamsExecutionContext(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver {
-        return StreamsSolverFactory.solverOf(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            stdIn,
-            stdOut,
-            stdErr
-        )
-    }
+    ) = StreamsSolverFactory.solverOf(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr
+    )
 
 }
 

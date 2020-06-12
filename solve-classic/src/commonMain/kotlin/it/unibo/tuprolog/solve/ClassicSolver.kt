@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.fsm.EndState
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.solve.fsm.clone
@@ -25,6 +23,7 @@ internal open class ClassicSolver(
             flags = flags,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
             inputChannels = inputChannels,
             outputChannels = outputChannels
         )
@@ -45,6 +44,7 @@ internal open class ClassicSolver(
             flags = flags,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             maxDuration = maxDuration,
@@ -77,4 +77,7 @@ internal open class ClassicSolver(
 
     override val outputChannels: PrologOutputChannels<*>
         get() = state.context.outputChannels
+
+    override val operators: OperatorSet
+        get() = state.context.operators
 }
