@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -24,6 +25,7 @@ object DummyInstances {
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKb: Nothing by lazy { throw NotImplementedError() }
         override val dynamicKb: Nothing by lazy { throw NotImplementedError() }
+        override val operators: OperatorSet by lazy { throw NotImplementedError() }
         override val inputChannels: Nothing by lazy { throw NotImplementedError() }
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
