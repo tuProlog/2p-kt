@@ -34,9 +34,9 @@ class TuPrologSolveQuery : CliktCommand(help = "Compute a particular query and t
                 val duration: TimeDuration = parentCommand.getTimeout()
                 val solutions = solver.solve(Struct.parse(query), duration).iterator()
                 if (maxSolutions == 0) {
-                    TuPrologUtils.printSolutions(solutions)
+                    TuPrologUtils.printSolutions(solutions, solver.operators)
                 } else {
-                    TuPrologUtils.printNumSolutions(solutions, maxSolutions)
+                    TuPrologUtils.printNumSolutions(solutions, maxSolutions, solver.operators)
                 }
             } catch (e: ParseException) {
                 TuPrologUtils.printParseException(e)

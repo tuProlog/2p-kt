@@ -4,7 +4,9 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.output.defaultCliktConsole
 import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.TermFormatter.Companion.prettyExpressions
 import it.unibo.tuprolog.core.format
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -12,34 +14,34 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 
 object TuPrologUtils {
 
-    private fun printSolution(sol: Solution) {
+    private fun printSolution(sol: Solution, operatorSet: OperatorSet) {
         when (sol) {
             is Solution.Yes -> {
-                printYesSolution(sol)
+                printYesSolution(sol, operatorSet)
             }
             is Solution.No -> {
-                printNoSolution(sol)
+                printNoSolution(sol, operatorSet)
             }
             is Solution.Halt -> {
-                printHaltSolution(sol)
+                printHaltSolution(sol, operatorSet)
             }
         }
     }
 
-    private fun printYesSolution(sol: Solution.Yes) {
-        TermUi.echo("yes: ${sol.solvedQuery.format(TermFormatter.prettyExpressions())}.")
+    private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
+        TermUi.echo("yes: ${sol.solvedQuery.format(prettyExpressions(operatorSet))}.")
         if (sol.substitution.isNotEmpty()) {
             val sep = "\n    "
             val substitutions = sol.substitution.entries.joinToString(sep) {
                 val prettyVariable = it.key.format(TermFormatter.prettyVariables())
-                val prettyValue = it.value.format(TermFormatter.prettyVariables())
+                val prettyValue = it.value.format(prettyExpressions(operatorSet))
                 "$prettyVariable = $prettyValue"
             }
             TermUi.echo("    $substitutions")
         }
     }
 
-    private fun printHaltSolution(sol: Solution.Halt) {
+    private fun printHaltSolution(sol: Solution.Halt, operatorSet: OperatorSet) {
         when (val ex = sol.exception) {
             is TimeOutException -> {
                 TermUi.echo("timeout.")
@@ -55,7 +57,7 @@ object TuPrologUtils {
                     TermUi.echo("halt: ${ex.message?.trim()}")
                 }
                 val sep = "\n    at "
-                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.toString() }
+                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(prettyExpressions(operatorSet)) }
                 TermUi.echo("    at $stacktrace")
             }
         }
@@ -95,11 +97,12 @@ object TuPrologUtils {
         return longQuery.toString()
     }
 
-    private fun printNoSolution(sol: Solution.No) {
+    @Suppress("UNUSED_PARAMETER")
+    private fun printNoSolution(sol: Solution.No, operatorSet: OperatorSet) {
         TermUi.echo("no.")
     }
 
-    fun printSolutions(solutions: Iterator<Solution>) {
+    fun printSolutions(solutions: Iterator<Solution>, operatorSet: OperatorSet) {
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
@@ -108,16 +111,16 @@ object TuPrologUtils {
             } else {
                 first = false
             }
-            printSolution(solutions.next())
+            printSolution(solutions.next(), operatorSet)
         }
         printEndOfSolutions()
     }
 
-    fun printNumSolutions(solutions: Iterator<Solution>, maxSolutions: Int) {
+    fun printNumSolutions(solutions: Iterator<Solution>, maxSolutions: Int, operatorSet: OperatorSet) {
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++
-            printSolution(solutions.next())
+            printSolution(solutions.next(), operatorSet)
         }
         printEndOfSolutions()
     }

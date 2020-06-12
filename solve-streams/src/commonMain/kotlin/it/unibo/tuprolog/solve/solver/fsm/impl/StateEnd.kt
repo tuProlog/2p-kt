@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -31,6 +32,7 @@ internal sealed class StateEnd(override val solve: Solve.Response) : AbstractSta
                 flags ?: emptyMap(),
                 staticKb ?: Theory.empty(),
                 dynamicKb ?: Theory.empty(),
+                operators ?: OperatorSet.EMPTY,
                 inputChannels ?: ExecutionContextAware.defaultInputChannels(),
                 outputChannels ?: ExecutionContextAware.defaultOutputChannels(),
                 solution.substitution as? Substitution.Unifier ?: Substitution.empty()
@@ -70,6 +72,7 @@ internal fun IntermediateState.stateEndTrue(
     staticKb: Theory? = null,
     dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
+    operators: OperatorSet? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.True(
@@ -80,6 +83,7 @@ internal fun IntermediateState.stateEndTrue(
         staticKb ?: solve.context.staticKb,
         dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager ?: solve.context.getSideEffectManager(),
+        operators ?: solve.context.operators,
         inputChannels ?: solve.context.inputChannels,
         outputChannels ?: solve.context.outputChannels
     )
@@ -92,6 +96,7 @@ internal fun IntermediateState.stateEndFalse(
     staticKb: Theory? = null,
     dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
+    operators: OperatorSet? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.False(
@@ -101,6 +106,7 @@ internal fun IntermediateState.stateEndFalse(
         staticKb ?: solve.context.staticKb,
         dynamicKb ?: solve.context.dynamicKb,
         sideEffectManager ?: solve.context.getSideEffectManager(),
+        operators ?: solve.context.operators,
         inputChannels ?: solve.context.inputChannels,
         outputChannels ?: solve.context.outputChannels
     )
@@ -114,6 +120,7 @@ internal fun IntermediateState.stateEndHalt(
     staticKb: Theory? = null,
     dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
+    operators: OperatorSet? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
 ) = StateEnd.Halt(
@@ -126,6 +133,7 @@ internal fun IntermediateState.stateEndHalt(
         sideEffectManager
             ?: exception.context.getSideEffectManager()
             ?: solve.context.getSideEffectManager(),
+        operators ?: solve.context.operators,
         inputChannels ?: solve.context.inputChannels,
         outputChannels ?: solve.context.outputChannels
     )
@@ -139,6 +147,7 @@ internal fun IntermediateState.stateEnd(
     staticKb: Theory? = null,
     dynamicKb: Theory? = null,
     sideEffectManager: SideEffectManager? = null,
+    operators: OperatorSet? = null,
     inputChannels: PrologInputChannels<*>? = null,
     outputChannels: PrologOutputChannels<*>? = null
 ): StateEnd = when (solution) {
@@ -150,11 +159,12 @@ internal fun IntermediateState.stateEnd(
             staticKb,
             dynamicKb,
             sideEffectManager,
+            operators,
             inputChannels,
             outputChannels
         )
     is Solution.No ->
-        stateEndFalse(libraries, flags, staticKb, dynamicKb, sideEffectManager, inputChannels, outputChannels)
+        stateEndFalse(libraries, flags, staticKb, dynamicKb, sideEffectManager, operators, inputChannels, outputChannels)
     is Solution.Halt ->
         stateEndHalt(
             solution.exception,
@@ -163,6 +173,7 @@ internal fun IntermediateState.stateEnd(
             staticKb,
             dynamicKb,
             sideEffectManager,
+            operators,
             inputChannels,
             outputChannels
         )
@@ -177,6 +188,7 @@ internal fun IntermediateState.stateEnd(response: Solve.Response) = with(respons
         staticKb,
         dynamicKb,
         sideEffectManager,
+        operators,
         inputChannels,
         outputChannels
     )

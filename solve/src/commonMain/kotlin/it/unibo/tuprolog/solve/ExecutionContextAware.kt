@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -54,6 +55,10 @@ interface ExecutionContextAware {
     /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
     @JsName("dynamicKb")
     val dynamicKb: Theory
+
+    /** Loaded operators */
+    @JsName("operators")
+    val operators: OperatorSet
 
     /** The currently open input channels */
     @JsName("inputChannels")

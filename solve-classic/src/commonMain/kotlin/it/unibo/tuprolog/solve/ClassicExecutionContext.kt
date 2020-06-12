@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -16,6 +17,7 @@ data class ClassicExecutionContext(
     override val flags: PrologFlags = emptyMap(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
+    override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
@@ -78,17 +80,15 @@ data class ClassicExecutionContext(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver {
-        return ClassicSolverFactory.solverOf(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            stdIn,
-            stdOut,
-            stdErr
-        )
-    }
+    ): Solver = ClassicSolverFactory.solverOf(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr
+    )
 
     override fun toString(): String {
         return "ClassicExecutionContext(" +
