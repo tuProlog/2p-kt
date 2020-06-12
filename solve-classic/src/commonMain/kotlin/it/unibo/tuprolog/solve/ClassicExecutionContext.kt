@@ -99,6 +99,7 @@ data class ClassicExecutionContext(
                 "rules=$rules, " +
                 "primitives=$primitives, " +
                 "startTime=$startTime, " +
+                "operators=${operators.joinToString(",", "{", "}") { "${it.functor}:${it.specifier}" }}, " +
                 "inputChannels=${inputChannels.keys}, " +
                 "outputChannels=${outputChannels.keys}, " +
                 "maxDuration=$maxDuration, " +
