@@ -62,4 +62,69 @@ class TestClausesParser {
             fail("Unexpected exception of type ${e::class}: $e")
         }
     }
+
+    @Test
+    fun testTheoryWithCustomOperator() {
+        val input = """
+            |:- op(900, xfy, '::').
+            |nil.
+            |1 :: nil.
+            |1 :: 2 :: nil.
+        """.trimMargin()
+
+        val th = with(ClausesParser.withStandardOperators) {
+            parseTheory(input)
+        }
+
+        assertMatch(th.elementAt(0)) {
+            directive { "op"(900, "xfy", "::") }
+        }
+
+        assertMatch(th.elementAt(1)) {
+            fact { "nil" }
+        }
+
+        assertMatch(th.elementAt(2)) {
+            fact { "::"(1, "nil") }
+        }
+
+        assertMatch(th.elementAt(3)) {
+            fact { "::"(1, "::"(2, "nil")) }
+        }
+    }
+
+    @Test
+    fun testTheoryWithCustomOperators() {
+        val input = """
+            |:- op(900, yfx, ['++', '--']).
+            |1 ++ 2.
+            |1 -- 2.
+            |1 -- 2 ++ 3.
+            |1 ++ 2 -- 3 ++ 4.
+        """.trimMargin()
+
+        val th = with(ClausesParser.withStandardOperators) {
+            parseTheory(input)
+        }
+
+        assertMatch(th.elementAt(0)) {
+            directive { "op"(900, "yfx", listOf("++", "--")) }
+        }
+
+        assertMatch(th.elementAt(1)) {
+            fact { "++"(1, 2) }
+        }
+
+        assertMatch(th.elementAt(2)) {
+            fact { "--"(1, 2) }
+        }
+
+        assertMatch(th.elementAt(3)) {
+            fact { "++"("--"(1, 2), 3) }
+        }
+
+        assertMatch(th.elementAt(4)) {
+            fact { "++"("--"("++"(1, 2), 3), 4) }
+        }
+    }
 }
