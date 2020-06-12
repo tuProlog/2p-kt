@@ -29,6 +29,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         EnsureExecutable,
         FindAll,
         FloatPrimitive,
+        Functor,
         Ground,
         Halt,
         Integer,
@@ -43,6 +44,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         TermIdentical,
         TermNotIdentical,
         UnifiesWith,
+        Univ,
         Var,
         Write
     ).map { it.descriptionPair }.toMap(),
