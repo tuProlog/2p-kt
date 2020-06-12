@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.core.parsing
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseListener
@@ -11,10 +12,11 @@ import it.unibo.tuprolog.parser.dynamic.Associativity
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
+import it.unibo.tuprolog.core.List as LogicList
 
 class DynamicOpListener private constructor(
     parser: PrologParser,
-    private val operatorDefinedCallback: (Operator) -> OperatorSet
+    private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit
 ) : PrologParserBaseListener() {
 
     private val parser: WeakReference<PrologParser> = WeakReference(parser)
@@ -24,45 +26,45 @@ class DynamicOpListener private constructor(
         if (ctx.exception != null) {
             return
         }
-        if (expr.op != null && ":-" == expr.op.symbol.text && Associativity.PREFIX.contains(expr.associativity)) {
-            val directive = ctx.accept(PrologExpressionVisitor()) as Struct
-            if (directive.arity == 1 && directive.getArgAt(0) is Struct) {
-                val op: Struct = directive.getArgAt(0) as Struct
-                if ("op" == op.functor && op.arity == 3 && op.getArgAt(0) is Number && op.getArgAt(1).isAtom && op.getArgAt(
-                        2
-                    ).isAtom
-                ) {
-                    val number = op.getArgAt(0) as Numeric
-                    val priority: Int = min(
-                        PrologParser.TOP,
-                        max(
-                            PrologParser.BOTTOM,
-                            number.intValue.toInt()
-                        )
+        if (expr.op != null && ":-" == expr.op.symbol.text && expr.associativity in Associativity.PREFIX) {
+            val directive = ctx.accept(PrologExpressionVisitor()) as Directive
+            val op = directive.body
+            if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
+                val priority = min(
+                    PrologParser.TOP,
+                    max(
+                        PrologParser.BOTTOM,
+                        (op[0] as Numeric).intValue.toInt()
                     )
-                    val struct1 = op.getArgAt(1) as Struct
-                    val associativity: Associativity =
-                        Associativity.valueOf(struct1.functor.toUpperCase())
-                    val struct2 = op.getArgAt(2) as Struct
-                    val functor: String = struct2.functor
-                    (parser.get())
-                        ?.addOperator(functor, associativity, priority)
-                    onOperatorDefined(Operator(functor, Specifier.valueOf(associativity.name), priority))
+                )
+                val specifier = Specifier.fromTerm(op[1])
+                when (val operator = op[2]) {
+                    is Atom -> {
+                        onOperatorDefined(Operator(operator.value, specifier, priority))
+                    }
+                    is LogicList -> {
+                        if (operator.toSequence().all { it is Atom }) {
+                            for (it in operator.toSequence().map { it as Atom }) {
+                                onOperatorDefined(Operator(it.value, specifier, priority))
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
     private fun onOperatorDefined(operator: Operator) {
-        operatorDefinedCallback.invoke(operator)
+        parser.get()?.addOperator(operator.functor, operator.specifier.toAssociativity(), operator.priority)
+        parser.get().operatorDefinedCallback(operator)
     }
 
     companion object {
         fun of(parser: PrologParser): DynamicOpListener {
-            return DynamicOpListener(parser) { OperatorSet.EMPTY }
+            return DynamicOpListener(parser) { }
         }
 
-        fun of(parser: PrologParser, operatorDefinedCallback: (Operator) -> OperatorSet): DynamicOpListener {
+        fun of(parser: PrologParser, operatorDefinedCallback: PrologParser?.(Operator) -> Unit): DynamicOpListener {
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }
