@@ -1,10 +1,9 @@
-package it.unibo.tuprolog.solve.stdlib.function
+package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.function.Compute
 
 /**
  * Base class to implement unary math functions

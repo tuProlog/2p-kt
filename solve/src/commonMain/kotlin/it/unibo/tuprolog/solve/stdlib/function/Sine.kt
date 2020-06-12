@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import org.gciatto.kt.math.BigDecimal
 import kotlin.math.sin
 

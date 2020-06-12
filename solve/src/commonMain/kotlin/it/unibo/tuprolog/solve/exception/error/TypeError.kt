@@ -44,7 +44,7 @@ class TypeError(
         index: Int? = null
     ) : this(
         message = "Argument ${index
-            ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
+            ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead",
         context = context,
         expectedType = expectedType,
         actualValue = actualValue,
@@ -64,13 +64,13 @@ class TypeError(
             actualValue: Term,
             index: Int? = null
         ) = TypeError(
-                message = "Argument ${index
-                    ?: ""} of `$procedure` should be a `$expectedType`, but `$actualValue` has been provided instead",
-                context = context,
-                expectedType = expectedType,
-                actualValue = actualValue,
-                extraData = actualValue
-            )
+            message = "Argument ${index
+                ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead",
+            context = context,
+            expectedType = expectedType,
+            actualValue = actualValue,
+            extraData = actualValue
+        )
 
         fun forGoal(
             context: ExecutionContext,

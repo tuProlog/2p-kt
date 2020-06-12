@@ -7,16 +7,9 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.MessageError
+import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Throw : UnaryPredicate<ExecutionContext>("throw") {
-    override fun uncheckedImplementation(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
-        sequenceOf(
-            request.ensuringAllArgumentsAreInstantiated()
-                .replyException(
-                    handleError(request.context, request.arguments[0])
-                )
-        )
-
     private fun handleError(context: ExecutionContext, error: Term): TuPrologRuntimeException =
         when {
             error is Struct && error.functor == "error" && error.arity in 1..2 -> {
@@ -28,4 +21,13 @@ object Throw : UnaryPredicate<ExecutionContext>("throw") {
             }
             else -> MessageError.of(error, context)
         }
+
+    override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {
+        return sequenceOf(
+            ensuringAllArgumentsAreInstantiated()
+                .replyException(
+                    handleError(context, arguments[0])
+                )
+        )
+    }
 }
