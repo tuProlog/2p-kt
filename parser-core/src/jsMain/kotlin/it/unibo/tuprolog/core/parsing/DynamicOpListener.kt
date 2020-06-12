@@ -6,37 +6,29 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
+import it.unibo.tuprolog.parser.Associativity
+import it.unibo.tuprolog.parser.ClauseContext
 import it.unibo.tuprolog.parser.PrologParser
-import it.unibo.tuprolog.parser.PrologParserBaseListener
-import it.unibo.tuprolog.parser.dynamic.Associativity
-import java.lang.ref.WeakReference
+import it.unibo.tuprolog.parser.PrologParserListener
 import kotlin.math.max
 import kotlin.math.min
 import it.unibo.tuprolog.core.List as LogicList
 
 class DynamicOpListener private constructor(
-    parser: PrologParser,
+    private val parser: PrologParser,
     private val operatorDefinedCallback: PrologParser?.(Operator) -> Unit
-) : PrologParserBaseListener() {
+) : PrologParserListener() {
 
-    private val parser: WeakReference<PrologParser> = WeakReference(parser)
-
-    override fun exitClause(ctx: PrologParser.ClauseContext) {
-        val expr: PrologParser.ExpressionContext = ctx.expression()
+    override fun exitClause(ctx: ClauseContext) {
+        val expr = ctx.expression()
         if (ctx.exception != null) {
             return
         }
-        if (expr.op != null && ":-" == expr.op.symbol.text && expr.associativity in Associativity.PREFIX) {
-            val directive = ctx.accept(PrologExpressionVisitor()) as Directive
+        if (expr._op != null && ":-" == expr._op?.symbol?.text && expr.associativity in Associativity.PREFIX) {
+            val directive = ctx.accept(PrologVisitor()) as Directive
             val op = directive.body
             if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
-                val priority = min(
-                    PrologParser.TOP,
-                    max(
-                        PrologParser.BOTTOM,
-                        (op[0] as Numeric).intValue.toInt()
-                    )
-                )
+                val priority = min(1200, max(0, (op[0] as Numeric).intValue.toInt()))
                 val specifier = Specifier.fromTerm(op[1])
                 when (val operator = op[2]) {
                     is Atom -> {
@@ -55,8 +47,8 @@ class DynamicOpListener private constructor(
     }
 
     private fun onOperatorDefined(operator: Operator) {
-        parser.get()?.addOperator(operator.functor, operator.specifier.toAssociativity(), operator.priority)
-        parser.get().operatorDefinedCallback(operator)
+        parser.addOperator(operator.functor, operator.specifier.toAssociativity(), operator.priority)
+        parser.operatorDefinedCallback(operator)
     }
 
     companion object {
