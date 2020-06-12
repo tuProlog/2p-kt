@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.repl
 
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
+import com.github.ajalt.clikt.output.defaultCliktConsole
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.parsing.ParseException
@@ -102,7 +103,7 @@ object TuPrologUtils {
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
-                val cmd = TermUi.prompt("", promptSuffix = "")?.trim()
+                val cmd = defaultCliktConsole().promptForLine("", false)?.trim()
                 if (cmd != ";") break
             } else {
                 first = false

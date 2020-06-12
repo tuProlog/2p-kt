@@ -162,5 +162,8 @@ interface SolverTest {
     fun testDisjunction()
     fun testDisjunctionWithUnification()
     fun testMember()
+    fun testAssertRules()
+    fun testRetract()
+    fun testNatural()
 }
 

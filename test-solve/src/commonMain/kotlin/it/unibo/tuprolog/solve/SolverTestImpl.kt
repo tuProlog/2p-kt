@@ -54,6 +54,8 @@ import it.unibo.tuprolog.solve.stdlib.rule.Arrow
 import it.unibo.tuprolog.solve.stdlib.rule.Member
 import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
+import it.unibo.tuprolog.theory.Theory
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -102,6 +104,8 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(NonVar)
                 assertHasPredicateInAPI(NotUnifiableWith)
                 assertHasPredicateInAPI(Number)
+                assertHasPredicateInAPI(Retract)
+                assertHasPredicateInAPI(Sleep)
                 assertHasPredicateInAPI(TermIdentical)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)
@@ -871,6 +875,75 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             )
 
             assertEquals(constants.size + 1, solutions.size)
+        }
+    }
+
+    override fun testAssertRules() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = "assertz"("f"(2) impliedBy false) and "asserta"("f"(1) impliedBy true)
+
+            val solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes()),
+                solutions
+            )
+
+            assertEquals(
+                ktListOf(
+                    factOf(structOf("f", numOf(1))),
+                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                ),
+                solver.dynamicKb.toList()
+            )
+        }
+    }
+
+    override fun testRetract() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                dynamicKb = theoryOf(
+                    factOf(structOf("f", numOf(1))),
+                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                )
+            )
+
+            val query = "retract"("f"("X"))
+
+            val solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes("X" to 1),
+                    query.yes("X" to 2)
+                ),
+                solutions
+            )
+
+            assertEquals(
+                ktListOf(),
+                solver.dynamicKb.toList()
+            )
+            assertEquals(0L, solver.dynamicKb.size)
+        }
+    }
+
+    override fun testNatural() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = "natural"("X") and "natural"("X")
+
+            val n = 100
+
+            val solutions = solver.solve(query, maxDuration).take(n).toList()
+
+            assertSolutionEquals(
+                (0 until n).map { query.yes("X" to it) },
+                solutions
+            )
         }
     }
 }
