@@ -40,6 +40,7 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         NonVar,
         NotUnifiableWith,
         Number,
+        Op,
         Retract,
         Sleep,
         TermIdentical,
