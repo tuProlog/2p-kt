@@ -3,14 +3,14 @@ package it.unibo.tuprolog.solve.stdlib.function.testutils
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.stdlib.function.BinaryMathFunction
-import it.unibo.tuprolog.solve.stdlib.function.UnaryMathFunction
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.function.Compute
-import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.function.BinaryMathFunction
+import it.unibo.tuprolog.solve.function.Compute
+import it.unibo.tuprolog.solve.function.FunctionWrapper
+import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import kotlin.test.assertFailsWith
 
 /**

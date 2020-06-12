@@ -1,11 +1,10 @@
-package it.unibo.tuprolog.solve.stdlib.function
+package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.function.FunctionWrapper
 import kotlin.jvm.JvmStatic
 
 /**
