@@ -30,9 +30,11 @@ object FloatingPointDivision : BinaryMathFunction("/") {
     /** Implements common behaviour for Integer and Real */
     private fun commonBehaviour(dividend: BigDecimal, divisor: BigDecimal, context: ExecutionContext): Real =
         // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
-        when (divisor) {
-            BigDecimal.ZERO -> throwZeroDivisorError(context)
-            else -> Numeric.of(dividend.div(divisor, MathContext())!!)
+        if (divisor.compareTo(BigDecimal.ZERO) == 0) {
+            throwZeroDivisorError(context)
+        } else {
+            Numeric.of(dividend.div(divisor, MathContext())!!)
         }
+
 
 }
