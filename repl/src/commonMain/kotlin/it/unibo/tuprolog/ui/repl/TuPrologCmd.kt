@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
+import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
@@ -45,14 +46,26 @@ class TuPrologCmd : CliktCommand(
         // nota: se subcommand è diverso da null, il controllo fluisce automaticamente al metodo run di subcommand
     }
 
-
     private fun loadTheory(): Theory {
         var theory: Theory = Theory.empty()
         for (file in this.files) {
             if (isReadableFile(file)) {
-                theory += loadTheoryFromFile(file)
+                try {
+                    val t = loadTheoryFromFile(file)
+                    TermUi.echo("# Successfully loaded ${t.size} clauses from $file")
+                    theory += t
+                } catch (e: ParseException) {
+                    TermUi.echo("""
+                        |Error while parsing theory file: $file
+                        |    Message: ${e.message}
+                        |    Line   : ${e.line}
+                        |    Column : ${e.column}
+                        |    Clause : ${e.clauseIndex}
+                    """.trimMargin(), err = true)
+                }
             }
         }
+        TermUi.echo("")
         return theory
     }
 
@@ -60,8 +73,9 @@ class TuPrologCmd : CliktCommand(
         var query: String? = TuPrologUtils.readQuery()
         while (query != null) {
             try {
-                val solutions = solver.solve(Struct.parse(query), this.getTimeout()).iterator()
-                TuPrologUtils.printSolutions(solutions)
+                val goal = Struct.parse(query, solver.operators)
+                val solutions = solver.solve(goal, this.getTimeout()).iterator()
+                TuPrologUtils.printSolutions(solutions, solver.operators)
             } catch (e: ParseException) {
                 TuPrologUtils.printParseException(e)
             }
@@ -71,14 +85,13 @@ class TuPrologCmd : CliktCommand(
     }
 
     fun getTimeout(): TimeDuration {
-        val duration: TimeDuration = timeout.toLong()
-        return duration
+        return timeout.toLong()
     }
 
     fun getSolver(): Solver {
+        TermUi.echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
-        val solve: Solver = Solver.classicWithDefaultBuiltins(staticKb = theory)
-        return solve
+        return Solver.classicWithDefaultBuiltins(staticKb = theory)
     }
 }
 

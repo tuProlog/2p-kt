@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
@@ -28,6 +29,7 @@ internal class StreamsSolver constructor(
         flags,
         staticKb,
         dynamicKb,
+        getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
         inputChannels,
         outputChannels
     )
@@ -73,6 +75,8 @@ internal class StreamsSolver constructor(
     override val outputChannels: PrologOutputChannels<*>
         get() = executionContext.outputChannels
 
+    override val operators: OperatorSet
+        get() = executionContext.operators
 
     internal companion object {
 

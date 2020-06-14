@@ -107,23 +107,11 @@ object PrologParserFactory {
         return addOperators(parser, operators) to originalErrorStrategy
     }
 
-
     fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
-        val ops = mutableListOf<String>()
-        for (it in operators) {
-            val op = when (it.specifier.name.toUpperCase()) {
-                "FX" -> Associativity.FX
-                "FY" -> Associativity.FY
-                "YF" -> Associativity.YF
-                "YFX" -> Associativity.YFX
-                "XFY" -> Associativity.XFY
-                "XF" -> Associativity.XF
-                "XFX" -> Associativity.XFX
-                else -> Associativity.YFX
-            }
-            ops.add(it.functor)
-            prologParser.addOperator(it.functor, op, it.priority)
+        operators.forEach {
+            prologParser.addOperator(it.functor, it.specifier.toAssociativity(), it.priority)
         }
+        prologParser.addParseListener(DynamicOpListener.of(prologParser))
         return prologParser
     }
 

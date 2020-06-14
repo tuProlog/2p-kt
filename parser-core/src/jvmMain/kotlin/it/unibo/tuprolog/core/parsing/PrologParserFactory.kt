@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
-import it.unibo.tuprolog.parser.dynamic.Associativity
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
@@ -189,9 +188,9 @@ object PrologParserFactory {
 
     fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         operators.forEach {
-            prologParser.addOperator(it.functor, Associativity.valueOf(it.specifier.name), it.priority)
+            prologParser.addOperator(it.functor, it.specifier.toAssociativity(), it.priority)
         }
-//        prologParser.addParseListener(DynamicOpListener.of(prologParser, OperatorSet()::plus))
+        prologParser.addParseListener(DynamicOpListener.of(prologParser))
         return prologParser
     }
 

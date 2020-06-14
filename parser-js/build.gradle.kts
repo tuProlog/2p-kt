@@ -96,7 +96,7 @@ with(fileTree("src/main/antlr")) {
                 "-o", outputDir,
                 "-message-format", "antlr",
                 "-long-messages",
-                "-no-listener",
+                "-listener",
                 "-visitor",
                 "-package", "${rootProject.group}.parsing",
                 antlrFile.absolutePath
