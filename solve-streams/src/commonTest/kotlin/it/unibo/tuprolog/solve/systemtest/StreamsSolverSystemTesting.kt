@@ -298,4 +298,14 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     override fun testNatural() {
         prototype.testNatural()
     }
+
+    @Test
+    override fun testUniv() {
+        prototype.testUniv()
+    }
+
+    @Test
+    override fun testFunctor() {
+        prototype.testFunctor()
+    }
 }

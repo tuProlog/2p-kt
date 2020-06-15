@@ -48,6 +48,7 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.rule.Arrow
@@ -95,6 +96,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(Compound)
                 assertHasPredicateInAPI(EnsureExecutable)
                 assertHasPredicateInAPI(FloatPrimitive)
+                assertHasPredicateInAPI(Functor)
                 assertHasPredicateInAPI(Ground)
                 assertHasPredicateInAPI(Halt)
                 assertHasPredicateInAPI(Integer)
@@ -109,6 +111,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(TermIdentical)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)
+                assertHasPredicateInAPI(Univ)
                 assertHasPredicateInAPI(Var)
                 assertHasPredicateInAPI(Write)
             }
@@ -942,6 +945,117 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             assertSolutionEquals(
                 (0 until n).map { query.yes("X" to it) },
+                solutions
+            )
+        }
+    }
+
+    override fun testFunctor() {
+
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "functor"("a"("b", "c"), "X", "Y")
+            var solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to "a", "Y" to 2)),
+                solutions
+            )
+
+            query = "functor"("a"("b", "c"), "a", "Y")
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("Y" to 2)),
+                solutions
+            )
+
+            query = "functor"("a"("b", "c"), "X", 2)
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to "a")),
+                solutions
+            )
+
+            query = "functor"("X", "a", 2)
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to structOf("a", anonymous(), anonymous()))),
+                solutions
+            )
+
+            query = "functor"("X", "Y", 2)
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.halt(InstantiationError.forArgument(
+                    DummyInstances.executionContext,
+                    Signature("functor", 3),
+                    1,
+                    varOf("Y")))),
+                solutions
+            )
+
+            query = "functor"("X", "a", "2")
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.halt(TypeError.forArgument(
+                    DummyInstances.executionContext,
+                    Signature("functor", 3),
+                    TypeError.Expected.INTEGER,
+                    varOf("Y"),
+                    2))),
+                solutions
+            )
+        }
+    }
+
+    override fun testUniv() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "a"("b", "c") univ "X"
+            var solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf("a","b","c"))),
+                solutions
+            )
+
+            query = "X" univ listOf("a","b","c")
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to structOf("a","b","c"))),
+                solutions
+            )
+
+            query = "X" univ "Y"
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.halt(InstantiationError.forArgument(
+                    DummyInstances.executionContext,
+                    Signature("=..", 2),
+                    0,
+                    varOf("X")))),
+                solutions
+            )
+
+            query = "a"("b", "c") univ "a"
+            solutions = solver.solve(query, maxDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.halt(TypeError.forArgument(
+                    DummyInstances.executionContext,
+                    Signature("=..", 2),
+                    TypeError.Expected.LIST,
+                    atomOf("a"),
+                    1))),
                 solutions
             )
         }

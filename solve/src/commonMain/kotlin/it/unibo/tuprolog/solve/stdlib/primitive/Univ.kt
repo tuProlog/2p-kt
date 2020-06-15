@@ -19,7 +19,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
     private fun univ(first: Term, second: it.unibo.tuprolog.core.List): Substitution {
         val list = second.toList()
         return if (list.isNotEmpty() && list[0] is Atom) {
-            first mguWith Struct.of(list[0].castTo<Atom>().value, list.subList(1, list.lastIndex))
+            first mguWith Struct.of(list[0].castTo<Atom>().value, list.drop(1))
         } else {
             Substitution.failed()
         }

@@ -165,5 +165,7 @@ interface SolverTest {
     fun testAssertRules()
     fun testRetract()
     fun testNatural()
+    fun testFunctor()
+    fun testUniv()
 }
 

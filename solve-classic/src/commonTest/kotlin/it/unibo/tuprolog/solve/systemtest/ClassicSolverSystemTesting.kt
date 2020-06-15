@@ -293,4 +293,14 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     override fun testNatural() {
         prototype.testNatural()
     }
+
+    @Test
+    override fun testFunctor() {
+        prototype.testFunctor()
+    }
+
+    @Test
+    override fun testUniv() {
+        prototype.testUniv()
+    }
 }
