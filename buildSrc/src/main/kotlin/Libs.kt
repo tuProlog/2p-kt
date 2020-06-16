@@ -92,35 +92,35 @@ object Libs {
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
-                    Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
 
     const val com_github_breadmoirai_github_release_gradle_plugin: String =
-        "com.github.breadmoirai.github-release:com.github.breadmoirai.github-release.gradle.plugin:" +
-                Versions.com_github_breadmoirai_github_release_gradle_plugin
+            "com.github.breadmoirai.github-release:com.github.breadmoirai.github-release.gradle.plugin:" +
+            Versions.com_github_breadmoirai_github_release_gradle_plugin
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String =
-        "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:" +
-                Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
+            "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:" +
+            Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
 
     const val com_github_johnrengelman_shadow_gradle_plugin: String =
-        "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:" +
-                Versions.com_github_johnrengelman_shadow_gradle_plugin
+            "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:" +
+            Versions.com_github_johnrengelman_shadow_gradle_plugin
 
     const val de_fayard_buildsrcversions_gradle_plugin: String =
-        "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
-                Versions.de_fayard_buildsrcversions_gradle_plugin
+            "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
+            Versions.de_fayard_buildsrcversions_gradle_plugin
 
     const val com_eden_orchidplugin_gradle_plugin: String =
-        "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
-                Versions.com_eden_orchidplugin_gradle_plugin
+            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
+            Versions.com_eden_orchidplugin_gradle_plugin
 
     const val org_jetbrains_dokka_gradle_plugin: String =
-        "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
-                Versions.org_jetbrains_dokka_gradle_plugin
+            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
+            Versions.org_jetbrains_dokka_gradle_plugin
 
     const val com_jfrog_bintray_gradle_plugin: String =
-        "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
-                Versions.com_jfrog_bintray_gradle_plugin
+            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
+            Versions.com_jfrog_bintray_gradle_plugin
 
     /**
      * 2.7.1

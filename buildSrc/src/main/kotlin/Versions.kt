@@ -12,7 +12,7 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val io_github_javaeden_orchid: String = "0.20.0"
+    const val io_github_javaeden_orchid: String = "0.21.0"
 
     const val org_jetbrains_kotlin: String = "1.3.72"
 
@@ -28,7 +28,7 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.20.0"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.20.0" // available: "0.21.0"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1"
 
@@ -41,11 +41,11 @@ object Versions {
     const val kt_math: String = "0.1.3"
 
     /**
-     * Current version: "6.4.1"
+     * Current version: "6.5"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.4.1"
+    const val gradleLatestVersion: String = "6.5"
 }
 
 /**

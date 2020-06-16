@@ -42,8 +42,7 @@ internal class StateRuleSelection(
                             wellFormedRuleBody,
                             unifyingSubstitution,
                             isChoicePointChild = isChoicePoint,
-                            requestIssuingInstant = if (solve.query === solve.context.procedure)
-                                currentTimeInstant() else solve.requestIssuingInstant
+                            requestIssuingInstant = currentTimeInstant()
                         )
 
                     val subInitialState = StateInit(subSolveRequest.initializeForSubRuleScope())

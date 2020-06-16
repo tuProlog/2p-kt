@@ -19,7 +19,7 @@ kotlin {
                         |package $tuPrologPackage
                         |
                         |object Info {
-                        |    val VERSION = "${rootProject.version}"
+                        |    const val VERSION = "${rootProject.version}"
                         |}
                     """.trimMargin())
                 }

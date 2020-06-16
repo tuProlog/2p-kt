@@ -17,9 +17,6 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
 
     override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
 
-//    override val maxDuration: TimeDuration
-//        get() = mediumDuration
-
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
@@ -113,13 +110,11 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testTimeout3() {
         prototype.testTimeout3()
     }
 
     @Test
-    @Ignore
     override fun testTimeout4() {
         prototype.testTimeout4()
     }
