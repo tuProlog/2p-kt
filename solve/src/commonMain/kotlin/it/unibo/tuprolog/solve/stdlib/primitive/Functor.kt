@@ -30,7 +30,10 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                                 Substitution.failed()
                         }
                         is Var -> {
-                            Substitution.of(third to Integer.of(first.arity))
+                            if (first.functor == second.value)
+                                Substitution.of(third to Integer.of(first.arity))
+                            else
+                                Substitution.failed()
                         }
                         else -> {
                             // TODO expected here should be INTEGER | VARIABLE
@@ -41,7 +44,10 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                 is Var -> {
                     when (third) {
                         is Numeric -> {
-                            Substitution.of(second to Atom.of(first.functor))
+                            if (first.arity == third.intValue.toInt())
+                                Substitution.of(second to Atom.of(first.functor))
+                            else
+                                Substitution.failed()
                         }
                         is Var -> {
                             Substitution.of(
