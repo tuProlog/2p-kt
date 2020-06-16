@@ -140,4 +140,14 @@ internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
     override fun hashCodeIsOrderDependent() {
         prototype.hashCodeIsOrderDependent()
     }
+
+    @Test
+    override fun nestedGetWorksAtSeveralDepthLevels() {
+        prototype.nestedGetWorksAtSeveralDepthLevels()
+    }
+
+    @Test
+    override fun nestedRetractWorksAtSeveralDepthLevels() {
+        prototype.nestedRetractWorksAtSeveralDepthLevels()
+    }
 }

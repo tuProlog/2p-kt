@@ -2,6 +2,10 @@ package it.unibo.tuprolog.collections
 
 internal interface PrototypeClauseCollectionTest {
 
+    fun nestedGetWorksAtSeveralDepthLevels()
+
+    fun nestedRetractWorksAtSeveralDepthLevels()
+
     fun collectionHasTheCorrectSize()
 
     fun emptyCollectionIsEmpty()

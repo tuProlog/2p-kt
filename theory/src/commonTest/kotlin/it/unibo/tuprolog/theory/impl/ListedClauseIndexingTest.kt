@@ -11,6 +11,11 @@ internal class ListedClauseIndexingTest {
     )
 
     @Test
+    fun testCornerCaseInClauseRetrieval() {
+        prototype.testCornerCaseInClauseRetrieval()
+    }
+
+    @Test
     fun correctIndexingOverDedicatedTheoryForF1Family() {
         prototype.correctIndexingOverDedicatedTheoryForF1Family()
     }

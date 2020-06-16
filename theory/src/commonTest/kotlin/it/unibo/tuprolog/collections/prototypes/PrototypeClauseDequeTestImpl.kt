@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.collections.prototypes
 
+import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
 import it.unibo.tuprolog.collections.RetrieveResult
@@ -62,6 +63,17 @@ internal class PrototypeClauseDequeTestImpl(
         )
 
     private val emptyCollection = emptyGenerator()
+
+    override fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+        return (collection as ClauseQueue).get(query)
+    }
+
+    override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+        return when(val res = (collection as ClauseQueue).retrieve(query)) {
+            is RetrieveResult.Success -> res.clauses.asSequence()
+            else -> emptySequence()
+        }
+    }
 
     override fun getWithPresentClauseReturnsTheCorrectSequence() {
         val sequence = collectionGenerator(clauses + presentClause)[presentClause]

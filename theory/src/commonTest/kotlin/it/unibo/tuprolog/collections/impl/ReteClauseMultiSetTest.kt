@@ -110,4 +110,14 @@ internal class ReteClauseMultiSetTest : PrototypeClauseMultiSetTest {
     override fun hashCodeIsOrderIndependent() {
         prototype.hashCodeIsOrderIndependent()
     }
+
+    @Test
+    override fun nestedGetWorksAtSeveralDepthLevels() {
+        prototype.nestedGetWorksAtSeveralDepthLevels()
+    }
+
+    @Test
+    override fun nestedRetractWorksAtSeveralDepthLevels() {
+        prototype.nestedRetractWorksAtSeveralDepthLevels()
+    }
 }

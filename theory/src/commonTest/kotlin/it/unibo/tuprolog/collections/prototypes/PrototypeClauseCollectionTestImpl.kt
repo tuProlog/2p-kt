@@ -4,6 +4,7 @@ import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.PrototypeClauseCollectionTest
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import kotlin.test.*
@@ -12,6 +13,26 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     private val emptyGenerator: () -> ClauseCollection,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection
 ) : PrototypeClauseCollectionTest {
+
+    private val deep =
+        Fact.of(
+            LogicList.of(
+                LogicList.of(
+                    LogicList.of(
+                        Atom.of("a"),
+                        Atom.of("b")
+                    ),
+                    Atom.of("c")
+                ),
+                Atom.of("d")
+            )
+        )
+
+    private val deepQueries = sequenceOf(
+        LogicList.of(Var.of("ABC"), Var.of("D")),
+        LogicList.of(LogicList.of(Var.of("AB"), Var.of("C")), Var.of("D")),
+        LogicList.of(LogicList.of(LogicList.of(Var.of("A"), Var.of("B")), Var.of("C")), Var.of("D"))
+    ).map { Fact.of(it) }.toList()
 
     private val fFamilySelector =
         Fact.of(Struct.of("f", Var.anonymous()))
@@ -40,6 +61,25 @@ internal abstract class PrototypeClauseCollectionTestImpl(
         )
 
     private val emptyCollection = emptyGenerator()
+
+    protected abstract fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
+
+    protected abstract fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
+
+    override fun nestedGetWorksAtSeveralDepthLevels() {
+        val collection = collectionGenerator(listOf(deep))
+
+        for (query in deepQueries) {
+            assertClausesHaveSameLengthAndContent(sequenceOf(deep), getClauses(collection, query))
+        }
+    }
+
+    override fun nestedRetractWorksAtSeveralDepthLevels() {
+        for (query in deepQueries) {
+            val collection = collectionGenerator(listOf(deep))
+            assertClausesHaveSameLengthAndContent(sequenceOf(deep), retractClauses(collection, query))
+        }
+    }
 
     override fun collectionHasTheCorrectSize() {
         assertEquals(0, emptyCollection.size)
