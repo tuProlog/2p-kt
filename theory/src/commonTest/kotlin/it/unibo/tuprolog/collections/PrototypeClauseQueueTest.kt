@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.prototypes.PrototypeClauseDequeTestImpl
+import it.unibo.tuprolog.collections.prototypes.PrototypeClauseQueueTestImpl
 import it.unibo.tuprolog.core.Clause
 
-internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
+internal interface PrototypeClauseQueueTest : PrototypeClauseCollectionTest {
 
     fun getWithPresentClauseReturnsTheCorrectSequence()
 
@@ -33,8 +33,8 @@ internal interface PrototypeClauseDequeTest : PrototypeClauseCollectionTest {
         internal fun prototype(
             emptyGenerator: () -> ClauseQueue,
             collectionGenerator: (Iterable<Clause>) -> ClauseQueue
-        ): PrototypeClauseDequeTest =
-            PrototypeClauseDequeTestImpl(
+        ): PrototypeClauseQueueTest =
+            PrototypeClauseQueueTestImpl(
                 emptyGenerator,
                 collectionGenerator
             )

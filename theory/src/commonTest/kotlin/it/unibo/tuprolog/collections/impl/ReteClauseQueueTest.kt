@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.collections.impl
 
 import it.unibo.tuprolog.collections.ClauseQueue
-import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
+import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import kotlin.test.Test
 
-internal class ReteClauseDequeTest : PrototypeClauseDequeTest{
+internal class ReteClauseQueueTest : PrototypeClauseQueueTest{
 
-    private val prototype = PrototypeClauseDequeTest.prototype(
+    private val prototype = PrototypeClauseQueueTest.prototype(
         ClauseQueue.Companion::empty,
         ClauseQueue.Companion::of
     )

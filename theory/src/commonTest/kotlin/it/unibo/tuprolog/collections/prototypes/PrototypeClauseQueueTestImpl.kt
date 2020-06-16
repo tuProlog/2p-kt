@@ -2,21 +2,19 @@ package it.unibo.tuprolog.collections.prototypes
 
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseQueue
-import it.unibo.tuprolog.collections.PrototypeClauseDequeTest
+import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.utils.permutations
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
-internal class PrototypeClauseDequeTestImpl(
+internal class PrototypeClauseQueueTestImpl(
     private val emptyGenerator: () -> ClauseQueue,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseQueue
-) : PrototypeClauseDequeTest,
+) : PrototypeClauseQueueTest,
     PrototypeClauseCollectionTestImpl(emptyGenerator, collectionGenerator) {
 
     private val fFamilySelector =
