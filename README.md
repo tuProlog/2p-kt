@@ -10,7 +10,7 @@ Some quick links:
 
 ![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/logo.png)
 
-[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
+[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is a multi-paradigm 
 logic programming framework written in Java.
 
 2P-Kt is a Kotlin-based and multi-platform reboot of 2P.
@@ -25,7 +25,7 @@ by featuring:
 
 * a module for logic unification representation, namely `unify`,
 
-* a module for in-memory indexing and storing logic theories, namely `theory`,
+* a module for in-memory indexing and storing logic theories, as well as other sorts of collections of logic clauses, namely `theory`,
 
 * a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations 
 (i.e. `solve-classic` and `solve-streams`),
@@ -34,11 +34,13 @@ by featuring:
 aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment,
 
 * two parsing modules: one aimed at parsing terms, namely `parser-core`, and the other aimed at parsing theories, 
-namely `parser-theory`.
+namely `parser-theory`,
+
+* a module for using Prolog via a command-line interface, namely `repl`.
 
 A complete overview about modules and their dependencies is provided by the following diagram: 
 
-![2P-Kt project map](https://www.plantuml.com/plantuml/svg/TP31Rjim38RlV0eYT-q1XY0ePfy6332GPATTD8k9jSgY8SenWdNlFbjQNSLhBpRuVp_vYtoIg4CSUmUH1uoCFpb6xj7OG6sqx46UhHzqq3rAfmrFrb_nefqG5EZ2pb30tu3uHRVFry2ZDnKx3lkz7YooT_V30TdP6xtd2SnnvdToZgVt3BOVt2Sq5BLrit7gR2Ju0_0lUDToe1s-3bhbqTlBVRUMiICEHMt4gTof1UlgGK-j6PmVG1wIoMabmkuspodNVMIgTLh4jgdnM6sWn42wbmoFAnnq40flRsogBVfrwtUulK-oVlt-xJ-pVEJTHfPRDYU0vGMuVr669wymtGO_ew61l94VdZraRRNaVaY_GaxRGlekebekKLP7WBf25UorY-hbW4ikrET2IJb96eUbhYkeJmNFYREs6ivBiLUluT3C0OukR_ERKnBAzcPjRwhSeGxffFFMev0aAMKc_GXFvCtOkxy0)
+![2P-Kt project map](http://www.plantuml.com/plantuml/svg/TL3DYjim4BxFKmo-gmzGGbXgdme5GvAUUb6jIQAkh34QEI5q--wrfSQhkDcBpNm_y-cR5uawnB5t47d0oFYJO-GUZGtKHSiUvDNwGGVTevoruQlr9png9mG5TMHdAE1lGFoYkzTJuD6RcXs7pKOF5jcxstQBxEo5dca2Svpu6pd7rsS2sm_k4ngAshf9U3tRIF07u5zmrN6W2k-B5dZqzdYhbZ6UYKCn6t4gExLWKp_WoPg9mmEHbsHclp32xa8LbdKVETKvBMAxPDpLAr9Y8DrB9dSBEUWW5DxVsDPhwjUbht1zdoJz-ltRVsBvIBkEB5ksIyj0WmEONuERDsNuwXMcE-5dD3IGD_B3iuUCBPAy2zAlW5DpIDyPLFDLoca7qDIeWZsTethRufmBpQ50Kaw2nc6UcngQVS7dn0bR18TvsAXxEBHJWAFZ-_vsdu3ItYxsjiuEjKtddLgFGfAWb9dm7S1yfxjdAlL2teoz-mi0)
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
 other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
@@ -79,6 +81,16 @@ dependencies {
  ``` 
 Notice that dependencies of `2P_MODULE` should be automatically imported. 
 
+#### JVM-only projects with Gradle
+
+Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targets the JVM platform:
+ ```kotlin
+// assumes Gradle's Kotlin DSL
+dependencies {
+    implementation("it.unibo.tuprolog", "2P_MODULE-jvm", "2P_VERSION")
+}
+ ``` 
+
 ### Maven
 
 To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Maven-based project, you must setup your Maven repositories first:
@@ -98,6 +110,30 @@ and then declare the desired dependency:
     <version>2P_VERSION</version>
 </dependency>
  ``` 
+Notice that dependencies of `2P_MODULE` should be automatically imported. 
+
+#### JVM-only projects with Maven
+
+Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targets the JVM platform:
+ ```xml
+<dependency>
+    <groupId>it.unibo.tuprolog</groupId>
+    <artifactId>2P_MODULE-jvm</artifactId>
+    <version>2P_VERSION</version>
+</dependency>
+ ``` 
+
+### NPM (JavaScript-only projects)
+
+The 2P-Kt software is available as a JavaScript library as well, on NPM, under the  [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
+To import the `2P_MODULE` into your `package.json`, it is sufficient to declare your dependency as follows:
+```json
+{
+  "dependencies": {
+    "@tuprolog/2P_MODULE": "^2P_MODULE_VERSION"
+  }
+}
+```
 Notice that dependencies of `2P_MODULE` should be automatically imported. 
 
 ## Developers
