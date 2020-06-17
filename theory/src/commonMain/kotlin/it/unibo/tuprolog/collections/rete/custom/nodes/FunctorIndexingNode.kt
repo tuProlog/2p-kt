@@ -61,7 +61,8 @@ internal class FunctorIndexingNode(
         return if (clause.isGlobal()) {
             Utils.merge(
                 arities.values.map {
-                    it.getIndexed(clause)
+//                    it.getIndexed(clause)
+                    it.extractGlobalIndexedSequence(clause)
                 }
             )
         } else {

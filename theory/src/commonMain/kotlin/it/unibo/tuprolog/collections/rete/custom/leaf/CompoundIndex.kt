@@ -113,7 +113,8 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-                    it.getIndexed(clause)
+//                    it.getIndexed(clause)
+                    it.extractGlobalIndexedSequence(clause)
                 }
             )
         } else {
