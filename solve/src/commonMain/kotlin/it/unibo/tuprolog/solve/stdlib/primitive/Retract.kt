@@ -29,7 +29,7 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
                     break
                 }
             }
+            yield(replyFail())
         }
     }
-
 }

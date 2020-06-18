@@ -917,7 +917,9 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertSolutionEquals(
                 ktListOf(
                     query.yes("X" to 1),
-                    query.yes("X" to 2)
+                    query.yes("X" to 2),
+                    query.no()
+
                 ),
                 solutions
             )
