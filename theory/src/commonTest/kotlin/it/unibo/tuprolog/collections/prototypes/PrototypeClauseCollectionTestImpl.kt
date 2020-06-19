@@ -14,6 +14,10 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection
 ) : PrototypeClauseCollectionTest {
 
+    private val member = Scope.empty {
+        factOf(structOf("member", varOf("H"), consOf(varOf("H"), anonymous())))
+    }
+
     private val deep =
         Fact.of(
             LogicList.of(
@@ -65,6 +69,35 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     protected abstract fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
 
     protected abstract fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
+
+    override fun getTakesUnificationIntoAccount() {
+        val collection = collectionGenerator(listOf(member))
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(member),
+            getClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("a")))))
+        )
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            getClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("b")))))
+        )
+    }
+
+    override fun retractTakesUnificationIntoAccount() {
+        var collection = collectionGenerator(listOf(member))
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(member),
+            retractClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("a")))))
+        )
+
+        collection = collectionGenerator(listOf(member))
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            retractClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("b")))))
+        )
+    }
 
     override fun nestedGetWorksAtSeveralDepthLevels() {
         val collection = collectionGenerator(listOf(deep))

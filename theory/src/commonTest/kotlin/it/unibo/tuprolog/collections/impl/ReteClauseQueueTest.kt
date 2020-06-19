@@ -150,4 +150,14 @@ internal class ReteClauseQueueTest : PrototypeClauseQueueTest{
     override fun nestedRetractWorksAtSeveralDepthLevels() {
         prototype.nestedRetractWorksAtSeveralDepthLevels()
     }
+
+    @Test
+    override fun getTakesUnificationIntoAccount() {
+        prototype.getTakesUnificationIntoAccount()
+    }
+
+    @Test
+    override fun retractTakesUnificationIntoAccount() {
+        prototype.retractTakesUnificationIntoAccount()
+    }
 }
