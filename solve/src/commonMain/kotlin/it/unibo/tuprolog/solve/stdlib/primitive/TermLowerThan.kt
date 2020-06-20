@@ -5,9 +5,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 
-/** Implementation of '@>'/2 predicate */
-object TermGreaterThan : BinaryRelation.Predicative<ExecutionContext>("@>") {
+/** Implementation of '@<'/2 predicate */
+object TermLowerThan : BinaryRelation.Predicative<ExecutionContext>("@<") {
     override fun Solve.Request<ExecutionContext>.compute(first: Term, second: Term): Boolean {
-        return first > second
+        return first < second
     }
 }
