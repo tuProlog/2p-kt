@@ -65,6 +65,12 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prototype.testSideEffectsPersistentAfterBacktracking1()
+    }
+
+    @Test
     override fun testStandardOutput() {
         prototype.testStandardOutput()
     }

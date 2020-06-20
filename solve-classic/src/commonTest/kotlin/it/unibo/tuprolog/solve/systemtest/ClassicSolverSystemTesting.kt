@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class ClassicSolverSystemTesting : SolverFactory, SolverTest {
@@ -42,6 +43,12 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     ) = MutableSolver.classic(
         libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
+
+    @Test
+    @Ignore
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prototype.testSideEffectsPersistentAfterBacktracking1()
+    }
 
     @Test
     override fun testFindAll() {
