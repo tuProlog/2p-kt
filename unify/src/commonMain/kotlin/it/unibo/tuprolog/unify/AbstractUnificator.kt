@@ -64,28 +64,29 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
             val eqIterator = equations.listIterator()
 
             while (eqIterator.hasNext()) {
-                eqIterator.next().also { eq ->
-                    when (eq) {
-                        is Contradiction -> return failed()
-                        is Identity -> {
-                            eqIterator.remove()
-                            changed = true
+                when (val eq = eqIterator.next()) {
+                    is Contradiction -> {
+                        return failed()
+                    }
+                    is Identity -> {
+                        eqIterator.remove()
+                        changed = true
+                    }
+                    is Assignment -> {
+                        if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs)) {
+                            return failed()
+                        } else {
+                            changed = changed || applySubstitutionToEquations(
+                                Substitution.of(eq.lhs as Var, eq.rhs),
+                                equations,
+                                eqIterator.previousIndex()
+                            )
                         }
-                        is Assignment -> {
-                            if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs))
-                                return failed()
-                            else
-                                changed = applySubstitutionToEquations(
-                                    Substitution.of(eq.lhs as Var, eq.rhs),
-                                    equations,
-                                    eqIterator.previousIndex()
-                                )
-                        }
-                        is Comparison -> {
-                            eqIterator.remove()
-                            equationsFor(eq.lhs, eq.rhs).forEach(eqIterator::add)
-                            changed = true
-                        }
+                    }
+                    is Comparison -> {
+                        eqIterator.remove()
+                        equationsFor(eq.lhs, eq.rhs).forEach(eqIterator::add)
+                        changed = true
                     }
                 }
             }
