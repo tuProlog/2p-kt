@@ -6,15 +6,20 @@ import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMatchCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMguCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertUnifiedTermCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.forEquationSequence
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.memberClause
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.negativeMemberPatterns
+import it.unibo.tuprolog.unify.testutils.UnificatorUtils.positiveMemberPatterns
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Test class for [AbstractUnificator]
  *
  * @author Enrico
  */
-internal class AbstractUnificationStrategyTest {
+internal class AbstractUnificatorTest {
 
     /** A concrete strategy constructor */
     private val myStrategyConstructor: (Substitution) -> Unificator = {
@@ -148,6 +153,28 @@ internal class AbstractUnificationStrategyTest {
             UnificatorUtils.successSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
+    }
+
+    @Test
+    fun testPositiveCornerCases() {
+        for (pattern in positiveMemberPatterns) {
+            with(myStrategyConstructor(Substitution.empty())) {
+                assertTrue {
+                    match(pattern, memberClause)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testNegativeCornerCases() {
+        for (pattern in negativeMemberPatterns) {
+            with(myStrategyConstructor(Substitution.empty())) {
+                assertFalse {
+                    match(pattern, memberClause)
+                }
+            }
+        }
     }
 
     @Test

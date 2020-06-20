@@ -47,6 +47,9 @@ internal object TheoryUtils {
         }
     )
 
+    internal fun member(first: Term, second: Term): Fact =
+        Fact.of(Struct.of("member", first, second))
+
     internal val positiveMemberQueries = listOf(
         member(
             LogicList.of(Struct.of("a", Var.of("X"))),
@@ -62,9 +65,6 @@ internal object TheoryUtils {
         ),
         member(Atom.of("a"), LogicList.of(Atom.of("b")))
     )
-
-    internal fun member(first: Term, second: Term): Fact =
-        Fact.of(Struct.of("member", first, second))
 
     internal val deepClause = listOf(
         Fact.of(
