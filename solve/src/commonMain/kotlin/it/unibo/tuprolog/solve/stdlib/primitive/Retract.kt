@@ -27,7 +27,7 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
                     break
                 }
             }
-            yield(replyFail())
+            yield(replyFail(dynamicKb = dynamicKb))
         }
     }
 }
