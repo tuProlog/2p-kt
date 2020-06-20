@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.theory.Theory
 
 /**
@@ -40,4 +41,33 @@ internal object TheoryUtils {
             Rule.of(Struct.of("f2", Atom.of("a")), Atom.of("do_something"), Numeric.of(1.5f))
         )
 
+    internal val memberClause = listOf(
+        Scope.empty {
+            factOf(structOf("member", varOf("H"), consOf(varOf("H"), anonymous())))
+        }
+    )
+
+    internal fun member(first: Term, second: Term): Fact =
+        Fact.of(Struct.of("member", first, second))
+
+    internal val deepClause = listOf(
+        Fact.of(
+            LogicList.of(
+                LogicList.of(
+                    LogicList.of(
+                        Atom.of("a"),
+                        Atom.of("b")
+                    ),
+                    Atom.of("c")
+                ),
+                Atom.of("d")
+            )
+        )
+    )
+
+    internal val deepQueries = sequenceOf(
+        LogicList.of(Var.of("ABC"), Var.of("D")),
+        LogicList.of(LogicList.of(Var.of("AB"), Var.of("C")), Var.of("D")),
+        LogicList.of(LogicList.of(LogicList.of(Var.of("A"), Var.of("B")), Var.of("C")), Var.of("D"))
+    ).map { Fact.of(it) }.toList()
 }
