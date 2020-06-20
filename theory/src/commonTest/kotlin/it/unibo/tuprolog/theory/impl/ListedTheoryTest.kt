@@ -226,4 +226,24 @@ internal class ListedTheoryTest {
     fun iteratorReturnsCorrectInstance() {
         prototype.iteratorReturnsCorrectInstance()
     }
+
+    @Test
+    fun getTakesUnificationIntoAccount() {
+        prototype.getTakesUnificationIntoAccount()
+    }
+
+    @Test
+    fun retractTakesUnificationIntoAccount() {
+        prototype.retractTakesUnificationIntoAccount()
+    }
+
+    @Test
+    fun nestedGetWorksAtSeveralDepthLevels() {
+        prototype.nestedGetWorksAtSeveralDepthLevels()
+    }
+
+    @Test
+    fun nestedRetractWorksAtSeveralDepthLevels() {
+        prototype.nestedRetractWorksAtSeveralDepthLevels()
+    }
 }

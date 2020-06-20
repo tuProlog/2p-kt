@@ -1,8 +1,14 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.TheoryUtils
+import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
+import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
+import it.unibo.tuprolog.testutils.TheoryUtils.negativeMemberQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.positiveMemberQueries
 import kotlin.test.*
 
 /**
@@ -341,4 +347,78 @@ class PrototypeTheoryTest(
         )
     }
 
+    fun getTakesUnificationIntoAccount() {
+        val theory = theoryGenerator(memberClause)
+
+        for (query in positiveMemberQueries) {
+            assertClausesHaveSameLengthAndContent(
+                memberClause.asSequence(),
+                theory[query]
+            )
+            assertClausesHaveSameLengthAndContent(
+                memberClause.asSequence(),
+                theory[query.head]
+            )
+        }
+
+        for (query in negativeMemberQueries) {
+            assertClausesHaveSameLengthAndContent(
+                emptySequence(),
+                theory[query]
+            )
+            assertClausesHaveSameLengthAndContent(
+                emptySequence(),
+                theory[query.head]
+            )
+        }
+    }
+
+    fun retractTakesUnificationIntoAccount() {
+
+        for (query in positiveMemberQueries) {
+            var theory = theoryGenerator(memberClause)
+            assertClausesHaveSameLengthAndContent(
+                memberClause,
+                (theory.retract(query) as RetractResult.Success).clauses
+            )
+            theory = theoryGenerator(memberClause)
+            assertClausesHaveSameLengthAndContent(
+                memberClause,
+                (theory.retract(query.head) as RetractResult.Success).clauses
+            )
+        }
+
+        for (query in negativeMemberQueries) {
+            val theory = theoryGenerator(memberClause)
+            assertEquals(
+                RetractResult.Failure(theory),
+                theory.retract(query)
+            )
+            assertEquals(
+                RetractResult.Failure(theory),
+                theory.retract(query.head)
+            )
+        }
+    }
+
+    fun nestedGetWorksAtSeveralDepthLevels() {
+        val theory = theoryGenerator(deepClause)
+
+        for (query in deepQueries) {
+            assertClausesHaveSameLengthAndContent(
+                deepClause.asSequence(),
+                theory[query]
+            )
+        }
+    }
+
+    fun nestedRetractWorksAtSeveralDepthLevels() {
+        for (query in deepQueries) {
+            val theory = theoryGenerator(deepClause)
+            assertClausesHaveSameLengthAndContent(
+                deepClause,
+                (theory.retract(query) as RetractResult.Success).clauses
+            )
+        }
+    }
 }

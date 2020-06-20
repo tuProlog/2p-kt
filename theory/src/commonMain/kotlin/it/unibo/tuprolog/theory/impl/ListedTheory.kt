@@ -26,7 +26,9 @@ private constructor(
         )
 
     override fun get(clause: Clause): Sequence<Clause> =
-        clauses.filter { it matches clause }.asSequence()
+        clauses.filter {
+            it matches clause
+        }.asSequence()
 
     override fun assertA(clause: Clause): Theory =
         ListedTheory(

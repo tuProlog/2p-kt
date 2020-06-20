@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * Utils singleton for testing [Theory]
@@ -45,6 +45,22 @@ internal object TheoryUtils {
         Scope.empty {
             factOf(structOf("member", varOf("H"), consOf(varOf("H"), anonymous())))
         }
+    )
+
+    internal val positiveMemberQueries = listOf(
+        member(
+            LogicList.of(Struct.of("a", Var.of("X"))),
+            LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
+        ),
+        member(Atom.of("a"), LogicList.of(Atom.of("a")))
+    )
+
+    internal val negativeMemberQueries = listOf(
+        member(
+            LogicList.of(Struct.of("a", Var.of("X"))),
+            LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
+        ),
+        member(Atom.of("a"), LogicList.of(Atom.of("b")))
     )
 
     internal fun member(first: Term, second: Term): Fact =

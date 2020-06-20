@@ -57,12 +57,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             memberClause.asSequence(),
-            getClauses(collection, Scope.empty {
+            getClauses(
+                collection,
                 member(
-                    listOf(structOf("a", varOf("X"))),
-                    listOf(listOf(structOf("a", numOf(1))))
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
                 )
-            })
+            )
         )
         assertClausesHaveSameLengthAndContent(
             memberClause.asSequence(),
@@ -70,12 +71,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
         )
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            getClauses(collection, Scope.empty {
+            getClauses(
+                collection,
                 member(
-                    listOf(structOf("a", varOf("X"))),
-                    listOf(listOf(structOf("b", numOf(1))))
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
                 )
-            })
+            )
         )
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
@@ -88,12 +90,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             memberClause.asSequence(),
-            retractClauses(collection, Scope.empty {
+            retractClauses(
+                collection,
                 member(
-                    listOf(structOf("a", varOf("X"))),
-                    listOf(listOf(structOf("a", numOf(1))))
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
                 )
-            })
+            )
         )
 
         collection = collectionGenerator(memberClause)
@@ -107,12 +110,13 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            retractClauses(collection, Scope.empty {
+            retractClauses(
+                collection,
                 member(
-                    listOf(structOf("a", varOf("X"))),
-                    listOf(listOf(structOf("b", numOf(1))))
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
                 )
-            })
+            )
         )
 
         collection = collectionGenerator(memberClause)
