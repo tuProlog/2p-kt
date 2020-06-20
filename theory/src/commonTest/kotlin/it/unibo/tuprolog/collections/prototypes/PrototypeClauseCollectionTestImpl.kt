@@ -66,6 +66,9 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
     private val emptyCollection = emptyGenerator()
 
+    private fun member(first: Term, second: Term): Fact =
+        Fact.of(Struct.of("member", first, second))
+
     protected abstract fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
 
     protected abstract fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
@@ -75,11 +78,29 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             sequenceOf(member),
-            getClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("a")))))
+            getClauses(collection, Scope.empty {
+                member(
+                    listOf(structOf("a", varOf("X"))),
+                    listOf(listOf(structOf("a", numOf(1))))
+                )
+            })
+        )
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(member),
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
         )
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            getClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("b")))))
+            getClauses(collection, Scope.empty {
+                member(
+                    listOf(structOf("a", varOf("X"))),
+                    listOf(listOf(structOf("b", numOf(1))))
+                )
+            })
+        )
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
         )
     }
 
@@ -88,14 +109,38 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(
             sequenceOf(member),
-            retractClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("a")))))
+            retractClauses(collection, Scope.empty {
+                member(
+                    listOf(structOf("a", varOf("X"))),
+                    listOf(listOf(structOf("a", numOf(1))))
+                )
+            })
+        )
+
+        collection = collectionGenerator(listOf(member))
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(member),
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
         )
 
         collection = collectionGenerator(listOf(member))
 
         assertClausesHaveSameLengthAndContent(
             sequenceOf(),
-            retractClauses(collection, Fact.of(Struct.of("member", Atom.of("a"), LogicList.of(Atom.of("b")))))
+            retractClauses(collection, Scope.empty {
+                member(
+                    listOf(structOf("a", varOf("X"))),
+                    listOf(listOf(structOf("b", numOf(1))))
+                )
+            })
+        )
+
+        collection = collectionGenerator(listOf(member))
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
         )
     }
 
@@ -128,8 +173,7 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     }
 
     override fun collectionIsEmptyAfterRemovingEveryElement() {
-        val emptiedCollection =
-            collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
+        val emptiedCollection = collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
 
         assertTrue(emptiedCollection.isEmpty())
     }
