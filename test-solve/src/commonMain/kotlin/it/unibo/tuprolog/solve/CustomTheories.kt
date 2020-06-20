@@ -201,4 +201,20 @@ object CustomTheories {
             )
         }
     }
+
+    val memberGoalToSolution by lazy {
+        prolog {
+            ktListOf(
+                "member"("X", listOf("a", "b", "c")).hasSolutions(
+                    { yes("X" to "a") },
+                    { yes("X" to "b") },
+                    { yes("X" to "c") },
+                    { no() }
+                ),
+                "member"("f"("X"), listOf("a"(1), "b"(2), "c"(3))).hasSolutions(
+                    { no() }
+                )
+            )
+        }
+    }
 }
