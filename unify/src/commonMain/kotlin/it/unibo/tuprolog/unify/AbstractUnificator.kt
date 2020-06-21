@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation.*
+import it.unibo.tuprolog.utils.dequeOf
 import kotlin.jvm.JvmOverloads
 
 abstract class AbstractUnificator @JvmOverloads constructor(override val context: Substitution = empty()) : Unificator {
@@ -56,7 +57,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
         if (context.isFailed) return failed()
 
-        val equations = (contextEquations + equationsFor(term1, term2)).toMutableList()
+        val equations = dequeOf(contextEquations + equationsFor(term1, term2))
         var changed = true
 
         while (changed) {
@@ -64,28 +65,35 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
             val eqIterator = equations.listIterator()
 
             while (eqIterator.hasNext()) {
-                eqIterator.next().also { eq ->
-                    when (eq) {
-                        is Contradiction -> return failed()
-                        is Identity -> {
-                            eqIterator.remove()
-                            changed = true
+                when (val eq = eqIterator.next()) {
+                    is Contradiction -> {
+                        return failed()
+                    }
+                    is Identity -> {
+                        eqIterator.remove()
+                        changed = true
+                    }
+                    is Assignment -> {
+                        if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs)) {
+                            return failed()
+                        } else {
+                            changed = changed || applySubstitutionToEquations(
+                                Substitution.of(eq.lhs as Var, eq.rhs),
+                                equations,
+                                eqIterator.previousIndex()
+                            )
                         }
-                        is Assignment -> {
-                            if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs))
-                                return failed()
-                            else
-                                changed = applySubstitutionToEquations(
-                                    Substitution.of(eq.lhs as Var, eq.rhs),
-                                    equations,
-                                    eqIterator.previousIndex()
-                                )
+                    }
+                    is Comparison -> {
+                        eqIterator.remove()
+                        insertion@ for (it in equationsFor(eq.lhs, eq.rhs)) {
+                            when (it) {
+                                is Identity -> continue@insertion
+                                is Contradiction -> return failed()
+                                else -> eqIterator.add(it)
+                            }
                         }
-                        is Comparison -> {
-                            eqIterator.remove()
-                            equationsFor(eq.lhs, eq.rhs).forEach(eqIterator::add)
-                            changed = true
-                        }
+                        changed = true
                     }
                 }
             }

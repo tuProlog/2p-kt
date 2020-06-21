@@ -4,35 +4,21 @@ import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.PrototypeClauseCollectionTest
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
-import kotlin.test.*
+import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
+import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.member
+import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import it.unibo.tuprolog.core.List as LogicList
 
 internal abstract class PrototypeClauseCollectionTestImpl(
     private val emptyGenerator: () -> ClauseCollection,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseCollection
 ) : PrototypeClauseCollectionTest {
-
-    private val deep =
-        Fact.of(
-            LogicList.of(
-                LogicList.of(
-                    LogicList.of(
-                        Atom.of("a"),
-                        Atom.of("b")
-                    ),
-                    Atom.of("c")
-                ),
-                Atom.of("d")
-            )
-        )
-
-    private val deepQueries = sequenceOf(
-        LogicList.of(Var.of("ABC"), Var.of("D")),
-        LogicList.of(LogicList.of(Var.of("AB"), Var.of("C")), Var.of("D")),
-        LogicList.of(LogicList.of(LogicList.of(Var.of("A"), Var.of("B")), Var.of("C")), Var.of("D"))
-    ).map { Fact.of(it) }.toList()
 
     private val fFamilySelector =
         Fact.of(Struct.of("f", Var.anonymous()))
@@ -66,18 +52,93 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
     protected abstract fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause>
 
+    override fun getTakesUnificationIntoAccount() {
+        val collection = collectionGenerator(memberClause)
+
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            getClauses(
+                collection,
+                member(
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
+                )
+            )
+        )
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
+        )
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            getClauses(
+                collection,
+                member(
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
+                )
+            )
+        )
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            getClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
+        )
+    }
+
+    override fun retractTakesUnificationIntoAccount() {
+        var collection = collectionGenerator(memberClause)
+
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            retractClauses(
+                collection,
+                member(
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("a", Integer.of(1))))
+                )
+            )
+        )
+
+        collection = collectionGenerator(memberClause)
+
+        assertClausesHaveSameLengthAndContent(
+            memberClause.asSequence(),
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("a"))))
+        )
+
+        collection = collectionGenerator(memberClause)
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            retractClauses(
+                collection,
+                member(
+                    LogicList.of(Struct.of("a", Var.of("X"))),
+                    LogicList.of(LogicList.of(Struct.of("b", Integer.of(1))))
+                )
+            )
+        )
+
+        collection = collectionGenerator(memberClause)
+
+        assertClausesHaveSameLengthAndContent(
+            sequenceOf(),
+            retractClauses(collection, member(Atom.of("a"), LogicList.of(Atom.of("b"))))
+        )
+    }
+
     override fun nestedGetWorksAtSeveralDepthLevels() {
-        val collection = collectionGenerator(listOf(deep))
+        val collection = collectionGenerator(deepClause)
 
         for (query in deepQueries) {
-            assertClausesHaveSameLengthAndContent(sequenceOf(deep), getClauses(collection, query))
+            assertClausesHaveSameLengthAndContent(deepClause.asSequence(), getClauses(collection, query))
         }
     }
 
     override fun nestedRetractWorksAtSeveralDepthLevels() {
         for (query in deepQueries) {
-            val collection = collectionGenerator(listOf(deep))
-            assertClausesHaveSameLengthAndContent(sequenceOf(deep), retractClauses(collection, query))
+            val collection = collectionGenerator(deepClause)
+            assertClausesHaveSameLengthAndContent(deepClause.asSequence(), retractClauses(collection, query))
         }
     }
 
@@ -95,8 +156,7 @@ internal abstract class PrototypeClauseCollectionTestImpl(
     }
 
     override fun collectionIsEmptyAfterRemovingEveryElement() {
-        val emptiedCollection =
-            collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
+        val emptiedCollection = collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
 
         assertTrue(emptiedCollection.isEmpty())
     }

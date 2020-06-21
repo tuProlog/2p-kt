@@ -2,6 +2,10 @@ package it.unibo.tuprolog.collections
 
 internal interface PrototypeClauseCollectionTest {
 
+    fun getTakesUnificationIntoAccount()
+
+    fun retractTakesUnificationIntoAccount()
+
     fun nestedGetWorksAtSeveralDepthLevels()
 
     fun nestedRetractWorksAtSeveralDepthLevels()

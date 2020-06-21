@@ -22,14 +22,12 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
                         is Clause -> (first mguWith result.firstClause) as Substitution.Unifier
                         else -> (first mguWith result.firstClause.head!!) as Substitution.Unifier
                     }
-                    yield(
-                        replySuccess(substitution = substitution, dynamicKb = dynamicKb)
-                    )
+                    yield(replySuccess(substitution = substitution, dynamicKb = dynamicKb))
                 } else {
                     break
                 }
             }
+            yield(replyFail(dynamicKb = dynamicKb))
         }
     }
-
 }

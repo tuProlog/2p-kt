@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.CustomTheories.ifThenElse1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThenElse2ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory1
 import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory2
+import it.unibo.tuprolog.solve.CustomTheories.memberGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheoryGoalsToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExample
@@ -855,26 +856,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
-    private fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
-
     override fun testMember() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val constants = ktListOf("a", "b", "c")
-            val goal = "member"("X", constants.toTerm())
-
-            val solutions = solver.solve(goal, mediumDuration).toList()
-
-            assertSolutionEquals(
-                ktListConcat(
-                    constants.map { goal.yes("X" to it) },
-                    ktListOf(goal.no())
-                ),
-                solutions
-            )
-
-            assertEquals(constants.size + 1, solutions.size)
+            assertSolverSolutionsCorrect(solver, memberGoalToSolution, mediumDuration)
         }
     }
 
@@ -917,7 +903,9 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertSolutionEquals(
                 ktListOf(
                     query.yes("X" to 1),
-                    query.yes("X" to 2)
+                    query.yes("X" to 2),
+                    query.no()
+
                 ),
                 solutions
             )

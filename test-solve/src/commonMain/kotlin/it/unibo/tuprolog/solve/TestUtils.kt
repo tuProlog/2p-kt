@@ -19,6 +19,8 @@ import kotlin.test.fail
 
 private inline val loggingOn get() = false
 
+fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
+
 /** Utility function to help writing tests; it creates a mapping between the receiver goal struct and the list of given solutions */
 fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) =
     this to solution.map { it() }
