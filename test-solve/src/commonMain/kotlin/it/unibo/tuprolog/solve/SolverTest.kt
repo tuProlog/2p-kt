@@ -164,5 +164,7 @@ interface SolverTest {
     fun testNatural()
     fun testFunctor()
     fun testUniv()
+    fun testAppend()
+    fun testRetractAll()
 }
 

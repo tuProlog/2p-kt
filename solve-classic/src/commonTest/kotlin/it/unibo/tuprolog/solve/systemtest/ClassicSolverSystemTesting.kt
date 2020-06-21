@@ -303,4 +303,14 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     override fun testUniv() {
         prototype.testUniv()
     }
+
+    @Test
+    override fun testRetractAll() {
+        prototype.testRetractAll()
+    }
+
+    @Test
+    override fun testAppend() {
+        prototype.testAppend()
+    }
 }
