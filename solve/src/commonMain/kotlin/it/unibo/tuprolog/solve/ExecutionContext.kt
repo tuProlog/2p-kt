@@ -10,6 +10,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** An interface representing the Solver execution context, containing important information that determines its behaviour */
+// TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
 interface ExecutionContext : ExecutionContextAware {
 
     /** The current procedure being executed */
@@ -36,5 +37,18 @@ interface ExecutionContext : ExecutionContextAware {
         warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.stdErr()
     ): Solver
 
-    // TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
+    @JsName("apply")
+    fun apply(sideEffect: SideEffect): ExecutionContext
+
+    @JsName("applyIterable")
+    fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext {
+        var current = this
+        for (effect in sideEffects) {
+            current = current.apply(effect)
+        }
+        return current
+    }
+
+    @JsName("applySequence")
+    fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext = apply(sideEffects.asIterable())
 }
