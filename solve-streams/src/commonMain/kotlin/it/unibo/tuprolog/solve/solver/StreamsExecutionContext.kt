@@ -56,6 +56,26 @@ internal data class StreamsExecutionContext(
         stdErr
     )
 
+    override fun update(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        operators: OperatorSet,
+        inputChannels: PrologInputChannels<*>,
+        outputChannels: PrologOutputChannels<*>
+    ): StreamsExecutionContext {
+        return copy(
+            libraries = libraries,
+            flags = flags,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+    }
+
 }
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
