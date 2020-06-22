@@ -62,6 +62,8 @@ interface SolverTest {
 
     fun testFindAll()
 
+    fun testSideEffectsPersistentAfterBacktracking1()
+
     /** Test `true` goal */
     fun testTrue()
 

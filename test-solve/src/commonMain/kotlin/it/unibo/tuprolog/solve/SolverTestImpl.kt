@@ -272,6 +272,42 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                dynamicKb = theoryOf(
+                    fact { "f"(1) },
+                    fact { "f"(2) },
+                    fact { "f"(3) }
+                ),
+                staticKb = theoryOf(
+                    clause { "getf"("F") `if` "findall"("X", "f"("X"), "F") },
+                    clause { "getg"("G") `if` "findall"("X", "g"("X"), "G") },
+                    clause {
+                        "ftog"("F", "G") `if` (
+                                "retract"("f"("X")) and
+                                        "assert"("g"("X")) and
+                                        "getf"("F") and
+                                        "getg"("G")
+                                )
+                    }
+                )
+            )
+
+            val query = "ftog"("X", "Y")
+            val solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes("X" to listOf(2, 3), "Y" to listOf(1)),
+                    query.yes("X" to listOf(2), "Y" to listOf(1, 2)),
+                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3))
+                ),
+                solutions
+            )
+        }
+    }
+
     /** Test `true` goal */
     override fun testTrue() {
         prolog {
@@ -979,11 +1015,16 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.halt(InstantiationError.forArgument(
-                    DummyInstances.executionContext,
-                    Signature("functor", 3),
-                    1,
-                    varOf("Y")))),
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            1,
+                            varOf("Y")
+                        )
+                    )
+                ),
                 solutions
             )
 
@@ -991,12 +1032,17 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.halt(TypeError.forArgument(
-                    DummyInstances.executionContext,
-                    Signature("functor", 3),
-                    TypeError.Expected.INTEGER,
-                    varOf("Y"),
-                    2))),
+                ktListOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.INTEGER,
+                            varOf("Y"),
+                            2
+                        )
+                    )
+                ),
                 solutions
             )
         }
@@ -1010,15 +1056,15 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to listOf("a","b","c"))),
+                ktListOf(query.yes("X" to listOf("a", "b", "c"))),
                 solutions
             )
 
-            query = "X" univ listOf("a","b","c")
+            query = "X" univ listOf("a", "b", "c")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("X" to structOf("a","b","c"))),
+                ktListOf(query.yes("X" to structOf("a", "b", "c"))),
                 solutions
             )
 
@@ -1026,11 +1072,16 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.halt(InstantiationError.forArgument(
-                    DummyInstances.executionContext,
-                    Signature("=..", 2),
-                    0,
-                    varOf("X")))),
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            0,
+                            varOf("X")
+                        )
+                    )
+                ),
                 solutions
             )
 
@@ -1038,12 +1089,17 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.halt(TypeError.forArgument(
-                    DummyInstances.executionContext,
-                    Signature("=..", 2),
-                    TypeError.Expected.LIST,
-                    atomOf("a"),
-                    1))),
+                ktListOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            TypeError.Expected.LIST,
+                            atomOf("a"),
+                            1
+                        )
+                    )
+                ),
                 solutions
             )
         }
