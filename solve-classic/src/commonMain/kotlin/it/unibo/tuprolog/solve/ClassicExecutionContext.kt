@@ -90,6 +90,101 @@ data class ClassicExecutionContext(
         stdErr
     )
 
+    override fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext {
+        var dynamicKb = dynamicKb
+        var staticKb = staticKb
+        var flags = flags
+        var libraries = libraries
+        var operators = operators
+        var inputChannels = inputChannels
+        var outputChannels = outputChannels
+
+        for (sideEffect in sideEffects) {
+            when (sideEffect) {
+                is SideEffect.AddStaticClauses -> {
+                    staticKb = if (sideEffect.onTop) {
+                        staticKb.assertA(sideEffect.clauses)
+                    } else {
+                        staticKb.assertZ(sideEffect.clauses)
+                    }
+                }
+                is SideEffect.AddDynamicClauses -> {
+                    dynamicKb = if (sideEffect.onTop) {
+                        dynamicKb.assertA(sideEffect.clauses)
+                    } else {
+                        dynamicKb.assertZ(sideEffect.clauses)
+                    }
+                }
+                is SideEffect.ResetStaticKb -> {
+                    staticKb = sideEffect.theory
+                }
+                is SideEffect.ResetDynamicKb -> {
+                    dynamicKb = sideEffect.theory
+                }
+                is SideEffect.RemoveStaticClauses -> {
+                    staticKb = staticKb.retract(sideEffect.clauses).theory
+                }
+                is SideEffect.RemoveDynamicClauses -> {
+                    staticKb = staticKb.retract(sideEffect.clauses).theory
+                }
+                is SideEffect.SetFlags -> {
+                    flags = flags + sideEffect.flags
+                }
+                is SideEffect.ResetFlags -> {
+                    flags = sideEffect.flags
+                }
+                is SideEffect.ClearFlags -> {
+                    flags = flags - sideEffect.names
+                }
+                is SideEffect.LoadLibrary -> {
+                    libraries += sideEffect.aliasedLibrary
+                }
+                is SideEffect.UpdateLibrary -> {
+                    libraries = libraries.update(sideEffect.aliasedLibrary)
+                }
+                is SideEffect.UnloadLibrary -> {
+                    libraries -= sideEffect.alias
+                }
+                is SideEffect.SetOperators -> {
+                    operators += sideEffect.operatorSet
+                }
+                is SideEffect.ResetOperators -> {
+                    operators = sideEffect.operatorSet
+                }
+                is SideEffect.RemoveOperators -> {
+                    operators -= sideEffect.operatorSet
+                }
+                is SideEffect.OpenInputChannels -> {
+                    inputChannels = inputChannels + sideEffect.inputChannels
+                }
+                is SideEffect.ResetInputChannels -> {
+                    inputChannels = sideEffect.inputChannels
+                }
+                is SideEffect.CloseInputChannels -> {
+                    inputChannels = inputChannels - sideEffect.names
+                }
+                is SideEffect.OpenOutputChannels -> {
+                    outputChannels = outputChannels + sideEffect.outputChannels
+                }
+                is SideEffect.ResetOutputChannels -> {
+                    outputChannels = sideEffect.outputChannels
+                }
+                is SideEffect.CloseOutputChannels -> {
+                    outputChannels = outputChannels - sideEffect.names
+                }
+            }
+        }
+        return copy(
+            dynamicKb = dynamicKb,
+            staticKb = staticKb,
+            flags = flags,
+            libraries = libraries,
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+    }
+
     override fun toString(): String {
         return "ClassicExecutionContext(" +
                 "query=$query, " +

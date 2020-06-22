@@ -71,6 +71,13 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         return Libraries(libraries.asSequence().filter { it.alias != library.alias })
     }
 
+    operator fun minus(alias: String): Libraries {
+        if (alias in libraryAliases) {
+            noSuchALibraryError(alias)
+        }
+        return Libraries(libraries.asSequence().filter { it.alias != alias })
+    }
+
 
     override fun update(library: AliasedLibrary): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
@@ -98,6 +105,9 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
             throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 
         private fun noSuchALibraryError(library: AliasedLibrary): Nothing =
-            throw NoSuchALibraryException("No library with alias `${library.alias}` has been loaded")
+            noSuchALibraryError(library.alias)
+
+        private fun noSuchALibraryError(alias: String): Nothing =
+            throw NoSuchALibraryException("No library with alias `$alias` has been loaded")
     }
 }

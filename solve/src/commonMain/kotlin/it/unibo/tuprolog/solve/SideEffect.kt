@@ -60,7 +60,7 @@ sealed class SideEffect {
                 : this(clauses.asIterable(), onTop)
     }
 
-    data class RetractDynamicClauses(val clauses: Iterable<Clause>) : SideEffect() {
+    data class RemoveDynamicClauses(val clauses: Iterable<Clause>) : SideEffect() {
         constructor(vararg clauses: Clause)
                 : this(listOf(*clauses))
 
@@ -120,7 +120,7 @@ sealed class SideEffect {
         }
     }
 
-    data class AddOperators(val operators: Iterable<Operator>) : SideEffect() {
+    data class SetOperators(val operators: Iterable<Operator>) : SideEffect() {
         constructor(vararg operators: Operator) :
                 this(listOf(*operators))
 

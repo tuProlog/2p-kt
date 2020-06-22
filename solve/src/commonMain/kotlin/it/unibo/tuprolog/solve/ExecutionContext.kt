@@ -38,16 +38,12 @@ interface ExecutionContext : ExecutionContextAware {
     ): Solver
 
     @JsName("apply")
-    fun apply(sideEffect: SideEffect): ExecutionContext
+    fun apply(sideEffect: SideEffect): ExecutionContext {
+        return apply(listOf(sideEffect))
+    }
 
     @JsName("applyIterable")
-    fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext {
-        var current = this
-        for (effect in sideEffects) {
-            current = current.apply(effect)
-        }
-        return current
-    }
+    fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext
 
     @JsName("applySequence")
     fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext = apply(sideEffects.asIterable())
