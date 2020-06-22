@@ -17,7 +17,7 @@ import kotlin.collections.List as KtList
 internal object SolveUtils {
 
     internal val someLibraries = Libraries()
-    internal val someFlags = emptyMap<Atom, Term>()
+    internal val someFlags = emptyMap<String, Term>()
     internal val aStaticKB = Theory.empty()
     internal val aDynamicKB = Theory.empty()
 
@@ -35,7 +35,7 @@ internal object SolveUtils {
         Libraries(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) }
     }
     internal val differentFlags by lazy {
-        mapOf<Atom, Term>(Truth.TRUE to Truth.FAIL).also { assertNotEquals(it, someFlags) }
+        mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }
     }
     internal val differentStaticKB by lazy {
         Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }

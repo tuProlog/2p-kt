@@ -136,7 +136,7 @@ internal class SolverUtilsTest {
         val modifiedContext = aContext.copy(
             dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
-            flags = mapOf(Atom.of("someFlag") to Atom.of("someFlagValue")),
+            flags = mapOf("someFlag" to Atom.of("someFlagValue")),
             libraries = Libraries()
         )
 
