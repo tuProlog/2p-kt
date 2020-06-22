@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
+import it.unibo.tuprolog.utils.dequeOf
 
 internal class IndexedTheory private constructor(private val queue: ClauseQueue) : AbstractTheory() {
 
@@ -33,6 +34,25 @@ internal class IndexedTheory private constructor(private val queue: ClauseQueue)
             else -> RetractResult.Success(
                 IndexedTheory(retracted.collection),
                 (retracted as RetrieveResult.Success).clauses
+            )
+        }
+    }
+
+    override fun retract(clauses: Iterable<Clause>): RetractResult {
+        val newTheory = ClauseQueue.of(clauses)
+        val removed = dequeOf<Clause>()
+        for (clause in clauses) {
+            val result = newTheory.retrieveFirst(clause)
+            if (result is RetrieveResult.Success) {
+                removed.addAll(result.clauses)
+            }
+        }
+        return if (removed.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(
+                IndexedTheory(newTheory),
+                removed
             )
         }
     }

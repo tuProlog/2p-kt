@@ -5,6 +5,7 @@ import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.dequeOf
 import kotlin.collections.List as KtList
 
 internal class ListedTheory
@@ -43,6 +44,24 @@ private constructor(
                     ), listOf(toBeActuallyRetracted)
                 )
             }
+        }
+    }
+
+    override fun retract(clauses: Iterable<Clause>): RetractResult {
+        val residual = dequeOf(this.clauses)
+        val removed = dequeOf<Clause>()
+        val i = residual.iterator()
+        while (i.hasNext()) {
+            val current = i.next()
+            if (clauses.any { it matches current }) {
+                i.remove()
+                removed.add(current)
+            }
+        }
+        return if (removed.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(ListedTheory(residual), removed)
         }
     }
 

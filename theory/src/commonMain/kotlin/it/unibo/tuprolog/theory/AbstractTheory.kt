@@ -98,5 +98,6 @@ internal abstract class AbstractTheory : Theory {
 
     protected abstract fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory
 
-
+    override fun retract(clauses: Sequence<Clause>): RetractResult =
+        retract(clauses.asIterable())
 }

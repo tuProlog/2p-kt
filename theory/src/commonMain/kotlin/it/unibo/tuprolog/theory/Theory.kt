@@ -94,7 +94,15 @@ interface Theory : Iterable<Clause> {
     @JsName("retract")
     fun retract(clause: Clause): RetractResult
 
-    /** Tries to delete a matching clause from this database */
+    /** Tries to delete the matching clauses from this theory */
+    @JsName("retractIterable")
+    fun retract(clauses: Iterable<Clause>): RetractResult
+
+    /** Tries to delete the matching clauses from this theory */
+    @JsName("retractSequence")
+    fun retract(clauses: Sequence<Clause>): RetractResult
+
+    /** Tries to delete a matching clause from this theory */
     @JsName("retractByHead")
     fun retract(head: Struct): RetractResult = retract(Rule.of(head, Var.anonymous()))
 
