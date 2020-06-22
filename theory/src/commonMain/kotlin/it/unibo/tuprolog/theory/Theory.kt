@@ -8,7 +8,7 @@ import kotlin.jvm.JvmStatic
 
 interface Theory : Iterable<Clause> {
 
-    /** All [Clause]s in this database */
+    /** All [Clause]s in this theory */
     @JsName("clauses")
     val clauses: Iterable<Clause>
 
@@ -34,63 +34,63 @@ interface Theory : Iterable<Clause> {
     @JsName("plus")
     operator fun plus(clause: Clause): Theory = assertZ(clause)
 
-    /** Checks if given clause is contained in this database */
+    /** Checks if given clause is contained in this theory */
     @JsName("contains")
     operator fun contains(clause: Clause): Boolean
 
-    /** Checks if given clause is present in this database */
+    /** Checks if given clause is present in this theory */
     @JsName("containsHead")
     operator fun contains(head: Struct): Boolean
 
-    /** Checks if clauses exists in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    /** Checks if clauses exists in this theory having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
     @JsName("containsIndicator")
     operator fun contains(indicator: Indicator): Boolean
 
-    /** Retrieves matching clauses from this database */
+    /** Retrieves matching clauses from this theory */
     @JsName("get")
     operator fun get(clause: Clause): Sequence<Clause>
 
-    /** Retrieves matching rules from this database */
+    /** Retrieves matching rules from this theory */
     @JsName("getByHead")
     operator fun get(head: Struct): Sequence<Rule>
 
-    /** Retrieves all rules in this database having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
+    /** Retrieves all rules in this theory having the specified [Indicator] as head; this should be [well-formed][Indicator.isWellFormed] */
     @JsName("getByIndicator")
     operator fun get(indicator: Indicator): Sequence<Rule>
 
-    /** Adds given clause before all other clauses in this database */
+    /** Adds given clause before all other clauses in this theory */
     @JsName("assertA")
     fun assertA(clause: Clause): Theory
 
-    /** Adds given clause before all other clauses in this database */
+    /** Adds given clause before all other clauses in this theory */
     @JsName("assertAFact")
     fun assertA(struct: Struct): Theory = assertA(Fact.of(struct))
 
-    /** Adds the given clauses before all other clauses in this database */
+    /** Adds the given clauses before all other clauses in this theory */
     @JsName("assertAIterable")
     fun assertA(clauses: Iterable<Clause>): Theory
 
-    /** Adds the given clauses before all other clauses in this database */
+    /** Adds the given clauses before all other clauses in this theory */
     @JsName("assertASequence")
     fun assertA(clauses: Sequence<Clause>): Theory
 
-    /** Adds given clause after all other clauses in this database */
+    /** Adds given clause after all other clauses in this theory */
     @JsName("assertZ")
     fun assertZ(clause: Clause): Theory
 
-    /** Adds given clause after all other clauses in this database */
+    /** Adds given clause after all other clauses in this theory */
     @JsName("assertZFact")
     fun assertZ(struct: Struct): Theory = assertZ(Fact.of(struct))
 
-    /** Adds the given clauses after all other clauses in this database */
+    /** Adds the given clauses after all other clauses in this theory */
     @JsName("assertZIterable")
     fun assertZ(clauses: Iterable<Clause>): Theory
 
-    /** Adds the given clauses after all other clauses in this database */
+    /** Adds the given clauses after all other clauses in this theory */
     @JsName("assertZSequence")
     fun assertZ(clauses: Sequence<Clause>): Theory
 
-    /** Tries to delete a matching clause from this database */
+    /** Tries to delete a matching clause from this theory */
     @JsName("retract")
     fun retract(clause: Clause): RetractResult
 
@@ -98,18 +98,18 @@ interface Theory : Iterable<Clause> {
     @JsName("retractByHead")
     fun retract(head: Struct): RetractResult = retract(Rule.of(head, Var.anonymous()))
 
-    /** Tries to delete all matching clauses from this database */
+    /** Tries to delete all matching clauses from this theory */
     @JsName("retractAll")
     fun retractAll(clause: Clause): RetractResult
 
-    /** Tries to delete all matching clauses from this database */
+    /** Tries to delete all matching clauses from this theory */
     @JsName("retractAllByHead")
     fun retractAll(head: Struct): RetractResult = retractAll(Rule.of(head, Var.anonymous()))
 
     @JsName("abolish")
     fun abolish(indicator: Indicator): Theory
 
-    /** An enhanced toString that prints the database in a Prolog program format, if [asPrologText] is `true` */
+    /** An enhanced toString that prints the theory in a Prolog program format, if [asPrologText] is `true` */
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String
 
