@@ -66,6 +66,14 @@ interface Theory : Iterable<Clause> {
     @JsName("assertAFact")
     fun assertA(struct: Struct): Theory = assertA(Fact.of(struct))
 
+    /** Adds the given clauses before all other clauses in this database */
+    @JsName("assertAIterable")
+    fun assertA(clauses: Iterable<Clause>): Theory
+
+    /** Adds the given clauses before all other clauses in this database */
+    @JsName("assertASequence")
+    fun assertA(clauses: Sequence<Clause>): Theory
+
     /** Adds given clause after all other clauses in this database */
     @JsName("assertZ")
     fun assertZ(clause: Clause): Theory
@@ -73,6 +81,14 @@ interface Theory : Iterable<Clause> {
     /** Adds given clause after all other clauses in this database */
     @JsName("assertZFact")
     fun assertZ(struct: Struct): Theory = assertZ(Fact.of(struct))
+
+    /** Adds the given clauses after all other clauses in this database */
+    @JsName("assertZIterable")
+    fun assertZ(clauses: Iterable<Clause>): Theory
+
+    /** Adds the given clauses after all other clauses in this database */
+    @JsName("assertZSequence")
+    fun assertZ(clauses: Sequence<Clause>): Theory
 
     /** Tries to delete a matching clause from this database */
     @JsName("retract")
@@ -91,7 +107,7 @@ interface Theory : Iterable<Clause> {
     fun retractAll(head: Struct): RetractResult = retractAll(Rule.of(head, Var.anonymous()))
 
     @JsName("abolish")
-    fun abolish(indicator: Indicator): Theory = TODO()
+    fun abolish(indicator: Indicator): Theory
 
     /** An enhanced toString that prints the database in a Prolog program format, if [asPrologText] is `true` */
     @JsName("toStringAsProlog")

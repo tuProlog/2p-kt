@@ -18,6 +18,10 @@ private constructor(
         checkClausesCorrect(clauses)
     }
 
+    constructor(clauses: Sequence<Clause>) : this(clauses.toList()) {
+        checkClausesCorrect(clauses)
+    }
+
     override fun plus(theory: Theory): Theory =
         ListedTheory(
             clauses.asIterable() + checkClausesCorrect(
@@ -46,9 +50,28 @@ private constructor(
             )
         )
 
+    override fun assertA(clauses: Iterable<Clause>): Theory =
+        ListedTheory(
+            checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence()
+        )
+
+    override fun assertA(clauses: Sequence<Clause>): Theory =
+        ListedTheory(
+            checkClausesCorrect(clauses) + this.clauses.asSequence()
+        )
+
+    override fun assertZ(clauses: Iterable<Clause>): Theory =
+        ListedTheory(
+            this.clauses.asSequence() + checkClausesCorrect(clauses.asSequence())
+        )
+
+    override fun assertZ(clauses: Sequence<Clause>): Theory =
+        ListedTheory(
+            this.clauses.asSequence() + checkClausesCorrect(clauses)
+        )
+
     override fun retract(clause: Clause): RetractResult {
         val retractability = clauses.filter { it matches clause }
-
         return when {
             retractability.none() -> RetractResult.Failure(this)
             else -> {

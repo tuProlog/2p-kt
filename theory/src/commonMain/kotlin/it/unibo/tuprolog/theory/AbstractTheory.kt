@@ -25,6 +25,12 @@ internal abstract class AbstractTheory : Theory {
         ).map { it as Rule }
     }
 
+    override fun abolish(indicator: Indicator): Theory {
+        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+
+        return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
+    }
+
     override fun toString(): String = "${Theory::class.simpleName}(clauses=$clauses)"
 
     override fun toString(asPrologText: Boolean): String = when (asPrologText) {

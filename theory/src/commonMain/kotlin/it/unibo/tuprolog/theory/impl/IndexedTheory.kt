@@ -36,11 +36,29 @@ internal class IndexedTheory private constructor(private val queue: ClauseQueue)
             ClauseQueue.of(clauses + clause)
         )
 
+    override fun assertA(clauses: Iterable<Clause>): Theory =
+        IndexedTheory(
+            ClauseQueue.of(clauses.asSequence() + this.clauses.asSequence())
+        )
+
+    override fun assertA(clauses: Sequence<Clause>): Theory =
+        IndexedTheory(
+            ClauseQueue.of(clauses + this.clauses.asSequence())
+        )
+
+    override fun assertZ(clauses: Iterable<Clause>): Theory =
+        IndexedTheory(
+            ClauseQueue.of(this.clauses.asSequence() + clauses.asSequence())
+        )
+
+    override fun assertZ(clauses: Sequence<Clause>): Theory =
+        IndexedTheory(
+            ClauseQueue.of(this.clauses.asSequence() + clauses)
+        )
+
     override fun retract(clause: Clause): RetractResult {
         val newTheory = ClauseQueue.of(clauses)
-        val retracted = newTheory.retrieveFirst(clause)
-
-        return when (retracted) {
+        return when (val retracted = newTheory.retrieveFirst(clause)) {
             is RetrieveResult.Failure ->
                 RetractResult.Failure(this)
             else -> RetractResult.Success(
@@ -52,9 +70,7 @@ internal class IndexedTheory private constructor(private val queue: ClauseQueue)
 
     override fun retractAll(clause: Clause): RetractResult {
         val newTheory = ClauseQueue.of(clauses)
-        val retracted = newTheory.retrieveAll(clause)
-
-        return when (retracted) {
+        return when (val retracted = newTheory.retrieveAll(clause)) {
             is RetrieveResult.Failure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
                 IndexedTheory(retracted.collection),
