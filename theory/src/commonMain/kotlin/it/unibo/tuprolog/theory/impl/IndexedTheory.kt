@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.collections.ClauseQueue
+import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
@@ -39,7 +40,7 @@ internal class IndexedTheory private constructor(private val queue: ClauseQueue)
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult {
-        val newTheory = ClauseQueue.of(clauses)
+        val newTheory = MutableClauseQueue.of(this.clauses)
         val removed = dequeOf<Clause>()
         for (clause in clauses) {
             val result = newTheory.retrieveFirst(clause)
