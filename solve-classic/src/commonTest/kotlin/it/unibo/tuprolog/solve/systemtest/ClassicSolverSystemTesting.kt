@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class ClassicSolverSystemTesting : SolverFactory, SolverTest {
@@ -45,7 +44,6 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     )
 
     @Test
-    @Ignore
     override fun testSideEffectsPersistentAfterBacktracking1() {
         prototype.testSideEffectsPersistentAfterBacktracking1()
     }
