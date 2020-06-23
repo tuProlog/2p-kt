@@ -79,7 +79,7 @@ interface ExecutionContext : ExecutionContextAware {
                     staticKb = staticKb.retract(sideEffect.clauses).theory
                 }
                 is SideEffect.RemoveDynamicClauses -> {
-                    staticKb = staticKb.retract(sideEffect.clauses).theory
+                    dynamicKb = dynamicKb.retract(sideEffect.clauses).theory
                 }
                 is SideEffect.SetFlags -> {
                     flags = flags + sideEffect.flags
