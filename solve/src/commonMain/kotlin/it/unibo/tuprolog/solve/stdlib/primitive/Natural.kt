@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import org.gciatto.kt.math.BigInteger
 
-// TODO doc
 object Natural : UnaryPredicate<ExecutionContext>("natural") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
         when (first) {
