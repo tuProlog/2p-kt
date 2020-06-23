@@ -84,7 +84,7 @@ sealed class Solve {
         ) = Response(
                 Solution.Yes(query, substitution),
                 sideEffectManager,
-            *sideEffects
+                *sideEffects
             )
 
         /** Creates a new failed [Response] to this Request */

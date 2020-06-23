@@ -110,6 +110,18 @@ data class ClassicExecutionContext(
         )
     }
 
+    override fun apply(sideEffect: SideEffect): ClassicExecutionContext {
+        return super.apply(sideEffect) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
+    }
+
     override fun toString(): String {
         return "ClassicExecutionContext(" +
                 "query=$query, " +
