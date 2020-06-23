@@ -43,5 +43,17 @@ object DummyInstances {
         ): Solver {
             throw NotImplementedError()
         }
+
+        override fun update(
+            libraries: Libraries,
+            flags: PrologFlags,
+            staticKb: Theory,
+            dynamicKb: Theory,
+            operators: OperatorSet,
+            inputChannels: PrologInputChannels<*>,
+            outputChannels: PrologOutputChannels<*>
+        ): ExecutionContext {
+            throw NotImplementedError()
+        }
     }
 }
