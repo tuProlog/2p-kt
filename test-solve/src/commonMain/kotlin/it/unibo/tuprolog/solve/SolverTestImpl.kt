@@ -300,7 +300,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertSolutionEquals(
                 ktListOf(
                     query.yes("X" to listOf(2, 3), "Y" to listOf(1)),
-                    query.yes("X" to listOf(2), "Y" to listOf(1, 2)),
+                    query.yes("X" to listOf(3), "Y" to listOf(1, 2)),
                     query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3))
                 ),
                 solutions
@@ -942,8 +942,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             assertSolutionEquals(
                 ktListOf(
                     query.yes("X" to 1),
-                    query.yes("X" to 2),
-                    query.no()
+                    query.yes("X" to 2)
 
                 ),
                 solutions
