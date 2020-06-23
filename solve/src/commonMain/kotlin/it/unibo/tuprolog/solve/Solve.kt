@@ -3,10 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
@@ -51,203 +48,66 @@ sealed class Solve {
         @JsName("replyWith")
         fun replyWith(
             substitution: Substitution,
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
+            vararg sideEffects: SideEffect
         ) = when (substitution) {
-            is Substitution.Unifier -> {
-                replySuccess(
-                    substitution,
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
-            else -> {
-                replyFail(
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
+            is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, *sideEffects)
+            else -> replyFail(sideEffectManager, *sideEffects)
         }
 
         /** Creates a new [Response] to this Request */
         @JsName("replyWithSolution")
         fun replyWith(
             solution: Solution,
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
-        ) = when (solution) {
-            is Solution.Yes -> {
-                replySuccess(
-                    solution.substitution,
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
-            is Solution.No -> {
-                replyFail(
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
-            is Solution.Halt -> {
-                replyException(
-                    solution.exception,
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
-        }
+            vararg sideEffects: SideEffect
+        ) = Response(solution, sideEffectManager, *sideEffects)
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
         @JsName("replyWithCondition")
         fun replyWith(
             condition: Boolean,
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
-        ) = when (condition) {
-            true -> {
-                replySuccess(
-                    libraries = libraries,
-                    flags = flags,
-                    staticKb = staticKb,
-                    dynamicKb = dynamicKb,
-                    sideEffectManager = sideEffectManager,
-                    operators = operators,
-                    inputChannels = inputChannels,
-                    outputChannels = outputChannels
-                )
-            }
-            false -> {
-                replyFail(
-                    libraries,
-                    flags,
-                    staticKb,
-                    dynamicKb,
-                    sideEffectManager,
-                    operators,
-                    inputChannels,
-                    outputChannels
-                )
-            }
+            vararg sideEffects: SideEffect
+        ) = if (condition) {
+            replySuccess(Substitution.empty(), sideEffectManager, *sideEffects)
+        } else {
+            replyFail(sideEffectManager, *sideEffects)
         }
 
         /** Creates a new successful [Response] to this Request, with substitution */
         @JsName("replySuccess")
         fun replySuccess(
             substitution: Substitution.Unifier = Substitution.empty(),
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
+            vararg sideEffects: SideEffect
         ) = Response(
                 Solution.Yes(query, substitution),
-                libraries,
-                flags,
-                staticKb,
-                dynamicKb,
                 sideEffectManager,
-                operators,
-                inputChannels,
-                outputChannels
+            *sideEffects
             )
 
         /** Creates a new failed [Response] to this Request */
         @JsName("replyFail")
         fun replyFail(
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
+            vararg sideEffects: SideEffect
         ) = Response(
                 Solution.No(query),
-                libraries,
-                flags,
-                staticKb,
-                dynamicKb,
                 sideEffectManager,
-                operators,
-                inputChannels,
-                outputChannels
+            *sideEffects
             )
 
         /** Creates a new halt [Response] to this Request, with cause exception */
         @JsName("replyException")
         fun replyException(
             exception: TuPrologRuntimeException,
-            libraries: Libraries? = null,
-            flags: PrologFlags? = null,
-            staticKb: Theory? = null,
-            dynamicKb: Theory? = null,
             sideEffectManager: SideEffectManager? = null,
-            operators: OperatorSet? = null,
-            inputChannels: PrologInputChannels<*>? = null,
-            outputChannels: PrologOutputChannels<*>? = null
+            vararg sideEffects: SideEffect
         ) = Response(
             Solution.Halt(query, exception),
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
             sideEffectManager,
-            operators,
-            inputChannels,
-            outputChannels
+            *sideEffects
         )
 
         @JsName("subSolver")
@@ -267,29 +127,30 @@ sealed class Solve {
         /** The solution attached to the response */
         @JsName("solution")
         val solution: Solution,
-        /** The set of loaded libraries after request execution (use `null` in case nothing changed) */
-        @JsName("libraries")
-        val libraries: Libraries? = null,
-        /** The map of loaded flags after request execution (use `null` in case nothing changed) */
-        @JsName("flags")
-        val flags: PrologFlags? = null,
-        /** The Static KB after request execution (use `null` in case nothing changed) */
-        @JsName("staticKb")
-        val staticKb: Theory? = null,
-        /** The Dynamic KB after request execution (use `null` in case nothing changed) */
-        @JsName("dynamicKb")
-        val dynamicKb: Theory? = null,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
         @JsName("sideEffectManager")
         val sideEffectManager: SideEffectManager? = null,
-        /** The set of loaded operators after request execution (use `null` in case nothing changed) */
-        @JsName("operators")
-        val operators: OperatorSet? = null,
-        /** The input channels modification after request execution (use `null` in case nothing changed) */
-        @JsName("inputChannels")
-        val inputChannels: PrologInputChannels<*>? = null,
-        /** The output channels flow modification after request execution (use `null` in case nothing changed) */
-        @JsName("outputChannels")
-        val outputChannels: PrologOutputChannels<*>? = null
-    ) : Solve()
+        /** The (possibly empty) [List] of [SideEffect]s to be applied to the execution context after a primitive has been
+         * executed */
+        @JsName("sideEffects")
+        val sideEffects: List<SideEffect> = emptyList()
+    ) : Solve() {
+        constructor(
+            solution: Solution,
+            sideEffectManager: SideEffectManager? = null,
+            sideEffects: Iterable<SideEffect> = emptyList()
+        ) : this(solution, sideEffectManager, sideEffects as? List<SideEffect> ?: sideEffects.toList())
+
+        constructor(
+            solution: Solution,
+            sideEffectManager: SideEffectManager? = null,
+            sideEffects: Sequence<SideEffect> = emptySequence()
+        ) : this(solution, sideEffectManager, sideEffects.asIterable())
+
+        constructor(
+            solution: Solution,
+            sideEffectManager: SideEffectManager? = null,
+            vararg sideEffects: SideEffect
+        ) : this(solution, sideEffectManager, listOf(*sideEffects))
+    }
 }
