@@ -56,6 +56,18 @@ internal data class StreamsExecutionContext(
         stdErr
     )
 
+    override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
+        return super.apply(sideEffect) as StreamsExecutionContext
+    }
+
+    override fun apply(sideEffects: Iterable<SideEffect>): StreamsExecutionContext {
+        return super.apply(sideEffects) as StreamsExecutionContext
+    }
+
+    override fun apply(sideEffects: Sequence<SideEffect>): StreamsExecutionContext {
+        return super.apply(sideEffects) as StreamsExecutionContext
+    }
+
     override fun update(
         libraries: Libraries,
         flags: PrologFlags,
