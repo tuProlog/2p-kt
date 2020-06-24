@@ -133,18 +133,18 @@ sealed class Solve {
         /** The (possibly empty) [List] of [SideEffect]s to be applied to the execution context after a primitive has been
          * executed */
         @JsName("sideEffects")
-        val sideEffects: List<SideEffect> = emptyList()
+        val sideEffects: List<SideEffect>
     ) : Solve() {
         constructor(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            sideEffects: Iterable<SideEffect> = emptyList()
+            sideEffects: Iterable<SideEffect>
         ) : this(solution, sideEffectManager, sideEffects as? List<SideEffect> ?: sideEffects.toList())
 
         constructor(
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
-            sideEffects: Sequence<SideEffect> = emptySequence()
+            sideEffects: Sequence<SideEffect>
         ) : this(solution, sideEffectManager, sideEffects.asIterable())
 
         constructor(
