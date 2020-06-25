@@ -51,10 +51,7 @@ import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.stdlib.rule.Arrow
-import it.unibo.tuprolog.solve.stdlib.rule.Member
-import it.unibo.tuprolog.solve.stdlib.rule.Not
-import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
+import it.unibo.tuprolog.solve.stdlib.rule.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -79,6 +76,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(Member.SIGNATURE)
                 assertHasPredicateInAPI(Not)
                 assertHasPredicateInAPI(Semicolon.SIGNATURE)
+                assertHasPredicateInAPI(Append.SIGNATURE)
                 assertHasPredicateInAPI(ArithmeticEqual)
                 assertHasPredicateInAPI(ArithmeticGreaterThan)
                 assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
@@ -105,8 +103,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(NotUnifiableWith)
                 assertHasPredicateInAPI(Number)
                 assertHasPredicateInAPI(Retract)
+                assertHasPredicateInAPI(RetractAll)
                 assertHasPredicateInAPI(Sleep)
+                assertHasPredicateInAPI(TermGreaterThan)
+                assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)
+                assertHasPredicateInAPI(TermLowerThan)
+                assertHasPredicateInAPI(TermLowerThanOrEqualTo)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)
                 assertHasPredicateInAPI(Univ)
@@ -1043,6 +1046,91 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                     1))),
                 solutions
             )
+        }
+    }
+
+    override fun testRetractAll() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                dynamicKb = theoryOf(
+                    factOf(structOf("f", numOf(1))),
+                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                )
+            )
+
+            var query = "retractall"("f"("X"))
+
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes()
+                ),
+                solutions
+            )
+
+            assertEquals(
+                ktListOf(),
+                solver.dynamicKb.toList()
+            )
+            assertEquals(0L, solver.dynamicKb.size)
+
+            query = "retractall"("f"("X"))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes()
+                ),
+                solutions
+            )
+        }
+    }
+
+    override fun testAppend() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "append"(listOf(1, 2, 3), listOf(4, 5, 6), "X")
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf(1, 2, 3, 4, 5, 6))),
+                solutions
+            )
+
+            query = "append"(listOf(1, 2, 3), "X", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf(4, 5, 6))),
+                solutions
+            )
+
+            query = "append"("X", "X", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.no()),
+                solutions
+            )
+
+            query = "append"("X", "Y", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3, 4, 5, 6)),
+                    query.yes("X" to listOf(1), "Y" to listOf(2, 3, 4, 5, 6)),
+                    query.yes("X" to listOf(1, 2), "Y" to listOf(3, 4, 5, 6)),
+                    query.yes("X" to listOf(1, 2, 3), "Y" to listOf(4, 5, 6)),
+                    query.yes("X" to listOf(1, 2, 3, 4), "Y" to listOf(5, 6)),
+                    query.yes("X" to listOf(1, 2, 3, 4, 5), "Y" to listOf(6)),
+                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList())
+                ),
+                solutions
+            )
+
         }
     }
 }

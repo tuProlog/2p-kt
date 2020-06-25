@@ -1,20 +1,19 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.greaterOrEqualQueryToResult
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.greaterOrEqualQueryToResult
 import kotlin.test.Test
 
 /**
- * Test class for [ArithmeticGreaterThanOrEqualTo]
+ * Test class for [TermGreaterThanOrEqualTo]
  *
- * @author Enrico
  */
-internal class ArithmeticGreaterThanOrEqualToTest {
+internal class TermGreaterThanOrEqualToTest {
 
     @Test
     fun computesCorrectResult() {
         greaterOrEqualQueryToResult.forEach { (input, result) ->
-            assertCorrectResponse(ArithmeticGreaterThanOrEqualTo, input, result)
+            assertCorrectResponse(TermGreaterThanOrEqualTo, input, result)
         }
     }
 }

@@ -24,26 +24,6 @@ import kotlin.test.fail
  */
 internal object ArithmeticUtils {
 
-    /** Utility method to check if the arithmetic relation responses are correct */
-    @Suppress("IMPLICIT_CAST_TO_ANY")
-    internal fun assertCorrectResponse(
-        arithmeticRelation: ArithmeticRelation<out ExecutionContext>,
-        input: Solve.Request<ExecutionContext>,
-        expectedResult: Any
-    ) = when (expectedResult) {
-        true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.Yes
-        }
-        false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.No
-        }
-        else ->
-            @Suppress("UNCHECKED_CAST")
-            (expectedResult as? KClass<out TuPrologRuntimeException>)
-                ?.let { assertFailsWith(expectedResult) { arithmeticRelation.wrappedImplementation(input) } }
-                ?: fail("Bad written test data!")
-    }
-
     /** [Is] primitive test data (input, [Substitution | ErrorType]) */
     internal val isQueryToResult by lazy {
         prolog {

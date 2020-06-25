@@ -1,20 +1,19 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.lowerQueryToResult
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermUtils.lowerQueryToResult
 import kotlin.test.Test
 
 /**
- * Test class for [ArithmeticLowerThan]
+ * Test class for [TermLowerThan]
  *
- * @author Enrico
  */
-internal class ArithmeticLowerThanTest {
+internal class TermLowerThanTest {
 
     @Test
     fun computesCorrectResult() {
         lowerQueryToResult.forEach { (input, result) ->
-            assertCorrectResponse(ArithmeticLowerThan, input, result)
+            assertCorrectResponse(TermLowerThan, input, result)
         }
     }
 
