@@ -7,6 +7,4 @@ interface Serializer<T> {
     val mimeType: MimeType
     @JsName("serialize")
     fun serialize(value: T): String
-    @JsName("objectify")
-    fun objectify(value: T): Any
 }
