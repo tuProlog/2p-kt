@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.serialize
 
-sealed class MimeType(val type: String, val subType: String) {
+import kotlin.js.JsName
+
+sealed class MimeType(
+    @JsName("type")
+    val type: String,
+    @JsName("subType")
+    val subType: String
+) {
 
     object Json : MimeType("application", "json")
 

@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Set
 
-object JvmTermObjectifier : TermObjectifier<Any> {
+class JvmTermObjectifier : TermObjectifier<Any> {
     override fun defaultValue(term: Term): Any {
         throw IllegalStateException()
     }
