@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.StructImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -143,6 +142,10 @@ interface Struct : Term {
         @JvmStatic
         @JsName("ofSequence")
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(functor: String, args: Iterable<Term>): Struct = of(functor, args.toList())
 
         @JvmStatic
         @JsName("foldListNullTerminated")

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.serialize
 
 import kotlin.js.JsName
 
-interface Deobjectifier<T> {
+interface Deobjectifier<T, U> {
     @JsName("deobjectify")
-    fun deobjectify(`object`: Any): T
+    fun deobjectify(`object`: U): T
 }
