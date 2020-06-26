@@ -26,7 +26,25 @@ class JvmTermDeobjectifier : TermDeobjectifier<Any> {
             value.containsKey("list") -> deobjectifyList(value)
             value.containsKey("set") -> deobjectifySet(value)
             value.containsKey("tuple") -> deobjectifyTuple(value)
+            value.containsKey("integer") -> deobjectifyInteger(value)
+            value.containsKey("real") -> deobjectifyReal(value)
             value.containsKey("head") || value.containsKey("body") -> deobjectifyClause(value)
+            else -> throw DeobjectificationException(value)
+        }
+    }
+
+    private fun deobjectifyReal(value: Map<*, *>): Term {
+        return when (val actualValue = value["real"]) {
+            is String -> scope.realOf(actualValue)
+            is Number -> deobjectifyNumber(actualValue) as? Real ?: throw DeobjectificationException(value)
+            else -> throw DeobjectificationException(value)
+        }
+    }
+
+    private fun deobjectifyInteger(value: Map<*, *>): Term {
+        return when (val actualValue = value["integer"]) {
+            is String -> scope.intOf(actualValue)
+            is Number -> deobjectifyNumber(actualValue) as? LogicInteger ?: throw DeobjectificationException(value)
             else -> throw DeobjectificationException(value)
         }
     }
