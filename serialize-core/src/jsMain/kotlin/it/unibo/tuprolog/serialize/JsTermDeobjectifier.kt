@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
+@Suppress("USELESS_CAST")
 class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
 
     private val scope: Scope = Scope.empty()
@@ -34,14 +35,14 @@ class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
 
     private fun deobjectifyReal(value: dynamic): Term {
         return when (val actualValue = value["real"]) {
-            is String -> scope.realOf(actualValue)
+            is String -> scope.realOf(actualValue as String)
             else -> deobjectifyNumber(actualValue)
         }
     }
 
     private fun deobjectifyInteger(value: dynamic): Term {
         return when (val actualValue = value["integer"]) {
-            is String -> scope.intOf(actualValue)
+            is String -> scope.intOf(actualValue as String)
             else -> deobjectifyNumber(actualValue)
         }
     }
@@ -114,12 +115,12 @@ class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
 
     private fun deobjectifyNumber(value: dynamic): Term {
         return when (value) {
-            is Int -> scope.numOf(value)
-            is Long -> scope.numOf(value)
-            is Double -> scope.numOf(value)
-            is Byte -> scope.numOf(value)
-            is Short -> scope.numOf(value)
-            is Float -> scope.numOf(value)
+            is Int -> scope.numOf(value as Int)
+            is Long -> scope.numOf(value as Long)
+            is Double -> scope.numOf(value as Double)
+            is Byte -> scope.numOf(value as Byte)
+            is Short -> scope.numOf(value as Short)
+            is Float -> scope.numOf(value as Float)
             else -> throw DeobjectificationException(value)
         }
     }

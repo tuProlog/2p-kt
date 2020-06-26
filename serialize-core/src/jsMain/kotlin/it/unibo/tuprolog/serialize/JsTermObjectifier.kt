@@ -31,7 +31,7 @@ class JsTermObjectifier : TermObjectifier<Any> {
 
     override fun visitInteger(term: Integer): dynamic =
         try {
-            term.value.toLongExact()
+            term.value.toIntExact()
         } catch (e: ArithmeticException) {
             jsObject(
                 "integer" to term.value.toString()
