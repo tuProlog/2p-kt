@@ -25,10 +25,10 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        serializer.assertTermSerializationWorks("--- \"atom\"\n") {
+        serializer.assertTermSerializationWorks("\"atom\"") {
             atomOf("atom")
         }
-        serializer.assertTermSerializationWorks("--- \"an atom\"\n") {
+        serializer.assertTermSerializationWorks("\"an atom\"") {
             atomOf("an atom")
         }
     }
@@ -42,7 +42,7 @@ class TestTermSerializer {
             numOf(2)
         }
 
-        serializer.assertTermSerializationWorks("{\"real\":\"3.0\"}") {
+        serializer.assertTermSerializationWorks("{\"real\": \"3.0\"}") {
             numOf(3.0)
         }
     }
@@ -53,10 +53,10 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        serializer.assertTermSerializationWorks("--- 3\n") {
+        serializer.assertTermSerializationWorks("3") {
             numOf(3)
         }
-        serializer.assertTermSerializationWorks("---\nreal: \"4.2\"\n") {
+        serializer.assertTermSerializationWorks("real: \"4.2\"") {
             numOf(4.2)
         }
     }
@@ -81,21 +81,19 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        var expected = """---
+        var expected = """
                 |list:
-                |- "hello"
+                |- hello
                 |- false
-                |
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             listOf(atomOf("hello"), truthOf(false))
         }
 
-        expected = """---
+        expected = """
                 |list:
-                |- "hello"
+                |- hello
                 |- 1
-                |
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             listOf(atomOf("hello"), numOf(1))
@@ -118,21 +116,19 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        var expected = """---
+        var expected = """
                 |set:
-                |- "hello"
+                |- hello
                 |- false
-                |
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             setOf(atomOf("hello"), truthOf(false))
         }
 
-        expected = """---
+        expected = """
                 |set:
-                |- "hello"
+                |- hello
                 |- 1
-                |
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             setOf(atomOf("hello"), numOf(1))
@@ -155,15 +151,14 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        val expected = """---
-                |fun: "f"
+        val expected = """
+                |fun: f
                 |args:
-                |- "hello"
+                |- hello
                 |- 2
                 |- list:
                 |  - true
-                |  - "ciao"
-                |
+                |  - ciao
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             structOf("f", atomOf("hello"), numOf(2), listOf(truthOf(true), atomOf("ciao")))
@@ -190,10 +185,10 @@ class TestTermSerializer {
 
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        serializer.assertTermSerializationWorks("--- true\n") {
+        serializer.assertTermSerializationWorks("true") {
             truthOf(true)
         }
-        serializer.assertTermSerializationWorks("--- false\n") {
+        serializer.assertTermSerializationWorks("false") {
             truthOf(false)
         }
     }
@@ -208,8 +203,8 @@ class TestTermSerializer {
             varOf("Y")
         }
 
-        serializer.assertTermSerializationWorks("{\"var\":\"Incognita\"}") {
-            varOf("Incognita")
+        serializer.assertTermSerializationWorks("{\"var\":\"Two Words\"}") {
+            varOf("Two Words")
         }
     }
 
@@ -218,9 +213,8 @@ class TestTermSerializer {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, serializer.mimeType)
 
-        val expected = """---
+        val expected = """
                 |var: "Y"
-                |
                 """.trimMargin()
 
         serializer.assertTermSerializationWorks(expected) {

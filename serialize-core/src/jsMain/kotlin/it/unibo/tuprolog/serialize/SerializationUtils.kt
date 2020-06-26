@@ -7,3 +7,11 @@ actual fun termSerializer(mimeType: MimeType): TermSerializer {
 actual fun termDeserializer(mimeType: MimeType): TermDeserializer {
     return JsTermDeserializer(mimeType)
 }
+
+actual fun termObjectifier(): TermObjectifier<*> {
+    return JsTermObjectifier()
+}
+
+actual fun termDeobjectifier(): TermDeobjectifier<*> {
+    return JsTermDeobjectifier()
+}

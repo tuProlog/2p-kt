@@ -5,8 +5,16 @@ import it.unibo.tuprolog.core.*
 /**
  * Utility assertion method aimed at checking if a serializer correctly works
  */
-fun <T> Serializer<T>.assertSerializationWorks(expected: String, actual: T) {
-    kotlin.test.assertEquals(expected, serialize(actual))
+fun <T : Term> Serializer<T>.assertSerializationWorks(expected: String, actual: T) {
+    val expectedObj = parseAsObject(expected, mimeType)
+    val actualObj = TermObjectifier.default.objectify(actual)
+    kotlin.test.assertTrue("""
+        |Expected:
+        |   $expectedObj
+        |got instead:
+        |   $actualObj
+        |
+    """.trimMargin()) { deeplyEqual(expectedObj, actualObj) }
 }
 
 /**

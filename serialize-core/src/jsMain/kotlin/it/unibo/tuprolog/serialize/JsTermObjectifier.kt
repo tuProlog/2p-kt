@@ -40,7 +40,13 @@ class JsTermObjectifier : TermObjectifier<Any> {
 
     override fun visitReal(term: Real): dynamic =
         jsObject(
-            "real" to term.value.toString()
+            "real" to term.value.toString().let {
+                if ("." !in it) {
+                    "$it.0"
+                } else {
+                    it
+                }
+            }
         )
 
     override fun visitSet(term: Set): dynamic =
