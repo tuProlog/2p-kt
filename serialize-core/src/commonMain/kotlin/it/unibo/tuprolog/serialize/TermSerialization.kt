@@ -1,4 +1,4 @@
-@file:JvmName("SerializationUtils")
+@file:JvmName("TermSerialization")
 
 package it.unibo.tuprolog.serialize
 
