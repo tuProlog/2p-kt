@@ -14,7 +14,8 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
         value.toBigInteger()
     }
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String =
+        Real.toStringEnsuringDecimal(value)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

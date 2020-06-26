@@ -33,6 +33,13 @@ interface Real : Numeric {
         val REAL_REGEX_PATTERN = "^[+\\-]?(($INT$DEC$EXP?)|($INT$EXP)|($DEC$EXP?))$".toRegex()
 
         @JvmStatic
+        @JsName("toStringEnsuringDecimal")
+        fun toStringEnsuringDecimal(real: BigDecimal): String =
+            real.toString().let {
+                if ("." !in it) "$it.0" else it
+            }
+
+        @JvmStatic
         @JsName("ofBigDecimal")
         fun of(real: BigDecimal): Real = RealImpl(real)
 
