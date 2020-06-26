@@ -8,7 +8,11 @@ class JvmTermSerializer(override val mimeType: MimeType) : WritingTermSerializer
     private val mapper = mimeType.objectMapper
     private val objectifier = JvmTermObjectifier()
 
-    override fun serialize(value: Term, writer: Writer) {
+    override fun serialize(writer: Writer, value: Term) {
         mapper.writeValue(writer, objectifier.objectify(value))
+    }
+
+    override fun serializeMany(writer: Writer, values: Iterable<Term>) {
+        mapper.writeValue(writer, objectifier.objectifyMany(values))
     }
 }

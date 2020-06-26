@@ -4,11 +4,11 @@ import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface TermDeobjectifier<T> : Deobjectifier<Term, T> {
+interface TermDeobjectifier : Deobjectifier<Term> {
     companion object {
         @JsName("default")
         @JvmStatic
-        val default: TermDeobjectifier<*>
+        val default: TermDeobjectifier
             get() = termDeobjectifier()
     }
 }

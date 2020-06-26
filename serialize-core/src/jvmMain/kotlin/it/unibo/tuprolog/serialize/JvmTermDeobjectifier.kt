@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
-class JvmTermDeobjectifier : TermDeobjectifier<Any> {
+class JvmTermDeobjectifier : TermDeobjectifier {
 
     private val scope: Scope = Scope.empty()
 
@@ -15,6 +15,13 @@ class JvmTermDeobjectifier : TermDeobjectifier<Any> {
             is Number -> deobjectifyNumber(`object`)
             is String -> deobjectifyString(`object`)
             is Map<*, *> -> deobjectifyMap(`object`)
+            else -> throw DeobjectificationException(`object`)
+        }
+    }
+
+    override fun deobjectifyMany(`object`: Any): Iterable<Term> {
+        return when (`object`) {
+            is List<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
             else -> throw DeobjectificationException(`object`)
         }
     }

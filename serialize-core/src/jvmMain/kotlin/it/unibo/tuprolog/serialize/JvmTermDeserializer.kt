@@ -11,4 +11,10 @@ class JvmTermDeserializer(override val mimeType: MimeType) : ReadingTermDeserial
         JvmTermDeobjectifier().deobjectify(
             mapper.readValue(reader, java.lang.Object::class.java)
         )
+
+    override fun deserializeMany(reader: Reader): Iterable<Term> =
+        JvmTermDeobjectifier().deobjectifyMany(
+            mapper.readValue(reader, java.lang.Object::class.java)
+        )
+
 }

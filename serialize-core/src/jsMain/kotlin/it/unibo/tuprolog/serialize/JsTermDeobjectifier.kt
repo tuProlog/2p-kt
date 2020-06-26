@@ -6,16 +6,23 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
 @Suppress("USELESS_CAST")
-class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
+class JsTermDeobjectifier : TermDeobjectifier {
 
     private val scope: Scope = Scope.empty()
 
-    override fun deobjectify(`object`: dynamic): Term {
+    override fun deobjectify(`object`: Any): Term {
         return when (`object`) {
             is Boolean -> deobjectifyBoolean(`object`)
             is Int, Long, Short, Byte, Float, Double -> deobjectifyNumber(`object`)
             is String -> deobjectifyString(`object`)
             else -> deobjectifyObj(`object`)
+        }
+    }
+
+    override fun deobjectifyMany(`object`: Any): Iterable<Term> {
+        return when (`object`) {
+            is Array<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
+            else -> throw DeobjectificationException(`object`)
         }
     }
 

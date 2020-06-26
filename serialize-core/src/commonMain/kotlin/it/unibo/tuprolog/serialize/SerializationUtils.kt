@@ -8,6 +8,6 @@ expect fun termSerializer(mimeType: MimeType): TermSerializer
 
 expect fun termDeserializer(mimeType: MimeType): TermDeserializer
 
-expect fun termObjectifier(): TermObjectifier<*>
+expect fun termObjectifier(): TermObjectifier
 
-expect fun termDeobjectifier(): TermDeobjectifier<*>
+expect fun termDeobjectifier(): TermDeobjectifier

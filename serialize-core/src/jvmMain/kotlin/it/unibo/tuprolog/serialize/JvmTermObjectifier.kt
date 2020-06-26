@@ -4,9 +4,13 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Set
 
-class JvmTermObjectifier : TermObjectifier<Any> {
+class JvmTermObjectifier : TermObjectifier {
     override fun defaultValue(term: Term): Any {
         throw IllegalStateException()
+    }
+
+    override fun objectifyMany(values: Iterable<Term>): Any {
+        return values.map { objectify(it) }
     }
 
     override fun visitVar(term: Var): Map<String, Any> =

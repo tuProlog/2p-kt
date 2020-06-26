@@ -4,6 +4,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":theory"))
+                api(project(":serialize-core"))
             }
         }
 

@@ -10,4 +10,11 @@ interface ReadingDeserializer<T> : Deserializer<T> {
         StringReader(string).use {
             deserialize(it)
         }
+
+    fun deserializeMany(reader: Reader): Iterable<T>
+
+    override fun deserializeMany(string: String): Iterable<T> =
+        StringReader(string).use {
+            deserializeMany(it)
+        }
 }

@@ -8,10 +8,10 @@ actual fun termDeserializer(mimeType: MimeType): TermDeserializer {
     return JvmTermDeserializer(mimeType)
 }
 
-actual fun termObjectifier(): TermObjectifier<*> {
+actual fun termObjectifier(): TermObjectifier {
     return JvmTermObjectifier()
 }
 
-actual fun termDeobjectifier(): TermDeobjectifier<*> {
+actual fun termDeobjectifier(): TermDeobjectifier {
     return JvmTermDeobjectifier()
 }
