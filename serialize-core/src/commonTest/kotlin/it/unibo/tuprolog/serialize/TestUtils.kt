@@ -39,7 +39,14 @@ fun Serializer<Term>.assertTermSerializationWorks(expected: String, actualGenera
  * Utility assertion method aimed at checking if a deserializer correctly works
  */
 fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: String) {
-    kotlin.test.assertTrue { termsRepresentationsAreEqual(expected, deserialize(actual)) }
+    val deserialized = deserialize(actual)
+    kotlin.test.assertTrue("""
+        |Expected:
+        |   $expected
+        |got:
+        |   $deserialized
+        |
+    """.trimMargin()) { termsRepresentationsAreEqual(expected, deserialized) }
 }
 
 /**

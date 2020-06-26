@@ -36,14 +36,16 @@ class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
     private fun deobjectifyReal(value: dynamic): Term {
         return when (val actualValue = value["real"]) {
             is String -> scope.realOf(actualValue as String)
-            else -> deobjectifyNumber(actualValue)
+            is Double -> scope.realOf(actualValue as Double)
+            else -> throw DeobjectificationException(value)
         }
     }
 
     private fun deobjectifyInteger(value: dynamic): Term {
         return when (val actualValue = value["integer"]) {
             is String -> scope.intOf(actualValue as String)
-            else -> deobjectifyNumber(actualValue)
+            is Int -> scope.intOf(actualValue as Int)
+            else -> throw DeobjectificationException(value)
         }
     }
 
@@ -114,15 +116,7 @@ class JsTermDeobjectifier : TermDeobjectifier<dynamic> {
     }
 
     private fun deobjectifyNumber(value: dynamic): Term {
-        return when (value) {
-            is Int -> scope.numOf(value as Int)
-            is Long -> scope.numOf(value as Long)
-            is Double -> scope.numOf(value as Double)
-            is Byte -> scope.numOf(value as Byte)
-            is Short -> scope.numOf(value as Short)
-            is Float -> scope.numOf(value as Float)
-            else -> throw DeobjectificationException(value)
-        }
+        return scope.numOf(value.toString())
     }
 
 }
