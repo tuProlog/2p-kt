@@ -6,7 +6,7 @@ class JsTheoryObjectifier : TheoryObjectifier {
     private val objectifier = JsTermObjectifier()
 
     override fun objectify(value: Theory): Any {
-        return arrayOf(value.map { objectifier.objectify(it) })
+        return value.map { objectifier.objectify(it) }.toTypedArray()
     }
 
     override fun objectifyMany(values: Iterable<Theory>): Any {
