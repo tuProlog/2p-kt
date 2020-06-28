@@ -8,6 +8,12 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                api(project(":solve"))
+            }
+        }
+
         jvm {
             compilations["main"].defaultSourceSet {
                 dependencies {

@@ -2,7 +2,7 @@ package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.core.Term
 
-class JsTermSerializer(override val mimeType: MimeType) : TermSerializer {
+internal class JsTermSerializer(override val mimeType: MimeType) : TermSerializer {
 
     private val objectifier = JsTermObjectifier()
 

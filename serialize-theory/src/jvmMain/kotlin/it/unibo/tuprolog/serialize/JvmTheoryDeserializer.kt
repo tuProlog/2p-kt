@@ -3,7 +3,7 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.theory.Theory
 import java.io.Reader
 
-class JvmTheoryDeserializer(override val mimeType: MimeType) : ReadingTheoryDeserializer {
+internal class JvmTheoryDeserializer(override val mimeType: MimeType) : ReadingTheoryDeserializer {
 
     private val mapper = mimeType.objectMapper
 

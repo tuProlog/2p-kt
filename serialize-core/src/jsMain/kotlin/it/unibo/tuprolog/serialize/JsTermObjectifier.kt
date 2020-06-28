@@ -2,7 +2,7 @@ package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.core.*
 
-class JsTermObjectifier : TermObjectifier {
+internal class JsTermObjectifier : TermObjectifier {
     override fun defaultValue(term: Term): Any {
         throw IllegalStateException()
     }

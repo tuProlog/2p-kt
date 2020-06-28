@@ -2,9 +2,9 @@ package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.theory.Theory
 
-class JvmTheoryObjectifier : TheoryObjectifier {
+internal class JvmTheoryObjectifier : TheoryObjectifier {
 
-    private val objectifier = JvmTermObjectifier()
+    private val objectifier = TermObjectifier.default
 
     override fun objectify(value: Theory): Any {
         return value.map { objectifier.objectify(it) }

@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
-class JvmTermDeobjectifier : TermDeobjectifier {
+internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     private val scope: Scope = Scope.empty()
 

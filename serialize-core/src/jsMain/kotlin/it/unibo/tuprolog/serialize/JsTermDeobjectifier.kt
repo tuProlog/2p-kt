@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
 @Suppress("USELESS_CAST")
-class JsTermDeobjectifier : TermDeobjectifier {
+internal class JsTermDeobjectifier : TermDeobjectifier {
 
     private val scope: Scope = Scope.empty()
 

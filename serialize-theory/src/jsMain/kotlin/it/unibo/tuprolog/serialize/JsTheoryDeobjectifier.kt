@@ -3,7 +3,7 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.Theory
 
-class JsTheoryDeobjectifier : TheoryDeobjectifier {
+internal class JsTheoryDeobjectifier : TheoryDeobjectifier {
     override fun deobjectify(`object`: Any): Theory {
         return Theory.of(
             JsTermDeobjectifier().deobjectifyMany(`object`)
