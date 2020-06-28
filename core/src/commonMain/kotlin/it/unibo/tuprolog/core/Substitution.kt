@@ -181,7 +181,8 @@ sealed class Substitution : Map<Var, Term> {
         @JvmStatic
         // TODO move to Extensions
         @JsName("asUnifier")
-        fun Map<Var, Term>.asUnifier(): Unifier = Unifier(this)
+        fun Map<Var, Term>.asUnifier(): Unifier =
+            this as? Unifier ?: Unifier(this)
 
         /** Creates a Substitution of given Variable with given Term */
         @JvmStatic
@@ -225,7 +226,7 @@ sealed class Substitution : Map<Var, Term> {
          */
         private fun anyContradiction(substitution: Substitution, other: Substitution): Boolean =
             when {
-                substitution.count() < other.count() -> substitution to other
+                substitution.size < other.size -> substitution to other
                 else -> other to substitution
             }.let { (smaller, bigger) ->
                 smaller.any { (`var`, substitution) ->
@@ -270,7 +271,7 @@ sealed class Substitution : Map<Var, Term> {
             }
 
             return when {
-                count() < 2 -> this
+                size < 2 -> this
                 else -> this.mapValues { (varKey, term) ->
                     term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
                 }
