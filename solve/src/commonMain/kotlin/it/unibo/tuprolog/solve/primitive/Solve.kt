@@ -57,6 +57,17 @@ sealed class Solve {
         }
 
         /** Creates a new [Response] to this Request */
+        @JsName("replyWithBuildingSideEffects")
+        fun replyWith(
+            substitution: Substitution,
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = when (substitution) {
+            is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, buildSideEffects)
+            else -> replyFail(sideEffectManager, buildSideEffects)
+        }
+
+        /** Creates a new [Response] to this Request */
         @JsName("replyWithSolution")
         fun replyWith(
             solution: Solution,
@@ -66,6 +77,18 @@ sealed class Solve {
             is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, *sideEffects)
             is Solution.No -> replyFail(sideEffectManager, *sideEffects)
             is Solution.Halt -> replyException(solution.exception, sideEffectManager, *sideEffects)
+        }
+
+        /** Creates a new [Response] to this Request */
+        @JsName("replyWithSolutionBuildingSideEffects")
+        fun replyWith(
+            solution: Solution,
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = when(solution) {
+            is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, buildSideEffects)
+            is Solution.No -> replyFail(sideEffectManager, buildSideEffects)
+            is Solution.Halt -> replyException(solution.exception, sideEffectManager, buildSideEffects)
         }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
@@ -80,6 +103,18 @@ sealed class Solve {
             replyFail(sideEffectManager, *sideEffects)
         }
 
+        /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
+        @JsName("replyWithConditionBuildingSideEffects")
+        fun replyWith(
+            condition: Boolean,
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = if (condition) {
+            replySuccess(Substitution.empty(), sideEffectManager, buildSideEffects)
+        } else {
+            replyFail(sideEffectManager, buildSideEffects)
+        }
+
         /** Creates a new successful [Response] to this Request, with substitution */
         @JsName("replySuccess")
         fun replySuccess(
@@ -90,6 +125,18 @@ sealed class Solve {
             Solution.Yes(query, substitution),
             sideEffectManager,
             *sideEffects
+        )
+
+        /** Creates a new successful [Response] to this Request, with substitution */
+        @JsName("replySuccessBuildingSideEffects")
+        fun replySuccess(
+            substitution: Substitution.Unifier = Substitution.empty(),
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = Response(
+            Solution.Yes(query, substitution),
+            sideEffectManager,
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
         )
 
         /** Creates a new failed [Response] to this Request */
@@ -103,6 +150,17 @@ sealed class Solve {
             *sideEffects
         )
 
+        /** Creates a new failed [Response] to this Request */
+        @JsName("replyFailBuildingSideEffects")
+        fun replyFail(
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = Response(
+            Solution.No(query),
+            sideEffectManager,
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
+        )
+
         /** Creates a new halt [Response] to this Request, with cause exception */
         @JsName("replyException")
         fun replyException(
@@ -113,6 +171,18 @@ sealed class Solve {
             Solution.Halt(query, exception),
             sideEffectManager,
             *sideEffects
+        )
+
+        /** Creates a new halt [Response] to this Request, with cause exception */
+        @JsName("replyExceptionBuildingSideEffects")
+        fun replyException(
+            exception: TuPrologRuntimeException,
+            sideEffectManager: SideEffectManager? = null,
+            buildSideEffects: SideEffectsBuilder.() -> Unit
+        ) = Response(
+            Solution.Halt(query, exception),
+            sideEffectManager,
+            SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
         )
 
         @JsName("subSolver")

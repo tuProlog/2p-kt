@@ -8,7 +8,9 @@ interface SideEffectsBuilder : SideEffectFactory {
 
     val sideEffects: MutableList<SideEffect>
 
-    fun build(): Array<SideEffect> = sideEffects.toTypedArray()
+    fun buildArray(): Array<SideEffect> = sideEffects.toTypedArray()
+
+    fun build(): List<SideEffect> = sideEffects.toList()
 
     companion object {
         @JvmStatic
