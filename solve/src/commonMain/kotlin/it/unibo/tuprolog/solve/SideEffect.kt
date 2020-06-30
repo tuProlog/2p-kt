@@ -99,6 +99,13 @@ sealed class SideEffect {
     }
 
     data class LoadLibrary(val alias: String, val library: Library) : SideEffect() {
+
+        init {
+            when (val lib = library) {
+                is AliasedLibrary -> require(lib.alias == alias)
+            }
+        }
+
         val aliasedLibrary: AliasedLibrary by lazy {
             if (library is AliasedLibrary) {
                 library
@@ -111,6 +118,12 @@ sealed class SideEffect {
     data class UnloadLibrary(val alias: String) : SideEffect()
 
     data class UpdateLibrary(val alias: String, val library: Library) : SideEffect() {
+        init {
+            when (val lib = library) {
+                is AliasedLibrary -> require(lib.alias == alias)
+            }
+        }
+
         val aliasedLibrary: AliasedLibrary by lazy {
             if (library is AliasedLibrary) {
                 library
