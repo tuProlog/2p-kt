@@ -15,9 +15,9 @@ object RetractAll : UnaryPredicate.NonBacktrackable<ExecutionContext>("retractal
         val dynamicKb = context.dynamicKb
         return when (val result = dynamicKb.retractAll(clause)) {
             is RetractResult.Success -> {
-                replySuccess(
-                    sideEffects = *arrayOf(SideEffect.RemoveDynamicClauses(result.clauses))
-                )
+                replySuccess {
+                    resetDynamicKb(result.theory)
+                }
             }
             else -> {
                 replySuccess()

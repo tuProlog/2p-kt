@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -18,7 +17,9 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
                 is Clause -> (first mguWith it) as Substitution.Unifier
                 else -> (first mguWith it.head!!) as Substitution.Unifier
             }
-            replySuccess(substitution, null, SideEffect.RemoveDynamicClauses(it))
+            replySuccess(substitution) {
+                removeDynamicClauses(it)
+            }
         }
     }
 }

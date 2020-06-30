@@ -20,7 +20,11 @@ sealed class SideEffect {
                 : this(clauses.asIterable())
 
         val theory by lazy {
-            Theory.indexedOf(clauses)
+            if (clauses is Theory) {
+                clauses
+            } else {
+                Theory.indexedOf(clauses)
+            }
         }
     }
 
@@ -48,7 +52,11 @@ sealed class SideEffect {
                 : this(clauses.asIterable())
 
         val theory by lazy {
-            Theory.indexedOf(clauses)
+            if (clauses is Theory) {
+                clauses
+            } else {
+                Theory.indexedOf(clauses)
+            }
         }
     }
 
