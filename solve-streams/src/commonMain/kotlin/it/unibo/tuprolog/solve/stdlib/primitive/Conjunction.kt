@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.*
 
 /**

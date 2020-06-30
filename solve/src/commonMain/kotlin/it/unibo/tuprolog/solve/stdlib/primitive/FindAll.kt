@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.MetaError
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith

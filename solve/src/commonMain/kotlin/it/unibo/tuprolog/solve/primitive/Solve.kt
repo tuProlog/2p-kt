@@ -1,8 +1,9 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import kotlin.js.JsName
 
@@ -86,10 +87,10 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
-                Solution.Yes(query, substitution),
-                sideEffectManager,
-                *sideEffects
-            )
+            Solution.Yes(query, substitution),
+            sideEffectManager,
+            *sideEffects
+        )
 
         /** Creates a new failed [Response] to this Request */
         @JsName("replyFail")
@@ -97,10 +98,10 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
-                Solution.No(query),
-                sideEffectManager,
+            Solution.No(query),
+            sideEffectManager,
             *sideEffects
-            )
+        )
 
         /** Creates a new halt [Response] to this Request, with cause exception */
         @JsName("replyException")

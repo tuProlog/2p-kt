@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution

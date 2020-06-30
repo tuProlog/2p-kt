@@ -9,9 +9,9 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.jvm.JvmName
 
 /** Check whether the receiver term is a well-formed predication */

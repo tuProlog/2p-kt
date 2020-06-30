@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.*
 

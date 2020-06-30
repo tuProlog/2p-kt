@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 
 /** Base class to implement primitives that relate two [Term]s and provide a single response */
 abstract class BinaryRelation<E : ExecutionContext>(operator: String) : PrimitiveWrapper<E>(operator, 2) {

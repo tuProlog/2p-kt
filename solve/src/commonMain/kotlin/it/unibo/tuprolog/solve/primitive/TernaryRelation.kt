@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 
 /** Base class to implement primitives that relate tree [Term]s */
 abstract class TernaryRelation<E : ExecutionContext>(operator: String) : PrimitiveWrapper<E>(operator, 3) {

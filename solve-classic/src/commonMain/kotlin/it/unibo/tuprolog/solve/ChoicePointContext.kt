@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 
 sealed class ChoicePointContext(

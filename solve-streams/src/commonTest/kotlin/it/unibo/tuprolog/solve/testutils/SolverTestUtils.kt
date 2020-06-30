@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.testutils
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Libraries

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aDynamicKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSolution

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
 
 /** Base class for implementing arithmetic relation between [Numeric] terms */

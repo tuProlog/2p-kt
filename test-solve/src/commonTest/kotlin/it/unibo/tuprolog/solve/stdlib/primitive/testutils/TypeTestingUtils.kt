@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.dsl.Prolog
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError

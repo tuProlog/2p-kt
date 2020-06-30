@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation

@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList

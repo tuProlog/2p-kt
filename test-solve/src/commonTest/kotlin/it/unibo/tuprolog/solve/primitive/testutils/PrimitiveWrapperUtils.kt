@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.test.assertTrue
 
 /**

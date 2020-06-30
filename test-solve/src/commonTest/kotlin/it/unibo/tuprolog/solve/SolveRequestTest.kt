@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSignature
