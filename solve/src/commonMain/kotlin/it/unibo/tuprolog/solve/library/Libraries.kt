@@ -71,7 +71,7 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         return Libraries(libraries.asSequence().filter { it.alias != library.alias })
     }
 
-    @JsName("minus")
+    @JsName("minusAlias")
     operator fun minus(alias: String): Libraries {
         if (alias in libraryAliases) {
             noSuchALibraryError(alias)
@@ -79,7 +79,7 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         return Libraries(libraries.asSequence().filter { it.alias != alias })
     }
 
-    @JsName("minusMany")
+    @JsName("minusAliases")
     operator fun minus(aliases: Iterable<String>): Libraries {
         val toBeRemoved = aliases.map {
             if (it in libraryAliases) {
