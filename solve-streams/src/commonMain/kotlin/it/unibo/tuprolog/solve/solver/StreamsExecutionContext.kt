@@ -30,6 +30,19 @@ internal data class StreamsExecutionContext(
     val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
 ) : ExecutionContext {
 
+    constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested
+        context.libraries,
+        context.flags,
+        context.staticKb,
+        context.dynamicKb,
+        context.operators,
+        context.inputChannels,
+        context.outputChannels,
+        newCurrentSubstitution,
+        (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
+        (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
+    )
+
     override val procedure: Struct?
         get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 
@@ -55,6 +68,38 @@ internal data class StreamsExecutionContext(
         stdOut,
         stdErr
     )
+
+    override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
+        return super.apply(sideEffect) as StreamsExecutionContext
+    }
+
+    override fun apply(sideEffects: Iterable<SideEffect>): StreamsExecutionContext {
+        return super.apply(sideEffects) as StreamsExecutionContext
+    }
+
+    override fun apply(sideEffects: Sequence<SideEffect>): StreamsExecutionContext {
+        return super.apply(sideEffects) as StreamsExecutionContext
+    }
+
+    override fun update(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        operators: OperatorSet,
+        inputChannels: PrologInputChannels<*>,
+        outputChannels: PrologOutputChannels<*>
+    ): StreamsExecutionContext {
+        return copy(
+            libraries = libraries,
+            flags = flags,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+    }
 
 }
 

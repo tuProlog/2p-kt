@@ -3,10 +3,9 @@ package it.unibo.tuprolog.theory.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.RetractResult
-import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.dequeOf
 import kotlin.collections.List as KtList
 
 internal class ListedTheory
@@ -18,37 +17,22 @@ private constructor(
         checkClausesCorrect(clauses)
     }
 
-    override fun plus(theory: Theory): Theory =
-        ListedTheory(
-            clauses.asIterable() + checkClausesCorrect(
-                theory.clauses
-            )
-        )
+    constructor(clauses: Sequence<Clause>) : this(clauses.toList()) {
+        checkClausesCorrect(clauses)
+    }
+
 
     override fun get(clause: Clause): Sequence<Clause> =
         clauses.filter {
             it matches clause
         }.asSequence()
 
-    override fun assertA(clause: Clause): Theory =
-        ListedTheory(
-            listOf(
-                checkClauseCorrect(
-                    clause
-                )
-            ) + clauses
-        )
-
-    override fun assertZ(clause: Clause): Theory =
-        ListedTheory(
-            clauses + listOf(
-                checkClauseCorrect(clause)
-            )
-        )
+    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
+        return ListedTheory(clauses)
+    }
 
     override fun retract(clause: Clause): RetractResult {
         val retractability = clauses.filter { it matches clause }
-
         return when {
             retractability.none() -> RetractResult.Failure(this)
             else -> {
@@ -60,6 +44,24 @@ private constructor(
                     ), listOf(toBeActuallyRetracted)
                 )
             }
+        }
+    }
+
+    override fun retract(clauses: Iterable<Clause>): RetractResult {
+        val residual = dequeOf(this.clauses)
+        val removed = dequeOf<Clause>()
+        val i = residual.iterator()
+        while (i.hasNext()) {
+            val current = i.next()
+            if (clauses.any { it matches current }) {
+                i.remove()
+                removed.add(current)
+            }
+        }
+        return if (removed.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(ListedTheory(residual), removed)
         }
     }
 

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
 internal abstract class AbstractTheory : Theory {
 
@@ -23,6 +24,12 @@ internal abstract class AbstractTheory : Theory {
                 Var.anonymous()
             )
         ).map { it as Rule }
+    }
+
+    override fun abolish(indicator: Indicator): Theory {
+        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+
+        return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
     }
 
     override fun toString(): String = "${Theory::class.simpleName}(clauses=$clauses)"
@@ -68,4 +75,29 @@ internal abstract class AbstractTheory : Theory {
         i
     }
 
+    override fun plus(theory: Theory): Theory =
+        createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
+
+    override fun assertA(clause: Clause): Theory =
+        createNewTheory(checkClausesCorrect(sequenceOf(clause)) + clauses.asSequence())
+
+    override fun assertA(clauses: Iterable<Clause>): Theory =
+        createNewTheory(checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence())
+
+    override fun assertA(clauses: Sequence<Clause>): Theory =
+        createNewTheory(checkClausesCorrect(clauses) + this.clauses.asSequence())
+
+    override fun assertZ(clause: Clause): Theory =
+        createNewTheory(clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)))
+
+    override fun assertZ(clauses: Iterable<Clause>): Theory =
+        createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses).asSequence())
+
+    override fun assertZ(clauses: Sequence<Clause>): Theory =
+        createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
+
+    protected abstract fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory
+
+    override fun retract(clauses: Sequence<Clause>): RetractResult =
+        retract(clauses.asIterable())
 }

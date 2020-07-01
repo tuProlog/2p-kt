@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSignature
@@ -112,12 +113,13 @@ internal class SolveRequestTest {
             assertEquals(
                 createRequest().replyWith(
                     it.solution,
-                    differentLibraries,
-                    differentFlags,
-                    differentStaticKB,
-                    differentDynamicKB,
                     aSideEffectManager
-                ),
+                ) {
+                    resetLibraries(differentLibraries)
+                    resetFlags(differentFlags)
+                    resetStaticKb(differentStaticKB)
+                    resetDynamicKb(differentDynamicKB)
+                },
                 it
             )
         }
@@ -128,12 +130,13 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replySuccess(
                 solutionSubstitution,
-                differentLibraries,
-                differentFlags,
-                differentStaticKB,
-                differentDynamicKB,
                 aSideEffectManager
-            ),
+            ) {
+                resetLibraries(differentLibraries)
+                resetFlags(differentFlags)
+                resetStaticKb(differentStaticKB)
+                resetDynamicKb(differentDynamicKB)
+            },
             defaultRequestSuccessResponse
         )
     }
@@ -142,12 +145,13 @@ internal class SolveRequestTest {
     fun replyFailCreatesCorrectResponse() {
         assertEquals(
             createRequest().replyFail(
-                differentLibraries,
-                differentFlags,
-                differentStaticKB,
-                differentDynamicKB,
                 aSideEffectManager
-            ),
+            ) {
+                resetLibraries(differentLibraries)
+                resetFlags(differentFlags)
+                resetStaticKb(differentStaticKB)
+                resetDynamicKb(differentDynamicKB)
+            },
             defaultRequestFailedResponse
         )
     }
@@ -157,12 +161,13 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replyException(
                 solutionException,
-                differentLibraries,
-                differentFlags,
-                differentStaticKB,
-                differentDynamicKB,
                 aSideEffectManager
-            ),
+            ) {
+                resetLibraries(differentLibraries)
+                resetFlags(differentFlags)
+                resetStaticKb(differentStaticKB)
+                resetDynamicKb(differentDynamicKB)
+            },
             defaultRequestHaltedResponse
         )
     }
@@ -172,12 +177,13 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replyWith(
                 true,
-                differentLibraries,
-                differentFlags,
-                differentStaticKB,
-                differentDynamicKB,
                 aSideEffectManager
-            ),
+            ) {
+                resetLibraries(differentLibraries)
+                resetFlags(differentFlags)
+                resetStaticKb(differentStaticKB)
+                resetDynamicKb(differentDynamicKB)
+            },
             defaultRequestSuccessResponse.copy(
                 solution = (defaultRequestSuccessResponse.solution as Solution.Yes).copy(
                     substitution = Substitution.empty()
@@ -188,12 +194,13 @@ internal class SolveRequestTest {
         assertEquals(
             createRequest().replyWith(
                 false,
-                differentLibraries,
-                differentFlags,
-                differentStaticKB,
-                differentDynamicKB,
                 aSideEffectManager
-            ),
+            ) {
+                resetLibraries(differentLibraries)
+                resetFlags(differentFlags)
+                resetStaticKb(differentStaticKB)
+                resetDynamicKb(differentDynamicKB)
+            },
             defaultRequestFailedResponse
         )
     }

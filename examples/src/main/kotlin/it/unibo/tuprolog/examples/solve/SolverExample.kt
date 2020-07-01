@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.primitive.Solve
 
 val gtSignature = Signature("gt", 2)
 
@@ -42,7 +43,7 @@ fun main() {
     prolog {
         val solver = Solver.classicWithDefaultBuiltins(
             libraries = Libraries(
-                Library.of(
+                Library.aliased(
                     primitives = mapOf(gtSignature to ::gt),
                     alias = "it.unibo.lrizzato.myprimives"
                 )

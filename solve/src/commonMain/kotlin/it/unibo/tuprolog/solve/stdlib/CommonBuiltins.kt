@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.stdlib.function.*
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 
-object CommonBuiltins : AliasedLibrary by Library.of(
+object CommonBuiltins : AliasedLibrary by Library.aliased(
     alias = "prolog.lang",
     operatorSet = OperatorSet.DEFAULT,
     theory = CommonRules.theory,
