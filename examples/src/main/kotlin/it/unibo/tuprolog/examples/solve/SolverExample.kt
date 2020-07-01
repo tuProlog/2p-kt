@@ -43,7 +43,7 @@ fun main() {
     prolog {
         val solver = Solver.classicWithDefaultBuiltins(
             libraries = Libraries(
-                Library.of(
+                Library.aliased(
                     primitives = mapOf(gtSignature to ::gt),
                     alias = "it.unibo.lrizzato.myprimives"
                 )

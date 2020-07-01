@@ -121,7 +121,7 @@ internal object LibraryUtils {
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, PrologFunction>,
         alias: String
-    ): AliasedLibrary = Library.of(opSet, theory, primitives, functions, alias)
+    ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(

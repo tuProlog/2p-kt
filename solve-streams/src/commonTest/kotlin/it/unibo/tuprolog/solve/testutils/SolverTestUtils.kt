@@ -28,7 +28,7 @@ internal object SolverTestUtils {
         query.argsList,
         StreamsExecutionContext(
             libraries = Libraries(
-                Library.of(
+                Library.aliased(
                     alias = "solve.solver.test",
                     theory = database,
                     primitives = primitives

@@ -67,7 +67,7 @@ internal class ConjunctionTest {
                 goal.extractSignature(), goal.argsList, StreamsExecutionContext(
                     substitution = preRequestSubstitution,
                     libraries = Libraries(
-                        Library.of(
+                        Library.aliased(
                             alias = "conjunction.test",
                             primitives = mapOf(
                                 *ktListOf(Conjunction, leftPrimitive, rightPrimitive)
