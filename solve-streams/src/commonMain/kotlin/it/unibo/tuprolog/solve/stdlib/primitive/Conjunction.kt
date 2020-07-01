@@ -27,6 +27,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                 subGoals,
                 request.context,
                 Substitution.empty(),
+                emptyList(),
                 request.context.sideEffectManager,
                 previousGoalsHadAlternatives = false
             )
@@ -48,6 +49,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         goals: Iterable<Term>,
         toPropagateContext: ExecutionContext,
         accumulatedSubstitutions: Substitution,
+        accumulatedSideEffects: List<SideEffect>,
         previousResponseSideEffectManager: SideEffectManagerImpl?,
         previousGoalsHadAlternatives: Boolean
     ): Boolean {
@@ -66,6 +68,8 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
             if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 
+            val allSideEffectsSoFar = accumulatedSideEffects + goalResponse.sideEffects
+
             when {
                 goalResponse.sideEffectManager?.shouldExecuteThrowCut() == false &&
                         goalResponse.solution is Solution.Yes &&
@@ -76,6 +80,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                             goals.drop(1),
                             goalFinalState.context,
                             goalResponse.solution.substitution - mainRequest.context.substitution,
+                            allSideEffectsSoFar,
                             goalResponse.sideEffectManager as? SideEffectManagerImpl,
                             previousGoalsHadAlternatives || currentHasAlternatives
                         )
@@ -83,7 +88,11 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                 else ->
                     // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
                     if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted)
-                        yield(mainRequest.replyWith(goalResponse))
+                        yield(
+                            mainRequest.replyWith(
+                                goalResponse.copy(sideEffects = allSideEffectsSoFar)
+                            )
+                        )
 
             }
             if (cutExecuted || goalResponse.solution is Solution.Halt) return true // cut other alternatives of current and previous goals
