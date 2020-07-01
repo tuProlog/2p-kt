@@ -5,6 +5,36 @@ import kotlin.test.assertEquals
 
 class TestTermDeserializer {
     @Test
+    fun testTailedListSerializationInJSON() {
+        val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
+        assertEquals(MimeType.Json, deserializer.mimeType)
+
+        deserializer.assertTermDeserializationWorks("{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}") {
+            structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
+        }
+    }
+
+    @Test
+    fun testTailedListSerializationInYAML() {
+        val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
+        assertEquals(MimeType.Yaml, deserializer.mimeType)
+
+        deserializer.assertTermDeserializationWorks(
+            """
+            |fun: member
+            |args:
+            |  - var: H
+            |  - list: 
+            |      - var: H
+            |    tail: 
+            |      var: _
+            """.trimMargin()
+        ) {
+            structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
+        }
+    }
+
+    @Test
     fun testAtomDeserializationInJSON() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Json)
         assertEquals(MimeType.Json, deserializer.mimeType)

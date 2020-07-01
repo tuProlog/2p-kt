@@ -76,6 +76,16 @@ class TestTermSerializer {
     }
 
     @Test
+    fun testTailedListSerializationInJSON() {
+        val serializer: TermSerializer = TermSerializer.of(MimeType.Json)
+        assertEquals(MimeType.Json, serializer.mimeType)
+
+        serializer.assertTermSerializationWorks("{\"fun\":\"member\",\"args\":[{\"var\":\"H\"},{\"list\":[{\"var\":\"H\"}],\"tail\":{\"var\":\"_\"}}]}") {
+            structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
+        }
+    }
+
+    @Test
     fun testListSerializationInYAML() {
         val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
 
@@ -97,6 +107,26 @@ class TestTermSerializer {
                 """.trimMargin()
         serializer.assertTermSerializationWorks(expected) {
             listOf(atomOf("hello"), numOf(1))
+        }
+    }
+
+    @Test
+    fun testTailedListSerializationInYAML() {
+        val serializer: TermSerializer = TermSerializer.of(MimeType.Yaml)
+        assertEquals(MimeType.Yaml, serializer.mimeType)
+
+        serializer.assertTermSerializationWorks(
+            """
+            |fun: member
+            |args:
+            |  - var: H
+            |  - list: 
+            |      - var: H
+            |    tail: 
+            |      var: _
+            """.trimMargin()
+        ) {
+            structOf("member", varOf("H"), consOf(varOf("H"), anonymous()))
         }
     }
 

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.theory.Theory
 internal class JsTheoryDeobjectifier : TheoryDeobjectifier {
     override fun deobjectify(`object`: Any): Theory {
         return Theory.of(
-            JsTermDeobjectifier().deobjectifyMany(`object`)
+            TermDeobjectifier.default.deobjectifyMany(`object`)
                 .asSequence()
                 .map { it as Clause }
         )

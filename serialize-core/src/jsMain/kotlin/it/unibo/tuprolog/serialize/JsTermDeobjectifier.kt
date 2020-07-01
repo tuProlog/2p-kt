@@ -74,7 +74,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyList(value: dynamic): Term {
         val items = value["list"] as? Array<dynamic> ?: throw DeobjectificationException(value)
-        val last = value["last"]
+        val last = value["tail"]
         return scope.listFrom(
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))

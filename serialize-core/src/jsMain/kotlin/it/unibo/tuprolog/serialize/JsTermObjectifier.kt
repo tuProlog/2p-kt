@@ -61,12 +61,19 @@ internal class JsTermObjectifier : TermObjectifier {
     override fun visitEmptySet(term: EmptySet): Any =
         visitSet(term)
 
-    override fun visitList(term: List): Any =
-        jsObject("list" to term.toList().map { it.accept(this) }) {
-            if (!term.isWellFormed) {
-                this["tail"] = term.unfoldedSequence.last().accept(this@JsTermObjectifier)
-            }
+    override fun visitList(term: List): Any {
+        val listed = term.toList()
+        return if (term.isWellFormed) {
+            jsObject(
+                "list" to listed.map { it.accept(this) }.toTypedArray()
+            )
+        } else {
+            jsObject(
+                "list" to listed.subList(0, listed.lastIndex).map { it.accept(this) }.toTypedArray(),
+                "tail" to listed[listed.lastIndex].accept(this)
+            )
         }
+    }
 
     override fun visitCons(term: Cons): Any =
         visitList(term)

@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.serialize.ObjectsUtils.deeplyEqual
+import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 
 /**
  * Utility assertion method aimed at checking if a serializer correctly works
@@ -46,7 +48,7 @@ fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: S
         |got:
         |   $deserialized
         |
-    """.trimMargin()) { termsRepresentationsAreEqual(expected, deserialized) }
+    """.trimMargin()) { expected.equals(deserialized, false) }
 }
 
 /**
@@ -65,22 +67,4 @@ fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: S
  */
 fun Deserializer<Term>.assertTermDeserializationWorks(actual: String, expectedGenerator: Scope.() -> Term) {
     assertDeserializationWorks(Scope.empty().expectedGenerator(), actual)
-}
-
-private fun termsRepresentationsAreEqual(t1: Term, t2: Term): Boolean {
-    return when {
-        t1 is Var && t2 is Var -> t1.name == t2.name
-        t1 is Atom && t2 is Atom -> t1.value == t2.value
-        t1 is Integer && t2 is Integer -> t1.value.compareTo(t2.value) == 0
-        t1 is Real && t2 is Real -> t1.value.compareTo(t2.value) == 0
-        t1 is Struct && t2 is Struct -> {
-            t1.arity == t2.arity && t1.functor == t2.functor && (0 until t1.arity).all {
-                termsRepresentationsAreEqual(
-                    t1[it],
-                    t2[it]
-                )
-            }
-        }
-        else -> false
-    }
 }

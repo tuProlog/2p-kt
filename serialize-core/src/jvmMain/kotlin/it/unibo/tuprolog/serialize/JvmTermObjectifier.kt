@@ -57,16 +57,19 @@ internal class JvmTermObjectifier : TermObjectifier {
     override fun visitEmptySet(term: EmptySet): Map<String, Any> =
         visitSet(term)
 
-    override fun visitList(term: List): Map<String, Any> =
-        mapOf(
-            "list" to term.toList().map { it.accept(this) }
-        ) + if (term.isWellFormed) {
-            emptyMap()
+    override fun visitList(term: List): Map<String, Any> {
+        val listed = term.toList()
+        return if (term.isWellFormed) {
+            mapOf(
+                "list" to listed.map { it.accept(this) }
+            )
         } else {
             mapOf(
-                "tail" to term.unfoldedSequence.last().accept(this)
+                "list" to listed.subList(0, listed.lastIndex).map { it.accept(this) },
+                "tail" to listed[listed.lastIndex].accept(this)
             )
         }
+    }
 
     override fun visitCons(term: Cons): Map<String, Any> =
         visitList(term)

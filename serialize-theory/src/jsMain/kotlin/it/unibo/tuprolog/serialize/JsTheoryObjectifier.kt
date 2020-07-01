@@ -3,7 +3,7 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.theory.Theory
 
 internal class JsTheoryObjectifier : TheoryObjectifier {
-    private val objectifier = JsTermObjectifier()
+    private val objectifier = TermObjectifier.default
 
     override fun objectify(value: Theory): Any {
         return value.map { objectifier.objectify(it) }.toTypedArray()
