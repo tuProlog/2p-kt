@@ -40,7 +40,7 @@ namely `parser-theory`,
 
 A complete overview about modules and their dependencies is provided by the following diagram: 
 
-![2P-Kt project map](http://www.plantuml.com/plantuml/svg/TL3DYjim4BxFKmo-gmzGGbXgdme5GvAUUb6jIQAkh34QEI5q--wrfSQhkDcBpNm_y-cR5uawnB5t47d0oFYJO-GUZGtKHSiUvDNwGGVTevoruQlr9png9mG5TMHdAE1lGFoYkzTJuD6RcXs7pKOF5jcxstQBxEo5dca2Svpu6pd7rsS2sm_k4ngAshf9U3tRIF07u5zmrN6W2k-B5dZqzdYhbZ6UYKCn6t4gExLWKp_WoPg9mmEHbsHclp32xa8LbdKVETKvBMAxPDpLAr9Y8DrB9dSBEUWW5DxVsDPhwjUbht1zdoJz-ltRVsBvIBkEB5ksIyj0WmEONuERDsNuwXMcE-5dD3IGD_B3iuUCBPAy2zAlW5DpIDyPLFDLoca7qDIeWZsTethRufmBpQ50Kaw2nc6UcngQVS7dn0bR18TvsAXxEBHJWAFZ-_vsdu3ItYxsjiuEjKtddLgFGfAWb9dm7S1yfxjdAlL2teoz-mi0)
+![2P-Kt project map](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/project-map.png)
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
 other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
