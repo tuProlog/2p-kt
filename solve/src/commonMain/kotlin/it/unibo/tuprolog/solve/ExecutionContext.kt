@@ -96,8 +96,14 @@ interface ExecutionContext : ExecutionContextAware {
                 is SideEffect.UpdateLibrary -> {
                     libraries = libraries.update(sideEffect.aliasedLibrary)
                 }
-                is SideEffect.UnloadLibrary -> {
-                    libraries -= sideEffect.alias
+                is SideEffect.UnloadLibraries -> {
+                    libraries -= sideEffect.aliases
+                }
+                is SideEffect.AddLibraries -> {
+                    libraries += sideEffect.libraries
+                }
+                is SideEffect.ResetLibraries -> {
+                    libraries = sideEffect.libraries
                 }
                 is SideEffect.SetOperators -> {
                     operators += sideEffect.operatorSet

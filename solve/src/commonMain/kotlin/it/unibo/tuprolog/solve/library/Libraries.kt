@@ -78,6 +78,15 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         return Libraries(libraries.asSequence().filter { it.alias != alias })
     }
 
+    operator fun minus(aliases: Iterable<String>): Libraries {
+        val toBeRemoved = aliases.map {
+            if (it in libraryAliases) {
+                noSuchALibraryError(it)
+            }
+            it
+        }.toSet()
+        return Libraries(libraries.asSequence().filterNot { it.alias in toBeRemoved })
+    }
 
     override fun update(library: AliasedLibrary): Libraries =
         libraryAliases.find { library.alias in libraryAliases }

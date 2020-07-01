@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.theory.Theory
 
@@ -123,7 +124,11 @@ sealed class SideEffect {
         }
     }
 
-    data class UnloadLibrary(val alias: String) : SideEffect()
+    data class UnloadLibraries(val aliases: List<String>) : SideEffect() {
+        constructor(aliases: Iterable<String>) : this(aliases.toList())
+        constructor(aliases: Sequence<String>) : this(aliases.toList())
+        constructor(vararg aliases: String) : this(listOf(*aliases))
+    }
 
     data class UpdateLibrary(val alias: String, val library: Library) : SideEffect() {
         init {
@@ -139,6 +144,18 @@ sealed class SideEffect {
                 Library.of(library, alias)
             }
         }
+    }
+
+    data class AddLibraries(val libraries: Libraries) : SideEffect() {
+        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries(libraries))
+        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries(libraries))
+        constructor(vararg libraries: AliasedLibrary) : this(Libraries(*libraries))
+    }
+
+    data class ResetLibraries(val libraries: Libraries) : SideEffect() {
+        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries(libraries))
+        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries(libraries))
+        constructor(vararg libraries: AliasedLibrary) : this(Libraries(*libraries))
     }
 
     data class SetOperators(val operators: Iterable<Operator>) : SideEffect() {

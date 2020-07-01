@@ -53,16 +53,17 @@ internal object SolveUtils {
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
     }
+    internal val someSideEffects = listOf<SideEffect>(SideEffect.ResetDynamicKb())
 
     /** The success response to default values request */
     internal val defaultRequestSuccessResponse by lazy {
         Solve.Response(
             Solution.Yes(aSignature, anArgumentList, solutionSubstitution),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 
@@ -70,11 +71,11 @@ internal object SolveUtils {
     internal val defaultRequestFailedResponse by lazy {
         Solve.Response(
             Solution.No(aSignature, anArgumentList),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 
@@ -82,11 +83,11 @@ internal object SolveUtils {
     internal val defaultRequestHaltedResponse by lazy {
         Solve.Response(
             Solution.Halt(aSignature, anArgumentList, solutionException),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 

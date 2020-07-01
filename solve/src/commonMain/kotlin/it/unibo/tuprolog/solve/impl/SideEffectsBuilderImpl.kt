@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.SideEffectsBuilder
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 
 internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>) : SideEffectsBuilder {
@@ -127,10 +128,6 @@ internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList
         return adding { super.loadLibrary(aliasedLibrary) }
     }
 
-    override fun unloadLibrary(alias: String): SideEffect.UnloadLibrary {
-        return adding { super.unloadLibrary(alias) }
-    }
-
     override fun updateLibrary(alias: String, library: Library): SideEffect.UpdateLibrary {
         return adding { super.updateLibrary(alias, library) }
     }
@@ -233,5 +230,49 @@ internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList
 
     override fun closeOutputChannels(vararg names: String): SideEffect.CloseOutputChannels {
         return adding { super.closeOutputChannels(*names) }
+    }
+
+    override fun unloadLibraries(aliases: Iterable<String>): SideEffect.UnloadLibraries {
+        return adding { super.unloadLibraries(aliases) }
+    }
+
+    override fun unloadLibraries(aliases: Sequence<String>): SideEffect.UnloadLibraries {
+        return adding { super.unloadLibraries(aliases) }
+    }
+
+    override fun unloadLibraries(vararg aliases: String): SideEffect.UnloadLibraries {
+        return adding { super.unloadLibraries(*aliases) }
+    }
+
+    override fun resetLibraries(libraries: Libraries): SideEffect.ResetLibraries {
+        return adding { super.resetLibraries(libraries) }
+    }
+
+    override fun resetLibraries(libraries: Iterable<AliasedLibrary>): SideEffect.ResetLibraries {
+        return adding { super.resetLibraries(libraries) }
+    }
+
+    override fun resetLibraries(libraries: Sequence<AliasedLibrary>): SideEffect.ResetLibraries {
+        return adding { super.resetLibraries(libraries) }
+    }
+
+    override fun resetLibraries(vararg libraries: AliasedLibrary): SideEffect.ResetLibraries {
+        return adding { super.resetLibraries(*libraries) }
+    }
+
+    override fun addLibraries(libraries: Libraries): SideEffect.AddLibraries {
+        return adding { super.addLibraries(libraries) }
+    }
+
+    override fun addLibraries(libraries: Iterable<AliasedLibrary>): SideEffect.AddLibraries {
+        return adding { super.addLibraries(libraries) }
+    }
+
+    override fun addLibraries(libraries: Sequence<AliasedLibrary>): SideEffect.AddLibraries {
+        return adding { super.addLibraries(libraries) }
+    }
+
+    override fun addLibraries(vararg libraries: AliasedLibrary): SideEffect.AddLibraries {
+        return adding { super.addLibraries(*libraries) }
     }
 }

@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 
 interface SideEffectFactory {
@@ -98,14 +99,44 @@ interface SideEffectFactory {
     fun loadLibrary(aliasedLibrary: AliasedLibrary) =
         SideEffect.LoadLibrary(aliasedLibrary.alias, aliasedLibrary)
 
-    fun unloadLibrary(alias: String) =
-        SideEffect.UnloadLibrary(alias)
+    fun unloadLibraries(aliases: Iterable<String>) =
+        SideEffect.UnloadLibraries(aliases)
+
+    fun unloadLibraries(aliases: Sequence<String>) =
+        SideEffect.UnloadLibraries(aliases)
+
+    fun unloadLibraries(vararg aliases: String) =
+        SideEffect.UnloadLibraries(*aliases)
 
     fun updateLibrary(alias: String, library: Library) =
         SideEffect.UpdateLibrary(alias, library)
 
     fun updateLibrary(aliasedLibrary: AliasedLibrary) =
         SideEffect.UpdateLibrary(aliasedLibrary.alias, aliasedLibrary)
+
+    fun resetLibraries(libraries: Libraries) =
+        SideEffect.ResetLibraries(libraries)
+
+    fun resetLibraries(libraries: Iterable<AliasedLibrary>) =
+        SideEffect.ResetLibraries(libraries)
+
+    fun resetLibraries(libraries: Sequence<AliasedLibrary>) =
+        SideEffect.ResetLibraries(libraries)
+
+    fun resetLibraries(vararg libraries: AliasedLibrary) =
+        SideEffect.ResetLibraries(*libraries)
+
+    fun addLibraries(libraries: Libraries) =
+        SideEffect.AddLibraries(libraries)
+
+    fun addLibraries(libraries: Iterable<AliasedLibrary>) =
+        SideEffect.AddLibraries(libraries)
+
+    fun addLibraries(libraries: Sequence<AliasedLibrary>) =
+        SideEffect.AddLibraries(libraries)
+
+    fun addLibraries(vararg libraries: AliasedLibrary) =
+        SideEffect.AddLibraries(*libraries)
 
     fun setOperators(operators: Iterable<Operator>) =
         SideEffect.SetOperators(operators)
