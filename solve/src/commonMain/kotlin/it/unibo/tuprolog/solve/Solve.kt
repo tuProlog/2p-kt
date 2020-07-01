@@ -61,7 +61,11 @@ sealed class Solve {
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
-        ) = Response(solution, sideEffectManager, *sideEffects)
+        ) =  when(solution) {
+            is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, *sideEffects)
+            is Solution.No -> replyFail(sideEffectManager, *sideEffects)
+            is Solution.Halt -> replyException(solution.exception, sideEffectManager, *sideEffects)
+        }
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
         @JsName("replyWithCondition")
