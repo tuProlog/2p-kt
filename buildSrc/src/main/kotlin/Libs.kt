@@ -8,6 +8,20 @@ import kotlin.String
  */
 object Libs {
     /**
+     * https://github.com/FasterXML/jackson-dataformat-xml
+     */
+    const val jackson_dataformat_xml: String =
+            "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:" +
+            Versions.com_fasterxml_jackson_dataformat
+
+    /**
+     * https://github.com/FasterXML/jackson-dataformats-text
+     */
+    const val jackson_dataformat_yaml: String =
+            "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:" +
+            Versions.com_fasterxml_jackson_dataformat
+
+    /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
     const val orchiddocs: String = "io.github.javaeden.orchid:OrchidDocs:" +
@@ -123,10 +137,23 @@ object Libs {
             Versions.com_jfrog_bintray_gradle_plugin
 
     /**
-     * 2.7.1
+     * https://github.com/FasterXML/jackson-modules-java8
+     */
+    const val jackson_datatype_jsr310: String =
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:" +
+            Versions.jackson_datatype_jsr310
+
+    /**
+     * 2.8.0
      */
     const val clikt_multiplatform: String = "com.github.ajalt:clikt-multiplatform:" +
             Versions.clikt_multiplatform
+
+    /**
+     * https://github.com/FasterXML/jackson-core
+     */
+    const val jackson_core: String = "com.fasterxml.jackson.core:jackson-core:" +
+            Versions.jackson_core
 
     /**
      * http://plantuml.sourceforge.net

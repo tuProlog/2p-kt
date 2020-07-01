@@ -6,7 +6,7 @@ variables:
   BEFORE_TASK: ""
   AFTER_TASK: ""
   GCMD: "gradle"
-  BUILD_TASK: "assemble"
+  BUILD_TASK: "clean assemble"
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
