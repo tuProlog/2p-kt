@@ -30,6 +30,19 @@ internal data class StreamsExecutionContext(
     val sideEffectManager: SideEffectManagerImpl = SideEffectManagerImpl()
 ) : ExecutionContext {
 
+    constructor(context: ExecutionContext, newCurrentSubstitution: Substitution.Unifier) : this( // to be tested
+        context.libraries,
+        context.flags,
+        context.staticKb,
+        context.dynamicKb,
+        context.operators,
+        context.inputChannels,
+        context.outputChannels,
+        newCurrentSubstitution,
+        (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
+        (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
+    )
+
     override val procedure: Struct?
         get() = sideEffectManager.logicalParentRequests.map { it.query }.firstOrNull()
 

@@ -92,8 +92,8 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
     with(otherResponse) {
         replyWith(
-            solution, libraries, flags, staticKb, dynamicKb,
+            solution,
             sideEffectManager ?: this@replyWith.context.getSideEffectManager(),
-            operators
+            *sideEffects.toTypedArray()
         )
     }
