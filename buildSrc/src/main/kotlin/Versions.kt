@@ -12,7 +12,9 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val io_github_javaeden_orchid: String = "0.21.0"
+    const val com_fasterxml_jackson_dataformat: String = "2.11.1"
+
+    const val io_github_javaeden_orchid: String = "0.21.1"
 
     const val org_jetbrains_kotlin: String = "1.3.72"
 
@@ -24,17 +26,21 @@ object Versions {
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.72"
 
-    const val com_github_johnrengelman_shadow_gradle_plugin: String = "5.2.0"
+    const val com_github_johnrengelman_shadow_gradle_plugin: String = "6.0.0"
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
-    const val com_eden_orchidplugin_gradle_plugin: String = "0.20.0" // available: "0.21.0"
+    const val com_eden_orchidplugin_gradle_plugin: String = "0.21.1"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
+    const val jackson_datatype_jsr310: String = "2.11.1"
+
     const val clikt_multiplatform: String = "2.7.1"
+
+    const val jackson_core: String = "2.11.1"
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 

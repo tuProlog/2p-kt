@@ -40,6 +40,12 @@ interface Scope {
     @JsName("structOfSequence")
     fun structOf(functor: String, args: Sequence<Term>): Struct
 
+    @JsName("structOfIterable")
+    fun structOf(functor: String, args: Iterable<Term>): Struct
+
+    @JsName("structOfList")
+    fun structOf(functor: String, args: List<Term>): Struct
+
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple
 

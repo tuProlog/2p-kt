@@ -47,7 +47,7 @@ internal class RealImplTest {
 
     @Test
     fun correctToString() {
-        val expectedToString = RealUtils.bigDecimals.map { it.toString() }
+        val expectedToString = RealUtils.bigDecimals.map { Real.toStringEnsuringDecimal(it) }
 
         onCorrespondingItems(expectedToString, realInstances.map { it.toString() }) { expectedString, realToString ->
             assertEquals(expectedString, realToString)
