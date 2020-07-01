@@ -937,7 +937,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             val query = "retract"("f"("X"))
 
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -1115,7 +1115,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             var query = "retractall"("f"("X"))
 
-            var solutions = solver.solve(query, mediumDuration).toList()
+            var solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(

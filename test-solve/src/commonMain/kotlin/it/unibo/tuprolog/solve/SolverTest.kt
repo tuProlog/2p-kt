@@ -45,7 +45,7 @@ interface SolverTest {
 
     /** A long test max duration */
     val longDuration: TimeDuration
-        get() = 2 * mediumDuration
+        get() = 4 * mediumDuration
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi()
