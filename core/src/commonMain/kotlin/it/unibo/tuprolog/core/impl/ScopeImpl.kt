@@ -91,6 +91,12 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun structOf(functor: String, args: Sequence<Term>): Struct =
         Struct.of(functor, args)
 
+    override fun structOf(functor: String, args: Iterable<Term>): Struct =
+        Struct.of(functor, args)
+
+    override fun structOf(functor: String, args: List<Term>): Struct =
+        Struct.of(functor, args)
+
     override fun factOf(head: Struct): Fact =
         Fact.of(head)
 

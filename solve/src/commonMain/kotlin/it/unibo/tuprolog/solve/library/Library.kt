@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /** Represents a Prolog library */
 interface Library {
@@ -54,7 +55,9 @@ interface Library {
     companion object {
 
         /** Creates an instance of [Library] with given parameters */
-        fun of(
+        @JvmStatic
+        @JsName("unaliased")
+        fun unaliased(
             operatorSet: OperatorSet = OperatorSet(),
             theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
@@ -62,7 +65,9 @@ interface Library {
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [AliasedLibrary] with given parameters */
-        fun of(
+        @JvmStatic
+        @JsName("aliased")
+        fun aliased(
             operatorSet: OperatorSet = OperatorSet(),
             theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
@@ -71,6 +76,8 @@ interface Library {
         ): AliasedLibrary = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
         /** Creates an instance of [AliasedLibrary] starting from [Library] and an alias */
+        @JvmStatic
+        @JsName("of")
         fun of(library: Library, alias: String): AliasedLibrary =
             LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }

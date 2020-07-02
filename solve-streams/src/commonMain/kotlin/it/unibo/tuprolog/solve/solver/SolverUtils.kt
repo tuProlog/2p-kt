@@ -9,9 +9,9 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.jvm.JvmName
 
 /** Check whether the receiver term is a well-formed predication */
@@ -92,8 +92,8 @@ internal fun Solve.Request<StreamsExecutionContext>.newSolveRequest(
 fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): Solve.Response =
     with(otherResponse) {
         replyWith(
-            solution, libraries, flags, staticKb, dynamicKb,
+            solution,
             sideEffectManager ?: this@replyWith.context.getSideEffectManager(),
-            operators
+            *sideEffects.toTypedArray()
         )
     }

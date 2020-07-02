@@ -37,6 +37,30 @@ internal object UnificatorUtils {
     private val failedResultsTriple: Triple<Substitution, Boolean, Term?> =
         Triple(Substitution.failed(), false, null)
 
+    internal val memberClause = Scope.empty {
+        factOf(structOf("member", varOf("H"), consOf(varOf("H"), varOf("T"))))
+    }
+
+    private fun member(first: Term, second: Term): kotlin.collections.List<Rule> =
+        listOf(
+            Fact.of(Struct.of("member", first, second)),
+            Rule.of(Struct.of("member", first, second), Var.of("B"))
+        )
+
+    internal val positiveMemberPatterns =
+        member(Atom.of("a"), List.of(Atom.of("a"))) +
+                member(
+                    List.of(Struct.of("a", Var.of("X"))),
+                    List.of(List.of(Struct.of("a", Integer.of(1))))
+                )
+
+    internal val negativeMemberPatterns =
+        member(Atom.of("a"), List.of(Atom.of("b"))) +
+                member(
+                    List.of(Struct.of("a", Var.of("X"))),
+                    List.of(List.of(Struct.of("b", Integer.of(1))))
+                )
+
     /** Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)` */
     internal val successfulUnifications by lazy {
         mapOf(

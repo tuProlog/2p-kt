@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoal
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateGoalEvaluation

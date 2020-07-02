@@ -12,7 +12,14 @@ internal class IndexedClauseIndexingTest {
     )
 
     @BeforeTest
-    fun init() {}
+    fun init() {
+
+    }
+
+    @Test
+    fun testCornerCaseInClauseRetrieval() {
+        prototype.testCornerCaseInClauseRetrieval()
+    }
 
     @Test
     fun correctIndexingOverDedicatedTheoryForF1Family() {

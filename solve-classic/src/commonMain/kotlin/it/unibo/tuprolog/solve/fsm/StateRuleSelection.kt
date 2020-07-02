@@ -106,17 +106,23 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
 
                 when {
                     currentGoal is Truth -> {
-                        if (currentGoal.isTrue) ignoreState else failureState
+                        if (currentGoal.isTrue) {
+                            ignoreState
+                        } else {
+                            failureState
+                        }
                     }
 
                     currentGoal.isCut() -> {
                         val cutLimit = computeCutLimit(currentGoal is MagicCut)
 
-                        ignoreState.copy(
-                            context = ignoreState.context.copy(
-                                choicePoints = ignoreState.context.choicePoints.performCut(cutLimit)
+                        ignoreState.let {
+                            it.copy(
+                                context = it.context.copy(
+                                    choicePoints = it.context.choicePoints.performCut(cutLimit)
+                                )
                             )
-                        )
+                        }
                     }
 
                     ruleSources.any { currentGoal in it } -> {

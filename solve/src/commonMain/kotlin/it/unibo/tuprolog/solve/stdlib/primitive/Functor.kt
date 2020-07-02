@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
@@ -30,7 +30,10 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                                 Substitution.failed()
                         }
                         is Var -> {
-                            Substitution.of(third to Integer.of(first.arity))
+                            if (first.functor == second.value)
+                                Substitution.of(third to Integer.of(first.arity))
+                            else
+                                Substitution.failed()
                         }
                         else -> {
                             // TODO expected here should be INTEGER | VARIABLE
@@ -41,7 +44,10 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                 is Var -> {
                     when (third) {
                         is Numeric -> {
-                            Substitution.of(second to Atom.of(first.functor))
+                            if (first.arity == third.intValue.toInt())
+                                Substitution.of(second to Atom.of(first.functor))
+                            else
+                                Substitution.failed()
                         }
                         is Var -> {
                             Substitution.of(

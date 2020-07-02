@@ -37,6 +37,9 @@ interface Prolog : Scope {
     @JsName("anyEqualsTo")
     infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
 
+    @JsName("anyUniv")
+    infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
+
     @JsName("anyGreaterThan")
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
 

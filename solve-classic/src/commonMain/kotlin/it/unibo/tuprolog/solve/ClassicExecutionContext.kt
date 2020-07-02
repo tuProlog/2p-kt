@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList
@@ -90,6 +91,38 @@ data class ClassicExecutionContext(
         stdErr
     )
 
+    override fun update(
+        libraries: Libraries,
+        flags: PrologFlags,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        operators: OperatorSet,
+        inputChannels: PrologInputChannels<*>,
+        outputChannels: PrologOutputChannels<*>
+    ): ClassicExecutionContext {
+        return copy(
+            libraries = libraries,
+            flags = flags,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
+        )
+    }
+
+    override fun apply(sideEffect: SideEffect): ClassicExecutionContext {
+        return super.apply(sideEffect) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
+    }
+
     override fun toString(): String {
         return "ClassicExecutionContext(" +
                 "query=$query, " +
@@ -99,7 +132,7 @@ data class ClassicExecutionContext(
                 "rules=$rules, " +
                 "primitives=$primitives, " +
                 "startTime=$startTime, " +
-                "operators=${operators.joinToString(",", "{", "}") { "${it.functor}:${it.specifier}" }}, " +
+                "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
                 "inputChannels=${inputChannels.keys}, " +
                 "outputChannels=${outputChannels.keys}, " +
                 "maxDuration=$maxDuration, " +

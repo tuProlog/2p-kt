@@ -44,6 +44,11 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     )
 
     @Test
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prototype.testSideEffectsPersistentAfterBacktracking1()
+    }
+
+    @Test
     override fun testFindAll() {
         prototype.testFindAll()
     }
@@ -292,5 +297,25 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     @Test
     override fun testNatural() {
         prototype.testNatural()
+    }
+
+    @Test
+    override fun testFunctor() {
+        prototype.testFunctor()
+    }
+
+    @Test
+    override fun testUniv() {
+        prototype.testUniv()
+    }
+
+    @Test
+    override fun testRetractAll() {
+        prototype.testRetractAll()
+    }
+
+    @Test
+    override fun testAppend() {
+        prototype.testAppend()
     }
 }

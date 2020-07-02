@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExamp
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheory

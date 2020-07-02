@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.collections.prototypes
 
-import it.unibo.tuprolog.collections.ClauseMultiSet
+import it.unibo.tuprolog.collections.*
 import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils
@@ -29,6 +29,17 @@ internal class PrototypeClauseMultiSetTestImpl (
         )
 
     private val emptyCollection = emptyGenerator()
+
+    override fun getClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+        return (collection as ClauseMultiSet).get(query)
+    }
+
+    override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
+        return when(val res = (collection as ClauseMultiSet).retrieve(query)) {
+            is RetrieveResult.Success -> res.clauses.asSequence()
+            else -> emptySequence()
+        }
+    }
 
     override fun countingOnPresentClauseAnswerTheRightNumber() {
         val count = collectionGenerator(clauses).count(presentClause)

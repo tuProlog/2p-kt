@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
@@ -19,7 +19,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
     private fun univ(first: Term, second: it.unibo.tuprolog.core.List): Substitution {
         val list = second.toList()
         return if (list.isNotEmpty() && list[0] is Atom) {
-            first mguWith Struct.of(list[0].castTo<Atom>().value, list.subList(1, list.lastIndex))
+            first mguWith Struct.of(list[0].castTo<Atom>().value, list.drop(1))
         } else {
             Substitution.failed()
         }

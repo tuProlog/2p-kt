@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.CustomTheories.ifThenElse1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThenElse2ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory1
 import it.unibo.tuprolog.solve.CustomTheories.ifThenTheory2
+import it.unibo.tuprolog.solve.CustomTheories.memberGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.callStandardExampleTheoryGoalsToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExample
@@ -42,20 +43,15 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalT
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.stdlib.rule.Arrow
-import it.unibo.tuprolog.solve.stdlib.rule.Member
-import it.unibo.tuprolog.solve.stdlib.rule.Not
-import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
-import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Test
+import it.unibo.tuprolog.solve.stdlib.rule.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -80,6 +76,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(Member.SIGNATURE)
                 assertHasPredicateInAPI(Not)
                 assertHasPredicateInAPI(Semicolon.SIGNATURE)
+                assertHasPredicateInAPI(Append.SIGNATURE)
                 assertHasPredicateInAPI(ArithmeticEqual)
                 assertHasPredicateInAPI(ArithmeticGreaterThan)
                 assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
@@ -95,6 +92,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(Compound)
                 assertHasPredicateInAPI(EnsureExecutable)
                 assertHasPredicateInAPI(FloatPrimitive)
+                assertHasPredicateInAPI(Functor)
                 assertHasPredicateInAPI(Ground)
                 assertHasPredicateInAPI(Halt)
                 assertHasPredicateInAPI(Integer)
@@ -105,10 +103,16 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(NotUnifiableWith)
                 assertHasPredicateInAPI(Number)
                 assertHasPredicateInAPI(Retract)
+                assertHasPredicateInAPI(RetractAll)
                 assertHasPredicateInAPI(Sleep)
+                assertHasPredicateInAPI(TermGreaterThan)
+                assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)
+                assertHasPredicateInAPI(TermLowerThan)
+                assertHasPredicateInAPI(TermLowerThanOrEqualTo)
                 assertHasPredicateInAPI(TermNotIdentical)
                 assertHasPredicateInAPI(UnifiesWith)
+                assertHasPredicateInAPI(Univ)
                 assertHasPredicateInAPI(Var)
                 assertHasPredicateInAPI(Write)
             }
@@ -125,7 +129,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                     assert("f"(3)) and
                     "f"("X")
 
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
             val ints = if (inverse) (3 downTo 1) else (1..3)
 
             assertSolutionEquals(
@@ -172,7 +176,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                     "write"("f"("x")) and
                     "nl"
 
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -208,7 +212,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             val query = "write"("b") and "write"("c") and "write"("d") and "nl"
 
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -235,7 +239,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             )
 
             var query = "findall"("N", "a"("N"), "L")
-            var solutions = solver.solve(query, maxDuration).toList()
+            var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes("L" to listOf(1, 2, 3))),
@@ -243,7 +247,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             )
 
             query = "findall"(`_`, false, "L")
-            solutions = solver.solve(query, maxDuration).toList()
+            solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes("L" to emptyList())),
@@ -251,7 +255,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             )
 
             query = "findall"(`_`, "G", `_`)
-            solutions = solver.solve(query, maxDuration).toList()
+            solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -268,12 +272,48 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                dynamicKb = theoryOf(
+                    fact { "f"(1) },
+                    fact { "f"(2) },
+                    fact { "f"(3) }
+                ),
+                staticKb = theoryOf(
+                    clause { "getf"("F") `if` "findall"("X", "f"("X"), "F") },
+                    clause { "getg"("G") `if` "findall"("X", "g"("X"), "G") },
+                    clause {
+                        "ftog"("F", "G") `if` (
+                                "retract"("f"("X")) and
+                                        "assert"("g"("X")) and
+                                        "getf"("F") and
+                                        "getg"("G")
+                                )
+                    }
+                )
+            )
+
+            val query = "ftog"("X", "Y")
+            val solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes("X" to listOf(2, 3), "Y" to listOf(1)),
+                    query.yes("X" to listOf(3), "Y" to listOf(1, 2)),
+                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3))
+                ),
+                solutions
+            )
+        }
+    }
+
     /** Test `true` goal */
     override fun testTrue() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = truthOf(true)
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -331,7 +371,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThen1ToSolution,
-            maxDuration = maxDuration
+            maxDuration = mediumDuration
         )
     }
 
@@ -340,7 +380,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThenElse1ToSolution,
-            maxDuration = maxDuration
+            maxDuration = mediumDuration
         )
     }
 
@@ -349,7 +389,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThenElse2ToSolution,
-            maxDuration = maxDuration
+            maxDuration = mediumDuration
         )
     }
 
@@ -358,7 +398,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThen2ToSolution,
-            maxDuration = maxDuration
+            maxDuration = mediumDuration
         )
     }
 
@@ -367,7 +407,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactTheory),
             simpleFactTheoryNotableGoalToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -377,7 +417,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutTheory),
             simpleCutTheoryNotableGoalToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -386,7 +426,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionTheory),
             simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -395,7 +435,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingTheory),
             cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -413,7 +453,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleTheory),
             prologStandardExampleTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -422,7 +462,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -431,7 +471,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListTheory),
             customReverseListTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -440,7 +480,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleTheory),
             conjunctionStandardExampleTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -472,7 +512,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    maxDuration
+                    mediumDuration
                 )
             }
         }
@@ -483,13 +523,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleTheory),
             callStandardExampleTheoryGoalsToSolution,
-            maxDuration
+            mediumDuration
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -504,7 +544,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    maxDuration
+                    mediumDuration
                 )
             }
         }
@@ -515,13 +555,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowTheoryExample),
             catchAndThrowTheoryExampleNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -555,7 +595,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    maxDuration
+                    mediumDuration
                 )
             }
         }
@@ -566,7 +606,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -575,7 +615,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleTheory),
             notStandardExampleTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -617,7 +657,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    maxDuration
+                    mediumDuration
                 )
             }
         }
@@ -628,7 +668,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleTheory),
             ifThenStandardExampleTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -637,7 +677,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -646,7 +686,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorTheory),
             customRangeListGeneratorTheoryNotableGoalToSolution,
-            maxDuration
+            mediumDuration
         )
     }
 
@@ -655,7 +695,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atomOf("a")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -678,7 +718,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -700,7 +740,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes("N" to 3), yes("N" to 2)) },
@@ -721,7 +761,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -743,7 +783,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -763,7 +803,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = atomOf("a")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -785,7 +825,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = atomOf("a")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -805,7 +845,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
@@ -825,7 +865,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = atomOf("a")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes(), yes()) },
@@ -844,7 +884,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
             val query = "a"("N")
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 with(query) { ktListOf(yes("N" to 1), yes("N" to 2)) },
@@ -855,26 +895,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         }
     }
 
-    private fun <T> ktListConcat(l1: List<T>, l2: List<T>): List<T> = l1 + l2
-
     override fun testMember() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val constants = ktListOf("a", "b", "c")
-            val goal = "member"("X", constants.toTerm())
-
-            val solutions = solver.solve(goal, maxDuration).toList()
-
-            assertSolutionEquals(
-                ktListConcat(
-                    constants.map { goal.yes("X" to it) },
-                    ktListOf(goal.no())
-                ),
-                solutions
-            )
-
-            assertEquals(constants.size + 1, solutions.size)
+            assertSolverSolutionsCorrect(solver, memberGoalToSolution, mediumDuration)
         }
     }
 
@@ -884,7 +909,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             val query = "assertz"("f"(2) impliedBy false) and "asserta"("f"(1) impliedBy true)
 
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -912,12 +937,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             val query = "retract"("f"("X"))
 
-            val solutions = solver.solve(query, maxDuration).toList()
+            val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
                     query.yes("X" to 1),
                     query.yes("X" to 2)
+
                 ),
                 solutions
             )
@@ -938,12 +964,228 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             val n = 100
 
-            val solutions = solver.solve(query, maxDuration).take(n).toList()
+            val solutions = solver.solve(query, mediumDuration).take(n).toList()
 
             assertSolutionEquals(
                 (0 until n).map { query.yes("X" to it) },
                 solutions
             )
+        }
+    }
+
+    override fun testFunctor() {
+
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "functor"("a"("b", "c"), "X", "Y")
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to "a", "Y" to 2)),
+                solutions
+            )
+
+            query = "functor"("a"("b", "c"), "a", "Y")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("Y" to 2)),
+                solutions
+            )
+
+            query = "functor"("a"("b", "c"), "X", 2)
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to "a")),
+                solutions
+            )
+
+            query = "functor"("X", "a", 2)
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to structOf("a", anonymous(), anonymous()))),
+                solutions
+            )
+
+            query = "functor"("X", "Y", 2)
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            1,
+                            varOf("Y")
+                        )
+                    )
+                ),
+                solutions
+            )
+
+            query = "functor"("X", "a", "2")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            TypeError.Expected.INTEGER,
+                            varOf("Y"),
+                            2
+                        )
+                    )
+                ),
+                solutions
+            )
+        }
+    }
+
+    override fun testUniv() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "a"("b", "c") univ "X"
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf("a", "b", "c"))),
+                solutions
+            )
+
+            query = "X" univ listOf("a", "b", "c")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to structOf("a", "b", "c"))),
+                solutions
+            )
+
+            query = "X" univ "Y"
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            0,
+                            varOf("X")
+                        )
+                    )
+                ),
+                solutions
+            )
+
+            query = "a"("b", "c") univ "a"
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("=..", 2),
+                            TypeError.Expected.LIST,
+                            atomOf("a"),
+                            1
+                        )
+                    )
+                ),
+                solutions
+            )
+        }
+    }
+
+    override fun testRetractAll() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                dynamicKb = theoryOf(
+                    factOf(structOf("f", numOf(1))),
+                    ruleOf(structOf("f", numOf(2)), atomOf("false"))
+                )
+            )
+
+            var query = "retractall"("f"("X"))
+
+            var solutions = solver.solve(query, longDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes()
+                ),
+                solutions
+            )
+
+            assertEquals(
+                ktListOf(),
+                solver.dynamicKb.toList()
+            )
+            assertEquals(0L, solver.dynamicKb.size)
+
+            query = "retractall"("f"("X"))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes()
+                ),
+                solutions
+            )
+        }
+    }
+
+    override fun testAppend() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            var query = "append"(listOf(1, 2, 3), listOf(4, 5, 6), "X")
+            var solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf(1, 2, 3, 4, 5, 6))),
+                solutions
+            )
+
+            query = "append"(listOf(1, 2, 3), "X", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.yes("X" to listOf(4, 5, 6))),
+                solutions
+            )
+
+            query = "append"("X", "X", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(query.no()),
+                solutions
+            )
+
+            query = "append"("X", "Y", listOf(1, 2, 3, 4, 5, 6))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3, 4, 5, 6)),
+                    query.yes("X" to listOf(1), "Y" to listOf(2, 3, 4, 5, 6)),
+                    query.yes("X" to listOf(1, 2), "Y" to listOf(3, 4, 5, 6)),
+                    query.yes("X" to listOf(1, 2, 3), "Y" to listOf(4, 5, 6)),
+                    query.yes("X" to listOf(1, 2, 3, 4), "Y" to listOf(5, 6)),
+                    query.yes("X" to listOf(1, 2, 3, 4, 5), "Y" to listOf(6)),
+                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList())
+                ),
+                solutions
+            )
+
         }
     }
 }

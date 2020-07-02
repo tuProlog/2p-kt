@@ -17,9 +17,6 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
 
     override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
 
-//    override val maxDuration: TimeDuration
-//        get() = mediumDuration
-
     override fun solverOf(
         libraries: Libraries,
         flags: PrologFlags,
@@ -68,6 +65,12 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prototype.testSideEffectsPersistentAfterBacktracking1()
+    }
+
+    @Test
     override fun testStandardOutput() {
         prototype.testStandardOutput()
     }
@@ -113,13 +116,11 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testTimeout3() {
         prototype.testTimeout3()
     }
 
     @Test
-    @Ignore
     override fun testTimeout4() {
         prototype.testTimeout4()
     }
@@ -297,5 +298,25 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     @Test
     override fun testNatural() {
         prototype.testNatural()
+    }
+
+    @Test
+    override fun testUniv() {
+        prototype.testUniv()
+    }
+
+    @Test
+    override fun testFunctor() {
+        prototype.testFunctor()
+    }
+
+    @Test
+    override fun testRetractAll() {
+        prototype.testRetractAll()
+    }
+
+    @Test
+    override fun testAppend() {
+        prototype.testAppend()
     }
 }

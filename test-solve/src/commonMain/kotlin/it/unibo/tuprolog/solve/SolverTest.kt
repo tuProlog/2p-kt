@@ -37,7 +37,7 @@ interface SolverTest {
 
     /** A short test max duration */
     val shortDuration: TimeDuration
-        get() = 500L
+        get() = 250L
 
     /** A medium test max duration */
     val mediumDuration: TimeDuration
@@ -45,10 +45,7 @@ interface SolverTest {
 
     /** A long test max duration */
     val longDuration: TimeDuration
-        get() = 2 * mediumDuration
-
-    val maxDuration: TimeDuration
-        get() = shortDuration
+        get() = 4 * mediumDuration
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi()
@@ -64,6 +61,8 @@ interface SolverTest {
     fun testStandardOutput()
 
     fun testFindAll()
+
+    fun testSideEffectsPersistentAfterBacktracking1()
 
     /** Test `true` goal */
     fun testTrue()
@@ -165,5 +164,9 @@ interface SolverTest {
     fun testAssertRules()
     fun testRetract()
     fun testNatural()
+    fun testFunctor()
+    fun testUniv()
+    fun testAppend()
+    fun testRetractAll()
 }
 

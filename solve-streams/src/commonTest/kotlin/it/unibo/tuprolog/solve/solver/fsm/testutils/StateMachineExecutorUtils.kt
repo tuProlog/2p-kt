@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.testutils
 
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
 import kotlin.reflect.KClass
