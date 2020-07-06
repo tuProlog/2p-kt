@@ -57,6 +57,86 @@ interface SolverFactory {
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): Solver
 
+    fun solverOf(
+        libraries: Libraries,
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = solverOf(
+        libraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverOf(
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = solverOf(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverOf(
+        staticKb: Theory
+    ) = solverOf(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        defaultStaticKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverOf(
+        libraries: Libraries,
+        staticKb: Theory
+    ) = solverOf(
+        libraries,
+        defaultFlags,
+        staticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverOf(
+        libraries: Libraries
+    ) = solverOf(
+        libraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverOf() = solverOf(
+        defaultLibraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
     @JsName("solverWithDefaultBuiltins")
     fun solverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
@@ -71,6 +151,72 @@ interface SolverFactory {
         otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
 
+    fun solverWithDefaultBuiltins(
+        otherLibraries: Libraries,
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = solverWithDefaultBuiltins(
+        otherLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverWithDefaultBuiltins(
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = solverWithDefaultBuiltins(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverWithDefaultBuiltins(
+        staticKb: Theory
+    ) = solverWithDefaultBuiltins(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverWithDefaultBuiltins(
+        otherLibraries: Libraries
+    ) = solverWithDefaultBuiltins(
+        otherLibraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun solverWithDefaultBuiltins() = solverWithDefaultBuiltins(
+        defaultLibraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
     @JsName("mutableSolverOf")
     fun mutableSolverOf(
         libraries: Libraries = defaultLibraries,
@@ -82,6 +228,86 @@ interface SolverFactory {
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): MutableSolver
+
+    fun mutableSolverOf(
+        libraries: Libraries,
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = mutableSolverOf(
+        libraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverOf(
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = mutableSolverOf(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverOf(
+        staticKb: Theory
+    ) = mutableSolverOf(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        defaultStaticKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverOf(
+        libraries: Libraries,
+        staticKb: Theory
+    ) = mutableSolverOf(
+        libraries,
+        defaultFlags,
+        staticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverOf(
+        libraries: Libraries
+    ) = mutableSolverOf(
+        libraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverOf() = mutableSolverOf(
+        defaultLibraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
 
     @JsName("mutableSolverWithDefaultBuiltins")
     fun mutableSolverWithDefaultBuiltins(
@@ -95,4 +321,71 @@ interface SolverFactory {
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): MutableSolver =
         mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+
+    fun mutableSolverWithDefaultBuiltins(
+        otherLibraries: Libraries,
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = mutableSolverWithDefaultBuiltins(
+        otherLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverWithDefaultBuiltins(
+        staticKb: Theory,
+        dynamicKb: Theory
+    ) = mutableSolverWithDefaultBuiltins(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        dynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverWithDefaultBuiltins(
+        staticKb: Theory
+    ) = mutableSolverWithDefaultBuiltins(
+        defaultLibraries,
+        defaultFlags,
+        staticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverWithDefaultBuiltins(
+        otherLibraries: Libraries
+    ) = mutableSolverWithDefaultBuiltins(
+        otherLibraries,
+        defaultFlags,
+        defaultStaticKb,
+        defaultDynamicKb,
+        defaultInputChannel,
+        defaultOutputChannel,
+        defaultErrorChannel,
+        defaultWarningsChannel
+    )
+
+    fun mutableSolverWithDefaultBuiltins() =
+        mutableSolverWithDefaultBuiltins(
+            defaultLibraries,
+            defaultFlags,
+            defaultStaticKb,
+            defaultDynamicKb,
+            defaultInputChannel,
+            defaultOutputChannel,
+            defaultErrorChannel,
+            defaultWarningsChannel
+        )
 }
