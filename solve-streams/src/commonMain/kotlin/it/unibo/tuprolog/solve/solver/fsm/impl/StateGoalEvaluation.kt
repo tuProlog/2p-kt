@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.StreamsSolver
@@ -48,7 +49,22 @@ internal class StateGoalEvaluation(
 
                 allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
 
-                yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
+                // if primitive response doesn't carry the whole context substitution, inject it
+                val completeSubstitution = when {
+                    it.solution.substitution.keys.intersect(context.substitution.keys).isEmpty() ->
+                        it.solution.substitution + context.substitution
+                    else ->
+                        it.solution.substitution
+                }
+
+                val enrichedResponse = it.copy(
+                    solution = (it.solution as? Solution.Yes)
+                        ?.copy(substitution = completeSubstitution as Substitution.Unifier)
+                        ?: it.solution,
+                    sideEffects = allSideEffectsSoFar
+                )
+
+                yield(ifTimeIsNotOver(stateEnd(enrichedResponse)))
 
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }
