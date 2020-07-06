@@ -52,9 +52,8 @@ internal class VarImplTest {
     }
 
     @Test
-    fun completeNamesContainsDifferentGeneratedNumbers() {
-        val toTestUniqueIdentifiers = mixedVarInstances.map { it.completeName.substringAfterLast("_") }
-        assertTrue { toTestUniqueIdentifiers.groupingBy { it }.eachCount().values.all { it == 1 } }
+    fun completeNamesContainsDifferentGeneratedNumbersIfSimpleNameIsTheSame() {
+        assertTrue { mixedVarInstances.groupingBy { it.name }.eachCount().values.all { it == 1 } }
     }
 
     @Test
