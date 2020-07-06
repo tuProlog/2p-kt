@@ -53,7 +53,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         accumulatedSideEffects: List<SideEffect>,
         previousResponseSideEffectManager: SideEffectManagerImpl?,
         previousGoalsHadAlternatives: Boolean
-    ): Boolean {
+    ): Pair<Boolean, List<SideEffect>> {
         val goal = goals.first().apply(accumulatedSubstitutions).prepareForExecutionAsGoal()
 
         val goalRequest = mainRequest.newSolveRequest(
@@ -64,40 +64,48 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         )
 
         var cutExecuted = false
+        var currentSideEffects = emptyList<SideEffect>()
         StreamsSolver.solveToFinalStates(goalRequest).forEachWithLookahead { goalFinalState, currentHasAlternatives ->
             val goalResponse = goalFinalState.solve
             if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
                 cutExecuted = true
 
-            val allSideEffectsSoFar = accumulatedSideEffects + goalResponse.sideEffects
+            currentSideEffects = currentSideEffects.addWithNoDuplicates(goalResponse.sideEffects)
 
             when {
                 goalResponse.sideEffectManager?.shouldExecuteThrowCut() == false &&
                         goalResponse.solution is Solution.Yes &&
-                        moreThanOne(goals.asSequence()) ->
-                    if (
-                        solveConjunctionGoals(
-                            mainRequest,
-                            goals.drop(1),
-                            goalFinalState.context,
-                            goalResponse.solution.substitution - mainRequest.context.substitution,
-                            allSideEffectsSoFar,
-                            goalResponse.sideEffectManager as? SideEffectManagerImpl,
-                            previousGoalsHadAlternatives || currentHasAlternatives
-                        )
-                    ) cutExecuted = true
+                        moreThanOne(goals.asSequence()) -> {
+
+                    val sideEffectPair = solveConjunctionGoals(
+                        mainRequest,
+                        goals.drop(1),
+                        goalFinalState.context.apply(currentSideEffects),
+                        goalResponse.solution.substitution - mainRequest.context.substitution,
+                        currentSideEffects,
+                        goalResponse.sideEffectManager as? SideEffectManagerImpl,
+                        previousGoalsHadAlternatives || currentHasAlternatives
+                    )
+
+                    if (sideEffectPair.first)
+                        cutExecuted = true
+
+                    currentSideEffects = sideEffectPair.second
+                }
                 else ->
                     // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
                     if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted)
                         yield(
                             mainRequest.replyWith(
-                                goalResponse.copy(sideEffects = allSideEffectsSoFar)
+                                goalResponse.copy(sideEffects = accumulatedSideEffects + currentSideEffects)
                             )
                         )
 
             }
-            if (cutExecuted || goalResponse.solution is Solution.Halt) return true // cut other alternatives of current and previous goals
+            if (cutExecuted || goalResponse.solution is Solution.Halt)
+            // cut other alternatives of current and previous goals
+                return Pair(true, accumulatedSideEffects + currentSideEffects)
         }
-        return cutExecuted
+        return Pair(cutExecuted, accumulatedSideEffects + currentSideEffects)
     }
 }

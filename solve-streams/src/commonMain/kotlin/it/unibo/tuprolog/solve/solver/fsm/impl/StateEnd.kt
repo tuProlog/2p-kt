@@ -31,7 +31,7 @@ internal sealed class StateEnd(
 
     override val context: ExecutionContext by lazy {
         StreamsExecutionContext(
-            sourceContext.apply(solve.sideEffects),
+            sourceContext,
             newCurrentSubstitution = solve.solution.substitution as? Substitution.Unifier ?: Substitution.empty()
         )
     }

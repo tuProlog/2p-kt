@@ -9,10 +9,12 @@ package it.unibo.tuprolog.solve.solver
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 import kotlin.jvm.JvmName
+import kotlin.collections.List as KtList
 
 /** Check whether the receiver term is a well-formed predication */
 fun Term.isWellFormed(): Boolean = accept(Clause.bodyWellFormedVisitor)
@@ -97,3 +99,13 @@ fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): So
             *sideEffects.toTypedArray()
         )
     }
+
+/** Utility function to add side effects without duplicating them */
+fun KtList<SideEffect>.addWithNoDuplicates(toAddSideEffects: KtList<SideEffect>): KtList<SideEffect> {
+    var duplicatedCount = 0
+    forEach { sideEffect ->
+        if (toAddSideEffects.find { toAddSideEffect -> sideEffect === toAddSideEffect } !== null)
+            duplicatedCount++
+    }
+    return this + toAddSideEffects.drop(duplicatedCount)
+}
