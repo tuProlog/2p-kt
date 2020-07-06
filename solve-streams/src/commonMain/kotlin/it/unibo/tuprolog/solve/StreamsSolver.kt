@@ -53,7 +53,7 @@ internal class StreamsSolver constructor(
                 executionMaxDuration = maxDuration
             )
         ).map {
-            executionContext = it.context
+            executionContext = it.context.apply(it.solve.sideEffects)
             it.solve.solution.cleanUp()
         }
     }

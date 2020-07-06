@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
+import it.unibo.tuprolog.solve.solver.addWithNoDuplicates
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.solver.newSolveRequest
@@ -45,7 +46,7 @@ internal class StateGoalEvaluation(
             var allSideEffectsSoFar = emptyList<SideEffect>()
             responses?.forEach {
 
-                allSideEffectsSoFar = allSideEffectsSoFar + it.sideEffects
+                allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
 
                 yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
 
