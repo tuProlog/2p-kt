@@ -100,7 +100,7 @@ ktSubprojects.forEachProject {
             val commonMain by getting {
                 dependencies {
                     api(kotlin("stdlib-common"))
-                    api(kotlin("reflect"))
+//                    api(kotlin("reflect"))
                 }
             }
             val commonTest by getting {
