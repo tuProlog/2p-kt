@@ -10,6 +10,8 @@ internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
     override val unfoldedSequence: Sequence<Term> = sequenceOf(this)
     override val unfoldedArray: Array<Term> = arrayOf(this)
 
+    override fun unfold(): Sequence<Term> = sequenceOf(this)
+
     override fun toString(): String = value
 
     override val last: Term

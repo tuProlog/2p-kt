@@ -8,9 +8,12 @@ internal class TupleImpl(override val left: Term, override val right: Term) :
     CollectionImpl(Tuple.FUNCTOR, arrayOf(left, right)), Tuple {
 
     override val unfoldedSequence: Sequence<Term>
-        get() = TupleIterator(this).asSequence()
+        get() = Iterable { TupleIterator(this) }.asSequence()
 
     override val size: Int get() = unfoldedList.size
+
+    override fun unfold(): Sequence<Term> =
+        Iterable { TupleUnfolder(this) }.asSequence()
 
     override val functor: String = Tuple.FUNCTOR
 

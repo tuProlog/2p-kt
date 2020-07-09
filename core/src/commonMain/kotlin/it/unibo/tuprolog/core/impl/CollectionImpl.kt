@@ -2,6 +2,8 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.itemWiseHashCode
 
@@ -21,5 +23,9 @@ internal abstract class CollectionImpl(functor: String, args: Array<Term>) : Str
 
     override fun argsHashCode(): Int {
         return itemWiseHashCode(unfoldedSequence)
+    }
+
+    override val variables: Sequence<Var> by lazy {
+        unfoldedSequence.flatMap { it.variables }
     }
 }

@@ -9,7 +9,7 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
     CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
 
     override val unfoldedSequence: Sequence<Term>
-        get() = LogicListIterator.All(this).asSequence()
+        get() = Iterable { LogicListIterator.All(this) }.asSequence()
 
     override val functor: String = Cons.FUNCTOR
 
@@ -36,6 +36,9 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
     override val last: Term by lazy {
         unfoldedSequence.last()
     }
+
+    override fun unfold(): Sequence<Term> =
+        Iterable { ListUnfolder(this) }.asSequence()
 
     override fun toString(): String {
         val (ending, take) = if (isWellFormed) {

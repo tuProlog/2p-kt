@@ -22,7 +22,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     private fun occurrenceCheck(variable: Var, term: Term): Boolean =
         when (term) {
             is Var -> checkTermsEquality(variable, term)
-            is Struct -> term.args.any { occurrenceCheck(variable, it) }
+            is Struct -> term.variables.any { occurrenceCheck(variable, it) }
             else -> false
         }
 
