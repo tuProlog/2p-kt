@@ -11,14 +11,6 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
     override val unfoldedSequence: Sequence<Term>
         get() = LogicListIterator.All(this).asSequence()
 
-    override val unfoldedList: List<Term> by lazy {
-        dequeOf(unfoldedSequence)
-    }
-
-    override val unfoldedArray: Array<Term> by lazy {
-        unfoldedList.toTypedArray()
-    }
-
     override val functor: String = Cons.FUNCTOR
 
     override val args: Array<Term> get() = super<CollectionImpl>.args

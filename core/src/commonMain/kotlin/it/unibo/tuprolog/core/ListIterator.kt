@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
-abstract class ListIterator
-    private constructor(list: List) : Iterator<Term> {
+sealed class ListIterator(list: List) : Iterator<Term> {
 
     protected var current: Term? = list
 
