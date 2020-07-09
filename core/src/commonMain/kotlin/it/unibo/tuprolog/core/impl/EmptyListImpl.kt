@@ -11,4 +11,7 @@ internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
     override val unfoldedArray: Array<Term> = arrayOf(this)
 
     override fun toString(): String = value
+
+    override val last: Term
+        get() = this
 }

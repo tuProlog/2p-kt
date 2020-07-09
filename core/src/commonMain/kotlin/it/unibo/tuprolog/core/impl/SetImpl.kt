@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Set as LogicSet
 
 internal open class SetImpl(private val item: Term?) :
-    StructImpl(LogicSet.FUNCTOR, listOfNotNull(item).toTypedArray()), LogicSet {
+    CollectionImpl(LogicSet.FUNCTOR, listOfNotNull(item).toTypedArray()), LogicSet {
 
     override val functor: String = super<LogicSet>.functor
 

@@ -50,10 +50,15 @@ internal open class StructImpl(override val functor: String, override val args: 
         return true
     }
 
-    final override val hashCodeCache: Int by lazy {
+    override val hashCodeCache: Int by lazy {
         var result = functor.hashCode()
-        result = 31 * result + args.contentHashCode()
+        result = 31 * result + arity
+        result = 31 * result + argsHashCode()
         result
+    }
+
+    protected open fun argsHashCode(): Int {
+        return args.contentHashCode()
     }
 
     override fun toString(): String {

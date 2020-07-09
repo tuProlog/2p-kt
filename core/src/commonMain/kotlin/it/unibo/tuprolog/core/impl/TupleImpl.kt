@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 
 internal class TupleImpl(override val left: Term, override val right: Term) :
-    StructImpl(Tuple.FUNCTOR, arrayOf(left, right)), Tuple {
+    CollectionImpl(Tuple.FUNCTOR, arrayOf(left, right)), Tuple {
 
     override val unfoldedSequence: Sequence<Term> by lazy {
         sequenceOf(left) + if (right is Tuple) right.unfoldedSequence else sequenceOf(right)
@@ -22,7 +22,7 @@ internal class TupleImpl(override val left: Term, override val right: Term) :
 
     override val functor: String = Tuple.FUNCTOR
 
-    override val args: Array<Term> by lazy { super<StructImpl>.args }
+    override val args: Array<Term> get() = super<CollectionImpl>.args
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
 }
