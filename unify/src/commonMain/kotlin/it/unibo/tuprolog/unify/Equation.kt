@@ -104,10 +104,10 @@ sealed class Equation<out A : Term, out B : Term>(
             lhs: LogicList, rhs: LogicList,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> {
-            return lhs.unfold().zip(rhs.unfold()).map { (l, r) ->
+            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l is Cons && r is Cons -> of(l.head, r.head, equalityChecker)
-                    else -> of(l, r, equalityChecker)
+                    l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
+                    else -> allOf(l, r, equalityChecker)
                 }
             }
         }
@@ -116,10 +116,10 @@ sealed class Equation<out A : Term, out B : Term>(
             lhs: Tuple, rhs: Tuple,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> {
-            return lhs.unfold().zip(rhs.unfold()).map { (l, r) ->
+            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
-                    l is Tuple && r is Tuple -> of(l.left, r.left, equalityChecker)
-                    else -> of(l, r, equalityChecker)
+                    l is Tuple && r is Tuple -> sequenceOf(of(l.left, r.left, equalityChecker))
+                    else -> allOf(l, r, equalityChecker)
                 }
             }
         }
