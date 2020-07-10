@@ -935,7 +935,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
 
-            val query = "retract"("f"("X"))
+            val query = "retract"("f"("X")) // retract(f(X))
 
             val solutions = solver.solve(query, longDuration).toList()
 

@@ -1,5 +1,3 @@
-val mochaTimeout: String by project
-
 kotlin {
 
     sourceSets {
@@ -21,14 +19,6 @@ kotlin {
         }
 
         js {
-            nodejs {
-                testTask {
-                    useMocha {
-                        timeout = mochaTimeout
-                    }
-                }
-            }
-
             compilations["main"].defaultSourceSet {
                 dependencies {
 //                    api(project(":core"))

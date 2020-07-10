@@ -13,6 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import it.unibo.tuprolog.core.List.Companion as LogicList
 
 /**
  * Test class for [AbstractUnificator]
@@ -204,5 +205,28 @@ internal class AbstractUnificatorTest {
             UnificatorUtils.failSequenceOfUnification,
             myStrategyConstructor
         ) { context, t1, t2 -> myStrategyConstructor(context).unify(t1, t2) }
+    }
+
+    @Test
+    fun unificationWorksForBigLists() {
+        val n = 10_000
+        val ints = LogicList.of((0 .. n).map { Integer.of(it) })
+        val intsAndVars = LogicList.of((0 .. n).map { if (it % 100 == 0) Var.anonymous() else Integer.of(it) })
+        val atoms = LogicList.of((0 .. n).map { Atom.of("a$it") })
+        val atomsAndVars = LogicList.of((0 .. n).map { if (it % 100 == 0) Var.anonymous() else Atom.of("a$it") })
+
+        with(myStrategyConstructor(Substitution.empty())) {
+            assertFalse { match(ints, atoms, true) }
+            assertFalse { match(ints, atoms, false) }
+            assertTrue { match(ints, ints, true) }
+            assertTrue { match(ints, ints, false) }
+            assertTrue { match(atoms, atoms, true) }
+            assertTrue { match(atoms, atoms, false) }
+            assertTrue { match(ints, intsAndVars, true) }
+            assertTrue { match(ints, intsAndVars, false) }
+            assertTrue { match(atoms, atomsAndVars, true) }
+            assertTrue { match(atoms, atomsAndVars, false) }
+        }
+
     }
 }

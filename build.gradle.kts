@@ -56,6 +56,8 @@ val projectIssues: String by project
 val githubOwner: String by project
 val githubRepo: String by project
 
+val mochaTimeout: String by project
+
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
 val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
@@ -128,7 +130,13 @@ ktSubprojects.forEachProject {
             }
 
             js {
-                nodejs()
+                nodejs {
+                    testTask {
+                        useMocha {
+                            timeout = mochaTimeout
+                        }
+                    }
+                }
 //                browser()
                 tasks.withType<KotlinJsCompile> {
                     kotlinOptions {

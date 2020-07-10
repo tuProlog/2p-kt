@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 import it.unibo.tuprolog.core.List as LogicList
@@ -123,5 +124,18 @@ internal class ListTest {
         val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast().asSequence(), it.last()) }
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
+    }
+
+    @Test
+    fun bigListsDoNotProvokeStackOverflow() {
+        val nums = (0..100_000).toList()
+        val list = LogicList.of(nums.map { Integer.of(it) })
+
+        assertEquals(nums.joinToString(", ", "[", "]"), list.toString())
+
+        val otherList = list.freshCopy()
+
+        assertEquals(list.hashCode(), otherList.hashCode())
+        assertEquals(list, otherList)
     }
 }
