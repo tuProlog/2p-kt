@@ -1,6 +1,3 @@
-
-val mochaTimeout: String by project
-
 kotlin {
 
     sourceSets {
@@ -32,13 +29,6 @@ kotlin {
         }
 
         js {
-            nodejs {
-                testTask {
-                    useMocha {
-                        timeout = mochaTimeout
-                    }
-                }
-            }
 
             val main = compilations["main"]
             val test = compilations["test"]
