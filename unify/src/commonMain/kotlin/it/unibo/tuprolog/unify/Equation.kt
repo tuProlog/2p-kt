@@ -107,7 +107,9 @@ sealed class Equation<out A : Term, out B : Term>(
             return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
                 when {
                     l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
-                    else -> allOf(l, r, equalityChecker)
+                    l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
+                    else ->
+                        allOf(l, r, equalityChecker)
                 }
             }
         }
