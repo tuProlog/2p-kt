@@ -8,29 +8,25 @@ class TestPrologWithResolution {
     @Test
     fun testAbrahamFamilyTree() {
         prolog {
-            loadStaticKb(
-                theoryOf(
-                    rule {
-                        "ancestor"("X", "Y") `if` "parent"("X", "Y")
-                    },
-                    rule {
-                        "ancestor"("X", "Y") `if` (
+            loadDynamicClauses(
+                rule {
+                    "ancestor"("X", "Y") `if` "parent"("X", "Y")
+                },
+                rule {
+                    "ancestor"("X", "Y") `if` (
                             "parent"("X", "Z") and "ancestor"("Z", "Y")
-                        )
-                    },
-                    fact { "parent"("abraham", "isaac") },
-                    fact { "parent"("isaac", "jacob") },
-                    fact { "parent"("jacob", "joseph") }
-                )
+                            )
+                },
+                fact { "parent"("abraham", "isaac") },
+                fact { "parent"("isaac", "jacob") },
+                fact { "parent"("jacob", "joseph") }
             )
 
             val actual = mutableListOf<String>()
 
-            for (sol in solve("ancestor"("abraham", "X"))) {
-                if (sol is Solution.Yes) {
+            for (sol in solve("ancestor"("abraham", "X")))
+                if (sol is Solution.Yes)
                     actual.add(sol.substitution["X"].toString())
-                }
-            }
 
             assertEquals(
                 mutableListOf("isaac", "jacob", "joseph"),
