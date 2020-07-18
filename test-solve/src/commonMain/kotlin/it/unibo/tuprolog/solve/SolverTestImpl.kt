@@ -711,7 +711,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 staticKb = theory(
                     { "a"("X") impliedBy ("b"("X") and "c"("X")) },
                     { "b"(1) },
-                    { "b"(2) impliedBy `!` },
+                    { "b"(2) impliedBy "!" },
                     { "b"(3) },
                     { "c"(2) },
                     { "c"(3) }
@@ -733,7 +733,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
                     { "a"("X") impliedBy ("c"("X") and "b"("X")) },
-                    { "b"(2) impliedBy `!` },
+                    { "b"(2) impliedBy "!" },
                     { "b"(3) },
                     { "c"(3) },
                     { "c"(2) }
@@ -753,7 +753,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
-                    { "a"("X") impliedBy (("b"("X") and `!`) and "c"("X")) },
+                    { "a"("X") impliedBy (("b"("X") and "!") and "c"("X")) },
                     { "b"(2) },
                     { "b"(3) },
                     { "c"(2) },
@@ -775,7 +775,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = theory(
-                    { "a"("X") impliedBy ("b"("X") and (`!` and "c"("X"))) },
+                    { "a"("X") impliedBy ("b"("X") and ("!" and "c"("X"))) },
                     { "b"(2) },
                     { "b"(3) },
                     { "c"(2) },

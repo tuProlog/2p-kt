@@ -11,9 +11,6 @@ interface PrologStdLibScope : PrologAwareScope {
     val at_end_of_stream: Atom
         get() = atomOf("at_end_of_stream")
 
-    val `!`: Atom
-        get() = atomOf("!")
-
     val halt: Atom
         get() = atomOf("halt")
 
