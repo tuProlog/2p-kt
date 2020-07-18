@@ -3,18 +3,15 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.*
 import kotlin.js.JsName
 
-interface PrologScope : Scope {
-
-    @JsName("anyToTerm")
-    fun Any.toTerm(): Term
-
-    @JsName("structOfAny")
-    fun structOf(functor: String, vararg args: Any): Struct =
-        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+interface PrologScope : PrologStdLibScope {
 
     @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
         structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
+
+    @JsName("structOfAny")
+    fun structOf(functor: String, vararg args: Any): Struct =
+        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
     @JsName("anyPlus")
     operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
@@ -26,14 +23,14 @@ interface PrologScope : Scope {
     operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
 
     @JsName("anyDiv")
-    operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
+    operator fun Any.div(other: Any): Indicator = indicatorOf(this.toTerm(), other.toTerm())
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
     @JsName("anyEqualsTo")
     infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
 
-    @JsName("anyUniv")
-    infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
+    @JsName("anyNotEqualsTo")
+    infix fun Any.notEqualsTo(other: Any): Struct = structOf("\\=", this.toTerm(), other.toTerm())
 
     @JsName("anyGreaterThan")
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
@@ -121,6 +118,15 @@ interface PrologScope : Scope {
 
     @JsName("scope")
     fun <R> scope(function: PrologScope.() -> R): R = PrologScope.empty().function()
+
+    @JsName("list")
+    fun list(vararg items: Any, tail: Any? = null): List = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
+        if (tail != null) {
+            listFrom(it, last = tail.toTerm())
+        } else {
+            listOf(it)
+        }
+    }
 
     @JsName("rule")
     fun rule(function: PrologScope.() -> Any): Rule = PrologScope.empty().function().toTerm() as Rule
