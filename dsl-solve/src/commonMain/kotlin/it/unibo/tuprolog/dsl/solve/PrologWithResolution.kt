@@ -41,28 +41,28 @@ interface PrologWithResolution : PrologWithTheories, MutableSolver {
         warnings
     )
 
-    @JsName("staticKb")
+    @JsName("staticKbByArray")
     fun staticKb(vararg clauses: Clause) = loadStaticClauses(*clauses)
 
-    @JsName("staticKbIterable")
+    @JsName("staticKbByIterable")
     fun staticKb(clauses: Iterable<Clause>) = loadStaticClauses(clauses)
 
-    @JsName("staticKbSequence")
+    @JsName("staticKbBySequence")
     fun staticKb(clauses: Sequence<Clause>) = loadStaticClauses(clauses)
 
-    @JsName("staticKbTheory")
+    @JsName("staticKbByTheory")
     fun staticKb(theory: Theory) = loadStaticKb(theory)
 
-    @JsName("dynamicKb")
+    @JsName("dynamicKbByArray")
     fun dynamicKb(vararg clauses: Clause) = loadDynamicClauses(*clauses)
 
-    @JsName("dynamicKbIterable")
+    @JsName("dynamicKbByIterable")
     fun dynamicKb(clauses: Iterable<Clause>) = loadDynamicClauses(clauses)
 
-    @JsName("dynamicKbSequence")
+    @JsName("dynamicKbBySequence")
     fun dynamicKb(clauses: Sequence<Clause>) = loadDynamicClauses(clauses)
 
-    @JsName("dynamicKbTheory")
+    @JsName("dynamicKbByTheory")
     fun dynamicKb(theory: Theory) = loadDynamicKb(theory)
 
     companion object {
