@@ -8,7 +8,7 @@ class TestPrologWithResolution {
     @Test
     fun testAbrahamFamilyTree() {
         prolog {
-            loadDynamicClauses(
+            staticKb(
                 rule {
                     "ancestor"("X", "Y") `if` "parent"("X", "Y")
                 },
