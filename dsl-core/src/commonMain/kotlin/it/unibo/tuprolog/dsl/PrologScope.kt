@@ -1,14 +1,9 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.*
-import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
-import kotlin.reflect.KClass
 
-import it.unibo.tuprolog.core.toTerm as extToTerm
-
-interface Prolog : Scope {
+interface PrologScope : Scope {
 
     @JsName("anyToTerm")
     fun Any.toTerm(): Term
@@ -125,13 +120,13 @@ interface Prolog : Scope {
         directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("scope")
-    fun <R> scope(function: Prolog.() -> R): R = Prolog.empty().function()
+    fun <R> scope(function: PrologScope.() -> R): R = PrologScope.empty().function()
 
     @JsName("rule")
-    fun rule(function: Prolog.() -> Any): Rule = Prolog.empty().function().toTerm() as Rule
+    fun rule(function: PrologScope.() -> Any): Rule = PrologScope.empty().function().toTerm() as Rule
 
     @JsName("clause")
-    fun clause(function: Prolog.() -> Any): Clause = Prolog.empty().function().let {
+    fun clause(function: PrologScope.() -> Any): Clause = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Clause -> t
             is Struct -> return factOf(t)
@@ -140,7 +135,7 @@ interface Prolog : Scope {
     }
 
     @JsName("directive")
-    fun directive(function: Prolog.() -> Any): Directive = Prolog.empty().function().let {
+    fun directive(function: PrologScope.() -> Any): Directive = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Directive -> t
             is Struct -> return directiveOf(t)
@@ -149,7 +144,7 @@ interface Prolog : Scope {
     }
 
     @JsName("fact")
-    fun fact(function: Prolog.() -> Any): Fact = Prolog.empty().function().let {
+    fun fact(function: PrologScope.() -> Any): Fact = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Fact -> t
             is Struct -> return factOf(t)
@@ -186,6 +181,6 @@ interface Prolog : Scope {
 
     companion object {
         @JsName("empty")
-        fun empty(): Prolog = PrologImpl()
+        fun empty(): PrologScope = PrologScopeImpl()
     }
 }

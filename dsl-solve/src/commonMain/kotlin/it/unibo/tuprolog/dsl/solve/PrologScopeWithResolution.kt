@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.dsl.theory.PrologWithTheories
+import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.PrologFlags
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
-interface PrologWithResolution : PrologWithTheories, MutableSolver {
+interface PrologScopeWithResolution : PrologScopeWithTheories, MutableSolver {
     @JsName("solverFactory")
     val solverFactory: SolverFactory
 
@@ -67,9 +67,9 @@ interface PrologWithResolution : PrologWithTheories, MutableSolver {
 
     companion object {
         @JsName("of")
-        fun of(solverFactory: SolverFactory): PrologWithResolution = PrologWithResolutionImpl(solverFactory)
+        fun of(solverFactory: SolverFactory): PrologScopeWithResolution = PrologScopeWithResolutionImpl(solverFactory)
 
         @JsName("empty")
-        fun empty(): PrologWithResolution = of(ClassicSolverFactory)
+        fun empty(): PrologScopeWithResolution = of(ClassicSolverFactory)
     }
 }

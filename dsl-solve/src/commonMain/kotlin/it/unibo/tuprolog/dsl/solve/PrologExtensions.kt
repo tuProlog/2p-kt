@@ -6,11 +6,11 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 @JsName("prologFromSolverFactory")
-fun <R> prolog(solverFactory: SolverFactory, function: PrologWithResolution.() -> R): R {
-    return PrologWithResolution.of(solverFactory).function()
+fun <R> prolog(solverFactory: SolverFactory, function: PrologScopeWithResolution.() -> R): R {
+    return PrologScopeWithResolution.of(solverFactory).function()
 }
 
 @JsName("prolog")
-fun <R> prolog(function: PrologWithResolution.() -> R): R {
-    return PrologWithResolution.empty().function()
+fun <R> prolog(function: PrologScopeWithResolution.() -> R): R {
+    return PrologScopeWithResolution.empty().function()
 }

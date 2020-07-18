@@ -3,7 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 
-actual class AnyToTermConverterImpl actual constructor(override val prolog: Prolog) : AnyToTermConverter {
+actual class AnyToTermConverterImpl actual constructor(override val prologScope: PrologScope) : AnyToTermConverter {
 
     companion object {
         private val INT_REGEX = "[0-9]+".toRegex()
