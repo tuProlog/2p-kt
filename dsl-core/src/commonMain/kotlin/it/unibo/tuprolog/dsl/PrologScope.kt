@@ -2,6 +2,8 @@ package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.*
 import kotlin.js.JsName
+import it.unibo.tuprolog.core.List as LogicList
+import it.unibo.tuprolog.core.Set as LogicSet
 
 interface PrologScope : PrologStdLibScope {
 
@@ -99,11 +101,11 @@ interface PrologScope : PrologStdLibScope {
     fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("listOfAny")
-    fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List =
+    fun listOf(vararg terms: Any): LogicList =
         this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("setOfAny")
-    fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set =
+    fun setOf(vararg terms: Any): LogicSet =
         this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("consOfAny")
@@ -120,7 +122,7 @@ interface PrologScope : PrologStdLibScope {
     fun <R> scope(function: PrologScope.() -> R): R = PrologScope.empty().function()
 
     @JsName("list")
-    fun list(vararg items: Any, tail: Any? = null): List = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
+    fun list(vararg items: Any, tail: Any? = null): LogicList = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
         if (tail != null) {
             listFrom(it, last = tail.toTerm())
         } else {
