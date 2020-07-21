@@ -16,9 +16,8 @@ abstract class StandardOrderRelation<E : ExecutionContext>(operator: String) : B
         )
 
     override fun Solve.Request<E>.computeSingleResponse(): Solve.Response =
-            ExpressionEvaluator(context).let {
-            replyWith(relationWithoutSideEffects(arguments[0].accept(it), arguments[1].accept(it)))
-        }
+            replyWith(relationWithoutSideEffects(arguments[0], arguments[1]))
+
 
     override fun relationWithoutSideEffects(x: Term, y: Term): Boolean =
         standardOrderfunction(x, y)
