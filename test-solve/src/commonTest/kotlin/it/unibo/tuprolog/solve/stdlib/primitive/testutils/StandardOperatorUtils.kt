@@ -36,7 +36,6 @@ internal object StandardOperatorUtils {
         prolog {
             mapOf(
                 StandardOrderEqual.functor(1.0, 1.0) to true,
-                StandardOrderEqual.functor(1.0, 1) to false,
                 StandardOrderEqual.functor("stringTest", "stringTest") to true,
                 StandardOrderEqual.functor("stringTest", 1.0) to false
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
@@ -61,7 +60,6 @@ internal object StandardOperatorUtils {
         prolog {
             mapOf(
                 StandardOrderGreaterThanOrEqualTo.functor(1, 1) to true,
-                StandardOrderGreaterThanOrEqualTo.functor(1.0, 1) to false,
                 StandardOrderGreaterThanOrEqualTo.functor("stringTest", "stringTest") to true,
                 StandardOrderGreaterThanOrEqualTo.functor("stringTest", "stringTest1") to false,
                 StandardOrderGreaterThanOrEqualTo.functor("stringTest", 1) to true
