@@ -84,10 +84,9 @@ internal object StandardOperatorUtils {
     /** @< test */
     internal val standardOrderLowerThanOrEqualToTest by lazy {
         prolog {
-            mapOf(
-                StandardOrderLowerThan.functor(1, 1.0) to false,
-                StandardOrderLowerThan.functor(1.0, 1.0) to true,
-                StandardOrderLowerThan.functor("stringTest", "stringTest") to true
+            mapOf(  StandardOrderLowerThanOrEqualTo.functor(1, 1.0) to false,
+                StandardOrderLowerThanOrEqualTo.functor(1.0, 1.0) to true,
+                StandardOrderLowerThanOrEqualTo.functor("stringTest", "stringTest") to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }

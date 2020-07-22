@@ -8,6 +8,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 
 object StandardOrderLowerThanOrEqualTo :  StandardOrderRelation<ExecutionContext>("@<=") {
     override fun standardOrderfunction(x: Term, y: Term): Boolean {
-        return x.compareTo(y) <= 0
+        return x <= y;
     }
 }
