@@ -47,6 +47,7 @@ import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanOrEqualTesting
 import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanTesting
 import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanOrEqualTesting
 import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanTesting
+import it.unibo.tuprolog.solve.TestingStandardOperator.notEqualTesting
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
@@ -911,7 +912,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     override fun testStandardNotEqual() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
-            greaterThanTesting,
+            notEqualTesting,
             maxDuration
         )
     }

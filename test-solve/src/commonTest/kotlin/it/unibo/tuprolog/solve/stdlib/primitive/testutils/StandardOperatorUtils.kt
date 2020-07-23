@@ -42,6 +42,17 @@ internal object StandardOperatorUtils {
         }
     }
 
+    /** \=@= test */
+    internal val standardOrderNotEqualTest by lazy {
+        prolog {
+            mapOf(
+                StandardOrderEqual.functor(1.0, 1.0) to false,
+                StandardOrderEqual.functor("stringTest", "stringTest") to false,
+                StandardOrderEqual.functor("stringTest", 1.0) to true
+            ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
+        }
+    }
+
     /** @> test */
     internal val standardOrderGreaterThanTest by lazy {
         prolog {

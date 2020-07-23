@@ -67,15 +67,9 @@ object TestingStandardOperator {
     val equalTesting by lazy {
         prolog {
             ktListOf(
-                "=@="(1.0,1.0).hasSolutions(
-                    { yes() }
-                ),
-                "=@="("stringTest","stringTest").hasSolutions(
-                    { no() }
-                ),
-                "=@="("stringTest",1.0).hasSolutions(
-                    { no() }
-                )
+                "=@="(1.0,1.0).hasSolutions({yes()}),
+                "=@="("stringTest","stringTest").hasSolutions({no()}),
+                "=@="("stringTest",1.0).hasSolutions({no()})
             )
         }
     }
@@ -127,8 +121,26 @@ object TestingStandardOperator {
         }
     }
 
-    val notEqual by lazy{
+    /**
+     * Standard operator Not Equal
+     *
+     * Contained requests:
+     * ```prolog
+     * ?- \=@=(1.0,1.0).
+     * ?- \=@=(stringTest,stringTest).
+     * ?- \=@=(stringTest,1.0).
+     * ```
+     */
 
+
+    val notEqualTesting by lazy{
+        prolog {
+            ktListOf(
+                "\\=@="(1.0,1.0).hasSolutions({no()}),
+                "\\=@="("stringTest","stringTest").hasSolutions({yes()}),
+                "\\=@="("stringTest",1.0).hasSolutions({yes()})
+            )
+        }
     }
 
 }
