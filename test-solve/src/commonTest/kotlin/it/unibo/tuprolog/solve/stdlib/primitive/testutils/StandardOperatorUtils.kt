@@ -79,7 +79,7 @@ internal object StandardOperatorUtils {
         }
     }
 
-    /** @< test */
+    /** @<= test */
     internal val standardOrderLowerThanOrEqualToTest by lazy {
         prolog {
             mapOf(  StandardOrderLowerThanOrEqualTo.functor(1, 1.0) to false,

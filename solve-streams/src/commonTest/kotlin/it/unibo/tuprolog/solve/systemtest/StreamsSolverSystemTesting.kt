@@ -282,4 +282,35 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     override fun testBasicBacktracking4() {
         prototype.testBasicBacktracking4()
     }
+
+    @Test
+    override fun testStandardGreaterThan() {
+        prototype.testStandardGreaterThan()
+    }
+
+    @Test
+    override fun testStandardEqual() {
+        prototype.testStandardEqual()
+    }
+
+    @Test
+    override fun testStandardLowerThan() {
+        prototype.testStandardLowerThan()
+    }
+
+    @Test
+    override fun testStandardGreaterThanOrEqual() {
+        prototype.testStandardGreaterThanOrEqual()
+    }
+
+    @Test
+    override fun testStandardLowerThanOrEqual() {
+        prototype.testStandardLowerThanOrEqual()
+    }
+
+    @Test
+    override fun testStandardNotEqual() {
+        prototype.testStandardNotEqual()
+    }
+
 }

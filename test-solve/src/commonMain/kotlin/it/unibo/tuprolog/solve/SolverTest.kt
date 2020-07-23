@@ -162,5 +162,14 @@ interface SolverTest {
     fun testDisjunction()
     fun testDisjunctionWithUnification()
     fun testMember()
+
+    /** Test StandardOperatorPrimitive */
+    fun testStandardGreaterThan()
+    fun testStandardGreaterThanOrEqual()
+    fun testStandardLowerThan()
+    fun testStandardLowerThanOrEqual()
+    fun testStandardEqual()
+    fun testStandardNotEqual()
+
 }
 

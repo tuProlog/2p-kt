@@ -42,6 +42,11 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGo
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
+import it.unibo.tuprolog.solve.TestingStandardOperator.equalTesting
+import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanTesting
+import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanTesting
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.lessThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1100MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedDatabases.slightlyMoreThan1800MsGoalToSolution
@@ -877,5 +882,53 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             assertEquals(constants.size + 1, solutions.size)
         }
+    }
+
+    override fun testStandardGreaterThan() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            greaterThanTesting,
+            maxDuration
+        )
+    }
+
+    override fun testStandardGreaterThanOrEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            greaterThanOrEqualTesting,
+            maxDuration
+        )
+    }
+
+    override fun testStandardEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            equalTesting,
+            maxDuration
+        )
+    }
+
+    override fun testStandardNotEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            greaterThanTesting,
+            maxDuration
+        )
+    }
+
+    override fun testStandardLowerThan() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            lowerThanTesting,
+            maxDuration
+        )
+    }
+
+    override fun testStandardLowerThanOrEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            lowerThanOrEqualTesting,
+            maxDuration
+        )
     }
 }
