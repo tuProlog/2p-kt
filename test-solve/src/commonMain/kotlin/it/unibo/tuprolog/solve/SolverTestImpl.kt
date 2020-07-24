@@ -250,7 +250,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("L" to emptyList())),
+                ktListOf(query.yes("L" to emptyList)),
                 solutions
             )
 
@@ -301,7 +301,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 ktListOf(
                     query.yes("X" to listOf(2, 3), "Y" to listOf(1)),
                     query.yes("X" to listOf(3), "Y" to listOf(1, 2)),
-                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3))
+                    query.yes("X" to emptyList, "Y" to listOf(1, 2, 3))
                 ),
                 solutions
             )
@@ -1175,13 +1175,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3, 4, 5, 6)),
+                    query.yes("X" to emptyList, "Y" to listOf(1, 2, 3, 4, 5, 6)),
                     query.yes("X" to listOf(1), "Y" to listOf(2, 3, 4, 5, 6)),
                     query.yes("X" to listOf(1, 2), "Y" to listOf(3, 4, 5, 6)),
                     query.yes("X" to listOf(1, 2, 3), "Y" to listOf(4, 5, 6)),
                     query.yes("X" to listOf(1, 2, 3, 4), "Y" to listOf(5, 6)),
                     query.yes("X" to listOf(1, 2, 3, 4, 5), "Y" to listOf(6)),
-                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList())
+                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList)
                 ),
                 solutions
             )

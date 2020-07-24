@@ -20,6 +20,10 @@ interface PrologStdLibScope : PrologAwareScope {
     val repeat: Atom
         get() = atomOf("repeat")
 
+//    @JsName("cut")
+//    val `!`: Atom
+//        get() = atomOf("!")
+
     fun at_end_of_stream(alias: Any): Struct =
         structOf("at_end_of_stream", alias.toTerm())
 
@@ -104,17 +108,29 @@ interface PrologStdLibScope : PrologAwareScope {
     @JsName("anyUniv")
     infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
 
-    infix fun Any.eq(right: Any): Struct =
+    @JsName("eq")
+    infix fun Any.`=`(right: Any): Struct =
         structOf("=", this.toTerm(), right.toTerm())
 
-    infix fun Any.neq(right: Any): Struct =
+    @JsName("neq")
+    infix fun Any.`!=`(right: Any): Struct =
         structOf("\\=", this.toTerm(), right.toTerm())
 
-    infix fun Any.id(right: Any): Struct =
+    @JsName("id")
+    infix fun Any.`==`(right: Any): Struct =
         structOf("==", this.toTerm(), right.toTerm())
 
-    infix fun Any.nid(right: Any): Struct =
+    @JsName("nid")
+    infix fun Any.`!==`(right: Any): Struct =
         structOf("\\==", this.toTerm(), right.toTerm())
+
+    @JsName("arithEq")
+    infix fun Any.`===`(right: Any): Struct =
+        structOf("=:=", this.toTerm(), right.toTerm())
+
+    @JsName("arithNeq")
+    infix fun Any.`=!=`(right: Any): Struct =
+        structOf("=\\=", this.toTerm(), right.toTerm())
 
     fun member(item: Any, list: Any): Struct =
         structOf("member", item.toTerm(), list.toTerm())
