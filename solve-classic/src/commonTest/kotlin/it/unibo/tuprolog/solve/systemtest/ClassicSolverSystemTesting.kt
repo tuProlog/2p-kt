@@ -282,6 +282,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardGreaterThan() {
         prototype.testStandardGreaterThan()
     }
@@ -292,6 +293,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardLowerThan() {
         prototype.testStandardLowerThan()
     }
@@ -302,6 +304,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardLowerThanOrEqual() {
         prototype.testStandardLowerThanOrEqual()
     }

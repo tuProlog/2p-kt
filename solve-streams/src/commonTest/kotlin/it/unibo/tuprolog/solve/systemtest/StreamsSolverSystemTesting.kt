@@ -284,6 +284,7 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardGreaterThan() {
         prototype.testStandardGreaterThan()
     }
@@ -294,6 +295,7 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardLowerThan() {
         prototype.testStandardLowerThan()
     }
@@ -304,6 +306,7 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
+    @Ignore
     override fun testStandardLowerThanOrEqual() {
         prototype.testStandardLowerThanOrEqual()
     }

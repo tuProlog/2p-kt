@@ -68,7 +68,7 @@ object TestingStandardOperator {
         prolog {
             ktListOf(
                 "=@="(1.0,1.0).hasSolutions({yes()}),
-                "=@="("stringTest","stringTest").hasSolutions({no()}),
+                "=@="("stringTest","stringTest").hasSolutions({yes()}),
                 "=@="("stringTest",1.0).hasSolutions({no()})
             )
         }
@@ -137,7 +137,7 @@ object TestingStandardOperator {
         prolog {
             ktListOf(
                 "\\=@="(1.0,1.0).hasSolutions({no()}),
-                "\\=@="("stringTest","stringTest").hasSolutions({yes()}),
+                "\\=@="("stringTest","stringTest").hasSolutions({no()}),
                 "\\=@="("stringTest",1.0).hasSolutions({yes()})
             )
         }
