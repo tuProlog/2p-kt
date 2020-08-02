@@ -44,17 +44,27 @@ class ClassicSolverTestAnd : TestAnd, SolverFactory {
     )
 
     @Test
-    override fun test1() {
-        prototype.test1()
+    override fun testTermIsFreeVariable() {
+        prototype.testTermIsFreeVariable()
     }
 
     @Test
-    override fun test2() {
-        prototype.test2()
+    override fun testWithSubstitution() {
+        prototype.testWithSubstitution()
     }
 
     @Test
-    override fun test3() {
-        prototype.test3()
+    override fun testFailIsAGoal() {
+        prototype.testFailIsAGoal()
+    }
+
+    @Test
+    override fun testNoFooIsAGoal() {
+        prototype.testNoFooIsAGoal()
+    }
+
+    @Test
+    override fun testTermIsAGoal() {
+        prototype.testTermIsAGoal()
     }
 }
