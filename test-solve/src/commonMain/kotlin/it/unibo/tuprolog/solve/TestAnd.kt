@@ -25,10 +25,10 @@ interface TestAnd {
 
     fun testWithSubstitution()
 
-    fun testFailIsAGoal()
+    fun testFailIsCallable()
 
-    fun testNoFooIsAGoal()
+    fun testNoFooIsCallable()
 
-    fun testTermIsAGoal()
+    fun testTermIsCallable()
 
 }

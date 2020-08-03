@@ -54,17 +54,17 @@ class ClassicSolverTestAnd : TestAnd, SolverFactory {
     }
 
     @Test
-    override fun testFailIsAGoal() {
-        prototype.testFailIsAGoal()
+    override fun testFailIsCallable() {
+        prototype.testFailIsCallable()
     }
 
     @Test
-    override fun testNoFooIsAGoal() {
-        prototype.testNoFooIsAGoal()
+    override fun testNoFooIsCallable() {
+        prototype.testNoFooIsCallable()
     }
 
     @Test
-    override fun testTermIsAGoal() {
-        prototype.testTermIsAGoal()
+    override fun testTermIsCallable() {
+        prototype.testTermIsCallable()
     }
 }

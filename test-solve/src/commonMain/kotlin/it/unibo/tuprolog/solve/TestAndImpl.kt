@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
@@ -11,7 +9,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ","("X=1", "var(X)")
+            val query = ","("="("X", 1), "var(X)")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -39,7 +37,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         }
     }
 
-    override fun testFailIsAGoal() {
+    override fun testFailIsCallable() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -53,35 +51,25 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         }
     }
 
-    override fun testNoFooIsAGoal() {
+    override fun testNoFooIsCallable() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins(
                     staticKb = theoryOf(
-                            fact { "nofoo(X)" }
+                            fact { "var(X)" }
                     )
             )
 
-            val query = ","("nofoo(X)", "call(X)")
+            val query = ","("var(X)", "call(X)")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(
-                            query.halt(
-                                    TypeError.forArgument(
-                                            DummyInstances.executionContext,
-                                            Signature(",", 3),
-                                            TypeError.Expected.CALLABLE,
-                                            varOf("nofoo(X)"),
-                                            2
-                                    )
-                            )
-                    ),
+                    ktListOf(query.no()),
                     solutions
             )
         }
     }
 
-    override fun testTermIsAGoal() {
+    override fun testTermIsCallable() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins(
                     staticKb = theoryOf(
