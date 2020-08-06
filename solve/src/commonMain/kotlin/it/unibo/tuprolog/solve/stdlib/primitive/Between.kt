@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
-
 object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between") {
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
@@ -29,7 +28,7 @@ object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between")
         return when (third) {
             is LogicInteger -> {
                 val x = third.value
-                sequenceOf(if (bottom <= x && top <= x) Substitution.empty() else Substitution.failed())
+                sequenceOf(if (x in bottom .. top) Substitution.empty() else Substitution.failed())
             }
             is Var -> {
                 if (bottom <= top) {
