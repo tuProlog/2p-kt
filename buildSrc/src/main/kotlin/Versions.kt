@@ -12,7 +12,7 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val com_fasterxml_jackson_dataformat: String = "2.11.1"
+    const val com_fasterxml_jackson_dataformat: String = "2.11.2"
 
     const val io_github_javaeden_orchid: String = "0.21.1"
 
@@ -36,22 +36,22 @@ object Versions {
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
-    const val jackson_datatype_jsr310: String = "2.11.1"
+    const val jackson_datatype_jsr310: String = "2.11.2"
 
     const val clikt_multiplatform: String = "2.7.1"
 
-    const val jackson_core: String = "2.11.1"
+    const val jackson_core: String = "2.11.2"
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 
     const val kt_math: String = "0.1.3"
 
     /**
-     * Current version: "6.5"
+     * Current version: "6.5.1"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.5"
+    const val gradleLatestVersion: String = "6.5.1"
 }
 
 /**
