@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory.parsing
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.ParseException
-import it.unibo.tuprolog.dsl.theory.PrologWithTheories
+import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
@@ -20,8 +20,8 @@ class TestClausesParser {
             }
         }
 
-        fun assertMatch(expected: Term, actual: PrologWithTheories.() -> Term) {
-            assertMatch(expected, PrologWithTheories.empty().actual())
+        fun assertMatch(expected: Term, actual: PrologScopeWithTheories.() -> Term) {
+            assertMatch(expected, PrologScopeWithTheories.empty().actual())
         }
     }
 

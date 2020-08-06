@@ -59,10 +59,10 @@ interface Scope {
     fun listOf(terms: Iterable<Term>): LogicList
 
     @JsName("emptyList")
-    fun emptyList(): EmptyList
+    val emptyList: EmptyList
 
     @JsName("emptySet")
-    fun emptySet(): EmptySet
+    val emptySet: EmptySet
 
     @JsName("listFrom")
     fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList

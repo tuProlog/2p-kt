@@ -10,14 +10,14 @@ object ParsingExamples {
         "f(X)" to prolog { "f"("X") },
         "f(X, y)" to prolog { "f"("X", "y") },
         "g(X, y, 3)" to prolog { "g"("X", "y", 3) },
-        "[]" to prolog { emptyList() },
-        "[ ]" to prolog { emptyList() },
+        "[]" to prolog { emptyList },
+        "[ ]" to prolog { emptyList },
         "[1]" to prolog { listOf(1) },
         "[1 | X]" to prolog { consOf(1, "X") },
         "[1, a | X]" to prolog { consOf(1, consOf("a", "X")) },
         "[a, 2, X]" to prolog { listOf("a", 2, "X") },
-        "{}" to prolog { emptySet() },
-        "{ }" to prolog { emptySet() },
+        "{}" to prolog { emptySet },
+        "{ }" to prolog { emptySet },
         "{ 1 }" to prolog { setOf(1) },
         "{ 1, a }" to prolog { setOf(1, "a") },
         "{ 1, a, X }" to prolog { setOf(1, "a", "X") },
@@ -129,7 +129,7 @@ object ParsingExamples {
                     (("K" greaterThan 1) and  (("K1" `is` ("K" - 1)) and  ("element_at"("X","L","K1"))))
         },
         "my_length([],0)" to prolog {
-            "my_length"(emptyList(),0)
+            "my_length"(emptyList,0)
         },
         "my_length([_|L],N) :- my_length(L,N1), N is N1 + 1" to prolog {
             "my_length"(consOf(`_`,"L"),"N") impliedBy
@@ -137,10 +137,10 @@ object ParsingExamples {
         },
         "my_reverse(L1,L2) :- my_rev(L1,L2,[])" to prolog {
             "my_reverse"("L1","L2") impliedBy
-                    "my_rev"("L1", "L2", emptyList())
+                    "my_rev"("L1", "L2", emptyList)
         },
         "my_rev([],L2,L2) :- !" to prolog {
-            "my_rev"(emptyList(),"L2","L2") impliedBy "!"
+            "my_rev"(emptyList,"L2","L2") impliedBy "!"
         },
         "my_rev([X|Xs],L2,Acc) :- my_rev(Xs,L2,[X|Acc])" to prolog {
             "my_rev"(consOf("X","Xs"), "L2","Acc") impliedBy
@@ -155,7 +155,7 @@ object ParsingExamples {
                     "\\+"("is_list"("X"))
         },
         "my_flatten([],[])" to prolog {
-            "my_flatten"(emptyList(), emptyList())
+            "my_flatten"(emptyList, emptyList)
         },
         "my_flatten([X|Xs],Zs) :- my_flatten(X,Y), my_flatten(Xs,Ys), append(Y,Ys,Zs)" to prolog {
             "my_flatten"(consOf("X","Xs"),"Zs") impliedBy
@@ -166,7 +166,7 @@ object ParsingExamples {
                     ("\\="("X","Y") and "compress"(consOf("Y","Ys"),"Zs"))
         },
         "count(X,[],[],N,[N,X]) :- N > 1" to prolog {
-            "count"("X",emptyList(),emptyList(),"N",consOf("N","X")) impliedBy
+            "count"("X", emptyList, emptyList,"N",consOf("N","X")) impliedBy
                     ("N" greaterThan 1)
         },
         "count(X,[Y|Ys],[Y|Ys],1,X) :- X \\= Y" to prolog {

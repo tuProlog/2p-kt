@@ -25,6 +25,18 @@ interface MutableSolver : Solver {
     @JsName("loadStaticKb")
     fun loadStaticKb(theory: Theory)
 
+    @JsName("loadStaticClauses")
+    fun loadStaticClauses(vararg clauses: Clause) =
+        loadStaticKb(Theory.of(*clauses))
+
+    @JsName("loadStaticClausesIterable")
+    fun loadStaticClauses(clauses: Iterable<Clause>) =
+        loadStaticKb(Theory.of(clauses))
+
+    @JsName("loadStaticClausesSequence")
+    fun loadStaticClauses(clauses: Sequence<Clause>) =
+        loadStaticKb(Theory.of(clauses))
+
     @JsName("appendStaticKb")
     fun appendStaticKb(theory: Theory)
 
@@ -33,6 +45,18 @@ interface MutableSolver : Solver {
 
     @JsName("loadDynamicKb")
     fun loadDynamicKb(theory: Theory)
+
+    @JsName("loadDynamicClauses")
+    fun loadDynamicClauses(vararg clauses: Clause) =
+        loadDynamicKb(Theory.of(*clauses))
+
+    @JsName("loadDynamicClausesIterable")
+    fun loadDynamicClauses(clauses: Iterable<Clause>) =
+        loadDynamicKb(Theory.of(clauses))
+
+    @JsName("loadDynamicClausesSequence")
+    fun loadDynamicClauses(clauses: Sequence<Clause>) =
+        loadDynamicKb(Theory.of(clauses))
 
     @JsName("appendDynamicKb")
     fun appendDynamicKb(theory: Theory)

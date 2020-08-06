@@ -1,25 +1,19 @@
 package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.*
-import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
-import kotlin.reflect.KClass
+import it.unibo.tuprolog.core.List as LogicList
+import it.unibo.tuprolog.core.Set as LogicSet
 
-import it.unibo.tuprolog.core.toTerm as extToTerm
-
-interface Prolog : Scope {
-
-    @JsName("anyToTerm")
-    fun Any.toTerm(): Term
-
-    @JsName("structOfAny")
-    fun structOf(functor: String, vararg args: Any): Struct =
-        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
+interface PrologScope : PrologStdLibScope {
 
     @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
         structOf(this, sequenceOf(term, *terms).map { it.toTerm() })
+
+    @JsName("structOfAny")
+    fun structOf(functor: String, vararg args: Any): Struct =
+        structOf(functor, *args.map { it.toTerm() }.toTypedArray())
 
     @JsName("anyPlus")
     operator fun Any.plus(other: Any): Struct = structOf("+", this.toTerm(), other.toTerm())
@@ -31,14 +25,14 @@ interface Prolog : Scope {
     operator fun Any.times(other: Any): Struct = structOf("*", this.toTerm(), other.toTerm())
 
     @JsName("anyDiv")
-    operator fun Any.div(other: Any): Struct = structOf("/", this.toTerm(), other.toTerm())
+    operator fun Any.div(other: Any): Indicator = indicatorOf(this.toTerm(), other.toTerm())
 
     /** Creates a structure whose functor is `'='/2` (term unification operator) */
     @JsName("anyEqualsTo")
     infix fun Any.equalsTo(other: Any): Struct = structOf("=", this.toTerm(), other.toTerm())
 
-    @JsName("anyUniv")
-    infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
+    @JsName("anyNotEqualsTo")
+    infix fun Any.notEqualsTo(other: Any): Struct = structOf("\\=", this.toTerm(), other.toTerm())
 
     @JsName("anyGreaterThan")
     infix fun Any.greaterThan(other: Any): Struct = structOf(">", this.toTerm(), other.toTerm())
@@ -107,11 +101,11 @@ interface Prolog : Scope {
     fun tupleOf(vararg terms: Any): Tuple = tupleOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("listOfAny")
-    fun listOf(vararg terms: Any): it.unibo.tuprolog.core.List =
+    fun listOf(vararg terms: Any): LogicList =
         this.listOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("setOfAny")
-    fun setOf(vararg terms: Any): it.unibo.tuprolog.core.Set =
+    fun setOf(vararg terms: Any): LogicSet =
         this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("consOfAny")
@@ -125,13 +119,22 @@ interface Prolog : Scope {
         directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     @JsName("scope")
-    fun <R> scope(function: Prolog.() -> R): R = Prolog.empty().function()
+    fun <R> scope(function: PrologScope.() -> R): R = PrologScope.empty().function()
+
+    @JsName("list")
+    fun list(vararg items: Any, tail: Any? = null): LogicList = kotlin.collections.listOf(*items).map { it.toTerm() }.let {
+        if (tail != null) {
+            listFrom(it, last = tail.toTerm())
+        } else {
+            listOf(it)
+        }
+    }
 
     @JsName("rule")
-    fun rule(function: Prolog.() -> Any): Rule = Prolog.empty().function().toTerm() as Rule
+    fun rule(function: PrologScope.() -> Any): Rule = PrologScope.empty().function().toTerm() as Rule
 
     @JsName("clause")
-    fun clause(function: Prolog.() -> Any): Clause = Prolog.empty().function().let {
+    fun clause(function: PrologScope.() -> Any): Clause = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Clause -> t
             is Struct -> return factOf(t)
@@ -140,7 +143,7 @@ interface Prolog : Scope {
     }
 
     @JsName("directive")
-    fun directive(function: Prolog.() -> Any): Directive = Prolog.empty().function().let {
+    fun directive(function: PrologScope.() -> Any): Directive = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Directive -> t
             is Struct -> return directiveOf(t)
@@ -149,7 +152,7 @@ interface Prolog : Scope {
     }
 
     @JsName("fact")
-    fun fact(function: Prolog.() -> Any): Fact = Prolog.empty().function().let {
+    fun fact(function: PrologScope.() -> Any): Fact = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Fact -> t
             is Struct -> return factOf(t)
@@ -186,6 +189,6 @@ interface Prolog : Scope {
 
     companion object {
         @JsName("empty")
-        fun empty(): Prolog = PrologImpl()
+        fun empty(): PrologScope = PrologScopeImpl()
     }
 }

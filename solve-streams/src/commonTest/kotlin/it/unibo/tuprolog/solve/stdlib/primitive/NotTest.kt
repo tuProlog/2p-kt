@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.dsl.theory.PrologWithTheories
+import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
@@ -41,7 +41,7 @@ internal class NotTest {
             createSolveRequest(
                 query,
                 primitives = mapOf(Not.descriptionPair, Call.descriptionPair),
-                database = PrologWithTheories.empty().theory({ "a" }, { "a" })
+                database = PrologScopeWithTheories.empty().theory({ "a" }, { "a" })
             )
         ).map { it.solution }.asIterable()
 
