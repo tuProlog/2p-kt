@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 
 sealed class Result {
+
     object None : Result()
 
     data class Value(val value: Any?) : Result(), ToTermConvertible {
