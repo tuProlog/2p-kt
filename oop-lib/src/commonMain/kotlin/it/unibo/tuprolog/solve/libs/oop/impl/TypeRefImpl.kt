@@ -1,20 +1,27 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.TypeRef
+import it.unibo.tuprolog.solve.libs.oop.companionObjectRef
 import it.unibo.tuprolog.solve.libs.oop.invoke
+import it.unibo.tuprolog.utils.Optional
+import kotlin.reflect.KClass
 
-internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by Atom.of(nameOf(`object`)) {
+@Suppress("UNCHECKED_CAST")
+internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom.of(nameOf(type)) {
     companion object {
-        private fun nameOf(any: Any): String = "<object:${any::class.qualifiedName}#${any.hashCode()}>"
+        private fun nameOf(type: KClass<*>): String = "<type:${type.qualifiedName}>"
     }
+
+    override fun invoke(methodName: String, arguments: List<Term>): Result =
+        when (val companionObjectRef = type.companionObjectRef) {
+            is Optional.Some<out Any> -> companionObjectRef.value.invoke(methodName, arguments)
+            else -> type.invoke(methodName, arguments)
+        }
 
     override val isConstant: Boolean
         get() = true
-
-    override fun invoke(methodName: String, arguments: List<Term>): Result =
-        `object`.invoke(methodName, arguments)
 
     override fun freshCopy(): Atom = this
 

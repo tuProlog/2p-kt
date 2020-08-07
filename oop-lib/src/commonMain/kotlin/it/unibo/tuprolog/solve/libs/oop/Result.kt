@@ -13,6 +13,7 @@ sealed class Result {
             ObjectToTermConverter.default.convert(value)
         }
 
-        override fun toTerm(): Term = termValue
+        override fun toTerm(): Term =
+            termValue
     }
 }

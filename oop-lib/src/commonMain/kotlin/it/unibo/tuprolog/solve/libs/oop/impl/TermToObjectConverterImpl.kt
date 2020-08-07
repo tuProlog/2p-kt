@@ -1,14 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConversionException
-import it.unibo.tuprolog.solve.libs.oop.NullRef
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
-import it.unibo.tuprolog.solve.libs.oop.TypeUtils.isSubtypeOf
+import it.unibo.tuprolog.solve.libs.oop.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-import kotlin.collections.Set
 import kotlin.reflect.KClass
 
 internal class TermToObjectConverterImpl : TermToObjectConverter {

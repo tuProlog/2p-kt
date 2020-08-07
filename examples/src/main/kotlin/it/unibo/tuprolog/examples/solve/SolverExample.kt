@@ -49,12 +49,12 @@ fun main() {
                 )
             ),
             staticKb = theoryOf(
-                fact { "user"("giovanni") },
-                fact { "user"("lorenzo") },
-                rule { "user"(`_`) impliedBy fail() }
+                fact { "user"("giovanni") },      // user(giovanni).
+                fact { "user"("lorenzo") },       // user(lorenzo).
+                rule { "user"(`_`) impliedBy fail() }   // user(_) :- fail.
             )
         )
-        val query = "user"("X") and "write"("hello: ") and "write"("X") and "nl" and "gt"(2, 1)
+        val query = "user"("X") and "write"("hello: ") and "write"("X") and "nl" and "gt"(1, 2)
         solver.solve(query).forEach {
             when (it) {
                 is Solution.No -> println("no.\n")
