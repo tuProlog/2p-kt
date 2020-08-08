@@ -9,30 +9,27 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ","("="("X", 1), "var(X)")
+//            val query = ","("="("X", 1), "var(X)")
+            val query = "X" `=` 1 and `var`("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
 
     override fun testWithSubstitution(){
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                    staticKb = theoryOf(
-                            fact { "var(X)" }
-                    )
-            )
-
-            val query = ","("var(X)", "="("X",1))
+            val solver = solverFactory.solverWithDefaultBuiltins()
+//            val query = ","("var(X)", "="("X",1))
+            val query = `var`("X") and ("X" `=` 1)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("X" to 1)),
-                    solutions
+                ktListOf(query.yes("X" to 1)),
+                solutions
             )
         }
     }
@@ -41,48 +38,45 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ","("fail", "call(3)")
+//            val query = ","("fail", "call(3)")
+            val query = fail() and call(3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
 
     override fun testNoFooIsCallable() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                    staticKb = theoryOf(
-                            fact { "var(X)" }
-                    )
-            )
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ","("var(X)", "call(X)")
+//            val query = ","("var(X)", "call(X)")
+            val query = "nofoo"("X") and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(
+                    query.no() // TODO should be existence_error, but it is not supported ATM
+                ),
+                solutions
             )
         }
     }
 
     override fun testTermIsCallable() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                    staticKb = theoryOf(
-                            fact { "call(X)" }
-                    )
-            )
+            val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ","("="("X",true), "call(X)")
+//            val query = ","("="("X",true), "call(X)")
+            val query = "X" `=` true and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("X" to true)),
-                    solutions
+                ktListOf(query.yes("X" to true)),
+                solutions
             )
         }
     }
