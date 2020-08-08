@@ -63,7 +63,7 @@ internal class AtomIndex(
     private fun extractFirst(clause: Clause): SituatedIndexedClause? =
         index.values.mapNotNull {
             extractFirst(clause, it)
-        }.min()
+        }.minOrNull()
 
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }

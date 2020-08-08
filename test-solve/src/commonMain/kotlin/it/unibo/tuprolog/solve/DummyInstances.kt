@@ -1,3 +1,5 @@
+@file:Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
+
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
@@ -18,14 +20,13 @@ import it.unibo.tuprolog.theory.Theory
 object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
-    @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
     val executionContext = object : ExecutionContext {
         override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKb: Nothing by lazy { throw NotImplementedError() }
         override val dynamicKb: Nothing by lazy { throw NotImplementedError() }
-        override val operators: OperatorSet by lazy { throw NotImplementedError() }
+        override val operators: Nothing by lazy { throw NotImplementedError() }
         override val inputChannels: Nothing by lazy { throw NotImplementedError() }
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
@@ -40,7 +41,7 @@ object DummyInstances {
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,
             warnings: OutputChannel<PrologWarning>
-        ): Solver {
+        ): Nothing {
             throw NotImplementedError()
         }
 
@@ -52,7 +53,7 @@ object DummyInstances {
             operators: OperatorSet,
             inputChannels: PrologInputChannels<*>,
             outputChannels: PrologOutputChannels<*>
-        ): ExecutionContext {
+        ): Nothing {
             throw NotImplementedError()
         }
     }
