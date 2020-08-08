@@ -15,7 +15,7 @@ sealed class Append : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     object Base : Append() {
         override val Scope.head: KtList<Term>
             get() = ktListOf(
-                emptyList(),
+                emptyList,
                 varOf("X"),
                 varOf("X")
             )

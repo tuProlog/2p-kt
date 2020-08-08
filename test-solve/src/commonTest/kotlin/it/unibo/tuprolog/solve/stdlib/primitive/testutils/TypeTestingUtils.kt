@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.dsl.Prolog
+import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -60,7 +60,7 @@ object TypeTestingUtils {
             ).map { it.toTerm() }
         }
 
-    private val commonArgs: List<Term> = Prolog.empty().let {
+    private val commonArgs: List<Term> = PrologScope.empty().let {
         baseArgs +
                 baseArgs.squared { x, y -> it.tupleOf(x, y) } +
                 baseArgs.squared { x, y -> it.structOf(";", x, y) } +

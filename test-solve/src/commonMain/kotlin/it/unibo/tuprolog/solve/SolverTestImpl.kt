@@ -122,11 +122,11 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
     private fun testAssert(suffix: String, inverse: Boolean) {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val assert = "assert$suffix"
+            val assertX = "assert$suffix"
 
-            val query = assert("f"(1)) and
-                    assert("f"(2)) and
-                    assert("f"(3)) and
+            val query = assertX("f"(1)) and
+                    assertX("f"(2)) and
+                    assertX("f"(3)) and
                     "f"("X")
 
             val solutions = solver.solve(query, mediumDuration).toList()
@@ -168,13 +168,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 addListener { outputs += it }
             }
 
-            val query = "write"(atomOf("atom")) and
-                    "write"(atomOf("a string")) and
-                    "write"(varOf("A_Var")) and
-                    "write"(numOf(1)) and
-                    "write"(numOf(2.1)) and
-                    "write"("f"("x")) and
-                    "nl"
+            val query = write(atomOf("atom")) and
+                    write(atomOf("a string")) and
+                    write(varOf("A_Var")) and
+                    write(numOf(1)) and
+                    write(numOf(2.1)) and
+                    write("f"("x")) and
+                    nl
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -210,7 +210,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 write("a")
             }
 
-            val query = "write"("b") and "write"("c") and "write"("d") and "nl"
+            val query = write("b") and write("c") and write("d") and nl
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -238,7 +238,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
 
-            var query = "findall"("N", "a"("N"), "L")
+            var query = findall("N", "a"("N"), "L")
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -246,15 +246,15 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "findall"(`_`, false, "L")
+            query = findall(`_`, false, "L")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("L" to emptyList())),
+                ktListOf(query.yes("L" to emptyList)),
                 solutions
             )
 
-            query = "findall"(`_`, "G", `_`)
+            query = findall(`_`, "G", `_`)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -281,12 +281,12 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                     fact { "f"(3) }
                 ),
                 staticKb = theoryOf(
-                    clause { "getf"("F") `if` "findall"("X", "f"("X"), "F") },
-                    clause { "getg"("G") `if` "findall"("X", "g"("X"), "G") },
+                    clause { "getf"("F") `if` findall("X", "f"("X"), "F") },
+                    clause { "getg"("G") `if` findall("X", "g"("X"), "G") },
                     clause {
                         "ftog"("F", "G") `if` (
-                                "retract"("f"("X")) and
-                                        "assert"("g"("X")) and
+                                retract("f"("X")) and
+                                        assert("g"("X")) and
                                         "getf"("F") and
                                         "getg"("G")
                                 )
@@ -301,7 +301,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 ktListOf(
                     query.yes("X" to listOf(2, 3), "Y" to listOf(1)),
                     query.yes("X" to listOf(3), "Y" to listOf(1, 2)),
-                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3))
+                    query.yes("X" to emptyList, "Y" to listOf(1, 2, 3))
                 ),
                 solutions
             )
@@ -538,7 +538,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.map { (goal, expectedSolutions) ->
-                    "call"(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
+                    call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
                 }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(
@@ -578,7 +578,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
                 listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
                     ktListOf(
-                        "catch"(goal, `_`, false).run {
+                        `catch`(goal, `_`, false).run {
                             when {
                                 expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException } ->
                                     hasSolutions({ no() })
@@ -586,7 +586,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                                     to(expectedSolutions.changeQueriesTo(this))
                             }
                         },
-                        "catch"(goal, "notUnifyingCatcher", false).run {
+                        `catch`(goal, "notUnifyingCatcher", false).run {
                             to(expectedSolutions.changeQueriesTo(this))
                         }
                     )
@@ -626,7 +626,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 listOfGoalToSolutions
                     .flatMap { (goal, expectedSolutions) ->
                         ktListOf(
-                            "\\+"(goal).run {
+                            naf(goal).run {
                                 when {
                                     expectedSolutions.first() is Solution.Yes -> hasSolutions(
                                         { no() })
@@ -635,7 +635,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                                     else -> to(expectedSolutions.changeQueriesTo(this))
                                 }
                             },
-                            "\\+"("\\+"(goal)).run {
+                            naf(naf(goal)).run {
                                 when {
                                     expectedSolutions.first() is Solution.Yes -> hasSolutions(
                                         { yes() })
@@ -907,7 +907,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "assertz"("f"(2) impliedBy false) and "asserta"("f"(1) impliedBy true)
+            val query = assertz("f"(2) impliedBy false) and asserta("f"(1) impliedBy true)
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -935,7 +935,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 )
             )
 
-            val query = "retract"("f"("X")) // retract(f(X))
+            val query = retract("f"("X")) // retract(f(X))
 
             val solutions = solver.solve(query, longDuration).toList()
 
@@ -960,7 +960,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "natural"("X") and "natural"("X")
+            val query = natural("X") and natural("X")
 
             val n = 100
 
@@ -978,7 +978,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "functor"("a"("b", "c"), "X", "Y")
+            var query = functor("a"("b", "c"), "X", "Y")
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -986,7 +986,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "functor"("a"("b", "c"), "a", "Y")
+            query = functor("a"("b", "c"), "a", "Y")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -994,7 +994,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "functor"("a"("b", "c"), "X", 2)
+            query = functor("a"("b", "c"), "X", 2)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -1002,7 +1002,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "functor"("X", "a", 2)
+            query = functor("X", "a", 2)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -1010,7 +1010,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "functor"("X", "Y", 2)
+            query = functor("X", "Y", 2)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -1027,7 +1027,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 solutions
             )
 
-            query = "functor"("X", "a", "2")
+            query = functor("X", "a", "2")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -1175,13 +1175,13 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
 
             assertSolutionEquals(
                 ktListOf(
-                    query.yes("X" to emptyList(), "Y" to listOf(1, 2, 3, 4, 5, 6)),
+                    query.yes("X" to emptyList, "Y" to listOf(1, 2, 3, 4, 5, 6)),
                     query.yes("X" to listOf(1), "Y" to listOf(2, 3, 4, 5, 6)),
                     query.yes("X" to listOf(1, 2), "Y" to listOf(3, 4, 5, 6)),
                     query.yes("X" to listOf(1, 2, 3), "Y" to listOf(4, 5, 6)),
                     query.yes("X" to listOf(1, 2, 3, 4), "Y" to listOf(5, 6)),
                     query.yes("X" to listOf(1, 2, 3, 4, 5), "Y" to listOf(6)),
-                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList())
+                    query.yes("X" to listOf(1, 2, 3, 4, 5, 6), "Y" to emptyList)
                 ),
                 solutions
             )

@@ -68,21 +68,21 @@ class DoubleChecksOnEqualities {
     @Test
     fun testListsAreEquals3() {
         assertEquals(Cons.singleton(Integer.of(1)), prolog {
-            consOf(1, emptyList())
+            consOf(1, emptyList)
         })
     }
 
     @Test
     fun testListsAreEquals4() {
         assertEquals(Cons.singleton(Integer.of(1)), prolog {
-            consOf(numOf(1), emptyList())
+            consOf(numOf(1), emptyList)
         })
     }
 
     @Test
     fun testListsAreEquals5() {
         assertEquals(Cons.singleton(Integer.of(1)), prolog {
-            consOf(Integer.of(1), emptyList())
+            consOf(Integer.of(1), emptyList)
         })
     }
 

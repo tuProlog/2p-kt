@@ -13,12 +13,12 @@ import kotlin.test.assertSame
 class TestProlog {
 
     companion object {
-        fun assertDSLCreationIsCorrect(expected: Term, actualCreator: Prolog.() -> Term) {
-            assertEquals(expected, Prolog.empty().actualCreator())
+        fun assertDSLCreationIsCorrect(expected: Term, actualCreator: PrologScope.() -> Term) {
+            assertEquals(expected, PrologScope.empty().actualCreator())
         }
 
-        fun assertDSLCreationIsCorrect(expectedCreator: Prolog.() -> Term, actualCreator: Prolog.() -> Term) {
-            val prolog = Prolog.empty()
+        fun assertDSLCreationIsCorrect(expectedCreator: PrologScope.() -> Term, actualCreator: PrologScope.() -> Term) {
+            val prolog = PrologScope.empty()
             assertEquals(prolog.expectedCreator(), prolog.actualCreator())
         }
     }
