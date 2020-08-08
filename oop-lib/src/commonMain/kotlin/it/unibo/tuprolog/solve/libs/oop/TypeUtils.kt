@@ -68,6 +68,12 @@ fun KClass<*>.invoke(methodName: String, arguments: List<Term>, instance: Any? =
     return Result.Value(result)
 }
 
+internal const val id = "[a-zA-Z_][a-zA-Z0-9_]+"
+
+expect val CLASS_NAME_PATTERN: Regex
+
 expect val KClass<*>.companionObjectRef: Optional<out Any>
 
 expect val KClass<*>.companionObjectType: Optional<out KClass<*>>
+
+expect fun kClassFromName(qualifiedName: String): Optional<out KClass<*>>

@@ -10,3 +10,19 @@ actual val KClass<*>.companionObjectRef: Optional<out Any>
 
 actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
     get() = Optional.of(companionObject)
+
+actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
+    require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
+        "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
+    }
+    return try {
+        Optional.of(Class.forName(qualifiedName).kotlin)
+    } catch (e: ClassNotFoundException) {
+        Optional.none()
+    }
+}
+
+private val classNamePattern = "^$id(\\.$id)*$".toRegex()
+
+actual val CLASS_NAME_PATTERN: Regex
+    get() = classNamePattern

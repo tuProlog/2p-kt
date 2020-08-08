@@ -23,4 +23,9 @@ class Prova {
         val y = x.toTerm().`as`<ObjectRef>().invoke("println", Atom.of("cacca"))
         println(y)
     }
+
+    @Test
+    fun prova() {
+
+    }
 }
