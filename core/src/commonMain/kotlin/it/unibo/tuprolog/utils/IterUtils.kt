@@ -8,8 +8,8 @@ fun <T> merge(comparator: Comparator<T>, iterables: Iterable<Iterable<T>>): Sequ
     return sequence {
         val pipeline = iterables.asSequence().map { it.cursor() }.filterNot { it.isOver }.toMutableList()
         while (pipeline.isNotEmpty()) {
-            val (minIndex, minValue) = pipeline.asSequence().map { it.current!! }.indexed().minWith(
-                Comparator<IntIndexed<T>> { a, b -> comparator.compare(a.value, b.value) }
+            val (minIndex, minValue) = pipeline.asSequence().map { it.current!! }.indexed().minWithOrNull(
+                Comparator { a, b -> comparator.compare(a.value, b.value) }
             )!!
             yield(minValue)
             pipeline[minIndex].next.let {

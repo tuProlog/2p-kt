@@ -16,7 +16,7 @@ object Versions {
 
     const val io_github_javaeden_orchid: String = "0.21.1"
 
-    const val org_jetbrains_kotlin: String = "1.3.72"
+    const val org_jetbrains_kotlin: String = "1.4.0-rc"
 
     const val org_antlr: String = "4.8-1"
 
@@ -24,7 +24,7 @@ object Versions {
 
     const val com_github_breadmoirai_github_release_gradle_plugin: String = "2.2.12"
 
-    const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.3.72"
+    const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.4.0-rc"
 
     const val com_github_johnrengelman_shadow_gradle_plugin: String = "6.0.0"
 
