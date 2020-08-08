@@ -3,11 +3,14 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.invoke
+import kotlin.collections.List
 
+@Suppress("UNCHECKED_CAST")
 internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by Atom.of(nameOf(`object`)) {
     companion object {
-        private fun nameOf(any: Any): String = "<object:${any::class.qualifiedName}#${any.hashCode()}>"
+        private fun nameOf(any: Any): String = "<object:${any::class.fullName}#${any.hashCode()}>"
     }
 
     override val isConstant: Boolean

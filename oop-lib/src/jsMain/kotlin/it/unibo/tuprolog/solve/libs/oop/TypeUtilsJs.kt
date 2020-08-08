@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+
+private val TODO_EXCEPTION = NotImplementedError("OOP-Prolog integration is still not supported on JS")
 
 actual val KClass<*>.companionObjectRef: Optional<out Any>
     get() = Optional.none()
@@ -33,3 +37,26 @@ private val classNamePattern = "^($id):($id(\\.$id)*)$".toRegex()
 
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
+
+actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
+    get() = throw TODO_EXCEPTION
+
+actual val KCallable<*>.actualParameterTypes: List<KClass<*>>
+    get() = throw TODO_EXCEPTION
+
+actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
+    throw TODO_EXCEPTION
+
+actual val KClass<*>.fullName: String
+    get() = throw TODO_EXCEPTION
+
+actual val KClass<*>.name: String
+    get() = throw TODO_EXCEPTION
+
+actual fun KClass<*>.invoke(
+    methodName: String,
+    arguments: List<Term>,
+    instance: Any?
+): Result {
+    throw TODO_EXCEPTION
+}

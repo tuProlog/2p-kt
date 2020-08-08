@@ -1,17 +1,15 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.Result
-import it.unibo.tuprolog.solve.libs.oop.TypeRef
-import it.unibo.tuprolog.solve.libs.oop.companionObjectRef
-import it.unibo.tuprolog.solve.libs.oop.invoke
+import it.unibo.tuprolog.solve.libs.oop.*
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KClass
+import kotlin.collections.List
 
 @Suppress("UNCHECKED_CAST")
 internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom.of(nameOf(type)) {
     companion object {
-        private fun nameOf(type: KClass<*>): String = "<type:${type.qualifiedName}>"
+        private fun nameOf(type: KClass<*>): String = "<type:${type.fullName}>"
     }
 
     override fun invoke(methodName: String, arguments: List<Term>): Result =

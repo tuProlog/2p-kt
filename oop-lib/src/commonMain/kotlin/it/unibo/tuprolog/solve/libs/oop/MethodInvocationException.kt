@@ -8,14 +8,14 @@ class MethodInvocationException : TuPrologException {
             super("Missing method `$missingMethodName` on term $ref referencing object ${ref.`object`}")
 
     constructor(type: KClass<*>, missingMethodName: String) :
-            super("Missing method `$missingMethodName` on type ${type.qualifiedName}")
+            super("Missing method `$missingMethodName` on type ${type.fullName}")
 
     constructor(type: KClass<*>) :
-            super("Missing companion object for type ${type.qualifiedName}")
+            super("Missing companion object for type ${type.fullName}")
 
     constructor(type: KClass<*>, missingMethodName: String, admissibleTypes: List<Set<KClass<*>>>) :
-            super("There is no method on type ${type.qualifiedName} which is named `$missingMethodName` and accepts " +
-                    admissibleTypes.map { it.joinToString("|") { t -> t.simpleName!! } } +
+            super("There is no method on type ${type.fullName} which is named `$missingMethodName` and accepts " +
+                    admissibleTypes.map { it.joinToString("|") { t -> t.name } } +
                     " as formal arguments"
             )
 

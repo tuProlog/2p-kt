@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.libs.oop.*
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
+import kotlin.collections.Set
 
 internal class TermToObjectConverterImpl : TermToObjectConverter {
     override fun convertInto(type: KClass<*>, term: Term): Any? {
