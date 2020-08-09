@@ -1,8 +1,7 @@
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Result
-import it.unibo.tuprolog.solve.libs.oop.TypeRef
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.libs.oop.*
 import org.gciatto.kt.math.BigInteger
 import kotlin.test.Test
 
@@ -25,7 +24,9 @@ class Prova {
     }
 
     @Test
-    fun prova() {
-
+    fun creation() {
+        val ref = TypeFactory.default.typeRefFromName("java.lang.String")!!
+        val x = ref.create()
+        println(x.asObjectRef())
     }
 }

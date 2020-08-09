@@ -55,23 +55,27 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
             is NullRef -> setOf(Nothing::class)
             is ObjectRef -> setOf(term.`object`::class)
             is Truth -> setOf(Boolean::class, String::class)
-            is Atom -> setOf(String::class, Char::class)
+            is Atom -> mutableSetOf<KClass<*>>(String::class).also {
+                if (term.value.length == 1) {
+                    it += Char::class
+                }
+            }
             is Real -> setOf(
                 Double::class,
                 BigDecimal::class,
                 Float::class
             )
             is Integer -> mutableSetOf<KClass<*>>(BigInteger::class).also {
-                if (term.intValue in BigInteger.of(Long.MIN_VALUE) .. BigInteger.of(Long.MAX_VALUE)) {
+                if (term.intValue in BigInteger.of(Long.MIN_VALUE)..BigInteger.of(Long.MAX_VALUE)) {
                     it += Long::class
                 }
-                if (term.intValue in BigInteger.of(Int.MIN_VALUE) .. BigInteger.of(Int.MAX_VALUE)) {
+                if (term.intValue in BigInteger.of(Int.MIN_VALUE)..BigInteger.of(Int.MAX_VALUE)) {
                     it += Int::class
                 }
-                if (term.intValue in BigInteger.of(Short.MIN_VALUE.toInt()) .. BigInteger.of(Short.MAX_VALUE.toInt())) {
+                if (term.intValue in BigInteger.of(Short.MIN_VALUE.toInt())..BigInteger.of(Short.MAX_VALUE.toInt())) {
                     it += Short::class
                 }
-                if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt()) .. BigInteger.of(Byte.MAX_VALUE.toInt())) {
+                if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt())..BigInteger.of(Byte.MAX_VALUE.toInt())) {
                     it += Byte::class
                 }
             }
