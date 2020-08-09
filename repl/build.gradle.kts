@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(Libs.clikt_multiplatform)
                 api(project(":core"))
+                api(project(":oop-lib"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
             }

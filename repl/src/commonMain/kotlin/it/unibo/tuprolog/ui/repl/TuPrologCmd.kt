@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.repl
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
@@ -13,6 +14,8 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 
 class TuPrologCmd : CliktCommand(
@@ -28,13 +31,17 @@ class TuPrologCmd : CliktCommand(
 
     private val files: List<String> by option("-T", "--theory", help = "Path of theory file to be loaded")
         .multiple()
+
     private val timeout by option(
         "-t",
         "--timeout",
         help = "Maximum amount of time for computing a solution (default: $DEFAULT_TIMEOUT ms)"
-    )
-        .int()
-        .default(DEFAULT_TIMEOUT)
+    ).int().default(DEFAULT_TIMEOUT)
+
+    private val oop by option(
+        "--oop",
+        help = "Loads the OOP library"
+    ).flag(default = false)
 
     override fun run() {
         val solve: Solver = getSolver()
@@ -65,7 +72,6 @@ class TuPrologCmd : CliktCommand(
                 }
             }
         }
-        TermUi.echo("")
         return theory
     }
 
@@ -90,8 +96,17 @@ class TuPrologCmd : CliktCommand(
 
     fun getSolver(): Solver {
         TermUi.echo("# 2P-Kt version ${Info.VERSION}")
-        val theory: Theory = this.loadTheory()
-        return Solver.classicWithDefaultBuiltins(staticKb = theory)
+        val theory: Theory = loadTheory()
+        return if (oop) {
+            Solver.classicWithDefaultBuiltins(staticKb = theory, libraries = Libraries(OOPLib))
+        } else {
+            Solver.classicWithDefaultBuiltins(staticKb = theory)
+        }.also {
+            for ((_, library) in it.libraries) {
+                TermUi.echo("# Successfully loaded library `${library.alias}`")
+            }
+            TermUi.echo("")
+        }
     }
 }
 
