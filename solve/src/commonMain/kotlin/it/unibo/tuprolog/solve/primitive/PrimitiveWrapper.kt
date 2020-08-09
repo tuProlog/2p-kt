@@ -100,6 +100,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is List -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, arg, index)
+                else -> this
+            }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Atom -> throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, arg, index)
