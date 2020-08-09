@@ -37,7 +37,7 @@ actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
         .flatMap { sequenceOf(it) + it.allSupertypes }
         .distinct()
 
-actual val KCallable<*>.actualParameterTypes: List<KClass<*>>
+actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map { it.type.classifier as KClass<*> }
 
 private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
@@ -60,11 +60,31 @@ actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KC
             method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
         } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
 
+actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
+    constructors.firstOrNull { constructor ->
+        constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
+    } ?: throw MethodInvocationException(this, admissibleTypes)
+
 actual val KClass<*>.fullName: String
     get() = qualifiedName!!
 
 actual val KClass<*>.name: String
     get() = simpleName!!
+
+private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
+    return formalParameterTypes.also { formalArgumentsTypes ->
+        require(formalParameterTypes.size == actualArguments.size) {
+            """
+            |
+            |Error while invoking $name the expected argument types 
+            |   ${formalArgumentsTypes.map { it.name }} 
+            |are not as many as the as the actual parameters (${formalArgumentsTypes.size} vs. ${actualArguments.size}):
+            |   $actualArguments
+            |
+            """.trimMargin()
+        }
+    }
+}
 
 actual fun KClass<*>.invoke(
     methodName: String,
@@ -73,20 +93,23 @@ actual fun KClass<*>.invoke(
 ): Result {
     val converter = TermToObjectConverter.default
     val methodRef = findMethod(methodName, arguments.map { converter.admissibleTypes(it) })
-    val argumentsExpectedTypes = methodRef.actualParameterTypes
-    require(argumentsExpectedTypes.size == arguments.size) {
-        """
-            |
-            |Error while invoking ${methodRef.name} the expected argument types 
-            |   ${argumentsExpectedTypes.map { it.name }} 
-            |are not as many as the as the actual parameters (${argumentsExpectedTypes.size} vs. ${arguments.size}):
-            |   $arguments
-            |
-            """.trimMargin()
-    }
+    val formalArgumentsTypes = methodRef.ensureArgumentsListIsOfSize(arguments)
     val args = arguments.mapIndexed { i, it ->
-        converter.convertInto(argumentsExpectedTypes[i], it)
+        converter.convertInto(formalArgumentsTypes[i], it)
     }.toTypedArray()
     val result = if (instance == null) methodRef.call(*args) else methodRef.call(instance, *args)
+    return Result.Value(result)
+}
+
+actual fun KClass<*>.create(
+    arguments: List<Term>
+): Result {
+    val converter = TermToObjectConverter.default
+    val constructorRef = findConstructor(arguments.map { converter.admissibleTypes(it) })
+    val formalArgumentsTypes = constructorRef.ensureArgumentsListIsOfSize(arguments)
+    val args = arguments.mapIndexed { i, it ->
+        converter.convertInto(formalArgumentsTypes[i], it)
+    }.toTypedArray()
+    val result = constructorRef.call(*args)
     return Result.Value(result)
 }

@@ -12,6 +12,10 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
         private fun nameOf(type: KClass<*>): String = "<type:${type.fullName}>"
     }
 
+    override fun create(arguments: List<Term>): Result {
+        return type.create(arguments)
+    }
+
     override fun invoke(methodName: String, arguments: List<Term>): Result =
         when (val companionObjectRef = type.companionObjectRef) {
             is Optional.Some<out Any> -> companionObjectRef.value.invoke(methodName, arguments)

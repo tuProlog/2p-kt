@@ -41,10 +41,13 @@ actual val CLASS_NAME_PATTERN: Regex
 actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
     get() = throw TODO_EXCEPTION
 
-actual val KCallable<*>.actualParameterTypes: List<KClass<*>>
+actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = throw TODO_EXCEPTION
 
 actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
+    throw TODO_EXCEPTION
+
+actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     throw TODO_EXCEPTION
 
 actual val KClass<*>.fullName: String
@@ -57,6 +60,12 @@ actual fun KClass<*>.invoke(
     methodName: String,
     arguments: List<Term>,
     instance: Any?
+): Result {
+    throw TODO_EXCEPTION
+}
+
+actual fun KClass<*>.create(
+    arguments: List<Term>
 ): Result {
     throw TODO_EXCEPTION
 }

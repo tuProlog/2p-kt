@@ -20,14 +20,24 @@ infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
 infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean =
     other isSupertypeOf this
 
-expect val KCallable<*>.actualParameterTypes: List<KClass<*>>
+expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
 
 expect fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*>
+
+expect fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*>
 
 fun Any.invoke(methodName: String, arguments: List<Term>): Result =
     this::class.invoke(methodName, arguments, this)
 
-expect fun KClass<*>.invoke(methodName: String, arguments: List<Term>, instance: Any? = null): Result
+expect fun KClass<*>.invoke(
+    methodName: String,
+    arguments: List<Term>,
+    instance: Any? = null
+): Result
+
+expect fun KClass<*>.create(
+    arguments: List<Term>
+): Result
 
 internal const val id = "[a-zA-Z_][a-zA-Z0-9_]+"
 

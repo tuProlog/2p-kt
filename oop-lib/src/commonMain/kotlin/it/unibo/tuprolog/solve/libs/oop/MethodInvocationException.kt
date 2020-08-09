@@ -19,6 +19,12 @@ class MethodInvocationException : TuPrologException {
                     " as formal arguments"
             )
 
+    constructor(type: KClass<*>, admissibleTypes: List<Set<KClass<*>>>) :
+            super("There is no constructor on type ${type.fullName} which accepts " +
+                    admissibleTypes.map { it.joinToString("|") { t -> t.name } } +
+                    " as formal arguments"
+            )
+
     constructor(message: String?, cause: Throwable?) : super(message, cause)
     constructor(cause: Throwable?) : super(cause)
 }
