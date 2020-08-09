@@ -7,7 +7,7 @@ object MagicCut : Atom by Atom.of("!") {
     const val FUNCTOR: String = "!MagicCut!"
 
     override val isConstant: Boolean
-        get() = super<Atom>.isConstant
+        get() = true
 
     override fun toString(): String {
         return FUNCTOR // different symbol for debugging purposes

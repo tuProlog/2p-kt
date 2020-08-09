@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
+import kotlin.reflect.KProperty
 import kotlin.collections.List as KtList
 
 
@@ -37,5 +38,11 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
         return "RuleWrapper(signature=${signature.toIndicator()}, rule=$wrappedImplementation)"
     }
 
+    @Suppress("ClassName")
+    object variableNames {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
+            return property.name
+        }
+    }
 
 }
