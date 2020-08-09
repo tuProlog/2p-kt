@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext

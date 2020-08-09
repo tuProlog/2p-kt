@@ -17,7 +17,5 @@ object LeftArrow : RuleWrapper<ExecutionContext>("<-", 2) {
         ).toList()
 
     override val Scope.body: Term
-        get() = tupleOf(
-            structOf(InvokeMethod.functor, varOf(Ref), varOf(Method), anonymous())
-        )
+        get() = structOf(InvokeMethod.functor, varOf(Ref), varOf(Method), anonymous())
 }

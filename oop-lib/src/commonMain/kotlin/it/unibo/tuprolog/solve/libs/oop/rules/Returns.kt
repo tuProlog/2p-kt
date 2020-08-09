@@ -18,8 +18,6 @@ object Returns : RuleWrapper<ExecutionContext>("returns", 2) {
         ).toList()
 
     override val Scope.body: Term
-        get() = tupleOf(
-            structOf(InvokeMethod.functor, varOf(Ref), varOf(Method), varOf(Res))
-        )
+        get() = structOf(InvokeMethod.functor, varOf(Ref), varOf(Method), varOf(Res))
 
 }
