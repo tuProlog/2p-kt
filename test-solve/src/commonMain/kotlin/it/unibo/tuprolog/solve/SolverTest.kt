@@ -149,6 +149,22 @@ interface SolverTest {
     /** If-Then-Else rule testing with [ifThenElseStandardExampleNotableGoalToSolution] */
     fun testIfThenElseRule()
 
+    /** atom_chars/2 test */
+    fun testAtomChars()
+
+    /** atom_length test */
+    fun testAtomLength()
+
+    /** char_code/2 test */
+    fun testCharCode()
+
+    /** atom_codes/2 test */
+    fun testAtomCodes()
+
+    /** atom_concat/3 test */
+    fun testAtomConcat()
+
+
     /** Test with [customRangeListGeneratorDatabaseNotableGoalToSolution] */
     fun testNumbersRangeListGeneration()
     fun testFailure()

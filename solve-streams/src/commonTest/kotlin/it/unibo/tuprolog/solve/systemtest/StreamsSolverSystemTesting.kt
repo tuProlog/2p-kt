@@ -316,4 +316,34 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         prototype.testStandardNotEqual()
     }
 
+    @Test
+    @Ignore
+    override fun testAtomChars() {
+        prototype.testAtomChars()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomLength() {
+        prototype.testAtomLength()
+    }
+
+    @Test
+    @Ignore
+    override fun testCharCode() {
+        prototype.testCharCode()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomCodes() {
+        prototype.testAtomCodes()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomConcat() {
+        prototype.testAtomConcat()
+    }
+
 }

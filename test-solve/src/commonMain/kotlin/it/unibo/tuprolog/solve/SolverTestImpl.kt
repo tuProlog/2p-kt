@@ -41,6 +41,11 @@ import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleCutDatabaseNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabase
 import it.unibo.tuprolog.solve.TestingClauseDatabases.simpleFactDatabaseNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLenghtTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
 import it.unibo.tuprolog.solve.TestingPrimitives.timeLibrary
 import it.unibo.tuprolog.solve.TestingStandardOperator.equalTesting
 import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanOrEqualTesting
@@ -929,6 +934,46 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,
+            maxDuration
+        )
+    }
+
+    override fun testAtomChars() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomCharsTesting,
+            maxDuration
+        )
+    }
+
+    override fun testAtomLength() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomLenghtTesting,
+            maxDuration
+        )
+    }
+
+    override fun testCharCode() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            charCodeTesting,
+            maxDuration
+        )
+    }
+
+    override fun testAtomCodes() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomCodesTesting,
+            maxDuration
+        )
+    }
+
+    override fun testAtomConcat() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomConcatTesting,
             maxDuration
         )
     }
