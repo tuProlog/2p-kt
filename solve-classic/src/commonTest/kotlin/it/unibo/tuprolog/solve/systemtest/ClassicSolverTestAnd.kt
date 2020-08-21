@@ -64,7 +64,7 @@ class ClassicSolverTestAnd : TestAnd, SolverFactory {
     }
 
     @Test
-    override fun testTermIsCallable() {
-        prototype.testTermIsCallable()
+    override fun testTrueVarCallable() {
+        prototype.testTrueVarCallable()
     }
 }

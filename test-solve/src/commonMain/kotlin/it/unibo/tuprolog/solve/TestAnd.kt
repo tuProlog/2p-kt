@@ -29,6 +29,6 @@ interface TestAnd {
 
     fun testNoFooIsCallable()
 
-    fun testTermIsCallable()
+    fun testTrueVarCallable()
 
 }
