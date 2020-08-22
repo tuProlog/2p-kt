@@ -13,11 +13,13 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    with(query) { ktListOf(
-                            yes(),
-                            no())
-                    },
-                    solutions
+                with(query) {
+                    ktListOf(
+                        yes(),
+                        no()
+                    )
+                },
+                solutions
             )
         }
     }
@@ -26,12 +28,13 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"(("!" and fail()), true)
+//            val query = ";"(("!" and fail()), true)
+            val query = "!" and fail() or true
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -40,12 +43,13 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("!", call(3))
+//            val query = ";"("!", call(3))
+            val query = "!" or call(3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -54,12 +58,13 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"(("X" `=` 1 and "!"), "X" `=` 2)
+//            val query = ";"(("X" `=` 1 and "!"), "X" `=` 2)
+            val query = ("X" `=` 1 and "!") or ("X" `=` 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("X" to 1)),
-                    solutions
+                ktListOf(query.yes("X" to 1)),
+                solutions
             )
         }
     }
@@ -68,15 +73,18 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ";"("X" `=` 1, "X" `=` 2)
+//            val query = ";"("X" `=` 1, "X" `=` 2)
+            val query = ("X" `=` 1) or ("X" `=` 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    with(query) { ktListOf(
-                            yes("X" to 1),
-                            yes("X" to 2))
-                    },
-                    solutions
+                with(query) {
+                    ktListOf(
+                        yes("X" to 1),
+                        yes("X" to 2)
+                    )
+                },
+                solutions
             )
         }
     }

@@ -5,7 +5,7 @@ import kotlin.collections.listOf as ktListOf
 
 internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNonVar {
 
-    override fun testNonVarNumber(){
+    override fun testNonVarNumber() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -13,13 +13,13 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
 
-    override fun testNonVarFoo(){ //foo
+    override fun testNonVarFoo() { //foo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -27,13 +27,13 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
 
-    override fun testNonVarFooCl(){ //Foo (CapsLock)
+    override fun testNonVarFooCl() { //Foo (CapsLock)
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -41,13 +41,13 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
 
-    override fun testNonVarFooAssignment(){
+    override fun testNonVarFooAssignment() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -55,13 +55,13 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("Foo" to "foo")),
-                    solutions
+                ktListOf(query.yes("Foo" to "foo")),
+                solutions
             )
         }
     }
 
-    override fun testNonVarAnyTerm(){
+    override fun testNonVarAnyTerm() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -69,13 +69,13 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
 
-    override fun testNonVar(){
+    override fun testNonVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -83,8 +83,8 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }

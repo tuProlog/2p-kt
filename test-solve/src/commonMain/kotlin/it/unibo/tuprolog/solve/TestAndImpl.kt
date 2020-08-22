@@ -20,7 +20,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         }
     }
 
-    override fun testWithSubstitution(){
+    override fun testWithSubstitution() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 //            val query = ","("var(X)", "="("X",1))
