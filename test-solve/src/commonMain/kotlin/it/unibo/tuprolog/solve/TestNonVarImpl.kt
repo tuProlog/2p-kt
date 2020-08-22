@@ -9,7 +9,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `nonvar`(33.3)
+            val query = nonvar(33.3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -23,7 +23,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `nonvar`("foo")
+            val query = nonvar("foo")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -37,7 +37,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `nonvar`("Foo")
+            val query = nonvar("Foo")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -51,7 +51,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("foo" `=` "Foo" and `nonvar`("Foo"))
+            val query = ("foo" `=` "Foo") and nonvar("Foo")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -65,7 +65,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `nonvar`("_")
+            val query = nonvar(`_`)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -79,7 +79,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = `nonvar`("a"("b"))
+            val query = nonvar("a"("b"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
