@@ -11,12 +11,12 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", "X" `=` 1 or "X" `=` 2, "S")
+            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("S" to listOf(1, 2))),
-                    solutions
+                ktListOf(query.yes("S" to listOf(1, 2))),
+                solutions
             )
         }
     }
@@ -25,12 +25,12 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("+"("X", "Y"),"X" `=` 1, "S")
+            val query = findall("+"("X", "Y"), "X" `=` 1, "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("S" to listOf(1+`_`))),
-                    solutions
+                ktListOf(query.yes("S" to listOf(1 + `_`))),
+                solutions
             )
         }
     }
@@ -43,8 +43,8 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("L" to emptyList)),
-                    solutions
+                ktListOf(query.yes("L" to emptyList)),
+                solutions
             )
         }
     }
@@ -53,12 +53,12 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", "X" `=` 1 or "X" `=` 1, "S")
+            val query = findall("X", ("X" `=` 1) or ("X" `=` 1), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes("S" to listOf("X","X"))),
-                    solutions
+                ktListOf(query.yes("S" to listOf("X", "X"))),
+                solutions
             )
         }
     }
@@ -67,12 +67,12 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", "X" `=` 2 or "X" `=` 1, listOf(1,2))
+            val query = findall("X", ("X" `=` 2) or ("X" `=` 1), listOf(1, 2))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -81,17 +81,17 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", "X" `=` 1 or "X" `=` 2, listOf("X","Y"))
+            val query = findall("X", ("X" `=` 1) or ("X" `=` 2), listOf("X", "Y"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    with(query) {
-                        ktListOf(
-                                yes("X" to 1),
-                                yes("Y" to 2)
-                        )
-                    },
-                    solutions
+                with(query) {
+                    ktListOf(
+                        yes("X" to 1),
+                        yes("Y" to 2)
+                    )
+                },
+                solutions
             )
         }
     }
@@ -104,15 +104,16 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("findall", 3),
-                                    varOf("X")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            varOf("X")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -125,16 +126,17 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("findall", 3),
-                                    TypeError.Expected.CALLABLE,
-                                    numOf(4)
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -147,16 +149,17 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("findall", 3),
-                                    TypeError.Expected.CALLABLE,
-                                    numOf(4)
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("findall", 3),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
