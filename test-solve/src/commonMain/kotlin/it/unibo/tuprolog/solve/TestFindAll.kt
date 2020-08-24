@@ -28,7 +28,7 @@ interface TestFindAll {
      * ?- findall(X,(X=1 ; X=2),S).
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory,
-     * producing 1 solution which binds variable `S` to `1` or `2`, respectively.
+     * producing 1 solution which binds variable `S` to the list `[1, 2]`.
      */
     fun testFindXInDiffValues()
 
@@ -38,7 +38,7 @@ interface TestFindAll {
      * ?- findall(X+Y,(X=1),S).
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory,
-     * producing 1 solution which binds variable `S` to `1` or any number.
+     * producing 1 solution which binds variable `S` to `[+(1, Y)]`.
      */
     fun testFindSumResult()
 
@@ -48,7 +48,7 @@ interface TestFindAll {
      * ?- findall(X,fail,L).
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory,
-     * producing 1 solution which binds variable `L` to emptylist.
+     * producing 1 solution which binds variable `L` to the empty list.
      */
     fun testFindXinFail()
 
@@ -58,7 +58,7 @@ interface TestFindAll {
      * ?- findall(X,(X=1 ; X=1),S).
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory,
-     * producing 1 solution which binds variable `S` to `1` or `1`, respectively.
+     * producing 1 solution which binds variable `S` the list `[1, 1]`.
      */
     fun testFindXinSameXValues()
 
@@ -77,7 +77,7 @@ interface TestFindAll {
      * findall(X,(X=1 ; X=2),[X,Y]).
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory,
-     * producing 2 solutions which bind variable `X` to the value `1` and `Y` to the value `2`.
+     * producing 2 solutions which bind variable `X` to the value `1` and `Y` to the value `2`, respectively.
      */
     fun testFindXtoDoubleAssigment()
 
@@ -87,7 +87,7 @@ interface TestFindAll {
      * ?- findall(X,Goal,S).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-     * producing exception instantiation_error.
+     * producing exception `instantiation_error`.
      */
     fun testFindXinGoal()
 
@@ -97,7 +97,7 @@ interface TestFindAll {
      * ?- findall(X,4,S).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-     * producing exception type_error(callable, 4).
+     * producing exception `type_error(callable, 4)`.
      */
     fun testFindXinNumber()
 
@@ -107,7 +107,7 @@ interface TestFindAll {
      * ?- findall(X,call(1),S).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-     * producing exception type_error(callable, 1).
+     * producing exception `type_error(callable, 1)`.
      */
     fun testFindXinCall()
 }

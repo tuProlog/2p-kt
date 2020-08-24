@@ -29,7 +29,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf(1 + `_`))),
+                ktListOf(query.yes("S" to listOf(1 + "Y"))),
                 solutions
             )
         }
@@ -57,7 +57,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes("S" to listOf("X", "X"))),
+                ktListOf(query.yes("S" to listOf(1, 1))),
                 solutions
             )
         }
