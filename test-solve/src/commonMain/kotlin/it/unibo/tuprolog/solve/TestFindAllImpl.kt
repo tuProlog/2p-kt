@@ -85,13 +85,8 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                with(query) {
-                    ktListOf(
-                        yes("X" to 1),
-                        yes("Y" to 2)
-                    )
-                },
-                solutions
+                    ktListOf(query.yes("X" to 1, "Y" to 2)),
+                    solutions
             )
         }
     }
