@@ -59,11 +59,25 @@ abstract class PrologError(
             extraData: Term? = null
         ): PrologError = with(type) {
             when {
-                functor == MetaError.typeFunctor && cause is TuPrologRuntimeException -> MetaError(message, cause, context, extraData)
+                functor == MetaError.typeFunctor && cause is TuPrologRuntimeException -> MetaError(
+                    message,
+                    cause,
+                    context,
+                    extraData
+                )
                 functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)
                 functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)
+                functor == ExistenceError.typeFunctor && type.arity == 2 ->
+                    ExistenceError(message, cause, context, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
                 functor == DomainError.typeFunctor && arity == 2 && DomainError.Expected.fromTerm(args.first()) != null ->
-                    DomainError(message, cause, context, DomainError.Expected.fromTerm(args.first())!!, args[1], extraData)
+                    DomainError(
+                        message,
+                        cause,
+                        context,
+                        DomainError.Expected.fromTerm(args.first())!!,
+                        args[1],
+                        extraData
+                    )
                 functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->
                     TypeError(message, cause, context, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
                 functor == EvaluationError.typeFunctor && arity == 1 && EvaluationError.Type.fromTerm(args.single()) != null ->
