@@ -11,6 +11,9 @@ class FlagStorage private constructor(private val flags: Map<String, Term>) : Ma
 
     private constructor(vararg notableFlagValues: NotableFlag) : this(notableFlagValues.map { it.toPair() }.toMap())
 
+    operator fun get(notableFlag: NotableFlag): Term? =
+        this[notableFlag.name]
+
     operator fun plus(flagValue: Pair<String, Term>): FlagStorage =
         FlagStorage(mapOf(flagValue) + this)
 
