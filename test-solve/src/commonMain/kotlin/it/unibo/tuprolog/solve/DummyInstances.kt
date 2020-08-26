@@ -18,7 +18,7 @@ import it.unibo.tuprolog.theory.Theory
 object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
-    @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
+    @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER", "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
     val executionContext = object : ExecutionContext {
         override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
         override val libraries: Nothing by lazy { throw NotImplementedError() }

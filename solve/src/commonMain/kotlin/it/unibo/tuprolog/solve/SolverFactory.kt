@@ -19,7 +19,7 @@ interface SolverFactory {
 
     @JsName("defaultFlags")
     val defaultFlags: PrologFlags
-        get() = emptyMap()
+        get() = PrologFlags.default()
 
     @JsName("defaultStaticKb")
     val defaultStaticKb: Theory

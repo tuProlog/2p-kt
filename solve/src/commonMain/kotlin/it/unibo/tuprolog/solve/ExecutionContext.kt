@@ -82,13 +82,13 @@ interface ExecutionContext : ExecutionContextAware {
                     dynamicKb = dynamicKb.retract(sideEffect.clauses).theory
                 }
                 is SideEffect.SetFlags -> {
-                    flags = flags + sideEffect.flags
+                    flags += sideEffect.flags
                 }
                 is SideEffect.ResetFlags -> {
-                    flags = sideEffect.flags
+                    flags = PrologFlags.of(sideEffect.flags)
                 }
                 is SideEffect.ClearFlags -> {
-                    flags = flags - sideEffect.names
+                    flags -= sideEffect.names
                 }
                 is SideEffect.LoadLibrary -> {
                     libraries += sideEffect.aliasedLibrary

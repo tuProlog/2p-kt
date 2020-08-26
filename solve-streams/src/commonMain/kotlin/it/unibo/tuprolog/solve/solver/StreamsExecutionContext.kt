@@ -17,7 +17,7 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal data class StreamsExecutionContext(
     override val libraries: Libraries = Libraries(),
-    override val flags: PrologFlags = emptyMap(),
+    override val flags: PrologFlags = PrologFlags.empty(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
