@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+/**
+ * Tests of Arg
+ */
 interface TestArg {
     companion object{
         fun prototype(solverFactory: SolverFactory): TestArg =
