@@ -8,8 +8,10 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 class ClassicSolverTestArg : TestArg, SolverFactory {
 
     private val prototype = TestArg.prototype(this)
@@ -49,6 +51,7 @@ class ClassicSolverTestArg : TestArg, SolverFactory {
     }
 
     @Test
+    //@Ignore
     override fun testArgFromFooX(){
         prototype.testArgFromFooX()
     }

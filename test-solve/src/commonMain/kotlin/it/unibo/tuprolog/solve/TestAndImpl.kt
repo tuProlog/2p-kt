@@ -5,7 +5,7 @@ import kotlin.collections.listOf as ktListOf
 
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
-    override fun testTermIsFreeVariable() { // test if the variable X is free
+    override fun testTermIsFreeVariable() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
