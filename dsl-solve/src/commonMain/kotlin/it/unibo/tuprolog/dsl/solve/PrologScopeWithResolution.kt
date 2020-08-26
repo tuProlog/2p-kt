@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.PrologFlags
+import it.unibo.tuprolog.solve.FlagStorage
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -23,7 +23,7 @@ interface PrologScopeWithResolution : PrologScopeWithTheories, MutableSolver {
     @JsName("solverOf")
     fun solverOf(
         otherLibraries: Libraries = solverFactory.defaultLibraries,
-        flags: PrologFlags = solverFactory.defaultFlags,
+        flags: FlagStorage = solverFactory.defaultFlags,
         staticKb: Theory = solverFactory.defaultStaticKb,
         dynamicKb: Theory = solverFactory.defaultDynamicKb,
         stdIn: InputChannel<String> = solverFactory.defaultInputChannel,

@@ -18,7 +18,7 @@ object StreamsSolverFactory : SolverFactory {
 
     override fun solverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -37,7 +37,7 @@ object StreamsSolverFactory : SolverFactory {
 
     override fun mutableSolverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,

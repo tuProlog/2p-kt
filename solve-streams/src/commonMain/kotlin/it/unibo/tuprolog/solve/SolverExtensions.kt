@@ -10,7 +10,7 @@ import kotlin.jvm.JvmName
 
 fun Solver.Companion.streams(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -22,7 +22,7 @@ fun Solver.Companion.streams(
 
 fun Solver.Companion.streamsWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -34,7 +34,7 @@ fun Solver.Companion.streamsWithDefaultBuiltins(
 
 fun MutableSolver.Companion.streams(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -46,7 +46,7 @@ fun MutableSolver.Companion.streams(
 
 fun MutableSolver.Companion.streamsWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),

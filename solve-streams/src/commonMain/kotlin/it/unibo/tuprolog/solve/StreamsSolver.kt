@@ -18,7 +18,7 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal class StreamsSolver constructor(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
@@ -61,7 +61,7 @@ internal class StreamsSolver constructor(
     override val libraries: Libraries
         get() = executionContext.libraries
 
-    override val flags: PrologFlags
+    override val flags: FlagStorage
         get() = executionContext.flags
 
     override val staticKb: Theory

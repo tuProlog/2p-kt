@@ -17,7 +17,7 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal data class StreamsExecutionContext(
     override val libraries: Libraries = Libraries(),
-    override val flags: PrologFlags = PrologFlags.empty(),
+    override val flags: FlagStorage = FlagStorage.empty(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
@@ -52,7 +52,7 @@ internal data class StreamsExecutionContext(
 
     override fun createSolver(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -83,7 +83,7 @@ internal data class StreamsExecutionContext(
 
     override fun update(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,

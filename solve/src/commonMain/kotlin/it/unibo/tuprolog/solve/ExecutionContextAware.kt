@@ -46,7 +46,7 @@ interface ExecutionContextAware {
 
     /** Enabled flags */
     @JsName("flags")
-    val flags: PrologFlags
+    val flags: FlagStorage
 
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
     @JsName("staticKb")

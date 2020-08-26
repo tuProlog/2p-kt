@@ -19,7 +19,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
 
     override fun solverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -32,7 +32,7 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
 
     override fun mutableSolverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStorage,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,

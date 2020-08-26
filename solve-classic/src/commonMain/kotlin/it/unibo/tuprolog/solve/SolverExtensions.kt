@@ -12,7 +12,7 @@ import kotlin.jvm.JvmName
 @JsName("classicSolver")
 fun Solver.Companion.classic(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -25,7 +25,7 @@ fun Solver.Companion.classic(
 @JsName("classicSolverWithDefaultBuiltins")
 fun Solver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -38,7 +38,7 @@ fun Solver.Companion.classicWithDefaultBuiltins(
 @JsName("classicMutableSolver")
 fun MutableSolver.Companion.classic(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),
@@ -51,7 +51,7 @@ fun MutableSolver.Companion.classic(
 @JsName("classicMutableSolverWithDefaultBuiltins")
 fun MutableSolver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = PrologFlags.empty(),
+    flags: FlagStorage = FlagStorage.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     stdIn: InputChannel<String> = InputChannel.stdIn(),

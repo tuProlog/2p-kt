@@ -18,8 +18,8 @@ interface SolverFactory {
     val defaultBuiltins: AliasedLibrary
 
     @JsName("defaultFlags")
-    val defaultFlags: PrologFlags
-        get() = PrologFlags.default()
+    val defaultFlags: FlagStorage
+        get() = FlagStorage.default()
 
     @JsName("defaultStaticKb")
     val defaultStaticKb: Theory
@@ -48,7 +48,7 @@ interface SolverFactory {
     @JsName("solver")
     fun solverOf(
         libraries: Libraries = defaultLibraries,
-        flags: PrologFlags = defaultFlags,
+        flags: FlagStorage = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -146,7 +146,7 @@ interface SolverFactory {
     @JsName("solverWithDefaultBuiltinsAnd")
     fun solverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
-        flags: PrologFlags = defaultFlags,
+        flags: FlagStorage = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -231,7 +231,7 @@ interface SolverFactory {
     @JsName("mutableSolver")
     fun mutableSolverOf(
         libraries: Libraries = defaultLibraries,
-        flags: PrologFlags = defaultFlags,
+        flags: FlagStorage = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -329,7 +329,7 @@ interface SolverFactory {
     @JsName("mutableSolverWithDefaultBuiltinsAnd")
     fun mutableSolverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
-        flags: PrologFlags = defaultFlags,
+        flags: FlagStorage = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,

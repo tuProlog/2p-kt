@@ -18,27 +18,27 @@ class ClassicSolverTestAnd : TestAnd, SolverFactory {
         get() = DefaultBuiltins
 
     override fun solverOf(
-            libraries: Libraries,
-            flags: PrologFlags,
-            staticKb: Theory,
-            dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
+        libraries: Libraries,
+        flags: FlagStorage,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
     ) = Solver.classic(
             libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
 
     override fun mutableSolverOf(
-            libraries: Libraries,
-            flags: PrologFlags,
-            staticKb: Theory,
-            dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
+        libraries: Libraries,
+        flags: FlagStorage,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
     ) = MutableSolver.classic(
             libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
     )
