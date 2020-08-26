@@ -39,7 +39,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ","("fail", "call(3)")
-            val query = fail() and call(3)
+            val query = fail and call(3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

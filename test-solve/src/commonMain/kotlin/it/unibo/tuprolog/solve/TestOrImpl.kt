@@ -9,7 +9,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = true or fail()
+            val query = true or fail
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -29,7 +29,7 @@ internal class TestOrImpl(private val solverFactory: SolverFactory) : TestOr {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
 //            val query = ";"(("!" and fail()), true)
-            val query = "!" and fail() or true
+            val query = "!" and fail or true
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

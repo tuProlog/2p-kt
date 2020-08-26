@@ -51,7 +51,7 @@ fun main() {
             staticKb = theoryOf(
                 fact { "user"("giovanni") },
                 fact { "user"("lorenzo") },
-                rule { "user"(`_`) impliedBy fail() }
+                rule { "user"(`_`) impliedBy fail }
             )
         )
         val query = "user"("X") and "write"("hello: ") and "write"("X") and "nl" and "gt"(2, 1)

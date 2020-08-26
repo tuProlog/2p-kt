@@ -13,6 +13,20 @@ interface Scope {
     @JsName("variables")
     val variables: Map<String, Var>
 
+    @JsName("fail")
+    val fail: Truth
+
+    @JsName("emptyList")
+    val emptyList: EmptyList
+
+    @JsName("emptySet")
+    val emptySet: EmptySet
+
+    @Suppress("PropertyName")
+    @JsName("_")
+    val `_`: Var
+        get() = anonymous()
+
     @JsName("containsVar")
     operator fun contains(variable: Var): Boolean
 
@@ -58,12 +72,6 @@ interface Scope {
     @JsName("listOfIterable")
     fun listOf(terms: Iterable<Term>): LogicList
 
-    @JsName("emptyList")
-    val emptyList: EmptyList
-
-    @JsName("emptySet")
-    val emptySet: EmptySet
-
     @JsName("listFrom")
     fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
 
@@ -96,11 +104,6 @@ interface Scope {
 
     @JsName("anonymous")
     fun anonymous(): Var
-
-    @Suppress("PropertyName")
-    @JsName("_")
-    val `_`: Var
-        get() = anonymous()
 
     @JsName("whatever")
     fun whatever(): Var
@@ -170,9 +173,6 @@ interface Scope {
 
     @JsName("truthOf")
     fun truthOf(value: Boolean): Truth
-
-    @JsName("fail")
-    fun fail(): Truth
 
     companion object {
 

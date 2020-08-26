@@ -52,8 +52,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun truthOf(value: Boolean): Truth =
         Truth.of(value)
 
-    override fun fail(): Truth =
-        Truth.FAIL
+    override val fail: Truth
+        get() = Truth.FAIL
 
     override fun setOf(terms: Iterable<Term>): LogicSet =
         LogicSet.of(terms)

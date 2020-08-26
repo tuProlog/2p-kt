@@ -39,7 +39,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = findall("X", fail(), "L")
+            val query = findall("X", fail, "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
