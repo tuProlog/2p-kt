@@ -8,14 +8,14 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-class StreamsSolverSystemTesting : SolverFactory, SolverTest {
+class TestClassicSolver : SolverFactory, TestSolver {
 
-    private val prototype = SolverTest.prototype(this)
+    private val prototype = TestSolver.prototype(this)
 
-    override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
+    override val defaultBuiltins: AliasedLibrary
+        get() = DefaultBuiltins
 
     override fun solverOf(
         libraries: Libraries,
@@ -26,7 +26,9 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ) = Solver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = Solver.classic(
+        libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
+    )
 
     override fun mutableSolverOf(
         libraries: Libraries,
@@ -37,12 +39,18 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = MutableSolver.classic(
+        libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
+    )
 
     @Test
-    @Ignore
     override fun testUnknownFlag() {
         prototype.testUnknownFlag()
+    }
+
+    @Test
+    override fun testSideEffectsPersistentAfterBacktracking1() {
+        prototype.testSideEffectsPersistentAfterBacktracking1()
     }
 
     @Test
@@ -71,12 +79,6 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
-    override fun testSideEffectsPersistentAfterBacktracking1() {
-        prototype.testSideEffectsPersistentAfterBacktracking1()
-    }
-
-    @Test
     override fun testStandardOutput() {
         prototype.testStandardOutput()
     }
@@ -87,25 +89,21 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    @Ignore
     override fun testIfThen1() {
         prototype.testIfThen1()
     }
 
     @Test
-    @Ignore
     override fun testIfThen2() {
         prototype.testIfThen2()
     }
 
     @Test
-    @Ignore
     override fun testIfThenElse1() {
         prototype.testIfThenElse1()
     }
 
     @Test
-    @Ignore
     override fun testIfThenElse2() {
         prototype.testIfThenElse2()
     }
@@ -307,13 +305,13 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     }
 
     @Test
-    override fun testUniv() {
-        prototype.testUniv()
+    override fun testFunctor() {
+        prototype.testFunctor()
     }
 
     @Test
-    override fun testFunctor() {
-        prototype.testFunctor()
+    override fun testUniv() {
+        prototype.testUniv()
     }
 
     @Test

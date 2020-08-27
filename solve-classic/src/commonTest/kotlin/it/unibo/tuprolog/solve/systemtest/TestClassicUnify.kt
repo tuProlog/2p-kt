@@ -8,12 +8,11 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-class ClassicSolverTestFindAll : TestFindAll, SolverFactory {
+class TestClassicUnify : TestUnify, SolverFactory {
 
-    private val prototype = TestFindAll.prototype(this)
+    private val prototype = TestUnify.prototype(this)
 
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
@@ -45,52 +44,58 @@ class ClassicSolverTestFindAll : TestFindAll, SolverFactory {
     )
 
     @Test
-    override fun testFindXInDiffValues(){
-        prototype.testFindXInDiffValues()
+    override fun testNumberUnify() {
+        prototype.testNumberUnify()
     }
 
     @Test
-    override fun testFindSumResult(){
-        prototype.testFindSumResult()
+    override fun testNumberXUnify() {
+        prototype.testNumberXUnify()
     }
 
     @Test
-    override fun testFindXinFail(){
-        prototype.testFindXinFail()
+    override fun testXYUnify() {
+        prototype.testXYUnify()
     }
 
     @Test
-//    @Ignore
-    override fun testFindXinSameXValues(){
-        prototype.testFindXinSameXValues()
+    override fun testDoubleUnify() {
+        prototype.testDoubleUnify()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
-    override fun testResultListIsCorrect(){
-        prototype.testResultListIsCorrect()
+    override fun testFDefUnify() {
+        prototype.testFDefUnify()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
-    override fun testFindXtoDoubleAssigment(){
-        prototype.testFindXtoDoubleAssigment()
+    override fun testDiffNumberUnify() {
+        prototype.testDiffNumberUnify()
     }
 
     @Test
-    override fun testFindXinGoal(){
-        prototype.testFindXinGoal()
+    override fun testDecNumberUnify() {
+        prototype.testDecNumberUnify()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
-    override fun testFindXinNumber(){
-        prototype.testFindXinNumber()
+    override fun testGUnifyFX() {
+        prototype.testGUnifyFX()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
-    override fun testFindXinCall(){
-        prototype.testFindXinCall()
+    override fun testFUnify() {
+        prototype.testFUnify()
     }
+
+    @Test
+    override fun testFMultipleTermUnify() {
+        prototype.testFMultipleTermUnify()
+    }
+
+    @Test
+    override fun testMultipleTermUnify() {
+        prototype.testMultipleTermUnify()
+    }
+
 }

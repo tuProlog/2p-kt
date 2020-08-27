@@ -66,7 +66,7 @@ import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.listOf as ktListOf
 
-internal class SolverTestImpl(private val solverFactory: SolverFactory) : SolverTest {
+internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSolver {
 
     override fun testUnknownFlag() {
         prolog {

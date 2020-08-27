@@ -12,7 +12,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-class ClassicSolverTestArg : TestArg, SolverFactory {
+class TestClassicArg : TestArg, SolverFactory {
 
     private val prototype = TestArg.prototype(this)
 

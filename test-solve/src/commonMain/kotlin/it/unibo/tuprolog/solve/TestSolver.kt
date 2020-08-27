@@ -28,11 +28,11 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
-interface SolverTest {
+interface TestSolver {
 
     companion object {
-        fun prototype(solverFactory: SolverFactory): SolverTest =
-            SolverTestImpl(solverFactory)
+        fun prototype(solverFactory: SolverFactory): TestSolver =
+            TestSolverImpl(solverFactory)
     }
 
     /** A short test max duration */

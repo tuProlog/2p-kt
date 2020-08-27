@@ -10,9 +10,8 @@ import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
-class ClassicSolverTestAnd : TestAnd, SolverFactory {
-
-    private val prototype = TestAnd.prototype(this)
+class TestClassicArith : TestArith, SolverFactory {
+    private val prototype = TestArith.prototype(this)
 
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
@@ -44,27 +43,33 @@ class ClassicSolverTestAnd : TestAnd, SolverFactory {
     )
 
     @Test
-    override fun testTermIsFreeVariable() {
-        prototype.testTermIsFreeVariable()
+    override fun testArithDiff() {
+        prototype.testArithDiff()
     }
 
     @Test
-    override fun testWithSubstitution() {
-        prototype.testWithSubstitution()
+    override fun testArithEq() {
+        prototype.testArithEq()
     }
 
     @Test
-    override fun testFailIsCallable() {
-        prototype.testFailIsCallable()
+    override fun testArithGreaterThan() {
+        prototype.testArithGreaterThan()
     }
 
     @Test
-    override fun testNoFooIsCallable() {
-        prototype.testNoFooIsCallable()
+    override fun testArithGreaterThanEq() {
+        prototype.testArithGreaterThanEq()
     }
 
     @Test
-    override fun testTrueVarCallable() {
-        prototype.testTrueVarCallable()
+    override fun testArithLessThan() {
+        prototype.testArithLessThan()
+    }
+
+    @Test
+    override fun testArithLessThanEq() {
+        prototype.testArithLessThanEq()
     }
 }
+

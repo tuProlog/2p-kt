@@ -10,9 +10,9 @@ import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
-class ClassicSolverTestUnify : TestUnify, SolverFactory {
+class TestClassicOr : TestOr, SolverFactory {
 
-    private val prototype = TestUnify.prototype(this)
+    private val prototype = TestOr.prototype(this)
 
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
@@ -44,58 +44,29 @@ class ClassicSolverTestUnify : TestUnify, SolverFactory {
     )
 
     @Test
-    override fun testNumberUnify() {
-        prototype.testNumberUnify()
+    override fun testTrueOrFalse() {
+        prototype.testTrueOrFalse()
     }
 
     @Test
-    override fun testNumberXUnify() {
-        prototype.testNumberXUnify()
+    override fun testCutFalseOrTrue() {
+        prototype.testCutFalseOrTrue()
     }
 
     @Test
-    override fun testXYUnify() {
-        prototype.testXYUnify()
+    override fun testCutCall() {
+        prototype.testCutCall()
     }
 
     @Test
-    override fun testDoubleUnify() {
-        prototype.testDoubleUnify()
+    override fun testCutAssignedValue() {
+        prototype.testCutAssignedValue()
     }
 
     @Test
-    override fun testFDefUnify() {
-        prototype.testFDefUnify()
+    override fun testOrDoubleAssignment() {
+        prototype.testOrDoubleAssignment()
     }
 
-    @Test
-    override fun testDiffNumberUnify() {
-        prototype.testDiffNumberUnify()
-    }
-
-    @Test
-    override fun testDecNumberUnify() {
-        prototype.testDecNumberUnify()
-    }
-
-    @Test
-    override fun testGUnifyFX() {
-        prototype.testGUnifyFX()
-    }
-
-    @Test
-    override fun testFUnify() {
-        prototype.testFUnify()
-    }
-
-    @Test
-    override fun testFMultipleTermUnify() {
-        prototype.testFMultipleTermUnify()
-    }
-
-    @Test
-    override fun testMultipleTermUnify() {
-        prototype.testMultipleTermUnify()
-    }
 
 }
