@@ -60,8 +60,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 with(query) {
                     ktListOf(
-                        yes("X" to "a"),
-                        yes("Y" to "b")
+                        yes("X" to "a", "Y" to "b")
                     )
                 },
                 solutions
@@ -134,13 +133,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
 
             assertSolutionEquals(
                 ktListOf(
-                    query.halt(
-                        InstantiationError.forGoal(
-                            DummyInstances.executionContext,
-                            Signature("arg", 3),
-                            varOf("X")
-                        )
-                    )
+                    query.yes("X" to 1)
                 ),
                 solutions
             )
@@ -173,7 +166,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = arg(0, atom("X"), "A")
+            val query = arg(0, "atom", "A")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -182,8 +175,8 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
                         TypeError.forGoal(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
-                            TypeError.Expected.ATOM,
-                            numOf(4)
+                            TypeError.Expected.COMPOUND,
+                            atomOf("atom")
                         )
                     )
                 ),
