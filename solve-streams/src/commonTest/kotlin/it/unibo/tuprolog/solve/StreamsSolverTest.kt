@@ -17,7 +17,7 @@ internal class StreamsSolverTest {
         val toBeTested = StreamsSolver()
 
         assertEquals(Libraries(), toBeTested.libraries)
-        assertEquals(emptyMap(), toBeTested.flags)
+        assertEquals(FlagStorage.EMPTY, toBeTested.flags)
         assertEquals(Theory.empty(), toBeTested.staticKb)
         assertEquals(Theory.empty(), toBeTested.dynamicKb)
     }
