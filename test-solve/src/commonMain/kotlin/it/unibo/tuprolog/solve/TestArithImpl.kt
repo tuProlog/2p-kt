@@ -11,59 +11,61 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "=\\="(0,1)
+            var query = 0 `=!=` 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=\\="(1.0,1)
+            query = 1.0 `=!=` 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = "=\\="(3*2,7-1)
+            query = (numOf(3) * 2) `=!=` (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = "=\\="("N",5)
+            query = "N" `=!=` 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=\\=", 3),
-                                    varOf("N")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=\\=", 2),
+                            varOf("N")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = "=\\="("floot"(1),5)
+            query = "floot"(1) `=!=` 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=\\=", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=\\=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -72,67 +74,69 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "=:="(0,1)
+            var query = 0 `===` 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = "=:="(1.0,1)
+            query = 1.0 `===` 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=:="(3*2,7-1)
+            query = (numOf(3) * 2) `===` (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=:="("N",5)
+            query = "N" `===` 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=:=", 3),
-                                    varOf("N")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=:=", 2),
+                            varOf("N")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = "=:="("floot"(1),5)
+            query = "floot"(1) `===` 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=:=", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=:=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query =  ""("0.333 =:= 1/3")
+            query = 0.333 `===` (numOf(1) / 3)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -141,59 +145,61 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = ">"(0,1)
+            var query = 0 greaterThan 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = ">"(1.0,1)
+            query = 1.0 greaterThan 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = ">"(3*2,7-1)
+            query = (numOf(3) * 2) greaterThan (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = ">"("X",5)
+            query = "X" greaterThan 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature(">", 3),
-                                    varOf("X")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature(">", 2),
+                            varOf("X")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = ">"(2 + "floot"(1),5)
+            query = (2 + "floot"(1)) greaterThan 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature(">", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature(">", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -202,59 +208,61 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = ">="(0,1)
+            var query = 0 greaterThanOrEqualsTo 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = ">="(1.0,1)
+            query = 1.0 greaterThanOrEqualsTo 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = ">="(3*2,7-1)
+            query = (numOf(3) * 2) greaterThanOrEqualsTo (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = ">="("X",5)
+            query = "X" greaterThanOrEqualsTo 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature(">", 3),
-                                    varOf("X")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature(">=", 2),
+                            varOf("X")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = ">="(2 + "floot"(1),5)
+            query = (2 + "floot"(1)) greaterThanOrEqualsTo 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature(">", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature(">=", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -263,59 +271,61 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "<"(0,1)
+            var query = 0 lowerThan 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "<"(1.0,1)
+            query = 1.0 lowerThan 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = "<"(3*2,7-1)
+            query = (numOf(3) * 2) lowerThan (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
 
-            query = "<"("X",5)
+            query = "X" lowerThan 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("<", 3),
-                                    varOf("X")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("<", 2),
+                            varOf("X")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = "<"(2 + "floot"(1),5)
+            query = (2 + "floot"(1)) lowerThan 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("<", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("<", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -324,59 +334,61 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "=<"(0,1)
+            var query = 0 lowerThanOrEqualsTo 1
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=<"(1.0,1)
+            query = 1.0 lowerThanOrEqualsTo 1
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=<"(3*2,7-1)
+            query = (numOf(3) * 2) lowerThanOrEqualsTo (numOf(7) - 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
 
-            query = "=<"("X",5)
+            query = "X" lowerThanOrEqualsTo 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=<", 3),
-                                    varOf("X")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=<", 2),
+                            varOf("X")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
 
-            query = "=<"(2 + "floot"(1),5)
+            query = (2 + "floot"(1)) lowerThanOrEqualsTo 5
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("=<", 3),
-                                    TypeError.Expected.EVALUABLE,
-                                    varOf("floot/1")
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("=<", 2),
+                            TypeError.Expected.EVALUABLE,
+                            "floot"(1)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
