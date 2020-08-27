@@ -21,7 +21,7 @@ class TestClassicArg : TestArg, SolverFactory {
 
     override fun solverOf(
         libraries: Libraries,
-        flags: FlagStorage,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -34,7 +34,7 @@ class TestClassicArg : TestArg, SolverFactory {
 
     override fun mutableSolverOf(
         libraries: Libraries,
-        flags: FlagStorage,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,

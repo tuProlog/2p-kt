@@ -54,7 +54,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     override fun testNoFooIsCallable() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStorage.of(Unknown to Unknown.ERROR)
+                flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
 
 //            val query = ","("var(X)", "call(X)")

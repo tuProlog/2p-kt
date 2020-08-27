@@ -33,7 +33,7 @@ object DummyInstances {
 
         override fun createSolver(
             libraries: Libraries,
-            flags: FlagStorage,
+            flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
             stdIn: InputChannel<String>,
@@ -46,7 +46,7 @@ object DummyInstances {
 
         override fun update(
             libraries: Libraries,
-            flags: FlagStorage,
+            flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
             operators: OperatorSet,

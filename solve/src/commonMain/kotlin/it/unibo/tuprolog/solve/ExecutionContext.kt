@@ -29,7 +29,7 @@ interface ExecutionContext : ExecutionContextAware {
     @JsName("createSolver")
     fun createSolver(
         libraries: Libraries = this.libraries,
-        flags: FlagStorage = this.flags,
+        flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
@@ -85,7 +85,7 @@ interface ExecutionContext : ExecutionContextAware {
                     flags += sideEffect.flags
                 }
                 is SideEffect.ResetFlags -> {
-                    flags = FlagStorage.of(sideEffect.flags)
+                    flags = FlagStore.of(sideEffect.flags)
                 }
                 is SideEffect.ClearFlags -> {
                     flags -= sideEffect.names
@@ -152,7 +152,7 @@ interface ExecutionContext : ExecutionContextAware {
     @JsName("update")
     fun update(
         libraries: Libraries = this.libraries,
-        flags: FlagStorage = this.flags,
+        flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,

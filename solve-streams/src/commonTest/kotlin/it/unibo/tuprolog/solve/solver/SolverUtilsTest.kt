@@ -18,7 +18,7 @@ internal class SolverUtilsTest {
     private val aContext = StreamsExecutionContext(
         dynamicKb = Theory.indexedOf({ factOf(atomOf("a")) }),
         staticKb = Theory.indexedOf({ factOf(atomOf("a")) }),
-        flags = FlagStorage.EMPTY
+        flags = FlagStore.EMPTY
     )
 
     /** A "true" solveRequest */
@@ -137,7 +137,7 @@ internal class SolverUtilsTest {
         val modifiedContext = aContext.copy(
             dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
-            flags = FlagStorage.of("someFlag" to Atom.of("someFlagValue")),
+            flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
             libraries = Libraries()
         )
 

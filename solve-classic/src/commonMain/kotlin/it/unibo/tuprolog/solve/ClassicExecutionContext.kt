@@ -15,7 +15,7 @@ import kotlin.collections.Set as KtSet
 data class ClassicExecutionContext(
     override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries(),
-    override val flags: FlagStorage = FlagStorage.EMPTY,
+    override val flags: FlagStore = FlagStore.EMPTY,
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
@@ -74,7 +74,7 @@ data class ClassicExecutionContext(
 
     override fun createSolver(
         libraries: Libraries,
-        flags: FlagStorage,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -93,7 +93,7 @@ data class ClassicExecutionContext(
 
     override fun update(
         libraries: Libraries,
-        flags: FlagStorage,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,

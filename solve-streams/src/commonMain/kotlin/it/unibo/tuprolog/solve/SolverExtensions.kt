@@ -10,7 +10,7 @@ import kotlin.jvm.JvmName
 
 fun Solver.Companion.streams(
     libraries: Libraries = StreamsSolverFactory.defaultLibraries,
-    flags: FlagStorage = StreamsSolverFactory.defaultFlags,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
@@ -22,7 +22,7 @@ fun Solver.Companion.streams(
 
 fun Solver.Companion.streamsWithDefaultBuiltins(
     libraries: Libraries = StreamsSolverFactory.defaultLibraries,
-    flags: FlagStorage = StreamsSolverFactory.defaultFlags,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
@@ -34,7 +34,7 @@ fun Solver.Companion.streamsWithDefaultBuiltins(
 
 fun MutableSolver.Companion.streams(
     libraries: Libraries = StreamsSolverFactory.defaultLibraries,
-    flags: FlagStorage = StreamsSolverFactory.defaultFlags,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
@@ -46,7 +46,7 @@ fun MutableSolver.Companion.streams(
 
 fun MutableSolver.Companion.streamsWithDefaultBuiltins(
     libraries: Libraries = StreamsSolverFactory.defaultLibraries,
-    flags: FlagStorage = StreamsSolverFactory.defaultFlags,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
     staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,

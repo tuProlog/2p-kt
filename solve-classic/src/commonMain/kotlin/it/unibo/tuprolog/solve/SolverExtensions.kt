@@ -12,7 +12,7 @@ import kotlin.jvm.JvmName
 @JsName("classicSolver")
 fun Solver.Companion.classic(
     libraries: Libraries = ClassicSolverFactory.defaultLibraries,
-    flags: FlagStorage = ClassicSolverFactory.defaultFlags,
+    flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
@@ -25,7 +25,7 @@ fun Solver.Companion.classic(
 @JsName("classicSolverWithDefaultBuiltins")
 fun Solver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = ClassicSolverFactory.defaultLibraries,
-    flags: FlagStorage = ClassicSolverFactory.defaultFlags,
+    flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
@@ -38,7 +38,7 @@ fun Solver.Companion.classicWithDefaultBuiltins(
 @JsName("classicMutableSolver")
 fun MutableSolver.Companion.classic(
     libraries: Libraries = ClassicSolverFactory.defaultLibraries,
-    flags: FlagStorage = ClassicSolverFactory.defaultFlags,
+    flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,
@@ -51,7 +51,7 @@ fun MutableSolver.Companion.classic(
 @JsName("classicMutableSolverWithDefaultBuiltins")
 fun MutableSolver.Companion.classicWithDefaultBuiltins(
     libraries: Libraries = ClassicSolverFactory.defaultLibraries,
-    flags: FlagStorage = ClassicSolverFactory.defaultFlags,
+    flags: FlagStore = ClassicSolverFactory.defaultFlags,
     staticKb: Theory = ClassicSolverFactory.defaultStaticKb,
     dynamicKb: Theory = ClassicSolverFactory.defaultDynamicKb,
     stdIn: InputChannel<String> = ClassicSolverFactory.defaultInputChannel,

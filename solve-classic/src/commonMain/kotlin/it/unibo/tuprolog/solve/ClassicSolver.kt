@@ -10,7 +10,7 @@ import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: FlagStorage = FlagStorage.EMPTY,
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
@@ -63,7 +63,7 @@ internal open class ClassicSolver(
     override val libraries: Libraries
         get() = state.context.libraries
 
-    override val flags: FlagStorage
+    override val flags: FlagStore
         get() = state.context.flags
 
     override val staticKb: Theory

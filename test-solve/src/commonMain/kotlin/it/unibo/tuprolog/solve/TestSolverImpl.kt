@@ -75,7 +75,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             val observedWarnings = mutableListOf<PrologWarning>()
 
             var solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStorage.of(Unknown to ERROR),
+                flags = FlagStore.of(Unknown to ERROR),
                 warnings = OutputChannel.of {
                     observedWarnings.add(it)
                 }
@@ -95,7 +95,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertTrue { observedWarnings.isEmpty() }
 
             solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStorage.of(Unknown to WARNING),
+                flags = FlagStore.of(Unknown to WARNING),
                 warnings = OutputChannel.of {
                     observedWarnings.add(it)
                 }
@@ -110,7 +110,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 
             solver = solverFactory.solverWithDefaultBuiltins(
-                flags = FlagStorage.of(Unknown to FAIL),
+                flags = FlagStore.of(Unknown to FAIL),
                 warnings = OutputChannel.of {
                     observedWarnings.add(it)
                 }

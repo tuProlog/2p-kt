@@ -18,8 +18,8 @@ interface SolverFactory {
     val defaultBuiltins: AliasedLibrary
 
     @JsName("defaultFlags")
-    val defaultFlags: FlagStorage
-        get() = FlagStorage.DEFAULT
+    val defaultFlags: FlagStore
+        get() = FlagStore.DEFAULT
 
     @JsName("defaultStaticKb")
     val defaultStaticKb: Theory
@@ -48,7 +48,7 @@ interface SolverFactory {
     @JsName("solver")
     fun solverOf(
         libraries: Libraries = defaultLibraries,
-        flags: FlagStorage = defaultFlags,
+        flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -146,7 +146,7 @@ interface SolverFactory {
     @JsName("solverWithDefaultBuiltinsAnd")
     fun solverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
-        flags: FlagStorage = defaultFlags,
+        flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -231,7 +231,7 @@ interface SolverFactory {
     @JsName("mutableSolver")
     fun mutableSolverOf(
         libraries: Libraries = defaultLibraries,
-        flags: FlagStorage = defaultFlags,
+        flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,
@@ -329,7 +329,7 @@ interface SolverFactory {
     @JsName("mutableSolverWithDefaultBuiltinsAnd")
     fun mutableSolverWithDefaultBuiltins(
         otherLibraries: Libraries = defaultLibraries,
-        flags: FlagStorage = defaultFlags,
+        flags: FlagStore = defaultFlags,
         staticKb: Theory = defaultStaticKb,
         dynamicKb: Theory = defaultDynamicKb,
         stdIn: InputChannel<String> = defaultInputChannel,

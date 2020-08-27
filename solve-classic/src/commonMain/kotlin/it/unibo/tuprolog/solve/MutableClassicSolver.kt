@@ -9,7 +9,7 @@ import it.unibo.tuprolog.theory.Theory
 
 internal class MutableClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: FlagStorage = FlagStorage.EMPTY,
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
