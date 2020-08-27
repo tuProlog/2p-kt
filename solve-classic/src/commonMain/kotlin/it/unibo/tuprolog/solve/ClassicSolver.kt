@@ -10,7 +10,7 @@ import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: FlagStorage = FlagStorage.empty(),
+    flags: FlagStorage = FlagStorage.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),

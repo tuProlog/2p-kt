@@ -4,7 +4,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologWarning
 
-class MissingPredicate(context: ExecutionContext, signature: Signature, cause: Throwable?) : PrologWarning(
+class MissingPredicate(context: ExecutionContext, val signature: Signature, cause: Throwable?) : PrologWarning(
     context = context,
     message = "No such a predicate: ${signature.toIndicator()}",
     cause = cause

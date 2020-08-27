@@ -19,7 +19,7 @@ interface SolverFactory {
 
     @JsName("defaultFlags")
     val defaultFlags: FlagStorage
-        get() = FlagStorage.default()
+        get() = FlagStorage.DEFAULT
 
     @JsName("defaultStaticKb")
     val defaultStaticKb: Theory

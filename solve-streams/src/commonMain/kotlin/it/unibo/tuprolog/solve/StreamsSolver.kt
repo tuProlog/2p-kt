@@ -18,7 +18,7 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal class StreamsSolver constructor(
     libraries: Libraries = Libraries(),
-    flags: FlagStorage = FlagStorage.empty(),
+    flags: FlagStorage = FlagStorage.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),

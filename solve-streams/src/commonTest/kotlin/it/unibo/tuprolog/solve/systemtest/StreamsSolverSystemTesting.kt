@@ -40,6 +40,12 @@ class StreamsSolverSystemTesting : SolverFactory, SolverTest {
     ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     @Test
+    @Ignore
+    override fun testUnknownFlag() {
+        prototype.testUnknownFlag()
+    }
+
+    @Test
     override fun testFindAll() {
         prototype.testFindAll()
     }

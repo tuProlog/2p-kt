@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.flags.DoubleQuotes
+import it.unibo.tuprolog.solve.flags.MaxArity
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.flags.Unknown
 
@@ -30,10 +32,12 @@ class FlagStorage private constructor(private val flags: Map<String, Term>) : Ma
         FlagStorage(this.flags - flagNames)
 
     companion object {
-        fun empty() = FlagStorage(emptyMap())
+        val EMPTY = FlagStorage(emptyMap())
 
-        fun default() = FlagStorage(
-            Unknown
+        val DEFAULT = FlagStorage(
+            Unknown,
+            MaxArity,
+            DoubleQuotes
         )
 
         fun of(flags: Map<String, Term>) = FlagStorage(flags)
