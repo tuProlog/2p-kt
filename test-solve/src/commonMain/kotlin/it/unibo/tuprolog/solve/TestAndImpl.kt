@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.flags.Unknown
 import kotlin.collections.listOf as ktListOf
 
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
@@ -51,7 +53,9 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
     override fun testNoFooIsCallable() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins()
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                flags = FlagStorage.of(Unknown to Unknown.ERROR)
+            )
 
 //            val query = ","("var(X)", "call(X)")
             val query = "nofoo"("X") and call("X")
@@ -59,7 +63,12 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 
             assertSolutionEquals(
                 ktListOf(
-                    query.no() // TODO should be existence_error, but it is not supported ATM
+                    query.halt(
+                        ExistenceError.forProcedure(
+                            DummyInstances.executionContext,
+                            Signature("nofoo", 1)
+                        )
+                    )
                 ),
                 solutions
             )
