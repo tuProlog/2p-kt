@@ -44,6 +44,11 @@ class ClassicSolverSystemTesting : SolverFactory, SolverTest {
     )
 
     @Test
+    override fun testUnknownFlag() {
+        prototype.testUnknownFlag()
+    }
+
+    @Test
     override fun testSideEffectsPersistentAfterBacktracking1() {
         prototype.testSideEffectsPersistentAfterBacktracking1()
     }

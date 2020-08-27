@@ -47,6 +47,8 @@ interface SolverTest {
     val longDuration: TimeDuration
         get() = 4 * mediumDuration
 
+    fun testUnknownFlag()
+
     /** Test presence of correct built-ins */
     fun testBuiltinApi()
 
