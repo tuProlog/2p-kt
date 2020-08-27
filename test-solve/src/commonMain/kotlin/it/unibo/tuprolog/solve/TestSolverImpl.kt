@@ -141,6 +141,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(Not)
                 assertHasPredicateInAPI(Semicolon.SIGNATURE)
                 assertHasPredicateInAPI(Append.SIGNATURE)
+                assertHasPredicateInAPI(Arg)
                 assertHasPredicateInAPI(ArithmeticEqual)
                 assertHasPredicateInAPI(ArithmeticGreaterThan)
                 assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
@@ -1101,7 +1102,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             TypeError.Expected.INTEGER,
-                            varOf("Y"),
+                            atomOf("2"),
                             2
                         )
                     )

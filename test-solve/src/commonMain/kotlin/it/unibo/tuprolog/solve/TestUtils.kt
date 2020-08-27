@@ -9,6 +9,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
@@ -84,6 +85,15 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
                 (actual as Solution.Halt).exception::class,
                 reportMsg(expected, actual)
             )
+            when (val expectedEx = expected.exception) {
+                is PrologError -> {
+                    val actualEx = actual.exception as PrologError
+                    assertTrue(reportMsg(expectedEx.errorStruct[0], actualEx.errorStruct[0])) {
+                        expectedEx.errorStruct[0].equals(actualEx.errorStruct[0], false)
+                    }
+                    // TODO [27 aug 2020] check whole errorStruct for equality
+                }
+            }
         }
 
         expected.substitution.values.asSequence().flatMap { it.variables }.any() -> {
