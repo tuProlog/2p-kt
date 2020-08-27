@@ -87,8 +87,8 @@ internal data class StreamsExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: PrologInputChannels<*>,
-        outputChannels: PrologOutputChannels<*>
+        inputChannels: InputStore<*>,
+        outputChannels: OutputStore<*>
     ): StreamsExecutionContext {
         return copy(
             libraries = libraries,

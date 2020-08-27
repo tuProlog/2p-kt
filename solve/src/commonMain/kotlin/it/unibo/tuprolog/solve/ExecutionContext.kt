@@ -156,7 +156,7 @@ interface ExecutionContext : ExecutionContextAware {
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,
-        inputChannels: PrologInputChannels<*> = this.inputChannels,
-        outputChannels: PrologOutputChannels<*> = this.outputChannels
+        inputChannels: InputStore<*> = this.inputChannels,
+        outputChannels: OutputStore<*> = this.outputChannels
     ): ExecutionContext
 }

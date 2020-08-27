@@ -20,13 +20,13 @@ interface ExecutionContextAware {
 
         @JvmStatic
         @JsName("defaultInputChannels")
-        fun defaultInputChannels(): PrologInputChannels<*> {
+        fun defaultInputChannels(): InputStore<*> {
             return mapOf(STDIN to InputChannel.stdIn())
         }
 
         @JvmStatic
         @JsName("defaultOutputChannels")
-        fun defaultOutputChannels(): PrologOutputChannels<*> {
+        fun defaultOutputChannels(): OutputStore<*> {
             return mapOf(
                 STDOUT to OutputChannel.stdOut<String>(),
                 STDERR to OutputChannel.stdErr<String>(),
@@ -62,11 +62,11 @@ interface ExecutionContextAware {
 
     /** The currently open input channels */
     @JsName("inputChannels")
-    val inputChannels: PrologInputChannels<*>
+    val inputChannels: InputStore<*>
 
     /** The currently open output channels */
     @JsName("outputChannels")
-    val outputChannels: PrologOutputChannels<*>
+    val outputChannels: OutputStore<*>
 
     /** Shortcut for the standard input channel defined in [inputChannels], and named as [STDIN].
      * Returns `null` if the channel is closed

@@ -97,8 +97,8 @@ data class ClassicExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: PrologInputChannels<*>,
-        outputChannels: PrologOutputChannels<*>
+        inputChannels: InputStore<*>,
+        outputChannels: OutputStore<*>
     ): ClassicExecutionContext {
         return copy(
             libraries = libraries,

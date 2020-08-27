@@ -21,8 +21,8 @@ internal class StreamsSolver constructor(
     flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     private var executionContext: ExecutionContext = StreamsExecutionContext(
@@ -70,10 +70,10 @@ internal class StreamsSolver constructor(
     override val dynamicKb: Theory
         get() = executionContext.dynamicKb
 
-    override val inputChannels: PrologInputChannels<*>
+    override val inputChannels: InputStore<*>
         get() = executionContext.inputChannels
 
-    override val outputChannels: PrologOutputChannels<*>
+    override val outputChannels: OutputStore<*>
         get() = executionContext.outputChannels
 
     override val operators: OperatorSet

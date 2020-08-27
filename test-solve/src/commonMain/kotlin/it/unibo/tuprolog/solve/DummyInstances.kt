@@ -50,8 +50,8 @@ object DummyInstances {
             staticKb: Theory,
             dynamicKb: Theory,
             operators: OperatorSet,
-            inputChannels: PrologInputChannels<*>,
-            outputChannels: PrologOutputChannels<*>
+            inputChannels: InputStore<*>,
+            outputChannels: OutputStore<*>
         ): ExecutionContext {
             throw NotImplementedError()
         }
