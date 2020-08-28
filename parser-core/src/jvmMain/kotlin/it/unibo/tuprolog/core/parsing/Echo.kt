@@ -4,10 +4,10 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
 
-fun main(args: Array<String>) {
+fun main() {
     val parser = TermParser.withStandardOperators
 
-    while(true) {
+    while (true) {
         print("> ")
         val line = readLine()
         val term = parser.parseTerm(line!!)

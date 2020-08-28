@@ -65,7 +65,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyAppliesCorrectlySelectionStrategy() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 55)
-        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.min()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.minOrNull()!! }
 
         assertEquals(testSequence.sorted().toList(), toBeTested.toList())
     }
@@ -73,7 +73,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyDoesntRemoveDuplicatedItems() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 5)
-        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.max()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.maxOrNull()!! }
 
         assertEquals(testSequence.sortedDescending().toList(), toBeTested.toList())
     }
