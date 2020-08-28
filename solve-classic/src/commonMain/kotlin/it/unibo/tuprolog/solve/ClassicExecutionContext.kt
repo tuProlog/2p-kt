@@ -15,7 +15,7 @@ import kotlin.collections.Set as KtSet
 data class ClassicExecutionContext(
     override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries(),
-    override val flags: PrologFlags = emptyMap(),
+    override val flags: FlagStore = FlagStore.EMPTY,
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
@@ -74,7 +74,7 @@ data class ClassicExecutionContext(
 
     override fun createSolver(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -93,12 +93,12 @@ data class ClassicExecutionContext(
 
     override fun update(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: PrologInputChannels<*>,
-        outputChannels: PrologOutputChannels<*>
+        inputChannels: InputStore<*>,
+        outputChannels: OutputStore<*>
     ): ClassicExecutionContext {
         return copy(
             libraries = libraries,

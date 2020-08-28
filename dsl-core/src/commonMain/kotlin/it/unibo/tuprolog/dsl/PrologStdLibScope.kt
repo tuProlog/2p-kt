@@ -48,6 +48,9 @@ interface PrologStdLibScope : PrologAwareScope {
     fun assertz(clause: Any): Struct =
         structOf("assertz", clause.toTerm())
 
+    fun arg(index: Any, compound: Any, argument: Any): Struct =
+        structOf("arg", index.toTerm(), compound.toTerm(), argument.toTerm())
+
     fun atom(atom: Any): Struct =
         structOf("atom", atom.toTerm())
 

@@ -1,5 +1,3 @@
-@file:Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
-
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
@@ -20,13 +18,14 @@ import it.unibo.tuprolog.theory.Theory
 object DummyInstances {
 
     /** An empty context to be used where needed to fill parameters */
+    @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER", "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
     val executionContext = object : ExecutionContext {
         override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
         override val libraries: Nothing by lazy { throw NotImplementedError() }
         override val flags: Nothing by lazy { throw NotImplementedError() }
         override val staticKb: Nothing by lazy { throw NotImplementedError() }
         override val dynamicKb: Nothing by lazy { throw NotImplementedError() }
-        override val operators: Nothing by lazy { throw NotImplementedError() }
+        override val operators: OperatorSet by lazy { throw NotImplementedError() }
         override val inputChannels: Nothing by lazy { throw NotImplementedError() }
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
@@ -34,26 +33,26 @@ object DummyInstances {
 
         override fun createSolver(
             libraries: Libraries,
-            flags: PrologFlags,
+            flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
             stdIn: InputChannel<String>,
             stdOut: OutputChannel<String>,
             stdErr: OutputChannel<String>,
             warnings: OutputChannel<PrologWarning>
-        ): Nothing {
+        ): Solver {
             throw NotImplementedError()
         }
 
         override fun update(
             libraries: Libraries,
-            flags: PrologFlags,
+            flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
             operators: OperatorSet,
-            inputChannels: PrologInputChannels<*>,
-            outputChannels: PrologOutputChannels<*>
-        ): Nothing {
+            inputChannels: InputStore<*>,
+            outputChannels: OutputStore<*>
+        ): ExecutionContext {
             throw NotImplementedError()
         }
     }

@@ -9,49 +9,49 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 
 fun Solver.Companion.streams(
-    libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
-    stdIn: InputChannel<String> = InputChannel.stdIn(),
-    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
-    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
+    staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
+    stdOut: OutputChannel<String> = StreamsSolverFactory.defaultOutputChannel,
+    stdErr: OutputChannel<String> = StreamsSolverFactory.defaultErrorChannel,
+    warnings: OutputChannel<PrologWarning> = StreamsSolverFactory.defaultWarningsChannel
 ): Solver =
     StreamsSolverFactory.solverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun Solver.Companion.streamsWithDefaultBuiltins(
-    libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
-    stdIn: InputChannel<String> = InputChannel.stdIn(),
-    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
-    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
+    staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
+    stdOut: OutputChannel<String> = StreamsSolverFactory.defaultOutputChannel,
+    stdErr: OutputChannel<String> = StreamsSolverFactory.defaultErrorChannel,
+    warnings: OutputChannel<PrologWarning> = StreamsSolverFactory.defaultWarningsChannel
 ): Solver =
     StreamsSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.streams(
-    libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
-    stdIn: InputChannel<String> = InputChannel.stdIn(),
-    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
-    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
+    staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
+    stdOut: OutputChannel<String> = StreamsSolverFactory.defaultOutputChannel,
+    stdErr: OutputChannel<String> = StreamsSolverFactory.defaultErrorChannel,
+    warnings: OutputChannel<PrologWarning> = StreamsSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     StreamsSolverFactory.mutableSolverOf(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 fun MutableSolver.Companion.streamsWithDefaultBuiltins(
-    libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
-    stdIn: InputChannel<String> = InputChannel.stdIn(),
-    stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-    stdErr: OutputChannel<String> = OutputChannel.stdOut(),
-    warnings: OutputChannel<PrologWarning> = OutputChannel.stdOut()
+    libraries: Libraries = StreamsSolverFactory.defaultLibraries,
+    flags: FlagStore = StreamsSolverFactory.defaultFlags,
+    staticKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    dynamicKb: Theory = StreamsSolverFactory.defaultDynamicKb,
+    stdIn: InputChannel<String> = StreamsSolverFactory.defaultInputChannel,
+    stdOut: OutputChannel<String> = StreamsSolverFactory.defaultOutputChannel,
+    stdErr: OutputChannel<String> = StreamsSolverFactory.defaultErrorChannel,
+    warnings: OutputChannel<PrologWarning> = StreamsSolverFactory.defaultWarningsChannel
 ): MutableSolver =
     StreamsSolverFactory.mutableSolverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)

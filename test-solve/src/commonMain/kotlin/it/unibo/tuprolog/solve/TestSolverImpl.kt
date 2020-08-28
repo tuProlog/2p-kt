@@ -47,9 +47,17 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
+import it.unibo.tuprolog.solve.flags.Unknown
+import it.unibo.tuprolog.solve.flags.Unknown.ERROR
+import it.unibo.tuprolog.solve.flags.Unknown.FAIL
+import it.unibo.tuprolog.solve.flags.Unknown.WARNING
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.rule.*
 import kotlin.test.assertEquals
@@ -58,7 +66,63 @@ import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.listOf as ktListOf
 
-internal class SolverTestImpl(private val solverFactory: SolverFactory) : SolverTest {
+internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSolver {
+
+    override fun testUnknownFlag() {
+        prolog {
+            val query = "missing_predicate"("X")
+
+            val observedWarnings = mutableListOf<PrologWarning>()
+
+            var solver = solverFactory.solverWithDefaultBuiltins(
+                flags = FlagStore.of(Unknown to ERROR),
+                warnings = OutputChannel.of {
+                    observedWarnings.add(it)
+                }
+            )
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        ExistenceError.forProcedure(
+                            DummyInstances.executionContext,
+                            query.extractSignature()
+                        )
+                    )
+                ),
+                solver.solve(query).toList()
+            )
+            assertTrue { observedWarnings.isEmpty() }
+
+            solver = solverFactory.solverWithDefaultBuiltins(
+                flags = FlagStore.of(Unknown to WARNING),
+                warnings = OutputChannel.of {
+                    observedWarnings.add(it)
+                }
+            )
+
+            assertSolutionEquals(
+                ktListOf(query.no()),
+                solver.solve(query).toList()
+            )
+            assertTrue { observedWarnings.size == 1 }
+            assertTrue { observedWarnings[0] is MissingPredicate }
+            assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
+
+            solver = solverFactory.solverWithDefaultBuiltins(
+                flags = FlagStore.of(Unknown to FAIL),
+                warnings = OutputChannel.of {
+                    observedWarnings.add(it)
+                }
+            )
+
+            assertSolutionEquals(
+                ktListOf(query.no()),
+                solver.solve(query).toList()
+            )
+            assertTrue { observedWarnings.size == 1 }
+        }
+    }
 
     /** Test presence of correct built-ins */
     override fun testBuiltinApi() {
@@ -77,6 +141,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                 assertHasPredicateInAPI(Not)
                 assertHasPredicateInAPI(Semicolon.SIGNATURE)
                 assertHasPredicateInAPI(Append.SIGNATURE)
+                assertHasPredicateInAPI(Arg)
                 assertHasPredicateInAPI(ArithmeticEqual)
                 assertHasPredicateInAPI(ArithmeticGreaterThan)
                 assertHasPredicateInAPI(ArithmeticGreaterThanOrEqualTo)
@@ -1037,7 +1102,7 @@ internal class SolverTestImpl(private val solverFactory: SolverFactory) : Solver
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             TypeError.Expected.INTEGER,
-                            varOf("Y"),
+                            atomOf("2"),
                             2
                         )
                     )

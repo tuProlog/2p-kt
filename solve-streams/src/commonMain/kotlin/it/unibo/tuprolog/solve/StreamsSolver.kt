@@ -18,11 +18,11 @@ import it.unibo.tuprolog.theory.Theory
  */
 internal class StreamsSolver constructor(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     private var executionContext: ExecutionContext = StreamsExecutionContext(
@@ -61,7 +61,7 @@ internal class StreamsSolver constructor(
     override val libraries: Libraries
         get() = executionContext.libraries
 
-    override val flags: PrologFlags
+    override val flags: FlagStore
         get() = executionContext.flags
 
     override val staticKb: Theory
@@ -70,10 +70,10 @@ internal class StreamsSolver constructor(
     override val dynamicKb: Theory
         get() = executionContext.dynamicKb
 
-    override val inputChannels: PrologInputChannels<*>
+    override val inputChannels: InputStore<*>
         get() = executionContext.inputChannels
 
-    override val outputChannels: PrologOutputChannels<*>
+    override val outputChannels: OutputStore<*>
         get() = executionContext.outputChannels
 
     override val operators: OperatorSet

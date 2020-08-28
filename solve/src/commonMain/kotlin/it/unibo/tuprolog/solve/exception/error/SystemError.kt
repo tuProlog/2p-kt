@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param extraData The possible extra data to be carried with the error
  *
  * @author Enrico
@@ -18,12 +18,22 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class SystemError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
-    override fun updateContext(newContext: ExecutionContext): PrologError = // TODO: 21/01/2020 since PrologError already correctly implements updateContext for all of its subtypes, this is not needed
-        SystemError(message, cause, newContext, extraData)
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), extraData)
+
+    override fun updateContext(newContext: ExecutionContext): SystemError =
+        SystemError(message, cause, contexts.setFirst(newContext), extraData)
+
+    override fun pushContext(newContext: ExecutionContext): SystemError =
+        SystemError(message, cause, contexts.addLast(newContext), extraData)
 
     companion object {
 

@@ -5,9 +5,12 @@ import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 
 internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
@@ -43,6 +46,25 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
             context.copy(step = nextStep())
         )
 
+    private fun missingProcedure(missingPredicateSignature: Signature): State =
+        when (context.flags[Unknown]) {
+            Unknown.ERROR -> exceptionalState(
+                ExistenceError.forProcedure(
+                    context = context,
+                    procedure = missingPredicateSignature
+                )
+            )
+            Unknown.WARNING -> failureState.also {
+                context.warnings?.write(
+                    MissingPredicate(
+                        context = context,
+                        signature = missingPredicateSignature
+                    )
+                )
+            }
+            else -> failureState
+        }
+
     private val ignoreState: StateGoalSelection
         get() = StateGoalSelection(
             context.copy(goals = context.goals.next, step = nextStep())
@@ -51,7 +73,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
     private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
-            val cutLimit = if (magicCut) {
+        val cutLimit = if (magicCut) {
                 this.pathToRoot.firstOrNull()
             } else {
                 this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
@@ -136,7 +158,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                         )
                     }
 
-                    else -> failureState
+                    else -> missingProcedure(currentGoal.extractSignature())
                 }
             }
             else -> {

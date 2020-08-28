@@ -97,7 +97,22 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Struct -> throw TypeError.forArgument(context, signature, TypeError.Expected.COMPOUND, arg, index)
+                !is Struct -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCallable(index: Int): Solve.Request<C> =
+            ensuringArgumentIsStruct(index)
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Struct, is Atom -> throw TypeError.forArgument(
+                    context,
+                    signature,
+                    TypeError.Expected.COMPOUND,
+                    arg,
+                    index
+                )
                 else -> this
             }
 

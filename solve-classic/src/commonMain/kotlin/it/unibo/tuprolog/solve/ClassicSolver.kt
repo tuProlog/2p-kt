@@ -10,11 +10,11 @@ import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     private var state: State = StateInit(
@@ -63,7 +63,7 @@ internal open class ClassicSolver(
     override val libraries: Libraries
         get() = state.context.libraries
 
-    override val flags: PrologFlags
+    override val flags: FlagStore
         get() = state.context.flags
 
     override val staticKb: Theory
@@ -72,10 +72,10 @@ internal open class ClassicSolver(
     override val dynamicKb: Theory
         get() = state.context.dynamicKb
 
-    override val inputChannels: PrologInputChannels<*>
+    override val inputChannels: InputStore<*>
         get() = state.context.inputChannels
 
-    override val outputChannels: PrologOutputChannels<*>
+    override val outputChannels: OutputStore<*>
         get() = state.context.outputChannels
 
     override val operators: OperatorSet

@@ -8,7 +8,7 @@ import kotlin.js.JsName
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param exitStatus The integer code representing the exit status code; it defaults to 1
  *
  * @author Enrico
@@ -16,13 +16,23 @@ import kotlin.js.JsName
 class HaltException(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     @JsName("exitStatus") val exitStatus: Int = 1
-) : TuPrologRuntimeException(message, cause, context) {
+) : TuPrologRuntimeException(message, cause, contexts) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        exitStatus: Int = 1
+    ) : this(message, cause, arrayOf(context), exitStatus)
 
     constructor(cause: Throwable?, context: ExecutionContext, exitStatus: Int = 1)
             : this(cause?.toString(), cause, context, exitStatus)
 
     override fun updateContext(newContext: ExecutionContext): HaltException =
-        HaltException(message, cause, newContext, exitStatus)
+        HaltException(message, cause, contexts.setFirst(newContext), exitStatus)
+
+    override fun pushContext(newContext: ExecutionContext): HaltException =
+        HaltException(message, cause, contexts.addLast(newContext), exitStatus)
 }

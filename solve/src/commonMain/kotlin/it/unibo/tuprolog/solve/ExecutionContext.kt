@@ -29,13 +29,13 @@ interface ExecutionContext : ExecutionContextAware {
     @JsName("createSolver")
     fun createSolver(
         libraries: Libraries = this.libraries,
-        flags: PrologFlags = this.flags,
+        flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
         stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.stdErr()
+        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
     ): Solver
 
     @JsName("apply")
@@ -82,13 +82,13 @@ interface ExecutionContext : ExecutionContextAware {
                     dynamicKb = dynamicKb.retract(sideEffect.clauses).theory
                 }
                 is SideEffect.SetFlags -> {
-                    flags = flags + sideEffect.flags
+                    flags += sideEffect.flags
                 }
                 is SideEffect.ResetFlags -> {
-                    flags = sideEffect.flags
+                    flags = FlagStore.of(sideEffect.flags)
                 }
                 is SideEffect.ClearFlags -> {
-                    flags = flags - sideEffect.names
+                    flags -= sideEffect.names
                 }
                 is SideEffect.LoadLibrary -> {
                     libraries += sideEffect.aliasedLibrary
@@ -152,11 +152,11 @@ interface ExecutionContext : ExecutionContextAware {
     @JsName("update")
     fun update(
         libraries: Libraries = this.libraries,
-        flags: PrologFlags = this.flags,
+        flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,
-        inputChannels: PrologInputChannels<*> = this.inputChannels,
-        outputChannels: PrologOutputChannels<*> = this.outputChannels
+        inputChannels: InputStore<*> = this.inputChannels,
+        outputChannels: OutputStore<*> = this.outputChannels
     ): ExecutionContext
 }

@@ -13,7 +13,7 @@ import kotlin.jvm.JvmStatic
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param type The error type structure
  * @param extraData The possible extra data to be carried with the error
  *
@@ -23,10 +23,18 @@ import kotlin.jvm.JvmStatic
 abstract class PrologError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     @JsName("type") open val type: Struct,
     @JsName("extraData") open val extraData: Term? = null
-) : TuPrologRuntimeException(message, cause, context) {
+) : TuPrologRuntimeException(message, cause, contexts) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        type: Struct,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), type, extraData)
 
     constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
             : this(cause?.toString(), cause, context, type, extraData)
@@ -37,8 +45,9 @@ abstract class PrologError(
     private fun generateErrorStruct() =
         extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
-    override fun updateContext(newContext: ExecutionContext): PrologError =
-        of(message, cause, newContext, type, extraData)
+    abstract override fun updateContext(newContext: ExecutionContext): PrologError
+
+    abstract override fun pushContext(newContext: ExecutionContext): PrologError
 
     override fun toString(): String = errorStruct.toString()
 
@@ -57,19 +66,43 @@ abstract class PrologError(
             context: ExecutionContext,
             type: Struct,
             extraData: Term? = null
+        ): PrologError = of(message, cause, arrayOf(context), type, extraData)
+
+        @JvmStatic
+        @JsName("ofManyContexts")
+        fun of(
+            message: String? = null,
+            cause: Throwable? = null,
+            contexts: Array<ExecutionContext>,
+            type: Struct,
+            extraData: Term? = null
         ): PrologError = with(type) {
             when {
-                functor == MetaError.typeFunctor && cause is TuPrologRuntimeException -> MetaError(message, cause, context, extraData)
-                functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, context, extraData)
-                functor == SystemError.typeFunctor -> SystemError(message, cause, context, extraData)
+                functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, contexts, extraData)
+                functor == SystemError.typeFunctor -> SystemError(message, cause, contexts, extraData)
+                functor == ExistenceError.typeFunctor && type.arity == 2 ->
+                    ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
                 functor == DomainError.typeFunctor && arity == 2 && DomainError.Expected.fromTerm(args.first()) != null ->
-                    DomainError(message, cause, context, DomainError.Expected.fromTerm(args.first())!!, args[1], extraData)
+                    DomainError(
+                        message,
+                        cause,
+                        contexts,
+                        DomainError.Expected.fromTerm(args.first())!!,
+                        args[1],
+                        extraData
+                    )
                 functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->
-                    TypeError(message, cause, context, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
+                    TypeError(message, cause, contexts, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
                 functor == EvaluationError.typeFunctor && arity == 1 && EvaluationError.Type.fromTerm(args.single()) != null ->
-                    EvaluationError(message, cause, context, EvaluationError.Type.fromTerm(args.single())!!, extraData)
-                functor == MessageError.typeFunctor -> MessageError(message, cause, context, extraData)
-                else -> object : PrologError(message, cause, context, type, extraData) {}
+                    EvaluationError(message, cause, contexts, EvaluationError.Type.fromTerm(args.single())!!, extraData)
+                functor == MessageError.typeFunctor -> MessageError(message, cause, contexts, extraData)
+                else -> object : PrologError(message, cause, contexts, type, extraData) {
+                    override fun updateContext(newContext: ExecutionContext): PrologError =
+                        of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+
+                    override fun pushContext(newContext: ExecutionContext): PrologError =
+                        of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+                }
             }
         }
     }
