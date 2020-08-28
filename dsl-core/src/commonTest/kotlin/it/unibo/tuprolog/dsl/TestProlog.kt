@@ -3,6 +3,7 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.dsl.PlatformSpecificValues.MINUS_THREE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.ONE_POINT_ZERO
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT
 import kotlin.test.Test
@@ -27,6 +28,9 @@ class TestProlog {
     fun testNumOf() {
         assertDSLCreationIsCorrect(Integer.of(1)) {
             numOf(1)
+        }
+        assertDSLCreationIsCorrect(Integer.of(-3)) {
+            numOf(-3)
         }
         assertDSLCreationIsCorrect(Integer.of(1)) {
             numOf(1L)
@@ -73,6 +77,9 @@ class TestProlog {
     fun testToTerm() {
         assertDSLCreationIsCorrect(Integer.of(1)) {
             1.toTerm()
+        }
+        assertDSLCreationIsCorrect(MINUS_THREE) {
+            (-3).toTerm()
         }
         assertDSLCreationIsCorrect(ONE_POINT_ZERO) {
             1.0.toTerm()
