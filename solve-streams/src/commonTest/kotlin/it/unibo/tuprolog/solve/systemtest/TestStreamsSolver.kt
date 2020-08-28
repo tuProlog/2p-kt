@@ -177,26 +177,31 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
+    @Ignore
     override fun testConjunctionProperties() {
         prototype.testConjunctionProperties()
     }
 
     @Test
+    @Ignore
     override fun testCallPrimitive() {
         prototype.testCallPrimitive()
     }
 
     @Test
+    @Ignore
     override fun testCallPrimitiveTransparency() {
         prototype.testCallPrimitiveTransparency()
     }
 
     @Test
+    @Ignore
     override fun testCatchPrimitive() {
         prototype.testCatchPrimitive()
     }
 
     @Test
+    @Ignore
     override fun testCatchPrimitiveTransparency() {
         prototype.testCatchPrimitiveTransparency()
     }
@@ -207,11 +212,13 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
+    @Ignore
     override fun testNotPrimitive() {
         prototype.testNotPrimitive()
     }
 
     @Test
+    @Ignore
     override fun testNotModularity() {
         prototype.testNotModularity()
     }
