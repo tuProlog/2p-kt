@@ -10,7 +10,7 @@ import kotlin.collections.Set
 internal class TermToObjectConverterImpl : TermToObjectConverter {
     override fun convertInto(type: KClass<*>, term: Term): Any? {
         return when (term) {
-            is NullRef -> null
+            is NullRef, is Var -> null
             is ObjectRef -> {
                 if (term.`object`::class isSubtypeOf type) {
                     term.`object`

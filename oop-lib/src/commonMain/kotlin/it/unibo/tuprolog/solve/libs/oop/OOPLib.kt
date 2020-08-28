@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.libs.oop.primitives.CreateObject
+import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject
 import it.unibo.tuprolog.solve.libs.oop.primitives.FindType
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
@@ -26,7 +26,7 @@ object OOPLib : AliasedLibrary by Library.aliased(
         Returns
     ).map { it.wrappedImplementation }),
     primitives = sequenceOf<PrimitiveWrapper<*>>(
-        CreateObject,
+        NewObject,
         FindType,
         InvokeMethod,
         InvokeStrict

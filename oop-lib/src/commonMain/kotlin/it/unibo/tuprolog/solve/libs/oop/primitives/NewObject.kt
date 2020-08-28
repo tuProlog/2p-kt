@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object CreateObject : TernaryRelation.Functional<ExecutionContext>("create_object") {
+object NewObject : TernaryRelation.Functional<ExecutionContext>("new_object") {
 
     private val typeFactory = TypeFactory.default
 
