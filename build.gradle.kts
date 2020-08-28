@@ -231,7 +231,7 @@ configure<GithubReleaseExtension> {
                    |${changelog().call()}
                    """.trimMargin()
             )
-        } catch (e: NullPointerException) {
+        } catch (e: Throwable) {
             e.message?.let { warn(it) }
         }
     }
