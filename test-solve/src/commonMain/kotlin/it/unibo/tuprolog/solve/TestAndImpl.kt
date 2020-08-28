@@ -11,7 +11,6 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-//            val query = ","("="("X", 1), "var(X)")
             val query = "X" `=` 1 and `var`("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -25,7 +24,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
     override fun testWithSubstitution() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-//            val query = ","("var(X)", "="("X",1))
+
             val query = `var`("X") and ("X" `=` 1)
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -40,7 +39,6 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-//            val query = ","("fail", "call(3)")
             val query = fail and call(3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -57,7 +55,6 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
                 flags = FlagStore.of(Unknown to Unknown.ERROR)
             )
 
-//            val query = ","("var(X)", "call(X)")
             val query = "nofoo"("X") and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -79,7 +76,6 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-//            val query = ","("="("X",true), "call(X)")
             val query = "X" `=` true and call("X")
             val solutions = solver.solve(query, mediumDuration).toList()
 

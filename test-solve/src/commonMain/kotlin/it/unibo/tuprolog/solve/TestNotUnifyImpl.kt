@@ -13,8 +13,8 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -27,8 +27,8 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -37,12 +37,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "X" notEqualsTo  "Y"
+            val query = "X" notEqualsTo "Y"
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -51,12 +51,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (("X" notEqualsTo  "Y") and ("X" notEqualsTo  "abc"))
+            val query = (("X" notEqualsTo "Y") and ("X" notEqualsTo "abc"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -65,12 +65,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "f"("X", "def") notEqualsTo  ("f"("def", "Y"))
+            val query = "f"("X", "def") notEqualsTo ("f"("def", "Y"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -79,12 +79,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 1 notEqualsTo  2
+            val query = 1 notEqualsTo 2
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -93,12 +93,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 1 notEqualsTo  1.0
+            val query = 1 notEqualsTo 1.0
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -107,12 +107,12 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("g"("X")) notEqualsTo  ("f"("a"("X")))
+            val query = ("g"("X")) notEqualsTo ("f"("a"("X")))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -125,8 +125,8 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -139,8 +139,8 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }

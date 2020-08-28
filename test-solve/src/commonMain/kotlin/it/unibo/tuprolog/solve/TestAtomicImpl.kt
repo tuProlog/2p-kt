@@ -9,8 +9,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic("atom")
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic("atom")
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.yes()),
@@ -23,8 +23,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic("a"("b"))
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic("a"("b"))
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.no()),
@@ -37,8 +37,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic("Var")
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic("Var")
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.no()),
@@ -51,8 +51,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic(emptyList)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic(emptyList)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.yes()),
@@ -65,8 +65,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic(6)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic(6)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.yes()),
@@ -79,8 +79,8 @@ internal class TestAtomicImpl(private val solverFactory: SolverFactory) : TestAt
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = atomic(3.3)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = atomic(3.3)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                     ktListOf(query.yes()),
