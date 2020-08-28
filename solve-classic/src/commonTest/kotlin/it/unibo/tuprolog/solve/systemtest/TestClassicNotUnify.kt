@@ -10,38 +10,9 @@ import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
-class TestClassicNotUnify : TestNotUnify, SolverFactory {
+class TestClassicNotUnify : TestNotUnify, SolverFactory by ClassicSolverFactory {
 
     private val prototype = TestNotUnify.prototype(this)
-
-    override val defaultBuiltins: AliasedLibrary
-        get() = DefaultBuiltins
-
-    override fun solverOf(
-            libraries: Libraries,
-            flags: FlagStore,
-            staticKb: Theory,
-            dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
-    ) = Solver.classic(
-            libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
-    )
-
-    override fun mutableSolverOf(
-            libraries: Libraries,
-            flags: FlagStore,
-            staticKb: Theory,
-            dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
-    ) = MutableSolver.classic(
-            libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
-    )
 
     @Test
     override fun testNumberNotUnify() {
