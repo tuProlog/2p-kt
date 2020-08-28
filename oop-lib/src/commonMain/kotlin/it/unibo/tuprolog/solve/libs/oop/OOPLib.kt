@@ -9,6 +9,10 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject
 import it.unibo.tuprolog.solve.libs.oop.primitives.FindType
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
+import it.unibo.tuprolog.solve.libs.oop.primitives.NullRef
+import it.unibo.tuprolog.solve.libs.oop.primitives.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.primitives.Ref
+import it.unibo.tuprolog.solve.libs.oop.primitives.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.rules.LeftArrow
 import it.unibo.tuprolog.solve.libs.oop.rules.Returns
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
@@ -17,8 +21,8 @@ import it.unibo.tuprolog.theory.Theory
 object OOPLib : AliasedLibrary by Library.aliased(
     operatorSet = OperatorSet(
         Operator("<-", XFX, 800),
-        Operator("returns", XFX, 850)//,
-//        Operator("as", XFX, 200),
+        Operator("returns", XFX, 850),
+        Operator("as", XFX, 200),
 //        Operator(".", XFX, 600)
     ),
     theory = Theory.indexedOf(sequenceOf(
@@ -29,7 +33,11 @@ object OOPLib : AliasedLibrary by Library.aliased(
         NewObject,
         FindType,
         InvokeMethod,
-        InvokeStrict
+        InvokeStrict,
+        TypeRef,
+        ObjectRef,
+        NullRef,
+        Ref
     ).map { it.descriptionPair }.toMap(),
     alias = "prolog.oop"
 )
