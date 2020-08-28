@@ -8,8 +8,8 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = integer(3)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = integer(3)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -22,8 +22,8 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = integer(-3)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = integer(-3)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.yes()),
@@ -36,8 +36,8 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = integer(3.3)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = integer(3.3)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.no()),
@@ -50,8 +50,8 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = integer("X")
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = integer("X")
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.no()),
@@ -64,8 +64,8 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = integer("atom")
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = integer("atom")
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(query.no()),
