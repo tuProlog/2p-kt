@@ -43,7 +43,7 @@ interface SolverFactory {
 
     @JsName("defaultWarningsChannel")
     val defaultWarningsChannel: OutputChannel<PrologWarning>
-        get() = OutputChannel.stdErr()
+        get() = OutputChannel.warn()
 
     @JsName("solver")
     fun solverOf(
