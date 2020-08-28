@@ -3,24 +3,12 @@ package it.unibo.tuprolog.solve
 /**
  * Tests of ';'/2 (= or, disjunction)
  */
-interface TestOr {
+interface TestOr : SolverTest {
 
-    companion object{
+    companion object {
         fun prototype(solverFactory: SolverFactory): TestOr =
-                TestOrImpl(solverFactory)
+            TestOrImpl(solverFactory)
     }
-
-    /** A short test max duration */
-    val shortDuration: TimeDuration
-        get() = 250L
-
-    /** A medium test max duration */
-    val mediumDuration: TimeDuration
-        get() = 2 * shortDuration
-
-    /** A long test max duration */
-    val longDuration: TimeDuration
-        get() = 4 * mediumDuration
 
     /**
      * Tests the query

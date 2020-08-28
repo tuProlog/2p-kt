@@ -28,24 +28,12 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
-interface TestSolver {
+interface TestSolver : SolverTest {
 
     companion object {
         fun prototype(solverFactory: SolverFactory): TestSolver =
             TestSolverImpl(solverFactory)
     }
-
-    /** A short test max duration */
-    val shortDuration: TimeDuration
-        get() = 250L
-
-    /** A medium test max duration */
-    val mediumDuration: TimeDuration
-        get() = 2 * shortDuration
-
-    /** A long test max duration */
-    val longDuration: TimeDuration
-        get() = 4 * mediumDuration
 
     fun testUnknownFlag()
 

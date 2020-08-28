@@ -1,22 +1,10 @@
 package it.unibo.tuprolog.solve
 
-interface TestUnify {
-    companion object{
+interface TestUnify : SolverTest {
+    companion object {
         fun prototype(solverFactory: SolverFactory): TestUnify =
-                TestUnifyImpl(solverFactory)
+            TestUnifyImpl(solverFactory)
     }
-
-    /** A short test max duration */
-    val shortDuration: TimeDuration
-        get() = 250L
-
-    /** A medium test max duration */
-    val mediumDuration: TimeDuration
-        get() = 2 * shortDuration
-
-    /** A long test max duration */
-    val longDuration: TimeDuration
-        get() = 4 * mediumDuration
 
     /**
      * Tests the query

@@ -3,24 +3,12 @@ package it.unibo.tuprolog.solve
 /**
  * Tests of findall
  */
-interface TestFindAll {
+interface TestFindAll : SolverTest {
 
     companion object {
         fun prototype(solverFactory: SolverFactory): TestFindAll =
-                TestFindAllImpl(solverFactory)
+            TestFindAllImpl(solverFactory)
     }
-
-    /** A short test max duration */
-    val shortDuration: TimeDuration
-        get() = 250L
-
-    /** A medium test max duration */
-    val mediumDuration: TimeDuration
-        get() = 2 * shortDuration
-
-    /** A long test max duration */
-    val longDuration: TimeDuration
-        get() = 4 * mediumDuration
 
     /**
      * Tests the query

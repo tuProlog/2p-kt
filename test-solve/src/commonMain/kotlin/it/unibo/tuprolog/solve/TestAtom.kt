@@ -3,23 +3,11 @@ package it.unibo.tuprolog.solve
 /**
  * Tests of atom
  */
-interface TestAtom {
-    companion object{
+interface TestAtom : SolverTest {
+    companion object {
         fun prototype(solverFactory: SolverFactory): TestAtom =
-                TestAtomImpl(solverFactory)
+            TestAtomImpl(solverFactory)
     }
-
-    /** A short test max duration */
-    val shortDuration: TimeDuration
-        get() = 250L
-
-    /** A medium test max duration */
-    val mediumDuration: TimeDuration
-        get() = 2 * shortDuration
-
-    /** A long test max duration */
-    val longDuration: TimeDuration
-        get() = 4 * mediumDuration
 
     /**
      * Tests the queries
