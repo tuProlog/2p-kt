@@ -152,6 +152,7 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
+    @Ignore // this does not fail but slows down the build a lot
     override fun testMaxDurationParameterAndTimeOutException() {
         prototype.testMaxDurationParameterAndTimeOutException()
     }
