@@ -22,4 +22,12 @@ internal object TheoryUtils {
             }
         }
 
+    fun checkClausesCorrect(clauses: Sequence<Clause>) =
+        clauses.also {
+            require(clauses.all { it.isWellFormed }) {
+                "ClauseDatabase can contain only well formed clauses: these aren't " +
+                        "${clauses.filterNot { it.isWellFormed }.toList()}"
+            }
+        }
+
 }

@@ -52,8 +52,8 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun truthOf(value: Boolean): Truth =
         Truth.of(value)
 
-    override fun fail(): Truth =
-        Truth.FAIL
+    override val fail: Truth
+        get() = Truth.FAIL
 
     override fun setOf(terms: Iterable<Term>): LogicSet =
         LogicSet.of(terms)
@@ -64,11 +64,11 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun listOf(terms: Iterable<Term>): LogicList =
         LogicList.of(terms)
 
-    override fun emptyList(): EmptyList =
-        EmptyList()
+    override val emptyList: EmptyList
+        get() = EmptyList()
 
-    override fun emptySet(): EmptySet =
-        EmptySet()
+    override val emptySet: EmptySet
+        get() = EmptySet()
 
     override fun listOf(vararg terms: Term): LogicList =
         LogicList.of(*terms)
@@ -89,6 +89,12 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         Struct.of(functor, *args)
 
     override fun structOf(functor: String, args: Sequence<Term>): Struct =
+        Struct.of(functor, args)
+
+    override fun structOf(functor: String, args: Iterable<Term>): Struct =
+        Struct.of(functor, args)
+
+    override fun structOf(functor: String, args: List<Term>): Struct =
         Struct.of(functor, args)
 
     override fun factOf(head: Struct): Fact =

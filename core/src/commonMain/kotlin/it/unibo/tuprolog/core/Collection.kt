@@ -25,4 +25,7 @@ interface Collection : Struct {
 
     @JsName("toSequence")
     fun toSequence(): Sequence<Term>
+
+    @JsName("unfold")
+    fun unfold(): Sequence<Term>
 }

@@ -2,18 +2,10 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.prolog
-import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import kotlin.reflect.KClass
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 
 /**
  * Utils singleton to help testing arithmetic primitives
@@ -21,26 +13,6 @@ import kotlin.test.fail
  * @author Enrico
  */
 internal object ArithmeticUtils {
-
-    /** Utility method to check if the arithmetic relation responses are correct */
-    @Suppress("IMPLICIT_CAST_TO_ANY")
-    internal fun assertCorrectResponse(
-        arithmeticRelation: ArithmeticRelation<out ExecutionContext>,
-        input: Solve.Request<ExecutionContext>,
-        expectedResult: Any
-    ) = when (expectedResult) {
-        true -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.Yes
-        }
-        false -> assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-            arithmeticRelation.wrappedImplementation(input).single().solution is Solution.No
-        }
-        else ->
-            @Suppress("UNCHECKED_CAST")
-            (expectedResult as? KClass<out TuPrologRuntimeException>)
-                ?.let { assertFailsWith(expectedResult) { arithmeticRelation.wrappedImplementation(input) } }
-                ?: fail("Bad written test data!")
-    }
 
     /** [Is] primitive test data (input, [Substitution | ErrorType]) */
     internal val isQueryToResult by lazy {

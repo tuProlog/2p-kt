@@ -1,13 +1,15 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
+import it.unibo.tuprolog.solve.solver.addWithNoDuplicates
 import it.unibo.tuprolog.solve.solver.fsm.State
 import it.unibo.tuprolog.solve.solver.getSideEffectManager
 import it.unibo.tuprolog.solve.solver.newSolveRequest
@@ -41,9 +43,12 @@ internal class StateGoalEvaluation(
                 responses = StreamsSolver.solveToResponses(solve.newThrowSolveRequest(prologError))
             }
 
+            var allSideEffectsSoFar = emptyList<SideEffect>()
             responses?.forEach {
 
-                yield(ifTimeIsNotOver(stateEnd(it)))
+                allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
+
+                yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
 
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }

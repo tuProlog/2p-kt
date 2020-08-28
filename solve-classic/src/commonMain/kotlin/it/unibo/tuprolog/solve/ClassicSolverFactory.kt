@@ -19,7 +19,7 @@ object ClassicSolverFactory : SolverFactory {
 
     override fun solverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,
@@ -38,7 +38,7 @@ object ClassicSolverFactory : SolverFactory {
 
     override fun mutableSolverOf(
         libraries: Libraries,
-        flags: PrologFlags,
+        flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
         stdIn: InputChannel<String>,

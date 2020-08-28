@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.fsm
 
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 

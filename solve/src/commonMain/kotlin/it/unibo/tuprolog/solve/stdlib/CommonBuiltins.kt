@@ -8,11 +8,12 @@ import it.unibo.tuprolog.solve.stdlib.function.*
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 
-object CommonBuiltins : AliasedLibrary by Library.of(
+object CommonBuiltins : AliasedLibrary by Library.aliased(
     alias = "prolog.lang",
     operatorSet = OperatorSet.DEFAULT,
     theory = CommonRules.theory,
     primitives = sequenceOf<PrimitiveWrapper<*>>(
+        Arg,
         ArithmeticEqual,
         ArithmeticGreaterThan,
         ArithmeticGreaterThanOrEqualTo,
@@ -24,11 +25,14 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         AssertZ,
         Atom,
         Atomic,
+        Between,
         Callable,
         Compound,
+        CurrentOp,
         EnsureExecutable,
         FindAll,
         FloatPrimitive,
+        Functor,
         Ground,
         Halt,
         Integer,
@@ -38,11 +42,18 @@ object CommonBuiltins : AliasedLibrary by Library.of(
         NonVar,
         NotUnifiableWith,
         Number,
+        Op,
         Retract,
+        RetractAll,
         Sleep,
+        TermGreaterThan,
+        TermGreaterThanOrEqualTo,
         TermIdentical,
+        TermLowerThan,
+        TermLowerThanOrEqualTo,
         TermNotIdentical,
         UnifiesWith,
+        Univ,
         Var,
         Write
     ).map { it.descriptionPair }.toMap(),

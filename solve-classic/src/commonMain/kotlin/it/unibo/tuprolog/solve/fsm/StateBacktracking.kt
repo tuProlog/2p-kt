@@ -13,7 +13,7 @@ internal data class StateBacktracking(override val context: ClassicExecutionCont
             )
         } else {
             val choicePointContext = choicePoints!!.pathToRoot.first { it.alternatives.hasNext }
-            val nextContext = choicePointContext.backtrack(nextStep(), context.startTime)
+            val nextContext = choicePointContext.backtrack(context)
             if (nextContext.primitives.hasNext) {
                 StatePrimitiveExecution(nextContext)
             } else {

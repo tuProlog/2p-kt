@@ -24,7 +24,11 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                             goals = goals.next, // go on with parent's goals
                             procedure = procedure,
                             step = nextStep(),
-                            startTime = context.startTime
+                            startTime = context.startTime,
+                            operators = context.operators,
+                            inputChannels = context.inputChannels,
+                            outputChannels = context.outputChannels,
+                            libraries = context.libraries
                         )
                     }
                 )

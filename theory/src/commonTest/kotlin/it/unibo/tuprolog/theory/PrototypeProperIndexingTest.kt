@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import kotlin.test.assertEquals
 
 
 class PrototypeProperIndexingTest(
@@ -86,6 +87,25 @@ class PrototypeProperIndexingTest(
     private val anonymousF2Clause = Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))
     private val anonymousG1Clause = Fact.of(Struct.of("g", Var.anonymous()))
     private val anonymousG2Clause = Fact.of(Struct.of("g", Var.anonymous(), Var.anonymous()))
+
+    fun testCornerCaseInClauseRetrieval() {
+        // f(f(f(1), 2), 3).
+        val fact = Fact.of(
+            Struct.of(
+                "f",
+                Struct.of(
+                    "f",
+                    Struct.of("f", Integer.of(1)),
+                    Integer.of(2)),
+                Integer.of(3)
+            )
+        )
+        val theory = theoryGenerator(listOf(fact))
+
+        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))])
+        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Struct.of("f", Var.anonymous(), Var.anonymous()), Var.anonymous()))])
+        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Struct.of("f", Struct.of("f", Var.anonymous()), Var.anonymous()), Var.anonymous()))])
+    }
 
     fun correctIndexingOverDedicatedTheoryForF1Family() {
         val generatedIndexingOverF1Family =

@@ -36,10 +36,10 @@ internal class SolutionIterator(
         }
 
     private fun Solution.Yes.cleanUp(): Solution.Yes {
-        return copy(substitution = substitution.cleanUp())
+        return copy(substitution = substitution.cleanUp(query.variables.toSet()))
     }
 
-    private fun Substitution.Unifier.cleanUp(): Substitution.Unifier {
-        return filter { _, term -> term !is Var }
+    private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
+        return filter { _, term -> (term !is Var) || (term in toRetain) }
     }
 }

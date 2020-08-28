@@ -9,11 +9,11 @@ import it.unibo.tuprolog.theory.Theory
 
 internal class MutableClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {

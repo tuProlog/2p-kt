@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.fsm.EndState
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.solve.fsm.clone
@@ -12,11 +10,11 @@ import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
+    flags: FlagStore = FlagStore.EMPTY,
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
 
     private var state: State = StateInit(
@@ -25,6 +23,7 @@ internal open class ClassicSolver(
             flags = flags,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
             inputChannels = inputChannels,
             outputChannels = outputChannels
         )
@@ -45,6 +44,7 @@ internal open class ClassicSolver(
             flags = flags,
             staticKb = staticKb,
             dynamicKb = dynamicKb,
+            operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             maxDuration = maxDuration,
@@ -63,7 +63,7 @@ internal open class ClassicSolver(
     override val libraries: Libraries
         get() = state.context.libraries
 
-    override val flags: PrologFlags
+    override val flags: FlagStore
         get() = state.context.flags
 
     override val staticKb: Theory
@@ -72,9 +72,12 @@ internal open class ClassicSolver(
     override val dynamicKb: Theory
         get() = state.context.dynamicKb
 
-    override val inputChannels: PrologInputChannels<*>
+    override val inputChannels: InputStore<*>
         get() = state.context.inputChannels
 
-    override val outputChannels: PrologOutputChannels<*>
+    override val outputChannels: OutputStore<*>
         get() = state.context.outputChannels
+
+    override val operators: OperatorSet
+        get() = state.context.operators
 }

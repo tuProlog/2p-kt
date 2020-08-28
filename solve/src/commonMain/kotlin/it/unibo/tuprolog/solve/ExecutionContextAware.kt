@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -19,17 +20,17 @@ interface ExecutionContextAware {
 
         @JvmStatic
         @JsName("defaultInputChannels")
-        fun defaultInputChannels(): PrologInputChannels<*> {
+        fun defaultInputChannels(): InputStore<*> {
             return mapOf(STDIN to InputChannel.stdIn())
         }
 
         @JvmStatic
         @JsName("defaultOutputChannels")
-        fun defaultOutputChannels(): PrologOutputChannels<*> {
+        fun defaultOutputChannels(): OutputStore<*> {
             return mapOf(
                 STDOUT to OutputChannel.stdOut<String>(),
                 STDERR to OutputChannel.stdErr<String>(),
-                WARNINGS to OutputChannel.stdErr<PrologWarning>()
+                WARNINGS to OutputChannel.warn()
             )
         }
 
@@ -45,7 +46,7 @@ interface ExecutionContextAware {
 
     /** Enabled flags */
     @JsName("flags")
-    val flags: PrologFlags
+    val flags: FlagStore
 
     /** Static Knowledge-base, that is a KB that *can't* change executing goals */
     @JsName("staticKb")
@@ -55,13 +56,17 @@ interface ExecutionContextAware {
     @JsName("dynamicKb")
     val dynamicKb: Theory
 
+    /** Loaded operators */
+    @JsName("operators")
+    val operators: OperatorSet
+
     /** The currently open input channels */
     @JsName("inputChannels")
-    val inputChannels: PrologInputChannels<*>
+    val inputChannels: InputStore<*>
 
     /** The currently open output channels */
     @JsName("outputChannels")
-    val outputChannels: PrologOutputChannels<*>
+    val outputChannels: OutputStore<*>
 
     /** Shortcut for the standard input channel defined in [inputChannels], and named as [STDIN].
      * Returns `null` if the channel is closed

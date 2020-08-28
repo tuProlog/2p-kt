@@ -57,7 +57,7 @@ internal object ExpressionEvaluatorUtils {
     internal fun createContextWithFunctionBy(signature: Signature, function: PrologFunction): ExecutionContext =
         object : ExecutionContext by DummyInstances.executionContext {
             override val libraries: Libraries = Libraries(
-                Library.of(
+                Library.aliased(
                     alias = "test.expression.evaluator",
                     functions = mapOf(signature to function)
                 )

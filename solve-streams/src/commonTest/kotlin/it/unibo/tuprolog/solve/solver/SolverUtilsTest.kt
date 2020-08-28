@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.*
 
@@ -17,7 +18,7 @@ internal class SolverUtilsTest {
     private val aContext = StreamsExecutionContext(
         dynamicKb = Theory.indexedOf({ factOf(atomOf("a")) }),
         staticKb = Theory.indexedOf({ factOf(atomOf("a")) }),
-        flags = mapOf()
+        flags = FlagStore.EMPTY
     )
 
     /** A "true" solveRequest */
@@ -64,7 +65,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyAppliesCorrectlySelectionStrategy() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 55)
-        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.min()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.minOrNull()!! }
 
         assertEquals(testSequence.sorted().toList(), toBeTested.toList())
     }
@@ -72,7 +73,7 @@ internal class SolverUtilsTest {
     @Test
     fun orderWithStrategyDoesntRemoveDuplicatedItems() {
         val testSequence = sequenceOf(1, 5, 2, 9, 3, 0, 5)
-        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.max()!! }
+        val toBeTested = testSequence.orderWithStrategy(aContext) { seq, _ -> seq.maxOrNull()!! }
 
         assertEquals(testSequence.sortedDescending().toList(), toBeTested.toList())
     }
@@ -136,7 +137,7 @@ internal class SolverUtilsTest {
         val modifiedContext = aContext.copy(
             dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
-            flags = mapOf(Atom.of("someFlag") to Atom.of("someFlagValue")),
+            flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
             libraries = Libraries()
         )
 

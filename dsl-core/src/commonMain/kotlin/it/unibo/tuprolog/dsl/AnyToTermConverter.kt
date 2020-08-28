@@ -10,22 +10,22 @@ import it.unibo.tuprolog.core.toTerm as extToTerm
 
 internal interface AnyToTermConverter {
 
-    @JsName("prolog")
-    val prolog: Prolog
+    @JsName("prologScope")
+    val prologScope: PrologScope
 
     @JsName("toTerm")
     fun toTerm(any: Any): Term = when (any) {
         is Term -> any
         is ToTermConvertible -> any.toTerm()
-        is BigInteger -> prolog.numOf(any)
-        is BigDecimal -> prolog.numOf(any)
+        is BigInteger -> prologScope.numOf(any)
+        is BigDecimal -> prologScope.numOf(any)
         is Number -> when {
             any.isInteger -> any.toInteger()
             else -> any.toReal()
         }
         is String -> when {
-            any.isVariable -> prolog.varOf(any)
-            else -> prolog.atomOf(any)
+            any.isVariable -> prologScope.varOf(any)
+            else -> prologScope.atomOf(any)
         }
         is Boolean -> any.toTruth()
         is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
@@ -46,18 +46,18 @@ internal interface AnyToTermConverter {
     fun Number.toReal(): Real
 
     @JsName("stringToVariable")
-    fun String.toVariable(): Var = prolog.varOf(this)
+    fun String.toVariable(): Var = prologScope.varOf(this)
 
     @JsName("stringToAtom")
-    fun String.toAtom(): Atom = prolog.atomOf(this)
+    fun String.toAtom(): Atom = prologScope.atomOf(this)
 
     @JsName("booleanToTruth")
-    fun Boolean.toTruth(): Truth = prolog.truthOf(this)
+    fun Boolean.toTruth(): Truth = prologScope.truthOf(this)
 
     companion object {
         @JsName("of")
-        fun of(prolog: Prolog): AnyToTermConverter {
-            return AnyToTermConverterImpl(prolog)
+        fun of(prologScope: PrologScope): AnyToTermConverter {
+            return AnyToTermConverterImpl(prologScope)
         }
     }
 }

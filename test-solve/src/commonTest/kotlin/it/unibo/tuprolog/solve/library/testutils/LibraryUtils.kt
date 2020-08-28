@@ -9,7 +9,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -121,7 +121,7 @@ internal object LibraryUtils {
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, PrologFunction>,
         alias: String
-    ): AliasedLibrary = Library.of(opSet, theory, primitives, functions, alias)
+    ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(

@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList
@@ -17,7 +18,7 @@ import kotlin.collections.List as KtList
 internal object SolveUtils {
 
     internal val someLibraries = Libraries()
-    internal val someFlags = emptyMap<Atom, Term>()
+    internal val someFlags = emptyMap<String, Term>()
     internal val aStaticKB = Theory.empty()
     internal val aDynamicKB = Theory.empty()
 
@@ -32,10 +33,10 @@ internal object SolveUtils {
     internal val varargArgumentList = anArgumentList + Truth.TRUE
 
     internal val differentLibraries by lazy {
-        Libraries(Library.of(alias = "test")).also { assertNotEquals(it, someLibraries) }
+        Libraries(Library.aliased(alias = "test")).also { assertNotEquals(it, someLibraries) }
     }
     internal val differentFlags by lazy {
-        mapOf<Atom, Term>(Truth.TRUE to Truth.FAIL).also { assertNotEquals(it, someFlags) }
+        mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }
     }
     internal val differentStaticKB by lazy {
         Theory.indexedOf(Fact.of(Truth.TRUE)).also { assertNotEquals(it, aStaticKB) }
@@ -52,16 +53,17 @@ internal object SolveUtils {
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
     }
+    internal val someSideEffects = listOf<SideEffect>(SideEffect.ResetDynamicKb())
 
     /** The success response to default values request */
     internal val defaultRequestSuccessResponse by lazy {
         Solve.Response(
             Solution.Yes(aSignature, anArgumentList, solutionSubstitution),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 
@@ -69,11 +71,11 @@ internal object SolveUtils {
     internal val defaultRequestFailedResponse by lazy {
         Solve.Response(
             Solution.No(aSignature, anArgumentList),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 
@@ -81,11 +83,11 @@ internal object SolveUtils {
     internal val defaultRequestHaltedResponse by lazy {
         Solve.Response(
             Solution.Halt(aSignature, anArgumentList, solutionException),
-            differentLibraries,
-            differentFlags,
-            differentStaticKB,
-            differentDynamicKB,
-            aSideEffectManager
+            aSideEffectManager,
+            SideEffect.ResetLibraries(differentLibraries),
+            SideEffect.ResetFlags(differentFlags),
+            SideEffect.ResetStaticKb(differentStaticKB),
+            SideEffect.ResetDynamicKb(differentDynamicKB)
         )
     }
 

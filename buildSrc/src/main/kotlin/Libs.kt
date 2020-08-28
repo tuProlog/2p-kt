@@ -8,6 +8,20 @@ import kotlin.String
  */
 object Libs {
     /**
+     * https://github.com/FasterXML/jackson-dataformat-xml
+     */
+    const val jackson_dataformat_xml: String =
+            "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:" +
+            Versions.com_fasterxml_jackson_dataformat
+
+    /**
+     * https://github.com/FasterXML/jackson-dataformats-text
+     */
+    const val jackson_dataformat_yaml: String =
+            "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:" +
+            Versions.com_fasterxml_jackson_dataformat
+
+    /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
     const val orchiddocs: String = "io.github.javaeden.orchid:OrchidDocs:" +
@@ -24,12 +38,6 @@ object Libs {
      */
     const val orchidplugindocs: String = "io.github.javaeden.orchid:OrchidPluginDocs:" +
             Versions.io_github_javaeden_orchid
-
-    /**
-     * https://kotlinlang.org/
-     */
-    const val kotlin_reflect: String = "org.jetbrains.kotlin:kotlin-reflect:" +
-            Versions.org_jetbrains_kotlin
 
     /**
      * https://kotlinlang.org/
@@ -92,41 +100,54 @@ object Libs {
 
     const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
             "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
-                    Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
 
     const val com_github_breadmoirai_github_release_gradle_plugin: String =
-        "com.github.breadmoirai.github-release:com.github.breadmoirai.github-release.gradle.plugin:" +
-                Versions.com_github_breadmoirai_github_release_gradle_plugin
+            "com.github.breadmoirai.github-release:com.github.breadmoirai.github-release.gradle.plugin:" +
+            Versions.com_github_breadmoirai_github_release_gradle_plugin
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String =
-        "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:" +
-                Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
+            "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:" +
+            Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
 
     const val com_github_johnrengelman_shadow_gradle_plugin: String =
-        "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:" +
-                Versions.com_github_johnrengelman_shadow_gradle_plugin
+            "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:" +
+            Versions.com_github_johnrengelman_shadow_gradle_plugin
 
     const val de_fayard_buildsrcversions_gradle_plugin: String =
-        "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
-                Versions.de_fayard_buildsrcversions_gradle_plugin
+            "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
+            Versions.de_fayard_buildsrcversions_gradle_plugin
 
     const val com_eden_orchidplugin_gradle_plugin: String =
-        "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
-                Versions.com_eden_orchidplugin_gradle_plugin
+            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
+            Versions.com_eden_orchidplugin_gradle_plugin
 
     const val org_jetbrains_dokka_gradle_plugin: String =
-        "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
-                Versions.org_jetbrains_dokka_gradle_plugin
+            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
+            Versions.org_jetbrains_dokka_gradle_plugin
 
     const val com_jfrog_bintray_gradle_plugin: String =
-        "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
-                Versions.com_jfrog_bintray_gradle_plugin
+            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
+            Versions.com_jfrog_bintray_gradle_plugin
 
     /**
-     * 2.7.1
+     * https://github.com/FasterXML/jackson-modules-java8
+     */
+    const val jackson_datatype_jsr310: String =
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:" +
+            Versions.jackson_datatype_jsr310
+
+    /**
+     * https://github.com/ajalt/clikt
      */
     const val clikt_multiplatform: String = "com.github.ajalt:clikt-multiplatform:" +
             Versions.clikt_multiplatform
+
+    /**
+     * https://github.com/FasterXML/jackson-core
+     */
+    const val jackson_core: String = "com.fasterxml.jackson.core:jackson-core:" +
+            Versions.jackson_core
 
     /**
      * http://plantuml.sourceforge.net
@@ -134,7 +155,7 @@ object Libs {
     const val plantuml: String = "net.sourceforge.plantuml:plantuml:" + Versions.plantuml
 
     /**
-     * 0.1.3
+     * https://github.com/gciatto/kt-math
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
 }

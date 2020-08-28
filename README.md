@@ -10,7 +10,7 @@ Some quick links:
 
 ![The 2P logo](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/logo.png)
 
-[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is multi-paradigm 
+[tuProlog](https://www.cs.nmsu.edu/ALP/2013/10/tuprolog-making-prolog-ubiquitous/) (2P henceforth) is a multi-paradigm 
 logic programming framework written in Java.
 
 2P-Kt is a Kotlin-based and multi-platform reboot of 2P.
@@ -18,14 +18,18 @@ It aims at becoming an open ecosystem for Symbolic Artificial Intelligence (AI).
 For this reason, 2P-Kt consists of a number of incrementally inter-dependent modules aimed at supporting symbolic 
 manipulation and reasoning in an extensible and flexible way.
 
-Currently, 2P-Kt focuses on supporting knowledge representation and automatic reasoning through logic programming, 
+A complete overview about modules and their dependencies is provided by the following diagram: 
+
+![2P-Kt project map](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/project-map.png)
+
+As shown in the project map, 2P-Kt currently focuses on supporting knowledge representation and automatic reasoning through logic programming, 
 by featuring:
 
-* a module for logic terms representation, namely `core`,
+* a module for logic terms and clauses representation, namely `core`,
 
 * a module for logic unification representation, namely `unify`,
 
-* a module for in-memory indexing and storing logic theories, namely `theory`,
+* a module for in-memory indexing and storing logic theories, as well as other sorts of collections of logic clauses, namely `theory`,
 
 * a module providing ISO Prolog resolution of logic queries, namely `solve`, coming with two implementations 
 (i.e. `solve-classic` and `solve-streams`),
@@ -34,35 +38,99 @@ by featuring:
 aimed at bridging the logic programming with the Kotlin object-oriented \& functional environment,
 
 * two parsing modules: one aimed at parsing terms, namely `parser-core`, and the other aimed at parsing theories, 
-namely `parser-theory`.
+namely `parser-theory`,
 
-A complete overview about modules and their dependencies is provided by the following diagram: 
+* two serialisation-related modules: one aimed at (de)serialising terms and clauses, namely `serialize-core`, and the 
+other aimed at  (de)serialising terms theories, namely `serialize-theory`,
 
-![2P-Kt project map](https://www.plantuml.com/plantuml/svg/TP31Rjim38RlV0eYT-q1XY0ePfy6332GPATTD8k9jSgY8SenWdNlFbjQNSLhBpRuVp_vYtoIg4CSUmUH1uoCFpb6xj7OG6sqx46UhHzqq3rAfmrFrb_nefqG5EZ2pb30tu3uHRVFry2ZDnKx3lkz7YooT_V30TdP6xtd2SnnvdToZgVt3BOVt2Sq5BLrit7gR2Ju0_0lUDToe1s-3bhbqTlBVRUMiICEHMt4gTof1UlgGK-j6PmVG1wIoMabmkuspodNVMIgTLh4jgdnM6sWn42wbmoFAnnq40flRsogBVfrwtUulK-oVlt-xJ-pVEJTHfPRDYU0vGMuVr669wymtGO_ew61l94VdZraRRNaVaY_GaxRGlekebekKLP7WBf25UorY-hbW4ikrET2IJb96eUbhYkeJmNFYREs6ivBiLUluT3C0OukR_ERKnBAzcPjRwhSeGxffFFMev0aAMKc_GXFvCtOkxy0)
+* a module for using Prolog via a command-line interface, namely `repl`.
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
 other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
 
 Furthermore, 2P-Kt is developed as in _pure_, __multi-platform__ Kotlin project. 
 This brings two immediate advantages:
-1. it virtually supports several platforms, there including JVM, JS, Android, and Native
+1. it virtually supports several platforms, there including JVM, JS, Android, and Native (even if, currently, only JVM, 
+JS and Android are supported),
 2. it consists of a very minimal and lightweight library, only leveraging on the Kotlin _common_ library, as it cannot 
-commit to any particular platform standard library
-
-<!-- 
-## Overview
-
-![Project Map](http://www.plantuml.com/plantuml/svg/dLTBSnCv4BxFhr3bagGsJW57bsC83xQsO2cAP7CWoK6UQTjQDDAWHpOkDlzzzHWt6eqof9P36Edx-j7gRgdzIXkgZ6rvPPZXG5vqX0doGHhEH5LrjFv6Dq1ggO3yg2f2Y8CDg3MjWLo2QjqkwV_zHfZ-NKahcZbvBIK7Age4XE-MSdqapHRKFCWU8o-XRQdUlf4D73dq3s5I3TeeMnkhAEUxTzFQ4X5McsbwQc8J_B-KHzgkvkJ2hhHXnXecnN7A0ZD5I9YBInBDBKbDjN6AZzsQf2PhBeMBDj86Y94NpdsnyM3y2k13-2ka0NBWF26KCwf1e-ytmkyoJTPI4H1qnPqaSP7V22_epLodZj_U2BqJXjw7p9i3GdKWVP86l2bSa1c7jPdvPPNNmXifjA723EhXZd8BSt8kTj7nNEYAgW5Vq1OmrEI4PDjnCF0fXGTbTowasBNIwYof8uiNeOIoedrlHMsaEZUoPJLg88DSh2Edu1rLpEn6jKhLHhl8bQAxHSX_Xdrasio9_rk4B-3xdBW_5aGDFIChG2OQk0zs-zefH_p9jg1OFGnPcAkOcjTiunHiG2Le0pLhAV_9U1itgYmbLC6btBTKRoOsRT4J3y16KJug4VG3l2D5sI-Go-NUbULyJiToMJib_HHWSdQsp_UD2EdrEy_yzqRxp-jRtoHUEJO9BiXCiStMpFnwT64gQxPPyRazm9eRbYLb7949Lm-DKt5u8xotFpVNb6iuz7v6itj7SOMUXetSrNTjPtRErIcxrxSZgpyUeiaWZYPnrTyWOLsqU07cyNIHCtBmu-40NHgB-twQbdUfAyjdebDndnuIAXg2bV42Jm4F9cCyyuSIJE2Pn0KUYL-ExrJRSPYEv_IWU1KHvrKvplzpmdZ5_-sxWaanhU7aIJx5zsxnxwoH_uXPVpEF0NnP2f1_Fu8k926slv0UGR4xzpo4mbLJHF02YuBHuKnb2V2fBGBfWPO8FbSLNYwu7Jkui9-qLVZqYEtwVVHY3A4Pnq7hcLY6nTACJWFkv_fmVEJK-WbbiVW2jQ5Yms6vt5ykMP5vAjPyuVd5AflF3ggCjGNQpFjJV9bXAzdiadSogKDiyN0T4hdUEp7G83kV9yg34KH0D46s5CeNcpPliHsc0iYWqK3XvAyz_oI4Tfj5bVdobYce3RlxXKFF9q_K4OJb_2cEFS6bznG7iLAMo5ciyrEvFdBcuRYaBM-Oc3Z4-pNY8IMFWdX6A1_uI0WUFp9N_acxnOSJSXNdk9fJhGS_3XPNL9qGdFG669ajlNnLEQtxZh62hTtpcrdvo-qo6CxCjNJmlPaFL5O9eTtO8_Cy7ke9CI_mvqygy38LeARUbaL6Oqfqj4ps_qMz3sbePWjIZMExn6tKhIm7tG_9FXFB16lwP241ivUmuiM3b9ZmmI3TSQkFeaVpteNZ_KTEYyhcVTtyf6N9e4patEB98JVjiOIPZVkvHlnrW64D-9dMCJkXKwr1cVF70XmpXygHDo9-VRBAhxzMgS0eMfi9bHcph7BCE-TyMcb6BklD1iVHev9hD7x9G1EgWB2sjOQkECmH1rflIGjcAnjlsohXtprAaD2RTJvPolck9sd4gRD_1tpVRolBk26h7K42DCmudPv0f83mFuAzPQO94tVo6pJ4Tb9KwPkNDhMM7D-MPDRqkweVbpw-ZKlY1uzbZwKwEghqMCTd9RdSVFQO6i_d9Uv7k2zGeoLluTJVvgTBic_x1ZeNaYOkl7ZjdjhEmRLKC00ZlqS3Sm378pWjAqOmHZd0NhaFs_B_0000)
--->
+commit to any particular platform standard library.
 
 ## Users
+2P-Kt can either be used as a command-line program or as a Kotlin, JVM, Android, or JS library.
 
-2P-Kt modules are currently available through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) for JVM and Kotlin users. 
-NPM modules will be deployed soon, making 2P easily available for JS users as well.
+The 2P-Kt executables are currently available for download on the [Releases section](https://github.com/tuProlog/2p-kt/releases) of the
+GitHub repository.
 
-### Gradle
+The 2P-Kt modules for JVM, Android, or Kotlin users are currently available for import 
+on [Maven Central](https://search.maven.org/search?q=g:it.unibo.tuprolog), under the `it.unibo.tuprolog` group ID (not 
+to be confused with the `it.unibo.alice.tuprolog`, which contains the old Java-based implementation).
+The same modules are available through an _ad-hoc_ [Maven repository](https://bintray.com/pika-lab/tuprolog) as well, 
+hosted by Bintray.
 
-To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Gradle-based project, you must setup your Maven repositories first:
+The 2P-Kt modules for JS users, are available for import on NPM, under the [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
+
+### End users
+
+#### Command Line Interface
+
+If you just need a command-line Prolog interpreter, you can rely on the 2P-Kt REPL which is available on the [Releases section of the 
+GitHub repository](https://github.com/tuProlog/2p-kt/releases). 
+
+The page of the [latest release](https://github.com/tuProlog/2p-kt/releases/latest) of 2P-Kt exposes a number of _Assets_.
+There, the one named:
+```
+2p-repl-VERSION-redist.jar
+```
+is the self-contained, executable Jar containing the 2P-Kt-based Prolog interpreter (`VERSION` may vary depending on the
+actual release version).
+
+After you download the `2p-repl-VERSION-redist.jar`, you can simply launch it by running:
+```bash
+java -jar 2p-repl-VERSION-redist.jar
+```
+This should start an interactive read-eval-print loop accepting Prolog queries.
+A normal output should be as follows:
+```
+# 2P-Kt version LAST_VERSION_HERE
+
+?- <write your dot-terminated Prolog query here>.
+```
+
+Other options or modes of execution are supported.
+One can explore them via the program help, which can be displayed by running:
+```bash
+java -jar 2p-repl-VERSION-redist.jar --help
+```
+This should display a message similar to the following one:
+```
+Usage: java -jar 2p-repl.jar [OPTIONS] COMMAND [ARGS]...
+
+  Start a Prolog Read-Eval-Print loop
+
+Options:
+  -T, --theory TEXT  Path of theory file to be loaded
+  -t, --timeout INT  Maximum amount of time for computing a solution (default:
+                     1000 ms)
+  -h, --help         Show this message and exit
+
+Commands:
+  solve  Compute a particular query and then terminate
+```
+
+### Gradle users
+
+To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Kotlin-based project leveraging on Gradle, 
+you simply need to declare the corresponding dependency in your `build.gradle(.kts)` file:
+ ```kotlin
+// assumes Gradle's Kotlin DSL
+dependencies {
+    implementation("it.unibo.tuprolog", "2P_MODULE", "2P_VERSION")
+}
+ ``` 
+In this way, the dependencies of `2P_MODULE` should be automatically imported. 
+
+The step above, requires you to tell Gradle to either use Maven Central or our Bintray repository (or both) as a source 
+for dependency lookup. You can do it as follows:
 ```kotlin
 // assumes Gradle's Kotlin DSL
 repositories {
@@ -70,18 +138,32 @@ repositories {
     maven("https://dl.bintray.com/pika-lab/tuprolog/")
 }
 ``` 
-and then declare the desired dependency:
+
+#### JVM-only projects with Gradle
+
+Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targets the JVM platform:
  ```kotlin
 // assumes Gradle's Kotlin DSL
 dependencies {
-    implementation("it.unibo.tuprolog", "2P_MODULE", "2P_VERSION")
+    implementation("it.unibo.tuprolog", "2P_MODULE-jvm", "2P_VERSION")
 }
  ``` 
-Notice that dependencies of `2P_MODULE` should be automatically imported. 
 
-### Maven
+### Maven users
 
-To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Maven-based project, you must setup your Maven repositories first:
+To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Kotlin-based project leveraging on Maven,
+you simply need to declare the corresponding dependency in your `pom.xml` file:
+ ```xml
+<dependency>
+    <groupId>it.unibo.tuprolog</groupId>
+    <artifactId>2P_MODULE</artifactId>
+    <version>2P_VERSION</version>
+</dependency>
+ ``` 
+In this way, the dependencies of `2P_MODULE` should be automatically imported. 
+
+The step above, requires you to tell Maven to either use Maven Central or our Bintray repository (or both) as a source 
+for dependency lookup. You can do it as follows:
 ```xml
 <repositories>
     <repository>
@@ -90,22 +172,38 @@ To import the 2P-Kt module named `2P_MODULE` (version `2P_VERSION`) into your Ma
     </repository>
 </repositories>
 ``` 
-and then declare the desired dependency:
+
+
+#### JVM-only projects with Maven
+
+Remember to add the `-jvm` suffix to `2P_MODULE` in case your project only targets the JVM platform:
  ```xml
 <dependency>
     <groupId>it.unibo.tuprolog</groupId>
-    <artifactId>2P_MODULE</artifactId>
+    <artifactId>2P_MODULE-jvm</artifactId>
     <version>2P_VERSION</version>
 </dependency>
  ``` 
-Notice that dependencies of `2P_MODULE` should be automatically imported. 
+
+### NPM users (JavaScript-only projects)
+
+The 2P-Kt software is available as a JavaScript library as well, on NPM, under the  [`@tuprolog` organization](https://www.npmjs.com/org/tuprolog).
+To import the `2P_MODULE` into your `package.json`, it is sufficient to declare your dependency as follows:
+```json
+{
+  "dependencies": {
+    "@tuprolog/2P_MODULE": "^2P_MODULE_VERSION"
+  }
+}
+```
+Notice that the JS dependencies of `2P_MODULE` should be automatically imported. 
 
 ## Developers
 
 Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
 - JDK 12+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.3.70+
-- Gradle 6.2+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
+- Kotlin 1.3.72+
+- Gradle 6.4+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 
 ### Develop 2P-Kt with IntelliJ Idea

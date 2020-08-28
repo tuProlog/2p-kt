@@ -1,13 +1,14 @@
 package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInstantiated
+import org.gciatto.kt.math.BigInteger
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -89,35 +90,70 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Numeric -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.NUMBER}",
-                    context = context,
-                    expectedType = TypeError.Expected.NUMBER,
-                    actualValue = arg
-                )
+                !is Numeric -> throw TypeError.forArgument(context, signature, TypeError.Expected.NUMBER, arg, index)
                 else -> this
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStruct(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Struct -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.COMPOUND}",
-                    context = context,
-                    expectedType = TypeError.Expected.COMPOUND,
-                    actualValue = arg
+                !is Struct -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCallable(index: Int): Solve.Request<C> =
+            ensuringArgumentIsStruct(index)
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Struct, is Atom -> throw TypeError.forArgument(
+                    context,
+                    signature,
+                    TypeError.Expected.COMPOUND,
+                    arg,
+                    index
                 )
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Atom -> throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsSpecifier(index: Int): Solve.Request<C> =
+            arguments[index].let { arg ->
+                when {
+                    arg !is Atom -> throw DomainError.forArgument(context, signature, DomainError.Expected.OPERATOR_SPECIFIER, arg, index)
+                    else -> {
+                        try {
+                            Specifier.fromTerm(arg)
+                            this
+                        } catch (e: IllegalArgumentException) {
+                            throw DomainError.forArgument(context, signature, DomainError.Expected.OPERATOR_SPECIFIER, arg, index)
+                        }
+                    }
+                }
+            }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Integer -> throw TypeError(
-                    "Argument $index of ${this.signature}` should be a ${TypeError.Expected.INTEGER}",
-                    context = context,
-                    expectedType = TypeError.Expected.INTEGER,
-                    actualValue = arg
-                )
+                !is Integer -> throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, arg, index)
                 else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
+            arguments[index].let { arg ->
+                when {
+                    arg !is Integer || arg.intValue < BigInteger.ZERO -> throw DomainError.forArgument(
+                        context,
+                        signature,
+                        DomainError.Expected.NOT_LESS_THAN_ZERO,
+                        arg,
+                        index
+                    )
+                    else -> this
+                }
             }
     }
 }

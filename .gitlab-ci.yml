@@ -6,11 +6,12 @@ variables:
   BEFORE_TASK: ""
   AFTER_TASK: ""
   GCMD: "gradle"
-  BUILD_TASK: "assemble"
+  BUILD_TASK: "clean assemble"
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
   BINTRAY_TASK: "publishAllToBintray"
+  CENTRAL_TASK: "publishAllPublicationsToMavenRepository"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
@@ -51,6 +52,15 @@ Deploy to Bintray:
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
     - /^(master)|(release)|(develop)$/
+
+Deploy to Maven Central:
+  stage: deploy
+  script: $GCMD $BEFORE_TASK $CENTRAL_TASK $AFTER_TASK $GOPTS
+  environment:
+    name: Maven Central
+    url: "https://oss.sonatype.org"
+  only:
+    - /^(master)|(release)$/
 
 Deploy to NPM:
   stage: deploy

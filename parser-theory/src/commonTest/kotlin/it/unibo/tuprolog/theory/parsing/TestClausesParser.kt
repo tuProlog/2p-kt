@@ -3,7 +3,7 @@ package it.unibo.tuprolog.theory.parsing
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.ParseException
-import it.unibo.tuprolog.dsl.theory.PrologWithTheories
+import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.test.Test
@@ -20,8 +20,8 @@ class TestClausesParser {
             }
         }
 
-        fun assertMatch(expected: Term, actual: PrologWithTheories.() -> Term) {
-            assertMatch(expected, PrologWithTheories.empty().actual())
+        fun assertMatch(expected: Term, actual: PrologScopeWithTheories.() -> Term) {
+            assertMatch(expected, PrologScopeWithTheories.empty().actual())
         }
     }
 
@@ -60,6 +60,71 @@ class TestClausesParser {
             assertEquals(input, e.input)
         } catch (e: Throwable) {
             fail("Unexpected exception of type ${e::class}: $e")
+        }
+    }
+
+    @Test
+    fun testTheoryWithCustomOperator() {
+        val input = """
+            |:- op(900, xfy, '::').
+            |nil.
+            |1 :: nil.
+            |1 :: 2 :: nil.
+        """.trimMargin()
+
+        val th = with(ClausesParser.withStandardOperators) {
+            parseTheory(input)
+        }
+
+        assertMatch(th.elementAt(0)) {
+            directive { "op"(900, "xfy", "::") }
+        }
+
+        assertMatch(th.elementAt(1)) {
+            fact { "nil" }
+        }
+
+        assertMatch(th.elementAt(2)) {
+            fact { "::"(1, "nil") }
+        }
+
+        assertMatch(th.elementAt(3)) {
+            fact { "::"(1, "::"(2, "nil")) }
+        }
+    }
+
+    @Test
+    fun testTheoryWithCustomOperators() {
+        val input = """
+            |:- op(900, yfx, ['++', '--']).
+            |1 ++ 2.
+            |1 -- 2.
+            |1 -- 2 ++ 3.
+            |1 ++ 2 -- 3 ++ 4.
+        """.trimMargin()
+
+        val th = with(ClausesParser.withStandardOperators) {
+            parseTheory(input)
+        }
+
+        assertMatch(th.elementAt(0)) {
+            directive { "op"(900, "yfx", listOf("++", "--")) }
+        }
+
+        assertMatch(th.elementAt(1)) {
+            fact { "++"(1, 2) }
+        }
+
+        assertMatch(th.elementAt(2)) {
+            fact { "--"(1, 2) }
+        }
+
+        assertMatch(th.elementAt(3)) {
+            fact { "++"("--"(1, 2), 3) }
+        }
+
+        assertMatch(th.elementAt(4)) {
+            fact { "++"("--"("++"(1, 2), 3), 4) }
         }
     }
 }
