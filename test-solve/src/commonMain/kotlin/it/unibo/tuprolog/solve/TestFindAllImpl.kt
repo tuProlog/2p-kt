@@ -150,7 +150,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
                             DummyInstances.executionContext,
                             Signature("findall", 3),
                             TypeError.Expected.CALLABLE,
-                            numOf(4)
+                            numOf(1)
                         )
                     )
                 ),

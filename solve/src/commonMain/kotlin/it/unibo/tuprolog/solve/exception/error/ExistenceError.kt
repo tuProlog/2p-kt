@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param expectedType The type of the missing object
  * @param actualValue The object whose lack caused the error
  * @param extraData The possible extra data to be carried with the error
@@ -21,13 +21,28 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class ExistenceError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     val expectedType: ObjectType,
     val actualValue: Term,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        expectedType: ObjectType,
+        actualValue: Term,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), expectedType, actualValue, extraData)
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
+
+    override fun updateContext(newContext: ExecutionContext): ExistenceError =
+        ExistenceError(message, cause, contexts.setFirst(newContext), expectedType, actualValue, extraData)
+
+    override fun pushContext(newContext: ExecutionContext): ExistenceError =
+        ExistenceError(message, cause, contexts.addLast(newContext), expectedType, actualValue, extraData)
 
     companion object {
 

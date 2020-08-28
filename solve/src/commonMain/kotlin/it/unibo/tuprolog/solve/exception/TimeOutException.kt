@@ -9,7 +9,7 @@ import kotlin.js.JsName
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param exceededDuration The time duration exceeded
  *
  * @author Enrico
@@ -17,13 +17,23 @@ import kotlin.js.JsName
 class TimeOutException(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     @JsName("exceededDuration") val exceededDuration: TimeDuration
-) : TuPrologRuntimeException(message, cause, context) {
+) : TuPrologRuntimeException(message, cause, contexts) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        exceededDuration: TimeDuration
+    ) : this(message, cause, arrayOf(context), exceededDuration)
 
     constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration)
             : this(cause?.toString(), cause, context, exceededDuration)
 
     override fun updateContext(newContext: ExecutionContext): TimeOutException =
-        TimeOutException(message, cause, newContext, exceededDuration)
+        TimeOutException(message, cause, contexts.setFirst(newContext), exceededDuration)
+
+    override fun pushContext(newContext: ExecutionContext): TimeOutException =
+        TimeOutException(message, cause, arrayOf(*contexts, newContext), exceededDuration)
 }

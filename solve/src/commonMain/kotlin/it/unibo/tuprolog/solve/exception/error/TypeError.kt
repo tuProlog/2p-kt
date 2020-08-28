@@ -14,7 +14,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param expectedType The type expected, that wouldn't have raised the error
  * @param actualValue The value not respecting [expectedType]
  * @param extraData The possible extra data to be carried with the error
@@ -24,32 +24,26 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected
 class TypeError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     val expectedType: Expected,
     val actualValue: Term,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
-
-    // TODO: 16/01/2020 in this early stage of the project consider not using deprecation,
-    // TODO             but instead advance the version number and change what should be changed (her: private constructor and only public factory)
-
-    /** This constructor automatically fills [message] field with provided information */
-    @Deprecated("Prefer TypeError.Companion.forArgument")
     constructor(
+        message: String? = null,
+        cause: Throwable? = null,
         context: ExecutionContext,
-        procedure: Signature,
         expectedType: Expected,
         actualValue: Term,
-        index: Int? = null
-    ) : this(
-        message = "Argument ${index
-            ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead",
-        context = context,
-        expectedType = expectedType,
-        actualValue = actualValue,
-        extraData = actualValue
-    )
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), expectedType, actualValue, extraData)
+
+    override fun updateContext(newContext: ExecutionContext): TypeError =
+        TypeError(message, cause, contexts.setFirst(newContext), expectedType, actualValue, extraData)
+
+    override fun pushContext(newContext: ExecutionContext): TypeError =
+        TypeError(message, cause, contexts.addLast(newContext), expectedType, actualValue, extraData)
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
 

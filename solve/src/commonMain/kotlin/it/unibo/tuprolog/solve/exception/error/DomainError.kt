@@ -13,21 +13,35 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param expectedDomain The expected domain, that wouldn't have raised the error
  * @param actualValue The value not respecting [expectedDomain]
  * @param extraData The possible extra data to be carried with the error
- *
- * @author Enrico
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class DomainError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     val expectedDomain: Expected,
     val actualValue: Term,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        expectedDomain: Expected,
+        actualValue: Term,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), expectedDomain, actualValue, extraData)
+
+    override fun updateContext(newContext: ExecutionContext): DomainError =
+        DomainError(message, cause, contexts.setFirst(newContext), expectedDomain, actualValue, extraData)
+
+    override fun pushContext(newContext: ExecutionContext): DomainError =
+        DomainError(message, cause, contexts.addLast(newContext), expectedDomain, actualValue, extraData)
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedDomain.toTerm(), actualValue) }
 

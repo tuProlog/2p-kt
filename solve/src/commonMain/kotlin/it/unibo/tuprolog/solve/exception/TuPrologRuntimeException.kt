@@ -10,20 +10,36 @@ import kotlin.js.JsName
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  */
 open class TuPrologRuntimeException(
     message: String? = null,
     cause: Throwable? = null,
-    @JsName("context") val context: ExecutionContext
+    @JsName("contexts") val contexts: Array<ExecutionContext>
 ) : TuPrologException(message, cause) {
 
+    init {
+        require(contexts.isNotEmpty())
+    }
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        vararg otherContexts: ExecutionContext
+    )
+            : this(message, cause, arrayOf(context, *otherContexts))
+
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
+
+    @JsName("context")
+    val context: ExecutionContext
+        get() = contexts[0]
 
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     @JsName("prologStackTrace")
     val prologStackTrace: List<Struct>
-        get() = context.prologStackTrace
+        get() = sequenceOf(*contexts).flatMap { it.prologStackTrace.asSequence() }.toList()
 
     /**
      * Creates a new exception instance with context field updated to [newContext].
@@ -33,4 +49,14 @@ open class TuPrologRuntimeException(
     @JsName("updateContext")
     open fun updateContext(newContext: ExecutionContext): TuPrologRuntimeException =
         TuPrologRuntimeException(message, cause, newContext)
+
+    @JsName("pushContext")
+    open fun pushContext(newContext: ExecutionContext): TuPrologRuntimeException =
+        TuPrologRuntimeException(message, cause, arrayOf(*contexts, context))
+
+    protected fun Array<ExecutionContext>.setFirst(item: ExecutionContext): Array<ExecutionContext> =
+        arrayOf(item, *copyOfRange(1, size))
+
+    protected fun Array<ExecutionContext>.addLast(item: ExecutionContext): Array<ExecutionContext> =
+        arrayOf(*this, item)
 }
