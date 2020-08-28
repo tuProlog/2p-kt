@@ -138,7 +138,7 @@ object Libs {
             Versions.jackson_datatype_jsr310
 
     /**
-     * 2.8.0
+     * https://github.com/ajalt/clikt
      */
     const val clikt_multiplatform: String = "com.github.ajalt:clikt-multiplatform:" +
             Versions.clikt_multiplatform
@@ -155,7 +155,7 @@ object Libs {
     const val plantuml: String = "net.sourceforge.plantuml:plantuml:" + Versions.plantuml
 
     /**
-     * 0.1.3
+     * https://github.com/gciatto/kt-math
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
 }
