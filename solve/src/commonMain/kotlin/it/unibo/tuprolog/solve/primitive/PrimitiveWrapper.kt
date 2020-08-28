@@ -100,6 +100,9 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCallable(index: Int): Solve.Request<C> =
+            ensuringArgumentIsStruct(index)
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Struct, is Atom -> throw TypeError.forArgument(

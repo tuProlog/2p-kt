@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestClassicFindAll : TestFindAll, SolverFactory {
@@ -60,19 +59,16 @@ class TestClassicFindAll : TestFindAll, SolverFactory {
     }
 
     @Test
-//    @Ignore
     override fun testFindXinSameXValues(){
         prototype.testFindXinSameXValues()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
     override fun testResultListIsCorrect(){
         prototype.testResultListIsCorrect()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
     override fun testFindXtoDoubleAssigment(){
         prototype.testFindXtoDoubleAssigment()
     }
@@ -83,13 +79,11 @@ class TestClassicFindAll : TestFindAll, SolverFactory {
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
     override fun testFindXinNumber(){
         prototype.testFindXinNumber()
     }
 
     @Test
-    @Ignore // TODO @gciatto-unibo must fix this
     override fun testFindXinCall(){
         prototype.testFindXinCall()
     }
