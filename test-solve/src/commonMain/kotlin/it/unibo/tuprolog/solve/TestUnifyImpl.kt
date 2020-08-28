@@ -93,7 +93,7 @@ internal class TestUnifyImpl(private val solverFactory: SolverFactory) : TestUni
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 1 `=` 1.0
+            val query = 1 `=` realOf(1.0)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

@@ -20,7 +20,6 @@ class TestClassicArg : TestArg, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    //@Ignore
     override fun testArgFromFooX(){
         prototype.testArgFromFooX()
     }

@@ -212,7 +212,7 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = arg(-3, "foo"("a", "b"), "A")
+            val query = arg(intOf(-3), "foo"("a", "b"), "A")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
