@@ -31,6 +31,8 @@ object OOPLib : AliasedLibrary by Library.aliased(
         LeftArrow,
         Returns,
         ColonEquals,
+        Alias.forType("array", Array::class),
+        Alias.forType("arraylist", ArrayList::class),
         *platformSpecificAliases
     ).map { it.wrappedImplementation }),
     primitives = sequenceOf<PrimitiveWrapper<*>>(

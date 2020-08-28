@@ -2,10 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KParameter
+import kotlin.reflect.*
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
@@ -39,7 +36,9 @@ actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
         .distinct()
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map { it.type.classifier as KClass<*> }
+    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
+        it.type.classifier as? KClass<*> ?: Any::class
+    }
 
 private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
     if (size != types.size) return false
@@ -49,6 +48,7 @@ private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
             is KClass<*> -> {
                 if (possible.none { formal isSupertypeOf it }) return false
             }
+            is KTypeParameter -> return true
             else -> return false
         }
     }
