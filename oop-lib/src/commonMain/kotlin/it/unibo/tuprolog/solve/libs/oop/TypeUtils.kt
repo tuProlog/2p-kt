@@ -38,6 +38,9 @@ expect fun KClass<*>.invoke(
     instance: Any? = null
 ): Result
 
+fun Any.assign(propertyName: String, value: Term): Result =
+    this::class.assign(propertyName, value, this)
+
 expect fun KClass<*>.assign(
     propertyName: String,
     value: Term,

@@ -1,10 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Result
-import it.unibo.tuprolog.solve.libs.oop.fullName
-import it.unibo.tuprolog.solve.libs.oop.invoke
+import it.unibo.tuprolog.solve.libs.oop.*
 import kotlin.collections.List
 
 @Suppress("UNCHECKED_CAST")
@@ -18,6 +15,11 @@ internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by At
 
     override fun invoke(methodName: String, arguments: List<Term>): Result =
         `object`.invoke(methodName, arguments)
+
+    override fun assign(propertyName: String, value: Term): Boolean {
+        `object`.assign(propertyName, value)
+        return true
+    }
 
     override fun freshCopy(): Atom = this
 

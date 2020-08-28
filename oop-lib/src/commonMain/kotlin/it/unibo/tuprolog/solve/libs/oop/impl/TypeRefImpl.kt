@@ -19,7 +19,7 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
     override fun invoke(methodName: String, arguments: List<Term>): Result =
         when (val companionObjectRef = type.companionObjectRef) {
             is Optional.Some<out Any> -> companionObjectRef.value.invoke(methodName, arguments)
-            else -> type.invoke(methodName, arguments)
+            else -> type.invoke(methodName, arguments, null)
         }
 
     override val isConstant: Boolean
@@ -41,4 +41,12 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
 
     override fun <T> accept(visitor: TermVisitor<T>): T =
         visitor.visit(this)
+
+    override fun assign(propertyName: String, value: Term): Boolean {
+        when (val companionObjectRef = type.companionObjectRef) {
+            is Optional.Some<out Any> -> companionObjectRef.value.assign(propertyName, value)
+            else -> type.assign(propertyName, value, null)
+        }
+        return true
+    }
 }
