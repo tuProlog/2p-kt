@@ -7,6 +7,7 @@ import it.unibo.tuprolog.utils.Optional
 import kotlin.jvm.JvmName
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 
 expect val KClass<*>.name: String
 
@@ -24,6 +25,8 @@ expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
 
 expect fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*>
 
+expect fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*>
+
 expect fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*>
 
 fun Any.invoke(methodName: String, arguments: List<Term>): Result =
@@ -32,6 +35,12 @@ fun Any.invoke(methodName: String, arguments: List<Term>): Result =
 expect fun KClass<*>.invoke(
     methodName: String,
     arguments: List<Term>,
+    instance: Any? = null
+): Result
+
+expect fun KClass<*>.assign(
+    propertyName: String,
+    value: Term,
     instance: Any? = null
 ): Result
 

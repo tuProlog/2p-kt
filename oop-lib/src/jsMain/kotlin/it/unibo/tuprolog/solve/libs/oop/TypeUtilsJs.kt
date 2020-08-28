@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 
 private val TODO_EXCEPTION = NotImplementedError("OOP-Prolog integration is still not supported on JS")
 
@@ -18,6 +19,7 @@ actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(match != null) {
         "`$qualifiedName` should match ${CLASS_NAME_PATTERN.pattern}, while is doesn't"
     }
+    @Suppress("UNUSED_VARIABLE")
     val module = match.groups[1]!!.value
     val packageSteps = match.groups[2]!!.value.split('.')
     var kClass: dynamic = js("require(module)")
@@ -47,6 +49,9 @@ actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
 actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     throw TODO_EXCEPTION
 
+actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
+    throw TODO_EXCEPTION
+
 actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     throw TODO_EXCEPTION
 
@@ -66,6 +71,14 @@ actual fun KClass<*>.invoke(
 
 actual fun KClass<*>.create(
     arguments: List<Term>
+): Result {
+    throw TODO_EXCEPTION
+}
+
+actual fun KClass<*>.assign(
+    propertyName: String,
+    value: Term,
+    instance: Any?
 ): Result {
     throw TODO_EXCEPTION
 }

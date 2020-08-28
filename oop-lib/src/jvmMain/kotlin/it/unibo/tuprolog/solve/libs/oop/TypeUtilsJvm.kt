@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -60,6 +61,13 @@ actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KC
             method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
         } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
 
+actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
+    members.filter { it.name == propertyName }
+        .filterIsInstance<KMutableProperty<*>>()
+        .firstOrNull { property ->
+            property.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(listOf(admissibleTypes))
+        } ?: throw PropertyAssignmentException(this, propertyName, admissibleTypes)
+
 actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     constructors.firstOrNull { constructor ->
         constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
@@ -93,12 +101,30 @@ actual fun KClass<*>.invoke(
 ): Result {
     val converter = TermToObjectConverter.default
     val methodRef = findMethod(methodName, arguments.map { converter.admissibleTypes(it) })
-    val formalArgumentsTypes = methodRef.ensureArgumentsListIsOfSize(arguments)
+    return methodRef.callWithPrologArguments(converter, arguments, instance)
+}
+
+private fun KCallable<*>.callWithPrologArguments(
+    converter: TermToObjectConverter,
+    arguments: List<Term>,
+    instance: Any? = null
+): Result {
+    val formalArgumentsTypes = ensureArgumentsListIsOfSize(arguments)
     val args = arguments.mapIndexed { i, it ->
         converter.convertInto(formalArgumentsTypes[i], it)
     }.toTypedArray()
-    val result = if (instance == null) methodRef.call(*args) else methodRef.call(instance, *args)
+    val result = if (instance == null) call(*args) else call(instance, *args)
     return Result.Value(result)
+}
+
+actual fun KClass<*>.assign(
+    propertyName: String,
+    value: Term,
+    instance: Any?
+): Result {
+    val converter = TermToObjectConverter.default
+    val setterRef = findProperty(propertyName, converter.admissibleTypes(value)).setter
+    return setterRef.callWithPrologArguments(converter, listOf(value), instance)
 }
 
 actual fun KClass<*>.create(
@@ -106,10 +132,5 @@ actual fun KClass<*>.create(
 ): Result {
     val converter = TermToObjectConverter.default
     val constructorRef = findConstructor(arguments.map { converter.admissibleTypes(it) })
-    val formalArgumentsTypes = constructorRef.ensureArgumentsListIsOfSize(arguments)
-    val args = arguments.mapIndexed { i, it ->
-        converter.convertInto(formalArgumentsTypes[i], it)
-    }.toTypedArray()
-    val result = constructorRef.call(*args)
-    return Result.Value(result)
+    return constructorRef.callWithPrologArguments(converter, arguments)
 }

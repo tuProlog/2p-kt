@@ -14,4 +14,6 @@ interface Ref : Atom {
 
     fun invoke(methodName: String, arguments: Sequence<Term>): Result =
         invoke(methodName, arguments.toList())
+
+    fun assign(propertyName: String, value: Term): Boolean
 }

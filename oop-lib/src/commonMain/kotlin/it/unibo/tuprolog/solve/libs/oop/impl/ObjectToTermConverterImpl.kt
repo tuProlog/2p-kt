@@ -18,7 +18,7 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
                     source.isInteger -> Integer.of(source.toInteger())
                     else -> Real.of(source.toDecimal())
                 }
-                is Char -> Atom.of(String(charArrayOf(source)))
+                is Char -> Atom.of(charArrayOf(source).concatToString())
                 is Boolean -> Truth.of(source)
                 else -> ObjectRef.of(source)
             }

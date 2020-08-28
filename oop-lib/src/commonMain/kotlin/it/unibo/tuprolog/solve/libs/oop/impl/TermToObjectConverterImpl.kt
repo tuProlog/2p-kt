@@ -52,7 +52,7 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
 
     override fun admissibleTypes(term: Term): Set<KClass<*>>  {
         return when (term) {
-            is NullRef -> setOf(Nothing::class)
+            is NullRef, is Var -> setOf(Nothing::class)
             is ObjectRef -> setOf(term.`object`::class)
             is Truth -> setOf(Boolean::class, String::class)
             is Atom -> mutableSetOf<KClass<*>>(String::class).also {
