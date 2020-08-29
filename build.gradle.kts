@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
-    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
+    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin apply true
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
@@ -67,7 +67,7 @@ val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 val githubToken = getPropertyOrWarnForAbsence("githubToken")
 val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
-val allSubprojects = subprojects.map { it.name }.toSet()
+val allSubprojects = allprojects.map { it.name }.toSet()
 val jvmSubprojects = setOf("parser-jvm", "examples")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
@@ -405,7 +405,8 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
             version = project.version.toString()
 
             for (component in componentsStrings) {
-                from(components[component])
+                if (component in components.names)
+                    from(components[component])
             }
 
             if (docArtifact != null && docArtifact in tasks.names) {
@@ -426,7 +427,7 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
     }
 }
 
-fun Set<String>.forEachProject(f: Project.() -> Unit) = subprojects.filter { it.name in this }.forEach(f)
+fun Set<String>.forEachProject(f: Project.() -> Unit) = allprojects.filter { it.name in this }.forEach(f)
 
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
     platform: String, configuration: Action<in GradlePassConfigurationImpl>

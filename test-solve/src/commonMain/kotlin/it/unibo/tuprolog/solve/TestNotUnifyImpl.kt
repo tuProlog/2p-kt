@@ -93,7 +93,7 @@ internal class TestNotUnifyImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 1 notEqualsTo 1.0
+            val query = intOf(1) notEqualsTo realOf(1.0)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

@@ -35,7 +35,7 @@ interface ExecutionContext : ExecutionContextAware {
         stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
         stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
         stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.stdErr()
+        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
     ): Solver
 
     @JsName("apply")

@@ -30,7 +30,7 @@ interface ExecutionContextAware {
             return mapOf(
                 STDOUT to OutputChannel.stdOut<String>(),
                 STDERR to OutputChannel.stdErr<String>(),
-                WARNINGS to OutputChannel.stdErr<PrologWarning>()
+                WARNINGS to OutputChannel.warn()
             )
         }
 
