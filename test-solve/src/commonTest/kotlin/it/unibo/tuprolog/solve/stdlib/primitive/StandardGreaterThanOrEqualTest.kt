@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.StandardOperatorUtils
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.TermOrderingUtils
 import kotlin.test.Test
 
 internal class StandardGreaterThanOrEqualTest {
     @Test
     fun computesCorrectResult() {
-        StandardOperatorUtils.standardOrderGreaterThanOrEqualToTest.forEach { (input, result) ->
-            StandardOperatorUtils.assertCorrectResponse(StandardOrderGreaterThanOrEqualTo, input, result)
+        TermOrderingUtils.standardOrderGreaterThanOrEqualToTest.forEach { (input, result) ->
+            TermOrderingUtils.assertCorrectResponse(TermGreaterThanOrEqualTo, input, result)
         }
     }
 }

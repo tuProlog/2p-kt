@@ -3,18 +3,20 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.primitive.BinaryRelation
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.primitive.*
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-internal object StandardOperatorUtils {
+internal object TermOrderingUtils {
 
+    @Suppress("IMPLICIT_CAST_TO_ANY")
     internal fun assertCorrectResponse(
-        standardOrderRelation: StandardOrderRelation<out ExecutionContext>,
+        standardOrderRelation: BinaryRelation.Predicative<out ExecutionContext>,
         input: Solve.Request<ExecutionContext>,
         expectedResult: Any
     ) = when (expectedResult) {
@@ -35,9 +37,9 @@ internal object StandardOperatorUtils {
     internal val standardOrderEqualTest by lazy {
         prolog {
             mapOf(
-                StandardOrderEqual.functor(1.0, 1.0) to true,
-                StandardOrderEqual.functor("stringTest", "stringTest") to true,
-                StandardOrderEqual.functor("stringTest", 1.0) to false
+                TermSame.functor(realOf(1.0), realOf(1.0)) to true,
+                TermSame.functor("stringTest", "stringTest") to true,
+                TermSame.functor("stringTest", realOf(1.0)) to false
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
@@ -46,9 +48,9 @@ internal object StandardOperatorUtils {
     internal val standardOrderNotEqualTest by lazy {
         prolog {
             mapOf(
-                StandardOrderEqual.functor(1.0, 1.0) to false,
-                StandardOrderEqual.functor("stringTest", "stringTest") to false,
-                StandardOrderEqual.functor("stringTest", 1.0) to true
+                TermNotSame.functor(realOf(1.0), realOf(1.0)) to false,
+                TermNotSame.functor("stringTest", "stringTest") to false,
+                TermNotSame.functor("stringTest", realOf(1.0)) to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
@@ -57,11 +59,11 @@ internal object StandardOperatorUtils {
     internal val standardOrderGreaterThanTest by lazy {
         prolog {
             mapOf(
-                StandardOrderGreaterThan.functor(1, 1.0) to true,
-                StandardOrderGreaterThan.functor(1.0, 1) to false,
-                StandardOrderGreaterThan.functor("stringTest", 1) to true,
-                StandardOrderGreaterThan.functor("stringTesta", "stringTestb") to false,
-                StandardOrderGreaterThan.functor("stringTestb", "stringTesta") to true
+                TermGreaterThan.functor(intOf(1), realOf(1.0)) to true,
+                TermGreaterThan.functor(realOf(1.0), intOf(1)) to false,
+                TermGreaterThan.functor("stringTest", intOf(1)) to true,
+                TermGreaterThan.functor("stringTesta", "stringTestb") to false,
+                TermGreaterThan.functor("stringTestb", "stringTesta") to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
@@ -70,10 +72,10 @@ internal object StandardOperatorUtils {
     internal val standardOrderGreaterThanOrEqualToTest by lazy {
         prolog {
             mapOf(
-                StandardOrderGreaterThanOrEqualTo.functor(1, 1) to true,
-                StandardOrderGreaterThanOrEqualTo.functor("stringTest", "stringTest") to true,
-                StandardOrderGreaterThanOrEqualTo.functor("stringTest", "stringTest1") to false,
-                StandardOrderGreaterThanOrEqualTo.functor("stringTest", 1) to true
+                TermGreaterThanOrEqualTo.functor(intOf(1), intOf(1)) to true,
+                TermGreaterThanOrEqualTo.functor("stringTest", "stringTest") to true,
+                TermGreaterThanOrEqualTo.functor("stringTest", "stringTest1") to false,
+                TermGreaterThanOrEqualTo.functor("stringTest", intOf(1)) to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
@@ -82,10 +84,10 @@ internal object StandardOperatorUtils {
     internal val standardOrderLowerThanTest by lazy {
         prolog {
             mapOf(
-                StandardOrderLowerThan.functor(1.0, 1) to true,
-                StandardOrderLowerThan.functor(1, 1.0) to false,
-                StandardOrderLowerThan.functor("stringTestA", "stringTestZ") to true,
-                StandardOrderLowerThan.functor(1.0, "stringTest") to true
+                TermLowerThan.functor(realOf(1.0), intOf(1)) to true,
+                TermLowerThan.functor(intOf(1), realOf(1.0)) to false,
+                TermLowerThan.functor("stringTestA", "stringTestZ") to true,
+                TermLowerThan.functor(realOf(1.0), "stringTest") to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
@@ -93,9 +95,10 @@ internal object StandardOperatorUtils {
     /** @<= test */
     internal val standardOrderLowerThanOrEqualToTest by lazy {
         prolog {
-            mapOf(  StandardOrderLowerThanOrEqualTo.functor(1, 1.0) to false,
-                StandardOrderLowerThanOrEqualTo.functor(1.0, 1.0) to true,
-                StandardOrderLowerThanOrEqualTo.functor("stringTest", "stringTest") to true
+            mapOf(
+                TermLowerThanOrEqualTo.functor(intOf(1), realOf(1.0)) to false,
+                TermLowerThanOrEqualTo.functor(realOf(1.0), realOf(1.0)) to true,
+                TermLowerThanOrEqualTo.functor("stringTest", "stringTest") to true
             ).mapKeys { (query, _) -> PrimitiveUtils.createSolveRequest(query) }
         }
     }
