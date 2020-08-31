@@ -9,11 +9,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "Result" `is` numOf(3) + 11.0
+            val query = "Result" `is` (numOf(3) + realOf(11.0))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("Result" to 14.0)),
+                kotlin.collections.listOf(query.yes("Result" to realOf(14.0))),
                 solutions
             )
         }
@@ -23,11 +23,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("X" `=` numOf(1) + 2) and ("Y" `is` "X" * 3)
+            val query = ("X" `=` (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to numOf(1)+2, "Y" to 9)),
+                kotlin.collections.listOf(query.yes("X" to intOf(1) + intOf(2), "Y" to intOf(9))),
                 solutions
             )
         }
@@ -37,7 +37,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "foo" `is` 77
+            val query = "foo" `is` intOf(77)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -51,7 +51,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 77 `is` "N"
+            val query = intOf(77) `is` "N"
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -73,7 +73,7 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = 77 `is` "foo"
+            val query = intOf(77) `is` "foo"
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -97,11 +97,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "X" `is` float(3)
+            val query = "X" `is` float(intOf(3))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 3.0)),
+                kotlin.collections.listOf(query.yes("X" to realOf(3.0))),
                 solutions
             )
         }

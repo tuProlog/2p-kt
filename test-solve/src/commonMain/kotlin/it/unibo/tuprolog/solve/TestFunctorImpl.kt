@@ -278,7 +278,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = functor("T", "foo", -1)
+            val query = functor("T", "foo", intOf(-1))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -288,7 +288,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
-                            numOf(-1)
+                            intOf(-1)
                         )
                     )
                 ),

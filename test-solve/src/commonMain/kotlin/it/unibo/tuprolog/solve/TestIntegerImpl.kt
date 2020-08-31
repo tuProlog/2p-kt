@@ -22,7 +22,7 @@ internal class TestIntegerImpl(private val solverFactory: SolverFactory) : TestI
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = integer(-3)
+            val query = integer(intOf(-3))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
