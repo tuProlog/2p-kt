@@ -26,7 +26,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExamp
 import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
 import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
 import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLenghtTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLengthTesting
 import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
@@ -47,12 +47,12 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
-import it.unibo.tuprolog.solve.TestingStandardOperator.equalTesting
-import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanOrEqualTesting
-import it.unibo.tuprolog.solve.TestingStandardOperator.greaterThanTesting
-import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanOrEqualTesting
-import it.unibo.tuprolog.solve.TestingStandardOperator.lowerThanTesting
-import it.unibo.tuprolog.solve.TestingStandardOperator.notEqualTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.equalTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.greaterThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.greaterThanTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.notEqualTesting
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
@@ -1325,7 +1325,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     override fun testAtomLength() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
-            atomLenghtTesting,
+            atomLengthTesting,
             mediumDuration
         )
     }
