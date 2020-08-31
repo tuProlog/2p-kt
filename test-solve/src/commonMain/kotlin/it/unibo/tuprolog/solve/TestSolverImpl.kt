@@ -23,6 +23,11 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleT
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLengthTesting
+import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
@@ -42,6 +47,12 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.TestingTermOperators.equalTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.greaterThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.greaterThanTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanOrEqualTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanTesting
+import it.unibo.tuprolog.solve.TestingTermOperators.notEqualTesting
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
@@ -152,6 +163,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(AssertA)
                 assertHasPredicateInAPI(AssertZ)
                 assertHasPredicateInAPI(Atom)
+                assertHasPredicateInAPI(AtomChars)
                 assertHasPredicateInAPI(Atomic)
                 assertHasPredicateInAPI(Callable)
                 assertHasPredicateInAPI(Compound)
@@ -176,6 +188,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(TermLowerThan)
                 assertHasPredicateInAPI(TermLowerThanOrEqualTo)
                 assertHasPredicateInAPI(TermNotIdentical)
+                assertHasPredicateInAPI(TermNotSame)
+                assertHasPredicateInAPI(TermSame)
                 assertHasPredicateInAPI(UnifiesWith)
                 assertHasPredicateInAPI(Univ)
                 assertHasPredicateInAPI(Var)
@@ -1252,5 +1266,93 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             )
 
         }
+    }
+
+    override fun testTermGreaterThan() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            greaterThanTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testTermGreaterThanOrEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            greaterThanOrEqualTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testTermSame() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            equalTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testTermNotSame() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            notEqualTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testTermLowerThan() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            lowerThanTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testTermLowerThanOrEqual() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            lowerThanOrEqualTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testAtomChars() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomCharsTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testAtomLength() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomLengthTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testCharCode() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            charCodeTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testAtomCodes() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomCodesTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testAtomConcat() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            atomConcatTesting,
+            mediumDuration
+        )
     }
 }

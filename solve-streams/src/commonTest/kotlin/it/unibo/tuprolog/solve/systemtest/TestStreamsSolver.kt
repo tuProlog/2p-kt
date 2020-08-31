@@ -333,4 +333,64 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     override fun testAppend() {
         prototype.testAppend()
     }
+
+    @Test
+    override fun testTermGreaterThan() {
+        prototype.testTermGreaterThan()
+    }
+
+    @Test
+    override fun testTermSame() {
+        prototype.testTermSame()
+    }
+
+    @Test
+    override fun testTermLowerThan() {
+        prototype.testTermLowerThan()
+    }
+
+    @Test
+    override fun testTermGreaterThanOrEqual() {
+        prototype.testTermGreaterThanOrEqual()
+    }
+
+    @Test
+    override fun testTermLowerThanOrEqual() {
+        prototype.testTermLowerThanOrEqual()
+    }
+
+    @Test
+    override fun testTermNotSame() {
+        prototype.testTermNotSame()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomChars() {
+        prototype.testAtomChars()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomLength() {
+        prototype.testAtomLength()
+    }
+
+    @Test
+    @Ignore
+    override fun testCharCode() {
+        prototype.testCharCode()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomCodes() {
+        prototype.testAtomCodes()
+    }
+
+    @Test
+    @Ignore
+    override fun testAtomConcat() {
+        prototype.testAtomConcat()
+    }
 }

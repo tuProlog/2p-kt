@@ -158,5 +158,27 @@ interface TestSolver : SolverTest {
     fun testUniv()
     fun testAppend()
     fun testRetractAll()
+
+    fun testTermGreaterThan()
+    fun testTermGreaterThanOrEqual()
+    fun testTermSame()
+    fun testTermNotSame()
+    fun testTermLowerThan()
+    fun testTermLowerThanOrEqual()
+
+    /** atom_chars/2 test */
+    fun testAtomChars()
+
+    /** atom_length test */
+    fun testAtomLength()
+
+    /** char_code/2 test */
+    fun testCharCode()
+
+    /** atom_codes/2 test */
+    fun testAtomCodes()
+
+    /** atom_concat/3 test */
+    fun testAtomConcat()
 }
 

@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import org.gciatto.kt.math.BigInteger
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -139,6 +140,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Integer -> throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is LogicList -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, arg, index)
                 else -> this
             }
 
