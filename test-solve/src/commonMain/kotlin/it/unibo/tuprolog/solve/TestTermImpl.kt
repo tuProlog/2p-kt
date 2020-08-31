@@ -9,7 +9,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "\\=="(1,1)
+            var query = "\\=="(1, 1)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -17,7 +17,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="("X","X")
+            query = "\\=="("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -25,7 +25,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="(1,2)
+            query = "\\=="(1, 2)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -33,7 +33,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="("X",1)
+            query = "\\=="("X", 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -41,7 +41,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="("X","Y")
+            query = "\\=="("X", "Y")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -49,7 +49,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="(`_`,`_`)
+            query = "\\=="(`_`, `_`)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -57,7 +57,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="("X","a"("X"))
+            query = "\\=="("X", "a"("X"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -65,7 +65,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "\\=="("f"("a"),"f"("a"))
+            query = "\\=="("f"("a"), "f"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -79,7 +79,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "=="(1,1)
+            var query = "=="(1, 1)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -87,7 +87,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="("X","X")
+            query = "=="("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -95,7 +95,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="(1,2)
+            query = "=="(1, 2)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -103,7 +103,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="("X",1)
+            query = "=="("X", 1)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -111,7 +111,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="("X","Y")
+            query = "=="("X", "Y")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -119,7 +119,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="(`_`,`_`)
+            query = "=="(`_`, `_`)
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -127,7 +127,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="("X","a"("X"))
+            query = "=="("X", "a"("X"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -135,7 +135,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "=="("f"("a"),"f"("a"))
+            query = "=="("f"("a"), "f"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -149,7 +149,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "@>"(1.0,1)
+            var query = "@>"(1.0, 1)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -157,7 +157,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("aardvark","zebra")
+            query = "@>"("aardvark", "zebra")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -165,7 +165,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("short","short")
+            query = "@>"("short", "short")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -173,7 +173,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("short","shorter")
+            query = "@>"("short", "shorter")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -181,7 +181,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("foo"("b"),"foo"("a"))
+            query = "@>"("foo"("b"), "foo"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -189,7 +189,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("X","X")
+            query = "@>"("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -197,7 +197,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>"("foo"("a", "X"),"foo"("b", "Y"))
+            query = "@>"("foo"("a", "X"), "foo"("b", "Y"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -211,7 +211,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "@>="(1.0,1)
+            var query = "@>="(1.0, 1)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -219,7 +219,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("aardvark","zebra")
+            query = "@>="("aardvark", "zebra")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -227,7 +227,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("short","short")
+            query = "@>="("short", "short")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -235,7 +235,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("short","shorter")
+            query = "@>="("short", "shorter")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -243,7 +243,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("foo"("b"),"foo"("a"))
+            query = "@>="("foo"("b"), "foo"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -251,7 +251,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("X","X")
+            query = "@>="("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -259,7 +259,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@>="("foo"("a", "X"),"foo"("b", "Y"))
+            query = "@>="("foo"("a", "X"), "foo"("b", "Y"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -273,7 +273,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "@<"(1.0,1)
+            var query = "@<"(1.0, 1)
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -281,7 +281,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("aardvark","zebra")
+            query = "@<"("aardvark", "zebra")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -289,7 +289,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("short","short")
+            query = "@<"("short", "short")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -297,7 +297,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("short","shorter")
+            query = "@<"("short", "shorter")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -305,7 +305,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("foo"("b"),"foo"("a"))
+            query = "@<"("foo"("b"), "foo"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -313,7 +313,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("X","X")
+            query = "@<"("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -321,7 +321,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<"("foo"("a", "X"),"foo"("b", "Y"))
+            query = "@<"("foo"("a", "X"), "foo"("b", "Y"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -335,7 +335,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = "@<="(1.0,1)
+            var query = "@=<"(realOf(1.0), intOf(1))
             var solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -343,7 +343,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("aardvark","zebra")
+            query = "@=<"(realOf(1.1), realOf(1.1))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -351,7 +351,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("short","short")
+            query = "@=<"(realOf(1.0), realOf(1.2))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -359,7 +359,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("short","shorter")
+            query = "@=<"(intOf(1), intOf(1))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -367,7 +367,39 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("foo"("b"),"foo"("a"))
+            query = "@=<"(intOf(1), intOf(2))
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.yes()),
+                solutions
+            )
+
+            query = "@=<"("aardvark", "zebra")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.yes()),
+                solutions
+            )
+
+            query = "@=<"("short", "short")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.yes()),
+                solutions
+            )
+
+            query = "@=<"("short", "shorter")
+            solutions = solver.solve(query, mediumDuration).toList()
+
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.yes()),
+                solutions
+            )
+
+            query = "@=<"("foo"("b"), "foo"("a"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -375,7 +407,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("X","X")
+            query = "@=<"("X", "X")
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -383,7 +415,7 @@ internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm
                 solutions
             )
 
-            query = "@<="("foo"("a", "X"),"foo"("b", "Y"))
+            query = "@=<"("foo"("a", "X"), "foo"("b", "Y"))
             solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
