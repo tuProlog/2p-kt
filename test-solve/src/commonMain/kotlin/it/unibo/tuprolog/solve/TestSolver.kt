@@ -159,12 +159,12 @@ interface TestSolver : SolverTest {
     fun testAppend()
     fun testRetractAll()
 
-    fun testStandardGreaterThan()
-    fun testStandardGreaterThanOrEqual()
-    fun testStandardEqual()
-    fun testStandardNotEqual()
-    fun testStandardLowerThan()
-    fun testStandardLowerThanOrEqual()
+    fun testTermGreaterThan()
+    fun testTermGreaterThanOrEqual()
+    fun testTermSame()
+    fun testTermNotSame()
+    fun testTermLowerThan()
+    fun testTermLowerThanOrEqual()
 
     /** atom_chars/2 test */
     fun testAtomChars()

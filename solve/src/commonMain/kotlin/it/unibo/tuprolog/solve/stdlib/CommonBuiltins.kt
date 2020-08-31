@@ -53,6 +53,8 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         TermLowerThan,
         TermLowerThanOrEqualTo,
         TermNotIdentical,
+        TermNotSame,
+        TermSame,
         UnifiesWith,
         Univ,
         Var,

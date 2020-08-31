@@ -98,17 +98,17 @@ object TestingTermOperators {
      *
      * Contained requests:
      * ```prolog
-     * ?- @<=(1,1.0).
-     * ?- @<=(1.0,1.0).
-     * ?- @<=(stringTest,stringTest).
+     * ?- @=<(1,1.0).
+     * ?- @=<(1.0,1.0).
+     * ?- @=<(stringTest,stringTest).
      * ```
      */
     val lowerThanOrEqualTesting by lazy {
         prolog {
             ktListOf(
-                "@<="(intOf(1), 1.0).hasSolutions({ no() }),
-                "@<="(1.0, 1.0).hasSolutions({ yes() }),
-                "@<="("stringTest", "stringTest").hasSolutions({ yes() })
+                "@=<"(intOf(1), realOf(1.0)).hasSolutions({ no() }),
+                "@=<"(realOf(1.0), realOf(1.0)).hasSolutions({ yes() }),
+                "@=<"("stringTest", "stringTest").hasSolutions({ yes() })
             )
         }
     }
@@ -126,9 +126,9 @@ object TestingTermOperators {
     val notEqualTesting by lazy {
         prolog {
             ktListOf(
-                "\\=@="(1.0, 1.0).hasSolutions({ no() }),
+                "\\=@="(realOf(1.0), realOf(1.0)).hasSolutions({ no() }),
                 "\\=@="("stringTest", "stringTest").hasSolutions({ no() }),
-                "\\=@="("stringTest", 1.0).hasSolutions({ yes() })
+                "\\=@="("stringTest", realOf(1.0)).hasSolutions({ yes() })
             )
         }
     }

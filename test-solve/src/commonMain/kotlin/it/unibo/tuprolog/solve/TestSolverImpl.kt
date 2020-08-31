@@ -188,6 +188,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(TermLowerThan)
                 assertHasPredicateInAPI(TermLowerThanOrEqualTo)
                 assertHasPredicateInAPI(TermNotIdentical)
+                assertHasPredicateInAPI(TermNotSame)
+                assertHasPredicateInAPI(TermSame)
                 assertHasPredicateInAPI(UnifiesWith)
                 assertHasPredicateInAPI(Univ)
                 assertHasPredicateInAPI(Var)
@@ -1266,7 +1268,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         }
     }
 
-    override fun testStandardGreaterThan() {
+    override fun testTermGreaterThan() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanTesting,
@@ -1274,7 +1276,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
-    override fun testStandardGreaterThanOrEqual() {
+    override fun testTermGreaterThanOrEqual() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanOrEqualTesting,
@@ -1282,7 +1284,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
-    override fun testStandardEqual() {
+    override fun testTermSame() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             equalTesting,
@@ -1290,7 +1292,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
-    override fun testStandardNotEqual() {
+    override fun testTermNotSame() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             notEqualTesting,
@@ -1298,7 +1300,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
-    override fun testStandardLowerThan() {
+    override fun testTermLowerThan() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanTesting,
@@ -1306,7 +1308,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
-    override fun testStandardLowerThanOrEqual() {
+    override fun testTermLowerThanOrEqual() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,

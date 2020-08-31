@@ -335,36 +335,33 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
-    @Ignore
-    override fun testStandardGreaterThan() {
-        prototype.testStandardGreaterThan()
+    override fun testTermGreaterThan() {
+        prototype.testTermGreaterThan()
     }
 
     @Test
-    override fun testStandardEqual() {
-        prototype.testStandardEqual()
+    override fun testTermSame() {
+        prototype.testTermSame()
     }
 
     @Test
-    @Ignore
-    override fun testStandardLowerThan() {
-        prototype.testStandardLowerThan()
+    override fun testTermLowerThan() {
+        prototype.testTermLowerThan()
     }
 
     @Test
-    override fun testStandardGreaterThanOrEqual() {
-        prototype.testStandardGreaterThanOrEqual()
+    override fun testTermGreaterThanOrEqual() {
+        prototype.testTermGreaterThanOrEqual()
     }
 
     @Test
-    @Ignore
-    override fun testStandardLowerThanOrEqual() {
-        prototype.testStandardLowerThanOrEqual()
+    override fun testTermLowerThanOrEqual() {
+        prototype.testTermLowerThanOrEqual()
     }
 
     @Test
-    override fun testStandardNotEqual() {
-        prototype.testStandardNotEqual()
+    override fun testTermNotSame() {
+        prototype.testTermNotSame()
     }
 
     @Test

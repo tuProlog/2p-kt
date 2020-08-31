@@ -1,13 +1,6 @@
 package it.unibo.tuprolog.solve.systemtest
 
 import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -297,38 +290,33 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
-    override fun testStandardGreaterThan() {
-        prototype.testStandardGreaterThan()
+    override fun testTermGreaterThan() {
+        prototype.testTermGreaterThan()
     }
 
     @Test
-    @Ignore
-    override fun testStandardEqual() {
-        prototype.testStandardEqual()
+    override fun testTermSame() {
+        prototype.testTermSame()
     }
 
     @Test
-    @Ignore
-    override fun testStandardLowerThan() {
-        prototype.testStandardLowerThan()
+    override fun testTermLowerThan() {
+        prototype.testTermLowerThan()
     }
 
     @Test
-    override fun testStandardGreaterThanOrEqual() {
-        prototype.testStandardGreaterThanOrEqual()
+    override fun testTermGreaterThanOrEqual() {
+        prototype.testTermGreaterThanOrEqual()
     }
 
     @Test
-    @Ignore
-    override fun testStandardLowerThanOrEqual() {
-        prototype.testStandardLowerThanOrEqual()
+    override fun testTermLowerThanOrEqual() {
+        prototype.testTermLowerThanOrEqual()
     }
 
     @Test
-    @Ignore
-    override fun testStandardNotEqual() {
-        prototype.testStandardNotEqual()
+    override fun testTermNotSame() {
+        prototype.testTermNotSame()
     }
 
     @Test
