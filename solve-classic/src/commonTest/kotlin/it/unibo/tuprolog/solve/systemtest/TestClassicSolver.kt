@@ -332,7 +332,6 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testAtomChars() {
         prototype.testAtomChars()
     }

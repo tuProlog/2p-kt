@@ -24,6 +24,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         AssertA,
         AssertZ,
         Atom,
+        AtomChars,
         Atomic,
         Between,
         Callable,
