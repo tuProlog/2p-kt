@@ -453,6 +453,8 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
     registerPlatform(platform) { }
 
 fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
+    if (this == rootProject) return
+
     apply<NpmPublishPlugin>()
 
     configure<NpmPublishExtension> {
