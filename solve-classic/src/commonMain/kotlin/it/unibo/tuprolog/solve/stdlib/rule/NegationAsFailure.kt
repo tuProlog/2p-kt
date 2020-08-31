@@ -21,8 +21,7 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     object Fail : NegationAsFailure() {
         override val Scope.body: Term
             get() = tupleOf(
-                structOf(EnsureExecutable.functor, varOf("X")),
-                varOf("X"),
+                structOf(Call.functor, varOf("X")),
                 MagicCut,
                 truthOf(false)
             )

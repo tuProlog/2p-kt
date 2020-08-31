@@ -20,7 +20,6 @@ class TestClassicNotProvable : TestNotProvable, SolverFactory by ClassicSolverFa
     }
 
     @Test
-    @Ignore //solver returns no
     override fun testNPCutFail() {
         prototype.testNPCutFail()
     }
@@ -41,7 +40,6 @@ class TestClassicNotProvable : TestNotProvable, SolverFactory by ClassicSolverFa
     }
 
     @Test
-    @Ignore //solver returns no
     override fun testOrNotCutFail() {
         prototype.testOrNotCutFail()
     }
