@@ -7,24 +7,23 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
 
 @JsName("scope")
-fun <R> PrologWithUnification.scope(function: PrologWithUnification.() -> R): R {
-    return PrologWithUnification.empty().function()
+fun <R> PrologScopeWithUnification.scope(function: PrologScopeWithUnification.() -> R): R {
+    return PrologScopeWithUnification.empty().function()
 }
 
 @JsName("rule")
-fun PrologWithUnification.rule(function: PrologWithUnification.() -> Term): Rule {
-    return PrologWithUnification.empty().function() as Rule
+fun PrologScopeWithUnification.rule(function: PrologScopeWithUnification.() -> Term): Rule {
+    return PrologScopeWithUnification.empty().function() as Rule
 }
 
 @JsName("fact")
-fun PrologWithUnification.fact(function: PrologWithUnification.() -> Term): Fact {
-    return factOf(PrologWithUnification.empty().function() as Struct)
+fun PrologScopeWithUnification.fact(function: PrologScopeWithUnification.() -> Term): Fact {
+    return factOf(PrologScopeWithUnification.empty().function() as Struct)
 }
 
 @JsName("prolog")
-fun <R> prolog(function: PrologWithUnification.() -> R): R {
-    return PrologWithUnification.empty().function()
+fun <R> prolog(function: PrologScopeWithUnification.() -> R): R {
+    return PrologScopeWithUnification.empty().function()
 }

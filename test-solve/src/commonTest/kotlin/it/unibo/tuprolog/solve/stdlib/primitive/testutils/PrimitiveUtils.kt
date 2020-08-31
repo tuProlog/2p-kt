@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Utils singleton to help testing Primitives
@@ -16,15 +16,15 @@ import it.unibo.tuprolog.theory.ClauseDatabase
  */
 internal object PrimitiveUtils {
 
-    private fun contextWith(database: ClauseDatabase) = object : ExecutionContext by DummyInstances.executionContext {
+    private fun contextWith(database: Theory) = object : ExecutionContext by DummyInstances.executionContext {
         override val libraries: Libraries = Libraries(CommonBuiltins)
-        override val staticKb: ClauseDatabase = database
+        override val staticKb: Theory = database
     }
 
     /** Creates a solve request with [database] and [CommonBuiltins] loaded and given query struct*/
     internal fun createSolveRequest(
         query: Struct,
-        database: ClauseDatabase = ClauseDatabase.empty()
+        database: Theory = Theory.empty()
     ): Solve.Request<ExecutionContext> =
         Solve.Request<ExecutionContext>(
             query.extractSignature(),

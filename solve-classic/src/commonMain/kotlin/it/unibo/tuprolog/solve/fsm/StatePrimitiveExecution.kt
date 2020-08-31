@@ -9,19 +9,16 @@ import it.unibo.tuprolog.utils.Cursor
 
 internal data class StatePrimitiveExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
 
-    private fun ClassicExecutionContext.copyFromCurrentPrimitive(goals: Cursor<out Term>? = null,
-                                                                 parentProcedure: Boolean = false,
-                                                                 substitution: Substitution? = null): ClassicExecutionContext {
-        return copy(
+    private fun ClassicExecutionContext.copyFromCurrentPrimitive(
+        goals: Cursor<out Term>? = null,
+        parentProcedure: Boolean = false,
+        substitution: Substitution? = null
+    ): ClassicExecutionContext {
+        val ctx = primitives.current?.let { apply(it.sideEffects) } ?: this
+        return ctx.copy(
             goals = goals ?: this.goals,
             procedure = if (parentProcedure) parent?.procedure else procedure,
             primitives = Cursor.empty(),
-            libraries = primitives.current?.libraries ?: libraries,
-            staticKb = primitives.current?.staticKb ?: staticKb,
-            dynamicKb = primitives.current?.dynamicKb ?: dynamicKb,
-            flags = primitives.current?.flags ?: flags,
-            inputChannels = primitives.current?.inputChannels ?: inputChannels,
-            outputChannels = primitives.current?.outputChannels ?: outputChannels,
             substitution = (substitution ?: this.substitution) as Substitution.Unifier,
             step = nextStep()
         )

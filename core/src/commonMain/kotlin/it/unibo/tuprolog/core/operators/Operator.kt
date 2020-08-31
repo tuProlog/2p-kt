@@ -53,6 +53,11 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
         @JvmField
         val TEMPLATE = Struct.of(FUNCTOR, Var.of("P"), Var.of("A"), Var.of("F"))
 
+        @JvmStatic
+        @JsName("fromTerms")
+        fun fromTerms(priority: Integer, specifier: Atom, functor: Atom): Operator? =
+            fromTerm(Struct.of(FUNCTOR, priority, specifier, functor))
+
         /** Creates an Operator instance from a well-formed Struct, or returns `null` if it cannot be interpreted as Operator */
         @JvmStatic
         @JsName("fromTerm")

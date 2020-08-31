@@ -7,8 +7,9 @@ import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.impl.LibraryAliasedImpl
 import it.unibo.tuprolog.solve.library.impl.LibraryImpl
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /** Represents a Prolog library */
 interface Library {
@@ -19,7 +20,7 @@ interface Library {
 
     /** The library theory clauses */
     @JsName("theory")
-    val theory: ClauseDatabase
+    val theory: Theory
 
     /** The library primitives, identified by their signatures */
     @JsName("primitives")
@@ -54,23 +55,29 @@ interface Library {
     companion object {
 
         /** Creates an instance of [Library] with given parameters */
-        fun of(
+        @JvmStatic
+        @JsName("unaliased")
+        fun unaliased(
             operatorSet: OperatorSet = OperatorSet(),
-            theory: ClauseDatabase = ClauseDatabase.empty(),
+            theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
             functions: Map<Signature, PrologFunction> = emptyMap()
         ): Library = LibraryImpl(operatorSet, theory, primitives, functions)
 
         /** Creates an instance of [AliasedLibrary] with given parameters */
-        fun of(
+        @JvmStatic
+        @JsName("aliased")
+        fun aliased(
             operatorSet: OperatorSet = OperatorSet(),
-            theory: ClauseDatabase = ClauseDatabase.empty(),
+            theory: Theory = Theory.empty(),
             primitives: Map<Signature, Primitive> = emptyMap(),
             functions: Map<Signature, PrologFunction> = emptyMap(),
             alias: String
         ): AliasedLibrary = LibraryAliasedImpl(operatorSet, theory, primitives, functions, alias)
 
         /** Creates an instance of [AliasedLibrary] starting from [Library] and an alias */
+        @JvmStatic
+        @JsName("of")
         fun of(library: Library, alias: String): AliasedLibrary =
             LibraryAliasedImpl(library.operators, library.theory, library.primitives, library.functions, alias)
     }

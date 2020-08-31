@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 
 object ClassicSolverFactory : SolverFactory {
 
@@ -19,9 +19,9 @@ object ClassicSolverFactory : SolverFactory {
 
     override fun solverOf(
         libraries: Libraries,
-        flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
@@ -38,9 +38,9 @@ object ClassicSolverFactory : SolverFactory {
 
     override fun mutableSolverOf(
         libraries: Libraries,
-        flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,

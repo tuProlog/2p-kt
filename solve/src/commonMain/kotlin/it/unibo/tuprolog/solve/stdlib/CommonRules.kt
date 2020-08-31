@@ -2,11 +2,8 @@ package it.unibo.tuprolog.solve.stdlib
 
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import it.unibo.tuprolog.solve.stdlib.rule.Arrow
-import it.unibo.tuprolog.solve.stdlib.rule.Member
-import it.unibo.tuprolog.solve.stdlib.rule.Not
-import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.stdlib.rule.*
+import it.unibo.tuprolog.theory.Theory
 
 object CommonRules {
     val wrappers: Sequence<RuleWrapper<ExecutionContext>> = sequenceOf(
@@ -17,9 +14,11 @@ object CommonRules {
         Semicolon.Or.Left,
         Semicolon.Or.Right,
         Member.Base,
-        Member.Recursive
+        Member.Recursive,
+        Append.Base,
+        Append.Recursive
     )
 
-    val clauseDb: ClauseDatabase
-        get() = ClauseDatabase.of(wrappers.map { it.wrappedImplementation })
+    val theory: Theory
+        get() = Theory.indexedOf(wrappers.map { it.wrappedImplementation })
 }

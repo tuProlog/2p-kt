@@ -4,8 +4,8 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.RetractResult
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /**
@@ -23,19 +23,43 @@ interface MutableSolver : Solver {
     fun setLibraries(libraries: Libraries)
 
     @JsName("loadStaticKb")
-    fun loadStaticKb(theory: ClauseDatabase)
+    fun loadStaticKb(theory: Theory)
+
+    @JsName("loadStaticClauses")
+    fun loadStaticClauses(vararg clauses: Clause) =
+        loadStaticKb(Theory.of(*clauses))
+
+    @JsName("loadStaticClausesIterable")
+    fun loadStaticClauses(clauses: Iterable<Clause>) =
+        loadStaticKb(Theory.of(clauses))
+
+    @JsName("loadStaticClausesSequence")
+    fun loadStaticClauses(clauses: Sequence<Clause>) =
+        loadStaticKb(Theory.of(clauses))
 
     @JsName("appendStaticKb")
-    fun appendStaticKb(theory: ClauseDatabase)
+    fun appendStaticKb(theory: Theory)
 
     @JsName("resetStaticKb")
     fun resetStaticKb()
 
     @JsName("loadDynamicKb")
-    fun loadDynamicKb(theory: ClauseDatabase)
+    fun loadDynamicKb(theory: Theory)
+
+    @JsName("loadDynamicClauses")
+    fun loadDynamicClauses(vararg clauses: Clause) =
+        loadDynamicKb(Theory.of(*clauses))
+
+    @JsName("loadDynamicClausesIterable")
+    fun loadDynamicClauses(clauses: Iterable<Clause>) =
+        loadDynamicKb(Theory.of(clauses))
+
+    @JsName("loadDynamicClausesSequence")
+    fun loadDynamicClauses(clauses: Sequence<Clause>) =
+        loadDynamicKb(Theory.of(clauses))
 
     @JsName("appendDynamicKb")
-    fun appendDynamicKb(theory: ClauseDatabase)
+    fun appendDynamicKb(theory: Theory)
 
     @JsName("resetDynamicKb")
     fun resetDynamicKb()

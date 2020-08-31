@@ -21,7 +21,7 @@ internal class LibraryTest {
     @Test
     fun ofCreatesCorrectInstance() {
         val toBeTested = LibraryUtils.allLibraries.map { (_, opSet, theory, primitives, functions) ->
-            Library.of(opSet, theory, primitives, functions)
+            Library.unaliased(opSet, theory, primitives, functions)
         }
 
         assertEquals(correctInstances, toBeTested)
@@ -29,7 +29,7 @@ internal class LibraryTest {
 
     @Test
     fun ofWithOmittedParametersCreatesEmptyLibrary() {
-        val toBeTested = Library.of()
+        val toBeTested = Library.unaliased()
 
         assertTrue { toBeTested.theory.none() }
         assertTrue { toBeTested.operators.none() }
@@ -39,7 +39,7 @@ internal class LibraryTest {
     @Test
     fun ofWithAliasCreatesCorrectInstance() {
         val toBeTested = LibraryUtils.allLibraries.map { (alias, opSet, theory, primitives, functions) ->
-            Library.of(opSet, theory, primitives, functions, alias)
+            Library.aliased(opSet, theory, primitives, functions, alias)
         }
 
         assertEquals(correctInstancesWithAlias, toBeTested)

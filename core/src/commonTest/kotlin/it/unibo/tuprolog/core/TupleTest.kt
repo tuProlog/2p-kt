@@ -88,4 +88,17 @@ internal class TupleTest {
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
+
+    @Test
+    fun bigTuplesDoNotProvokeStackOverflow() {
+        val nums = (0..100_000).toList()
+        val tuple = Tuple.of(nums.map { Integer.of(it) })
+
+        assertEquals(nums.joinToString(", ", "(", ")"), tuple.toString())
+
+        val otherTuple = tuple.freshCopy()
+
+        assertEquals(tuple.hashCode(), otherTuple.hashCode())
+        assertEquals(tuple, otherTuple)
+    }
 }

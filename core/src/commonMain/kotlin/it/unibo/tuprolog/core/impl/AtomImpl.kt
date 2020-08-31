@@ -8,9 +8,12 @@ internal open class AtomImpl(override val functor: String) : StructImpl(functor,
 
     override val args: Array<Term> = super<StructImpl>.args
 
-    override val argsList: List<Term> by lazy { emptyList<Term>() }
+    override val argsList: List<Term>
+        get() = emptyList()
 
-    override val isGround: Boolean by lazy { super<Atom>.isGround }
+    override val isGround: Boolean
+        get() = true
 
-    override val variables: Sequence<Var> by lazy { super<Atom>.variables }
+    override val variables: Sequence<Var>
+        get() = emptySequence()
 }

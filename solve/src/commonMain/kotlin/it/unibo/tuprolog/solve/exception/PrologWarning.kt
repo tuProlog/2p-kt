@@ -7,12 +7,22 @@ import it.unibo.tuprolog.solve.ExecutionContext
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  *
  * @author Giovanni
  */
 abstract class PrologWarning(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext
-) : TuPrologRuntimeException(message, cause, context)
+    contexts: Array<ExecutionContext>
+) : TuPrologRuntimeException(message, cause, contexts) {
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext
+    ) : this(message, cause, arrayOf(context))
+
+    abstract override fun updateContext(newContext: ExecutionContext): PrologWarning
+
+    abstract override fun pushContext(newContext: ExecutionContext): PrologWarning
+}

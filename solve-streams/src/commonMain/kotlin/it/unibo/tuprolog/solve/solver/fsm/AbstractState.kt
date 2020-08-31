@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.solver.fsm
 
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
  * Base class for all States refactoring common behaviour

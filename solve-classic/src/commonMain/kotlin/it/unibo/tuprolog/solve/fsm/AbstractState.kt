@@ -11,11 +11,11 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
         currentTime()
     }
 
+    protected open val isTimeout: Boolean
+        get() = executionTime - context.startTime > context.maxDuration
+
     override fun next(): State {
-        val deltaTime = executionTime - context.startTime
-        return if (deltaTime <= context.maxDuration) {
-            computeNext()
-        } else {
+        return if (isTimeout) {
             StateHalt(
                 TimeOutException(
                     exceededDuration = context.maxDuration,
@@ -23,6 +23,8 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
                 ),
                 context.copy(step = nextStep())
             )
+        } else {
+            computeNext()
         }
     }
 

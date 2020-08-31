@@ -19,17 +19,17 @@ object TestingAtomBuiltIn {
 
     val atomCharsTesting by lazy {
         prolog {
-        ktListOf(
-            "atom_chars"("X",listOf("t","e","s","t")).hasSolutions({yes("X" to "test")}
-            ),
-            "atom_chars"(atomOf("test"),listOf("t","e","s","t")).hasSolutions({yes()}
-            ),
-            "atom_chars"(atomOf("test"),listOf("t","e","s","T")).hasSolutions({yes("T" to "t")}
-            ),
-            "atom_chars"(atomOf("test1"),listOf("t","e","s","t")).hasSolutions({no()}
+            ktListOf(
+                "atom_chars"("X", listOf("t", "e", "s", "t")).hasSolutions({ yes("X" to "test") }
+                ),
+                "atom_chars"(atomOf("test"), listOf("t", "e", "s", "t")).hasSolutions({ yes() }
+                ),
+                "atom_chars"(atomOf("test"), listOf("t", "e", "s", "T")).hasSolutions({ yes("T" to "t") }
+                ),
+                "atom_chars"(atomOf("test1"), listOf("t", "e", "s", "t")).hasSolutions({ no() }
+                )
             )
-            )
-    }
+        }
     }
 
     /**
@@ -45,18 +45,18 @@ object TestingAtomBuiltIn {
      * ```
      */
 
-    val atomLenghtTesting by lazy{
+    val atomLenghtTesting by lazy {
         prolog {
             ktListOf(
-                "atom_length"(atomOf("test"),intOf(4)).hasSolutions({yes()}
+                "atom_length"(atomOf("test"), intOf(4)).hasSolutions({ yes() }
                 ),
-                "atom_length"(atomOf("test"),"X").hasSolutions({yes("X" to 4)}
+                "atom_length"(atomOf("test"), "X").hasSolutions({ yes("X" to 4) }
                 ),
-                "atom_length"("X",intOf(4)).hasSolutions({no()}
+                "atom_length"("X", intOf(4)).hasSolutions({ no() }
                 ),
-                "atom_length"(atomOf("42"),"X").hasSolutions({yes("X" to 2)}
+                "atom_length"(atomOf("42"), "X").hasSolutions({ yes("X" to 2) }
                 ),
-                "atom_length"(atomOf("test"),intOf(5)).hasSolutions({no()}
+                "atom_length"(atomOf("test"), intOf(5)).hasSolutions({ no() }
                 )
             )
         }
@@ -75,17 +75,16 @@ object TestingAtomBuiltIn {
      */
 
 
-
-    val charCodeTesting by lazy{
+    val charCodeTesting by lazy {
         prolog {
             ktListOf(
-                "char_code"("a","X").hasSolutions({yes("X" to 97)}
+                "char_code"("a", "X").hasSolutions({ yes("X" to 97) }
                 ),
-                "char_code"("X",intOf(97)).hasSolutions({yes("X" to "a")}
+                "char_code"("X", intOf(97)).hasSolutions({ yes("X" to "a") }
                 ),
-                "char_code"("X","a").hasSolutions({no()}
+                "char_code"("X", "a").hasSolutions({ no() }
                 ),
-                "char_code"("g",intOf(103)).hasSolutions({yes()}
+                "char_code"("g", intOf(103)).hasSolutions({ yes() }
                 )
             )
         }
@@ -103,16 +102,16 @@ object TestingAtomBuiltIn {
      * ```
      */
 
-    val atomCodesTesting by lazy{
+    val atomCodesTesting by lazy {
         prolog {
             ktListOf(
-                "atom_codes"(atomOf("abc"),"X").hasSolutions({yes("X" to listOf("97,98,99"))}
+                "atom_codes"(atomOf("abc"), "X").hasSolutions({ yes("X" to listOf("97,98,99")) }
                 ),
-                "atom_codes"(atomOf("test"),"X").hasSolutions({yes("X" to listOf("116,101,115,116"))}
+                "atom_codes"(atomOf("test"), "X").hasSolutions({ yes("X" to listOf("116,101,115,116")) }
                 ),
-                "atom_codes"(atomOf("test"),listOf("116,101,115,116")).hasSolutions({yes()}
+                "atom_codes"(atomOf("test"), listOf("116,101,115,116")).hasSolutions({ yes() }
                 ),
-                "atom_codes"(atomOf("test"),listOf("112,101,115,116")).hasSolutions({no()}
+                "atom_codes"(atomOf("test"), listOf("112,101,115,116")).hasSolutions({ no() }
                 )
             )
         }
@@ -132,11 +131,15 @@ object TestingAtomBuiltIn {
     val atomConcatTesting by lazy {
         prolog {
             ktListOf(
-                "atom_concat"(atomOf("test"),atomOf("concat"),"X").hasSolutions({yes("X" to atomOf("testconcat"))}
+                "atom_concat"(atomOf("test"), atomOf("concat"), "X").hasSolutions({ yes("X" to atomOf("testconcat")) }
                 ),
-                "atom_concat"(atomOf("test"),atomOf("concat"),atomOf("test")).hasSolutions({no()}
+                "atom_concat"(atomOf("test"), atomOf("concat"), atomOf("test")).hasSolutions({ no() }
                 ),
-                "atom_concat"(atomOf("test"),atomOf("X"),atomOf("testTest")).hasSolutions({yes("X" to atomOf("Test"))}
+                "atom_concat"(
+                    atomOf("test"),
+                    atomOf("X"),
+                    atomOf("testTest")
+                ).hasSolutions({ yes("X" to atomOf("Test")) }
                 )
             )
         }

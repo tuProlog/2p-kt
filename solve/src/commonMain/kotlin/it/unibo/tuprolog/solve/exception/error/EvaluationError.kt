@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param errorType The error type
  * @param extraData The possible extra data to be carried with the error
  *
@@ -21,10 +21,24 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class EvaluationError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     val errorType: Type,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        errorType: Type,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), errorType, extraData)
+
+    override fun updateContext(newContext: ExecutionContext): EvaluationError =
+        EvaluationError(message, cause, contexts.setFirst(newContext), errorType, extraData)
+
+    override fun pushContext(newContext: ExecutionContext): EvaluationError =
+        EvaluationError(message, cause, contexts.addLast(newContext), errorType, extraData)
 
     override val type: Struct by lazy { Struct.of(super.type.functor, errorType.toTerm()) }
 

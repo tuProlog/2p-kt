@@ -4,16 +4,16 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
 import it.unibo.tuprolog.theory.RetractResult
+import it.unibo.tuprolog.theory.Theory
 
 internal class MutableClassicSolver(
     libraries: Libraries = Libraries(),
-    flags: PrologFlags = emptyMap(),
-    staticKb: ClauseDatabase = ClauseDatabase.empty(),
-    dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
-    inputChannels: PrologInputChannels<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: PrologOutputChannels<*> = ExecutionContextAware.defaultOutputChannels()
+    flags: FlagStore = FlagStore.EMPTY,
+    staticKb: Theory = Theory.empty(),
+    dynamicKb: Theory = Theory.empty(),
+    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {
@@ -34,13 +34,13 @@ internal class MutableClassicSolver(
         }
     }
 
-    override fun loadStaticKb(theory: ClauseDatabase) {
+    override fun loadStaticKb(theory: Theory) {
         updateContext {
             copy(staticKb = theory)
         }
     }
 
-    override fun appendStaticKb(theory: ClauseDatabase) {
+    override fun appendStaticKb(theory: Theory) {
         updateContext {
             copy(staticKb = staticKb + theory)
         }
@@ -48,17 +48,17 @@ internal class MutableClassicSolver(
 
     override fun resetStaticKb() {
         updateContext {
-            copy(staticKb = ClauseDatabase.empty())
+            copy(staticKb = Theory.empty())
         }
     }
 
-    override fun loadDynamicKb(theory: ClauseDatabase) {
+    override fun loadDynamicKb(theory: Theory) {
         updateContext {
             copy(dynamicKb = theory)
         }
     }
 
-    override fun appendDynamicKb(theory: ClauseDatabase) {
+    override fun appendDynamicKb(theory: Theory) {
         updateContext {
             copy(dynamicKb = dynamicKb + theory)
         }
@@ -66,7 +66,7 @@ internal class MutableClassicSolver(
 
     override fun resetDynamicKb() {
         updateContext {
-            copy(dynamicKb = ClauseDatabase.empty())
+            copy(dynamicKb = Theory.empty())
         }
     }
 
@@ -97,7 +97,7 @@ internal class MutableClassicSolver(
     override fun retract(clause: Clause): RetractResult {
         val result = dynamicKb.retract(clause)
         updateContext {
-            copy(dynamicKb = result.clauseDatabase)
+            copy(dynamicKb = result.theory)
         }
         return result
     }
@@ -105,7 +105,7 @@ internal class MutableClassicSolver(
     override fun retract(fact: Struct): RetractResult {
         val result = dynamicKb.retract(fact)
         updateContext {
-            copy(dynamicKb = result.clauseDatabase)
+            copy(dynamicKb = result.theory)
         }
         return result
     }
@@ -113,7 +113,7 @@ internal class MutableClassicSolver(
     override fun retractAll(clause: Clause): RetractResult {
         val result = dynamicKb.retractAll(clause)
         updateContext {
-            copy(dynamicKb = result.clauseDatabase)
+            copy(dynamicKb = result.theory)
         }
         return result
     }
@@ -121,7 +121,7 @@ internal class MutableClassicSolver(
     override fun retractAll(fact: Struct): RetractResult {
         val result = dynamicKb.retractAll(fact)
         updateContext {
-            copy(dynamicKb = result.clauseDatabase)
+            copy(dynamicKb = result.theory)
         }
         return result
     }

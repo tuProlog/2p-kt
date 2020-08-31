@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.dsl.Prolog
+import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.testutils.squared
+import it.unibo.tuprolog.utils.squared
 import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
@@ -59,7 +60,7 @@ object TypeTestingUtils {
             ).map { it.toTerm() }
         }
 
-    private val commonArgs: List<Term> = Prolog.empty().let {
+    private val commonArgs: List<Term> = PrologScope.empty().let {
         baseArgs +
                 baseArgs.squared { x, y -> it.tupleOf(x, y) } +
                 baseArgs.squared { x, y -> it.structOf(";", x, y) } +

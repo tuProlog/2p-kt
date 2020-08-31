@@ -5,13 +5,17 @@ import it.unibo.tuprolog.core.Var
 import kotlin.jvm.Synchronized
 
 @Suppress("EqualsOrHashCode")
-internal class VarImpl(override val name: String, private val identifier: Int = instanceId()) : TermImpl(), Var {
+internal class VarImpl(override val name: String, private val identifier: Long = instanceId(name)) : TermImpl(), Var {
 
     companion object {
-        private var instanceCount = 0
+        private val nameToInstanceCount = mutableMapOf<String, Long>()
 
         @Synchronized
-        private fun instanceId() = instanceCount++
+        private fun instanceId(name: String): Long {
+            val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
+            nameToInstanceCount[name]  = count
+            return count
+        }
     }
 
     override val completeName: String by lazy {

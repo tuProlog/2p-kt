@@ -59,6 +59,7 @@ external class PrologParser(input: TokenStream) {
 
     fun reset()
 
+    fun addParseListener(listener: PrologParserListener)
     fun addErrorListener(listener: dynamic)
     fun removeErrorListeners()
 
@@ -112,7 +113,7 @@ external class ExpressionContext : ParserRuleContext {
     val associativity: String
     val bottom: Int
     val left: TermContext?
-    val _op: OpContext
+    val _op: OpContext?
     val operators: Array<OpContext>
     val _expression: ExpressionContext?
     val right: Array<ExpressionContext>

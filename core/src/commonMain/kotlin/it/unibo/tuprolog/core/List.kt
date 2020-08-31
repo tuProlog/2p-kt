@@ -12,6 +12,9 @@ interface List : Collection {
     @JsName("isWellFormed")
     val isWellFormed: Boolean
 
+    @JsName("last")
+    val last: Term
+
     override val unfoldedSequence: Sequence<Term>
 
     override val unfoldedList: KtList<Term>
@@ -19,24 +22,13 @@ interface List : Collection {
     override val unfoldedArray: Array<Term>
 
     override val size: Int
-        get() = when {
-            unfoldedList.last() is EmptyList -> unfoldedList.size - 1
-            else -> unfoldedList.size
+        get() = unfoldedSequence.count().let {
+            if (isWellFormed) {
+                it - 1
+            } else {
+                it
+            }
         }
-
-    override fun toArray(): Array<Term> =
-        when {
-            unfoldedArray.last() is EmptyList -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
-            else -> unfoldedArray
-        }
-
-    override fun toList(): KtList<Term> =
-        when {
-            unfoldedList.last() is EmptyList -> unfoldedList.slice(0 until unfoldedArray.lastIndex)
-            else -> unfoldedList
-        }
-
-    override fun toSequence(): Sequence<Term> = toList().asSequence()
 
     override fun freshCopy(): List = super.freshCopy() as List
 
@@ -62,6 +54,16 @@ interface List : Collection {
         @JvmStatic
         @JsName("ofIterable")
         fun of(items: Iterable<Term>): List = from(items.toList(), empty())
+
+        @JvmStatic
+        @JsName("from")
+        fun from(vararg items: Term, last: Term?): List =
+            from(items.toList(), last)
+
+        @JvmStatic
+        @JsName("fromNullTerminated")
+        fun from(vararg items: Term): List =
+            from(items.toList(), null)
 
         @JvmStatic
         @JsName("fromIterable")

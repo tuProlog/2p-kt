@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.*
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * A class representing an Equation of logic terms, to be unified;
@@ -99,6 +100,32 @@ sealed class Equation<out A : Term, out B : Term>(
         ): Sequence<Equation<Term, Term>> =
             allOf(pair.first, pair.second, equalityChecker)
 
+        private fun allOfLists(
+            lhs: LogicList, rhs: LogicList,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> {
+            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
+                when {
+                    l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
+                    l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
+                    else ->
+                        allOf(l, r, equalityChecker)
+                }
+            }
+        }
+
+        private fun allOfTuples(
+            lhs: Tuple, rhs: Tuple,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> {
+            return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
+                when {
+                    l is Tuple && r is Tuple -> sequenceOf(of(l.left, r.left, equalityChecker))
+                    else -> allOf(l, r, equalityChecker)
+                }
+            }
+        }
+
         /** Creates all equations resulting from the deep inspection of provided left-hand and right-hand sides' [Term] */
         @JvmStatic
         @JvmOverloads
@@ -108,14 +135,21 @@ sealed class Equation<out A : Term, out B : Term>(
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> =
             when {
-                (lhs !is Constant && rhs !is Constant && lhs !is Var && rhs !is Var) &&
-                        lhs is Struct && rhs is Struct &&
-                        lhs.arity == rhs.arity &&
-                        lhs.functor == rhs.functor ->
-
+                (lhs is Atom && rhs is Atom) -> {
+                    sequenceOf(of(lhs, rhs, equalityChecker))
+                }
+                lhs is LogicList && rhs is LogicList -> {
+                    allOfLists(lhs, rhs, equalityChecker)
+                }
+                lhs is Tuple && rhs is Tuple -> {
+                    allOfTuples(lhs, rhs, equalityChecker)
+                }
+                lhs is Struct && rhs is Struct && lhs.arity == rhs.arity && lhs.functor == rhs.functor -> {
                     lhs.argsSequence.zip(rhs.argsSequence).flatMap { allOf(it, equalityChecker) }
-
-                else -> sequenceOf(of(lhs, rhs, equalityChecker))
+                }
+                else -> {
+                    sequenceOf(of(lhs, rhs, equalityChecker))
+                }
             }
     }
 }

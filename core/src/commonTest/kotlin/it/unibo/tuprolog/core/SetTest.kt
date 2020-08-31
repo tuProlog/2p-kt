@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SetUtils
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 /**
@@ -58,4 +59,16 @@ internal class SetTest {
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
 
+    @Test
+    fun bigSetDoNotProvokeStackOverflow() {
+        val nums = (0..100_000).toList()
+        val set = Set.of(nums.map { Integer.of(it) })
+
+        assertEquals(nums.joinToString(", ", "{", "}"), set.toString())
+
+        val otherSet = set.freshCopy()
+
+        assertEquals(set.hashCode(), otherSet.hashCode())
+        assertEquals(set, otherSet)
+    }
 }

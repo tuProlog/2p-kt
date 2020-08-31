@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 
 sealed class ChoicePointContext(
@@ -56,7 +57,7 @@ sealed class ChoicePointContext(
 
     protected abstract val typeName: String
 
-    abstract fun backtrack(nextStep: Long): ClassicExecutionContext
+    abstract fun backtrack(context: ClassicExecutionContext): ClassicExecutionContext
 
     data class Primitives(
         override val alternatives: Cursor<out Solve.Response>,
@@ -72,10 +73,18 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Primitives"
 
-        override fun backtrack(nextStep: Long): ClassicExecutionContext {
+        override fun backtrack(context: ClassicExecutionContext): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 primitives = alternatives,
-                step = nextStep
+                step = context.step + 1,
+                startTime = context.startTime,
+                flags = context.flags,
+                dynamicKb = context.dynamicKb,
+                staticKb = context.staticKb,
+                operators = context.operators,
+                inputChannels = context.inputChannels,
+                outputChannels = context.outputChannels,
+                libraries = context.libraries
             )
 
             val nextChoicePointContext = copy(
@@ -101,10 +110,18 @@ sealed class ChoicePointContext(
         override val typeName: String
             get() = "Rules"
 
-        override fun backtrack(nextStep: Long): ClassicExecutionContext {
+        override fun backtrack(context: ClassicExecutionContext): ClassicExecutionContext {
             val tempContext = executionContext!!.copy(
                 rules = alternatives,
-                step = nextStep
+                step = context.step + 1,
+                startTime = context.startTime,
+                flags = context.flags,
+                dynamicKb = context.dynamicKb,
+                staticKb = context.staticKb,
+                operators = context.operators,
+                inputChannels = context.inputChannels,
+                outputChannels = context.outputChannels,
+                libraries = context.libraries
             )
 
             val nextChoicePointContext = copy(

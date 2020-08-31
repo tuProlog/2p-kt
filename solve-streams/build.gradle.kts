@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
-val mochaTimeout: String by project
 val jvmStackSize: String by project
 val jvmMaxHeapSize: String by project
 
@@ -35,15 +34,6 @@ kotlin {
         }
 
         js {
-
-            nodejs {
-                testTask {
-                    useMocha {
-                        timeout = mochaTimeout
-                    }
-                }
-            }
-
             val main = compilations["main"]
             val test = compilations["test"]
 

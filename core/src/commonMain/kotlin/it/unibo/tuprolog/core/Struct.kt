@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.StructImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
 
@@ -67,7 +66,6 @@ interface Struct : Term {
     @JsName("functor")
     val functor: String
 
-
     @JsName("isFunctorWellFormed")
     val isFunctorWellFormed: Boolean
 
@@ -117,6 +115,12 @@ interface Struct : Term {
             }
 
         @JvmStatic
+        @JsName("template")
+        fun template(functor: String, arity: Int): Struct {
+            return of(functor, (0 until arity).map { Var.anonymous() })
+        }
+
+        @JvmStatic
         @JsName("ofList")
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
@@ -138,6 +142,10 @@ interface Struct : Term {
         @JvmStatic
         @JsName("ofSequence")
         fun of(functor: String, args: Sequence<Term>): Struct = of(functor, args.toList())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(functor: String, args: Iterable<Term>): Struct = of(functor, args.toList())
 
         @JvmStatic
         @JsName("foldListNullTerminated")

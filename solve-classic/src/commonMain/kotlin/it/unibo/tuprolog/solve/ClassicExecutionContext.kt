@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
@@ -13,9 +15,10 @@ import kotlin.collections.Set as KtSet
 data class ClassicExecutionContext(
     override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries(),
-    override val flags: PrologFlags = emptyMap(),
-    override val staticKb: ClauseDatabase = ClauseDatabase.empty(),
-    override val dynamicKb: ClauseDatabase = ClauseDatabase.empty(),
+    override val flags: FlagStore = FlagStore.EMPTY,
+    override val staticKb: Theory = Theory.empty(),
+    override val dynamicKb: Theory = Theory.empty(),
+    override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
@@ -71,23 +74,53 @@ data class ClassicExecutionContext(
 
     override fun createSolver(
         libraries: Libraries,
-        flags: PrologFlags,
-        staticKb: ClauseDatabase,
-        dynamicKb: ClauseDatabase,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
         stdIn: InputChannel<String>,
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver {
-        return ClassicSolverFactory.solverOf(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            stdIn,
-            stdOut,
-            stdErr
+    ): Solver = ClassicSolverFactory.solverOf(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr
+    )
+
+    override fun update(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        operators: OperatorSet,
+        inputChannels: InputStore<*>,
+        outputChannels: OutputStore<*>
+    ): ClassicExecutionContext {
+        return copy(
+            libraries = libraries,
+            flags = flags,
+            staticKb = staticKb,
+            dynamicKb = dynamicKb,
+            operators = operators,
+            inputChannels = inputChannels,
+            outputChannels = outputChannels
         )
+    }
+
+    override fun apply(sideEffect: SideEffect): ClassicExecutionContext {
+        return super.apply(sideEffect) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
+    }
+
+    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext {
+        return super.apply(sideEffects) as ClassicExecutionContext
     }
 
     override fun toString(): String {
@@ -99,6 +132,7 @@ data class ClassicExecutionContext(
                 "rules=$rules, " +
                 "primitives=$primitives, " +
                 "startTime=$startTime, " +
+                "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
                 "inputChannels=${inputChannels.keys}, " +
                 "outputChannels=${outputChannels.keys}, " +
                 "maxDuration=$maxDuration, " +

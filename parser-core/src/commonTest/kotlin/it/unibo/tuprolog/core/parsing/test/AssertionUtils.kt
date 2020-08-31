@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.parsing.TermParser
-import it.unibo.tuprolog.dsl.unify.PrologWithUnification
+import it.unibo.tuprolog.dsl.unify.PrologScopeWithUnification
 import kotlin.test.assertEquals
 
 /** Asserts terms are equal taking into account differences in complete variables names */
@@ -45,9 +45,9 @@ fun assertTermsAreEqual(expected: Term, actual: Term) {
 
 fun TermParser.assertTermIsCorrectlyParsed(
     stringToBeParsed: String,
-    expectedGenerator: PrologWithUnification.() -> Term
+    expectedGenerator: PrologScopeWithUnification.() -> Term
 ) {
-    assertTermIsCorrectlyParsed(stringToBeParsed, PrologWithUnification.empty().expectedGenerator())
+    assertTermIsCorrectlyParsed(stringToBeParsed, PrologScopeWithUnification.empty().expectedGenerator())
 }
 
 fun TermParser.assertTermIsCorrectlyParsed(stringToBeParsed: String, expected: Term, loggingOn: Boolean = false) {

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.exception.AlreadyLoadedLibraryException
 import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** A class representing an agglomerate of libraries with an alias */
@@ -28,8 +28,8 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         OperatorSet(libraries.flatMap { it.operators.asSequence() })
     }
 
-    override val theory: ClauseDatabase by lazy {
-        ClauseDatabase.of(libraries.flatMap { it.theory.clauses.asSequence() })
+    override val theory: Theory by lazy {
+        Theory.indexedOf(libraries.flatMap { it.theory.clauses.asSequence() })
     }
 
     override val primitives: Map<Signature, Primitive> by lazy {
@@ -71,6 +71,24 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
         return Libraries(libraries.asSequence().filter { it.alias != library.alias })
     }
 
+    @JsName("minusAlias")
+    operator fun minus(alias: String): Libraries {
+        if (alias in libraryAliases) {
+            noSuchALibraryError(alias)
+        }
+        return Libraries(libraries.asSequence().filter { it.alias != alias })
+    }
+
+    @JsName("minusAliases")
+    operator fun minus(aliases: Iterable<String>): Libraries {
+        val toBeRemoved = aliases.map {
+            if (it in libraryAliases) {
+                noSuchALibraryError(it)
+            }
+            it
+        }.toSet()
+        return Libraries(libraries.asSequence().filterNot { it.alias in toBeRemoved })
+    }
 
     override fun update(library: AliasedLibrary): Libraries =
         libraryAliases.find { library.alias in libraryAliases }
@@ -98,6 +116,9 @@ class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibra
             throw AlreadyLoadedLibraryException("A library aliased as `${library.alias}` has already been loaded")
 
         private fun noSuchALibraryError(library: AliasedLibrary): Nothing =
-            throw NoSuchALibraryException("No library with alias `${library.alias}` has been loaded")
+            noSuchALibraryError(library.alias)
+
+        private fun noSuchALibraryError(alias: String): Nothing =
+            throw NoSuchALibraryException("No library with alias `$alias` has been loaded")
     }
 }

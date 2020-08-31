@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.Solve
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.SolverStrategies
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateInitUtils.allRequests
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateInitUtils.allWellFormedGoalRequests

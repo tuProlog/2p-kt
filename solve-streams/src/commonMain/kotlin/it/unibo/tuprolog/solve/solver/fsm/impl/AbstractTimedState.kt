@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.Solve.Response
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.primitive.Solve.Response
 import it.unibo.tuprolog.solve.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.solver.fsm.IntermediateState
 import it.unibo.tuprolog.solve.solver.fsm.State

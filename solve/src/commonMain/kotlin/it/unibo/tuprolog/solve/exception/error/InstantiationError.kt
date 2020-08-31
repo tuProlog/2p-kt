@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
- * @param context The current context at exception creation
+ * @param contexts a stack of contexts localising the exception
  * @param extraData The possible extra data to be carried with the error
  *
  * @author Enrico
@@ -20,21 +20,22 @@ import it.unibo.tuprolog.solve.exception.PrologError
 class InstantiationError(
     message: String? = null,
     cause: Throwable? = null,
-    context: ExecutionContext,
+    contexts: Array<ExecutionContext>,
     extraData: Term? = null
-) : PrologError(message, cause, context, Atom.of(typeFunctor), extraData) {
+) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
-    // TODO: 16/01/2020 in this early stage of the project consider not using deprecation,
-    // TODO             but instead advance the version number and change what should be changed (her: private constructor and only public factory)
+    constructor(
+        message: String? = null,
+        cause: Throwable? = null,
+        context: ExecutionContext,
+        extraData: Term? = null
+    ) : this(message, cause, arrayOf(context), extraData)
 
-    /** This constructor automatically fills [message] field with provided information */
-    @Deprecated("Prefer InstantiationError.Companion.forArgument instead")
-    constructor(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) : this(
-        message = "Argument ${index ?: ""} `${variable
-            ?: ""}` of $procedure is unexpectedly not instantiated",
-        context = context,
-        extraData = variable
-    )
+    override fun updateContext(newContext: ExecutionContext): InstantiationError =
+        InstantiationError(message, cause, contexts.setFirst(newContext), extraData)
+
+    override fun pushContext(newContext: ExecutionContext): InstantiationError =
+        InstantiationError(message, cause, contexts.addLast(newContext), extraData)
 
     companion object {
 
@@ -45,7 +46,7 @@ class InstantiationError(
 
         fun forArgument(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) =
             InstantiationError(
-                message = "Argument ${index ?: ""} `${variable ?: ""}` of $procedure is unexpectedly not instantiated",
+                message = "Argument ${index ?: ""} `${variable ?: ""}` of ${procedure.toIndicator()} is unexpectedly not instantiated",
                 context = context,
                 extraData = variable
             )

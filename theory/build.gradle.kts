@@ -1,4 +1,3 @@
-// Project specific kotlin multiplatform configuration
 kotlin {
 
     sourceSets {

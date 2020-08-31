@@ -7,15 +7,15 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
-import it.unibo.tuprolog.solve.library.Library
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.PrologFunction
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solve
-import it.unibo.tuprolog.theory.ClauseDatabase
+import it.unibo.tuprolog.solve.library.AliasedLibrary
+import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.theory.Theory
 
 /**
  * Utils singleton to help testing [Library]
@@ -28,7 +28,7 @@ internal object LibraryUtils {
     internal data class RawLibrary(
         val name: String,
         val opSet: OperatorSet,
-        val theory: ClauseDatabase,
+        val theory: Theory,
         val primitives: Map<Signature, Primitive>,
         val functions: Map<Signature, PrologFunction>
     )
@@ -38,8 +38,8 @@ internal object LibraryUtils {
 
     private val minusOperatorOverridden = Operator("-", Specifier.YFX, 1000)
 
-    private val theory = ClauseDatabase.of(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
-    private val theoryWithDuplicates = ClauseDatabase.of(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
+    private val theory = Theory.indexedOf(Rule.of(Atom.of("a")), Rule.of(Atom.of("b")))
+    private val theoryWithDuplicates = Theory.indexedOf(Rule.of(Atom.of("c")), Rule.of(Atom.of("b")))
 
     private fun myPrimitive(@Suppress("UNUSED_PARAMETER") r: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
         throw NotImplementedError()
@@ -61,7 +61,7 @@ internal object LibraryUtils {
 
     /** An empty library */
     internal val emptyLibrary by lazy {
-        RawLibrary("emptyLibrary", OperatorSet(), ClauseDatabase.empty(), emptyMap(), emptyMap())
+        RawLibrary("emptyLibrary", OperatorSet(), Theory.empty(), emptyMap(), emptyMap())
     }
 
     /** Contains a starting library, with some operators theory and primitives */
@@ -99,7 +99,7 @@ internal object LibraryUtils {
 
     /** A duplicated alias library w.r.t. [library] */
     internal val duplicatedAliasLibrary by lazy {
-        RawLibrary("myLibrary", OperatorSet(), ClauseDatabase.of(Fact.of(Truth.FAIL)), emptyMap(), emptyMap())
+        RawLibrary("myLibrary", OperatorSet(), Theory.indexedOf(Fact.of(Truth.FAIL)), emptyMap(), emptyMap())
     }
 
     /** Contains various libraries */
@@ -117,22 +117,22 @@ internal object LibraryUtils {
     /** A method to disambiguate use of Library.of reference */
     internal fun libraryWithAliasConstructor(
         opSet: OperatorSet,
-        theory: ClauseDatabase,
+        theory: Theory,
         primitives: Map<Signature, Primitive>,
         functions: Map<Signature, PrologFunction>,
         alias: String
-    ): AliasedLibrary = Library.of(opSet, theory, primitives, functions, alias)
+    ): AliasedLibrary = Library.aliased(opSet, theory, primitives, functions, alias)
 
     /** Utility function to construct a library from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>) -> Library
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>) -> Library
     ): Library = constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions)
 
     /** Utility function to construct a library with alias from raw data */
     internal inline fun makeLib(
         rawLibrary: RawLibrary,
-        constructor: (OperatorSet, ClauseDatabase, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> AliasedLibrary
+        constructor: (OperatorSet, Theory, Map<Signature, Primitive>, Map<Signature, PrologFunction>, String) -> AliasedLibrary
     ): AliasedLibrary =
         constructor(rawLibrary.opSet, rawLibrary.theory, rawLibrary.primitives, rawLibrary.functions, rawLibrary.name)
 

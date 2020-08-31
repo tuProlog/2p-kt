@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
-    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin
+    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin apply true
     id("maven-publish")
     signing
     id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
@@ -56,6 +56,8 @@ val projectIssues: String by project
 val githubOwner: String by project
 val githubRepo: String by project
 
+val mochaTimeout: String by project
+
 val signingKey = getPropertyOrWarnForAbsence("signingKey")
 val signingPassword = getPropertyOrWarnForAbsence("signingPassword")
 val bintrayUser = getPropertyOrWarnForAbsence("bintrayUser")
@@ -65,7 +67,7 @@ val ossrhPassword = getPropertyOrWarnForAbsence("ossrhPassword")
 val githubToken = getPropertyOrWarnForAbsence("githubToken")
 val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
-val allSubprojects = subprojects.map { it.name }.toSet()
+val allSubprojects = allprojects.map { it.name }.toSet()
 val jvmSubprojects = setOf("parser-jvm", "examples")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
@@ -100,7 +102,7 @@ ktSubprojects.forEachProject {
             val commonMain by getting {
                 dependencies {
                     api(kotlin("stdlib-common"))
-                    api(kotlin("reflect"))
+//                    api(kotlin("reflect"))
                 }
             }
             val commonTest by getting {
@@ -128,7 +130,13 @@ ktSubprojects.forEachProject {
             }
 
             js {
-                nodejs()
+                nodejs {
+                    testTask {
+                        useMocha {
+                            timeout = mochaTimeout
+                        }
+                    }
+                }
 //                browser()
                 tasks.withType<KotlinJsCompile> {
                     kotlinOptions {
@@ -173,7 +181,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub({ "jvm" in it })
+    configureUploadToGithub({ "jvm" in it || "shadow" in it })
 }
 
 jvmSubprojects.forEachProject {
@@ -223,7 +231,7 @@ configure<GithubReleaseExtension> {
                    |${changelog().call()}
                    """.trimMargin()
             )
-        } catch (e: NullPointerException) {
+        } catch (e: Throwable) {
             e.message?.let { warn(it) }
         }
     }
@@ -397,7 +405,8 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
             version = project.version.toString()
 
             for (component in componentsStrings) {
-                from(components[component])
+                if (component in components.names)
+                    from(components[component])
             }
 
             if (docArtifact != null && docArtifact in tasks.names) {
@@ -418,7 +427,7 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
     }
 }
 
-fun Set<String>.forEachProject(f: Project.() -> Unit) = subprojects.filter { it.name in this }.forEach(f)
+fun Set<String>.forEachProject(f: Project.() -> Unit) = allprojects.filter { it.name in this }.forEach(f)
 
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
     platform: String, configuration: Action<in GradlePassConfigurationImpl>
