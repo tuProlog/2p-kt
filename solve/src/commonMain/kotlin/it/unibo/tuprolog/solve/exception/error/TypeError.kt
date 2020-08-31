@@ -51,6 +51,21 @@ class TypeError(
 
         // TODO: 16/01/2020 test factories
 
+        fun forArgumentList(
+            context: ExecutionContext,
+            procedure: Signature,
+            expectedType: Expected,
+            actualValue: Term,
+            index: Int? = null
+        ) = TypeError(
+            message = "Argument ${index
+                ?: ""} of `${procedure.toIndicator()}` should be a list of `$expectedType`, but `$actualValue` has been provided instead",
+            context = context,
+            expectedType = expectedType,
+            actualValue = actualValue,
+            extraData = actualValue
+        )
+
         fun forArgument(
             context: ExecutionContext,
             procedure: Signature,
