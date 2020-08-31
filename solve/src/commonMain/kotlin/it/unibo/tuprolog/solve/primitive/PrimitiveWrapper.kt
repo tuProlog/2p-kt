@@ -150,7 +150,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
-            arguments[index].let { arg ->
+            ensuringArgumentIsInteger(index)
+                .arguments[index].let { arg ->
                 when {
                     arg !is Integer || arg.intValue < BigInteger.ZERO -> throw DomainError.forArgument(
                         context,

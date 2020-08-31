@@ -40,13 +40,11 @@ class TestClassicFunctor : TestFunctor, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    @Ignore
     override fun testFunXNameYArity() {
         prototype.testFunXNameYArity()
     }
 
     @Test
-    @Ignore
     override fun testFunDecNum() {
         prototype.testFunDecNum()
     }
@@ -92,7 +90,6 @@ class TestClassicFunctor : TestFunctor, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    @Ignore
     override fun testFunNegativeArity() {
         prototype.testFunNegativeArity()
     }
