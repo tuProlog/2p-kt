@@ -15,6 +15,7 @@ class TestStreamsFail : TestFail, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testUndefPred() {
         prototype.testUndefPred()
     }
