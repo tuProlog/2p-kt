@@ -27,11 +27,16 @@ object TestingClauseTheories {
     internal val haltException = HaltException(context = aContext)
     internal val instantiationError = InstantiationError(context = aContext)
     internal val typeError1 =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { (truthOf(true) and false) and 1 })
+        TypeError(
+            context = aContext,
+            expectedType = TypeError.Expected.CALLABLE,
+            actualValue = prolog { (truthOf(true) and false) and 1 })
     internal val typeError2 =
         TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { true and 1 })
     internal val typeError3 =
         TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { fail and 1 })
+    internal val typeError4 =
+        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { intOf(1) })
     internal val systemError = SystemError(context = aContext)
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 

@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
 import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
 import it.unibo.tuprolog.solve.TestingClauseTheories.typeError1
 import it.unibo.tuprolog.solve.TestingClauseTheories.typeError3
+import it.unibo.tuprolog.solve.TestingClauseTheories.typeError4
 import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
@@ -235,7 +236,7 @@ object PrologStandardExampleTheories {
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
                 "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
-                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError1) }),
+                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError4) }),
                 "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
             )
         }

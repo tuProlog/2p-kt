@@ -44,33 +44,8 @@ fun Struct.halt(withException: TuPrologRuntimeException) = Solution.Halt(this, w
 fun Solution.changeQueryTo(query: Struct) = when (this) {
     is Solution.Yes -> copy(query)
     is Solution.No -> copy(query)
-    is Solution.Halt -> exception.let {
-        if (it is TypeError && it.expectedType == TypeError.Expected.CALLABLE) {
-            val newCulprit = query.callableTerm
-            if (newCulprit != null) {
-                copy(query, TypeError(it.message, it.cause, it.context, it.expectedType, newCulprit, it.extraData))
-            } else {
-                copy(query)
-            }
-        } else {
-            copy(query)
-        }
-    }
+    is Solution.Halt -> copy(query)
 }
-
-private val callableFunctors = setOf("not", "call", "\\+")
-
-private val Struct.callableTerm
-    get() = when(this) {
-        is Tuple -> unfoldedSequence
-        else -> sequenceOf(this)
-    }.map {
-        if (it is Struct && it.functor in callableFunctors && it.arity > 0) {
-            it[0]
-        } else {
-            null
-        }
-    }.filterNotNull().firstOrNull()
 
 /** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
 fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(query) }
@@ -115,7 +90,7 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
             when (val expectedEx = expected.exception) {
                 is PrologError -> {
                     val actualEx = actual.exception as PrologError
-                    assertTrue(reportMsg(expectedEx.errorStruct[0], actualEx.errorStruct[0])) {
+                    assertTrue(reportMsg(expected, actual)) {
                         expectedEx.errorStruct[0].equals(actualEx.errorStruct[0], false)
                     }
                     // TODO [27 aug 2020] check whole errorStruct for equality
