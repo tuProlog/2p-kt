@@ -16,7 +16,8 @@ object CommonRules {
         Member.Base,
         Member.Recursive,
         Append.Base,
-        Append.Recursive
+        Append.Recursive,
+        Once
     )
 
     val theory: Theory

@@ -44,6 +44,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         NotUnifiableWith,
         Number,
         Op,
+        Repeat,
         Retract,
         RetractAll,
         Sleep,
