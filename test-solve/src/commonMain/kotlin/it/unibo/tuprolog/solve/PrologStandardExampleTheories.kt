@@ -6,7 +6,8 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.instantiationError
 import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
 import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
-import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
+import it.unibo.tuprolog.solve.TestingClauseTheories.typeError1
+import it.unibo.tuprolog.solve.TestingClauseTheories.typeError3
 import it.unibo.tuprolog.theory.Theory
 import kotlin.collections.listOf as ktListOf
 
@@ -184,7 +185,7 @@ object PrologStandardExampleTheories {
                 ),
                 "call"(false).hasSolutions({ no() }),
                 "call"(true and "X").hasSolutions({ halt(instantiationError) }),
-                "call"("true" and "false" and 1).hasSolutions({ halt(typeError) })
+                "call"("true" and "false" and 1).hasSolutions({ halt(typeError1) })
             )
         }
     }
@@ -234,7 +235,7 @@ object PrologStandardExampleTheories {
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
                 "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
-                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError) }),
+                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError1) }),
                 "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
             )
         }
@@ -301,7 +302,7 @@ object PrologStandardExampleTheories {
                 ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "\\+"("fail" and 1).hasSolutions({ halt(typeError) }),
+                "\\+"("fail" and 1).hasSolutions({ halt(typeError3) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),

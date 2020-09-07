@@ -107,7 +107,7 @@ class TypeError(
      *
      * @author Enrico
      */
-    class Expected private constructor(private val type: String) : ToTermConvertible {
+    data class Expected private constructor(private val type: String) : ToTermConvertible {
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)

@@ -9,8 +9,10 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.jvm.JvmName
@@ -42,8 +44,33 @@ fun Struct.halt(withException: TuPrologRuntimeException) = Solution.Halt(this, w
 fun Solution.changeQueryTo(query: Struct) = when (this) {
     is Solution.Yes -> copy(query)
     is Solution.No -> copy(query)
-    is Solution.Halt -> copy(query)
+    is Solution.Halt -> exception.let {
+        if (it is TypeError && it.expectedType == TypeError.Expected.CALLABLE) {
+            val newCulprit = query.callableTerm
+            if (newCulprit != null) {
+                copy(query, TypeError(it.message, it.cause, it.context, it.expectedType, newCulprit, it.extraData))
+            } else {
+                copy(query)
+            }
+        } else {
+            copy(query)
+        }
+    }
 }
+
+private val callableFunctors = setOf("not", "call", "\\+")
+
+private val Struct.callableTerm
+    get() = when(this) {
+        is Tuple -> unfoldedSequence
+        else -> sequenceOf(this)
+    }.map {
+        if (it is Struct && it.functor in callableFunctors && it.arity > 0) {
+            it[0]
+        } else {
+            null
+        }
+    }.filterNotNull().firstOrNull()
 
 /** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
 fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(query) }

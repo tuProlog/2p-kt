@@ -10,32 +10,33 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.TypeEnsurer
 
 object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
-    private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<Unit> =
-        object : TermVisitor<Unit> {
-            override fun defaultValue(term: Term) { /* does nothing */ }
+    private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
+        object : TermVisitor<TypeError?> {
+            override fun defaultValue(term: Term): Nothing? = null
 
             override fun visit(term: Struct) = when {
-                term.functor in Clause.notableFunctors && term.arity == 2 ->
-                    term.argsSequence.forEach { arg -> arg.accept(this) }
+                term.functor in Clause.notableFunctors && term.arity == 2 -> {
+                    term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                }
                 else -> defaultValue(term)
             }
 
-            override fun visit(term: Numeric) {
-                throw TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
+            override fun visit(term: Numeric): TypeError {
+                return TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
             }
         }
 
     override fun ensureType(context: ExecutionContext, term: Term) {
+        val signature = context.procedure!!.extractSignature()
         when (term) {
             is Var -> {
-                throw InstantiationError.forGoal(
-                    context,
-                    context.procedure!!.extractSignature(),
-                    context.substitution.getOriginal(term) ?: term
-                )
+                val variable = context.substitution.getOriginal(term) ?: term
+                throw InstantiationError.forGoal(context, signature, variable)
             }
             else -> {
-                term.accept(ensurerVisitor(context, context.procedure!!.extractSignature()))
+                term.accept(ensurerVisitor(context, signature))?.let {
+                    throw TypeError(it.message, it.cause, it.contexts, it.expectedType, term, it.extraData)
+                }
             }
         }
     }

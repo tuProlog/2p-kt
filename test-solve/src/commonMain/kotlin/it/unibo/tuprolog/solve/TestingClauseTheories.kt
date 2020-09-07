@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -25,8 +26,12 @@ object TestingClauseTheories {
 
     internal val haltException = HaltException(context = aContext)
     internal val instantiationError = InstantiationError(context = aContext)
-    internal val typeError =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { numOf(1) })
+    internal val typeError1 =
+        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { (truthOf(true) and false) and 1 })
+    internal val typeError2 =
+        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { true and 1 })
+    internal val typeError3 =
+        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { fail and 1 })
     internal val systemError = SystemError(context = aContext)
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
@@ -394,7 +399,7 @@ object TestingClauseTheories {
                 "call"("true" and "true").hasSolutions({ yes() }),
                 "call"("!").hasSolutions({ yes() }),
                 "call"("X").hasSolutions({ halt(instantiationError) }),
-                "call"("true" and 1).hasSolutions({ halt(typeError) })
+                "call"("true" and 1).hasSolutions({ halt(typeError2) })
             )
         }
     }
