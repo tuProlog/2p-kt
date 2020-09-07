@@ -15,7 +15,6 @@ class TestClassicFail : TestFail, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    @Ignore
     override fun testUndefPred() {
         prototype.testUndefPred()
     }
