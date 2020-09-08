@@ -17,8 +17,8 @@ import it.unibo.tuprolog.solve.stdlib.function.*
  *
  * @author Enrico
  */
-class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, private val index: Int?) :
-    AbstractEvaluator<E, Numeric>(request) {
+class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index: Int?) :
+    AbstractEvaluator<E, Numeric>(request, index) {
 
     constructor(request: Solve.Request<E>) : this(request, null)
 
@@ -26,7 +26,7 @@ class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, priva
     override fun visit(term: Indicator): Numeric = super.visitStruct(term)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */
-    override fun Term.staticCheck(request: Solve.Request<E>) {
+    override fun Term.staticCheck() {
         when {
             this is Var ->
                 throw InstantiationError.forArgument(request.context, request.signature, this, index)
@@ -38,7 +38,7 @@ class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, priva
     }
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (dynamically) */
-    override fun Term.dynamicCheck(enclosingTerm: Struct, request: Solve.Request<E>) {
+    override fun Term.dynamicCheck(enclosingTerm: Struct) {
         when {
             // the argument of an arithmetic functor is evaluated to a non-numeric value
             this !is Numeric ->

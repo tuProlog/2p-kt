@@ -17,6 +17,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 object Is : BinaryRelation.Functional<ExecutionContext>("is") {
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
-        first mguWith second.evalAsExpression(this)
+        ensuringArgumentIsInstantiated(1).run {
+            first mguWith second.evalAsExpression(this, 1)
+        }
 
 }

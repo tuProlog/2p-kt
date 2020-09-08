@@ -53,28 +53,34 @@ class DomainError(
             expectedDomain: Expected,
             actualValue: Term,
             index: Int? = null
-        ) = DomainError(
-            message = "Argument ${index?.toString()?.plus(" ") ?: ""}" +
+        ): DomainError = message(
+            "Argument ${index?.toString()?.plus(" ") ?: ""}" +
                     "of `${procedure.toIndicator()}` should be `$expectedDomain`, " +
-                    "but `$actualValue` has been provided instead",
-            context = context,
-            expectedDomain = expectedDomain,
-            actualValue = actualValue,
-            extraData = actualValue
-        )
+                    "but `$actualValue` has been provided instead"
+        ) { m, extra ->
+            DomainError(
+                message = m,
+                context = context,
+                expectedDomain = expectedDomain,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
 
         fun forGoal(
             context: ExecutionContext,
             procedure: Signature,
             expectedDomain: Expected,
             actualValue: Term
-        ) = "Subgoal `$actualValue` of ${procedure.toIndicator()} is not $expectedDomain term".let {
+        ): DomainError = message(
+            "Subgoal `$actualValue` of ${procedure.toIndicator()} is not $expectedDomain term"
+        ) { m, extra ->
             DomainError(
-                message = it,
+                message = m,
                 context = context,
                 expectedDomain = expectedDomain,
                 actualValue = actualValue,
-                extraData = Atom.of(it)
+                extraData = extra
             )
         }
 

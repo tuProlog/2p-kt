@@ -156,10 +156,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
-                            varOf("X")
+                            varOf("Y"),
+                            1
                         )
                     )
                 ),
@@ -178,10 +179,11 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
-                            varOf("N")
+                            varOf("N"),
+                            index = 2
                         )
                     )
                 ),
@@ -200,11 +202,12 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             TypeError.Expected.INTEGER,
-                            atomOf("a")
+                            atomOf("a"),
+                            index = 2
                         )
                     )
                 ),
@@ -223,11 +226,12 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             TypeError.Expected.ATOM,
-                            numOf(1.5)
+                            numOf(1.5),
+                            index = 1
                         )
                     )
                 ),
@@ -285,11 +289,12 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        DomainError.forGoal(
+                        DomainError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
-                            intOf(-1)
+                            intOf(-1),
+                            index = 2
                         )
                     )
                 ),

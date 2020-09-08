@@ -148,9 +148,9 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forArgument(
+                        TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("findall", 3),
+                            Signature("call", 1),
                             TypeError.Expected.CALLABLE,
                             numOf(1)
                         )

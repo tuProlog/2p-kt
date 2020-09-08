@@ -57,10 +57,11 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("is", 2),
-                            varOf("N")
+                            varOf("N"),
+                            index = 1
                         )
                     )
                 ),
@@ -79,12 +80,12 @@ internal class TestIsImpl(private val solverFactory: SolverFactory) : TestIs {
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("is", 2),
                             TypeError.Expected.EVALUABLE,
-                            atomOf("foo")
-
+                            atomOf("foo"),
+                            index = 1
                         )
                     )
                 ),
