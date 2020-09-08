@@ -49,7 +49,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
                         univ(first, second)
                     }
                     is Var -> {
-                        throw InstantiationError.forArgument(context, signature, 0, first)
+                        throw InstantiationError.forArgument(context, signature, first, 0)
                     }
                     else -> {
                         // TODO expected here should be LIST | VARIABLE or something like that

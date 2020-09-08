@@ -79,8 +79,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 throw InstantiationError.forArgument(
                     context,
                     signature,
-                    index,
-                    it
+                    it,
+                    index
                 )
             } ?: this
 

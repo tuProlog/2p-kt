@@ -83,13 +83,14 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 
 // TODO Giovanni's review needed!! with Git > Show History
 fun ClassicExecutionContext.toRequest(
-    signature: Signature,
-    arguments: kotlin.collections.List<Term>
+    goal: Struct,
+    signature: Signature
 ): Solve.Request<ClassicExecutionContext> =
     Solve.Request(
         signature,
-        arguments,
+        goal.argsList,
         copy(
+            procedure = goal,
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,

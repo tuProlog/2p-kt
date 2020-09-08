@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.exception
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.*
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
@@ -78,7 +79,13 @@ abstract class PrologError(
             extraData: Term? = null
         ): PrologError = with(type) {
             when {
-                functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, contexts, extraData)
+                functor == InstantiationError.typeFunctor -> InstantiationError(
+                    message,
+                    cause,
+                    contexts,
+                    Var.anonymous(),
+                    extraData
+                )
                 functor == SystemError.typeFunctor -> SystemError(message, cause, contexts, extraData)
                 functor == ExistenceError.typeFunctor && type.arity == 2 ->
                     ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])

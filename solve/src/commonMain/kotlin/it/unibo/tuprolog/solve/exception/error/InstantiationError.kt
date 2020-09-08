@@ -21,6 +21,7 @@ class InstantiationError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
+    val culprit: Var,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -28,37 +29,40 @@ class InstantiationError(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
+        culprit: Var,
         extraData: Term? = null
-    ) : this(message, cause, arrayOf(context), extraData)
+    ) : this(message, cause, arrayOf(context), culprit, extraData)
 
     override fun updateContext(newContext: ExecutionContext): InstantiationError =
-        InstantiationError(message, cause, contexts.setFirst(newContext), extraData)
+        InstantiationError(message, cause, contexts.setFirst(newContext), culprit, extraData)
 
     override fun pushContext(newContext: ExecutionContext): InstantiationError =
-        InstantiationError(message, cause, contexts.addLast(newContext), extraData)
-
+        InstantiationError(message, cause, contexts.addLast(newContext), culprit, extraData)
     companion object {
 
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
 
-        // TODO: 16/01/2020 test factories
-
-        fun forArgument(context: ExecutionContext, procedure: Signature, index: Int? = null, variable: Var? = null) =
-            InstantiationError(
-                message = "Argument ${index ?: ""} `${variable ?: ""}` of ${procedure.toIndicator()} is unexpectedly not instantiated",
-                context = context,
-                extraData = variable
-            )
+        fun forArgument(context: ExecutionContext, procedure: Signature, variable: Var, index: Int? = null) =
+            "Argument ${index ?: ""} `${variable}` of ${procedure.toIndicator()} is unexpectedly not instantiated".let {
+                InstantiationError(
+                    message = it,
+                    context = context,
+                    culprit = variable,
+                    extraData = Atom.of(it)
+                )
+            }
 
         fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
             "Uninstantiated subgoal $variable in procedure ${procedure.toIndicator()}".let {
                 InstantiationError(
                     message = it,
                     context = context,
+                    culprit = variable,
                     extraData = Atom.of(it)
                 )
             }
 
     }
+
 }

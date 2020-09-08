@@ -21,7 +21,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
 
     override fun computeNext(): State {
         return with(context) {
-            when (val goal = currentGoal!!/*[substitution]*/) {
+            when (val goal = currentGoal!!) {
                 is Var -> {
                     exceptionalState(
                         InstantiationError.forGoal(
@@ -36,7 +36,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
 
                     if (libraries.hasPrimitive(signature)) {
 
-                        val req = toRequest(signature, goal.argsList)
+                        val req = toRequest(goal, signature)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
 

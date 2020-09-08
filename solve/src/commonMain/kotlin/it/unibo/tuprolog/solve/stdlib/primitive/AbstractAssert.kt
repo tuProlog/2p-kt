@@ -11,6 +11,7 @@ abstract class AbstractAssert(
 ) : UnaryPredicate.NonBacktrackable<ExecutionContext>("assert$suffix") {
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
+        ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsStruct(0)
         val clause = if (first is Clause) first else Fact.of(first as Struct)
         return replySuccess {

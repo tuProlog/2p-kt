@@ -1100,8 +1100,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
-                            1,
-                            varOf("Y")
+                            varOf("Y"),
+                            1
                         )
                     )
                 ),
@@ -1157,8 +1157,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=..", 2),
-                            0,
-                            varOf("X")
+                            varOf("X"),
+                            0
                         )
                     )
                 ),

@@ -13,14 +13,13 @@ import kotlin.test.Ignore
 
 class TestClassicAssertA : TestAssertA, SolverFactory by ClassicSolverFactory{
     private val prototype = TestAssertA.prototype(this)
+
     @Test
-    @Ignore
     override fun testAssertAClause() {
         prototype.testAssertAClause()
     }
 
     @Test
-    @Ignore
     override fun testAssertAAny() {
         prototype.testAssertAAny()
     }
@@ -31,13 +30,11 @@ class TestClassicAssertA : TestAssertA, SolverFactory by ClassicSolverFactory{
     }
 
     @Test
-    @Ignore
     override fun testAssertAFooNumber() {
         prototype.testAssertAFooNumber()
     }
 
     @Test
-    @Ignore
     override fun testAssertAAtomTrue() {
         prototype.testAssertAAtomTrue()
     }

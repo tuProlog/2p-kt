@@ -150,10 +150,11 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
-                            varOf("X")
+                            varOf("X"),
+                            index = 1
                         )
                     )
                 ),
@@ -172,11 +173,12 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
                             TypeError.Expected.COMPOUND,
-                            atomOf("atom")
+                            atomOf("atom"),
+                            index = 1
                         )
                     )
                 ),
@@ -195,11 +197,12 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
                             TypeError.Expected.COMPOUND,
-                            numOf(3)
+                            numOf(3),
+                            index = 1
                         )
                     )
                 ),
@@ -218,11 +221,12 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        DomainError.forGoal(
+                        DomainError.forArgument(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
                             DomainError.Expected.NOT_LESS_THAN_ZERO,
-                            numOf(-3)
+                            numOf(-3),
+                            index = 0
                         )
                     )
                 ),
@@ -241,11 +245,12 @@ internal class TestArgImpl(private val solverFactory: SolverFactory) : TestArg {
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("arg", 3),
                             TypeError.Expected.INTEGER,
-                            atomOf("a")
+                            atomOf("a"),
+                            index = 0
                         )
                     )
                 ),

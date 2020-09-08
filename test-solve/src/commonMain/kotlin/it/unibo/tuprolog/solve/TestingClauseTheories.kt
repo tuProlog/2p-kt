@@ -1,10 +1,6 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.List
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -13,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.core.List as LogicList
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -25,18 +22,13 @@ object TestingClauseTheories {
     internal val aContext = DummyInstances.executionContext
 
     internal val haltException = HaltException(context = aContext)
-    internal val instantiationError = InstantiationError(context = aContext)
-    internal val typeError1 =
-        TypeError(
-            context = aContext,
-            expectedType = TypeError.Expected.CALLABLE,
-            actualValue = prolog { (truthOf(true) and false) and 1 })
-    internal val typeError2 =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { true and 1 })
-    internal val typeError3 =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { fail and 1 })
-    internal val typeError4 =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { intOf(1) })
+
+    internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int) =
+        InstantiationError.forArgument(aContext, Signature(functor, arity), culprit, index)
+
+    internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int) =
+        TypeError.forArgument(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue, index)
+
     internal val systemError = SystemError(context = aContext)
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
@@ -299,8 +291,8 @@ object TestingClauseTheories {
     val customReverseListTheory by lazy {
         prolog {
             theory(
-                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
-                { "my_rev"(List.empty(), "L2", "L2") `if` "!" },
+                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", emptyList) },
+                { "my_rev"(emptyList, "L2", "L2") `if` "!" },
                 {
                     "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
                             "my_rev"("Xs", "L2", consOf("X", "Acc"))
@@ -376,7 +368,7 @@ object TestingClauseTheories {
                 ),
                 "range"(2, 1, "L").hasSolutions({ no() }),
                 "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
-                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(instantiationError) })
+                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(instantiationError("range", 3, varOf("A"), 2)) })
             )
         }
     }
@@ -403,8 +395,8 @@ object TestingClauseTheories {
                 "call"("halt").hasSolutions({ halt(haltException) }),
                 "call"("true" and "true").hasSolutions({ yes() }),
                 "call"("!").hasSolutions({ yes() }),
-                "call"("X").hasSolutions({ halt(instantiationError) }),
-                "call"("true" and 1).hasSolutions({ halt(typeError2) })
+                "call"("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"), 0)) }),
+                "call"("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1), 0)) })
             )
         }
     }

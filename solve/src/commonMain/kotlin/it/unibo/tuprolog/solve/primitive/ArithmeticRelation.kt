@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
+import it.unibo.tuprolog.solve.function.evalAsArithmeticExpression
 
 /** Base class for implementing arithmetic relation between [Numeric] terms */
 abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : BinaryRelation.Predicative<E>(operator) {
@@ -14,9 +15,7 @@ abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : Bina
     }
 
     private fun Solve.Request<E>.evaluateAndCompute(x: Term, y: Term): Boolean =
-        ArithmeticEvaluator(context).let {
-            computeNumeric(x.accept(it) as Numeric, y.accept(it) as Numeric)
-        }
+        computeNumeric(x.evalAsArithmeticExpression(context, 0), y.evalAsArithmeticExpression(context, 1))
 
     abstract fun computeNumeric(x: Numeric, y: Numeric): Boolean
 }

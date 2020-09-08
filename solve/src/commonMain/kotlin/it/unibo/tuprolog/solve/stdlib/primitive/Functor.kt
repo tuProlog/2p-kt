@@ -51,7 +51,7 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                     }
                 }
                 is Var -> {
-                    throw InstantiationError.forArgument(context, signature, 1, second)
+                    throw InstantiationError.forArgument(context, signature, second, 1)
                 }
                 else -> {
                     throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)

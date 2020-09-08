@@ -12,6 +12,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
@@ -70,30 +71,46 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
  */
 fun assertSolutionEquals(expected: Solution, actual: Solution) {
 
-    fun reportMsg(expected: Any, actual: Any) = "Expected: `$expected`\nActual\t: `$actual`"
+    fun reportMsg(expected: Any, actual: Any, motivation: String = "") =
+        "Expected: `$expected`\nActual\t: `$actual`" + if (motivation.isNotBlank()) " ($motivation)" else ""
+
     fun assertSameClass(expected: Solution, actual: Solution) =
         assertEquals(expected::class, actual::class, reportMsg(expected, actual))
 
     fun assertSameQuery(expected: Solution, actual: Solution) =
         assertEquals(expected.query, actual.query, reportMsg(expected, actual))
 
+
+
     when {
         expected is Solution.Halt -> {
             assertSameClass(expected, actual)
             assertSameQuery(expected, actual)
-            assertEquals(expected.substitution, actual.substitution, reportMsg(expected, actual))
+            assertEquals(expected.substitution, actual.substitution, reportMsg(expected, actual, "Wrong substitution"))
+            assertTrue(reportMsg(expected, actual, "Solution is not Halt")) { actual is Solution.Halt }
             assertEquals(
                 expected.exception::class,
                 (actual as Solution.Halt).exception::class,
-                reportMsg(expected, actual)
+                reportMsg(expected, actual, "Wrong exception type")
             )
             when (val expectedEx = expected.exception) {
                 is PrologError -> {
+                    assertTrue(
+                        reportMsg(
+                            expected,
+                            actual,
+                            "Exception is not PrologError"
+                        )
+                    ) { actual.exception is PrologError }
                     val actualEx = actual.exception as PrologError
-                    assertTrue(reportMsg(expected, actual)) {
-                        expectedEx.errorStruct[0].equals(actualEx.errorStruct[0], false)
+                    assertTrue(reportMsg(expected, actual, "The error structs do not match")) {
+                        expectedEx.errorStruct.equals(actualEx.errorStruct, false)
                     }
-                    // TODO [27 aug 2020] check whole errorStruct for equality
+                    assertEquals(
+                        expectedEx.message,
+                        actualEx.message,
+                        reportMsg(expected, actual, "Different messages")
+                    )
                 }
             }
         }

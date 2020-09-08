@@ -4,6 +4,9 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.EVALUABLE
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.NUMBER
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.function.*
@@ -13,31 +16,21 @@ import it.unibo.tuprolog.solve.stdlib.function.*
  *
  * @author Enrico
  */
-open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(context) {
+class ArithmeticEvaluator(context: ExecutionContext) : AbstractEvaluator<Numeric>(context) {
 
     // this override is needed to treat "/" functor as an arithmetic one, among the others
-    override fun visit(term: Indicator): Term = super.visitStruct(term)
+    override fun visit(term: Indicator): Numeric = super.visitStruct(term)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */
     override fun Term.staticCheck(context: ExecutionContext) {
+        val signature = context.procedure?.extractSignature()
         when {
-            this is Var -> throw InstantiationError(
-                "Variable sub-expressions are not allowed: `$this`",
-                context = context,
-                extraData = this
-            )
-            this is Atom -> throw TypeError(
-                "Atom sub-expression are not allowed: `$this`",
-                context = context,
-                expectedType = TypeError.Expected.EVALUABLE,
-                actualValue = this
-            )
-            this is Struct && this.extractSignature() !in allowedArithmeticSignatures -> throw TypeError(
-                "The struct `$this` is not part of allowed arithmetic functions",
-                context = context,
-                expectedType = TypeError.Expected.EVALUABLE,
-                actualValue = this
-            )
+            this is Var ->
+                throw InstantiationError.forArgument(context, signature!!, this)
+            this is Atom ->
+                throw TypeError.forArgument(context, signature!!, EVALUABLE, this)
+            this is Struct && this.extractSignature() !in allowedArithmeticSignatures ->
+                throw TypeError.forArgument(context, signature!!, EVALUABLE, this)
         }
     }
 
@@ -45,20 +38,12 @@ open class ArithmeticEvaluator(context: ExecutionContext) : ExpressionEvaluator(
     override fun Term.dynamicCheck(enclosingTerm: Struct, context: ExecutionContext) {
         when {
             // the argument of an arithmetic functor is evaluated to a non-numeric value
-            this !is Numeric -> throw TypeError(
-                "An argument of an arithmetic functor got evaluated to a non-numeric value",
-                context = context,
-                expectedType = TypeError.Expected.NUMBER,
-                actualValue = this
-            )
+            this !is Numeric ->
+                throw TypeError.forArgument(context, context.procedure!!.extractSignature(), NUMBER, this)
 
             // the argument of a bitwise operator is evaluated to a non-integer value
-            this !is Integer && enclosingTerm.extractSignature() in bitwiseStandardOperatorsSignatures -> throw TypeError(
-                "The argument of a bitwise operator was evaluated to a non-integer value",
-                context = context,
-                expectedType = TypeError.Expected.INTEGER,
-                actualValue = this
-            )
+            this !is Integer && enclosingTerm.extractSignature() in bitwiseStandardOperatorsSignatures ->
+                throw TypeError.forArgument(context, context.procedure!!.extractSignature(), INTEGER, this)
         }
     }
 
