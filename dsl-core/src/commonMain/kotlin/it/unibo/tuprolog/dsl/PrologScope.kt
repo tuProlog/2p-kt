@@ -108,11 +108,11 @@ interface PrologScope : PrologStdLibScope {
     fun setOf(vararg terms: Any): LogicSet =
         this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("consOfAny")
-    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
-
     @JsName("factOfAny")
     fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
+
+    @JsName("consOfAny")
+    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
 
     @JsName("directiveOfAny")
     fun directiveOf(term: Any, vararg terms: Any): Directive =

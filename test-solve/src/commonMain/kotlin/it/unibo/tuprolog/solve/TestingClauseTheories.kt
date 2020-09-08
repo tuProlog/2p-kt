@@ -23,13 +23,22 @@ object TestingClauseTheories {
 
     internal val haltException = HaltException(context = aContext)
 
-    internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int) =
-        InstantiationError.forArgument(aContext, Signature(functor, arity), culprit, index)
+    internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int? = null) =
+        if (index != null) {
+            InstantiationError.forArgument(aContext, Signature(functor, arity), culprit, index)
+        } else {
+            InstantiationError.forGoal(aContext, Signature(functor, arity), culprit)
+        }
 
-    internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int) =
-        TypeError.forArgument(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue, index)
+    internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int? = null) =
+        if (index != null) {
+            TypeError.forArgument(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue, index)
+        } else {
+            TypeError.forGoal(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue)
+        }
 
-    internal val systemError = SystemError(context = aContext)
+    internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
+
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
@@ -331,13 +340,13 @@ object TestingClauseTheories {
     val customRangeListGeneratorTheory by lazy {
         prolog {
             theory(
-                { ("range"("N", "N", listOf("N")) `if` "!") },
+                { "range"("N", "N", listOf("N")) `if` "!" },
                 {
-                    ("range"("M", "N", listFrom(ktListOf(varOf("M")), varOf("Ns"))) `if` (
+                    "range"("M", "N", consOf("M", "Ns")) `if` (
                             "<"("M", "N") and
                                     ("M1" `is` (varOf("M") + 1)) and
                                     "range"("M1", "N", "Ns")
-                            ))
+                            )
                 }
             )
         }
@@ -356,19 +365,18 @@ object TestingClauseTheories {
      * ```
      */
     val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
+        val N = customRangeListGeneratorTheory.last().head!![1] as Var
         prolog {
             ktListOf(
                 "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
                 "range"(1, 4, listOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
-                "range"(1, 4, "L").hasSolutions(
-                    { yes("L" to listOf(1, 2, 3, 4)) }
-                ),
-                "range"(1, 1, "L").hasSolutions(
-                    { yes("L" to listOf(1)) }
-                ),
+                "range"(1, 4, "L").hasSolutions({ yes("L" to listOf(1, 2, 3, 4)) }),
+                "range"(1, 1, "L").hasSolutions({ yes("L" to listOf(1)) }),
                 "range"(2, 1, "L").hasSolutions({ no() }),
                 "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
-                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(instantiationError("range", 3, varOf("A"), 2)) })
+                "range"(2, "A", listOf(2, 3, 4)).hasSolutions(
+                    { halt(instantiationError("<", 2, N, 1)) }
+                )
             )
         }
     }
@@ -395,8 +403,8 @@ object TestingClauseTheories {
                 "call"("halt").hasSolutions({ halt(haltException) }),
                 "call"("true" and "true").hasSolutions({ yes() }),
                 "call"("!").hasSolutions({ yes() }),
-                "call"("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"), 0)) }),
-                "call"("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1), 0)) })
+                "call"("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
+                "call"("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1))) })
             )
         }
     }
@@ -420,7 +428,7 @@ object TestingClauseTheories {
                 "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
                 "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
-                    { halt(systemError) }
+                    { halt(systemError(atomOf("second"))) }
                 ),
                 "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
                 "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })

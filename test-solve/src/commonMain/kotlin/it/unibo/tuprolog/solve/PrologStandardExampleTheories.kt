@@ -183,8 +183,8 @@ object PrologStandardExampleTheories {
                     { yes("X" to 2, "Z" to "!") }
                 ),
                 "call"(false).hasSolutions({ no() }),
-                "call"(true and "X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"), 0)) }),
-                "call"(true and (false and 1)).hasSolutions({ halt(typeError("call", 1, true and (false and 1), 0)) })
+                "call"(true and "X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
+                "call"(true and (false and 1)).hasSolutions({ halt(typeError("call", 1, true and (false and 1))) })
             )
         }
     }
@@ -233,9 +233,11 @@ object PrologStandardExampleTheories {
                 "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
-                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
+                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions(
+                    { halt(systemError("f"("X", "X"))) }
+                ),
                 "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError("throw", 1, intOf(1), 0)) }),
-                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
+                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError(truthOf(false))) })
             )
         }
     }
@@ -301,7 +303,7 @@ object PrologStandardExampleTheories {
                 ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "\\+"(fail and 1).hasSolutions({ halt(typeError("call", 1, fail and 1, 0)) }),
+                "\\+"(fail and 1).hasSolutions({ halt(typeError("\\+", 1, fail and 1)) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
