@@ -246,11 +246,12 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
                             TypeError.Expected.ATOM, // it has to ATOMIC
-                            "foo"("a")
+                            "foo"("a"),
+                            index = 1
                         )
                     )
                 ),

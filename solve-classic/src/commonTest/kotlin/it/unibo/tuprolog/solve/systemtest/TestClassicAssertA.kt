@@ -11,6 +11,7 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.Ignore
 
+@Ignore
 class TestClassicAssertA : TestAssertA, SolverFactory by ClassicSolverFactory{
     private val prototype = TestAssertA.prototype(this)
 

@@ -35,7 +35,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("asserta", 1),
+                            Signature("assertz", 1),
                             underscore,
                             0
                         )
@@ -58,7 +58,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("asserta", 3),
+                            Signature("assertz", 1),
                             TypeError.Expected.CALLABLE,
                             numOf(4)
                         )
@@ -81,7 +81,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("asserta", 3),
+                            Signature("assertz", 1),
                             TypeError.Expected.CALLABLE,
                             numOf(4)
                         )

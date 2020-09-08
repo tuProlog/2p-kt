@@ -90,7 +90,6 @@ fun ClassicExecutionContext.toRequest(
         signature,
         goal.argsList,
         copy(
-            procedure = goal,
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,

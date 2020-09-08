@@ -73,7 +73,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                     query.halt(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 2),
+                            Signature("call", 1),
                             varOf("X")
                         )
                     )
@@ -95,7 +95,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 2),
+                            Signature("call", 1),
                             TypeError.Expected.CALLABLE,
                             numOf(1)
 
@@ -165,7 +165,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 2),
+                            Signature("call", 1),
                             TypeError.Expected.CALLABLE,
                             fail and 1  //solver returns 1
 
@@ -190,7 +190,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 2),
+                            Signature("call", 1),
                             TypeError.Expected.CALLABLE,
                             write(3) and 1  //solver returns 1
 
@@ -215,7 +215,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 2),
+                            Signature("call", 1),
                             TypeError.Expected.CALLABLE,
                             (1 or true) //solver returns 1
 

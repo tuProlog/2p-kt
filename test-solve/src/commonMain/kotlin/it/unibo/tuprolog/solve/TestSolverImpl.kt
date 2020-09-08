@@ -167,7 +167,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(Atomic)
                 assertHasPredicateInAPI(Callable)
                 assertHasPredicateInAPI(Compound)
-                assertHasPredicateInAPI(EnsureExecutable)
                 assertHasPredicateInAPI(FloatPrimitive)
                 assertHasPredicateInAPI(Functor)
                 assertHasPredicateInAPI(Ground)

@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.EVAL
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.INTEGER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.NUMBER
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.function.*
 
@@ -16,34 +17,36 @@ import it.unibo.tuprolog.solve.stdlib.function.*
  *
  * @author Enrico
  */
-class ArithmeticEvaluator(context: ExecutionContext) : AbstractEvaluator<Numeric>(context) {
+class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, private val index: Int?) :
+    AbstractEvaluator<E, Numeric>(request) {
+
+    constructor(request: Solve.Request<E>) : this(request, null)
 
     // this override is needed to treat "/" functor as an arithmetic one, among the others
     override fun visit(term: Indicator): Numeric = super.visitStruct(term)
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (statically) */
-    override fun Term.staticCheck(context: ExecutionContext) {
-        val signature = context.procedure?.extractSignature()
+    override fun Term.staticCheck(request: Solve.Request<E>) {
         when {
             this is Var ->
-                throw InstantiationError.forArgument(context, signature!!, this)
+                throw InstantiationError.forArgument(request.context, request.signature, this, index)
             this is Atom ->
-                throw TypeError.forArgument(context, signature!!, EVALUABLE, this)
+                throw TypeError.forArgument(request.context, request.signature, EVALUABLE, this, index)
             this is Struct && this.extractSignature() !in allowedArithmeticSignatures ->
-                throw TypeError.forArgument(context, signature!!, EVALUABLE, this)
+                throw TypeError.forArgument(request.context, request.signature, EVALUABLE, this, index)
         }
     }
 
     /** This method implements all the check required by the Prolog Standard for expressions to be considered valid (dynamically) */
-    override fun Term.dynamicCheck(enclosingTerm: Struct, context: ExecutionContext) {
+    override fun Term.dynamicCheck(enclosingTerm: Struct, request: Solve.Request<E>) {
         when {
             // the argument of an arithmetic functor is evaluated to a non-numeric value
             this !is Numeric ->
-                throw TypeError.forArgument(context, context.procedure!!.extractSignature(), NUMBER, this)
+                throw TypeError.forArgument(request.context, request.signature, NUMBER, this)
 
             // the argument of a bitwise operator is evaluated to a non-integer value
             this !is Integer && enclosingTerm.extractSignature() in bitwiseStandardOperatorsSignatures ->
-                throw TypeError.forArgument(context, context.procedure!!.extractSignature(), INTEGER, this)
+                throw TypeError.forArgument(request.context, request.signature, INTEGER, this)
         }
     }
 

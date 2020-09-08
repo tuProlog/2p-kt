@@ -27,7 +27,7 @@ object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
         }
 
     override fun ensureType(context: ExecutionContext, term: Term) {
-        val signature = context.procedure!!.extractSignature()
+        val signature = context.procedure?.extractSignature() ?: signature
         when (term) {
             is Var -> {
                 val variable = context.substitution.getOriginal(term) ?: term
@@ -35,7 +35,7 @@ object EnsureExecutable : TypeEnsurer<ExecutionContext>("ensure_executable") {
             }
             else -> {
                 term.accept(ensurerVisitor(context, signature))?.let {
-                    throw TypeError(it.message, it.cause, it.contexts, it.expectedType, term, it.extraData)
+                    throw TypeError.forGoal(context, signature, it.expectedType, term)
                 }
             }
         }

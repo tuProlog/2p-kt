@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
  * A class implementing a visitor that will evaluate expression terms according to context loaded functions
  *
  * No additional check is implemented at this level
  *
- * @param context the context in which the evaluation should happen
+ * @param request the request of the primitive in which the evaluation should happen
  *
  * @author Enrico
  */
-class ExpressionEvaluator(private val context: ExecutionContext) : AbstractEvaluator<Term>(context)
+class ExpressionEvaluator<E : ExecutionContext>(request: Solve.Request<E>) : AbstractEvaluator<E, Numeric>(request)

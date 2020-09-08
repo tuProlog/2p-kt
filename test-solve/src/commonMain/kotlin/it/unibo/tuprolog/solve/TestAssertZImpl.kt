@@ -5,18 +5,18 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
-internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestAssertZ{
+internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestAssertZ {
 
     override fun testAssertZClause() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = assertz("foo"("X") `if` "X" then call("X"))
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = assertz("foo"("X") `if` "X" then call("X"))
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -25,19 +25,20 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = assertz(`_`)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = assertz(`_`)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            InstantiationError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("assertz", 3),
-                                    varOf("_")
-                            )
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("assertz", 1),
+                            varOf("_")
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -46,20 +47,22 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = assertz(4)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = assertz(4)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("assertz", 3),
-                                    TypeError.Expected.CALLABLE,
-                                    numOf(4)
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("assertz", 1),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4),
+                            index = 0
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -68,20 +71,21 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = assertz(("foo" `if` 4))
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = assertz(("foo" `if` 4))
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.halt(
-                            TypeError.forGoal(
-                                    DummyInstances.executionContext,
-                                    Signature("assertz", 3),
-                                    TypeError.Expected.CALLABLE,
-                                    numOf(4)
-                            )
+                ktListOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("assertz", 1),
+                            TypeError.Expected.CALLABLE,
+                            numOf(4)
+                        )
                     )
-                    ),
-                    solutions
+                ),
+                solutions
             )
         }
     }
@@ -90,13 +94,14 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            var query = assertz(atom(`_`) `if` true)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            val query = assertz(atom(`_`) `if` true)
+            val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no() //TODO permission_error
-                    ),
-                    solutions
+                ktListOf(
+                    query.no() //TODO permission_error
+                ),
+                solutions
             )
         }
     }

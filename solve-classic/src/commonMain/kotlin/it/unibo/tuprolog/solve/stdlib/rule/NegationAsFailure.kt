@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
-import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 

@@ -15,7 +15,7 @@ abstract class ArithmeticRelation<E : ExecutionContext>(operator: String) : Bina
     }
 
     private fun Solve.Request<E>.evaluateAndCompute(x: Term, y: Term): Boolean =
-        computeNumeric(x.evalAsArithmeticExpression(context, 0), y.evalAsArithmeticExpression(context, 1))
+        computeNumeric(x.evalAsArithmeticExpression(this, 0), y.evalAsArithmeticExpression(this, 1))
 
     abstract fun computeNumeric(x: Numeric, y: Numeric): Boolean
 }

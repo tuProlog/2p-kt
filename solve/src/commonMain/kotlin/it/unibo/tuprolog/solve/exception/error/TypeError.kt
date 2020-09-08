@@ -57,14 +57,16 @@ class TypeError(
             expectedType: Expected,
             actualValue: Term,
             index: Int? = null
-        ) = TypeError(
-            message = "Argument ${index
-                ?: ""} of `${procedure.toIndicator()}` should be a list of `$expectedType`, but `$actualValue` has been provided instead",
-            context = context,
-            expectedType = expectedType,
-            actualValue = actualValue,
-            extraData = actualValue
-        )
+        ) =
+            message("Argument ${index ?: ""} of `${procedure.toIndicator()}` should be a list of `$expectedType`, but `$actualValue` has been provided instead") { m, extra ->
+                TypeError(
+                    message = m,
+                    context = context,
+                    expectedType = expectedType,
+                    actualValue = actualValue,
+                    extraData = extra
+                )
+            }
 
         fun forArgument(
             context: ExecutionContext,
@@ -72,33 +74,36 @@ class TypeError(
             expectedType: Expected,
             actualValue: Term,
             index: Int? = null
-        ) = TypeError(
-            message = "Argument ${index
-                ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead",
-            context = context,
-            expectedType = expectedType,
-            actualValue = actualValue,
-            extraData = actualValue
-        )
+        ) =
+            message("Argument ${index ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead") { m, extra ->
+                TypeError(
+                    message = m,
+                    context = context,
+                    expectedType = expectedType,
+                    actualValue = actualValue,
+                    extraData = extra
+                )
+            }
 
         fun forGoal(
             context: ExecutionContext,
             procedure: Signature,
             expectedType: Expected,
             actualValue: Term
-        ) = "Subgoal `$actualValue` of ${procedure.toIndicator()} is not a $expectedType term".let {
+        ) = message("Subgoal `$actualValue` of ${procedure.toIndicator()} is not a $expectedType term") { m, extra ->
             TypeError(
-                message = it,
+                message = m,
                 context = context,
                 expectedType = expectedType,
                 actualValue = actualValue,
-                extraData = Atom.of(it)
+                extraData = extra
             )
         }
 
         /** The type error Struct functor */
         const val typeFunctor = "type_error"
     }
+
 
     /**
      * A class describing the expected type whose absence caused the error
@@ -107,7 +112,7 @@ class TypeError(
      *
      * @author Enrico
      */
-    data class Expected private constructor(private val type: String) : ToTermConvertible {
+    data class Expected constructor(private val type: String) : ToTermConvertible {
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)
@@ -150,6 +155,4 @@ class TypeError(
             }
         }
     }
-
-
 }

@@ -101,10 +101,11 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
-                            varOf("X")
+                            varOf("Goal"),
+                            index = 1
                         )
                     )
                 ),
@@ -123,11 +124,12 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
                             TypeError.Expected.CALLABLE,
-                            numOf(4)
+                            numOf(4),
+                            index = 1
                         )
                     )
                 ),
@@ -146,7 +148,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
                             TypeError.Expected.CALLABLE,

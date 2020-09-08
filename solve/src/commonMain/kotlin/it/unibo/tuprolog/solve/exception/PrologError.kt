@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.exception
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -53,6 +54,10 @@ abstract class PrologError(
     override fun toString(): String = errorStruct.toString()
 
     companion object {
+
+        @JvmStatic
+        protected inline fun <E : PrologError> message(message: String, f: (String, Atom) -> E): E =
+            f(message, Atom.of(message))
 
         /**
          * Factory method for [PrologError]s

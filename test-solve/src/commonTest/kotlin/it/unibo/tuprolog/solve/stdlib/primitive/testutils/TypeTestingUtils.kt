@@ -109,18 +109,18 @@ object TypeTestingUtils {
         typeTest(Compound.functor) { it is Struct && it.arity > 0 }
     }
 
-    @Suppress("IMPLICIT_CAST_TO_ANY")
-    val ensureExecutableQueryToResult by lazy {
-        typeTest(EnsureExecutable.functor) {
-            isExecutable(it)
-        }.mapValues { (request, result) ->
-            when {
-                request.arguments[0] is Var -> InstantiationError::class
-                result -> result
-                else -> TypeError::class
-            }
-        }
-    }
+//    @Suppress("IMPLICIT_CAST_TO_ANY")
+//    val ensureExecutableQueryToResult by lazy {
+//        typeTest(EnsureExecutable.functor) {
+//            isExecutable(it)
+//        }.mapValues { (request, result) ->
+//            when {
+//                request.arguments[0] is Var -> InstantiationError::class
+//                result -> result
+//                else -> TypeError::class
+//            }
+//        }
+//    }
 
     val floatQueryToResult by lazy {
         typeTest(FloatPrimitive.functor) { it is Real }
