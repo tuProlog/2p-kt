@@ -28,6 +28,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         Atomic,
         Between,
         Callable,
+        Clause,
         Compound,
         CurrentOp,
         EnsureExecutable,
