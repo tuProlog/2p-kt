@@ -11,18 +11,17 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 import kotlin.test.Ignore
 
+@Ignore
 class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory{
 
     private val prototype = TestAssertA.prototype(this)
 
     @Test
-    @Ignore
     override fun testAssertAClause() {
         prototype.testAssertAClause()
     }
 
     @Test
-    @Ignore
     override fun testAssertAAny() {
         prototype.testAssertAAny()
     }
@@ -33,13 +32,11 @@ class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory{
     }
 
     @Test
-    @Ignore
     override fun testAssertAFooNumber() {
         prototype.testAssertAFooNumber()
     }
 
     @Test
-    @Ignore
     override fun testAssertAAtomTrue() {
         prototype.testAssertAAtomTrue()
     }

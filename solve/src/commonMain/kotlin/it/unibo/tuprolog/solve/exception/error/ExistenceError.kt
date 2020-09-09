@@ -49,13 +49,15 @@ class ExistenceError(
         fun forProcedure(
             context: ExecutionContext,
             procedure: Signature
-        ) = "Procedure `${procedure.toIndicator()}` does not exist".let {
+        ) = message(
+            "Procedure `${procedure.pretty()}` does not exist"
+        ) { m, extra ->
             ExistenceError(
-                message = it,
+                message = m,
                 context = context,
                 expectedType = ObjectType.PROCEDURE,
-                actualValue = procedure.toIndicator()!!,
-                extraData = Atom.of(it)
+                actualValue = procedure.toIndicator(),
+                extraData = extra
             )
         }
 
@@ -67,13 +69,15 @@ class ExistenceError(
         fun forStream(
             context: ExecutionContext,
             alias: String
-        ) = "There exists no stream whose alias is `${alias}`".let {
+        ) = message(
+            "There exists no stream whose alias is `${alias}`"
+        ) { m, extra ->
             ExistenceError(
-                message = it,
+                message = m,
                 context = context,
                 expectedType = ObjectType.STREAM,
                 actualValue = Atom.of(alias),
-                extraData = Atom.of(it)
+                extraData = extra
             )
         }
 
@@ -86,7 +90,11 @@ class ExistenceError(
      *
      * @param type the type expected string description
      */
-    class ObjectType private constructor(private val type: String) : ToTermConvertible {
+    enum class ObjectType constructor(private val type: String) : ToTermConvertible {
+
+        PROCEDURE("procedure"),
+        SOURCE_SINK("source_sink"),
+        STREAM("stream");
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)
@@ -95,25 +103,8 @@ class ExistenceError(
 
         companion object {
 
-            /** Predefined expected types [Atom] values */
-            private val predefinedExpectedTypes by lazy {
-                listOf(
-                    "procedure", "source_sink", "stream"
-                )
-            }
-
-            /** Predefined expected instances */
-            private val predefinedNameToInstance by lazy {
-                predefinedExpectedTypes.map { it to ObjectType(it) }.toMap()
-            }
-
-            val PROCEDURE by lazy { predefinedNameToInstance.getValue("procedure") }
-            val SOURCE_SINK by lazy { predefinedNameToInstance.getValue("source_sink") }
-            val STREAM by lazy { predefinedNameToInstance.getValue("stream") }
-
             /** Returns the [ObjectType] instance described by [type]; creates a new instance only if [type] was not predefined */
-            fun of(type: String): ObjectType = predefinedNameToInstance[type.toLowerCase()]
-                ?: ObjectType(type)
+            fun of(type: String): ObjectType = valueOf(type)
 
             /** Gets [ObjectType] instance from [term] representation, if possible */
             fun fromTerm(term: Term): ObjectType? = when (term) {

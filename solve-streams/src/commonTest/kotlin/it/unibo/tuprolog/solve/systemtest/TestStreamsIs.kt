@@ -26,11 +26,13 @@ class TestStreamsIs : TestIs, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testIsNNumber() {
         prototype.testIsNNumber()
     }
 
     @Test
+    @Ignore
     override fun testIsNumberFoo() {
         prototype.testIsNumberFoo()
     }

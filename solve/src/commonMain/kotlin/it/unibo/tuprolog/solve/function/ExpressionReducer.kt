@@ -8,17 +8,14 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
- * Evaluates a [Term] as an expression, w.r.t. the loaded functions provided through [request].
- * Throws a [TypeError] in case a non-evaluable sub-term is met.
+ * Reduces a [Term] as an expression by evaluating all the evaluable sub-terms it contains
+ * w.r.t. the loaded functions provided through [request].
+ * If the input expression is non-evaluable, it remains unaffected and no error is thrown
  *
  * @param request the request of the primitive in which the evaluation should happen
  * @param index the index of the argument being evalued in the aforementioned primitive
  */
-class ExpressionEvaluator<E : ExecutionContext>(
+class ExpressionReducer<E : ExecutionContext>(
     request: Solve.Request<E>,
     index: Int? = null
-) : AbstractEvaluator<E, Term>(request, index) {
-
-    override fun unevaluable(struct: Struct): Term =
-        throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
-}
+) : AbstractEvaluator<E, Term>(request, index)

@@ -14,7 +14,7 @@ import kotlin.test.assertFailsWith
  */
 internal class ArithmeticEvaluatorTest {
 
-    private val arithmeticEvaluator = ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsContext)
+    private val arithmeticEvaluator = ArithmeticEvaluator(ArithmeticEvaluatorUtils.commonFunctionsRequest)
 
     @Test
     fun throwsExpectedErrors() {

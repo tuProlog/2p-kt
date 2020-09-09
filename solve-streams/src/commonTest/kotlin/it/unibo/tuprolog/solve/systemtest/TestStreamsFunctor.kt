@@ -65,26 +65,31 @@ class TestStreamsFunctor : TestFunctor, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testFunXYWrongArity() {
         prototype.testFunXYWrongArity()
     }
 
     @Test
+    @Ignore
     override fun testFunXNArity() {
         prototype.testFunXNArity()
     }
 
     @Test
+    @Ignore
     override fun testFunXAArity() {
         prototype.testFunXAArity()
     }
 
     @Test
+    @Ignore
     override fun testFunNumName() {
         prototype.testFunNumName()
     }
 
     @Test
+    @Ignore
     override fun testFunFooName() {
         prototype.testFunFooName()
     }

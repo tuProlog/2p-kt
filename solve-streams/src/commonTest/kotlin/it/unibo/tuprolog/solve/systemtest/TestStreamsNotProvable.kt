@@ -31,11 +31,13 @@ class TestStreamsNotProvable : TestNotProvable, SolverFactory by StreamsSolverFa
     }
 
     @Test
+    @Ignore
     override fun testNPNum() {
         prototype.testNPNum()
     }
 
     @Test
+    @Ignore
     override fun testNPX() {
         prototype.testNPX()
     }

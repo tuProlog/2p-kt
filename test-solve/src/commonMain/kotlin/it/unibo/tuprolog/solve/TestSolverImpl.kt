@@ -40,7 +40,6 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktracki
 import it.unibo.tuprolog.solve.TestingClauseTheories.haltTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.infiniteComputationTheoryNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheory
@@ -340,10 +339,11 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("findall", 3),
-                            varOf("G")
+                            varOf("G"),
+                            index = 1
                         )
                     )
                 ),
@@ -703,35 +703,37 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     override fun testNotModularity() {
         prolog {
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
-                listOfGoalToSolutions
-                    .flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
-                            naf(goal).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions(
-                                        { no() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions(
-                                        { yes() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
-                            },
-                            naf(naf(goal)).run {
-                                when {
-                                    expectedSolutions.first() is Solution.Yes -> hasSolutions(
-                                        { yes() })
-                                    expectedSolutions.first() is Solution.No -> hasSolutions(
-                                        { no() })
-                                    else -> to(expectedSolutions.changeQueriesTo(this))
-                                }
+                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                    ktListOf(
+                        naf(goal).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
                             }
-                        )
-                    }
-                    .flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
-                            goal to expectedSolutions,
-                            goal.replaceAllFunctors("\\+", "not")
-                                .let { it to expectedSolutions.changeQueriesTo(it) }
-                        )
+                        },
+                        not(goal).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        naf(naf(goal)).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        },
+                        not(not(goal)).run {
+                            when {
+                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                else -> to(expectedSolutions.changeQueriesTo(this))
+                            }
+                        }
+                    )
                     }
             }.forEach { (database, goalToSolutions) ->
                 assertSolverSolutionsCorrect(

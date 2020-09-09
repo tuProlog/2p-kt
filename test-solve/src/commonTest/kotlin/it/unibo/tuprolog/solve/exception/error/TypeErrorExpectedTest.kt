@@ -29,10 +29,14 @@ internal class TypeErrorExpectedTest {
     }
 
     @Test
-    fun typeErrorExpectedOfReturnsNewInstanceIfNameUnknown() {
-        TypeErrorExpectedUtils.nonPredefinedToInstances.forEach { (name, instance) ->
-            assertNotSame(instance, TypeError.Expected.of(name))
-            assertNotSame(instance, TypeError.Expected.of(name.toUpperCase()))
+    fun typeErrorExpectedOfThrowsExceptionIfNameIsUnknown() {
+        try {
+            TypeError.Expected.of("dummy")
+            fail()
+        } catch (e: IllegalArgumentException) {
+            // ok
+        } catch (e: IllegalStateException) {
+            // ok
         }
     }
 
@@ -52,12 +56,22 @@ internal class TypeErrorExpectedTest {
 
     @Test
     fun typeErrorExpectedFromTermWorkForCorrectTerms() {
-        assertNotSame(TypeError.Expected.fromTerm(Atom.of("ciao")), TypeError.Expected.fromTerm(Atom.of("ciao")))
+        for (e in TypeError.Expected.values()) {
+            assertEquals(e, TypeError.Expected.fromTerm(e.toTerm()))
+        }
     }
 
     @Test
     fun typeErrorExpectedEnumFromTermComplainsForIncorrectTerms() {
         assertNull(TypeError.Expected.fromTerm(Struct.of("callable", Var.anonymous())))
         assertNull(TypeError.Expected.fromTerm(Var.of("CALLABLE")))
+        try {
+            TypeError.Expected.fromTerm(Atom.of("ciao"))
+            fail()
+        } catch (e: IllegalArgumentException) {
+            // ok
+        } catch (e: IllegalStateException) {
+            // ok
+        }
     }
 }

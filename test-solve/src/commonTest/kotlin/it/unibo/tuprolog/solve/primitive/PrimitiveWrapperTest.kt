@@ -63,7 +63,7 @@ internal class PrimitiveWrapperTest {
         nonAllGroundRequests.forEach { request ->
             assertOverFailure<InstantiationError>({ request.ensuringAllArgumentsAreInstantiated() }) { error ->
                 assertSame(request.context, error.context)
-                assertSame(request.arguments.first { !it.isGround }, error.extraData)
+//                assertSame(request.arguments.first { !it.isGround }, error.extraData)
             }
         }
     }

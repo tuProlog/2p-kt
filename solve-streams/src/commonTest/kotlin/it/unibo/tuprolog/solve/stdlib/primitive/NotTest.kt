@@ -5,6 +5,7 @@ import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
 import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
@@ -49,6 +50,7 @@ internal class NotTest {
     }
 
     @Test
+    @Ignore
     fun notReturnsAsIsAnHaltSolution() {
         val query = prolog { "\\+"(1) }
         val solutions = Not.wrappedImplementation(

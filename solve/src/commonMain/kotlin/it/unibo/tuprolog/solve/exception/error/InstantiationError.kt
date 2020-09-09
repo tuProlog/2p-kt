@@ -21,7 +21,7 @@ class InstantiationError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val culprit: Var,
+    val culprit: Var = Var.anonymous(),
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -29,7 +29,7 @@ class InstantiationError(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        culprit: Var,
+        culprit: Var = Var.anonymous(),
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), culprit, extraData)
 
@@ -38,28 +38,34 @@ class InstantiationError(
 
     override fun pushContext(newContext: ExecutionContext): InstantiationError =
         InstantiationError(message, cause, contexts.addLast(newContext), culprit, extraData)
+
     companion object {
 
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
 
         fun forArgument(context: ExecutionContext, procedure: Signature, variable: Var, index: Int? = null) =
-            "Argument ${index ?: ""} `${variable}` of ${procedure.toIndicator()} is unexpectedly not instantiated".let {
+            message(
+                "${index?.let { "The $it-th argument" } ?: "The argument"} `${variable.pretty()}` " +
+                        "of ${procedure.pretty()} is unexpectedly not instantiated"
+            ) { m, extra ->
                 InstantiationError(
-                    message = it,
+                    message = m,
                     context = context,
                     culprit = variable,
-                    extraData = Atom.of(it)
+                    extraData = extra
                 )
             }
 
         fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
-            "Uninstantiated subgoal $variable in procedure ${procedure.toIndicator()}".let {
+            message(
+                "Uninstantiated subgoal ${variable.pretty()} in procedure ${procedure.pretty()}"
+            ) { m, extra ->
                 InstantiationError(
-                    message = it,
+                    message = m,
                     context = context,
                     culprit = variable,
-                    extraData = Atom.of(it)
+                    extraData = extra
                 )
             }
 

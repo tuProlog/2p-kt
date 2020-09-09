@@ -30,11 +30,13 @@ class TestStreamsOnce : TestOnce, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testOnceNum() {
         prototype.testOnceNum()
     }
 
     @Test
+    @Ignore
     override fun testOnceX() {
         prototype.testOnceX()
     }

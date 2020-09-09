@@ -57,16 +57,19 @@ class TypeError(
             expectedType: Expected,
             actualValue: Term,
             index: Int? = null
-        ) =
-            message("Argument ${index ?: ""} of `${procedure.toIndicator()}` should be a list of `$expectedType`, but `$actualValue` has been provided instead") { m, extra ->
-                TypeError(
-                    message = m,
-                    context = context,
-                    expectedType = expectedType,
-                    actualValue = actualValue,
-                    extraData = extra
-                )
-            }
+        ) = message(
+            (index?.let { "The $it-th argument" } ?: "An argument") +
+                    " of `${procedure.pretty()}` should be a list of `$expectedType`, " +
+                    "but `${actualValue.pretty()}` has been provided instead"
+        ) { m, extra ->
+            TypeError(
+                message = m,
+                context = context,
+                expectedType = expectedType,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
 
         fun forArgument(
             context: ExecutionContext,
@@ -75,7 +78,11 @@ class TypeError(
             actualValue: Term,
             index: Int? = null
         ) =
-            message("Argument ${index ?: ""} of `${procedure.toIndicator()}` should be a `$expectedType`, but `$actualValue` has been provided instead") { m, extra ->
+            message(
+                (index?.let { "The $it-th argument" } ?: "An argument") +
+                        " of `${procedure.pretty()}` should be a `$expectedType`, " +
+                        "but `${actualValue.pretty()}` has been provided instead"
+            ) { m, extra ->
                 TypeError(
                     message = m,
                     context = context,
@@ -90,7 +97,9 @@ class TypeError(
             procedure: Signature,
             expectedType: Expected,
             actualValue: Term
-        ) = message("Subgoal `$actualValue` of ${procedure.toIndicator()} is not a $expectedType term") { m, extra ->
+        ) = message(
+            "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not a $expectedType term"
+        ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
@@ -112,7 +121,16 @@ class TypeError(
      *
      * @author Enrico
      */
-    data class Expected constructor(private val type: String) : ToTermConvertible {
+    enum class Expected constructor(private val type: String) : ToTermConvertible {
+        CALLABLE("callable"),
+        ATOM("atom"),
+        INTEGER("integer"),
+        NUMBER("number"),
+        PREDICATE_INDICATOR("predicate_indicator"),
+        COMPOUND("compound"),
+        LIST("list"),
+        CHARACTER("character"),
+        EVALUABLE("evaluable");
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)
@@ -120,33 +138,8 @@ class TypeError(
         override fun toString(): String = type
 
         companion object {
-
-            /** Predefined expected types Atom values */
-            private val predefinedExpectedTypes by lazy {
-                listOf(
-                    "callable", "atom", "integer", "number", "predicate_indicator", "compound",
-                    "list", "character", "evaluable"
-                )
-                // these are only some of the commonly used types... when implementing more built-ins types can be added
-                // maybe in future "type" information, as it is described in PrologStandard, could be moved in a standalone "enum class" and used here
-            }
-
-            /** Predefined expected instances */
-            private val predefinedNameToInstance by lazy { predefinedExpectedTypes.map { it to Expected(it) }.toMap() }
-
-            val CALLABLE by lazy { predefinedNameToInstance.getValue("callable") }
-            val ATOM by lazy { predefinedNameToInstance.getValue("atom") }
-            val INTEGER by lazy { predefinedNameToInstance.getValue("integer") }
-            val NUMBER by lazy { predefinedNameToInstance.getValue("number") }
-            val PREDICATE_INDICATOR by lazy { predefinedNameToInstance.getValue("predicate_indicator") }
-            val COMPOUND by lazy { predefinedNameToInstance.getValue("compound") }
-            val LIST by lazy { predefinedNameToInstance.getValue("list") }
-            val CHARACTER by lazy { predefinedNameToInstance.getValue("character") }
-            val EVALUABLE by lazy { predefinedNameToInstance.getValue("evaluable") }
-
             /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
-            fun of(type: String): Expected = predefinedNameToInstance[type.toLowerCase()]
-                ?: Expected(type)
+            fun of(type: String): Expected = valueOf(type.toUpperCase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
             fun fromTerm(term: Term): Expected? = when (term) {

@@ -171,7 +171,7 @@ internal class SignatureTest {
 
     @Test
     fun toIndicatorComplainsOnVarargSignatures() {
-        assertNull(varargSignature.toIndicator())
+        assertFailsWith<NotImplementedError> { varargSignature.toIndicator() }
     }
 
     @Test

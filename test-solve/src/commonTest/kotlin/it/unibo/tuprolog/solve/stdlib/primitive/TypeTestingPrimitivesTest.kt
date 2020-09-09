@@ -69,10 +69,10 @@ internal class TypeTestingPrimitivesTest {
         assertTypeTestingWorks(VarPrimitive, varQueryToResult)
     }
 
-//    @Test
-//    fun ensureExecutableTypeTestingWorksCorrectly() {
-//        assertTypeTestingWorks(EnsureExecutable, ensureExecutableQueryToResult)
-//    }
+    @Test
+    fun ensureExecutableTypeTestingWorksCorrectly() {
+        assertTypeTestingWorks(EnsureExecutable, ensureExecutableQueryToResult)
+    }
 
     @Test
     fun atomicTypeTestingWorksCorrectly() {

@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  *
  * @author Enrico
  */
-class SystemError(
+class SystemError constructor(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
@@ -40,14 +40,12 @@ class SystemError(
         /** The system error Struct functor */
         const val typeFunctor = "system_error"
 
-        // TODO: 16/01/2020 test factories
-
         fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =
-            "Uncaught exception `$exception`".let {
+            message("Uncaught exception `${exception.pretty()}`") { m, extra ->
                 SystemError(
-                    message = it,
+                    message = m,
                     context = context,
-                    extraData = Atom.of(it)
+                    extraData = extra
                 )
             }
 

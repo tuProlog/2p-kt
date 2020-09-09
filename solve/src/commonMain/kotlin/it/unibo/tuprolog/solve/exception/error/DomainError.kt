@@ -54,9 +54,9 @@ class DomainError(
             actualValue: Term,
             index: Int? = null
         ): DomainError = message(
-            "Argument ${index?.toString()?.plus(" ") ?: ""}" +
-                    "of `${procedure.toIndicator()}` should be `$expectedDomain`, " +
-                    "but `$actualValue` has been provided instead"
+            (index?.let { "The $it-th argument" } ?: "An argument") +
+                    "of `${procedure.pretty()}` should be `$expectedDomain`, " +
+                    "but `${actualValue.pretty()}` has been provided instead"
         ) { m, extra ->
             DomainError(
                 message = m,
@@ -73,7 +73,7 @@ class DomainError(
             expectedDomain: Expected,
             actualValue: Term
         ): DomainError = message(
-            "Subgoal `$actualValue` of ${procedure.toIndicator()} is not $expectedDomain term"
+            "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not $expectedDomain term"
         ) { m, extra ->
             DomainError(
                 message = m,

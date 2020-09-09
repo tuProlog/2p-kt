@@ -4,18 +4,21 @@ import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.EVALUABLE
-import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.INTEGER
-import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.Companion.NUMBER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.NUMBER
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.solve.stdlib.function.*
 
 /**
- * Prolog Arithmetic Expression evaluator implementation
+ * Evaluates an expression as a [Numeric] term.
+ * Throws a [TypeError] in case a non-evaluable sub-term is met.
+ * Throws a [TypeError] in case the evaluation produces a non-numeric term.
  *
- * @author Enrico
+ * @param request the request of the primitive in which the evaluation should happen
+ * @param index the index of the argument being evalued in the aforementioned primitive
  */
 class ArithmeticEvaluator<E : ExecutionContext>(request: Solve.Request<E>, index: Int?) :
     AbstractEvaluator<E, Numeric>(request, index) {

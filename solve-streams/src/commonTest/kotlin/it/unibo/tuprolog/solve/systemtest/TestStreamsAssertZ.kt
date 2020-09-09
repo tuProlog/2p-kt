@@ -27,6 +27,7 @@ class TestStreamsAssertZ : TestAssertZ, SolverFactory by StreamsSolverFactory{
     }
 
     @Test
+    @Ignore
     override fun testAssertZNumber() {
         prototype.testAssertZNumber()
     }

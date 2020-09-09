@@ -2,7 +2,6 @@ package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
-import kotlin.coroutines.Continuation
 import kotlin.js.JsName
 
 @Suppress("PropertyName", "unused", "FunctionName")
@@ -20,9 +19,9 @@ interface PrologStdLibScope : PrologAwareScope {
     val repeat: Atom
         get() = atomOf("repeat")
 
-//    @JsName("cut")
-//    val `!`: Atom
-//        get() = atomOf("!")
+    @JsName("cut")
+    val cut: Atom
+        get() = atomOf("!")
 
     fun at_end_of_stream(alias: Any): Struct =
         structOf("at_end_of_stream", alias.toTerm())
@@ -32,6 +31,9 @@ interface PrologStdLibScope : PrologAwareScope {
 
     fun `catch`(goal: Any, error: Any, continuation: Any): Struct =
         structOf("catch", goal.toTerm(), error.toTerm(), continuation.toTerm())
+
+    fun `throw`(error: Any): Struct =
+        structOf("throw", error.toTerm())
 
     fun not(goal: Any): Struct =
         structOf("not", goal.toTerm())
@@ -158,6 +160,9 @@ interface PrologStdLibScope : PrologAwareScope {
 
     fun atom_length(atom: Any, length: Any): Struct =
         structOf("atom_length", atom.toTerm(), length.toTerm())
+
+    fun char_code(char: Any, code: Any): Struct =
+        structOf("char_code", char.toTerm(), code.toTerm())
 
 //    bagof/3
 //    char_code/2

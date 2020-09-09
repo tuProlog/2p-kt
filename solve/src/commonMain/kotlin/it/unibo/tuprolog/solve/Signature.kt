@@ -28,11 +28,11 @@ data class Signature(
             else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
         }
 
-    /** Converts this Signature to [Indicator], if possible without loosing information, otherwise returns `null` */
+    /** Converts this Signature to [Indicator], if possible without loosing information, otherwise throws an exception */
     @JsName("toIndicator")
-    fun toIndicator(): Indicator? =
+    fun toIndicator(): Indicator =
         when {
-            this.vararg -> null
+            this.vararg -> TODO("Implement conversion to indicator in case of vararg signature")
             else -> Indicator.of(this.name, this.arity)
         }
 

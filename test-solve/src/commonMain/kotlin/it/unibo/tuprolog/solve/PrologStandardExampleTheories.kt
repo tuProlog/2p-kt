@@ -236,7 +236,7 @@ object PrologStandardExampleTheories {
                 "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions(
                     { halt(systemError("f"("X", "X"))) }
                 ),
-                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError("throw", 1, intOf(1), 0)) }),
+                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError(";", 2, intOf(1))) }),
                 "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError(truthOf(false))) })
             )
         }
@@ -313,13 +313,15 @@ object PrologStandardExampleTheories {
                 "test_Prolog_unifiable"("X", "f"("X")).hasSolutions({ no() }),
 
                 atomOf("p1").hasSolutions({ no() }),
-                atomOf("p2").hasSolutions({ yes() })
-            ).flatMap { (goal, solutions) ->
-                ktListOf(
-                    goal to solutions,
-                    goal.replaceAllFunctors("\\+", "not").let { it to solutions.changeQueriesTo(it) }
-                )
-            }
+                atomOf("p2").hasSolutions({ yes() }),
+
+                (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
+                "not"(fail).hasSolutions({ yes() }),
+                ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
+                ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
+                (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
+                "not"(fail and 1).hasSolutions({ halt(typeError("not", 1, fail and 1)) }),
+            )
         }
     }
 

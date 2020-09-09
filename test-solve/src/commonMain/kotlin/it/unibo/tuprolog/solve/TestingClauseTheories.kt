@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.core.List as LogicList
 import kotlin.collections.listOf as ktListOf
 
 /**
@@ -398,13 +397,13 @@ object TestingClauseTheories {
     val callTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                "call"(true).hasSolutions({ yes() }),
-                "call"(false).hasSolutions({ no() }),
-                "call"("halt").hasSolutions({ halt(haltException) }),
-                "call"("true" and "true").hasSolutions({ yes() }),
-                "call"("!").hasSolutions({ yes() }),
-                "call"("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
-                "call"("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1))) })
+                call(true).hasSolutions({ yes() }),
+                call(false).hasSolutions({ no() }),
+                call(halt).hasSolutions({ halt(haltException) }),
+                call("true" and "true").hasSolutions({ yes() }),
+                call(`cut`).hasSolutions({ yes() }),
+                call("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
+                call("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1))) })
             )
         }
     }
@@ -424,14 +423,14 @@ object TestingClauseTheories {
     val catchTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                "catch"(true, `_`, false).hasSolutions({ yes() }),
-                "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
+                catch(true, `_`, false).hasSolutions({ yes() }),
+                catch(catch(`throw`("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
-                "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
+                catch(`throw`("first"), "X", `throw`("second")).hasSolutions(
                     { halt(systemError(atomOf("second"))) }
                 ),
-                "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
-                "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
+                catch(`throw`("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
+                catch(`throw`("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
             )
         }
     }
@@ -449,9 +448,11 @@ object TestingClauseTheories {
     val haltTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                atomOf("halt").hasSolutions({ halt(haltException) }),
-                "catch"("halt", `_`, true).hasSolutions({ halt(haltException) }),
-                "catch"("catch"("throw"("something"), `_`, "halt"), `_`, true).hasSolutions({ halt(haltException) })
+                halt.hasSolutions({ halt(haltException) }),
+                catch(halt, `_`, true).hasSolutions({ halt(haltException) }),
+                catch(catch(`throw`("something"), `_`, halt), `_`, true).hasSolutions(
+                    { halt(haltException) }
+                )
             )
         }
     }

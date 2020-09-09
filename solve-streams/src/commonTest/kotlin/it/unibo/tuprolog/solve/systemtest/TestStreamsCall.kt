@@ -30,36 +30,43 @@ class TestClassicCall : TestCall, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testCallWriteX() {
         prototype.testCallWriteX()
     }
 
     @Test
+    @Ignore
     override fun testCallWriteCall() {
         prototype.testCallWriteCall()
     }
 
     @Test
+    @Ignore
     override fun testCallX() {
         prototype.testCallX()
     }
 
     @Test
+    @Ignore
     override fun testCallOne() {
         prototype.testCallOne()
     }
 
     @Test
+    @Ignore
     override fun testCallFailOne() {
         prototype.testCallFailOne()
     }
 
     @Test
+    @Ignore
     override fun testCallWriteOne() {
         prototype.testCallWriteOne()
     }
 
     @Test
+    @Ignore
     override fun testCallTrue() {
         prototype.testCallTrue()
     }

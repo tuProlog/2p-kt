@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.CatchUtils
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
@@ -9,6 +10,7 @@ import kotlin.test.Test
  *
  * @author Enrico
  */
+@Ignore
 internal class CatchTest {
 
     @Test

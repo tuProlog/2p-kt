@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.*
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
 import kotlin.js.JsName
@@ -55,9 +53,14 @@ abstract class PrologError(
 
     companion object {
 
-        @JvmStatic
-        protected inline fun <E : PrologError> message(message: String, f: (String, Atom) -> E): E =
+        internal fun <E : PrologError> message(message: String, f: (String, Atom) -> E): E =
             f(message, Atom.of(message))
+
+        internal fun Term.pretty(): String =
+            format(TermFormatter.prettyVariables())
+
+        internal fun Signature.pretty(): String =
+            TermFormatter.prettyVariables().format(toIndicator())
 
         /**
          * Factory method for [PrologError]s

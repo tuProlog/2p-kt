@@ -35,12 +35,7 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                             errorCause != null -> throw errorCause
 
                             // if current unhandled exception is some other error, launch it as message
-                            else -> throw SystemError(
-                                "Exception thrown, but no compatible catch/3 found",
-                                errorCause,
-                                request.context,
-                                throwArgument
-                            )
+                            else -> throw SystemError.forUncaughtException(request.context, throwArgument)
                         }
                     }
 

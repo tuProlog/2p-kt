@@ -38,7 +38,7 @@ interface Library {
     @JsName("containsSignature")
     operator fun contains(signature: Signature): Boolean =
         primitives.containsKey(signature) ||
-                signature.toIndicator()?.let { theory.contains(it) } ?: false
+                signature.toIndicator().let { theory.contains(it) }
 
     /** Checks whether this library contains the definition of provided operator */
     @JsName("containsOperator")

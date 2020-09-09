@@ -12,10 +12,7 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Test class for [LibraryImpl] and [Library]
@@ -76,7 +73,13 @@ internal class LibraryImplTest {
             LibraryImpl(OperatorSet(), Theory.indexedOf(Fact.of(Struct.of("f", Atom.of("a")))), emptyMap(), emptyMap())
 
         assertTrue { Signature("f", 1, false) in library }
-        assertFalse { Signature("f", 1, true) in library }
+
+        try {
+            assertFalse { Signature("f", 1, true) in library }
+            fail()
+        } catch (e: NotImplementedError) {
+            // ok
+        }
     }
 
     @Test

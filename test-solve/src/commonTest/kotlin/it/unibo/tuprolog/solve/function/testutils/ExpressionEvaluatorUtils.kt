@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
  * Utils singleton to help testing [ExpressionEvaluator]
@@ -22,6 +23,12 @@ internal object ExpressionEvaluatorUtils {
     internal val noFunctionsContext = object : ExecutionContext by DummyInstances.executionContext {
         override val libraries: Libraries = Libraries()
     }
+
+    internal val noFunctionRequest = Solve.Request(
+        signature = Signature("dummy", 0),
+        arguments = emptyList(),
+        context = noFunctionsContext
+    )
 
     /** Test data is in the form (input, transforming function, expected output) */
     internal val inputFunctionOutputTriple by lazy {
@@ -38,7 +45,15 @@ internal object ExpressionEvaluatorUtils {
             ),
             Triple(
                 Struct.of("concat", Atom.of("a"), Atom.of("b")),
-                { request -> with(request) { replyWith(Atom.of(arguments.first().toString() + arguments.last().toString())) } },
+                { request ->
+                    with(request) {
+                        replyWith(
+                            Atom.of(
+                                arguments.first().toString() + arguments.last().toString()
+                            )
+                        )
+                    }
+                },
                 Atom.of("ab")
             ),
             Triple(
@@ -47,14 +62,22 @@ internal object ExpressionEvaluatorUtils {
                     Struct.of("concat", Atom.of("a"), Atom.of("b")),
                     Struct.of("concat", Atom.of("a"), Atom.of("b"))
                 ),
-                { request -> with(request) { replyWith(Atom.of(arguments.first().toString() + arguments.last().toString())) } },
+                { request ->
+                    with(request) {
+                        replyWith(
+                            Atom.of(
+                                arguments.first().toString() + arguments.last().toString()
+                            )
+                        )
+                    }
+                },
                 Atom.of("abab")
             )
         )
     }
 
     /** Creates a context with provided signature-function binding */
-    internal fun createContextWithFunctionBy(signature: Signature, function: PrologFunction): ExecutionContext =
+    private fun createContextWithFunctionBy(signature: Signature, function: PrologFunction): ExecutionContext =
         object : ExecutionContext by DummyInstances.executionContext {
             override val libraries: Libraries = Libraries(
                 Library.aliased(
@@ -63,5 +86,15 @@ internal object ExpressionEvaluatorUtils {
                 )
             )
         }
+
+    internal fun createRequestWithFunctionBy(
+        signature: Signature,
+        function: PrologFunction
+    ): Solve.Request<ExecutionContext> =
+        Solve.Request(
+            signature = Signature("dummy", 0),
+            arguments = emptyList(),
+            context = createContextWithFunctionBy(signature, function)
+        )
 
 }

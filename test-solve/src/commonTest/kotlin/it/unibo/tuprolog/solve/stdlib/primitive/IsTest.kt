@@ -33,11 +33,12 @@ internal class IsTest {
                         }
                     }
                 }
-                else ->
-                    @Suppress("UNCHECKED_CAST")
-                    (expectedResult as? KClass<out TuPrologRuntimeException>)
-                        ?.let { assertFailsWith(expectedResult) { Is.wrappedImplementation(input) } }
-                        ?: fail("Bad written test data!")
+                else -> try {
+                    Is.wrappedImplementation(input)
+                    fail("Expected: $expectedResult but no exception was thrown")
+                } catch (e: TuPrologRuntimeException) {
+                    assertEquals(expectedResult as KClass<*>, e::class)
+                }
             }
         }
     }

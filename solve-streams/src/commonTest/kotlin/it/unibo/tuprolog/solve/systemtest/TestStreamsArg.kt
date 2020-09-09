@@ -62,26 +62,31 @@ class TestStreamsArg : TestArg, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
+    @Ignore
     override fun testArgNumberFromX() {
         prototype.testArgNumberFromX()
     }
 
     @Test
+    @Ignore
     override fun testArgFromAtom() {
         prototype.testArgFromAtom()
     }
 
     @Test
+    @Ignore
     override fun testArgFromNumber() {
         prototype.testArgFromNumber()
     }
 
     @Test
+    @Ignore
     override fun testNegativeArgFromFoo() {
         prototype.testNegativeArgFromFoo()
     }
 
     @Test
+    @Ignore
     override fun testArgAFromFoo() {
         prototype.testArgAFromFoo()
     }
