@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
 
 /**
- * The domain error occurs when something has the correct type but the value is not amissible
+ * The domain error occurs when something has the correct type but the value is not admissible
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
