@@ -13,10 +13,22 @@ object Instances {
         |      ]
         |    },
         |    "body":{
-        |      "fun":"\\+",
-        |      "args":[
+        |      "tuple":[
         |        {
-        |          "var":"G"
+        |          "fun":"ensure_executable",
+        |          "args":[
+        |            {
+        |              "var":"G"
+        |            }
+        |          ]
+        |        },
+        |        {
+        |          "fun":"\\+",
+        |          "args":[
+        |            {
+        |              "var":"G"
+        |            }
+        |          ]
         |        }
         |      ]
         |    }
@@ -273,6 +285,14 @@ object Instances {
         |    "body":{
         |      "tuple":[
         |        {
+        |          "fun":"ensure_executable",
+        |          "args":[
+        |            {
+        |              "var":"G"
+        |            }
+        |          ]
+        |        },
+        |        {
         |          "fun":"call",
         |          "args":[
         |            {
@@ -294,9 +314,13 @@ object Instances {
         |    args:
         |    - var: "G"
         |  body:
-        |    fun: "\\+"
-        |    args:
-        |    - var: "G"
+        |    tuple:
+        |    - fun: "ensure_executable"
+        |      args:
+        |      - var: "G"
+        |    - fun: "\\+"
+        |      args:
+        |      - var: "G"
         |- head:
         |    fun: "->"
         |    args:
@@ -401,6 +425,9 @@ object Instances {
         |    - var: "G"
         |  body:
         |    tuple:
+        |    - fun: "ensure_executable"
+        |      args:
+        |      - var: "G"
         |    - fun: "call"
         |      args:
         |      - var: "G"

@@ -34,3 +34,17 @@ kotlin {
         }
     }
 }
+
+listOf("yaml", "json").forEach {
+    tasks.create("print${it.capitalize()}", JavaExec::class.java) {
+        group = "application"
+        dependsOn("jvmTestClasses")
+        classpath = files(
+            kotlin.jvm().compilations.getByName("test").output,
+            kotlin.jvm().compilations.getByName("test").compileDependencyFiles
+        )
+        standardInput = System.`in`
+        main = "${it.toUpperCase()}PrinterKt"
+    }
+}
+
