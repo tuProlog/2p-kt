@@ -33,6 +33,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         Compound,
         CopyTerm,
         CurrentOp,
+        CurrentPrologFlag,
         EnsureExecutable,
         FindAll,
         FloatPrimitive,

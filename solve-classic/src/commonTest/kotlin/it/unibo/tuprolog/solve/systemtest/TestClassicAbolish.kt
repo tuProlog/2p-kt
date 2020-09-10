@@ -25,7 +25,6 @@ class TestClassicAbolish : TestAbolish, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testAbolishFlag() {
         prototype.testAbolishFlag()
     }
