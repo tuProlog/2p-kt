@@ -60,7 +60,7 @@ abstract class PrologError(
             format(TermFormatter.prettyVariables())
 
         internal fun Signature.pretty(): String =
-            TermFormatter.prettyVariables().format(toIndicator())
+            toIndicator().toString()
 
         /**
          * Factory method for [PrologError]s
