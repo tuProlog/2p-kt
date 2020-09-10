@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Operation.MODIFY
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
@@ -23,12 +24,12 @@ abstract class AbstractAssert(
             is Struct -> Fact.of(first)
             else -> return ensuringArgumentIsCallable(0).replyFail()
         }
-        val headSignature = clause.head?.extractSignature()
+        val headSignature: Signature? = clause.head?.extractSignature()
         if (headSignature != null) {
             if (context.libraries.hasProtected(headSignature)) {
                 throw PermissionError.of(context, signature, MODIFY, PRIVATE_PROCEDURE, headSignature.toIndicator())
             }
-            if (headSignature in context.staticKb) {
+            if (headSignature.toIndicator() in context.staticKb) {
                 throw PermissionError.of(context, signature, MODIFY, STATIC_PROCEDURE, headSignature.toIndicator())
             }
         }
