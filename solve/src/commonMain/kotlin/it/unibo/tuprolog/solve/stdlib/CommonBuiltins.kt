@@ -30,6 +30,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
         Callable,
         Clause,
         Compound,
+        CopyTerm,
         CurrentOp,
         EnsureExecutable,
         FindAll,

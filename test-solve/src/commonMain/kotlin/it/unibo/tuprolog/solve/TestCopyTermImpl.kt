@@ -7,12 +7,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("X", 3)
+            val query = copy_term(X, 3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -21,12 +21,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"(`_`, "a")
+            val query = copy_term(`_`, "a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -35,12 +35,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("a"+"X", "X"+"b")
+            val query = copy_term(atomOf("a") + X, X + "b")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes("X" to "a")),
-                    solutions
+                kotlin.collections.listOf(query.yes(X to "a")),
+                solutions
             )
         }
     }
@@ -49,12 +49,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"(`_`, `_`)
+            val query = copy_term(`_`, `_`)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -63,12 +63,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("X"+"X"+"Y", "A"+"B"+"B")
+            val query = copy_term(X + X + Y, A + B + B)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes("B" to "A")),
-                    solutions
+                kotlin.collections.listOf(query.yes(A to B)),
+                solutions
             )
         }
     }
@@ -77,12 +77,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("a", "a")
+            val query = copy_term("a", "a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -91,12 +91,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("a", "b")
+            val query = copy_term("a", "b")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -105,12 +105,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "copy_term"("f"("a"), "f"("X"))
+            val query = copy_term("f"("a"), "f"(X))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes("X" to "a")),
-                    solutions
+                kotlin.collections.listOf(query.yes(X to "a")),
+                solutions
             )
         }
     }
@@ -119,12 +119,12 @@ class TestCopyTermImpl(private val solverFactory: SolverFactory) : TestCopyTerm 
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("copy_term"("a"+"X", "X"+"b") and  "copy_term"("a"+"X", "X"+"b"))
+            val query = copy_term(atom("a") + X, X + "b") and copy_term(atom("a") + X, X + "b")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
