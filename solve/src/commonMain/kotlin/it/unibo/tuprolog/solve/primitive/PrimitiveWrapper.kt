@@ -32,17 +32,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
     companion object {
 
-        /** Private class to support the wrap methods, without using the object literal notation */
-        private class FromFunction<C : ExecutionContext>(signature: Signature, private val uncheckedPrimitive: Primitive)
-            : PrimitiveWrapper<C>(signature) {
-
-            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
-                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
-
-            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
-                uncheckedPrimitive(request)
-        }
-
         // TODO: 16/01/2020 test the three "wrap" functions
 
         /**
@@ -68,13 +57,48 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> =
             wrap(name, arity, false, primitive)
 
+        /** Private class to support the wrap methods, without using the object literal notation */
+        private class FromFunction<C : ExecutionContext>(
+            signature: Signature,
+            private val uncheckedPrimitive: Primitive
+        ) : PrimitiveWrapper<C>(signature) {
+
+            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
+                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
+
+            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
+                uncheckedPrimitive(request)
+        }
+
+        private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
+            object : TermVisitor<TypeError?> {
+                override fun defaultValue(term: Term): Nothing? = null
+
+                override fun visit(term: Struct) = when {
+                    term.functor in Clause.notableFunctors && term.arity == 2 -> {
+                        term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                    }
+                    else -> defaultValue(term)
+                }
+
+                override fun visit(term: Numeric): TypeError {
+                    return TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
+                }
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =
+            term.accept(ensurerVisitor(context, signature))
+
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
             arguments.withIndex().firstOrNull { it.value is Var }?.let {
                 ensureIsInstantiated(it.value, it.index)
             } ?: this
 
-        private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(term: Term?, index: Int): Solve.Request<C> =
+        private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(
+            term: Term?,
+            index: Int
+        ): Solve.Request<C> =
             (term as? Var)?.let {
                 throw InstantiationError.forArgument(
                     context,
@@ -84,10 +108,25 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 )
             } ?: this
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
+            ensuringArgumentIsInstantiated(index)
+            ensuringArgumentIsStruct(index)
+            val candidate = arguments[index]
+            when {
+                candidate is Clause -> {
+                    if (!candidate.isWellFormed) {
+                        throw DomainError.forArgument(context, signature, DomainError.Expected.CLAUSE, candidate, index)
+                    }
+                    return this
+                }
+                candidate is Struct && candidate.functor == Clause.FUNCTOR && candidate.arity == 2 ->
+                    throw DomainError.forArgument(context, signature, DomainError.Expected.CLAUSE, candidate, index)
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, candidate, index)
+            }
+        }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInstantiated(index: Int): Solve.Request<C> =
             ensureIsInstantiated(arguments[index], index)
-
-        // TODO: 16/01/2020 test those below ensure methods
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
