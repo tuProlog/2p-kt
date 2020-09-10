@@ -53,7 +53,7 @@ class RepresentationError(
             signature: Signature,
             limit: Limit
         ): RepresentationError = message(
-            "Representation limit while executing `${signature.pretty()}`: $limit"
+            "Reached representation limit while executing `${signature.pretty()}`: $limit"
         ) { m, extra ->
             RepresentationError(
                 message = m,

@@ -250,6 +250,18 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsArity(index: Int): Solve.Request<C> =
+            ensuringArgumentIsNonNegativeInteger(index).run {
+                val arity = arguments[index] as Integer
+                context.flags[MaxArity]?.castTo<Integer>()?.value?.let {
+                    if (arity.intValue > it) {
+                        throw RepresentationError.of(context, signature, MAX_ARITY)
+                    }
+                }
+                return this
+            }
+
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index)
                 .arguments[index].let { arg ->

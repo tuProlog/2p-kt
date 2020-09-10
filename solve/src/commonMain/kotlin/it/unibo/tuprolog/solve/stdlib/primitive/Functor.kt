@@ -7,7 +7,9 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.flags.MaxArity
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import org.gciatto.kt.math.BigInteger
@@ -16,6 +18,7 @@ import org.gciatto.kt.math.BigInteger
  * Implementation of 'functor'/3 predicate
  */
 object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
@@ -23,13 +26,13 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
     ): Substitution = when (first) {
         is Struct -> {
             if (third !is Var) {
-                ensuringArgumentIsNonNegativeInteger(2)
+                ensuringArgumentIsArity(2)
             }
             (second mguWith Atom.of(first.functor)) + (third mguWith Integer.of(first.arity))
         }
         is Numeric -> {
             if (third !is Var) {
-                ensuringArgumentIsNonNegativeInteger(2)
+                ensuringArgumentIsArity(2)
             }
             (first mguWith second) + (third mguWith Integer.of(0))
         }
@@ -37,14 +40,16 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
             when (second) {
                 is Atom -> {
                     ensuringArgumentIsInstantiated(2)
-                    ensuringArgumentIsNonNegativeInteger(2)
+                    ensuringArgumentIsArity(2)
                     Substitution.of(first to Struct.template(second.value, (third as Integer).intValue.toInt()))
                 }
                 is Numeric -> {
                     ensuringArgumentIsInstantiated(2)
-                    ensuringArgumentIsNonNegativeInteger(2)
+                    ensuringArgumentIsArity(2)
 
-                    if ((third as Integer).intValue == BigInteger.ZERO) {
+                    val arity = (third as Integer)
+
+                    if (arity.intValue == BigInteger.ZERO) {
                         Substitution.of(first to second) + (third mguWith Integer.of(0))
                     } else {
                         throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
@@ -54,7 +59,7 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                     throw InstantiationError.forArgument(context, signature, second, 1)
                 }
                 else -> {
-                    throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
+                    throw TypeError.forArgument(context, signature, TypeError.Expected.ATOMIC, second, 1)
                 }
             }
         }
