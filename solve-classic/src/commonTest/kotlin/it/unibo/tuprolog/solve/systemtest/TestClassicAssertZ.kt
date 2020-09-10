@@ -1,13 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.ClassicSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestAssertZ
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -15,12 +10,12 @@ class TestClassicAssertZ : TestAssertZ, SolverFactory by ClassicSolverFactory{
     private val prototype = TestAssertZ.prototype(this)
 
     @Test
+    @Ignore
     override fun testAssertZClause() {
         prototype.testAssertZClause()
     }
 
     @Test
-    @Ignore
     override fun testAssertZAny() {
         prototype.testAssertZAny()
     }
@@ -31,13 +26,11 @@ class TestClassicAssertZ : TestAssertZ, SolverFactory by ClassicSolverFactory{
     }
 
     @Test
-    @Ignore
     override fun testAssertZFooNumber() {
         prototype.testAssertZFooNumber()
     }
 
     @Test
-    @Ignore
     override fun testAssertZAtomTrue() {
         prototype.testAssertZAtomTrue()
     }
