@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVAT
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.buffered
 
@@ -25,11 +26,12 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
             ensuringArgumentIsCallable(1)
         }
         val head = first as Struct
-        if (context.libraries.hasProtected(head.extractSignature())) {
-            throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, head)
+        val headSignature = head.extractSignature()
+        if (context.libraries.hasProtected(headSignature)) {
+            throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
         }
         return (context.staticKb[head] + context.dynamicKb[head].buffered()).map {
-            (it.head mguWith head) + (it.body mguWith second)
+            (it.head mguWith head) + Unificator.default.mgu(it.body, second, false)
         }.filter {
             it.isSuccess
         }
