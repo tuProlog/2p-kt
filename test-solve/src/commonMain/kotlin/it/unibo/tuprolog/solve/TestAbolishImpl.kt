@@ -59,7 +59,7 @@ internal class TestAbolishImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = abolish("foo" / (-1))
+            val query = abolish("foo" / intOf(-1))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
