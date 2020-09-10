@@ -167,6 +167,9 @@ interface PrologStdLibScope : PrologAwareScope {
     fun clause(head: Any, body: Any): Struct =
         structOf("clause", head.toTerm(), body.toTerm())
 
+    fun copy_term(term: Any, copy: Any): Struct =
+        structOf("copy_term", term.toTerm(), copy.toTerm())
+
 //    bagof/3
 //    char_code/2
 //    close/1
