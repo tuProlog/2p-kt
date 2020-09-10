@@ -121,6 +121,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
                 candidate is Struct && candidate.functor == Clause.FUNCTOR && candidate.arity == 2 ->
                     throw DomainError.forArgument(context, signature, DomainError.Expected.CLAUSE, candidate, index)
+                candidate is Struct -> return this
                 else -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, candidate, index)
             }
         }
