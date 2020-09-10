@@ -7,7 +7,11 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.extractSignature
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -107,6 +111,34 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     index
                 )
             } ?: this
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringClauseProcedureHasPermission(
+            clause: Clause,
+            operation: PermissionError.Operation
+        ): Solve.Request<C> {
+            val headSignature: Signature? = clause.head?.extractSignature()
+            if (headSignature != null) {
+                if (context.libraries.hasProtected(headSignature)) {
+                    throw PermissionError.of(
+                        context,
+                        signature,
+                        operation,
+                        PRIVATE_PROCEDURE,
+                        headSignature.toIndicator()
+                    )
+                }
+                if (headSignature.toIndicator() in context.staticKb) {
+                    throw PermissionError.of(
+                        context,
+                        signature,
+                        operation,
+                        STATIC_PROCEDURE,
+                        headSignature.toIndicator()
+                    )
+                }
+            }
+            return this
+        }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)

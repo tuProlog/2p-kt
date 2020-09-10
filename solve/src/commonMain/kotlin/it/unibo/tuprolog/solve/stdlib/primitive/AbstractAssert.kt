@@ -24,15 +24,7 @@ abstract class AbstractAssert(
             is Struct -> Fact.of(first)
             else -> return ensuringArgumentIsCallable(0).replyFail()
         }
-        val headSignature: Signature? = clause.head?.extractSignature()
-        if (headSignature != null) {
-            if (context.libraries.hasProtected(headSignature)) {
-                throw PermissionError.of(context, signature, MODIFY, PRIVATE_PROCEDURE, headSignature.toIndicator())
-            }
-            if (headSignature.toIndicator() in context.staticKb) {
-                throw PermissionError.of(context, signature, MODIFY, STATIC_PROCEDURE, headSignature.toIndicator())
-            }
-        }
+        ensuringClauseProcedureHasPermission(clause, MODIFY)
         return replySuccess {
             addDynamicClauses(clause.prepareForExecution(), onTop = before)
         }

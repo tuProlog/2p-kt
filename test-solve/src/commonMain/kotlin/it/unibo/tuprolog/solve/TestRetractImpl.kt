@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.DomainError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestRetract {
@@ -8,18 +10,18 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = retract((4 `if` "X"))
+            val query = retract(":-"(4, "X"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.halt(
-                        TypeError.forGoal(
+                        DomainError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("retract", 2),
-                            TypeError.Expected.CALLABLE,
-                            numOf(4)
-
+                            Signature("retract", 1),
+                            DomainError.Expected.CLAUSE,
+                            ":-"(4, "X"),
+                            index = 0
                         )
                     )
                 ),
@@ -32,12 +34,21 @@ internal class TestRetractImpl(private val solverFactory: SolverFactory) : TestR
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = retract((atom(`_`) `if` "X" `==` emptyList))
+            val query = retract((atom(`_`) `if` ("X" `==` emptyList)))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()), //Permission_error
+                    query.halt(
+                        PermissionError.of(
+                            DummyInstances.executionContext,
+                            Signature("retract", 1),
+                            PermissionError.Operation.MODIFY,
+                            PermissionError.Permission.PRIVATE_PROCEDURE,
+                            "atom" / 1
+                        )
+                    )
+                ), //Permission_error
                 solutions
             )
         }
