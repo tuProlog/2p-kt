@@ -16,10 +16,6 @@ interface TestAssertA : SolverTest{
      * ```
      * succeeds on a solver initialized with default built-ins and with and empty theory.
      * producing 1 solution which binds variable `B` to `call(X)`.
-     *
-     * Expected: `Yes(query=(asserta(bar(X_19) :- X_19), (bar(B_3), X_20) :- true), substitution={B_4=call(X_19)})`
-     * Actual	: `No(query=(asserta(bar(X_19) :- X_19), (bar(B_3), X_20) :- true))`
-     *
      */
     fun testAssertAClause()
 
@@ -31,9 +27,6 @@ interface TestAssertA : SolverTest{
      * fails on a solver initialized with default built-ins and with and empty theory.
      * producing exception instantiation_error.
      *
-     * Expected: `Halt(query=asserta(__12), exception=error(instantiation_error, 'Uninstantiated subgoal __13 in procedure asserta/3'))`
-     * Actual: `Halt(query=asserta(__12), exception=error(type_error(callable, __12), __12))`
-     *
      */
     fun testAssertAAny()
 
@@ -42,23 +35,18 @@ interface TestAssertA : SolverTest{
      * ```prolog
      * ?- asserta(4).
      * ```
-     *
      * fails on a solver initialized with default built-ins and with and empty theory.
      * producing exception type_error(callable, 4).
-     *
      */
     fun testAssertANumber()
 
     /**
      * Tests the queries
      * ```prolog
-     * ?- asserta(foo := 4).
+     * ?- asserta(foo :- 4).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory.
-     * producing exception type_error(callable, 4).
-     *
-     * ClauseDatabase can contain only well formed clauses: these aren't [foo :- 4]
-     *
+     * producing exception domain_error(clause, foo :- 4)
      */
     fun testAssertAFooNumber()
 
@@ -68,11 +56,7 @@ interface TestAssertA : SolverTest{
      * ?- asserta((atom(_) :- true)).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory.
-     * producing exception permission_error(modify,static_procedure,atom/1).
-     *
-     * Expected :No(query=asserta(atom(__14) :- true))
-     * Actual   :Yes(query=asserta(atom(__14) :- true), substitution={})
-     *
+     * producing exception permission_error(modify,private_procedure,atom/1).
      */
     fun testAssertAAtomTrue()
 }

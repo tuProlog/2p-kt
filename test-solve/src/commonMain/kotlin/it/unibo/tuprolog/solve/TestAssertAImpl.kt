@@ -13,7 +13,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = asserta(("bar"("X") `if` "X")) and clause("bar"("B"), "X")
+            val query = asserta(("bar"("X") `if` "X")) and clause("bar"("X"), "B")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

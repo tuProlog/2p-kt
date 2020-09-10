@@ -13,7 +13,7 @@ internal class TestAssertZImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = assertz("foo"("X") `if` "X" then call("X"))
+            val query = assertz("foo"("X") `if` ("X" then call("X")))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
