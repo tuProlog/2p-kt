@@ -28,7 +28,6 @@ class TestStreamsCopyTerm  : TestCopyTerm, SolverFactory by StreamsSolverFactory
     }
 
     @Test
-    @Ignore
     override fun testCopyAnyAny() {
         prototype.testCopyAnyAny()
     }
@@ -40,25 +39,21 @@ class TestStreamsCopyTerm  : TestCopyTerm, SolverFactory by StreamsSolverFactory
     }
 
     @Test
-    @Ignore
     override fun testCopyAA() {
         prototype.testCopyAA()
     }
 
     @Test
-    @Ignore
     override fun testCopyAB() {
         prototype.testCopyAB()
     }
 
     @Test
-    @Ignore
     override fun testCopyF() {
         prototype.testCopyF()
     }
 
     @Test
-    @Ignore
     override fun testDoubleCopy() {
         prototype.testDoubleCopy()
     }

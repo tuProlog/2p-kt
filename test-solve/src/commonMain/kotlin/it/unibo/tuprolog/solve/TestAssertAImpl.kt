@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
@@ -11,7 +13,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (asserta(("bar"("X") `if` "X")) and clause { ("bar"("B") and "X") })
+            val query = asserta(("bar"("X") `if` "X")) and clause("bar"("X"), "B")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -25,9 +27,7 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val underscore = `_`
-
-            val query = asserta(underscore)
+            val query = asserta(`_`)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -35,9 +35,9 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("assertz", 1),
-                            underscore,
-                            0
+                            Signature("asserta", 1),
+                            `_`,
+                            index = 0
                         )
                     )
                 ),
@@ -56,11 +56,12 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("assertz", 1),
+                            Signature("asserta", 1),
                             TypeError.Expected.CALLABLE,
-                            numOf(4)
+                            numOf(4),
+                            index = 0
                         )
                     )
                 ),
@@ -73,17 +74,18 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = asserta(("foo" `if` 4))
+            val query = asserta("foo" `if` 4)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        DomainError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("assertz", 1),
-                            TypeError.Expected.CALLABLE,
-                            numOf(4)
+                            Signature("asserta", 1),
+                            DomainError.Expected.CLAUSE,
+                            ("foo" `if` 4),
+                            index = 0
                         )
                     )
                 ),
@@ -101,7 +103,15 @@ internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestA
 
             assertSolutionEquals(
                 ktListOf(
-                    query.no() //TODO permission_error
+                    query.halt(
+                        PermissionError.of(
+                            DummyInstances.executionContext,
+                            Signature("asserta", 1),
+                            PermissionError.Operation.MODIFY,
+                            PermissionError.Permission.PRIVATE_PROCEDURE,
+                            "atom" / 1
+                        )
+                    )
                 ),
                 solutions
             )

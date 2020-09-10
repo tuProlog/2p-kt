@@ -117,20 +117,30 @@ class TypeError(
     /**
      * A class describing the expected type whose absence caused the error
      *
-     * @param type the type expected string description
-     *
      * @author Enrico
      */
-    enum class Expected constructor(private val type: String) : ToTermConvertible {
-        CALLABLE("callable"),
-        ATOM("atom"),
-        INTEGER("integer"),
-        NUMBER("number"),
-        PREDICATE_INDICATOR("predicate_indicator"),
-        COMPOUND("compound"),
-        LIST("list"),
-        CHARACTER("character"),
-        EVALUABLE("evaluable");
+    enum class Expected : ToTermConvertible {
+        ATOM,
+        ATOMIC,
+        BOOLEAN,
+        BYTE,
+        CALLABLE,
+        CHARACTER,
+        COMPOUND,
+        EVALUABLE,
+        FLOAT,
+        IN_BYTE,
+        IN_CHARACTER,
+        INTEGER,
+        LIST,
+        NUMBER,
+        PAIR,
+        PREDICATE_INDICATOR;
+
+        /**
+         * The type expected string description
+         */
+        private val type: String by lazy { name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)

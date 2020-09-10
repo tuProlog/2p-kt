@@ -15,25 +15,21 @@ class TestClassicClause : TestClause, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    @Ignore
     override fun testClauseAnyB() {
         prototype.testClauseAnyB()
     }
 
     @Test
-    @Ignore
     override fun testClauseNumB() {
         prototype.testClauseNumB()
     }
 
     @Test
-    @Ignore
     override fun testClauseFAnyNum() {
         prototype.testClauseFAnyNum()
     }
 
     @Test
-    @Ignore
     override fun testClauseAtomBody() {
         prototype.testClauseAtomBody()
     }

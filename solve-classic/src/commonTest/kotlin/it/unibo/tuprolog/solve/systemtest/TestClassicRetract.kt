@@ -10,13 +10,11 @@ class TestClassicRetract : TestRetract, SolverFactory by ClassicSolverFactory  {
     private val prototype = TestRetract.prototype(this)
 
     @Test
-    @Ignore
     override fun testRetractNumIfX() {
         prototype.testRetractNumIfX()
     }
 
     @Test
-    @Ignore
     override fun testRetractAtomEmptyList() {
         prototype.testRetractAtomEmptyList()
     }

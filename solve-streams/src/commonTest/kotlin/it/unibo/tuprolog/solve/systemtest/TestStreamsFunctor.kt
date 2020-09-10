@@ -95,6 +95,7 @@ class TestStreamsFunctor : TestFunctor, SolverFactory by StreamsSolverFactory  {
     }
 
     @Test
+    @Ignore
     override fun testFunFlag() {
         prototype.testFunFlag()
     }

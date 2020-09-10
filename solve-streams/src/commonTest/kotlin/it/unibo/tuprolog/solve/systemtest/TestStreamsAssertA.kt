@@ -1,17 +1,12 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
-import kotlin.test.Test
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.TestAssertA
 import kotlin.test.Ignore
+import kotlin.test.Test
 
-@Ignore
+
 class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory{
 
     private val prototype = TestAssertA.prototype(this)
@@ -22,21 +17,25 @@ class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory{
     }
 
     @Test
+    @Ignore
     override fun testAssertAAny() {
         prototype.testAssertAAny()
     }
 
     @Test
+    @Ignore
     override fun testAssertANumber() {
         prototype.testAssertANumber()
     }
 
     @Test
+    @Ignore
     override fun testAssertAFooNumber() {
         prototype.testAssertAFooNumber()
     }
 
     @Test
+    @Ignore
     override fun testAssertAAtomTrue() {
         prototype.testAssertAAtomTrue()
     }

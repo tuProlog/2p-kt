@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
 
 /**
- * The domain error occurs when something has the correct type but the value is not amissible
+ * The domain error occurs when something has the correct type but the value is not admissible
  *
  * @param message the detail message string.
  * @param cause the cause of this exception.
@@ -90,21 +90,50 @@ class DomainError(
 
     /**
      * A class describing the expected domain whose absence caused the error
-     *
-     * @param domain the expected domain string description
      */
-    enum class Expected constructor(private val domain: String) : ToTermConvertible {
-        // TODO add more cases
-        NOT_LESS_THAN_ZERO("not_less_than_zero"),
-        STREAM_PROPERTY("stream_property"),
-        STREAM_POSITION("stream_position"),
-        STREAM_OR_ALIAS("stream_or_alias"),
-        READ_OPTION("read_option"),
-        PROLOG_FLAG("prolog_flag"),
-        FLAG_VALUE("flag_value"),
-        OPERATOR_SPECIFIER("operator_specifier"),
-        OPERATOR_PRIORITY("operator_priority");
+    enum class Expected : ToTermConvertible {
 
+        ATOM_PROPERTY,
+        BUFFERING_MODE,
+        CHARACTER_CODE_LIST,
+        CLOSE_OPTION,
+        DATE_TIME,
+        EOF_ACTION,
+        FLAG_VALUE,
+        FORMAT_CONTROL_SEQUENCE,
+        IO_MODE,
+        NON_EMPTY_LIST,
+        NOT_LESS_THAN_ZERO,
+        OPERATOR_PRIORITY,
+        OPERATOR_SPECIFIER,
+        ORDER,
+        OS_FILE_PERMISSION,
+        OS_FILE_PROPERTY,
+        OS_PATH,
+        PREDICATE_PROPERTY,
+        PROLOG_FLAG,
+        READ_OPTION,
+        SELECTABLE_ITEM,
+        SOCKET_ADDRESS,
+        SOCKET_DOMAIN,
+        SOURCE_SINK,
+        STREAM,
+        STREAM_OPTION,
+        STREAM_OR_ALIAS,
+        STREAM_POSITION,
+        STREAM_PROPERTY,
+        STREAM_SEEK_METHOD,
+        STREAM_TYPE,
+        TERM_STREAM_OR_ALIAS,
+        VAR_BINDING_OPTION,
+        WRITE_OPTION,
+        CLAUSE,
+        RULE,
+        FACT,
+        DIRECTIVE;
+
+        /** The expected domain string description */
+        val domain: String by lazy { name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(domain)

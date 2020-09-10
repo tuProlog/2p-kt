@@ -5,7 +5,7 @@ import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
-interface PrologScope : PrologStdLibScope {
+interface PrologScope : PrologStdLibScope, VariablesAwareScope {
 
     @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
@@ -186,6 +186,7 @@ interface PrologScope : PrologStdLibScope {
     @JsName("substitutionContainsValue")
     fun Substitution.containsValue(term: Any): Boolean =
         this.containsValue(term.toTerm())
+
 
     companion object {
         @JsName("empty")

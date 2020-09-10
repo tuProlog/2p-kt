@@ -12,21 +12,14 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
-abstract class AbstractAssert(
-    suffix: String,
-    private val before: Boolean
-) : UnaryPredicate.NonBacktrackable<ExecutionContext>("assert$suffix") {
-
+object Abolish : UnaryPredicate.NonBacktrackable<ExecutionContext>("abolish") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
-        ensuringArgumentIsWellFormedClause(0)
-        val clause: Clause = when (first) {
-            is Clause -> first
-            is Struct -> Fact.of(first)
-            else -> return ensuringArgumentIsCallable(0).replyFail()
-        }
-        ensuringClauseProcedureHasPermission(clause, MODIFY)
+        ensuringArgumentIsWellFormedIndicator(0)
+        val indicator = first as Indicator
+        val clausesToBeRemoved = context.dynamicKb[indicator]
+        ensuringProcedureHasPermission(Signature.fromIndicator(indicator), MODIFY)
         return replySuccess {
-            addDynamicClauses(clause.prepareForExecution(), onTop = before)
+            removeDynamicClauses(clausesToBeRemoved)
         }
     }
 }

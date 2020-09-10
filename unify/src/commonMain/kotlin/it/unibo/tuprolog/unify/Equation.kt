@@ -90,6 +90,31 @@ sealed class Equation<out A : Term, out B : Term>(
         ): Equation<Term, Term> =
             of(pair.first, pair.second, equalityChecker)
 
+        @JvmStatic
+        @JvmOverloads
+        @JsName("fromSequence")
+        fun <A : Term, B : Term> from(
+            pairs: Sequence<Pair<A, B>>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> =
+            pairs.flatMap { allOf(it, equalityChecker) }
+
+        @JvmStatic
+        @JvmOverloads
+        @JsName("fromIterable")
+        fun <A : Term, B : Term> from(
+            pairs: Iterable<Pair<A, B>>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> = from(pairs.asSequence(), equalityChecker)
+
+        @JvmStatic
+        @JvmOverloads
+        @JsName("from")
+        fun <A : Term, B : Term> from(
+            vararg pairs: Pair<A, B>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> = from(sequenceOf(*pairs), equalityChecker)
+
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         @JvmStatic
         @JvmOverloads

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution

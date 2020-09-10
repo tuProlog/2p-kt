@@ -3,9 +3,10 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestFunctor{
+internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestFunctor {
     override fun testFunArity() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -122,7 +123,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = functor(consOf(`_`,`_`), ".", 2)
+            val query = functor(consOf(`_`, `_`), ".", 2)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -253,7 +254,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
                         TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("functor", 3),
-                            TypeError.Expected.ATOM, // it has to ATOMIC
+                            TypeError.Expected.ATOMIC,
                             "foo"("a"),
                             index = 1
                         )
@@ -268,18 +269,26 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = ("current_prolog_flag"("max_arity", "A") and ("X" `is` "A" + 1)
-                    and functor("T", "foo", "X"))
+            val query = current_prolog_flag("max_arity", A) and (
+                    (X `is` (A + 1)) and functor(T, "foo", X))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                kotlin.collections.listOf(
+                    query.halt(
+                        RepresentationError.of(
+                            DummyInstances.executionContext,
+                            Signature("functor", 3),
+                            RepresentationError.Limit.MAX_ARITY
+                        )
+                    )
+                ),
                 solutions
             )
         }
     }
 
-    override fun testFunNegativeArity() { //solver returns yes(T to foo)
+    override fun testFunNegativeArity() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 

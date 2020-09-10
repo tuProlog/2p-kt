@@ -12,7 +12,7 @@ interface TestRetract : SolverTest {
      * ?- retract((4 :- X)).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-     * producing exception `type_error(callable, 4))`.
+     * producing exception `domain_error(clause, 4))`.
      */
     fun testRetractNumIfX()
 
@@ -22,7 +22,7 @@ interface TestRetract : SolverTest {
      * ?- retract((atom(_) :- X == '[]')).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-     * producing exception `permission_error(modify,static_procedure,atom/1)`.
+     * producing exception `permission_error(modify,private_procedure,atom/1)`.
      */
     fun testRetractAtomEmptyList()
 }

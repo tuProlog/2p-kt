@@ -25,10 +25,6 @@ interface TestAssertZ : SolverTest {
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory.
      * producing exception instantiation_error.
-     *
-     * Expected: `Halt(query=assertz(__16), exception=error(instantiation_error, 'Uninstantiated subgoal __17 in procedure assertz/3'))`
-     * Actual	: `Halt(query=assertz(__16), exception=error(type_error(callable, __16), __16))`
-     *
      */
     fun testAssertZAny()
 
@@ -45,13 +41,10 @@ interface TestAssertZ : SolverTest {
     /**
      * Tests the queries
      * ```prolog
-     * ?- assertz(foo := 4).
+     * ?- assertz(foo :- 4).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory.
-     * producing exception type_error(callable, 4).
-     *
-     * ClauseDatabase can contain only well formed clauses: these aren't [foo :- 4]
-     *
+     * producing exception domain_error(clause, foo :- 4).
      */
     fun testAssertZFooNumber()
 
@@ -61,11 +54,7 @@ interface TestAssertZ : SolverTest {
      * ?- assertz((atom(_) :- true)).
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory.
-     * producing exception permission_error(modify,static_procedure,atom/1).
-     *
-     * Expected :No(query=assertz(atom(__15) :- true))
-     * Actual   :Yes(query=assertz(atom(__15) :- true), substitution={})
-     *
+     * producing exception permission_error(modify,private_procedure,atom/1).
      */
     fun testAssertZAtomTrue()
 }
