@@ -93,6 +93,14 @@ abstract class PrologError(
                     SystemError(message, cause, contexts, extraData)
                 functor == MessageError.typeFunctor ->
                     MessageError(message, cause, contexts, extraData)
+                functor == RepresentationError.typeFunctor && type.arity == 1 ->
+                    RepresentationError(
+                        message,
+                        cause,
+                        contexts,
+                        RepresentationError.Limit.fromTerm(type[0])!!,
+                        extraData
+                    )
                 functor == ExistenceError.typeFunctor && type.arity == 2 ->
                     ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
                 functor == DomainError.typeFunctor && arity == 2 ->

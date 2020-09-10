@@ -67,6 +67,10 @@ interface Indicator : Struct {
             else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
         }
 
+    operator fun component1(): Term = nameTerm
+
+    operator fun component2(): Term = arityTerm
+
     companion object {
 
         /** The canonical indicator functor: `/` */

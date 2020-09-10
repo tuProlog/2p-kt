@@ -170,6 +170,9 @@ interface PrologStdLibScope : PrologAwareScope {
     fun copy_term(term: Any, copy: Any): Struct =
         structOf("copy_term", term.toTerm(), copy.toTerm())
 
+    fun current_prolog_flag(name: Any, value: Any): Struct =
+        structOf("current_prolog_flag", name.toTerm(), value.toTerm())
+
 //    bagof/3
 //    char_code/2
 //    close/1

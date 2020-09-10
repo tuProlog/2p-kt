@@ -6,23 +6,20 @@ import it.unibo.tuprolog.solve.TestAbolish
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestClassicAbolish : TestAbolish, SolverFactory by ClassicSolverFactory  {
+class TestClassicAbolish : TestAbolish, SolverFactory by ClassicSolverFactory {
     private val prototype = TestAbolish.prototype(this)
 
     @Test
-    @Ignore
     override fun testDoubleAbolish() {
         prototype.testDoubleAbolish()
     }
 
     @Test
-    @Ignore
     override fun testAbolishFoo() {
         prototype.testAbolishFoo()
     }
 
     @Test
-    @Ignore
     override fun testAbolishFooNeg() {
         prototype.testAbolishFooNeg()
     }
@@ -34,7 +31,6 @@ class TestClassicAbolish : TestAbolish, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    @Ignore
     override fun testAbolish() {
         prototype.testAbolish()
     }

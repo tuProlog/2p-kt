@@ -5,13 +5,14 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.error.DomainError
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.*
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
-import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARITY
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.*
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.MaxArity
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -112,32 +113,60 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 )
             } ?: this
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringProcedureHasPermission(
+            signature: Signature?,
+            operation: PermissionError.Operation
+        ): Solve.Request<C> {
+            if (signature != null) {
+                if (context.libraries.hasProtected(signature)) {
+                    throw PermissionError.of(
+                        context,
+                        this.signature,
+                        operation,
+                        PRIVATE_PROCEDURE,
+                        signature.toIndicator()
+                    )
+                }
+                if (signature.toIndicator() in context.staticKb) {
+                    throw PermissionError.of(
+                        context,
+                        this.signature,
+                        operation,
+                        STATIC_PROCEDURE,
+                        signature.toIndicator()
+                    )
+                }
+            }
+            return this
+        }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringClauseProcedureHasPermission(
             clause: Clause,
             operation: PermissionError.Operation
         ): Solve.Request<C> {
             val headSignature: Signature? = clause.head?.extractSignature()
-            if (headSignature != null) {
-                if (context.libraries.hasProtected(headSignature)) {
-                    throw PermissionError.of(
-                        context,
-                        signature,
-                        operation,
-                        PRIVATE_PROCEDURE,
-                        headSignature.toIndicator()
-                    )
+            return ensuringProcedureHasPermission(headSignature, operation)
+        }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(index: Int): Solve.Request<C> {
+            ensuringArgumentIsInstantiated(index)
+            when (val candidate = arguments[index]) {
+                is Indicator -> {
+                    val (name, arity) = candidate
+                    when {
+                        name is Var -> throw InstantiationError.forArgument(context, signature, name, index)
+                        arity is Var -> throw InstantiationError.forArgument(context, signature, arity, index)
+                        name !is Atom -> throw TypeError.forArgument(context, signature, ATOM, name, index)
+                        arity !is Integer -> throw TypeError.forArgument(context, signature, INTEGER, arity, index)
+                        arity.value < BigInteger.ZERO ->
+                            throw DomainError.forArgument(context, signature, NOT_LESS_THAN_ZERO, arity, index)
+                        context.flags[MaxArity]?.castTo<Integer>()?.value?.let { arity.value > it } ?: false ->
+                            throw RepresentationError.of(context, signature, MAX_ARITY)
+                        else -> return this
+                    }
                 }
-                if (headSignature.toIndicator() in context.staticKb) {
-                    throw PermissionError.of(
-                        context,
-                        signature,
-                        operation,
-                        STATIC_PROCEDURE,
-                        headSignature.toIndicator()
-                    )
-                }
+                else -> throw TypeError.forArgument(context, signature, PREDICATE_INDICATOR, candidate, index)
             }
-            return this
         }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
@@ -228,7 +257,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     arg !is Integer || arg.intValue < BigInteger.ZERO -> throw DomainError.forArgument(
                         context,
                         signature,
-                        DomainError.Expected.NOT_LESS_THAN_ZERO,
+                        NOT_LESS_THAN_ZERO,
                         arg,
                         index
                     )

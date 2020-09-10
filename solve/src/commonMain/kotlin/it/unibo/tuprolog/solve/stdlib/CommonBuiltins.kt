@@ -13,6 +13,7 @@ object CommonBuiltins : AliasedLibrary by Library.aliased(
     operatorSet = OperatorSet.DEFAULT,
     theory = CommonRules.theory,
     primitives = sequenceOf<PrimitiveWrapper<*>>(
+        Abolish,
         Arg,
         ArithmeticEqual,
         ArithmeticGreaterThan,
