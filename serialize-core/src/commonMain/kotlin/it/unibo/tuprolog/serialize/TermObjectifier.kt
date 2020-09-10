@@ -2,7 +2,6 @@ package it.unibo.tuprolog.serialize
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.objectify.Objectifier
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
