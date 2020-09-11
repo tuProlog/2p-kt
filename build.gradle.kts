@@ -22,6 +22,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
 }
 
 repositories {
@@ -175,6 +176,7 @@ ktSubprojects.forEachProject {
         }
     }
 
+    configureKtLint()
     configureDokka("jvm", "js")
     configureMavenPublications("packDokka")
     configureUploadToMavenCentral()
@@ -192,6 +194,7 @@ jvmSubprojects.forEachProject {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
 
+    configureKtLint()
     configureDokka()
     createMavenPublications("jvm", "java", docArtifact = "packDokka")
     configureUploadToMavenCentral()
@@ -207,6 +210,7 @@ jsSubprojects.forEachProject {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
 
+    configureKtLint()
     configureDokka()
     createMavenPublications("js", "kotlin", docArtifact = "packDokka")
     configureUploadToMavenCentral()
@@ -214,7 +218,7 @@ jsSubprojects.forEachProject {
     configureSigning()
 }
 
-configure<GithubReleaseExtension> {
+githubRelease {
     if (githubToken != null) {
         token(githubToken)
         owner(githubOwner)
@@ -233,6 +237,20 @@ configure<GithubReleaseExtension> {
             )
         } catch (e: Throwable) {
             e.message?.let { warn(it) }
+        }
+    }
+}
+
+fun Project.configureKtLint() {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    ktlint {
+        debug.set(false)
+        ignoreFailures.set(false)
+        enableExperimentalRules.set(true)
+        filter {
+            exclude("**/generated/**")
+            include("**/kotlin/**")
         }
     }
 }
