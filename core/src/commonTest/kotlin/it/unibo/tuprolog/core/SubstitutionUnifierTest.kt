@@ -21,7 +21,7 @@ internal class SubstitutionUnifierTest {
 
     private val substitutions by lazy {
         SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) +
-                listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
+            listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
     @Test

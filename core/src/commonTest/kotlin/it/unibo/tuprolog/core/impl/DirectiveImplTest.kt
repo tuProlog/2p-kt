@@ -9,7 +9,6 @@ import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import kotlin.test.*
 
-
 /**
  * Test class for [DirectiveImpl] and [Directive]
  *

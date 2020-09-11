@@ -261,7 +261,6 @@ internal object TermTypeAssertionUtils {
         )
     }
 
-
     /** Checks passed term to be an Indicator or fails otherwise */
     fun assertIsIndicator(any: Any) {
         assertTrue(any is Term)

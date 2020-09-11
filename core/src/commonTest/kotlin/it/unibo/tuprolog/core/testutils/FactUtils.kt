@@ -28,5 +28,4 @@ internal object FactUtils {
 
     /** Contains mixed [groundFacts] and [nonGroundFacts] */
     val mixedFacts by lazy { groundFacts + nonGroundFacts }
-
 }

@@ -179,7 +179,6 @@ fun <T> itemWiseHashCode(sequence: Sequence<T>): Int {
     return itemWiseHashCode(sequence.asIterable())
 }
 
-
 fun <T> Iterable<T>.subsequences(): Sequence<Sequence<T>> {
     return asSequence().subsequences()
 }

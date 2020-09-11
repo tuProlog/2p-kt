@@ -80,8 +80,10 @@ internal class ConversionsTest {
     @Test
     fun numberToTerm() {
         @Suppress("USELESS_CAST")
-        val numberValues = (with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
-                with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }).map { it as Number }
+        val numberValues = (
+            with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+                with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }
+            ).map { it as Number }
 
         val correct = numberValues.map { Numeric.of(it) }
         val toBeTested = numberValues.map { it.toTerm() }

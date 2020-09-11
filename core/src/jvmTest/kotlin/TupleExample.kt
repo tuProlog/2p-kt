@@ -4,8 +4,6 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 
 fun main() {
-
-
     val tuple = Tuple.of(Atom.of("first"), Numeric.of(2), Var.of("Third"))
 
     println(tuple)
@@ -25,5 +23,4 @@ fun main() {
     println(Tuple.wrapIfNeeded(Atom.of("first"), Numeric.of(2)))
     println(Tuple.wrapIfNeeded(Atom.of("first")))
     println(Tuple.wrapIfNeeded())
-
 }

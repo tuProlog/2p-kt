@@ -7,12 +7,11 @@ import it.unibo.tuprolog.utils.impl.EmptyCursor
 import it.unibo.tuprolog.utils.impl.LazyCursor
 import kotlin.jvm.JvmName
 
-
 operator fun <T> Cursor<out T>.plus(other: Cursor<out T>): Cursor<out T> {
     if (other.hasNext) {
         return ConjunctionCursor(this, other)
     } else if (hasNext) {
-        return this;
+        return this
     } else {
         return EmptyCursor
     }

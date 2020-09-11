@@ -11,4 +11,3 @@ interface Indexed<K, T> {
 
     fun <R> map(mapper: (T) -> R): Indexed<K, R>
 }
-

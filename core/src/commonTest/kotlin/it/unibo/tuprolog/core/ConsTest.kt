@@ -30,4 +30,4 @@ internal class ConsTest {
 
         assertEqualities(correctInstance, toBeTested)
     }
-} 
+}

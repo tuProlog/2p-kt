@@ -53,5 +53,4 @@ internal object AtomUtils {
         assertTrue(atom.argsList.isEmpty())
         assertTrue(atom.argsSequence.toList().isEmpty())
     }
-
 }

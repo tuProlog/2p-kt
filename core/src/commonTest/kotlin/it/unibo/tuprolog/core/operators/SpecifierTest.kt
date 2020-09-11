@@ -98,5 +98,4 @@ internal class SpecifierTest {
     fun fromTermThatIsNotAtom() {
         assertFailsWith<IllegalArgumentException> { Specifier.fromTerm(Var.of("XFX")) }
     }
-
 }

@@ -54,7 +54,6 @@ internal object AssertionUtils {
             actual structurallyEquals expected
         )
 
-
     /** Asserts all types of equalities (normal, strict and structural) for two [Term]s */
     fun assertEqualities(expected: Term, actual: Term) {
         assertStructurallyEquals(expected, actual)

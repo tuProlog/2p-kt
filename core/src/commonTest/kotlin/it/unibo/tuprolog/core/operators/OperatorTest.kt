@@ -109,8 +109,10 @@ internal class OperatorTest {
     fun fromTermReturnsNullIfNotCorrectOperator() {
         /** Utility function to help testing fromTerm method */
         fun testFromTerm(
-            functor: String = Operator.FUNCTOR, priority: Term = plusPriority.toTerm(),
-            specifier: Term = plusSpecifier.toTerm(), opFunctor: Term = plusFunctor.toTerm()
+            functor: String = Operator.FUNCTOR,
+            priority: Term = plusPriority.toTerm(),
+            specifier: Term = plusSpecifier.toTerm(),
+            opFunctor: Term = plusFunctor.toTerm()
         ) = Operator.fromTerm(Struct.of(functor, priority, specifier, opFunctor))
 
         assertEquals(plusOperator, testFromTerm())

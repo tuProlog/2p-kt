@@ -31,5 +31,4 @@ class SetIterator(Set: Set) : Iterator<Term> {
             }
         }
     }
-
 }

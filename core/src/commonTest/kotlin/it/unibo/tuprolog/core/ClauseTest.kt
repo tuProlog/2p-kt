@@ -18,15 +18,15 @@ internal class ClauseTest {
 
     private val correctInstances =
         RuleUtils.mixedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.mixedDirectives.map { Directive.of(it) }
+            DirectiveUtils.mixedDirectives.map { Directive.of(it) }
 
     private val wellFormedClauseInstances =
         RuleUtils.wellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
+            DirectiveUtils.wellFormedDirectives.map { Directive.of(it) }
 
     private val nonWellFormedClauseInstances =
         RuleUtils.nonWellFormedRules.map { (head, body) -> Rule.of(head, body) } +
-                DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
+            DirectiveUtils.nonWellFormedDirectives.map { Directive.of(it) }
 
     /**
      * A function replacing correctly variables with call structure where needed
@@ -115,11 +115,13 @@ internal class ClauseTest {
         val aRuleWithVarInHeadAfterPreparation =
             Rule.of(Tuple.of(aVar, aVar), Tuple.of(Struct.of("call", aVar), Struct.of("call", aVar)))
 
-        val toBeTested = (correctInstances.filter { it.isWellFormed } + listOf(
-            aFactWithVarInHead,
-            aRuleWithVarInHead,
-            aRuleWithVarInHeadAfterPreparation
-        )).map { it.accept(Clause.defaultPreparationForExecutionVisitor) }
+        val toBeTested = (
+            correctInstances.filter { it.isWellFormed } + listOf(
+                aFactWithVarInHead,
+                aRuleWithVarInHead,
+                aRuleWithVarInHeadAfterPreparation
+            )
+            ).map { it.accept(Clause.defaultPreparationForExecutionVisitor) }
 
         val correct = wellFormedClausesCorrectlyPreparedForExecution + listOf(
             aFactWithVarInHead,
@@ -147,5 +149,4 @@ internal class ClauseTest {
 
         onCorrespondingItems(correct, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
-
 }

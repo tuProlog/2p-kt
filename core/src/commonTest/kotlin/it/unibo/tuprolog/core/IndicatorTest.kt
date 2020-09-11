@@ -35,5 +35,4 @@ internal class IndicatorTest {
 
         onCorrespondingItems(correctInstances.filter { it.isWellFormed }, toBeTested, ::assertEqualities)
     }
-
 }

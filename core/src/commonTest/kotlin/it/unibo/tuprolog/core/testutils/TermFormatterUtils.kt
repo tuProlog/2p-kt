@@ -35,7 +35,8 @@ object TermFormatterUtils {
         Indicator.of(Var.of("A"), Var.of("B")) to "'/'(A, B)",
         Rule.of(
             Tuple.of(Var.of("A"), Var.of("B")),
-            Tuple.of(Var.of("C"), Var.of("D"))) to "':-'(','(A, B), ','(C, D))",
+            Tuple.of(Var.of("C"), Var.of("D"))
+        ) to "':-'(','(A, B), ','(C, D))",
         Fact.of(
             Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
         ) to "':-'(','(A, ','(B, ','(A1, B1))), true)",
@@ -61,16 +62,21 @@ object TermFormatterUtils {
             items = listOf(Tuple.of(Var.of("A"), Var.of("B")), Var.of("A"), Var.of("B")),
             last = Tuple.of(Var.of("A"), Var.of("B"))
         ) to "[(A, B), A1, B1 | (A2, B2)]",
-        Struct.of("+",
+        Struct.of(
+            "+",
             Struct.of("+", Var.of("A"), Var.of("B")),
-            Struct.of("+", Var.of("C"), Var.of("D"))) to "A + B + C + D",
-        Struct.of("+",
+            Struct.of("+", Var.of("C"), Var.of("D"))
+        ) to "A + B + C + D",
+        Struct.of(
+            "+",
             Struct.of("-", Var.of("A"), Var.of("B")),
-            Struct.of("-", Var.of("C"), Var.of("D"))) to "A - B + C - D",
+            Struct.of("-", Var.of("C"), Var.of("D"))
+        ) to "A - B + C - D",
         Indicator.of(Var.of("A"), Var.of("B")) to "A / B",
         Rule.of(
             Tuple.of(Var.of("A"), Var.of("B")),
-            Tuple.of(Var.of("C"), Var.of("D"))) to "A, B :- C, D",
+            Tuple.of(Var.of("C"), Var.of("D"))
+        ) to "A, B :- C, D",
         Fact.of(
             Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
         ) to "A, B, A1, B1 :- true",
@@ -85,7 +91,11 @@ object TermFormatterUtils {
 
     fun TermFormatter.assertProperlyFormats(expected: String, actual: Term) {
         val formatted = actual.format(this)
-        assertEquals(expected, formatted, message = """
+        assertEquals(
+            expected,
+            formatted,
+            message =
+            """
             |Formatting 
             |   $actual
             |with ${this::class} should result in
@@ -94,6 +104,7 @@ object TermFormatterUtils {
             |   $formatted
             |is produced instead
             |
-        """.trimMargin())
+        """.trimMargin()
+        )
     }
 }

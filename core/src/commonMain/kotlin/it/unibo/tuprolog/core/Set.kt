@@ -60,4 +60,3 @@ interface Set : Collection {
         fun of(terms: Sequence<Term>): Set = of(terms.toList())
     }
 }
-

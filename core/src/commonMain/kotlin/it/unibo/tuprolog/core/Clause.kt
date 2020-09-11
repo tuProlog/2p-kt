@@ -111,5 +111,4 @@ interface Clause : Struct {
          */
         internal val defaultPreparationForExecutionVisitor = preparationForExecutionVisitor()
     }
-
 }

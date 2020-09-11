@@ -137,5 +137,4 @@ internal class IndicatorImplTest {
     fun freshCopyMergesDifferentVariablesWithSameName() {
         StructUtils.assertFreshCopyMergesDifferentVariablesWithSameName(::IndicatorImpl)
     }
-
 }

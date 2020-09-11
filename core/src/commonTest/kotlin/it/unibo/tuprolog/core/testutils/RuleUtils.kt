@@ -13,7 +13,7 @@ internal object RuleUtils {
     val groundWellFormedRules by lazy {
         listOf(
             Struct.of("parent", Atom.of("bob"), Atom.of("jack"))
-                    to Struct.of("son", Atom.of("jack"), Atom.of("bob")),
+                to Struct.of("son", Atom.of("jack"), Atom.of("bob")),
             Struct.of("money", Integer.of(100)) to Atom.of("win"),
             Atom.of("a") to Struct.of("?", Integer.of(1), Integer.of(2)),
             Atom.of("b") to Struct.of(",", Real.of(0.5), Real.of(0.6), Real.of(0.7)),

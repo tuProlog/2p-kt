@@ -54,5 +54,4 @@ internal object IndicatorUtils {
 
     /** Contains well-formed and non-well-formed indicators */
     internal val mixedIndicators by lazy { wellFormedIndicators + nonWellFormedIndicators }
-
 }

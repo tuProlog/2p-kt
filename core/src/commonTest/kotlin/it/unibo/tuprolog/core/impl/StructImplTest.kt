@@ -31,7 +31,8 @@ internal class StructImplTest {
     fun functorCorrect() {
         onCorrespondingItems(
             StructUtils.mixedStructFunctors,
-            mixedStructInstances.map { it.functor }) { expected, actual ->
+            mixedStructInstances.map { it.functor }
+        ) { expected, actual ->
             assertEquals(expected, actual)
         }
     }
@@ -103,7 +104,7 @@ internal class StructImplTest {
     fun toStringWorksAsExpected() {
         val correctToStrings = mixedStructInstances.map {
             (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
-                    (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
+                (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
         }
         onCorrespondingItems(correctToStrings, mixedStructInstances.map { it.toString() }) { expected, actual ->
             assertEquals(expected, actual)
@@ -188,7 +189,7 @@ internal class StructImplTest {
         val isList: (Struct) -> Boolean =
             { aStruct ->
                 aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
-                        aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
+                    aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isList).forEach { assertTrue { it.isList } }
@@ -200,7 +201,7 @@ internal class StructImplTest {
         val isSet: (Struct) -> Boolean =
             { aStruct ->
                 aStruct.functor == LogicSet.FUNCTOR && aStruct.arity == 1 ||
-                        aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
+                    aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isSet).forEach { assertTrue { it.isSet } }

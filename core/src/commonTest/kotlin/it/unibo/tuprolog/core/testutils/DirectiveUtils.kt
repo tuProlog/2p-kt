@@ -52,5 +52,4 @@ internal object DirectiveUtils {
     val mixedDirectives by lazy {
         groundWellFormedDirectives + groundNonWellFormedDirectives + nonGroundWellFormedDirectives + nonGroundNonWellFormedDirectives
     }
-
 }

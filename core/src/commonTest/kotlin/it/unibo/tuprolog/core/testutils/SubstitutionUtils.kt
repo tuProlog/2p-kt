@@ -41,8 +41,10 @@ internal object SubstitutionUtils {
             ktListOf(
                 ktListOf(varOf("A") to atomOf("a"), varOf("A") to atomOf("a")),
                 ktListOf(
-                    varOf("A") to atomOf("a"), varOf("A") to atomOf("a"),
-                    varOf("B") to atomOf("b"), varOf("B") to atomOf("b")
+                    varOf("A") to atomOf("a"),
+                    varOf("A") to atomOf("a"),
+                    varOf("B") to atomOf("b"),
+                    varOf("B") to atomOf("b")
                 )
             )
         }

@@ -29,9 +29,9 @@ internal class ScopeImplTest {
         mixedScopeInstances = ScopeUtils.mixedScopes.map(::ScopeImpl)
     }
 
-    ////////////////////
+    // //////////////////
     // Scope specific //
-    ////////////////////
+    // //////////////////
 
     @Test
     fun containsVarWorksAsExpected() {
@@ -64,7 +64,6 @@ internal class ScopeImplTest {
     fun varOfStringWithNonPresentVariableNameShouldInsertANewOneAmongOthers() {
         emptyScopeInstance.varOf("Test")
         assertEquals(1, emptyScopeInstance.variables.count())
-
 
         val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
         val newVarNames = ScopeUtils.nonEmptyScopeVarNames.map { scopeVarNames -> scopeVarNames.map { it + "x" } }
@@ -137,9 +136,9 @@ internal class ScopeImplTest {
         assertNotEquals(mixedScopeInstances, toTestMixedScopes)
     }
 
-    ///////////////////////
+    // /////////////////////
     // General Factories //
-    ///////////////////////
+    // /////////////////////
 
     @Test
     fun setOfIterable() {
@@ -381,5 +380,4 @@ internal class ScopeImplTest {
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
-
 }
