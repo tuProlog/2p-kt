@@ -9,8 +9,13 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     private val prototype = TestSolver.prototype(this)
 
     @Test
-    override fun testUnknownFlag() {
-        prototype.testUnknownFlag()
+    override fun testUnknownFlag2() {
+        prototype.testUnknownFlag2()
+    }
+
+    @Test
+    override fun testUnknownFlag1() {
+        prototype.testUnknownFlag1()
     }
 
     @Test

@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
+import it.unibo.tuprolog.theory.Theory
 
 internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
@@ -46,23 +47,32 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
             context.copy(step = nextStep())
         )
 
-    private fun missingProcedure(missingPredicateSignature: Signature): State =
-        when (context.flags[Unknown]) {
-            Unknown.ERROR -> exceptionalState(
-                ExistenceError.forProcedure(
-                    context = context,
-                    procedure = missingPredicateSignature
-                )
-            )
-            Unknown.WARNING -> failureState.also {
-                context.warnings?.write(
-                    MissingPredicate(
-                        context = context,
-                        signature = missingPredicateSignature
-                    )
-                )
+    private fun missingProcedure(ruleSources: Sequence<Theory>, missing: Signature): State =
+        when (val unknown = context.flags[Unknown]) {
+            Unknown.FAIL -> failureState
+            else -> {
+                if (ruleSources.none { missing.toIndicator() in it }) {
+                    when (unknown) {
+                        Unknown.ERROR -> exceptionalState(
+                            ExistenceError.forProcedure(
+                                context = context,
+                                procedure = missing
+                            )
+                        )
+                        Unknown.WARNING -> failureState.also {
+                            context.warnings?.write(
+                                MissingPredicate(
+                                    context = context,
+                                    signature = missing
+                                )
+                            )
+                        }
+                        else -> failureState
+                    }
+                } else {
+                    failureState
+                }
             }
-            else -> failureState
         }
 
     private val ignoreState: StateGoalSelection
@@ -158,7 +168,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                         )
                     }
 
-                    else -> missingProcedure(currentGoal.extractSignature())
+                    else -> missingProcedure(ruleSources, currentGoal.extractSignature())
                 }
             }
             else -> {

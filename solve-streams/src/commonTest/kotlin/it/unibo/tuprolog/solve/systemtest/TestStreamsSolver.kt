@@ -41,8 +41,14 @@ class TestStreamsSolver : SolverFactory, TestSolver {
 
     @Test
     @Ignore
-    override fun testUnknownFlag() {
-        prototype.testUnknownFlag()
+    override fun testUnknownFlag2() {
+        prototype.testUnknownFlag2()
+    }
+
+    @Test
+    @Ignore
+    override fun testUnknownFlag1() {
+        prototype.testUnknownFlag1()
     }
 
     @Test

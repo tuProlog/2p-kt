@@ -35,7 +35,9 @@ interface TestSolver : SolverTest {
             TestSolverImpl(solverFactory)
     }
 
-    fun testUnknownFlag()
+    fun testUnknownFlag1()
+
+    fun testUnknownFlag2()
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi()
