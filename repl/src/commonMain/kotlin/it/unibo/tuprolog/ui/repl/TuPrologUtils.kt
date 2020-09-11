@@ -29,12 +29,12 @@ object TuPrologUtils {
     }
 
     private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
-        TermUi.echo("yes: ${sol.solvedQuery.format(prettyExpressions(operatorSet))}.")
+        val formatter = prettyExpressions(operatorSet)
+        TermUi.echo("yes: ${sol.solvedQuery.format(formatter)}.")
         if (sol.substitution.isNotEmpty()) {
-            val sep = "\n    "
-            val substitutions = sol.substitution.entries.joinToString(sep) {
-                val prettyVariable = it.key.format(TermFormatter.prettyVariables())
-                val prettyValue = it.value.format(prettyExpressions(operatorSet))
+            val substitutions = sol.substitution.entries.joinToString("\n    ") {
+                val prettyVariable = it.key.format(formatter)
+                val prettyValue = it.value.format(formatter)
                 "$prettyVariable = $prettyValue"
             }
             TermUi.echo("    $substitutions")
@@ -57,14 +57,15 @@ object TuPrologUtils {
                     TermUi.echo("halt: ${ex.message?.trim()}")
                 }
                 val sep = "\n    at "
-                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(prettyExpressions(operatorSet)) }
+                val formatter = prettyExpressions(operatorSet)
+                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(formatter) }
                 TermUi.echo("    at $stacktrace")
             }
         }
     }
 
     fun printParseException(e: ParseException) {
-        TermUi.echo(e.message?.capitalize(), err = true)
+        TermUi.echo("# ${e.message?.capitalize()}", err = true)
     }
 
     private fun printEndOfSolutions() {
