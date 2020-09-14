@@ -93,9 +93,9 @@ data class Signature(
                             )
                         }
                         args.last().let {
-                            it is Struct && functor == varargStructFunctor && arity == 2 &&
-                                args.first().isInt &&
-                                args.last() == varargAtom
+                            it is Struct && it.functor == varargStructFunctor && it.arity == 2 &&
+                                it.args.first().isInt &&
+                                it.args.last() == varargAtom
                         } -> {
                             Signature(
                                 args.first().`as`<Atom>().value,

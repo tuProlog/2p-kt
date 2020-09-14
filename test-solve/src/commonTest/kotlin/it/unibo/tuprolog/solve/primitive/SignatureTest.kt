@@ -100,7 +100,11 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithStructCreatesCorrectInstance() {
-        signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm()) ?: fail()) }
+        signatures.forEach {
+            val reconstructed = Signature.fromSignatureTerm(it.toTerm())
+                ?: fail("Cannot reconstruct signature $it from it.toTerm(): ${it.toTerm()}")
+            assertEquals(it, reconstructed)
+        }
 
         signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
             assertEquals(signature, Signature.fromSignatureTerm(signatureTerm) ?: fail())
