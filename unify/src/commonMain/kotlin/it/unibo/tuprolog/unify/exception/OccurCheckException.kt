@@ -11,9 +11,8 @@ class OccurCheckException(
     other: Throwable?
 ) : NoUnifyException(term1, term2, other) {
 
-    constructor(term1: Term, term2: Term, innerVar: Var, innerTerm: Term)
-            : this(term1, term2, innerVar, innerTerm, null)
-
+    constructor(term1: Term, term2: Term, innerVar: Var, innerTerm: Term) :
+        this(term1, term2, innerVar, innerTerm, null)
 
     override val message: String?
         get() = "${super.message} because variable `$innerVar` occurs in term `$innerTerm`"
