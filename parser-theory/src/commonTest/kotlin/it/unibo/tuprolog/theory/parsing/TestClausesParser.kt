@@ -15,7 +15,7 @@ class TestClausesParser {
 
     companion object {
         fun assertMatch(expected: Term, actual: Term) {
-            assertTrue("Term `$actual` does not unify with `$expected`"){
+            assertTrue("Term `$actual` does not unify with `$expected`") {
                 Unificator.default.match(expected, actual)
             }
         }
@@ -65,7 +65,8 @@ class TestClausesParser {
 
     @Test
     fun testTheoryWithCustomOperator() {
-        val input = """
+        val input =
+            """
             |:- op(900, xfy, '::').
             |nil.
             |1 :: nil.
@@ -95,7 +96,8 @@ class TestClausesParser {
 
     @Test
     fun testTheoryWithCustomOperators() {
-        val input = """
+        val input =
+            """
             |:- op(900, yfx, ['++', '--']).
             |1 ++ 2.
             |1 -- 2.
