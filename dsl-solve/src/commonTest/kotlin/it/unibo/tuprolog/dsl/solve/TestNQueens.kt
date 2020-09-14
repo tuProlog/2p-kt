@@ -18,7 +18,7 @@ class TestNQueens {
         staticKb(
             rule {
                 "no_attack"(("X1" and "Y1"), ("X2" and "Y2")) `if` (
-                        ("X1" `=!=` "X2") and
+                    ("X1" `=!=` "X2") and
                         ("Y1" `=!=` "Y2") and
                         (("Y2" - "Y1") `=!=` ("X2" - "X1")) and
                         (("Y2" - "Y1") `=!=` ("X1" - "X2"))
@@ -27,21 +27,21 @@ class TestNQueens {
             fact { "no_attack_all"(`_`, emptyList) },
             rule {
                 "no_attack_all"("C", consOf("H", "Hs")) `if` (
-                        "no_attack"("C", "H") and
+                    "no_attack"("C", "H") and
                         "no_attack_all"("C", "Hs")
                     )
             },
             fact { "solution"(`_`, emptyList) },
             rule {
                 "solution"("N", consOf(("X" and "Y"), "Cs")) `if` (
-                        "solution"("N", "Cs") and
+                    "solution"("N", "Cs") and
                         between(1, "N", "Y") and
                         "no_attack_all"(("X" and "Y"), "Cs")
                     )
             }
         )
 
-        solve("solution"(n, (1 .. n).map { it and "Y$it" }))
+        solve("solution"(n, (1..n).map { it and "Y$it" }))
             .filterIsInstance<Solution.Yes>()
             .map { it.solvedQuery[1] as Collection }
             .map { it.toList() }
@@ -59,5 +59,4 @@ class TestNQueens {
             assertEquals(solutions[i], actual)
         }
     }
-
 }
