@@ -18,5 +18,4 @@ object AbsoluteValue : UnaryMathFunction("abs") {
 
     override fun mathFunction(real: Real, context: ExecutionContext): Numeric =
         Numeric.of(real.value.absoluteValue)
-
 }

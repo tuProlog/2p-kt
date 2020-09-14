@@ -15,9 +15,11 @@ interface NotableFlag {
         this to defaultValue
 
     infix fun to(value: Term): Pair<String, Term> =
-        name to (value.also {
-            require(isAdmissibleValue(it)) {
-                "$value is not an admissible value for flag $name"
+        name to (
+            value.also {
+                require(isAdmissibleValue(it)) {
+                    "$value is not an admissible value for flag $name"
+                }
             }
-        })
+            )
 }

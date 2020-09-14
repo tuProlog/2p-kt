@@ -3,7 +3,16 @@ package it.unibo.tuprolog.solve.primitive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.SideEffectManager
+import it.unibo.tuprolog.solve.SideEffectsBuilder
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import kotlin.js.JsName
 
@@ -73,7 +82,7 @@ sealed class Solve {
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
-        ) =  when(solution) {
+        ) = when (solution) {
             is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, *sideEffects)
             is Solution.No -> replyFail(sideEffectManager, *sideEffects)
             is Solution.Halt -> replyException(solution.exception, sideEffectManager, *sideEffects)
@@ -85,7 +94,7 @@ sealed class Solve {
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
-        ) = when(solution) {
+        ) = when (solution) {
             is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, buildSideEffects)
             is Solution.No -> replyFail(sideEffectManager, buildSideEffects)
             is Solution.Halt -> replyException(solution.exception, sideEffectManager, buildSideEffects)
@@ -195,7 +204,6 @@ sealed class Solve {
             return subSolver().solve(goal, maxDuration)
         }
     }
-
 
     /** Class representing a Response, from the Solver, to a [Solve.Request] */
     data class Response(

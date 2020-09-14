@@ -47,7 +47,7 @@ class InstantiationError(
         fun forArgument(context: ExecutionContext, procedure: Signature, variable: Var, index: Int? = null) =
             message(
                 "${index?.let { "The $it-th argument" } ?: "The argument"} `${variable.pretty()}` " +
-                        "of ${procedure.pretty()} is unexpectedly not instantiated"
+                    "of ${procedure.pretty()} is unexpectedly not instantiated"
             ) { m, extra ->
                 InstantiationError(
                     message = m,
@@ -68,7 +68,5 @@ class InstantiationError(
                     extraData = extra
                 )
             }
-
     }
-
 }

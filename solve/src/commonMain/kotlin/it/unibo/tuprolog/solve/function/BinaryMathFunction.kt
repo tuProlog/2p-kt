@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.math.sign
 
 /**
  * Base class to implement unary math functions

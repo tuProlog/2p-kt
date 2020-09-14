@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
-import kotlin.jvm.JvmOverloads
 
 /**
  * Represents a Prolog Goal solver

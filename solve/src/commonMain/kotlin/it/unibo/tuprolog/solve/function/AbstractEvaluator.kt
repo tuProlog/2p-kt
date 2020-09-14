@@ -1,10 +1,13 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
-
 
 abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
     protected val request: Solve.Request<E>,

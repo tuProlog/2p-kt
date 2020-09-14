@@ -65,13 +65,14 @@ class EvaluationError(
 
             /** Gets [Type] instance from [term] representation, if possible */
             fun fromTerm(term: Term): Type? = when (term) {
-                is Atom -> try {
-                    valueOf(term.value.toUpperCase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                } catch (e: IllegalStateException) {
-                    null
-                }
+                is Atom ->
+                    try {
+                        valueOf(term.value.toUpperCase())
+                    } catch (e: IllegalArgumentException) {
+                        null
+                    } catch (e: IllegalStateException) {
+                        null
+                    }
                 else -> null
             }
         }

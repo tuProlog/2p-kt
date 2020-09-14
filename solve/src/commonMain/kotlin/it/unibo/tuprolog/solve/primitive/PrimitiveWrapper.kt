@@ -1,16 +1,30 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.error.*
+import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARITY
-import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.*
+import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
 import org.gciatto.kt.math.BigInteger
@@ -68,8 +82,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             private val uncheckedPrimitive: Primitive
         ) : PrimitiveWrapper<C>(signature) {
 
-            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
-                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
+            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
+                this(Signature(name, arity, vararg), uncheckedPrimitive)
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
                 uncheckedPrimitive(request)
@@ -260,7 +274,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
                 return this
             }
-
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index)

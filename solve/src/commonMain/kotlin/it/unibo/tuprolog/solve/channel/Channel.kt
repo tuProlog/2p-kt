@@ -11,5 +11,4 @@ interface Channel<T> {
 
     @JsName("clearListeners")
     fun clearListeners()
-
 }

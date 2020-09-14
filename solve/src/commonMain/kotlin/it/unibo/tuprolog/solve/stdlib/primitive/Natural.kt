@@ -22,5 +22,4 @@ object Natural : UnaryPredicate<ExecutionContext>("natural") {
 
     private fun checkValue(value: Integer): Boolean =
         value.intValue.signum >= 0
-
 }

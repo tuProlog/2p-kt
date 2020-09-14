@@ -35,5 +35,4 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
             it.isSuccess
         }
     }
-
 }

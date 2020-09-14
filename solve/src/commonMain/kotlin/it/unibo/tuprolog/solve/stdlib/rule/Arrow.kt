@@ -17,5 +17,4 @@ object Arrow : RuleWrapper<ExecutionContext>("->", 2) {
         MagicCut,
         varOf("Then")
     )
-
 }

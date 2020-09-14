@@ -1,6 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
 import kotlin.js.JsName
 
 /** The signature of a query Struct or a Primitive */
@@ -17,15 +22,23 @@ data class Signature(
         require(arity >= 0) { "Signature arity should be greater than or equals to 0: $arity" }
     }
 
-    /** Converts this signature to a Struct `'/'([name],[arity])` or `'/'([name],'+'([arity], vararg))` */
+    /** Converts this signature to a Struct `'/'([name], [arity])` or `'/'([name],'+'([arity], vararg))` */
     override fun toTerm(): Struct =
         when {
-            vararg -> Struct.of(
-                FUNCTOR, Atom.of(name), Struct.of(
-                    varargStructFunctor, Integer.of(arity),
-                    varargAtom
-                ))
-            else -> Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
+            vararg -> {
+                Struct.of(
+                    FUNCTOR,
+                    Atom.of(name),
+                    Struct.of(
+                        varargStructFunctor,
+                        Integer.of(arity),
+                        varargAtom
+                    )
+                )
+            }
+            else -> {
+                Struct.of(FUNCTOR, Atom.of(name), Integer.of(arity))
+            }
         }
 
     /** Converts this Signature to [Indicator], if possible without loosing information, otherwise throws an exception */
@@ -73,22 +86,23 @@ data class Signature(
             with(term) {
                 when {
                     functor == FUNCTOR && arity == 2 && args.first().isAtom -> when {
-                        args.last().isInt ->
+                        args.last().isInt -> {
                             Signature(
                                 args.first().`as`<Atom>().value,
                                 args.last().`as`<Integer>().intValue.toInt()
                             )
-
-                        with(args.last()) {
-                            this is Struct && functor == varargStructFunctor && arity == 2 &&
-                                    args.first().isInt &&
-                                    args.last() == varargAtom
-                        } -> Signature(
-                            args.first().`as`<Atom>().value,
-                            args.last().`as`<Struct>()[0].`as`<Integer>().intValue.toInt(),
-                            true
-                        )
-
+                        }
+                        args.last().let {
+                            it is Struct && functor == varargStructFunctor && arity == 2 &&
+                                args.first().isInt &&
+                                args.last() == varargAtom
+                        } -> {
+                            Signature(
+                                args.first().`as`<Atom>().value,
+                                args.last().`as`<Struct>()[0].`as`<Integer>().intValue.toInt(),
+                                true
+                            )
+                        }
                         else -> null
                     }
                     else -> null
@@ -108,10 +122,12 @@ data class Signature(
         /** Creates a Signature instance from a well-formed Indicator, or returns `null` if it wasn't */
         @JsName("fromIndicator")
         fun fromIndicator(indicator: Indicator): Signature? = when {
-            indicator.isWellFormed -> Signature(
-                indicator.indicatedName!!,
-                indicator.indicatedArity!!
-            )
+            indicator.isWellFormed -> {
+                Signature(
+                    indicator.indicatedName!!,
+                    indicator.indicatedArity!!
+                )
+            }
             else -> null
         }
     }
