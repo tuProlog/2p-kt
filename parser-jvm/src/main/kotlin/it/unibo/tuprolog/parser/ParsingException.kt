@@ -11,11 +11,10 @@ class ParsingException(
 
     override fun toString(): String {
         return "ParsingException{" +
-                "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
-                ", line=" + line +
-                ", column=" + column +
-                ", offendingSymbol='" + offendingSymbol + '\'' +
-                '}'
+            "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
+            ", line=" + line +
+            ", column=" + column +
+            ", offendingSymbol='" + offendingSymbol + '\'' +
+            '}'
     }
-
 }

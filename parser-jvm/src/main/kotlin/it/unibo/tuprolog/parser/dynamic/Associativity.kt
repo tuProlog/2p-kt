@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.parser.dynamic
 
-import java.util.*
+import java.util.EnumSet
 import java.util.stream.Stream
 
 enum class Associativity {
