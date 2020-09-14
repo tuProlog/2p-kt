@@ -4,7 +4,13 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThan
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThan
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticNotEqual
+import it.unibo.tuprolog.solve.stdlib.primitive.Is
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.createSolveRequest
 
 /**
@@ -109,5 +115,4 @@ internal object ArithmeticUtils {
             ).mapKeys { (query, _) -> createSolveRequest(query) }
         }
     }
-
 }

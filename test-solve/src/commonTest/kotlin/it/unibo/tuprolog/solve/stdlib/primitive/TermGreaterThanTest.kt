@@ -16,5 +16,4 @@ internal class TermGreaterThanTest {
             assertCorrectResponse(TermGreaterThan, input, result)
         }
     }
-
 }

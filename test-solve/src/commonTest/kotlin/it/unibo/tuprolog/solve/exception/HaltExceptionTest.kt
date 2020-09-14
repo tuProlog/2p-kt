@@ -36,5 +36,4 @@ internal class HaltExceptionTest {
 
         assertSameMessageCauseContextStatus(aMessage, aCause, aDifferentContext, anExitStatus, toBeTested)
     }
-
 }

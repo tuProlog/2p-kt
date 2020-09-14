@@ -3,13 +3,13 @@ package it.unibo.tuprolog.solve.function.testutils
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.function.ExpressionEvaluator
 import it.unibo.tuprolog.solve.function.PrologFunction
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
@@ -96,5 +96,4 @@ internal object ExpressionEvaluatorUtils {
             arguments = emptyList(),
             context = createContextWithFunctionBy(signature, function)
         )
-
 }

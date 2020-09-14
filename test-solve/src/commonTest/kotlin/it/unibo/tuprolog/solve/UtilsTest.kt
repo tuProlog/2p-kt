@@ -14,7 +14,6 @@ internal class UtilsTest {
 
     @Test
     fun foreachWithLookAheadWorksExactlyLikeNormalForeach() {
-
         // should not launch exception
         emptyList<Nothing>().forEachWithLookahead { _, _ -> throw IllegalStateException() }
 
@@ -34,5 +33,4 @@ internal class UtilsTest {
             }
         }
     }
-
 }

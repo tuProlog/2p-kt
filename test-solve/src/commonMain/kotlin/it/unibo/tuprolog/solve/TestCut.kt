@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.solve.SolverTest
-
 interface TestCut : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCut =

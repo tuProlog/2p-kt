@@ -4,12 +4,12 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
+import it.unibo.tuprolog.solve.function.Compute
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -62,5 +62,4 @@ internal object ComputeUtils {
         requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
         executionMaxDuration: TimeDuration = anExecutionMaxDuration
     ) = Compute.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
-
 }

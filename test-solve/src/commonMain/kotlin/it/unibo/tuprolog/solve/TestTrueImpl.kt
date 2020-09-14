@@ -11,8 +11,8 @@ internal class TestTrueImpl(private val solverFactory: SolverFactory) : TestTrue
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }

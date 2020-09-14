@@ -18,5 +18,4 @@ internal object TypeErrorExpectedUtils {
     internal val allNamesToInstances by lazy {
         predefinedErrorNamesToInstances
     }
-
 }

@@ -167,8 +167,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                             DummyInstances.executionContext,
                             Signature("call", 1),
                             TypeError.Expected.CALLABLE,
-                            fail and 1  //solver returns 1
-
+                            fail and 1 // solver returns 1
 
                         )
                     )
@@ -192,8 +191,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                             DummyInstances.executionContext,
                             Signature("call", 1),
                             TypeError.Expected.CALLABLE,
-                            write(3) and 1  //solver returns 1
-
+                            write(3) and 1 // solver returns 1
 
                         )
                     )
@@ -217,7 +215,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
                             DummyInstances.executionContext,
                             Signature("call", 1),
                             TypeError.Expected.CALLABLE,
-                            (1 or true) //solver returns 1
+                            (1 or true) // solver returns 1
 
                         )
                     )

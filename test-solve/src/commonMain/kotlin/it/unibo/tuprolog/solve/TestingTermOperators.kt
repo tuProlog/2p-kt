@@ -44,7 +44,8 @@ object TestingTermOperators {
                 "@>="(intOf(1), intOf(1)).hasSolutions({ yes() }),
                 "@>="("stringTest", "stringTest").hasSolutions({ yes() }),
                 "@>="("stringTest", "stringTest1").hasSolutions({ no() }),
-                "@>="("stringTest", intOf(1)).hasSolutions({ yes() }
+                "@>="("stringTest", intOf(1)).hasSolutions(
+                    { yes() }
                 )
             )
         }
@@ -132,5 +133,4 @@ object TestingTermOperators {
             )
         }
     }
-
 }

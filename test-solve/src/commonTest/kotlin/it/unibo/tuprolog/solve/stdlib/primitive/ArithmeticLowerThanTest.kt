@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.lowerQueryToResult
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.BinaryRelationUtils.assertCorrectResponse
 import kotlin.test.Test
 
 /**
@@ -17,5 +17,4 @@ internal class ArithmeticLowerThanTest {
             assertCorrectResponse(ArithmeticLowerThan, input, result)
         }
     }
-
 }

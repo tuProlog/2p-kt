@@ -4,9 +4,9 @@ package it.unibo.tuprolog.solve
  * Tests of assertz
  */
 interface TestAssertZ : SolverTest {
-    companion object{
+    companion object {
         fun prototype(solverFactory: SolverFactory): TestAssertZ =
-                TestAssertZImpl(solverFactory)
+            TestAssertZImpl(solverFactory)
     }
 
     /**

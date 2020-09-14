@@ -23,9 +23,9 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheo
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
 interface TestSolver : SolverTest {
@@ -183,4 +183,3 @@ interface TestSolver : SolverTest {
     /** atom_concat/3 test */
     fun testAtomConcat()
 }
-

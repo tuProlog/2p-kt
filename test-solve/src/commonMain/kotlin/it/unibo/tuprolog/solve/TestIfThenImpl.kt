@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 
-internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIfThen{
+internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIfThen {
     override fun testIfThenTrue() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -77,7 +77,7 @@ internal class TestIfThenImpl(private val solverFactory: SolverFactory) : TestIf
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = "->"(true,("X" `=` 1) or ("X" `=` 2))
+            val query = "->"(true, ("X" `=` 1) or ("X" `=` 2))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

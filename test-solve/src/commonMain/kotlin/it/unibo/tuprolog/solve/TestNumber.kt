@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 /**
  * Tests of number
  */
-interface TestNumber : SolverTest{
+interface TestNumber : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestNumber =
             TestNumberImpl(solverFactory)

@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aResult
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aSignature
@@ -13,8 +15,6 @@ import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.assertContainsCor
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.createRequest
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.defaultResponse
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.varargArgumentList
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.currentTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

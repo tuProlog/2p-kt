@@ -16,5 +16,4 @@ internal class TermIdenticalTest {
             assertCorrectResponse(TermIdentical, input, result)
         }
     }
-
 }

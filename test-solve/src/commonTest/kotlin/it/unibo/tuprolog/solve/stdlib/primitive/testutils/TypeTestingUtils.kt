@@ -1,18 +1,29 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
-import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.Atomic
+import it.unibo.tuprolog.solve.stdlib.primitive.Callable
+import it.unibo.tuprolog.solve.stdlib.primitive.Compound
+import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
+import it.unibo.tuprolog.solve.stdlib.primitive.Ground
+import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
 import it.unibo.tuprolog.utils.squared
-import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -63,9 +74,9 @@ object TypeTestingUtils {
 
     private val commonArgs: List<Term> = PrologScope.empty().let {
         baseArgs +
-                baseArgs.squared { x, y -> it.tupleOf(x, y) } +
-                baseArgs.squared { x, y -> it.structOf(";", x, y) } +
-                baseArgs.squared { x, y -> it.structOf("->", x, y) }
+            baseArgs.squared { x, y -> it.tupleOf(x, y) } +
+            baseArgs.squared { x, y -> it.structOf(";", x, y) } +
+            baseArgs.squared { x, y -> it.structOf("->", x, y) }
     }.toList()
 
     private inline fun typeTest(

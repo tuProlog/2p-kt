@@ -1,12 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.testutils.SolveUtils.aDynamicKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSolution
-import it.unibo.tuprolog.solve.testutils.SolveUtils.aStaticKB
-import it.unibo.tuprolog.solve.testutils.SolveUtils.someFlags
-import it.unibo.tuprolog.solve.testutils.SolveUtils.someLibraries
 import it.unibo.tuprolog.solve.testutils.SolveUtils.someSideEffects
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,5 +36,4 @@ internal class SolveResponseTest {
     fun equalsWorksAsExpected() {
         assertEquals(aResponse.copy(), aResponse)
     }
-
 }

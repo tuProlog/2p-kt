@@ -18,5 +18,4 @@ internal object FloatFunctionUtils {
         -2.0000000001 to (-2.0 to -0.0000000001),
         -1984984.02 to (-1984984.0 to -0.02)
     )
-
 }

@@ -32,5 +32,4 @@ internal class ArithmeticEvaluatorTest {
             assertEquals(result, toBeTested)
         }
     }
-
 }

@@ -11,8 +11,8 @@ internal class TestRepeatImpl(private val solverFactory: SolverFactory) : TestRe
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }

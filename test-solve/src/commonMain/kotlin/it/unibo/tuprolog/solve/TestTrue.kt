@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 interface TestTrue : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestTrue =
-                TestTrueImpl(solverFactory)
+            TestTrueImpl(solverFactory)
     }
 
     /**

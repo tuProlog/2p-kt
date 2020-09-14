@@ -91,7 +91,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         }
     }
 
-    override fun testFunXNameYArity() { //solver says exception_error
+    override fun testFunXNameYArity() { // solver says exception_error
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -105,7 +105,7 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
         }
     }
 
-    override fun testFunDecNum() { //solver says exception_error
+    override fun testFunDecNum() { // solver says exception_error
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -270,7 +270,8 @@ internal class TestFunctorImpl(private val solverFactory: SolverFactory) : TestF
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = current_prolog_flag("max_arity", A) and (
-                    (X `is` (A + 1)) and functor(T, "foo", X))
+                (X `is` (A + 1)) and functor(T, "foo", X)
+                )
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

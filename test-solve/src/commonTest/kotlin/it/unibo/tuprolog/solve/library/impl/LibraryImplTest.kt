@@ -12,7 +12,11 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils
 import it.unibo.tuprolog.solve.library.testutils.LibraryUtils.makeLib
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Test class for [LibraryImpl] and [Library]
@@ -100,10 +104,12 @@ internal class LibraryImplTest {
 
             primitives.keys.forEach { signature -> assertTrue { libraryInstance.hasPrimitive(signature) } }
 
-            (theory.rules.map { it.head.extractSignature() } + Signature(
-                "ciao",
-                3
-            )).forEach {
+            (
+                theory.rules.map { it.head.extractSignature() } + Signature(
+                    "ciao",
+                    3
+                )
+                ).forEach {
                 assertFalse { libraryInstance.hasPrimitive(it) }
             }
         }

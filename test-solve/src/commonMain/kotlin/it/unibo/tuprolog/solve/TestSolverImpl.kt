@@ -68,8 +68,61 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.flags.Unknown.ERROR
 import it.unibo.tuprolog.solve.flags.Unknown.FAIL
 import it.unibo.tuprolog.solve.flags.Unknown.WARNING
-import it.unibo.tuprolog.solve.stdlib.primitive.*
-import it.unibo.tuprolog.solve.stdlib.rule.*
+import it.unibo.tuprolog.solve.stdlib.primitive.Abolish
+import it.unibo.tuprolog.solve.stdlib.primitive.Arg
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThan
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThan
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticLowerThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticNotEqual
+import it.unibo.tuprolog.solve.stdlib.primitive.Assert
+import it.unibo.tuprolog.solve.stdlib.primitive.AssertA
+import it.unibo.tuprolog.solve.stdlib.primitive.AssertZ
+import it.unibo.tuprolog.solve.stdlib.primitive.Atom
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomChars
+import it.unibo.tuprolog.solve.stdlib.primitive.Atomic
+import it.unibo.tuprolog.solve.stdlib.primitive.Between
+import it.unibo.tuprolog.solve.stdlib.primitive.Callable
+import it.unibo.tuprolog.solve.stdlib.primitive.Clause
+import it.unibo.tuprolog.solve.stdlib.primitive.Compound
+import it.unibo.tuprolog.solve.stdlib.primitive.CopyTerm
+import it.unibo.tuprolog.solve.stdlib.primitive.CurrentOp
+import it.unibo.tuprolog.solve.stdlib.primitive.CurrentPrologFlag
+import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
+import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
+import it.unibo.tuprolog.solve.stdlib.primitive.Functor
+import it.unibo.tuprolog.solve.stdlib.primitive.Ground
+import it.unibo.tuprolog.solve.stdlib.primitive.Halt
+import it.unibo.tuprolog.solve.stdlib.primitive.Integer
+import it.unibo.tuprolog.solve.stdlib.primitive.Is
+import it.unibo.tuprolog.solve.stdlib.primitive.Natural
+import it.unibo.tuprolog.solve.stdlib.primitive.NewLine
+import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
+import it.unibo.tuprolog.solve.stdlib.primitive.NotUnifiableWith
+import it.unibo.tuprolog.solve.stdlib.primitive.Number
+import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
+import it.unibo.tuprolog.solve.stdlib.primitive.Retract
+import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
+import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
+import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
+import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.TermIdentical
+import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThan
+import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.TermNotIdentical
+import it.unibo.tuprolog.solve.stdlib.primitive.TermNotSame
+import it.unibo.tuprolog.solve.stdlib.primitive.TermSame
+import it.unibo.tuprolog.solve.stdlib.primitive.UnifiesWith
+import it.unibo.tuprolog.solve.stdlib.primitive.Univ
+import it.unibo.tuprolog.solve.stdlib.primitive.Var
+import it.unibo.tuprolog.solve.stdlib.primitive.Write
+import it.unibo.tuprolog.solve.stdlib.rule.Append
+import it.unibo.tuprolog.solve.stdlib.rule.Arrow
+import it.unibo.tuprolog.solve.stdlib.rule.Member
+import it.unibo.tuprolog.solve.stdlib.rule.Not
+import it.unibo.tuprolog.solve.stdlib.rule.Once
+import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -272,9 +325,9 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             val assertX = "assert$suffix"
 
             val query = assertX("f"(1)) and
-                    assertX("f"(2)) and
-                    assertX("f"(3)) and
-                    "f"(X)
+                assertX("f"(2)) and
+                assertX("f"(3)) and
+                "f"(X)
 
             val solutions = solver.solve(query, mediumDuration).toList()
             val ints = if (inverse) (3 downTo 1) else (1..3)
@@ -316,12 +369,12 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             }
 
             val query = write(atomOf("atom")) and
-                    write(atomOf("a string")) and
-                    write(varOf("A_Var")) and
-                    write(numOf(1)) and
-                    write(numOf(2.1)) and
-                    write("f"("x")) and
-                    nl
+                write(atomOf("a string")) and
+                write(varOf("A_Var")) and
+                write(numOf(1)) and
+                write(numOf(2.1)) and
+                write("f"("x")) and
+                nl
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -433,11 +486,11 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                     clause { "getg"(G) `if` findall(X, "g"(X), G) },
                     clause {
                         "ftog"(F, G) `if` (
-                                retract("f"(X)) and
-                                        assert("g"(X)) and
-                                        "getf"(F) and
-                                        "getg"(G)
-                                )
+                            retract("f"(X)) and
+                                assert("g"(X)) and
+                                "getf"(F) and
+                                "getg"(G)
+                            )
                     }
                 )
             )
@@ -558,7 +611,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             mediumDuration
         )
     }
-
 
     /** Test with [simpleCutTheoryNotableGoalToSolutions] */
     override fun testSimpleCutAlternatives() {
@@ -716,11 +768,11 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     /** A test in which all testing goals are called through the Catch primitive */
     override fun testCatchPrimitiveTransparency() {
         prolog {
-
             fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
                 "halt" -> true
-                else -> argsSequence.filterIsInstance<Struct>()
-                    .any { it.containsHaltPrimitive() }
+                else ->
+                    argsSequence.filterIsInstance<Struct>()
+                        .any { it.containsHaltPrimitive() }
             }
 
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
@@ -850,7 +902,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.no()
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -873,7 +926,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes(N to 2)
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -916,7 +970,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes(N to 2)
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -938,7 +993,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes(N to 2)
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -958,7 +1014,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes()
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -980,7 +1037,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes()
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -1000,7 +1058,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             assertSolutionEquals(
                 ktListOf(
                     query.yes(N to 1)
-                ), solutions
+                ),
+                solutions
             )
         }
     }
@@ -1124,7 +1183,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     }
 
     override fun testFunctor() {
-
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -1335,7 +1393,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 ),
                 solutions
             )
-
         }
     }
 
