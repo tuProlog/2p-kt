@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.TestAtom
 import kotlin.test.Test
 
 class TestStreamsAtom : TestAtom, SolverFactory by StreamsSolverFactory {
