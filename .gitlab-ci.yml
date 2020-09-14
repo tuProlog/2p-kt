@@ -35,7 +35,7 @@ Compile:
   script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
 
 Check Format:
-  stage: build
+  stage: test
   script: $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
 
 Test JVM:
