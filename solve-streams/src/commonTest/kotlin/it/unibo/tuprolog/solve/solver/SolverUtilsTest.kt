@@ -104,11 +104,13 @@ internal class SolverUtilsTest {
     @Test
     fun moreThanOneWorksLazily() {
         assertTrue {
-            moreThanOne(sequence {
-                yield(1)
-                yield(1)
-                fail("Should not evaluate entire sequence")
-            })
+            moreThanOne(
+                sequence {
+                    yield(1)
+                    yield(1)
+                    fail("Should not evaluate entire sequence")
+                }
+            )
         }
     }
 

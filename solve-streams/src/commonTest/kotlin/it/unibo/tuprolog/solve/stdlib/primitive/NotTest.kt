@@ -67,10 +67,11 @@ internal class NotTest {
                         DummyInstances.executionContext,
                         Not.signature,
                         TypeError.Expected.CALLABLE,
-                        prolog { numOf(1) })
+                        prolog { numOf(1) }
+                    )
                 )
-            ), solutions
+            ),
+            solutions
         )
     }
-
 }

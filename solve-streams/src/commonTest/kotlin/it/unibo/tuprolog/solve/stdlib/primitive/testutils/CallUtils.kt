@@ -61,7 +61,8 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query, database = simpleFactTheory,
+                    query,
+                    database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }
@@ -118,7 +119,8 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query, database = simpleFactTheory,
+                    query,
+                    database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }

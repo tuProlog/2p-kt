@@ -64,7 +64,9 @@ internal class ConjunctionTest {
 
             val goal = "left" and "right"
             val request = Solve.Request(
-                goal.extractSignature(), goal.argsList, StreamsExecutionContext(
+                goal.extractSignature(),
+                goal.argsList,
+                StreamsExecutionContext(
                     substitution = preRequestSubstitution,
                     libraries = Libraries(
                         Library.aliased(

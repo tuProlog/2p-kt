@@ -117,7 +117,6 @@ class TestStreamsSolver : SolverFactory, TestSolver {
         prototype.testIfThenElse2()
     }
 
-
     @Test
     override fun testTimeout1() {
         prototype.testTimeout1()
