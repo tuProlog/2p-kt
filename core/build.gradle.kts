@@ -15,13 +15,15 @@ kotlin {
 
             val createInfoKt by tasks.creating {
                 doLast {
-                    infoKtFile.writeText("""
+                    infoKtFile.writeText(
+                        """
                         |package $tuPrologPackage
                         |
                         |object Info {
                         |    const val VERSION = "${rootProject.version}"
                         |}
-                    """.trimMargin())
+                        |""".trimMargin()
+                    )
                 }
                 outputs.file(infoKtFile)
             }
