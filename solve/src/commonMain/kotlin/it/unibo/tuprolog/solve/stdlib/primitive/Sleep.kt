@@ -21,8 +21,9 @@ object Sleep : UnaryPredicate<ExecutionContext>("sleep") {
                     val initialTime = currentTimeInstant()
                     val threshold = arguments[0].castTo<Integer>().intValue.toLongExact()
                     while (currentTimeInstant() - initialTime < threshold) {
-                        yield(replySuccess())
+                        // busy waiting
                     }
+                    yield(replySuccess())
                 }
         }
 }
