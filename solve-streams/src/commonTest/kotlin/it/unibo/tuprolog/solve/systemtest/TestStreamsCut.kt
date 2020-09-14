@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.TestCut
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsCut : TestCut, SolverFactory by StreamsSolverFactory {
+class TestStreamsCut: TestCut, SolverFactory by StreamsSolverFactory {
 
     private val prototype = TestCut.prototype(this)
 

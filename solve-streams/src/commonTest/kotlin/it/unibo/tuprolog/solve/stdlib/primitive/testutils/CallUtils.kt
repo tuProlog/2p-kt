@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
-import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -63,8 +61,7 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query,
-                    database = simpleFactTheory,
+                    query, database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }
@@ -121,8 +118,7 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query,
-                    database = simpleFactTheory,
+                    query, database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }

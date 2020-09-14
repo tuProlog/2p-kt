@@ -21,8 +21,7 @@ internal object StateUtils {
     /** Utility function to assert that there's only one next state of given type */
     internal inline fun <reified S : State> assertOnlyOneNextState(actualNextStateSequence: Sequence<State>) {
         assertEquals(
-            1,
-            actualNextStateSequence.count(),
+            1, actualNextStateSequence.count(),
             "Expected only one state, but ${actualNextStateSequence.toList()}"
         )
         assertTrue { actualNextStateSequence.single() is S }
@@ -51,5 +50,6 @@ internal object StateUtils {
     internal fun Solve.getSideEffectsManager(): SideEffectManager = when (this) {
         is Solve.Response -> sideEffectManager
         is Solve.Request<*> -> context.getSideEffectManager()
-    } ?: fail("SideEffectManager is not present in $this")
+    } ?: fail("SideEffectManager is not present in ${this}")
+
 }

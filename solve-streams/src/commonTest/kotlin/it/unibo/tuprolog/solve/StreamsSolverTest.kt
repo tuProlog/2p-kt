@@ -21,4 +21,5 @@ internal class StreamsSolverTest {
         assertEquals(Theory.empty(), toBeTested.staticKb)
         assertEquals(Theory.empty(), toBeTested.dynamicKb)
     }
+
 }

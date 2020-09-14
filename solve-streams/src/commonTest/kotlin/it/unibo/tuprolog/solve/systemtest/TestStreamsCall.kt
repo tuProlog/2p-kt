@@ -1,16 +1,16 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestCall
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsCall : TestCall, SolverFactory by StreamsSolverFactory {
+class TestClassicCall : TestCall, SolverFactory by StreamsSolverFactory  {
     private val prototype = TestCall.prototype(this)
 
     @Test
-    override fun testCallCut() {
+    override fun testCallCut(){
         prototype.testCallCut()
     }
 

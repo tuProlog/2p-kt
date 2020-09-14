@@ -33,4 +33,5 @@ class TestStreamsNumber : TestNumber, SolverFactory by StreamsSolverFactory {
     override fun testXNum() {
         prototype.testXNum()
     }
+
 }

@@ -62,4 +62,5 @@ internal class StateGoalEvaluationTest {
             assertOnlyOneNextState<StateEnd.Halt>(nextStates)
         }
     }
+
 }

@@ -12,12 +12,7 @@ import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.th
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.threeShotStateAlreadyExecuted
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.toBehavedState
 import it.unibo.tuprolog.solve.solver.fsm.testutils.StateMachineExecutorUtils.twoAlternativeState
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 /**
  * Test class for [StateMachineExecutor]

@@ -31,8 +31,7 @@ internal class CutAndConjunctionIntegrationTest {
 
             modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
                 val request = createSolveRequest(
-                    goal,
-                    simpleFactTheory,
+                    goal, simpleFactTheory,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                 )
                 val solutions = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()
@@ -52,8 +51,7 @@ internal class CutAndConjunctionIntegrationTest {
 
             modifiedSimpleFactDatabaseGoals.forEach { (goal, solutionList) ->
                 val request = createSolveRequest(
-                    goal,
-                    simpleFactTheory,
+                    goal, simpleFactTheory,
                     mapOf(Conjunction.descriptionPair, Cut.descriptionPair)
                 )
                 val solutions = Conjunction.wrappedImplementation(request).map { it.solution }.asIterable()

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.exception.PrologError
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 

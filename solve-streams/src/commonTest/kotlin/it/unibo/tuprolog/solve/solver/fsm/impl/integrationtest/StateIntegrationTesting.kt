@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExamp
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.customReverseListTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.TestingClauseTheories.cutConjunctionAndBacktrackingTheory
@@ -22,7 +23,6 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.solve.extractSignature
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.State
@@ -67,8 +67,7 @@ internal class StateIntegrationTesting {
                     finalState.solve.solution.let {
                         // cleanUp as in StreamsSolver
                         (it as? Solution.Yes)?.copy(substitution = it.substitution.filter { _, t -> t !is Var }) ?: it
-                    }
-                )
+                    })
             }
         }
     }

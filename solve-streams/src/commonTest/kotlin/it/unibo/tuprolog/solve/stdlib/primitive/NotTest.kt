@@ -2,13 +2,9 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.dsl.prolog
 import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.assertSolutionEquals
+import it.unibo.tuprolog.solve.*
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.halt
-import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.solve.yes
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -71,11 +67,10 @@ internal class NotTest {
                         DummyInstances.executionContext,
                         Not.signature,
                         TypeError.Expected.CALLABLE,
-                        prolog { numOf(1) }
-                    )
+                        prolog { numOf(1) })
                 )
-            ),
-            solutions
+            ), solutions
         )
     }
+
 }

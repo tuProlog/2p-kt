@@ -47,4 +47,5 @@ internal class AlreadyExecutedStateTest {
 
         assertSame(correct.wrappedState, toBeTested.wrappedState)
     }
+
 }

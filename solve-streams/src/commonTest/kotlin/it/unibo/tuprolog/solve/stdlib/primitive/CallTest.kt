@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.CallUtils.assertErrorC
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.CallUtils.requestSolutionMap
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.CallUtils.requestToErrorSolutionMap
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.CallUtils.requestToSolutionOfCallWithCut
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.deepCause
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

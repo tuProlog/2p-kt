@@ -6,7 +6,8 @@ import it.unibo.tuprolog.solve.TestAssertA
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory {
+
+class TestStreamsAssertA : TestAssertA, SolverFactory by StreamsSolverFactory{
 
     private val prototype = TestAssertA.prototype(this)
 

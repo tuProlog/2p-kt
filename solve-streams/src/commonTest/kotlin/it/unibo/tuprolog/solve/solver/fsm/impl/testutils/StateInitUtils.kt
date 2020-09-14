@@ -62,7 +62,7 @@ internal object StateInitUtils {
     /** Collection of [Solve.Request] that should pass [StateInit] going into [StateGoalEvaluation] */
     internal val allWellFormedGoalRequests by lazy {
         wellFormedGoalRequestsNeedingPreparationForExecution +
-            wellFormedGoalRequestsNotNeedingPreparationForExecution
+                wellFormedGoalRequestsNotNeedingPreparationForExecution
     }
 
     /** Solve request with non well-formed goal */

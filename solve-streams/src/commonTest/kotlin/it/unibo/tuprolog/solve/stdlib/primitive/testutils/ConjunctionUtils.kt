@@ -36,4 +36,5 @@ internal object ConjunctionUtils {
             "true" and "true" and "fail"
         ).map { createSolveRequest(it) }
     }
+
 }

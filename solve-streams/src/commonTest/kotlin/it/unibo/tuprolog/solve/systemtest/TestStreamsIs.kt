@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestIs
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsIs : TestIs, SolverFactory by StreamsSolverFactory {
+class TestStreamsIs : TestIs, SolverFactory by StreamsSolverFactory  {
     private val prototype = TestIs.prototype(this)
 
     @Test
@@ -16,7 +16,7 @@ class TestStreamsIs : TestIs, SolverFactory by StreamsSolverFactory {
 
     @Test
     @Ignore
-    override fun testIsXY() {
+    override fun testIsXY(){
         prototype.testIsXY()
     }
 
