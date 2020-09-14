@@ -1,4 +1,5 @@
 @file:JvmName("Echo")
+
 package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.TermFormatter

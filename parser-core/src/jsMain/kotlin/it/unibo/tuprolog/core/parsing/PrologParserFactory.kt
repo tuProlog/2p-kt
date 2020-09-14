@@ -1,7 +1,21 @@
 package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.parser.*
+import it.unibo.tuprolog.parser.BailErrorStrategy
+import it.unibo.tuprolog.parser.ClauseContext
+import it.unibo.tuprolog.parser.CommonTokenStream
+import it.unibo.tuprolog.parser.ErrorListener
+import it.unibo.tuprolog.parser.ErrorStrategy
+import it.unibo.tuprolog.parser.InputStream
+import it.unibo.tuprolog.parser.OptClauseContext
+import it.unibo.tuprolog.parser.PredictionMode
+import it.unibo.tuprolog.parser.PrologLexer
+import it.unibo.tuprolog.parser.PrologParser
+import it.unibo.tuprolog.parser.RecognitionException
+import it.unibo.tuprolog.parser.SingletonExpressionContext
+import it.unibo.tuprolog.parser.Token
+import it.unibo.tuprolog.parser.isParseCancellationException
+import it.unibo.tuprolog.parser.isRecognitionException
 
 object PrologParserFactory {
 
@@ -75,7 +89,6 @@ object PrologParserFactory {
         }
     }
 
-
     fun parseExpressionWithStandardOperators(string: String): SingletonExpressionContext =
         parseExpression(string, OperatorSet.DEFAULT)
 
@@ -83,7 +96,6 @@ object PrologParserFactory {
         val parser = createParser(source, withOperators)
         return parseClauses(parser, source)
     }
-
 
     fun parseClauses(source: String): Sequence<ClauseContext> =
         parseClauses(source, OperatorSet.EMPTY)
@@ -156,5 +168,4 @@ object PrologParserFactory {
             }.takeWhile { !it.isOver }
             .map { it.clause() }
     }
-
 }

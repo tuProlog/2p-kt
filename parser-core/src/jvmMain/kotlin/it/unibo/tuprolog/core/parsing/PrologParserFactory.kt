@@ -3,7 +3,17 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.PrologLexer
 import it.unibo.tuprolog.parser.PrologParser
-import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.ANTLRErrorListener
+import org.antlr.v4.runtime.BailErrorStrategy
+import org.antlr.v4.runtime.BaseErrorListener
+import org.antlr.v4.runtime.BufferedTokenStream
+import org.antlr.v4.runtime.CharStream
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.DefaultErrorStrategy
+import org.antlr.v4.runtime.RecognitionException
+import org.antlr.v4.runtime.Recognizer
+import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.TokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import java.io.InputStream
@@ -268,5 +278,4 @@ object PrologParserFactory {
             }.takeWhile { !it.isOver }
             .map { it.clause() }
     }
-
 }

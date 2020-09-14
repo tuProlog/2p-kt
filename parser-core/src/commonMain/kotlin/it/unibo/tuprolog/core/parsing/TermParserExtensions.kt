@@ -2,7 +2,16 @@
 
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
@@ -13,7 +22,7 @@ private val defaultParser = TermParser.withDefaultOperators
 
 @JsName("termToClause")
 fun Term.toClause(source: Any? = null, line: Int = 0, column: Int = 0): Clause =
-    when(this) {
+    when (this) {
         is Clause -> this
         is Struct -> Fact.of(this)
         else -> throw InvalidTermTypeException(source, toString(), Clause::class, line, column)
@@ -99,7 +108,6 @@ fun String.parseAsAtom(operators: OperatorSet): Atom =
 fun String.parseAsAtom(): Atom =
     defaultParser.parseAtom(this)
 
-
 @JsName("parseNumericWithOperators")
 fun Numeric.Companion.parse(input: String, operators: OperatorSet): Numeric =
     defaultParser.parseNumeric(input, operators)
@@ -116,7 +124,6 @@ fun String.parseAsNumeric(operators: OperatorSet): Numeric =
 fun String.parseAsNumeric(): Numeric =
     defaultParser.parseNumeric(this)
 
-
 @JsName("parseIntegerWithOperators")
 fun Integer.Companion.parse(input: String, operators: OperatorSet): Integer =
     defaultParser.parseInteger(input, operators)
@@ -132,7 +139,6 @@ fun String.parseAsInteger(operators: OperatorSet): Integer =
 @JsName("parseStringAsInteger")
 fun String.parseAsInteger(): Integer =
     defaultParser.parseInteger(this)
-
 
 @JsName("parseRealWithOperators")
 fun Real.Companion.parse(input: String, operators: OperatorSet): Real =
