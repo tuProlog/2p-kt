@@ -17,4 +17,3 @@ interface Objectifier<T> {
     fun objectifyMany(values: Sequence<T>): Any =
         objectifyMany(values.asIterable())
 }
-

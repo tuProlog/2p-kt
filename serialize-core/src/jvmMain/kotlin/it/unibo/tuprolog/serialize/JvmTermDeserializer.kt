@@ -16,5 +16,4 @@ internal class JvmTermDeserializer(override val mimeType: MimeType) : ReadingTer
         JvmTermDeobjectifier().deobjectifyMany(
             mapper.readValue(reader, java.lang.Object::class.java)
         )
-
 }

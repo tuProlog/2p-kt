@@ -85,24 +85,31 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyTuple(value: dynamic): Term {
         val items = value["tuple"] as? Array<*> ?: throw DeobjectificationException(value)
-        return scope.tupleOf(items.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.tupleOf(
+            items.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifySet(value: dynamic): Term {
         val items = value["set"] as? Array<*> ?: throw DeobjectificationException(value)
-        return scope.setOf(items.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.setOf(
+            items.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifyStructure(value: dynamic): Term {
         val name = value["fun"] as? String ?: throw DeobjectificationException(value)
         val args = value["args"] as? Array<*> ?: throw DeobjectificationException(value)
-        return scope.structOf(name, args.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.structOf(
+            name,
+            args.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifyVariable(value: dynamic): Term {
@@ -125,5 +132,4 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyNumber(value: dynamic): Term {
         return scope.numOf(value.toString())
     }
-
 }
