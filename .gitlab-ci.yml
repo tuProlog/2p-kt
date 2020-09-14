@@ -7,6 +7,7 @@ variables:
   AFTER_TASK: ""
   GCMD: "gradle"
   BUILD_TASK: "clean assemble"
+  CHECK_CODE_TASK: "ktlintCheck"
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
@@ -32,6 +33,10 @@ cache:
 Compile:
   stage: build
   script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
+
+Check Format:
+  stage: build
+  script: $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
 
 Test JVM:
   stage: test
