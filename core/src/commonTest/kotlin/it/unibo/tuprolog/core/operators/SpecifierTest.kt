@@ -4,10 +4,22 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.operators.Specifier.*
+import it.unibo.tuprolog.core.operators.Specifier.FX
+import it.unibo.tuprolog.core.operators.Specifier.FY
+import it.unibo.tuprolog.core.operators.Specifier.XF
+import it.unibo.tuprolog.core.operators.Specifier.XFX
+import it.unibo.tuprolog.core.operators.Specifier.XFY
+import it.unibo.tuprolog.core.operators.Specifier.YF
+import it.unibo.tuprolog.core.operators.Specifier.YFX
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for [Specifier]

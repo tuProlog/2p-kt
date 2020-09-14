@@ -1,9 +1,22 @@
 package it.unibo.tuprolog.core.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.EmptySet
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.format
 import kotlin.test.assertEquals
 
 object TermFormatterUtils {
@@ -95,16 +108,16 @@ object TermFormatterUtils {
             expected,
             formatted,
             message =
-            """
-            |Formatting 
-            |   $actual
-            |with ${this::class} should result in
-            |   $expected
-            |while 
-            |   $formatted
-            |is produced instead
-            |
-        """.trimMargin()
+                """
+                |Formatting 
+                |   $actual
+                |with ${this::class} should result in
+                |   $expected
+                |while 
+                |   $formatted
+                |is produced instead
+                |
+                """.trimMargin()
         )
     }
 }
