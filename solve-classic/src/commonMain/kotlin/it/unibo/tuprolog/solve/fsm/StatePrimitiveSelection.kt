@@ -35,7 +35,6 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
                     val signature = goal.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
-
                         val req = toRequest(goal, signature)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
@@ -69,5 +68,4 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
             }
         }
     }
-
 }

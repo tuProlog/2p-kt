@@ -39,4 +39,3 @@ internal abstract class AbstractState(override val context: ClassicExecutionCont
 
     protected fun previousDepth(): Int = context.depth - 1
 }
-

@@ -8,5 +8,6 @@ internal data class StateHalt(
     override val exception: TuPrologRuntimeException,
     override val context: ClassicExecutionContext
 ) : ExceptionalState, AbstractEndState(
-    Solution.Halt(context.query, exception), context
+    Solution.Halt(context.query, exception),
+    context
 )

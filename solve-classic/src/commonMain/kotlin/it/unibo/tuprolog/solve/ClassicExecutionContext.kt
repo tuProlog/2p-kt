@@ -1,6 +1,11 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -125,20 +130,20 @@ data class ClassicExecutionContext(
 
     override fun toString(): String {
         return "ClassicExecutionContext(" +
-                "query=$query, " +
-                "procedure=$procedure, " +
-                "substitution=$substitution, " +
-                "goals=$goals, " +
-                "rules=$rules, " +
-                "primitives=$primitives, " +
-                "startTime=$startTime, " +
-                "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
-                "inputChannels=${inputChannels.keys}, " +
-                "outputChannels=${outputChannels.keys}, " +
-                "maxDuration=$maxDuration, " +
-                "choicePoints=$choicePoints, " +
-                "depth=$depth, " +
-                "step=$step" +
-                ")"
+            "query=$query, " +
+            "procedure=$procedure, " +
+            "substitution=$substitution, " +
+            "goals=$goals, " +
+            "rules=$rules, " +
+            "primitives=$primitives, " +
+            "startTime=$startTime, " +
+            "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
+            "inputChannels=${inputChannels.keys}, " +
+            "outputChannels=${outputChannels.keys}, " +
+            "maxDuration=$maxDuration, " +
+            "choicePoints=$choicePoints, " +
+            "depth=$depth, " +
+            "step=$step" +
+            ")"
     }
 }

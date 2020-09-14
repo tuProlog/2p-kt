@@ -83,5 +83,4 @@ internal data class StateException(
             else -> finalState
         }
     }
-
 }
