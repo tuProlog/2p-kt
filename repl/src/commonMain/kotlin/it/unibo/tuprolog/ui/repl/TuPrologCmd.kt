@@ -62,7 +62,8 @@ class TuPrologCmd : CliktCommand(
                         |#     Line   : ${e.line}
                         |#     Column : ${e.column}
                         |#     Clause : ${e.clauseIndex}
-                    """.trimMargin(), err = true
+                    """.trimMargin(),
+                        err = true
                     )
                 }
             }
@@ -101,5 +102,3 @@ class TuPrologCmd : CliktCommand(
         )
     }
 }
-
-

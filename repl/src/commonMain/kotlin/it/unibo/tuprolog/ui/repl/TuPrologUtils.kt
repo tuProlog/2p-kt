@@ -3,7 +3,6 @@ package it.unibo.tuprolog.ui.repl
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.output.defaultCliktConsole
-import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.TermFormatter.Companion.prettyExpressions
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
