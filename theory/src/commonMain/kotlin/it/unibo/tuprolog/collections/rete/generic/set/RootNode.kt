@@ -39,7 +39,9 @@ internal data class RootNode(override val children: MutableMap<String?, ReteNode
 
     override fun deepCopy(): RootNode =
         RootNode(
-            children.deepCopy({ it },
-                { it.deepCopy() })
+            children.deepCopy(
+                { it },
+                { it.deepCopy() }
+            )
         )
 }

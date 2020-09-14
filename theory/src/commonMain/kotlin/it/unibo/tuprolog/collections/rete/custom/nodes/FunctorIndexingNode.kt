@@ -61,7 +61,6 @@ internal class FunctorIndexingNode(
         return if (clause.isGlobal()) {
             Utils.merge(
                 arities.values.map {
-//                    it.getIndexed(clause)
                     it.extractGlobalIndexedSequence(clause)
                 }
             )
@@ -75,7 +74,8 @@ internal class FunctorIndexingNode(
             val partialResult = Utils.merge(
                 arities.values.map {
                     it.extractGlobalIndexedSequence(clause)
-                })
+                }
+            )
                 .filter { it.innerClause matches clause }
                 .toList()
             if (partialResult.isNotEmpty()) {
@@ -135,5 +135,4 @@ internal class FunctorIndexingNode(
                 )
             }
         )
-
 }

@@ -37,5 +37,4 @@ internal interface PrototypeClauseCollectionTest {
     fun retrievingPresentClauseWithRetrieveAllWorksCorrectly()
 
     fun retrievingAbsentClauseWithRetrieveAllDoesNotAlterCollection()
-
 }

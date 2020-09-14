@@ -11,7 +11,11 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertSu
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.defaultClauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -449,7 +453,6 @@ class UnorderedReteTreeTest {
 
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {
-
                 val head = Struct.of(functor, args)
                 val template = Rule.of(head, Var.anonymous())
 
@@ -519,7 +522,6 @@ class UnorderedReteTreeTest {
             .map { it.head.functor to it.head.arity }
             .filter { (_, arity) -> arity > 0 }
             .toSet()
-
 
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {

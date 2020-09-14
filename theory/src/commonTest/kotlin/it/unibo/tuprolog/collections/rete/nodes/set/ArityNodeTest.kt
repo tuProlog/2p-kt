@@ -1,7 +1,12 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.collections.rete.generic.set.ArityNode
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
@@ -9,7 +14,12 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for [ArityNode]
@@ -202,5 +212,4 @@ internal class ArityNodeTest {
             assertSame(it.indexedElements.single(), independentCopy.indexedElements.single())
         }
     }
-
 }

@@ -1,6 +1,17 @@
 package it.unibo.tuprolog.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.core.List as LogicList
 

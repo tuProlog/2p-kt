@@ -9,7 +9,11 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for [RuleNode]

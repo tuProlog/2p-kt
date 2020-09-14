@@ -51,5 +51,4 @@ internal interface IndexedClause : LongIndexed<Clause> {
             )
         }
     }
-
 }

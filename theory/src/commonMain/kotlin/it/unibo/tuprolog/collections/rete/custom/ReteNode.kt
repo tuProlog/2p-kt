@@ -18,5 +18,4 @@ internal interface ReteNode : Cacheable<SituatedIndexedClause> {
 
     /**Removes all the clauses matching the given [Clause], returning all of them as a [Sequence] of [Clause]*/
     fun retractAll(clause: Clause): Sequence<Clause>
-
 }

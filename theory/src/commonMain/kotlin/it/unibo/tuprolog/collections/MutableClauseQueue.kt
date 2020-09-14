@@ -3,7 +3,6 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.collections.impl.MutableReteClauseQueue
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -47,9 +46,11 @@ interface MutableClauseQueue : ClauseQueue {
         @JvmStatic
         @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): MutableClauseQueue =
-            of(clause.map {
-                Scope.empty(it)
-            })
+            of(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -77,5 +78,4 @@ interface MutableClauseQueue : ClauseQueue {
             )
         }
     }
-
 }

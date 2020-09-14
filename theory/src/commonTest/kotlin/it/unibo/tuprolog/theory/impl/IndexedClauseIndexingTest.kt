@@ -13,7 +13,6 @@ internal class IndexedClauseIndexingTest {
 
     @BeforeTest
     fun init() {
-
     }
 
     @Test
@@ -110,5 +109,4 @@ internal class IndexedClauseIndexingTest {
     fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
         prototype.correctIndexingAfterTwoArityMixedClauseAssertionZ()
     }
-
 }

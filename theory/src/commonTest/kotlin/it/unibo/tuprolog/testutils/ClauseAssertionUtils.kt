@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import kotlin.test.assertEquals
 
 internal object ClauseAssertionUtils {
@@ -27,7 +31,7 @@ internal object ClauseAssertionUtils {
                 expected,
                 actual,
                 message =
-                """Comparing:
+                    """Comparing:
                     |   actual: $actual
                     |     type: ${actual::class}
                     | expected: $expected
@@ -56,5 +60,4 @@ internal object ClauseAssertionUtils {
             )
         }
     }
-
 }

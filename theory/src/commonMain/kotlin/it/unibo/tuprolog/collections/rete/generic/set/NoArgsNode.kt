@@ -22,7 +22,9 @@ internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteN
 
     override fun deepCopy(): NoArgsNode =
         NoArgsNode(
-            children.deepCopy({ it },
-                { it.deepCopy() })
+            children.deepCopy(
+                { it },
+                { it.deepCopy() }
+            )
         )
 }

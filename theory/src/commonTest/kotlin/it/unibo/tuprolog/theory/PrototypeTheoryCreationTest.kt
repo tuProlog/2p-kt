@@ -54,5 +54,4 @@ internal class PrototypeTheoryCreationTest(
 
         assertEquals(correctInstance, toBeTested)
     }
-
 }

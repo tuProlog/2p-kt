@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.TheoryUtils
@@ -9,7 +15,12 @@ import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
 import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
 import it.unibo.tuprolog.testutils.TheoryUtils.negativeMemberQueries
 import it.unibo.tuprolog.testutils.TheoryUtils.positiveMemberQueries
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for all [Theory] subtypes
@@ -374,7 +385,6 @@ class PrototypeTheoryTest(
     }
 
     fun retractTakesUnificationIntoAccount() {
-
         for (query in positiveMemberQueries) {
             var theory = theoryGenerator(memberClause)
             assertClausesHaveSameLengthAndContent(

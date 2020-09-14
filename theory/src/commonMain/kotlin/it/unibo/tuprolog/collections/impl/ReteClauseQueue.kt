@@ -7,7 +7,6 @@ import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
-import it.unibo.tuprolog.utils.itemWiseHashCode
 
 internal class ReteClauseQueue private constructor(
     rete: ReteTree
@@ -69,5 +68,4 @@ internal class ReteClauseQueue private constructor(
     override fun hashCode(): Int {
         return hashCodeCache
     }
-
 }

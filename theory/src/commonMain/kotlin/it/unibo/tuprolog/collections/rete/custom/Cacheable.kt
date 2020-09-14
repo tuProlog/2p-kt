@@ -10,5 +10,4 @@ internal interface Cacheable<T> {
 
     /**Forcefully invalidate the node cache and all of its subtree cache*/
     fun invalidateCache()
-
 }
