@@ -1,8 +1,11 @@
+import node.Bugs
+import node.NpmPublishExtension
+import node.NpmPublishPlugin
+import node.People
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
-import java.io.File
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import node.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import java.io.File
 
 apply<NpmPublishPlugin>()
 
@@ -115,7 +118,7 @@ configure<NpmPublishExtension> {
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
         homepage = projectHomepage
-        bugs = Bugs(projectIssues,"gcEmail")
+        bugs = Bugs(projectIssues, "gcEmail")
         license = projectLicense
         name = "@tuprolog/$name"
         dependencies = dependencies?.mapKeys {
