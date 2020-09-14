@@ -1,8 +1,13 @@
 package it.unibo.tuprolog.dsl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.MINUS_THREE
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.ONE_POINT_ZERO
 import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT

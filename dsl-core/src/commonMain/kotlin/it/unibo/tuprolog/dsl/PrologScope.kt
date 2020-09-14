@@ -1,6 +1,16 @@
 package it.unibo.tuprolog.dsl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
@@ -186,7 +196,6 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     @JsName("substitutionContainsValue")
     fun Substitution.containsValue(term: Any): Boolean =
         this.containsValue(term.toTerm())
-
 
     companion object {
         @JsName("empty")
