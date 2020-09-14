@@ -45,7 +45,6 @@ kotlin {
                 dependsOn(main.defaultSourceSet)
             }
         }
-
     }
 }
 

@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.TestNotProvable
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsNotProvable : TestNotProvable, SolverFactory by StreamsSolverFactory  {
+class TestStreamsNotProvable : TestNotProvable, SolverFactory by StreamsSolverFactory {
     private val prototype = TestNotProvable.prototype(this)
 
     @Test
@@ -20,7 +20,7 @@ class TestStreamsNotProvable : TestNotProvable, SolverFactory by StreamsSolverFa
     }
 
     @Test
-    @Ignore //solver returns no
+    @Ignore // solver returns no
     override fun testNPCutFail() {
         prototype.testNPCutFail()
     }
@@ -43,7 +43,7 @@ class TestStreamsNotProvable : TestNotProvable, SolverFactory by StreamsSolverFa
     }
 
     @Test
-    @Ignore //solver returns no
+    @Ignore // solver returns no
     override fun testOrNotCutFail() {
         prototype.testOrNotCutFail()
     }

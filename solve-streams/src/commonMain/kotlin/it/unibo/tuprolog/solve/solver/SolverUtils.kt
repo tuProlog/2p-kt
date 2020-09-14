@@ -7,7 +7,12 @@
 
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.TimeInstant
@@ -104,8 +109,9 @@ fun Solve.Request<ExecutionContext>.replyWith(otherResponse: Solve.Response): So
 fun KtList<SideEffect>.addWithNoDuplicates(toAddSideEffects: KtList<SideEffect>): KtList<SideEffect> {
     var duplicatedCount = 0
     forEach { sideEffect ->
-        if (toAddSideEffects.find { toAddSideEffect -> sideEffect === toAddSideEffect } !== null)
+        if (toAddSideEffects.find { toAddSideEffect -> sideEffect === toAddSideEffect } !== null) {
             duplicatedCount++
+        }
     }
     return this + toAddSideEffects.drop(duplicatedCount)
 }
