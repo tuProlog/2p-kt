@@ -185,6 +185,36 @@ ktSubprojects.forEachProject {
     configureUploadToGithub({ "jvm" in it || "shadow" in it })
 }
 
+with(rootProject) {
+    kotlin {
+        sourceSets {
+            val commonMain by getting {
+                dependencies {
+                    for (subproject in (ktSubprojects - setOf(rootProject.name, "solve-streams", "test-solve"))) {
+                        api(project(subproject))
+                    }
+                }
+            }
+
+            val jvmMain by getting {
+                dependencies {
+                    for (subproject in jvmSubprojects) {
+                        api(project(subproject))
+                    }
+                }
+            }
+
+            val jsMain by getting {
+                dependencies {
+                    for (subproject in jsSubprojects) {
+                        api(project(subproject))
+                    }
+                }
+            }
+        }
+    }
+}
+
 jvmSubprojects.forEachProject {
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
