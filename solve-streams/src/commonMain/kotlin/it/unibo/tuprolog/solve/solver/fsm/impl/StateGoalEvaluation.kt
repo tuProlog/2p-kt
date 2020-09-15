@@ -32,11 +32,8 @@ internal class StateGoalEvaluation(
             var responses: Sequence<Solve.Response>? = null
             try {
                 responses = primitive(solve) // execute primitive
-
             } catch (exception: HaltException) {
-
                 yield(stateEndHalt(exception))
-
             } catch (prologError: PrologError) {
                 // if primitive throws PrologError try to solve corresponding throw/1 request
 
@@ -45,14 +42,12 @@ internal class StateGoalEvaluation(
 
             var allSideEffectsSoFar = emptyList<SideEffect>()
             responses?.forEach {
-
                 allSideEffectsSoFar = allSideEffectsSoFar.addWithNoDuplicates(it.sideEffects)
 
                 yield(ifTimeIsNotOver(stateEnd(it.copy(sideEffects = allSideEffectsSoFar))))
 
                 if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
             }
-
         } ?: yield(StateRuleSelection(solve))
     }
 

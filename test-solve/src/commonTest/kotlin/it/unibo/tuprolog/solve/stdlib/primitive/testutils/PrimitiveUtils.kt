@@ -3,9 +3,9 @@ package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.theory.Theory
 
@@ -31,5 +31,4 @@ internal object PrimitiveUtils {
             query.argsList,
             contextWith(database)
         )
-
 }

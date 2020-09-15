@@ -10,7 +10,11 @@ import it.unibo.tuprolog.core.testutils.ConstantUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [RealImpl] and [Real]

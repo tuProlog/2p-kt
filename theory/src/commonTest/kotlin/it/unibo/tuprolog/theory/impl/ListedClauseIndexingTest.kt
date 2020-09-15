@@ -104,5 +104,4 @@ internal class ListedClauseIndexingTest {
     fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
         prototype.correctIndexingAfterTwoArityMixedClauseAssertionZ()
     }
-
 }

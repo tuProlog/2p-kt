@@ -18,5 +18,4 @@ interface TestAnd : SolverTest {
     fun testNoFooIsCallable()
 
     fun testTrueVarCallable()
-
 }

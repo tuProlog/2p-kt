@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.testutils.*
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.AtomUtils
+import it.unibo.tuprolog.core.testutils.ConsUtils
+import it.unibo.tuprolog.core.testutils.IntegerUtils
+import it.unibo.tuprolog.core.testutils.RealUtils
+import it.unibo.tuprolog.core.testutils.VarUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import kotlin.test.Test
 
@@ -80,8 +84,10 @@ internal class ConversionsTest {
     @Test
     fun numberToTerm() {
         @Suppress("USELESS_CAST")
-        val numberValues = (with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
-                with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }).map { it as Number }
+        val numberValues = (
+            with(IntegerUtils) { onlyBytes + onlyInts + onlyShorts + onlyLongs } +
+                with(RealUtils) { decimalsAsDoubles + decimalsAsFloats }
+            ).map { it as Number }
 
         val correct = numberValues.map { Numeric.of(it) }
         val toBeTested = numberValues.map { it.toTerm() }

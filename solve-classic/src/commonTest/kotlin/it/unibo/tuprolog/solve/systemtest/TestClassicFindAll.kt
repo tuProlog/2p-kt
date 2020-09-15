@@ -1,13 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.ClassicSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestFindAll
 import kotlin.test.Test
 
 class TestClassicFindAll : TestFindAll, SolverFactory by ClassicSolverFactory {
@@ -25,37 +20,37 @@ class TestClassicFindAll : TestFindAll, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    override fun testFindXinFail(){
+    override fun testFindXinFail() {
         prototype.testFindXinFail()
     }
 
     @Test
-    override fun testFindXinSameXValues(){
+    override fun testFindXinSameXValues() {
         prototype.testFindXinSameXValues()
     }
 
     @Test
-    override fun testResultListIsCorrect(){
+    override fun testResultListIsCorrect() {
         prototype.testResultListIsCorrect()
     }
 
     @Test
-    override fun testFindXtoDoubleAssigment(){
+    override fun testFindXtoDoubleAssigment() {
         prototype.testFindXtoDoubleAssigment()
     }
 
     @Test
-    override fun testFindXinGoal(){
+    override fun testFindXinGoal() {
         prototype.testFindXinGoal()
     }
 
     @Test
-    override fun testFindXinNumber(){
+    override fun testFindXinNumber() {
         prototype.testFindXinNumber()
     }
 
     @Test
-    override fun testFindXinCall(){
+    override fun testFindXinCall() {
         prototype.testFindXinCall()
     }
 }

@@ -1,13 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.ClassicSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestAtomic
 import kotlin.test.Test
 
 class TestClassicAtomic : TestAtomic, SolverFactory by ClassicSolverFactory {
@@ -25,22 +20,22 @@ class TestClassicAtomic : TestAtomic, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    override fun testAtomicVar(){
+    override fun testAtomicVar() {
         prototype.testAtomicVar()
     }
 
     @Test
-    override fun testAtomicEmptyList(){
+    override fun testAtomicEmptyList() {
         prototype.testAtomicEmptyList()
     }
 
     @Test
-    override fun testAtomicNum(){
+    override fun testAtomicNum() {
         prototype.testAtomicNum()
     }
 
     @Test
-    override fun testAtomicNumDec(){
+    override fun testAtomicNumDec() {
         prototype.testAtomicNumDec()
     }
 }

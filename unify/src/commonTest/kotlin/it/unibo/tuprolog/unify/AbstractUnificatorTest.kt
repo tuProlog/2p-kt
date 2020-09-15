@@ -1,6 +1,11 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMatchCorrect
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertMguCorrect
@@ -119,7 +124,7 @@ internal class AbstractUnificatorTest {
 
         val correctnessMap = mapOf(
             (xVar eq structWithX) to
-                    Triple(Substitution.of(xVar, structWithX), true, structWithX)
+                Triple(Substitution.of(xVar, structWithX), true, structWithX)
         )
 
         assertMguCorrect(correctnessMap) { term1, term2 -> myStrategy.mgu(term1, term2, false) }
@@ -129,19 +134,13 @@ internal class AbstractUnificatorTest {
 
     @Test
     fun sequenceOfEquationsSuccessUnification() {
-        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
-        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
-        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.successSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
@@ -180,19 +179,13 @@ internal class AbstractUnificatorTest {
 
     @Test
     fun sequenceOfEquationsFailedUnification() {
-        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
-        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
+        forEquationSequence(::assertMguCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).mgu(t1, t2) }
 
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
-        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
-        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor)
-        { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
-
+        forEquationSequence(::assertMatchCorrect, UnificatorUtils.failSequenceOfUnification, myStrategyConstructor) { context, t1, t2 -> myStrategyConstructor(context).match(t1, t2) }
 
         forEquationSequence(
             ::assertUnifiedTermCorrect,
@@ -210,10 +203,10 @@ internal class AbstractUnificatorTest {
     @Test
     fun unificationWorksForBigLists() {
         val n = 10_000
-        val ints = LogicList.of((0 .. n).map { Integer.of(it) })
-        val intsAndVars = LogicList.of((0 .. n).map { if (it % 100 == 0) Var.anonymous() else Integer.of(it) })
-        val atoms = LogicList.of((0 .. n).map { Atom.of("a$it") })
-        val atomsAndVars = LogicList.of((0 .. n).map { if (it % 100 == 0) Var.anonymous() else Atom.of("a$it") })
+        val ints = LogicList.of((0..n).map { Integer.of(it) })
+        val intsAndVars = LogicList.of((0..n).map { if (it % 100 == 0) Var.anonymous() else Integer.of(it) })
+        val atoms = LogicList.of((0..n).map { Atom.of("a$it") })
+        val atomsAndVars = LogicList.of((0..n).map { if (it % 100 == 0) Var.anonymous() else Atom.of("a$it") })
 
         with(myStrategyConstructor(Substitution.empty())) {
             assertFalse { match(ints, atoms, true) }
@@ -227,6 +220,5 @@ internal class AbstractUnificatorTest {
             assertTrue { match(atoms, atomsAndVars, true) }
             assertTrue { match(atoms, atomsAndVars, false) }
         }
-
     }
 }

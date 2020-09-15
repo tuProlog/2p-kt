@@ -42,5 +42,4 @@ internal class SolverStrategiesTest {
         assertTrue { prologStandard.successCheckStrategy(Truth.TRUE, aContext) }
         assertFalse { prologStandard.successCheckStrategy(Atom.of("ciao"), aContext) }
     }
-
 }

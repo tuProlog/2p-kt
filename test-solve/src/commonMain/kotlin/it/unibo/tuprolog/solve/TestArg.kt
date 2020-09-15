@@ -144,5 +144,4 @@ interface TestArg : SolverTest {
      * producing exception type_error(integer,a).
      */
     fun testArgAFromFoo()
-
 }

@@ -3,14 +3,13 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestFunctor
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestClassicFunctor : TestFunctor, SolverFactory by ClassicSolverFactory  {
+class TestClassicFunctor : TestFunctor, SolverFactory by ClassicSolverFactory {
     private val prototype = TestFunctor.prototype(this)
 
     @Test
-    override fun testFunArity(){
+    override fun testFunArity() {
         prototype.testFunArity()
     }
 

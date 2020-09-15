@@ -68,5 +68,4 @@ class DynamicOpListener private constructor(
             return DynamicOpListener(parser, operatorDefinedCallback)
         }
     }
-
 }

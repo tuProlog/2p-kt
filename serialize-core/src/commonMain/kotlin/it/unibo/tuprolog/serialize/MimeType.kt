@@ -14,5 +14,4 @@ sealed class MimeType(
     object Yaml : MimeType("application", "yaml")
 
     object Xml : MimeType("application", "xml")
-
 }

@@ -11,7 +11,7 @@ fun main() {
     val term = Struct.of("father", Atom.of("abraham"), Atom.of("isaac"))
     val template = Struct.of("father", Var.of("X"), Atom.of("isaac"))
 
-    println(term mguWith  template)     // {X_0=abraham}
-    println(term matches template)      // true
-    println(term unifyWith template)    // father(abraham, isaac)
+    println(term mguWith template) // {X_0=abraham}
+    println(term matches template) // true
+    println(term unifyWith template) // father(abraham, isaac)
 }

@@ -16,5 +16,4 @@ internal class TermNotIdenticalTest {
             assertCorrectResponse(TermNotIdentical, input, result)
         }
     }
-
 }

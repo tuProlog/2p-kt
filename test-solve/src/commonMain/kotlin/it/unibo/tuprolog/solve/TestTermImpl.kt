@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 
 internal class TestTermImpl(private val solverFactory: SolverFactory) : TestTerm {
     override fun testTermDiff() {

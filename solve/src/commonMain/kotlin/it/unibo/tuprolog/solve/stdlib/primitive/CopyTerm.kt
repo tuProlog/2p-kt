@@ -10,5 +10,4 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 object CopyTerm : BinaryRelation.Functional<ExecutionContext>("copy_term") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
         first.freshCopy() mguWith second
-
 }

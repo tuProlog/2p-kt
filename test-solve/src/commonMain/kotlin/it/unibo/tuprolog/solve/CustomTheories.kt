@@ -49,22 +49,22 @@ object CustomTheories {
                 ("a"(2) then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 ),
-                (("a"("X")  and "!") then "b"("X")).hasSolutions(
+                (("a"("X") and "!") then "b"("X")).hasSolutions(
                     { yes("X" to 1) }
                 ),
-                (("a"("X")  and "!") then "c"("X")).hasSolutions(
+                (("a"("X") and "!") then "c"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
+                (("a"("X") and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
+                (("a"("X") and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 ),
-                (("a"("X")  and "!" and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
+                (("a"("X") and "!" and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and "!" and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
+                (("a"("X") and "!" and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
                     { no() }
                 )
             )
@@ -92,22 +92,22 @@ object CustomTheories {
                 ("a"(2) then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 ),
-                (("a"("X")  and "!") then "b"("X")).hasSolutions(
+                (("a"("X") and "!") then "b"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and "!") then "c"("X")).hasSolutions(
+                (("a"("X") and "!") then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 ),
-                (("a"("X")  and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
+                (("a"("X") and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
+                (("a"("X") and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 ),
-                (("a"("X")  and "!" and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
+                (("a"("X") and "!" and ("X" greaterThan 1)) then "b"("X")).hasSolutions(
                     { no() }
                 ),
-                (("a"("X")  and "!" and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
+                (("a"("X") and "!" and ("X" greaterThan 1)) then "c"("X")).hasSolutions(
                     { yes("X" to 2) }
                 )
             )

@@ -1,13 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.TestAnd
 import kotlin.test.Ignore
 import kotlin.test.Test
 

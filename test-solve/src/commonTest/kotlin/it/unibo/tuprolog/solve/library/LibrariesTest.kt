@@ -115,7 +115,7 @@ internal class LibrariesTest {
     @Test
     fun primitivesShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
         val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.primitives) +
-                library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
+            library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
         val toBeTested = Libraries(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.primitives)
@@ -144,7 +144,7 @@ internal class LibrariesTest {
     @Test
     fun functionsShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
         val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.functions) +
-                library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
+            library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
         val toBeTested = Libraries(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.functions)

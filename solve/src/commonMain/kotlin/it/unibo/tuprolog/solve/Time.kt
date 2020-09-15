@@ -1,4 +1,5 @@
 @file:JvmName("Time")
+
 package it.unibo.tuprolog.solve
 
 import kotlin.js.JsName

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.collections.impl
 
-import it.unibo.tuprolog.collections.*
 import it.unibo.tuprolog.collections.AbstractReteClauseCollection
+import it.unibo.tuprolog.collections.ClauseMultiSet
+import it.unibo.tuprolog.collections.MutableClauseMultiSet
 import it.unibo.tuprolog.collections.rete.custom.ReteTree
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.TheoryUtils
-import it.unibo.tuprolog.utils.itemWiseHashCode
 
 internal class ReteClauseMultiSet private constructor(
     rete: ReteTree
@@ -43,5 +43,4 @@ internal class ReteClauseMultiSet private constructor(
     }
 
     override fun hashCode(): Int = hashCodeCache
-
 }

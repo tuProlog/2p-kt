@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.core.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 
 /**
  * Utils singleton for testing [Indicator]
@@ -54,5 +60,4 @@ internal object IndicatorUtils {
 
     /** Contains well-formed and non-well-formed indicators */
     internal val mixedIndicators by lazy { wellFormedIndicators + nonWellFormedIndicators }
-
 }

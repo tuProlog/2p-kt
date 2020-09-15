@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve
 
-interface TestFail: SolverTest {
+interface TestFail : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestFail =
-                TestFailImpl(solverFactory)
+            TestFailImpl(solverFactory)
     }
 
     /**
@@ -12,7 +12,7 @@ interface TestFail: SolverTest {
      * ?- fail.
      * ```
      * fails on a solver initialized with default built-ins and with and empty theory,
-      */
+     */
     fun testFail()
 
     /**

@@ -26,5 +26,4 @@ object ErrorUtils {
      */
     fun errorStructOf(errorDescription: Struct, customErrorData: Term = Atom.of("")) =
         Struct.of(errorWrapperFunctor, errorDescription, customErrorData)
-
 }

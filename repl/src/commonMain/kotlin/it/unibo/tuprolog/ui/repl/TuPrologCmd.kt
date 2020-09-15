@@ -12,6 +12,7 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
 
@@ -43,7 +44,6 @@ class TuPrologCmd : CliktCommand(
         if (subcommand == null) {
             readEvalPrintLoop(solve)
         }
-        // nota: se subcommand è diverso da null, il controllo fluisce automaticamente al metodo run di subcommand
     }
 
     private fun loadTheory(): Theory {
@@ -55,13 +55,16 @@ class TuPrologCmd : CliktCommand(
                     TermUi.echo("# Successfully loaded ${t.size} clauses from $file")
                     theory += t
                 } catch (e: ParseException) {
-                    TermUi.echo("""
-                        |Error while parsing theory file: $file
-                        |    Message: ${e.message}
-                        |    Line   : ${e.line}
-                        |    Column : ${e.column}
-                        |    Clause : ${e.clauseIndex}
-                    """.trimMargin(), err = true)
+                    TermUi.echo(
+                        """
+                        |# Error while parsing theory file: $file
+                        |#     Message: ${e.message}
+                        |#     Line   : ${e.line}
+                        |#     Column : ${e.column}
+                        |#     Clause : ${e.clauseIndex}
+                    """.trimMargin(),
+                        err = true
+                    )
                 }
             }
         }
@@ -91,8 +94,11 @@ class TuPrologCmd : CliktCommand(
     fun getSolver(): Solver {
         TermUi.echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
-        return Solver.classicWithDefaultBuiltins(staticKb = theory)
+        return Solver.classicWithDefaultBuiltins(
+            staticKb = theory,
+            warnings = OutputChannel.of {
+                TermUi.echo("# ${it.message}", err = true)
+            }
+        )
     }
 }
-
-

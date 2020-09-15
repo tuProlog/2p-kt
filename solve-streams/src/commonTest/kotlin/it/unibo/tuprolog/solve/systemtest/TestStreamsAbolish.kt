@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.TestAbolish
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsAbolish : TestAbolish, SolverFactory by StreamsSolverFactory  {
+class TestStreamsAbolish : TestAbolish, SolverFactory by StreamsSolverFactory {
     private val prototype = TestAbolish.prototype(this)
 
     @Test

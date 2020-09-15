@@ -98,7 +98,8 @@ interface Struct : Term {
 
         /** The pattern of a well-formed functor for a Struct */
         @JvmField
-        val STRUCT_FUNCTOR_REGEX_PATTERN = """^[a-z][A-Za-z_0-9]*$""".toRegex()
+        val STRUCT_FUNCTOR_REGEX_PATTERN =
+            """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
         @JvmStatic
         @JsName("escapeFunctor")
@@ -176,7 +177,6 @@ interface Struct : Term {
                 }
             }
 
-
         @JvmStatic
         @JsName("foldSequence")
         fun fold(operator: String, terms: Sequence<Term>, terminal: Term?): Struct =
@@ -206,6 +206,5 @@ interface Struct : Term {
         @JsName("foldNullTerminated")
         fun fold(operator: String, vararg terms: Term): Struct =
             fold(operator, listOf(*terms))
-
     }
 }

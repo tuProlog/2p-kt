@@ -15,26 +15,11 @@ val ktFreeCompilerArgsJvm: String by project
 
 dependencies {
     antlr("org.antlr", "antlr4", Versions.org_antlr)
-
     api("org.antlr", "antlr4-runtime", Versions.org_antlr)
 
     implementation(kotlin("stdlib-jdk8"))
-
-//    testImplementation("pl.pragmatists:JUnitParams:1.1.1")
-//    testImplementation("junit", "junit", "4.13")
     testImplementation(kotlin("test-junit"))
 }
-
-//
-//publishing {
-//    publications.forEach {
-//        println("${project.name} publication: ${it.name}")
-//    }
-//}
-//
-//components.forEach {
-//    println("${project.name} component: ${it.name}")
-//}
 
 configure<JavaPluginConvention> {
     targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")

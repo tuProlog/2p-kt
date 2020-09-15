@@ -21,13 +21,13 @@ internal class AtomIndex(
     private val index: MutableMap<Atom, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.nestedFirstArgument().isAtom)
+        return if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?.map { it.innerClause }
                 ?: emptySequence()
-        else extractGlobalSequence(clause)
+        } else extractGlobalSequence(clause)
     }
 
     override fun assertA(clause: IndexedClause) {
@@ -73,12 +73,12 @@ internal class AtomIndex(
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.nestedFirstArgument().isAtom)
+        return if (clause.nestedFirstArgument().isAtom) {
             index[clause.asInnerAtom()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?: emptySequence()
-        else extractGlobalIndexedSequence(clause)
+        } else extractGlobalIndexedSequence(clause)
     }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {
@@ -126,5 +126,4 @@ internal class AtomIndex(
 
     private fun IndexedClause.asInnerAtom(): Atom =
         this.innerClause.nestedFirstArgument() as Atom
-
 }

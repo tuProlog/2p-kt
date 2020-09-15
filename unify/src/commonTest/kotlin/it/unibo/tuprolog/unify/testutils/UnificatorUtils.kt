@@ -1,6 +1,16 @@
 package it.unibo.tuprolog.unify.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.unify.eq
@@ -17,10 +27,8 @@ private typealias MatchStrategy<T1, T2> = (T1, T2) -> Boolean
 /** Represents teh Unification Unify function */
 private typealias UnifyStrategy<T1, T2> = (T1, T2) -> Term?
 
-
 /** A typealias to simplify method signature writing */
 private typealias CorrectnessMap<T1, T2> = Map<Equation<T1, T2>, Triple<Substitution, Boolean, Term?>>
-
 
 /**
  * Utils singleton for testing [Unificator]
@@ -49,17 +57,17 @@ internal object UnificatorUtils {
 
     internal val positiveMemberPatterns =
         member(Atom.of("a"), List.of(Atom.of("a"))) +
-                member(
-                    List.of(Struct.of("a", Var.of("X"))),
-                    List.of(List.of(Struct.of("a", Integer.of(1))))
-                )
+            member(
+                List.of(Struct.of("a", Var.of("X"))),
+                List.of(List.of(Struct.of("a", Integer.of(1))))
+            )
 
     internal val negativeMemberPatterns =
         member(Atom.of("a"), List.of(Atom.of("b"))) +
-                member(
-                    List.of(Struct.of("a", Var.of("X"))),
-                    List.of(List.of(Struct.of("b", Integer.of(1))))
-                )
+            member(
+                List.of(Struct.of("a", Var.of("X"))),
+                List.of(List.of(Struct.of("b", Integer.of(1))))
+            )
 
     /** Contains a mapping between equations that should have success unifying and a `Triple(mgu, isMatching, unifiedTerm)` */
     internal val successfulUnifications by lazy {
@@ -75,41 +83,41 @@ internal object UnificatorUtils {
             Scope.empty { (xVar eq varOf("X")) to Triple(Substitution.of(xVar, varOf("X")), true, varOf("X")) },
             Var.anonymous().let { (xVar eq it) to Triple(Substitution.of(xVar, it), true, it) },
             (Struct.of("f", aAtom, xVar) eq Struct.of("f", aAtom, bAtom)) to
-                    Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
+                Triple(Substitution.of(xVar, bAtom), true, Struct.of("f", aAtom, bAtom)),
             (Struct.of("f", xVar) eq Struct.of("f", yVar)) to
-                    Triple(Substitution.of(xVar, yVar), true, Struct.of("f", yVar)),
+                Triple(Substitution.of(xVar, yVar), true, Struct.of("f", yVar)),
             (Struct.of("f", Struct.of("g", xVar)) eq Struct.of("f", yVar)) to
-                    Triple(
-                        Substitution.of(yVar, Struct.of("g", xVar)),
-                        true,
-                        Struct.of("f", Struct.of("g", xVar))
-                    ),
+                Triple(
+                    Substitution.of(yVar, Struct.of("g", xVar)),
+                    true,
+                    Struct.of("f", Struct.of("g", xVar))
+                ),
             (Struct.of("f", Struct.of("g", xVar), xVar) eq Struct.of("f", yVar, aAtom)) to
-                    Triple(
-                        Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
-                        true,
-                        Struct.of("f", Struct.of("g", aAtom), aAtom)
-                    ),
+                Triple(
+                    Substitution.of(yVar to Struct.of("g", aAtom), xVar to aAtom),
+                    true,
+                    Struct.of("f", Struct.of("g", aAtom), aAtom)
+                ),
             Scope.empty {
                 Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom) eq
-                        Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
-                        Triple(
-                            Substitution.of(
-                                varOf("A") to aAtom,
-                                varOf("B") to Struct.of("b", varOf("X")),
-                                varOf("C") to bAtom
-                            ),
-                            true,
-                            Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom)
-                        )
+                    Rule.of(Struct.of("f", varOf("A"), varOf("B")), varOf("C")) to
+                    Triple(
+                        Substitution.of(
+                            varOf("A") to aAtom,
+                            varOf("B") to Struct.of("b", varOf("X")),
+                            varOf("C") to bAtom
+                        ),
+                        true,
+                        Rule.of(Struct.of("f", aAtom, Struct.of("b", varOf("X"))), bAtom)
+                    )
             },
             Scope.empty {
                 Indicator.of("ciao", 2) eq Indicator.of(varOf("A"), varOf("B")) to
-                        Triple(
-                            Substitution.of(varOf("A") to Atom.of("ciao"), varOf("B") to Integer.of(2)),
-                            true,
-                            Indicator.of("ciao", 2)
-                        )
+                    Triple(
+                        Substitution.of(varOf("A") to Atom.of("ciao"), varOf("B") to Integer.of(2)),
+                        true,
+                        Indicator.of("ciao", 2)
+                    )
             }
 
         )
@@ -141,11 +149,11 @@ internal object UnificatorUtils {
     internal val successSequenceOfUnification by lazy {
         mapOf(
             listOf(xVar eq yVar, yVar eq aAtom) to
-                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
             listOf(aAtom eq yVar, xVar eq yVar) to
-                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
+                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom),
             listOf(aAtom eq yVar, xVar eq yVar, xVar eq aAtom) to
-                    Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom)
+                Triple(Substitution.of(xVar to aAtom, yVar to aAtom), true, aAtom)
         )
     }
 
@@ -160,11 +168,11 @@ internal object UnificatorUtils {
         )
     }
 
-
     /** Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu] */
     internal inline fun <T1 : Term, T2 : Term> assertMguCorrect(
         equation: Equation<T1, T2>,
-        expectedMgu: Substitution, mguStrategy: MguStrategy<T1, T2>
+        expectedMgu: Substitution,
+        mguStrategy: MguStrategy<T1, T2>
     ) {
         val (equationLhs, equationRhs) = equation.toPair()
 
@@ -190,7 +198,8 @@ internal object UnificatorUtils {
     /** Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch] */
     internal inline fun <T1 : Term, T2 : Term> assertMatchCorrect(
         equation: Equation<T1, T2>,
-        expectedMatch: Boolean, matchStrategy: MatchStrategy<T1, T2>
+        expectedMatch: Boolean,
+        matchStrategy: MatchStrategy<T1, T2>
     ) {
         val (equationLhs, equationRhs) = equation.toPair()
 
@@ -216,7 +225,8 @@ internal object UnificatorUtils {
     /** Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm] */
     internal inline fun <T1 : Term, T2 : Term> assertUnifiedTermCorrect(
         equation: Equation<T1, T2>,
-        expectedUnifiedTerm: Term?, unifyStrategy: UnifyStrategy<T1, T2>
+        expectedUnifiedTerm: Term?,
+        unifyStrategy: UnifyStrategy<T1, T2>
     ) {
         val (equationLhs, equationRhs) = equation.toPair()
 
@@ -238,7 +248,6 @@ internal object UnificatorUtils {
             unifyStrategy
         )
     }
-
 
     /** Utility function to calculate the unifier for more than one equation, passing created context through different unification */
     private inline fun <T1 : Term, T2 : Term> multipleEquationMgu(

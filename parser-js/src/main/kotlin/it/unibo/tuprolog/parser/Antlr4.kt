@@ -1,12 +1,13 @@
 @file:JsModule("antlr4")
 @file:JsNonModule
+
 package it.unibo.tuprolog.parser
 
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/Token.js
  */
 open external class Token {
-    var source: dynamic;
+    var source: dynamic
     var type: Int; // token type of the token
     var channel: Int; // The parser ignores everything not on DEFAULT_CHANNEL
     var start: Int // optional; return -1 if not implemented.
@@ -66,7 +67,6 @@ external class InputStream(input: dynamic, decodeToUnicodeCodePoints: Boolean) {
  */
 open external class TokenStream
 
-
 /**
  * https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/BufferedTokenStream.js
  */
@@ -91,7 +91,6 @@ open external class BufferedTokenStream(tokenSource: dynamic) : TokenStream {
     fun fill()
 }
 
-
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/CommonTokenStream.js
  */
@@ -108,16 +107,13 @@ external class CommonTokenStream(lexer: dynamic, channel: Int) : BufferedTokenSt
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/RuleContext.js
  * */
-
 open external class RuleContext(parent: dynamic, invokingStateNumber: Int) {
-    fun <T>accept(visitor: dynamic): T
+    fun <T> accept(visitor: dynamic): T
 }
-
 
 /**
  * @see https://github.com/antlr/antlr4/blob/master/runtime/JavaScript/src/antlr4/ParserRuleContext.js
  * */
-
 open external class ParserRuleContext(parent: dynamic, invokingStateNumber: Int) : RuleContext {
     val children: Array<dynamic>
 

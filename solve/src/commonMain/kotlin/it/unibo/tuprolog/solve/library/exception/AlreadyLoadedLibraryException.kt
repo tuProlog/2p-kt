@@ -6,4 +6,3 @@ class AlreadyLoadedLibraryException(
 ) : LibraryException(message, cause) {
     constructor(cause: Throwable?) : this(cause?.toString(), cause)
 }
-

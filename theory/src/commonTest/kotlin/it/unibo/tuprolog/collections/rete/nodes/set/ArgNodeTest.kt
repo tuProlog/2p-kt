@@ -2,7 +2,11 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.collections.rete.generic.set.ArgNode
 import it.unibo.tuprolog.collections.rete.generic.set.RuleNode
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
@@ -101,7 +105,9 @@ internal class ArgNodeTest {
                     mutableListOf(
                         noArgsHeadedRule
                     )
-                ), it.children[null])
+                ),
+                it.children[null]
+            )
         }
     }
 

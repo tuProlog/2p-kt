@@ -69,9 +69,11 @@ interface ClauseQueue : ClauseCollection {
         @JvmStatic
         @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): ClauseQueue =
-            of(clause.map {
-                Scope.empty(it)
-            })
+            of(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -99,6 +101,4 @@ interface ClauseQueue : ClauseCollection {
             )
         }
     }
-
 }
-

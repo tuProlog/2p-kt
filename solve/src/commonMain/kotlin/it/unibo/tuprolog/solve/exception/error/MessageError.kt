@@ -46,6 +46,5 @@ class MessageError internal constructor( // TODO: 16/01/2020 test this class
         /** Factory method to create a [MessageError] */
         fun of(content: Term, context: ExecutionContext, cause: Throwable? = null) =
             MessageError(content.toString(), cause, context, content)
-
     }
 }

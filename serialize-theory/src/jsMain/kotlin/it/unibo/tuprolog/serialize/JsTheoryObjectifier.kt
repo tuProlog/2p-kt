@@ -12,5 +12,4 @@ internal class JsTheoryObjectifier : TheoryObjectifier {
     override fun objectifyMany(values: Iterable<Theory>): Any {
         return values.map { objectify(it) }.toTypedArray()
     }
-
 }

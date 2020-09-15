@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve
 /**
  * Tests of asserta
  */
-interface TestAssertA : SolverTest{
-    companion object{
+interface TestAssertA : SolverTest {
+    companion object {
         fun prototype(solverFactory: SolverFactory): TestAssertA =
-                TestAssertAImpl(solverFactory)
+            TestAssertAImpl(solverFactory)
     }
 
     /**

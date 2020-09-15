@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.unify.Unificator.Companion.unifyWith

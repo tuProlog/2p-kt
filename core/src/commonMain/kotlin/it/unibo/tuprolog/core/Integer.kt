@@ -27,7 +27,8 @@ interface Integer : Numeric {
     companion object {
 
         @JvmField
-        val INTEGER_REGEX_PATTERN = """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
+        val INTEGER_REGEX_PATTERN =
+            """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
 
         @JvmStatic
         @JsName("ofBigInteger")

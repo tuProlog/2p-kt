@@ -15,6 +15,6 @@ class InvalidTermTypeException(
     offendingSymbol,
     line,
     column,
-    "Expecting ${expected.simpleName}, got `$offendingSymbol` instead" ,
+    "Expecting ${expected.simpleName}, got `$offendingSymbol` instead",
     cause
 )

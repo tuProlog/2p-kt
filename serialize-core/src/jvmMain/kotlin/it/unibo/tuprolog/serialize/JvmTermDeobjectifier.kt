@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.serialize
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import java.math.BigDecimal
 import java.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
@@ -81,24 +85,31 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyTuple(value: Map<*, *>): Term {
         val items = value["tuple"] as? List<*> ?: throw DeobjectificationException(value)
-        return scope.tupleOf(items.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.tupleOf(
+            items.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifySet(value: Map<*, *>): Term {
         val items = value["set"] as? List<*> ?: throw DeobjectificationException(value)
-        return scope.setOf(items.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.setOf(
+            items.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifyStructure(value: Map<*, *>): Term {
         val name = value["fun"] as? String ?: throw DeobjectificationException(value)
         val args = value["args"] as? List<*> ?: throw DeobjectificationException(value)
-        return scope.structOf(name, args.map {
-            deobjectify(it ?: throw DeobjectificationException(value))
-        })
+        return scope.structOf(
+            name,
+            args.map {
+                deobjectify(it ?: throw DeobjectificationException(value))
+            }
+        )
     }
 
     private fun deobjectifyVariable(value: Map<*, *>): Term {
@@ -131,5 +142,4 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyBoolean(value: Boolean): Term {
         return scope.truthOf(value)
     }
-
 }

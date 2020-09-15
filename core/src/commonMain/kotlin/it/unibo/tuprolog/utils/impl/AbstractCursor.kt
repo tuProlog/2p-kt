@@ -11,4 +11,3 @@ internal abstract class AbstractCursor<T> : Cursor<T> {
         }
     }
 }
-

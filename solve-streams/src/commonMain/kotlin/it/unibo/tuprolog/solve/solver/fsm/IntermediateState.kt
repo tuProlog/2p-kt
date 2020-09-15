@@ -16,5 +16,4 @@ interface IntermediateState : State {
 
     override val context: ExecutionContext
         get() = solve.context
-
 }

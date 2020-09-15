@@ -13,8 +13,8 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -50,8 +50,8 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -64,8 +64,8 @@ internal class TestFailImpl(private val solverFactory: SolverFactory) : TestFail
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }

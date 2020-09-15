@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestFloat
 import kotlin.test.Test
 
-class TestClassicFloat : TestFloat, SolverFactory by ClassicSolverFactory  {
+class TestClassicFloat : TestFloat, SolverFactory by ClassicSolverFactory {
     private val prototype = TestFloat.prototype(this)
 
     @Test

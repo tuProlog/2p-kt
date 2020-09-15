@@ -25,7 +25,6 @@ interface Atom : Struct, Constant {
     override val isTrue: Boolean
         get() = Truth.TRUE_FUNCTOR == value
 
-
     override val isFail: Boolean
         get() = Truth.FAIL_FUNCTOR == value
 

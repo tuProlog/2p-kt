@@ -1,7 +1,13 @@
 package it.unibo.tuprolog.solve.primitive.testutils
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.AbstractWrapper
-import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import kotlin.collections.List as KtList
@@ -20,7 +26,8 @@ internal object WrapperUtils {
                 Signature("ciao", 0),
                 listOf(Atom.of("ciao")),
                 listOf(
-                    Atom.of("ciaO"), Atom.of("cc")
+                    Atom.of("ciaO"),
+                    Atom.of("cc")
                 )
             ),
             Triple(

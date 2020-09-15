@@ -13,8 +13,8 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -27,13 +27,13 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    with(query) {
-                        kotlin.collections.listOf(
-                                yes("X" to 1),
-                                yes("X" to 2)
-                        )
-                    },
-                    solutions
+                with(query) {
+                    kotlin.collections.listOf(
+                        yes("X" to 1),
+                        yes("X" to 2)
+                    )
+                },
+                solutions
             )
         }
     }
@@ -46,8 +46,8 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -60,8 +60,8 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -74,18 +74,18 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(
-                            query.halt(
-                                    TypeError.forGoal(
-                                            DummyInstances.executionContext,
-                                            Signature("once", 1),
-                                            TypeError.Expected.CALLABLE,
-                                            numOf(3)
+                kotlin.collections.listOf(
+                    query.halt(
+                        TypeError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("once", 1),
+                            TypeError.Expected.CALLABLE,
+                            numOf(3)
 
-                                    )
-                            )
-                    ),
-                    solutions
+                        )
+                    )
+                ),
+                solutions
             )
         }
     }
@@ -98,16 +98,16 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(
-                            query.halt(
-                                    InstantiationError.forGoal(
-                                            DummyInstances.executionContext,
-                                            Signature("once", 1),
-                                            varOf("X")
-                                    )
-                            )
-                    ),
-                    solutions
+                kotlin.collections.listOf(
+                    query.halt(
+                        InstantiationError.forGoal(
+                            DummyInstances.executionContext,
+                            Signature("once", 1),
+                            varOf("X")
+                        )
+                    )
+                ),
+                solutions
             )
         }
     }

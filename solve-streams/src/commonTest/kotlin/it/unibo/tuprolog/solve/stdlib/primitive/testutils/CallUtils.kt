@@ -1,12 +1,16 @@
 package it.unibo.tuprolog.solve.stdlib.primitive.testutils
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
+import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.hasSolutions
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
@@ -16,6 +20,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.solve.stdlib.primitive.Cut
 import it.unibo.tuprolog.solve.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.yes
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -47,12 +52,9 @@ internal object CallUtils {
     internal val requestSolutionMap by lazy {
         prolog {
             mapOf(
-                Call.functor(true)
-                    .hasSolutions({ yes() }),
-                Call.functor("true" and "true")
-                    .hasSolutions({ yes() }),
-                Call.functor("!")
-                    .hasSolutions({ yes() }),
+                Call.functor(true).hasSolutions({ yes() }),
+                Call.functor("true" and "true").hasSolutions({ yes() }),
+                Call.functor("!").hasSolutions({ yes() }),
                 *simpleFactTheoryNotableGoalToSolutions.map { (goal, solutionList) ->
                     Call.functor(goal).run { to(solutionList.changeQueriesTo(this)) }
                 }.toTypedArray(),
@@ -61,7 +63,8 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query, database = simpleFactTheory,
+                    query,
+                    database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }
@@ -118,7 +121,8 @@ internal object CallUtils {
                 }.toTypedArray()
             ).mapKeys { (query, _) ->
                 createSolveRequest(
-                    query, database = simpleFactTheory,
+                    query,
+                    database = simpleFactTheory,
                     primitives = mapOf(*ktListOf(Call, Cut, Conjunction).map { it.descriptionPair }.toTypedArray())
                 )
             }

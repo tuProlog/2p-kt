@@ -18,5 +18,4 @@ internal class JsTheoryDeobjectifier : TheoryDeobjectifier {
             else -> throw DeobjectificationException(`object`)
         }
     }
-
 }

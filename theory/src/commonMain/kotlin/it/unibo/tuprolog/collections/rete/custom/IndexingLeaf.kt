@@ -22,5 +22,4 @@ internal interface IndexingLeaf : ReteNode {
     /**Variant of [getIndexed] aimed at preventing a proper traversal of the children of this node,
      * retrieving all the clauses matching the given [Clause] without performing any branch selection*/
     fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause>
-
 }

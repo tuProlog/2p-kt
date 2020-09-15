@@ -9,11 +9,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.jvm.JvmName
@@ -70,7 +67,6 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
  * **these variables are compared only by name**, because instances will differ
  */
 fun assertSolutionEquals(expected: Solution, actual: Solution) {
-
     fun reportMsg(expected: Any, actual: Any, motivation: String = "") =
         "Expected: `$expected`\nActual\t: `$actual`" + if (motivation.isNotBlank()) " ($motivation)" else ""
 
@@ -79,8 +75,6 @@ fun assertSolutionEquals(expected: Solution, actual: Solution) {
 
     fun assertSameQuery(expected: Solution, actual: Solution) =
         assertEquals(expected.query, actual.query, reportMsg(expected, actual))
-
-
 
     when {
         expected is Solution.Halt -> {
@@ -198,7 +192,7 @@ fun Solver.logKBs() {
 
 /** Utility function to log passed goal and solutions */
 fun logGoalAndSolutions(goal: Struct, solutions: Iterable<Solution>) {
-    println("?- ${goal}.")
+    println("?- $goal.")
     solutions.forEach {
         when (it) {
             is Solution.Yes -> {

@@ -11,7 +11,12 @@ import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.VarUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
 import it.unibo.tuprolog.core.testutils.VarUtils.assertSameVariable
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for [VarImpl] and [Var]

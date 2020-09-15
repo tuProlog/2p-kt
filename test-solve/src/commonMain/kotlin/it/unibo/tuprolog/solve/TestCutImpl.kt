@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 
-internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut{
+internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut {
     override fun testCut() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -35,7 +35,7 @@ internal class TestCutImpl(private val solverFactory: SolverFactory) : TestCut{
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (call("!") and fail or true )
+            val query = (call("!") and fail or true)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

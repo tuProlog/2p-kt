@@ -4,7 +4,6 @@ import it.unibo.tuprolog.collections.impl.MutableReteClauseMultiSet
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.TermComparator
-import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -39,9 +38,11 @@ interface MutableClauseMultiSet : ClauseMultiSet {
         @JvmStatic
         @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): MutableClauseMultiSet =
-            of(clause.map {
-                Scope.empty(it)
-            })
+            of(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [MutableClauseMultiSet] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -69,5 +70,4 @@ interface MutableClauseMultiSet : ClauseMultiSet {
             )
         }
     }
-
 }

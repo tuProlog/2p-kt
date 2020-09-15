@@ -16,5 +16,4 @@ internal class JvmTheoryDeserializer(override val mimeType: MimeType) : ReadingT
         JvmTheoryDeobjectifier().deobjectifyMany(
             mapper.readValue(reader, java.lang.Object::class.java)
         )
-
 }

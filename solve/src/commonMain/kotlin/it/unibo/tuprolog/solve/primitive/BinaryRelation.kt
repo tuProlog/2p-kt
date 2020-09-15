@@ -37,7 +37,6 @@ abstract class BinaryRelation<E : ExecutionContext>(operator: String) : Primitiv
         final override fun Solve.Request<E>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
             return sequenceOf(computeOne(first, second))
         }
-
     }
 
     abstract class Functional<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {

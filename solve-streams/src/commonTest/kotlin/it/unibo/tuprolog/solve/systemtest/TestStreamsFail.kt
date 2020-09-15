@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.TestFail
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestStreamsFail : TestFail, SolverFactory by StreamsSolverFactory  {
+class TestStreamsFail : TestFail, SolverFactory by StreamsSolverFactory {
     private val prototype = TestFail.prototype(this)
 
     @Test

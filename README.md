@@ -5,6 +5,7 @@ Some quick links:
 * [GitHub Repository](https://github.com/tuProlog/2p-kt) (where JVM releases are hosted)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
 * [Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted)
+* [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/)
 
 ## Intro
 

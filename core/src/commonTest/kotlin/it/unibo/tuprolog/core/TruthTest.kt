@@ -40,5 +40,4 @@ internal class TruthTest {
     fun failTruthRetrieval() {
         assertEquals(FAIL, Truth.FAIL)
     }
-
 }

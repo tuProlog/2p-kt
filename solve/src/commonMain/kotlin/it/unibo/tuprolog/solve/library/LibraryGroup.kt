@@ -24,5 +24,4 @@ interface LibraryGroup<L : Library> : Library {
     /** Updates an already contained library, with given library */
     @JsName("update")
     fun update(library: L): LibraryGroup<L>
-
 }

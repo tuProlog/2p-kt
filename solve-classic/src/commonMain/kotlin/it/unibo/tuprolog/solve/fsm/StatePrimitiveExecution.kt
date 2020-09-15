@@ -24,7 +24,6 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
         )
     }
 
-
     override fun computeNext(): State = try {
         when (val sol = context.primitives.current?.solution) {
             is Solution.Yes -> {
@@ -55,5 +54,4 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
             context.copy(step = nextStep())
         )
     }
-
 }

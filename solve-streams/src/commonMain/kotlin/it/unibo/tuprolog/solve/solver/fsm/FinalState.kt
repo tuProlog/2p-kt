@@ -11,5 +11,4 @@ interface FinalState : State {
 
     /** The [Solve.Response] characterizing this Final State */
     override val solve: Solve.Response
-
 }

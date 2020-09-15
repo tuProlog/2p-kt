@@ -86,8 +86,8 @@ internal data class SideEffectManagerImpl(
      * - if cut was called, and the first "scoped" choice point context is to be cut
      */
     internal fun shouldCutExecuteInRuleSelection() =
-        clauseScopedParents.lastOrNull() in toCutContextsParent
-                || shouldExecuteThrowCut()
+        clauseScopedParents.lastOrNull() in toCutContextsParent ||
+            shouldExecuteThrowCut()
 
     /** A method to retrieve the first ancestor catch request that has its second argument that unifies with [toUnifyArgument] */
     internal fun retrieveAncestorCatchRequest(toUnifyArgument: Term): Solve.Request<StreamsExecutionContext>? {
@@ -119,7 +119,6 @@ internal data class SideEffectManagerImpl(
     internal fun resetCutWorkChanges(toRecoverSituation: SideEffectManagerImpl) =
         // opaque behaviour of call/1 w.r.t cut/0, results in cancellation of sub-goal work onto "cut"'s data structures
         copy(toCutContextsParent = toRecoverSituation.toCutContextsParent)
-
 
     /**
      * Method to query if the throw Cut should execute; the throw cut can exit clause Scope, so it uses different data structures

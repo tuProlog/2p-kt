@@ -6,7 +6,12 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
+import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThan
+import it.unibo.tuprolog.solve.stdlib.primitive.TermLowerThanOrEqualTo
+import it.unibo.tuprolog.solve.stdlib.primitive.TermNotSame
+import it.unibo.tuprolog.solve.stdlib.primitive.TermSame
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue

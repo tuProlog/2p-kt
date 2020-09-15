@@ -6,7 +6,10 @@ import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.unify.Equation.*
+import it.unibo.tuprolog.unify.Equation.Assignment
+import it.unibo.tuprolog.unify.Equation.Comparison
+import it.unibo.tuprolog.unify.Equation.Contradiction
+import it.unibo.tuprolog.unify.Equation.Identity
 import it.unibo.tuprolog.utils.dequeOf
 import kotlin.jvm.JvmOverloads
 
@@ -41,7 +44,6 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
         equations: MutableList<Equation<Term, Term>>,
         exceptIndex: Int
     ): Boolean {
-
         var changed = false
 
         for (i in equations.indices) {

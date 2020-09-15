@@ -1,11 +1,15 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
-import kotlin.test.assertEquals
-
 
 class PrototypeProperIndexingTest(
     private val theoryGenerator: (Iterable<Clause>) -> Theory
@@ -96,7 +100,8 @@ class PrototypeProperIndexingTest(
                 Struct.of(
                     "f",
                     Struct.of("f", Integer.of(1)),
-                    Integer.of(2)),
+                    Integer.of(2)
+                ),
                 Integer.of(3)
             )
         )
@@ -284,6 +289,4 @@ class PrototypeProperIndexingTest(
         assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
         assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2MixedClause), generatedIndexingAfterAssertionA)
     }
-
-
 }

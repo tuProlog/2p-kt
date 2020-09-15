@@ -57,7 +57,6 @@ internal open class ClassicSolver(
             require(newState.context.step == newStep)
             state = newState
         }.asSequence()
-
     }
 
     override val libraries: Libraries

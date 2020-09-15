@@ -1,6 +1,17 @@
 package it.unibo.tuprolog.collections.rete.custom
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.interleave
 import it.unibo.tuprolog.utils.interleaveSequences

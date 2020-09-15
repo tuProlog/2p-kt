@@ -21,5 +21,4 @@ abstract class AbstractChannel<T> : Channel<T> {
     protected fun notify(value: T) {
         _listeners.forEach { it(value) }
     }
-
 }

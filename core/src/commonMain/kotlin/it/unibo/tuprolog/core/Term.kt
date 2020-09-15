@@ -43,7 +43,6 @@ interface Term : Comparable<Term> {
     override fun compareTo(other: Term): Int =
         TermComparator.DefaultComparator.compare(this, other)
 
-
     /**
      * Checks whether an[other] term is _equals_ to the current one or not,
      * by explicitly letting the client decide whether to rely or not on [Var]riables

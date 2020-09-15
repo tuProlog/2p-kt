@@ -13,7 +13,10 @@ fun assertTermsAreEqual(expected: Term, actual: Term) {
     assertEquals(expected.isGround, actual.isGround)
     if (expected.isGround) {
         assertEquals(
-            expected, actual, message = """Comparing:
+            expected,
+            actual,
+            message =
+                """Comparing:
             |   actual: $actual
             |     type: ${actual::class}
             | expected: $expected

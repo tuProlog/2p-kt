@@ -125,5 +125,4 @@ internal class MutableClassicSolver(
         }
         return result
     }
-
 }

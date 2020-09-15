@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.core.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 
 /**
@@ -16,7 +22,6 @@ internal object ConsUtils {
     /** Constructs a non ground Cons with one Term */
     internal fun oneElementList(constructor: (Term, Term) -> Cons) = constructor(headOfFirstList, tailOfFirstList)
 
-
     private val headOfSecondList = Var.of("H")
     private val tailOfSecondListElement = Var.of("T")
     private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
@@ -24,7 +29,6 @@ internal object ConsUtils {
     /** Constructs a non ground Cons with two Terms */
     internal fun twoElementList(constructor: (Term, Term) -> Cons) =
         constructor(headOfSecondList, tailOfSecondList(constructor))
-
 
     private val headOfThirdList = Atom.of("bigList")
     private val tailOfThirdListFirstElement = Integer.of(4)
@@ -36,7 +40,6 @@ internal object ConsUtils {
     /** Constructs a ground Cons with three Terms */
     internal fun threeElementList(constructor: (Term, Term) -> Cons) =
         constructor(headOfThirdList, tailOfThirdList(constructor))
-
 
     private val headOfFourthList = Var.of("Head")
     private val tailOfFourthList = Var.of("Tail")
@@ -56,7 +59,6 @@ internal object ConsUtils {
     internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) =
         constructor(headOfFifthList, tailOfFifthList(constructor))
 
-
     /** Returns only those Cons that are terminated with an EmptyList */
     internal fun onlyConsEmptyListTerminated(constructor: (Term, Term) -> Cons) =
         listOf(
@@ -72,11 +74,9 @@ internal object ConsUtils {
             threeElementListWithPipe(constructor)
         )
 
-
     /** Returns all Cons mixing [onlyConsEmptyListTerminated] and [onlyConsPipeTerminated] */
     internal fun mixedConsInstances(constructor: (Term, Term) -> Cons) =
         onlyConsEmptyListTerminated(constructor) + onlyConsPipeTerminated(constructor)
-
 
     /** All Cons heads */
     internal val mixedConsInstancesHeads by lazy {
@@ -96,7 +96,7 @@ internal object ConsUtils {
     /** All Cons correct toString representations */
     internal val mixedConsInstancesCorrectToString by lazy {
         onlyConsEmptyListTerminatedElementLists.map { it.joinToString(prefix = "[", postfix = "]") } +
-                onlyConsPipeTerminatedElementLists.map { it.dropLast().joinToString(prefix = "[") + " | ${it.last()}]" }
+            onlyConsPipeTerminatedElementLists.map { it.dropLast().joinToString(prefix = "[") + " | ${it.last()}]" }
     }
 
     internal val onlyConsEmptyListTerminatedElementLists by lazy {

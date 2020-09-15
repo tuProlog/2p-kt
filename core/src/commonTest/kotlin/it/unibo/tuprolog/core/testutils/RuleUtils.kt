@@ -1,6 +1,16 @@
 package it.unibo.tuprolog.core.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 
 /**
  * Utils singleton for testing [Rule]
@@ -13,7 +23,7 @@ internal object RuleUtils {
     val groundWellFormedRules by lazy {
         listOf(
             Struct.of("parent", Atom.of("bob"), Atom.of("jack"))
-                    to Struct.of("son", Atom.of("jack"), Atom.of("bob")),
+                to Struct.of("son", Atom.of("jack"), Atom.of("bob")),
             Struct.of("money", Integer.of(100)) to Atom.of("win"),
             Atom.of("a") to Struct.of("?", Integer.of(1), Integer.of(2)),
             Atom.of("b") to Struct.of(",", Real.of(0.5), Real.of(0.6), Real.of(0.7)),

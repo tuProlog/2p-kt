@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 interface TestCopyTerm : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCopyTerm =
-                TestCopyTermImpl(solverFactory)
+            TestCopyTermImpl(solverFactory)
     }
 
     /**
@@ -14,7 +14,6 @@ interface TestCopyTerm : SolverTest {
      * succeeds on a solver initialized with default built-ins and with and empty theory.
      */
     fun testCopyXNum()
-
 
     /**
      * Tests the queries

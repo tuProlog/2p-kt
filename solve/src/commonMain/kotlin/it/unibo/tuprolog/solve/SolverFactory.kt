@@ -154,7 +154,14 @@ interface SolverFactory {
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
     ): Solver = solverOf(
-        otherLibraries + defaultBuiltins, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings
+        otherLibraries + defaultBuiltins,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr,
+        warnings
     )
 
     @JsName("solverWithDefaultBuiltinsAndLibrariesAndKBs")

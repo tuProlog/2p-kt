@@ -1,3 +1,3 @@
 package it.unibo.tuprolog.core.impl
 
-internal object SimpleTermFormatter: AbstractTermFormatter()
+internal object SimpleTermFormatter : AbstractTermFormatter()

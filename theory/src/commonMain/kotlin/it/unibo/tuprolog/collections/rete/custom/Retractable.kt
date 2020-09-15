@@ -8,5 +8,4 @@ internal interface Retractable {
 
     /**Removes the given [SituatedIndexedClause] from the storage of this node*/
     fun retractIndexed(indexed: SituatedIndexedClause)
-
 }

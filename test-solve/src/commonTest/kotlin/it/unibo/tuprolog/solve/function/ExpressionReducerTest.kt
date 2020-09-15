@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 /**
- * Test class for [ExpressionEvaluator]
+ * Test class for [ExpressionReducerTest]
  *
  * @author Enrico
  */
@@ -32,5 +32,4 @@ internal class ExpressionReducerTest {
             assertEquals(output, toBeTested)
         }
     }
-
 }

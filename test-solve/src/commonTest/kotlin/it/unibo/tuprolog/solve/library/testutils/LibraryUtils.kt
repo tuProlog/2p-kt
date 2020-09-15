@@ -9,12 +9,12 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Primitive
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 
 /**
@@ -112,7 +112,6 @@ internal object LibraryUtils {
             duplicatedAliasLibrary
         )
     }
-
 
     /** A method to disambiguate use of Library.of reference */
     internal fun libraryWithAliasConstructor(

@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Signature
@@ -84,16 +88,16 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
 
     private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
         val cutLimit = if (magicCut) {
-                this.pathToRoot.firstOrNull()
-            } else {
-                this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
-            }
-            return if (cutLimit == null) {
-                CutLimit.None
-            } else {
-                CutLimit.Actual(cutLimit.depth, cutLimit.procedure)
-            }
+            this.pathToRoot.firstOrNull()
+        } else {
+            this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
         }
+        return if (cutLimit == null) {
+            CutLimit.None
+        } else {
+            CutLimit.Actual(cutLimit.depth, cutLimit.procedure)
+        }
+    }
 
     private fun ChoicePointContext?.performCut(cutLimit: CutLimit): ChoicePointContext? {
         return when {
@@ -101,8 +105,8 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                 null
             }
             cutLimit is CutLimit.None ||
-            cutLimit.depthToCut > executionContext!!.depth ||
-            cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
+                cutLimit.depthToCut > executionContext!!.depth ||
+                cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
                 this
             }
             else -> {
@@ -122,7 +126,6 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
     }
 
     override fun computeNext(): State {
-
         return when (val currentGoal = context.currentGoal!!) {
             is Var -> {
                 exceptionalState(

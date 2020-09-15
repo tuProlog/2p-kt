@@ -25,8 +25,9 @@ class TestPrologWithResolution {
             val actual = mutableListOf<String>()
 
             for (sol in solve("ancestor"("abraham", "X")))
-                if (sol is Solution.Yes)
+                if (sol is Solution.Yes) {
                     actual.add(sol.substitution["X"].toString())
+                }
 
             assertEquals(
                 mutableListOf("isaac", "jacob", "joseph"),

@@ -3,10 +3,10 @@ package it.unibo.tuprolog.solve.testutils
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.extractSignature
 
 /**
  * Utils singleton to help testing [Solution]
@@ -22,5 +22,4 @@ internal object SolutionUtils {
     internal val aSubstitution = with(solutionScope) { Substitution.of(varOf("A"), Struct.of("c", varOf("B"))) }
     internal val theQuerySolved = with(solutionScope) { Struct.of("f", Struct.of("c", varOf("B"))) }
     internal val anException = TuPrologRuntimeException(context = DummyInstances.executionContext)
-
 }
