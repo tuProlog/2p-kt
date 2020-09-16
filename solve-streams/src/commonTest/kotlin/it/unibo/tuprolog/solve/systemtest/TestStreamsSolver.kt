@@ -45,19 +45,16 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     ) = MutableSolver.streams(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     @Test
-    @Ignore
     override fun testUnknownFlag2() {
         prototype.testUnknownFlag2()
     }
 
     @Test
-    @Ignore
     override fun testUnknownFlag1() {
         prototype.testUnknownFlag1()
     }
 
     @Test
-    @Ignore
     override fun testFindAll() {
         prototype.testFindAll()
     }
@@ -83,7 +80,6 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
-    @Ignore
     override fun testSideEffectsPersistentAfterBacktracking1() {
         prototype.testSideEffectsPersistentAfterBacktracking1()
     }
