@@ -19,7 +19,8 @@ object DefaultBuiltins : AliasedLibrary by CommonBuiltins {
             Conjunction,
             Cut,
             Throw,
-            Not
+            Not,
+            FindAll
         ).map { it.descriptionPair }.toMap()
     }
 }
