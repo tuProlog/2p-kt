@@ -4,22 +4,13 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.prepareForExecution
-import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.currentTimeInstant
-import it.unibo.tuprolog.solve.forEachWithLookahead
+import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
+import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
-import it.unibo.tuprolog.solve.solver.extendParentScopeWith
-import it.unibo.tuprolog.solve.solver.fsm.AlreadyExecutedState
-import it.unibo.tuprolog.solve.solver.fsm.FinalState
-import it.unibo.tuprolog.solve.solver.fsm.State
-import it.unibo.tuprolog.solve.solver.fsm.StateMachineExecutor
-import it.unibo.tuprolog.solve.solver.fsm.asAlreadyExecuted
-import it.unibo.tuprolog.solve.solver.moreThanOne
-import it.unibo.tuprolog.solve.solver.newSolveRequest
-import it.unibo.tuprolog.solve.solver.orderWithStrategy
-import it.unibo.tuprolog.solve.solver.shouldCutExecuteInRuleSelection
+import it.unibo.tuprolog.solve.solver.*
+import it.unibo.tuprolog.solve.solver.fsm.*
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -40,7 +31,35 @@ internal class StateRuleSelection(
         val isChoicePoint = moreThanOne(matchingRules)
 
         when {
-            matchingRules.none() -> yield(stateEndFalse())
+            matchingRules.none() ->
+                when (val unknown = context.flags[Unknown]) {
+                    Unknown.FAIL -> yield(stateEndFalse())
+                    else -> {
+                        val ruleSources = with(context) { sequenceOf(libraries.theory, staticKb, dynamicKb) }
+                        val missing = currentGoal.extractSignature()
+                        if (ruleSources.none { missing.toIndicator() in it }) {
+                            when (unknown) {
+                                Unknown.ERROR -> yield(
+                                    stateEndHalt(
+                                        ExistenceError.forProcedure(
+                                            context = context,
+                                            procedure = missing
+                                        )
+                                    )
+                                )
+                                Unknown.WARNING -> yield(stateEndFalse().also {
+                                    context.warnings?.write(
+                                        MissingPredicate(
+                                            context = context,
+                                            signature = missing
+                                        )
+                                    )
+                                })
+                                else -> yield(stateEndFalse())
+                            }
+                        } else yield(stateEndFalse())
+                    }
+                }
 
             else ->
                 with(solve.context) {
