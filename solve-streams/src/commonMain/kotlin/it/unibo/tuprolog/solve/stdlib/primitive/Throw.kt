@@ -68,6 +68,7 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
     private fun Term.extractErrorCauseChain(withContext: ExecutionContext): PrologError? =
         extractErrorTypeAndExtra()?.let { (type, extra) ->
             PrologError.of(
+                message = extra.toString().removeSurrounding("\'"),
                 context = withContext,
                 type = type,
                 extraData = extra,
