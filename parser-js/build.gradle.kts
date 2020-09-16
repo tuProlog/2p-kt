@@ -7,14 +7,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 
 apply<NpmPublishPlugin>()
 
-val javaVersion: String by project
-val ktFreeCompilerArgs: String by project
 val gcName: String by project
 val gcEmail: String by project
 val gcUrl: String by project
 val projectHomepage: String by project
-val bintrayRepo: String by project
-val bintrayUserOrg: String by project
 val projectLicense: String by project
 val projectIssues: String by project
 val npmToken: String by project
@@ -63,14 +59,3 @@ configure<NpmPublishExtension> {
 tasks.create("jsTest") {
     dependsOn("test")
 }
-
-// tasks.getByName<Jar>("sourcesJar") {
-//     kotlin.sourceSets.forEach { sourceSet ->
-//         sourceSet.resources.sourceDirectories.forEach {
-//             from(it)
-//         }
-//         sourceSet.kotlin.srcDirs.forEach {
-//             from(it)
-//         }
-//     }
-// }
