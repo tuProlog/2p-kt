@@ -30,13 +30,11 @@ cache:
     - .gradle/
     - build/
 
-Compile:
+Compile & Check Style:
   stage: build
-  script: $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
-
-Check Format:
-  stage: test
-  script: $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
+    - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
 
 Test JVM:
   stage: test
