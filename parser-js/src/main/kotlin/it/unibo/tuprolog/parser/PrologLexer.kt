@@ -1,4 +1,4 @@
-@file:JsModule("./PrologLexer")
+@file:JsModule("@tuprolog/parser-utils")
 @file:JsNonModule
 
 package it.unibo.tuprolog.parser
