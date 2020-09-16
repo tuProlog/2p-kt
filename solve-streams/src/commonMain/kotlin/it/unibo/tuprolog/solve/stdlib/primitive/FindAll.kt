@@ -38,7 +38,7 @@ internal object FindAll : PrimitiveWrapper<StreamsExecutionContext>("findall", 3
 
                     yield(
                         request.replyWith(
-                            (request.context.substitution + thirdArg.mguWith(List.from(mapped))) as Substitution.Unifier
+                            request.context.substitution + thirdArg.mguWith(List.from(mapped))
                         )
                     )
                 }

@@ -41,13 +41,11 @@ class TestStreamsFindAll : TestFindAll, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testFindXinGoal() {
         prototype.testFindXinGoal()
     }
 
     @Test
-    @Ignore
     override fun testFindXinNumber() {
         prototype.testFindXinNumber()
     }
