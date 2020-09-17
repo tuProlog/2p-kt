@@ -455,6 +455,8 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
             for (component in componentsStrings) {
                 if (component in components.names) {
                     from(components[component])
+                } else {
+                    warn("Missing component $component in ${project.name} for publication $name")
                 }
             }
 
@@ -464,7 +466,7 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                 }
             } else if (docArtifact == null || !docArtifact.endsWith("KotlinMultiplatform")) {
                 log(
-                    "no javadoc artifact for publication $name in project ${project.name}: " +
+                    "No javadoc artifact for publication $name in project ${project.name}: " +
                         "no such a task: $docArtifact"
                 )
             }

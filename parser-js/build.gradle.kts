@@ -59,3 +59,17 @@ configure<NpmPublishExtension> {
 tasks.create("jsTest") {
     dependsOn("test")
 }
+
+publishing {
+    publications.withType<MavenPublication>().getByName("js") {
+        from(components["kotlin"])
+    }
+}
+
+tasks.getByName<Jar>("sourcesJar") {
+    kotlin.sourceSets.forEach { sourceSet ->
+        sourceSet.kotlin.srcDirs.forEach {
+            from(it)
+        }
+    }
+}
