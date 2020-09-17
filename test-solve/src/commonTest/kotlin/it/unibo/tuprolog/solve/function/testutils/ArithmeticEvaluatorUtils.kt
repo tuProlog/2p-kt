@@ -1,13 +1,19 @@
 package it.unibo.tuprolog.solve.function.testutils
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
-import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.function.ArithmeticEvaluator
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 
 /**
  * Utils singleton to help testing [ArithmeticEvaluator]
@@ -20,6 +26,13 @@ internal object ArithmeticEvaluatorUtils {
     internal val commonFunctionsContext = object : ExecutionContext by ExpressionEvaluatorUtils.noFunctionsContext {
         override val libraries: Libraries = Libraries(CommonBuiltins)
     }
+
+    /** A context with [CommonBuiltins] loaded */
+    internal val commonFunctionsRequest = Solve.Request(
+        Signature("dummy", 0),
+        emptyList(),
+        commonFunctionsContext
+    )
 
     /** A map from term input to raised error type */
     internal val inputToErrorType by lazy {

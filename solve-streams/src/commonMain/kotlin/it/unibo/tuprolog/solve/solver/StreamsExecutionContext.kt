@@ -3,11 +3,21 @@ package it.unibo.tuprolog.solve.solver
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContextAware
+import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.SolverStrategies
+import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.Theory
 
 /**
@@ -100,7 +110,6 @@ internal data class StreamsExecutionContext(
             outputChannels = outputChannels
         )
     }
-
 }
 
 /** Extension method to get [SideEffectManagerImpl], if this context is of right type*/

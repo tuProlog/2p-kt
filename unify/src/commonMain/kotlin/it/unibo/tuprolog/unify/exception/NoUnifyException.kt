@@ -11,4 +11,3 @@ open class NoUnifyException(private val term1: Term, private val term2: Term, ot
     override val message: String?
         get() = "Cannot match term `$term1` with term `$term2`"
 }
-

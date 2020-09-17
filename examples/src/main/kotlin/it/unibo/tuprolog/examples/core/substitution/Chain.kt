@@ -11,8 +11,8 @@ import it.unibo.tuprolog.core.Substitution
 fun main() {
     Scope.empty {
         val substitution = Substitution.of(
-                varOf("X") to varOf("Y"),
-                varOf("Y") to varOf("Z")
+            varOf("X") to varOf("Y"),
+            varOf("Y") to varOf("Z")
         )
 
         val originalZ = substitution.getOriginal(varOf("Z"))

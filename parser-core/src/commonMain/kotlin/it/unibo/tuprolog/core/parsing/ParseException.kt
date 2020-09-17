@@ -17,11 +17,10 @@ open class ParseException(
 
     override fun toString(): String {
         return "ParseException{" +
-                "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
-                ", line=" + line +
-                ", column=" + column +
-                ", offendingSymbol='" + offendingSymbol + '\'' +
-                '}'
+            "message='" + message!!.replace("\\n", "\\\\n") + '\'' +
+            ", line=" + line +
+            ", column=" + column +
+            ", offendingSymbol='" + offendingSymbol + '\'' +
+            '}'
     }
-
 }

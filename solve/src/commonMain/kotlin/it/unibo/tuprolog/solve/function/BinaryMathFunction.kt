@@ -3,7 +3,10 @@ package it.unibo.tuprolog.solve.function
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 /**
  * Base class to implement unary math functions
@@ -23,7 +26,9 @@ abstract class BinaryMathFunction(name: String) : MathFunction(name, 2) {
                 term1 is Real && term2 is Integer -> mathFunction(term1, term2, context)
                 term1 is Integer && term2 is Real -> mathFunction(term1, term2, context)
                 term1 is Real && term2 is Real -> mathFunction(term1, term2, context)
-                else -> throw IllegalStateException("One, or both, of the two terms (`$term1`, `$term2`) is neither an Integer nor a Real")
+                term1 is Var -> throw InstantiationError.forArgument(context, signature, term1, 0)
+                term2 is Var -> throw InstantiationError.forArgument(context, signature, term2, 1)
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.NUMBER, term1, 0)
             }
         )
     }

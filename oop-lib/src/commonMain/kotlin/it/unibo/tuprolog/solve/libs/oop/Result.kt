@@ -30,6 +30,5 @@ sealed class Result {
         override fun toTerm(): Term = termValue
 
         override fun asObjectRef(): ObjectRef = objectRef
-
     }
 }

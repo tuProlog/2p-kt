@@ -28,8 +28,8 @@ class TimeOutException(
         exceededDuration: TimeDuration
     ) : this(message, cause, arrayOf(context), exceededDuration)
 
-    constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration)
-            : this(cause?.toString(), cause, context, exceededDuration)
+    constructor(cause: Throwable?, context: ExecutionContext, exceededDuration: TimeDuration) :
+        this(cause?.toString(), cause, context, exceededDuration)
 
     override fun updateContext(newContext: ExecutionContext): TimeOutException =
         TimeOutException(message, cause, contexts.setFirst(newContext), exceededDuration)

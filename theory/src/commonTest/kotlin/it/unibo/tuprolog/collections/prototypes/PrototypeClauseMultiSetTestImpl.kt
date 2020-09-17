@@ -1,15 +1,18 @@
 package it.unibo.tuprolog.collections.prototypes
 
-import it.unibo.tuprolog.collections.*
+import it.unibo.tuprolog.collections.ClauseCollection
+import it.unibo.tuprolog.collections.ClauseMultiSet
 import it.unibo.tuprolog.collections.PrototypeClauseMultiSetTest
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.testutils.ClauseAssertionUtils
+import it.unibo.tuprolog.collections.RetrieveResult
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.utils.permutations
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
-internal class PrototypeClauseMultiSetTestImpl (
+internal class PrototypeClauseMultiSetTestImpl(
     private val emptyGenerator: () -> ClauseMultiSet,
     private val collectionGenerator: (Iterable<Clause>) -> ClauseMultiSet
 ) : PrototypeClauseMultiSetTest,
@@ -35,7 +38,7 @@ internal class PrototypeClauseMultiSetTestImpl (
     }
 
     override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
-        return when(val res = (collection as ClauseMultiSet).retrieve(query)) {
+        return when (val res = (collection as ClauseMultiSet).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
         }
@@ -83,7 +86,6 @@ internal class PrototypeClauseMultiSetTestImpl (
         }
     }
 
-
     override fun hashCodeIsOrderIndependent() {
         val actualClauses = clauses + clauses[0]
 
@@ -94,5 +96,4 @@ internal class PrototypeClauseMultiSetTestImpl (
             permutations.map { collectionGenerator(it) }.toSet().size
         )
     }
-
 }

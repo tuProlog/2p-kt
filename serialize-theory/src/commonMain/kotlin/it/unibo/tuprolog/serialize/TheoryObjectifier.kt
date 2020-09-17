@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.serialize
 
-import it.unibo.tuprolog.objectify.Objectifier
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic

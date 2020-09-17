@@ -9,7 +9,7 @@ internal object TheoryUtils {
         clause.also {
             require(clause.isWellFormed) {
                 "ClauseDatabase can contain only well formed clauses: " +
-                        "this isn't $clause"
+                    "this isn't $clause"
             }
         }
 
@@ -18,7 +18,7 @@ internal object TheoryUtils {
         clauses.also {
             require(clauses.all { it.isWellFormed }) {
                 "ClauseDatabase can contain only well formed clauses: these aren't " +
-                        "${clauses.filterNot { it.isWellFormed }.toList()}"
+                    "${clauses.filterNot { it.isWellFormed }.toList()}"
             }
         }
 
@@ -26,8 +26,7 @@ internal object TheoryUtils {
         clauses.also {
             require(clauses.all { it.isWellFormed }) {
                 "ClauseDatabase can contain only well formed clauses: these aren't " +
-                        "${clauses.filterNot { it.isWellFormed }.toList()}"
+                    "${clauses.filterNot { it.isWellFormed }.toList()}"
             }
         }
-
 }

@@ -1,6 +1,14 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -17,7 +25,6 @@ sealed class Equation<out A : Term, out B : Term>(
     /** The right-hand side of the equation */
     @JsName("rhs") open val rhs: B
 ) : ToTermConvertible {
-
 
     /** An equation of identical [Term]s */
     data class Identity<out T : Term>(override val lhs: T, override val rhs: T) : Equation<T, T>(lhs, rhs)
@@ -55,7 +62,6 @@ sealed class Equation<out A : Term, out B : Term>(
     ): Equation<Term, Term> =
         of(lhs[substitution], rhs[substitution], equalityChecker)
 
-
     /** Equation companion object */
     companion object {
 
@@ -64,7 +70,8 @@ sealed class Equation<out A : Term, out B : Term>(
         @JvmOverloads
         @JsName("of")
         fun <A : Term, B : Term> of(
-            lhs: A, rhs: B,
+            lhs: A,
+            rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Equation<Term, Term> =
             when {
@@ -90,6 +97,31 @@ sealed class Equation<out A : Term, out B : Term>(
         ): Equation<Term, Term> =
             of(pair.first, pair.second, equalityChecker)
 
+        @JvmStatic
+        @JvmOverloads
+        @JsName("fromSequence")
+        fun <A : Term, B : Term> from(
+            pairs: Sequence<Pair<A, B>>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> =
+            pairs.flatMap { allOf(it, equalityChecker) }
+
+        @JvmStatic
+        @JvmOverloads
+        @JsName("fromIterable")
+        fun <A : Term, B : Term> from(
+            pairs: Iterable<Pair<A, B>>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> = from(pairs.asSequence(), equalityChecker)
+
+        @JvmStatic
+        @JvmOverloads
+        @JsName("from")
+        fun <A : Term, B : Term> from(
+            vararg pairs: Pair<A, B>,
+            equalityChecker: (Term, Term) -> Boolean = Term::equals
+        ): Sequence<Equation<Term, Term>> = from(sequenceOf(*pairs), equalityChecker)
+
         /** Creates all equations resulting from the deep inspection of given [Pair] of [Term]s */
         @JvmStatic
         @JvmOverloads
@@ -101,7 +133,8 @@ sealed class Equation<out A : Term, out B : Term>(
             allOf(pair.first, pair.second, equalityChecker)
 
         private fun allOfLists(
-            lhs: LogicList, rhs: LogicList,
+            lhs: LogicList,
+            rhs: LogicList,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> {
             return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
@@ -115,7 +148,8 @@ sealed class Equation<out A : Term, out B : Term>(
         }
 
         private fun allOfTuples(
-            lhs: Tuple, rhs: Tuple,
+            lhs: Tuple,
+            rhs: Tuple,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> {
             return lhs.unfold().zip(rhs.unfold()).flatMap { (l, r) ->
@@ -131,7 +165,8 @@ sealed class Equation<out A : Term, out B : Term>(
         @JvmOverloads
         @JsName("allOf")
         fun <A : Term, B : Term> allOf(
-            lhs: A, rhs: B,
+            lhs: A,
+            rhs: B,
             equalityChecker: (Term, Term) -> Boolean = Term::equals
         ): Sequence<Equation<Term, Term>> =
             when {
@@ -153,5 +188,3 @@ sealed class Equation<out A : Term, out B : Term>(
             }
     }
 }
-
-

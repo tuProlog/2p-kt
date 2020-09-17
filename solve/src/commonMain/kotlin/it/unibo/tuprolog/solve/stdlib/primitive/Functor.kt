@@ -1,94 +1,66 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import org.gciatto.kt.math.BigInteger
 
 /**
  * Implementation of 'functor'/3 predicate
  */
 object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
+
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
         third: Term
     ): Substitution = when (first) {
         is Struct -> {
-            when (second) {
-                is Atom -> {
-                    when (third) {
-                        is Numeric -> {
-                            if (second.value == first.functor && third.intValue.toInt() == first.arity)
-                                Substitution.empty()
-                            else
-                                Substitution.failed()
-                        }
-                        is Var -> {
-                            if (first.functor == second.value)
-                                Substitution.of(third to Integer.of(first.arity))
-                            else
-                                Substitution.failed()
-                        }
-                        else -> {
-                            // TODO expected here should be INTEGER | VARIABLE
-                            throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, third, 2)
-                        }
-                    }
-                }
-                is Var -> {
-                    when (third) {
-                        is Numeric -> {
-                            if (first.arity == third.intValue.toInt())
-                                Substitution.of(second to Atom.of(first.functor))
-                            else
-                                Substitution.failed()
-                        }
-                        is Var -> {
-                            Substitution.of(
-                                second to Atom.of(first.functor),
-                                third to Integer.of(first.arity)
-                            )
-                        }
-                        else -> {
-                            // TODO expected here should be INTEGER | VARIABLE
-                            throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, third, 2)
-                        }
-                    }
-                }
-                else -> {
-                    // TODO expected here should be ATOM | VARIABLE
-                    throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
-                }
+            if (third !is Var) {
+                ensuringArgumentIsArity(2)
             }
+            (second mguWith Atom.of(first.functor)) + (third mguWith Integer.of(first.arity))
+        }
+        is Numeric -> {
+            if (third !is Var) {
+                ensuringArgumentIsArity(2)
+            }
+            (first mguWith second) + (third mguWith Integer.of(0))
         }
         is Var -> {
             when (second) {
                 is Atom -> {
-                    when (third) {
-                        is Numeric -> {
-                            Substitution.of(first to Struct.template(second.value, third.intValue.toInt()))
-                        }
-                        is Var -> {
-                            throw InstantiationError.forArgument(context, signature, 2, third)
-                        }
-                        else -> {
-                            // TODO expected here should be INTEGER | VARIABLE
-                            throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, third, 2)
-                        }
+                    ensuringArgumentIsInstantiated(2)
+                    ensuringArgumentIsArity(2)
+                    Substitution.of(first to Struct.template(second.value, (third as Integer).intValue.toInt()))
+                }
+                is Numeric -> {
+                    ensuringArgumentIsInstantiated(2)
+                    ensuringArgumentIsArity(2)
+
+                    val arity = (third as Integer)
+
+                    if (arity.intValue == BigInteger.ZERO) {
+                        Substitution.of(first to second) + (third mguWith Integer.of(0))
+                    } else {
+                        throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
                     }
                 }
                 is Var -> {
-                    throw InstantiationError.forArgument(context, signature, 1, second)
+                    throw InstantiationError.forArgument(context, signature, second, 1)
                 }
                 else -> {
-                    // TODO expected here should be ATOM | VARIABLE
-                    throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
+                    throw TypeError.forArgument(context, signature, TypeError.Expected.ATOMIC, second, 1)
                 }
             }
         }

@@ -1,9 +1,22 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Test class for [Signature]
@@ -87,7 +100,11 @@ internal class SignatureTest {
 
     @Test
     fun fromTermWithStructCreatesCorrectInstance() {
-        signatures.forEach { assertEquals(it, Signature.fromSignatureTerm(it.toTerm()) ?: fail()) }
+        signatures.forEach {
+            val reconstructed = Signature.fromSignatureTerm(it.toTerm())
+                ?: fail("Cannot reconstruct signature $it from it.toTerm(): ${it.toTerm()}")
+            assertEquals(it, reconstructed)
+        }
 
         signatureTerms.zip(signatures).forEach { (signatureTerm, signature) ->
             assertEquals(signature, Signature.fromSignatureTerm(signatureTerm) ?: fail())
@@ -171,7 +188,7 @@ internal class SignatureTest {
 
     @Test
     fun toIndicatorComplainsOnVarargSignatures() {
-        assertNull(varargSignature.toIndicator())
+        assertFailsWith<NotImplementedError> { varargSignature.toIndicator() }
     }
 
     @Test

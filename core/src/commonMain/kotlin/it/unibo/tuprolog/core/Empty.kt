@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import kotlin.js.JsName
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Empty : Atom {

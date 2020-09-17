@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.utils.NumberTypeTester
@@ -24,5 +28,4 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
             }
         }
     }
-
 }

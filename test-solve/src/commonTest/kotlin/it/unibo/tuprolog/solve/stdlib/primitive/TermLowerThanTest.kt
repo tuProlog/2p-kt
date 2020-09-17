@@ -16,5 +16,4 @@ internal class TermLowerThanTest {
             assertCorrectResponse(TermLowerThan, input, result)
         }
     }
-
 }

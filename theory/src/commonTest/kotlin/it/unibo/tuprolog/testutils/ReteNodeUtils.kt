@@ -1,7 +1,17 @@
 package it.unibo.tuprolog.testutils
 
-import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import kotlin.math.min
 import kotlin.test.assertEquals
@@ -130,7 +140,7 @@ internal object ReteNodeUtils {
     ) {
         val beforeContents = reteNode.indexedElements.toList()
 
-        @Suppress("UNCHECKED_CAST")  // nothing will be inserted, so it's safe
+        @Suppress("UNCHECKED_CAST") // nothing will be inserted, so it's safe
         val idempotentActionResult = (reteNode as ReteNode<*, Clause>).idempotentAction()
 
         assertTrue(idempotentActionResult.none())
@@ -147,7 +157,7 @@ internal object ReteNodeUtils {
         val allClauseCount = allClauses.count()
         val remainingClausesExpected = allClauses - removedExpected
 
-        @Suppress("UNCHECKED_CAST")  // nothing will be inserted, so it's safe
+        @Suppress("UNCHECKED_CAST") // nothing will be inserted, so it's safe
         val removedActual = (reteNode as ReteNode<*, Clause>).removeAction()
 
         assertEquals(removedExpected, removedActual.toList())
@@ -198,7 +208,8 @@ internal object ReteNodeUtils {
         }
         assertTrue(actualClauses.toList().containsAll(expectedClauses.toList()))
 
-        actualClauses.forEachStructurallyEqualsHead(partialOrderingHeadClauseMap(expectedClauses).toMutableMap(),
+        actualClauses.forEachStructurallyEqualsHead(
+            partialOrderingHeadClauseMap(expectedClauses).toMutableMap(),
             onPresentEntry = { clause, entry ->
                 when {
                     entry.value.none() -> fail("Clause $clause not indexed under its head Struct")
@@ -220,12 +231,12 @@ internal object ReteNodeUtils {
      * constructing the overall partial ordering */
     private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Struct?, Iterable<Clause>> =
         mutableMapOf<Struct?, Iterable<Clause>>().also { resultMap ->
-            clauses.forEachStructurallyEqualsHead(resultMap,
+            clauses.forEachStructurallyEqualsHead(
+                resultMap,
                 onPresentEntry = { clause, entry -> entry.setValue(entry.value + clause) },
                 onMissingEntry = { clause, map -> map[clause.head] = mutableListOf(clause) }
             )
         }.toMap()
-
 
     /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
     private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(

@@ -2,14 +2,22 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.collections.rete.generic.ReteNode
 import it.unibo.tuprolog.collections.rete.generic.set.RootNode
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertCorrectAndPartialOrderRespected
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 /**
  * Test class for [RootNode]
@@ -78,10 +86,12 @@ internal class RootNodeTest {
         filledRootNode.put(aDirective, true)
         filledRootNode.put(aRule, true)
 
-        assertCorrectAndPartialOrderRespected(filledRootNode,
+        assertCorrectAndPartialOrderRespected(
+            filledRootNode,
             ReteNodeUtils.mixedClauses.toMutableList().apply {
                 addAll(0, listOf(aRule, aDirective))
-            })
+            }
+        )
     }
 
     @Test
@@ -174,5 +184,4 @@ internal class RootNodeTest {
 
         assertEquals(correctInstances, toBeTested)
     }
-
 }

@@ -1,7 +1,18 @@
 package it.unibo.tuprolog.solve.testutils
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.SideEffectManager
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
@@ -104,5 +115,4 @@ internal object SolveUtils {
         requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
         executionMaxDuration: TimeDuration = anExecutionMaxDuration
     ) = Solve.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
-
 }

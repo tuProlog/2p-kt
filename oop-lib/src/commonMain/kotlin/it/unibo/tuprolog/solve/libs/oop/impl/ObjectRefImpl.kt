@@ -1,8 +1,15 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.*
-import kotlin.collections.List
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.solve.libs.oop.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.assign
+import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.solve.libs.oop.invoke
 
 @Suppress("UNCHECKED_CAST")
 internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by Atom.of(nameOf(`object`)) {

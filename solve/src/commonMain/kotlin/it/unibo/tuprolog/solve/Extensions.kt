@@ -1,4 +1,5 @@
 @file:JvmName("Extensions")
+
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Scope
@@ -16,4 +17,3 @@ fun Solver.solve(
     maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     scopedContext: Scope.() -> Struct
 ): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)
-

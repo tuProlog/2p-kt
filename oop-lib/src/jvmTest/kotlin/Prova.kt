@@ -1,7 +1,9 @@
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.*
+import it.unibo.tuprolog.solve.libs.oop.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.TypeFactory
+import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import org.gciatto.kt.math.BigInteger
 import kotlin.test.Test
 

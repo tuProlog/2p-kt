@@ -1,9 +1,9 @@
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.FloatIntegerPart
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FloatFunctionUtils
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
-import it.unibo.tuprolog.solve.Signature
 import kotlin.test.Test
 
 /**
@@ -28,7 +28,7 @@ internal class FloatIntegerPartTest {
 
             kotlin.test.assertEquals(expected, actual)
 
-            if(loggingOn) println("".padEnd(80, '-'))
+            if (loggingOn) println("".padEnd(80, '-'))
         }
     }
 
@@ -47,5 +47,4 @@ internal class FloatIntegerPartTest {
             )
         }
     }
-
 }

@@ -13,7 +13,9 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
@@ -62,16 +64,20 @@ class TuPrologCmd : CliktCommand(
                     TermUi.echo("# Successfully loaded ${t.size} clauses from $file")
                     theory += t
                 } catch (e: ParseException) {
-                    TermUi.echo("""
-                        |Error while parsing theory file: $file
-                        |    Message: ${e.message}
-                        |    Line   : ${e.line}
-                        |    Column : ${e.column}
-                        |    Clause : ${e.clauseIndex}
-                    """.trimMargin(), err = true)
+                    TermUi.echo(
+                        """
+                        |# Error while parsing theory file: $file
+                        |#     Message: ${e.message}
+                        |#     Line   : ${e.line}
+                        |#     Column : ${e.column}
+                        |#     Clause : ${e.clauseIndex}
+                        """.trimMargin(),
+                        err = true
+                    )
                 }
             }
         }
+        TermUi.echo("")
         return theory
     }
 
@@ -96,11 +102,18 @@ class TuPrologCmd : CliktCommand(
 
     fun getSolver(): Solver {
         TermUi.echo("# 2P-Kt version ${Info.VERSION}")
-        val theory: Theory = loadTheory()
+        val theory: Theory = this.loadTheory()
+        val outputChannel = OutputChannel.of<PrologWarning> {
+            TermUi.echo("# ${it.message}", err = true)
+        }
         return if (oop) {
-            Solver.classicWithDefaultBuiltins(staticKb = theory, libraries = Libraries(OOPLib))
+            Solver.classicWithDefaultBuiltins(
+                staticKb = theory,
+                libraries = Libraries(OOPLib),
+                warnings = outputChannel
+            )
         } else {
-            Solver.classicWithDefaultBuiltins(staticKb = theory)
+            Solver.classicWithDefaultBuiltins(staticKb = theory, warnings = outputChannel)
         }.also {
             for ((_, library) in it.libraries) {
                 TermUi.echo("# Successfully loaded library `${library.alias}`")
@@ -109,5 +122,3 @@ class TuPrologCmd : CliktCommand(
         }
     }
 }
-
-

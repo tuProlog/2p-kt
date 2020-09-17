@@ -20,15 +20,16 @@ internal abstract class AbstractReteNode<K, E>(override val children: MutableMap
     override fun removeAll(element: E): Sequence<E> = remove(element, Int.MAX_VALUE)
 
     override fun toString(treefy: Boolean): String =
-        if (treefy)
+        if (treefy) {
             "$header {" +
-                    children.values.joinToString(",\n\t", "\n\t", "\n") {
-                        it.toString(treefy).replace("\n", "\n\t")
-                    } + "}"
-        else
+                children.values.joinToString(",\n\t", "\n\t", "\n") {
+                    it.toString(treefy).replace("\n", "\n\t")
+                } + "}"
+        } else {
             "$header {${children.values.joinToString(",") {
                 it.toString()
             }}"
+        }
 
     override fun toString(): String {
         return toString(false)

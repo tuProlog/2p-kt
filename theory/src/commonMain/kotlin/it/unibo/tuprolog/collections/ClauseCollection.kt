@@ -59,9 +59,11 @@ interface ClauseCollection : Iterable<Clause> {
         @JvmStatic
         @JsName("multiSetOfScopes")
         fun multiSetOf(vararg clause: Scope.() -> Clause): ClauseMultiSet =
-            multiSetOf(clause.map {
-                Scope.empty(it)
-            })
+            multiSetOf(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -88,9 +90,11 @@ interface ClauseCollection : Iterable<Clause> {
         @JvmStatic
         @JsName("queueOfScopes")
         fun queueOf(vararg clause: Scope.() -> Clause): ClauseQueue =
-            queueOf(clause.map {
-                Scope.empty(it)
-            })
+            queueOf(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -104,6 +108,3 @@ interface ClauseCollection : Iterable<Clause> {
             ClauseQueue.of(clauses)
     }
 }
-
-
-

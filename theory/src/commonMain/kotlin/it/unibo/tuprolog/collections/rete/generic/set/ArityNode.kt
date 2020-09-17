@@ -22,7 +22,6 @@ internal data class ArityNode(
         element.head.arity > 0 -> {
             val headFirstArg = element.head[0]
             val child = children.getOrElse(headFirstArg) {
-
                 children.retrieve<ArgNode> { head -> head != null && head structurallyEquals headFirstArg }
                     .singleOrNull()
             }
@@ -32,7 +31,6 @@ internal data class ArityNode(
         }
 
         else -> children.getOrPut(null) { NoArgsNode() }
-
     }.put(element, beforeOthers)
 
     override fun selectChildren(element: Rule) = when {

@@ -1,11 +1,14 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.isQueryToResult
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.isQueryToResult
 import kotlin.reflect.KClass
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Test class for [Is]
@@ -34,12 +37,13 @@ internal class IsTest {
                     }
                 }
                 else ->
-                    @Suppress("UNCHECKED_CAST")
-                    (expectedResult as? KClass<out TuPrologRuntimeException>)
-                        ?.let { assertFailsWith(expectedResult) { Is.wrappedImplementation(input) } }
-                        ?: fail("Bad written test data!")
+                    try {
+                        Is.wrappedImplementation(input)
+                        fail("Expected: $expectedResult but no exception was thrown")
+                    } catch (e: TuPrologRuntimeException) {
+                        assertEquals(expectedResult as KClass<*>, e::class)
+                    }
             }
         }
     }
-
 }

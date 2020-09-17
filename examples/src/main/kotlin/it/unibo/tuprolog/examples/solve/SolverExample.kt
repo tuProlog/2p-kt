@@ -3,7 +3,11 @@ package it.unibo.tuprolog.examples.solve
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
@@ -49,9 +53,9 @@ fun main() {
                 )
             ),
             staticKb = theoryOf(
-                fact { "user"("giovanni") },      // user(giovanni).
-                fact { "user"("lorenzo") },       // user(lorenzo).
-                rule { "user"(`_`) impliedBy fail }   // user(_) :- fail.
+                fact { "user"("giovanni") },
+                fact { "user"("lorenzo") },
+                rule { "user"(`_`) impliedBy fail }
             )
         )
         val query = "user"("X") and "write"("hello: ") and "write"("X") and "nl" and "gt"(2, 1)

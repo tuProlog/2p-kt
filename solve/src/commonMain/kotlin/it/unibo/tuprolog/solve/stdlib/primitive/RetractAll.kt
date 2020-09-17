@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.theory.RetractResult
@@ -23,6 +25,5 @@ object RetractAll : UnaryPredicate.NonBacktrackable<ExecutionContext>("retractal
                 replySuccess()
             }
         }
-
     }
 }

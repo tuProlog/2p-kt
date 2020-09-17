@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.stdlib.magic
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 object MagicCut : Atom by Atom.of("!") {
 

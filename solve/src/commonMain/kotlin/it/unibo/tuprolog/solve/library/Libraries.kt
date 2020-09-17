@@ -10,7 +10,8 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
 /** A class representing an agglomerate of libraries with an alias */
-class Libraries(libraries: Sequence<AliasedLibrary>) : LibraryGroup<AliasedLibrary>,
+class Libraries(libraries: Sequence<AliasedLibrary>) :
+    LibraryGroup<AliasedLibrary>,
     Map<String, AliasedLibrary> by (libraries.map { it.alias to it }.toMap()) {
 
     constructor(vararg library: AliasedLibrary) : this(library.asSequence())

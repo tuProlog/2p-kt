@@ -2,7 +2,11 @@ package it.unibo.tuprolog.solve.function
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.TimeInstant
+import it.unibo.tuprolog.solve.currentTimeInstant
 import kotlin.js.JsName
 
 /** A base class for Computation requests and responses */
@@ -47,7 +51,6 @@ sealed class Compute {
         @JsName("replyWith")
         fun replyWith(result: Term) = Response(result)
     }
-
 
     /** Class representing a Response, from the Expression evaluator, to a [Solve.Request] */
     data class Response(

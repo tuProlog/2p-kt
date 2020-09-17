@@ -45,15 +45,15 @@ sealed class ChoicePointContext(
         get() = executionContext?.procedure
 
     override fun toString(): String = "$typeName(" +
-            "alternatives=$alternatives, " +
-            if (executionContext === null) {
-                "executionContext=${executionContext}, "
-            } else {
-                "executionContextDepth=${executionContextDepth}, "
-                "executionContextProcedure=${executionContextProcedure}, "
-            } +
-            "depth=$depth" +
-            ")"
+        "alternatives=$alternatives, " +
+        if (executionContext === null) {
+            "executionContext=$executionContext, "
+        } else {
+            "executionContextDepth=$executionContextDepth, "
+            "executionContextProcedure=$executionContextProcedure, "
+        } +
+        "depth=$depth" +
+        ")"
 
     protected abstract val typeName: String
 

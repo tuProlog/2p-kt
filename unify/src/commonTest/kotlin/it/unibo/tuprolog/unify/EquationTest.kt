@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.testutils.EquationUtils
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAllIdentities
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyAssignment
@@ -23,9 +27,9 @@ internal class EquationTest {
     /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
     private val correctShallowEquationsInstances =
         EquationUtils.shallowIdentityEquations.map { (lhs, rhs) -> Equation.Identity(lhs, rhs) } +
-                EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) } +
-                EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
-                EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
+            EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.Assignment(lhs, rhs) } +
+            EquationUtils.comparisonEquations.map { (lhs, rhs) -> Equation.Comparison(lhs, rhs) } +
+            EquationUtils.shallowContradictionEquations.map { (lhs, rhs) -> Equation.Contradiction(lhs, rhs) }
 
     @Test
     fun identityLhsAndRhsCorrect() {
@@ -80,10 +84,10 @@ internal class EquationTest {
     @Test
     fun equationOfAutomaticallySwapsAssignments() {
         val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
-                EquationUtils.assignmentEquations.map { Equation.of(it) }
+            EquationUtils.assignmentEquations.map { Equation.of(it) }
 
         val toBeTested = EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.of(lhs, rhs) } +
-                EquationUtils.assignmentEquationsShuffled.map { Equation.of(it) }
+            EquationUtils.assignmentEquationsShuffled.map { Equation.of(it) }
 
         assertEquals(correct, toBeTested)
     }
@@ -133,11 +137,11 @@ internal class EquationTest {
     @Test
     fun equationAllOfAutomaticallySwapsAssignments() {
         val correct = EquationUtils.assignmentEquations.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
-                EquationUtils.assignmentEquations.map { Equation.allOf(it).toList() }
+            EquationUtils.assignmentEquations.map { Equation.allOf(it).toList() }
 
         val toBeTested =
             EquationUtils.assignmentEquationsShuffled.map { (lhs, rhs) -> Equation.allOf(lhs, rhs).toList() } +
-                    EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it).toList() }
+                EquationUtils.assignmentEquationsShuffled.map { Equation.allOf(it).toList() }
 
         assertEquals(correct, toBeTested)
     }
@@ -166,8 +170,8 @@ internal class EquationTest {
     @Test
     fun swapCanInvertAllInvertibleEquations() {
         val testableItems = EquationUtils.allIdentityEquations +
-                EquationUtils.allContradictionEquations +
-                EquationUtils.comparisonEquations
+            EquationUtils.allContradictionEquations +
+            EquationUtils.comparisonEquations
 
         val correct = testableItems.map { (lhs, rhs) -> rhs to lhs }.map { Equation.of(it) }
         val toBeTested = testableItems.map { Equation.of(it) }.map(Equation<*, *>::swap)
@@ -188,30 +192,38 @@ internal class EquationTest {
 
     @Test
     fun equationOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
-        assertNoIdentities(EquationUtils.mixedAllEquations.map { (lhs, rhs) ->
-            Equation.of(lhs, rhs, { _, _ -> false })
-        }.asSequence())
+        assertNoIdentities(
+            EquationUtils.mixedAllEquations.map { (lhs, rhs) ->
+                Equation.of(lhs, rhs, { _, _ -> false })
+            }.asSequence()
+        )
     }
 
     @Test
     fun equationOfPairUsesProvidedEqualityCheckerToTestIdentity() {
-        assertNoIdentities(EquationUtils.mixedAllEquations.map {
-            Equation.of(it) { _, _ -> false }
-        }.asSequence())
+        assertNoIdentities(
+            EquationUtils.mixedAllEquations.map {
+                Equation.of(it) { _, _ -> false }
+            }.asSequence()
+        )
     }
 
     @Test
     fun equationAllOfLhsAndRhsUsesProvidedEqualityCheckerToTestIdentity() {
-        assertNoIdentities(EquationUtils.mixedAllEquations.flatMap { (lhs, rhs) ->
-            Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
-        }.asSequence())
+        assertNoIdentities(
+            EquationUtils.mixedAllEquations.flatMap { (lhs, rhs) ->
+                Equation.allOf(lhs, rhs, { _, _ -> false }).asIterable()
+            }.asSequence()
+        )
     }
 
     @Test
     fun equationAllOfPairUsesProvidedEqualityCheckerToTestIdentity() {
-        assertNoIdentities(EquationUtils.mixedAllEquations.flatMap {
-            Equation.allOf(it) { _, _ -> false }.asIterable()
-        }.asSequence())
+        assertNoIdentities(
+            EquationUtils.mixedAllEquations.flatMap {
+                Equation.allOf(it) { _, _ -> false }.asIterable()
+            }.asSequence()
+        )
     }
 
     @Test

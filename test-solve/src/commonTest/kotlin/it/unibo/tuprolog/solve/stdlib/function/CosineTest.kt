@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,5 +28,4 @@ internal class CosineTest {
             toBeTested < 6.123233995736767E-17 && toBeTested > 6.123233995736765E-17
         }
     }
-
 }

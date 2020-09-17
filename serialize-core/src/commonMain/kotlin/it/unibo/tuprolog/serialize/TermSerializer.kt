@@ -13,5 +13,4 @@ interface TermSerializer : Serializer<Term> {
             return termSerializer(mimeType)
         }
     }
-
 }

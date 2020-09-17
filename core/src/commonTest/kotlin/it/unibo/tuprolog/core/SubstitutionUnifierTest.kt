@@ -4,7 +4,11 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 /**
  * Test class for [Substitution.Unifier] and [Substitution]
@@ -21,7 +25,7 @@ internal class SubstitutionUnifierTest {
 
     private val substitutions by lazy {
         SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) +
-                listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
+            listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
     @Test

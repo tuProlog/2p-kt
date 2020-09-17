@@ -5,10 +5,16 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.parser.PrologParser
 import it.unibo.tuprolog.parser.PrologParserBaseVisitor
-import it.unibo.tuprolog.parser.dynamic.Associativity.*
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.INFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.POSTFIX
 import it.unibo.tuprolog.parser.dynamic.Associativity.Companion.PREFIX
+import it.unibo.tuprolog.parser.dynamic.Associativity.FX
+import it.unibo.tuprolog.parser.dynamic.Associativity.FY
+import it.unibo.tuprolog.parser.dynamic.Associativity.XF
+import it.unibo.tuprolog.parser.dynamic.Associativity.XFX
+import it.unibo.tuprolog.parser.dynamic.Associativity.XFY
+import it.unibo.tuprolog.parser.dynamic.Associativity.YF
+import it.unibo.tuprolog.parser.dynamic.Associativity.YFX
 import org.gciatto.kt.math.BigInteger
 
 class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
@@ -33,13 +39,13 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
                 PREFIX.contains(ctx.associativity) -> visitPrefixExpression(ctx)
                 ctx.exception != null -> throw ctx.exception
                 else -> throw IllegalArgumentException() // use kotlin's IllegalArgumentException
-            }, flatten(ctx.outers)
+            },
+            flatten(ctx.outers)
         )
     }
 
     override fun visitTerm(ctx: PrologParser.TermContext): Term =
         if (ctx.isExpr) visitExpression(ctx.expression()) else ctx.children[0].accept(this)
-
 
     override fun visitInteger(ctx: PrologParser.IntegerContext): Term {
         val value = parseInteger(ctx)
@@ -66,10 +72,11 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
         }
 
     override fun visitStructure(ctx: PrologParser.StructureContext): Term {
-        if (ctx.isList)
+        if (ctx.isList) {
             return scope.listOf()
-        else if (ctx.isSet)
+        } else if (ctx.isSet) {
             return scope.setOf()
+        }
         return if (ctx.arity == 0) {
             scope.atomOf(ctx.functor.text)
         } else {
@@ -90,10 +97,11 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
     }
 
     override fun visitSet(ctx: PrologParser.SetContext): Term {
-        return if (ctx.length == 1)
+        return if (ctx.length == 1) {
             scope.setOf(ctx.items[0].accept(this))
-        else
+        } else {
             scope.setOf(ctx.items.map(this::visitExpression))
+        }
     }
 
     @Suppress("NullableBooleanElvis", "UNNECESSARY_SAFE_CALL")
@@ -146,9 +154,12 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
     }
 
     private fun visitPostfixExpression(ctx: PrologParser.ExpressionContext): Term =
-        postfix(ctx.left.accept(this), ctx.operators.map {
-            it.symbol.text
-        })
+        postfix(
+            ctx.left.accept(this),
+            ctx.operators.map {
+                it.symbol.text
+            }
+        )
 
     private fun postfix(term: Term, ops: List<String>): Term {
         val operator = ops.iterator()
@@ -160,9 +171,12 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
     }
 
     private fun visitPrefixExpression(ctx: PrologParser.ExpressionContext): Term =
-        prefix(ctx.right[0].accept(this), ctx.operators.map {
-            it.symbol.text
-        })
+        prefix(
+            ctx.right[0].accept(this),
+            ctx.operators.map {
+                it.symbol.text
+            }
+        )
 
     private fun prefix(term: Term, ops: List<String>): Term {
         var i = ops.size - 1
@@ -237,7 +251,6 @@ class PrologExpressionVisitor : PrologParserBaseVisitor<Term>() {
 
     private fun listOfOperators(ctx: PrologParser.ExpressionContext): List<String> =
         ctx.operators.map { it.symbol.text }
-
 
     private fun visitInfixRightAssociativeExpression(ctx: PrologParser.ExpressionContext): Term =
         infixRight(listOfOperands(ctx), listOfOperators(ctx))

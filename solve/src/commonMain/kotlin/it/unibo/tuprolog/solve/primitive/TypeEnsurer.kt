@@ -9,5 +9,5 @@ abstract class TypeEnsurer<E : ExecutionContext>(typeName: String) : UnaryPredic
         return true
     }
 
-    abstract fun ensureType(context: E, term: Term)
+    abstract fun Solve.Request<E>.ensureType(context: E, term: Term)
 }

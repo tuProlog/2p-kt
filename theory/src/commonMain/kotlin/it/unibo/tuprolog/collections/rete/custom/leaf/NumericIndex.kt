@@ -21,13 +21,13 @@ internal class NumericIndex(
     private val index: MutableMap<Numeric, MutableList<SituatedIndexedClause>> = mutableMapOf()
 
     override fun get(clause: Clause): Sequence<Clause> {
-        return if (clause.nestedFirstArgument().isNumber)
+        return if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?.map { it.innerClause }
                 ?: emptySequence()
-        else extractGlobalSequence(clause)
+        } else extractGlobalSequence(clause)
     }
 
     override fun assertA(clause: IndexedClause) {
@@ -73,12 +73,12 @@ internal class NumericIndex(
     }
 
     override fun getIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (clause.nestedFirstArgument().isNumber)
+        return if (clause.nestedFirstArgument().isNumber) {
             index[clause.asInnerNumeric()]
                 ?.asSequence()
                 ?.filter { it.innerClause matches clause }
                 ?: emptySequence()
-        else extractGlobalIndexedSequence(clause)
+        } else extractGlobalIndexedSequence(clause)
     }
 
     override fun retractIndexed(indexed: SituatedIndexedClause) {
@@ -126,5 +126,4 @@ internal class NumericIndex(
 
     private fun IndexedClause.asInnerNumeric(): Numeric =
         this.innerClause.nestedFirstArgument() as Numeric
-
 }

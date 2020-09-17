@@ -37,7 +37,8 @@ protected constructor(
                 RetrieveResult.Failure(this as Self)
             else ->
                 RetrieveResult.Success(
-                    newCollectionBuilder(newTheory), retracted.toList()
+                    newCollectionBuilder(newTheory),
+                    retracted.toList()
                 )
         }
     }
@@ -52,7 +53,8 @@ protected constructor(
                 RetrieveResult.Failure(this as Self)
             else ->
                 RetrieveResult.Success(
-                    newCollectionBuilder(newTheory), retracted.toList()
+                    newCollectionBuilder(newTheory),
+                    retracted.toList()
                 )
         }
     }

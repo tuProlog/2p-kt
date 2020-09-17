@@ -16,5 +16,4 @@ object Unknown : NotableFlag {
         get() = WARNING
 
     override val admissibleValues: Sequence<Term> = sequenceOf(ERROR, WARNING, FAIL)
-
 }

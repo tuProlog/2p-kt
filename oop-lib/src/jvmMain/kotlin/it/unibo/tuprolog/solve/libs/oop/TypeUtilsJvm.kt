@@ -2,7 +2,11 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
-import kotlin.reflect.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 

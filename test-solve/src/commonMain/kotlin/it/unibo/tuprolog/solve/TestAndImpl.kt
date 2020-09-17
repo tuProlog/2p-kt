@@ -35,7 +35,7 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
         }
     }
 
-    override fun testFailIsCallable() { //goal
+    override fun testFailIsCallable() { // goal
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -85,5 +85,4 @@ internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
             )
         }
     }
-
 }

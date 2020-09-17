@@ -1,7 +1,18 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.operators.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.EmptySet
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.core.operators.OperatorsIndex
+import it.unibo.tuprolog.core.operators.Specifier
+import it.unibo.tuprolog.core.operators.toOperatorsIndex
 import kotlin.collections.Set
 
 internal class TermFormatterWithPrettyExpressions(
@@ -32,8 +43,8 @@ internal class TermFormatterWithPrettyExpressions(
             get() = decorations.suffix
     }
 
-    constructor(delegate: TermFormatter, operators: OperatorSet)
-        : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet())
+    constructor(delegate: TermFormatter, operators: OperatorSet) :
+        this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet())
 
     override fun visitVar(term: Var): String =
         term.accept(delegate)

@@ -45,6 +45,15 @@ interface Unificator {
     fun unify(term1: Term, term2: Term): Term? =
         unify(term1, term2, true)
 
+    /** Merges two [Substitution]s **/
+    @JsName("mergeWithOccurCheck")
+    fun merge(substitution1: Substitution, substitution2: Substitution, occurCheckEnabled: Boolean): Substitution
+
+    /** Merges two [Substitution]s, with occurs check **/
+    @JsName("merge")
+    fun merge(substitution1: Substitution, substitution2: Substitution): Substitution =
+        merge(substitution1, substitution2, true)
+
     companion object {
 
         /**
@@ -69,6 +78,10 @@ interface Unificator {
         @JvmStatic
         @JsName("unifyWith")
         infix fun Term.unifyWith(other: Term): Term? = default.unify(this, other)
+
+        @JvmStatic
+        @JsName("mergeWith")
+        infix fun Substitution.mergeWith(other: Substitution): Substitution = default.merge(this, other)
 
         /** Creates naive unification strategy, with the given [context], that checks [Term]s identity through their [Term.equals]
          * methods, except in the case of numbers which are compared by value */

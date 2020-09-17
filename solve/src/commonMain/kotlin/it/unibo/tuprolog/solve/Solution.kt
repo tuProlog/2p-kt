@@ -58,10 +58,10 @@ sealed class Solution {
         @JsName("exception") val exception: TuPrologRuntimeException
     ) : Solution() {
 
-        constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException)
-                : this(signature withArgs arguments, exception) {
-            noVarargSignatureCheck(signature)
-        }
+        constructor(signature: Signature, arguments: List<Term>, exception: TuPrologRuntimeException) :
+            this(signature withArgs arguments, exception) {
+                noVarargSignatureCheck(signature)
+            }
     }
 
     val isYes: Boolean

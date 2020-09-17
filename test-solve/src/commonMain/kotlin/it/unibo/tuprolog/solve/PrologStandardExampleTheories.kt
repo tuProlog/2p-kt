@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.instantiationError
-import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
 import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
 import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
@@ -81,7 +80,7 @@ object PrologStandardExampleTheories {
     val prologStandardExampleWithCutTheory by lazy {
         prolog {
             theory({ "p"("X", "Y") `if` ("q"("X") and "!" and "r"("X", "Y")) }) +
-                    theoryOf(*prologStandardExampleTheory.clauses.drop(1).toTypedArray())
+                theoryOf(*prologStandardExampleTheory.clauses.drop(1).toTypedArray())
         }
     }
 
@@ -183,8 +182,8 @@ object PrologStandardExampleTheories {
                     { yes("X" to 2, "Z" to "!") }
                 ),
                 "call"(false).hasSolutions({ no() }),
-                "call"(true and "X").hasSolutions({ halt(instantiationError) }),
-                "call"("true" and "false" and 1).hasSolutions({ halt(typeError) })
+                "call"(true and "X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
+                "call"(true and (false and 1)).hasSolutions({ halt(typeError("call", 1, true and (false and 1))) })
             )
         }
     }
@@ -233,9 +232,11 @@ object PrologStandardExampleTheories {
                 "catch"("throw"("exit"(1)), "exit"("X"), true).hasSolutions({ yes("X" to 1) }),
                 "catch"("throw"(true), "X", "X").hasSolutions({ yes("X" to true) }),
                 "catch"("throw"(false), "X", "X").hasSolutions({ no() }),
-                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions({ halt(systemError) }),
-                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError) }),
-                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError) })
+                "catch"("throw"("f"("X", "X")), "f"("X", "g"("X")), true).hasSolutions(
+                    { halt(systemError("f"("X", "X"))) }
+                ),
+                "catch"("throw"(1), "X", false or "X").hasSolutions({ halt(typeError(";", 2, intOf(1))) }),
+                "catch"("throw"(false), true, "G").hasSolutions({ halt(systemError(truthOf(false))) })
             )
         }
     }
@@ -297,11 +298,11 @@ object PrologStandardExampleTheories {
         prolog {
             ktListOf(
                 (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
-                "\\+"("fail").hasSolutions({ yes() }),
+                "\\+"(fail).hasSolutions({ yes() }),
                 ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "\\+"("fail" and 1).hasSolutions({ halt(typeError) }),
+                "\\+"(fail and 1).hasSolutions({ halt(typeError("\\+", 1, fail and 1)) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
@@ -311,13 +312,15 @@ object PrologStandardExampleTheories {
                 "test_Prolog_unifiable"("X", "f"("X")).hasSolutions({ no() }),
 
                 atomOf("p1").hasSolutions({ no() }),
-                atomOf("p2").hasSolutions({ yes() })
-            ).flatMap { (goal, solutions) ->
-                ktListOf(
-                    goal to solutions,
-                    goal.replaceAllFunctors("\\+", "not").let { it to solutions.changeQueriesTo(it) }
-                )
-            }
+                atomOf("p2").hasSolutions({ yes() }),
+
+                (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
+                "not"(fail).hasSolutions({ yes() }),
+                ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
+                ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
+                (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
+                "not"(fail and 1).hasSolutions({ halt(typeError("not", 1, fail and 1)) }),
+            )
         }
     }
 

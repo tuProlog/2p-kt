@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.solver.fsm.impl.testutils.StateRuleSelectionUtils.createRequest
@@ -33,15 +33,20 @@ internal class StateRuleSelectionTest {
     private val theQuery = prolog { "f"(theQueryVariable) }
 
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
-    private val threeDBSolveRequest = Solve.Request(theQuery.extractSignature(), theQuery.argsList,
+    private val threeDBSolveRequest = Solve.Request(
+        theQuery.extractSignature(),
+        theQuery.argsList,
         StreamsExecutionContext(
-            libraries = Libraries(Library.aliased(
-                alias = "testLib",
-                theory = prolog { theory({ "f"("a") }) }
-            )),
+            libraries = Libraries(
+                Library.aliased(
+                    alias = "testLib",
+                    theory = prolog { theory({ "f"("a") }) }
+                )
+            ),
             staticKb = prolog { theory({ "f"("b") }) },
             dynamicKb = prolog { theory({ "f"("c") }) }
-        ))
+        )
+    )
 
     @Test
     fun noMatchingRulesFoundMakeItGoIntoFalseState() {
@@ -115,5 +120,4 @@ internal class StateRuleSelectionTest {
             }
         }
     }
-
 }

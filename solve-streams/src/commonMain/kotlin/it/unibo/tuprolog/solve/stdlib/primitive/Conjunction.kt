@@ -3,10 +3,22 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.StreamsSolver
+import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.solver.*
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
+import it.unibo.tuprolog.solve.solver.addWithNoDuplicates
+import it.unibo.tuprolog.solve.solver.moreThanOne
+import it.unibo.tuprolog.solve.solver.newSolveRequest
+import it.unibo.tuprolog.solve.solver.orderWithStrategy
+import it.unibo.tuprolog.solve.solver.prepareForExecutionAsGoal
+import it.unibo.tuprolog.solve.solver.replyWith
+import it.unibo.tuprolog.solve.solver.shouldExecuteThrowCut
 
 /**
  * Implementation of primitive handling `','/2` behaviour
@@ -67,16 +79,16 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
         var currentSideEffects = emptyList<SideEffect>()
         StreamsSolver.solveToFinalStates(goalRequest).forEachWithLookahead { goalFinalState, currentHasAlternatives ->
             val goalResponse = goalFinalState.solve
-            if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true)
+            if (Cut.functor == goal.functor || goalResponse.sideEffectManager?.shouldExecuteThrowCut() == true) {
                 cutExecuted = true
+            }
 
             currentSideEffects = currentSideEffects.addWithNoDuplicates(goalResponse.sideEffects)
 
             when {
                 goalResponse.sideEffectManager?.shouldExecuteThrowCut() == false &&
-                        goalResponse.solution is Solution.Yes &&
-                        moreThanOne(goals.asSequence()) -> {
-
+                    goalResponse.solution is Solution.Yes &&
+                    moreThanOne(goals.asSequence()) -> {
                     val sideEffectPair = solveConjunctionGoals(
                         mainRequest,
                         goals.drop(1),
@@ -87,24 +99,26 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
                         previousGoalsHadAlternatives || currentHasAlternatives
                     )
 
-                    if (sideEffectPair.first)
+                    if (sideEffectPair.first) {
                         cutExecuted = true
+                    }
 
                     currentSideEffects = sideEffectPair.second
                 }
                 else ->
                     // yield only non-false responses or false responses when there are no open alternatives (because no more or cut)
-                    if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted)
+                    if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted) {
                         yield(
                             mainRequest.replyWith(
                                 goalResponse.copy(sideEffects = accumulatedSideEffects + currentSideEffects)
                             )
                         )
-
+                    }
             }
-            if (cutExecuted || goalResponse.solution is Solution.Halt)
             // cut other alternatives of current and previous goals
+            if (cutExecuted || goalResponse.solution is Solution.Halt) {
                 return Pair(true, accumulatedSideEffects + currentSideEffects)
+            }
         }
         return Pair(cutExecuted, accumulatedSideEffects + currentSideEffects)
     }

@@ -35,13 +35,15 @@ internal class StateInit(
             else -> when {
                 currentGoal.isWellFormed() -> currentGoal.prepareForExecutionAsGoal().also { preparedGoal ->
                     // a primitive call or well-formed goal
-                    yield(StateGoalEvaluation(
-                        solve.copy(
-                            signature = preparedGoal.extractSignature(),
-                            arguments = preparedGoal.argsList,
-                            context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
+                    yield(
+                        StateGoalEvaluation(
+                            solve.copy(
+                                signature = preparedGoal.extractSignature(),
+                                arguments = preparedGoal.argsList,
+                                context = with(solve.context) { copy(sideEffectManager = initializedSideEffectsManager) }
+                            )
                         )
-                    ))
+                    )
                 }
 
                 // goal non well-formed

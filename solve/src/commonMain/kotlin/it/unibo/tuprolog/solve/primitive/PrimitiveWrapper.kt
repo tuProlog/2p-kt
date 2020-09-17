@@ -1,15 +1,34 @@
 package it.unibo.tuprolog.solve.primitive
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.DomainError
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARITY
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
+import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.MaxArity
 import org.gciatto.kt.math.BigInteger
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * Wrapper class for [Primitive] implementation
@@ -31,17 +50,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         primitiveOf(signature, ::uncheckedImplementation as Primitive)
 
     companion object {
-
-        /** Private class to support the wrap methods, without using the object literal notation */
-        private class FromFunction<C : ExecutionContext>(signature: Signature, private val uncheckedPrimitive: Primitive)
-            : PrimitiveWrapper<C>(signature) {
-
-            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
-                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
-
-            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
-                uncheckedPrimitive(request)
-        }
 
         // TODO: 16/01/2020 test the three "wrap" functions
 
@@ -68,26 +76,133 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> wrap(name: String, arity: Int, primitive: Primitive): PrimitiveWrapper<C> =
             wrap(name, arity, false, primitive)
 
+        /** Private class to support the wrap methods, without using the object literal notation */
+        private class FromFunction<C : ExecutionContext>(
+            signature: Signature,
+            private val uncheckedPrimitive: Primitive
+        ) : PrimitiveWrapper<C>(signature) {
+
+            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
+                this(Signature(name, arity, vararg), uncheckedPrimitive)
+
+            override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
+                uncheckedPrimitive(request)
+        }
+
+        private fun ensurerVisitor(context: ExecutionContext, procedure: Signature): TermVisitor<TypeError?> =
+            object : TermVisitor<TypeError?> {
+                override fun defaultValue(term: Term): Nothing? = null
+
+                override fun visit(term: Struct) = when {
+                    term.functor in Clause.notableFunctors && term.arity == 2 -> {
+                        term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
+                    }
+                    else -> defaultValue(term)
+                }
+
+                override fun visit(term: Numeric): TypeError {
+                    return TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
+                }
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =
+            term.accept(ensurerVisitor(context, signature))
+
         /** Utility function to ensure that all arguments of Solve.Request are instantiated and *not* (still) Variables */
         fun <C : ExecutionContext> Solve.Request<C>.ensuringAllArgumentsAreInstantiated(): Solve.Request<C> =
             arguments.withIndex().firstOrNull { it.value is Var }?.let {
                 ensureIsInstantiated(it.value, it.index)
             } ?: this
 
-        private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(term: Term?, index: Int): Solve.Request<C> =
+        private fun <C : ExecutionContext> Solve.Request<C>.ensureIsInstantiated(
+            term: Term?,
+            index: Int
+        ): Solve.Request<C> =
             (term as? Var)?.let {
                 throw InstantiationError.forArgument(
                     context,
                     signature,
-                    index,
-                    it
+                    it,
+                    index
                 )
             } ?: this
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringProcedureHasPermission(
+            signature: Signature?,
+            operation: PermissionError.Operation
+        ): Solve.Request<C> {
+            if (signature != null) {
+                if (context.libraries.hasProtected(signature)) {
+                    throw PermissionError.of(
+                        context,
+                        this.signature,
+                        operation,
+                        PRIVATE_PROCEDURE,
+                        signature.toIndicator()
+                    )
+                }
+                if (signature.toIndicator() in context.staticKb) {
+                    throw PermissionError.of(
+                        context,
+                        this.signature,
+                        operation,
+                        STATIC_PROCEDURE,
+                        signature.toIndicator()
+                    )
+                }
+            }
+            return this
+        }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringClauseProcedureHasPermission(
+            clause: Clause,
+            operation: PermissionError.Operation
+        ): Solve.Request<C> {
+            val headSignature: Signature? = clause.head?.extractSignature()
+            return ensuringProcedureHasPermission(headSignature, operation)
+        }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedIndicator(index: Int): Solve.Request<C> {
+            ensuringArgumentIsInstantiated(index)
+            when (val candidate = arguments[index]) {
+                is Indicator -> {
+                    val (name, arity) = candidate
+                    when {
+                        name is Var -> throw InstantiationError.forArgument(context, signature, name, index)
+                        arity is Var -> throw InstantiationError.forArgument(context, signature, arity, index)
+                        name !is Atom -> throw TypeError.forArgument(context, signature, ATOM, name, index)
+                        arity !is Integer -> throw TypeError.forArgument(context, signature, INTEGER, arity, index)
+                        arity.value < BigInteger.ZERO ->
+                            throw DomainError.forArgument(context, signature, NOT_LESS_THAN_ZERO, arity, index)
+                        context.flags[MaxArity]?.castTo<Integer>()?.value?.let { arity.value > it } ?: false ->
+                            throw RepresentationError.of(context, signature, MAX_ARITY)
+                        else -> return this
+                    }
+                }
+                else -> throw TypeError.forArgument(context, signature, PREDICATE_INDICATOR, candidate, index)
+            }
+        }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
+            ensuringArgumentIsInstantiated(index)
+            ensuringArgumentIsStruct(index)
+            val candidate = arguments[index]
+            when {
+                candidate is Clause -> {
+                    if (!candidate.isWellFormed) {
+                        throw DomainError.forArgument(context, signature, DomainError.Expected.CLAUSE, candidate, index)
+                    }
+                    return this
+                }
+                candidate is Struct && candidate.functor == Clause.FUNCTOR && candidate.arity == 2 ->
+                    throw DomainError.forArgument(context, signature, DomainError.Expected.CLAUSE, candidate, index)
+                candidate is Struct -> return this
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, candidate, index)
+            }
+        }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInstantiated(index: Int): Solve.Request<C> =
             ensureIsInstantiated(arguments[index], index)
-
-        // TODO: 16/01/2020 test those below ensure methods
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNumeric(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
@@ -113,12 +228,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     arg,
                     index
                 )
-                else -> this
-            }
-
-        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> =
-            when (val arg = arguments[index]) {
-                !is List -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, arg, index)
                 else -> this
             }
 
@@ -149,13 +258,31 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsList(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is LogicList -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsArity(index: Int): Solve.Request<C> =
+            ensuringArgumentIsNonNegativeInteger(index).run {
+                val arity = arguments[index] as Integer
+                context.flags[MaxArity]?.castTo<Integer>()?.value?.let {
+                    if (arity.intValue > it) {
+                        throw RepresentationError.of(context, signature, MAX_ARITY)
+                    }
+                }
+                return this
+            }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
-            arguments[index].let { arg ->
+            ensuringArgumentIsInteger(index)
+                .arguments[index].let { arg ->
                 when {
                     arg !is Integer || arg.intValue < BigInteger.ZERO -> throw DomainError.forArgument(
                         context,
                         signature,
-                        DomainError.Expected.NOT_LESS_THAN_ZERO,
+                        NOT_LESS_THAN_ZERO,
                         arg,
                         index
                     )

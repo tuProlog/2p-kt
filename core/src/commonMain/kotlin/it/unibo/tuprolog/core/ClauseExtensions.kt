@@ -5,8 +5,6 @@ package it.unibo.tuprolog.core
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-
-
 /**
  * Prepares the receiver Clause for execution, using the provided visitor
  *

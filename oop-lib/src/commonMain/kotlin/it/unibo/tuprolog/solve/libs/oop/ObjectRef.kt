@@ -8,7 +8,7 @@ interface ObjectRef : Ref {
 
     companion object {
         fun of(any: Any?): ObjectRef =
-            when(any) {
+            when (any) {
                 null -> NULL
                 else -> ObjectRefImpl(any)
             }

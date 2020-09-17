@@ -1,6 +1,15 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
@@ -31,7 +40,8 @@ internal class StructImplTest {
     fun functorCorrect() {
         onCorrespondingItems(
             StructUtils.mixedStructFunctors,
-            mixedStructInstances.map { it.functor }) { expected, actual ->
+            mixedStructInstances.map { it.functor }
+        ) { expected, actual ->
             assertEquals(expected, actual)
         }
     }
@@ -103,7 +113,7 @@ internal class StructImplTest {
     fun toStringWorksAsExpected() {
         val correctToStrings = mixedStructInstances.map {
             (if (it.isFunctorWellFormed) it.functor else "'${it.functor}'") +
-                    (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
+                (if (it.arity > 0) "(${it.args.joinToString(", ")})" else "")
         }
         onCorrespondingItems(correctToStrings, mixedStructInstances.map { it.toString() }) { expected, actual ->
             assertEquals(expected, actual)
@@ -188,7 +198,7 @@ internal class StructImplTest {
         val isList: (Struct) -> Boolean =
             { aStruct ->
                 aStruct.functor == Cons.FUNCTOR && aStruct.arity == 2 ||
-                        aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
+                    aStruct.functor == Empty.EMPTY_LIST_FUNCTOR && aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isList).forEach { assertTrue { it.isList } }
@@ -200,7 +210,7 @@ internal class StructImplTest {
         val isSet: (Struct) -> Boolean =
             { aStruct ->
                 aStruct.functor == LogicSet.FUNCTOR && aStruct.arity == 1 ||
-                        aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
+                    aStruct.functor == Empty.EMPTY_SET_FUNCTOR && aStruct.arity == 0
             }
 
         mixedStructInstances.filter(isSet).forEach { assertTrue { it.isSet } }

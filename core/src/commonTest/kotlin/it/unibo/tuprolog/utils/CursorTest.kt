@@ -1,4 +1,3 @@
 package it.unibo.tuprolog.utils
 
-class CursorTest {
-}
+class CursorTest

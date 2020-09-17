@@ -65,5 +65,4 @@ internal object PrologErrorUtils {
             prologError.errorStruct
         )
     }
-
 }

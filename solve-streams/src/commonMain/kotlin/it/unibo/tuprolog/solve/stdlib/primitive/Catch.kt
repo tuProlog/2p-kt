@@ -2,11 +2,15 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.solver.*
+import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
+import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
+import it.unibo.tuprolog.solve.solver.isSelectedThrowCatch
+import it.unibo.tuprolog.solve.solver.newSolveRequest
+import it.unibo.tuprolog.solve.solver.replyWith
 
 /**
  * Implementation of primitive handling `catch/3` behaviour
@@ -23,7 +27,6 @@ internal object Catch : PrimitiveWrapper<StreamsExecutionContext>("catch", 3) {
                 when {
                     // if i'm the catch selected by throw/1 primitive
                     goalResponse.sideEffectManager.isSelectedThrowCatch(request.context) -> {
-
                         val recoverGoalArgument = request.arguments.last().apply(goalResponse.solution.substitution)
 
                         // attaching recover goal's solve request to catch/3 parent, to not re-execute this catch/3 if error thrown

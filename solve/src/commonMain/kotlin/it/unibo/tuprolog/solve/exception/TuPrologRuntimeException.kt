@@ -27,8 +27,8 @@ open class TuPrologRuntimeException(
         cause: Throwable? = null,
         context: ExecutionContext,
         vararg otherContexts: ExecutionContext
-    )
-            : this(message, cause, arrayOf(context, *otherContexts))
+    ) :
+        this(message, cause, arrayOf(context, *otherContexts))
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
 

@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.libs.oop.NullRef
-import it.unibo.tuprolog.solve.libs.oop.Result
-import it.unibo.tuprolog.solve.libs.oop.invoke
-import kotlin.collections.List
 
 @Suppress("UNCHECKED_CAST")
 internal object NullRefImpl : NullRef, Atom by Atom.of(NullRef.NULL_FUNCTOR) {

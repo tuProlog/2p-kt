@@ -1,4 +1,5 @@
 @file:JvmName("PrologExtensions")
+
 package it.unibo.tuprolog.dsl.unify
 
 import it.unibo.tuprolog.core.Fact

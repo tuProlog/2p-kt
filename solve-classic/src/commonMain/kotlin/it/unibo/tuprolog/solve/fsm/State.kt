@@ -22,5 +22,3 @@ fun State.clone(context: ClassicExecutionContext = this.context): State =
         is StateRuleSelection -> copy(context)
         else -> throw IllegalStateException()
     }
-
-

@@ -8,11 +8,10 @@ import kotlin.jvm.JvmOverloads
  * @param message the detail message string.
  * @param cause the cause of this exception.
  */
-open class TuPrologException
-    @JvmOverloads constructor(
-        override val message: String? = null,
-        override val cause: Throwable? = null
-    ) : RuntimeException(message, cause) {
+open class TuPrologException @JvmOverloads constructor(
+    override val message: String? = null,
+    override val cause: Throwable? = null
+) : RuntimeException(message, cause) {
 
     // left this auxiliary constructor to initialize message when only cause is present
     constructor(cause: Throwable?) : this(cause?.toString(), cause)

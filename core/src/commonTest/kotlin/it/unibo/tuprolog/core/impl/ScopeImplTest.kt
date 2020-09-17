@@ -1,13 +1,45 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.testutils.*
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
+import it.unibo.tuprolog.core.testutils.AtomUtils
+import it.unibo.tuprolog.core.testutils.ConsUtils
+import it.unibo.tuprolog.core.testutils.DirectiveUtils
+import it.unibo.tuprolog.core.testutils.FactUtils
+import it.unibo.tuprolog.core.testutils.IndicatorUtils
+import it.unibo.tuprolog.core.testutils.IntegerUtils
+import it.unibo.tuprolog.core.testutils.RealUtils
+import it.unibo.tuprolog.core.testutils.RuleUtils
+import it.unibo.tuprolog.core.testutils.ScopeUtils
 import it.unibo.tuprolog.core.testutils.ScopeUtils.assertScopeCorrectContents
-import kotlin.test.*
+import it.unibo.tuprolog.core.testutils.SetUtils
+import it.unibo.tuprolog.core.testutils.StructUtils
+import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
+import it.unibo.tuprolog.core.testutils.TupleUtils
+import kotlin.test.BeforeTest
+import kotlin.test.Ignore
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
@@ -29,9 +61,9 @@ internal class ScopeImplTest {
         mixedScopeInstances = ScopeUtils.mixedScopes.map(::ScopeImpl)
     }
 
-    ////////////////////
+    // //////////////////
     // Scope specific //
-    ////////////////////
+    // //////////////////
 
     @Test
     fun containsVarWorksAsExpected() {
@@ -64,7 +96,6 @@ internal class ScopeImplTest {
     fun varOfStringWithNonPresentVariableNameShouldInsertANewOneAmongOthers() {
         emptyScopeInstance.varOf("Test")
         assertEquals(1, emptyScopeInstance.variables.count())
-
 
         val scopeVarInitialCounts = ScopeUtils.nonEmptyScopeVarNames.map { it.count() }
         val newVarNames = ScopeUtils.nonEmptyScopeVarNames.map { scopeVarNames -> scopeVarNames.map { it + "x" } }
@@ -137,9 +168,9 @@ internal class ScopeImplTest {
         assertNotEquals(mixedScopeInstances, toTestMixedScopes)
     }
 
-    ///////////////////////
+    // /////////////////////
     // General Factories //
-    ///////////////////////
+    // /////////////////////
 
     @Test
     fun setOfIterable() {
@@ -381,5 +412,4 @@ internal class ScopeImplTest {
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
-
 }

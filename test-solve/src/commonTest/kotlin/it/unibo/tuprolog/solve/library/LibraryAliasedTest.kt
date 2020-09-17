@@ -21,5 +21,4 @@ internal class LibraryAliasedTest {
 
         assertEquals(Libraries(library, overridingLibrary), toBeTested)
     }
-
 }

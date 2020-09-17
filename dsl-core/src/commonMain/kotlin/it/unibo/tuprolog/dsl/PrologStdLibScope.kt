@@ -2,7 +2,6 @@ package it.unibo.tuprolog.dsl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
-import kotlin.coroutines.Continuation
 import kotlin.js.JsName
 
 @Suppress("PropertyName", "unused", "FunctionName")
@@ -20,9 +19,9 @@ interface PrologStdLibScope : PrologAwareScope {
     val repeat: Atom
         get() = atomOf("repeat")
 
-//    @JsName("cut")
-//    val `!`: Atom
-//        get() = atomOf("!")
+    @JsName("cut")
+    val cut: Atom
+        get() = atomOf("!")
 
     fun at_end_of_stream(alias: Any): Struct =
         structOf("at_end_of_stream", alias.toTerm())
@@ -32,6 +31,9 @@ interface PrologStdLibScope : PrologAwareScope {
 
     fun `catch`(goal: Any, error: Any, continuation: Any): Struct =
         structOf("catch", goal.toTerm(), error.toTerm(), continuation.toTerm())
+
+    fun `throw`(error: Any): Struct =
+        structOf("throw", error.toTerm())
 
     fun not(goal: Any): Struct =
         structOf("not", goal.toTerm())
@@ -141,6 +143,9 @@ interface PrologStdLibScope : PrologAwareScope {
     fun retract(clause: Any): Struct =
         structOf("retract", clause.toTerm())
 
+    fun append(left: Any, right: Any, result: Any): Struct =
+        structOf("append", left.toTerm(), right.toTerm(), result.toTerm())
+
     fun retractall(clause: Any): Struct =
         structOf("retractall", clause.toTerm())
 
@@ -159,9 +164,20 @@ interface PrologStdLibScope : PrologAwareScope {
     fun atom_length(atom: Any, length: Any): Struct =
         structOf("atom_length", atom.toTerm(), length.toTerm())
 
+    fun char_code(char: Any, code: Any): Struct =
+        structOf("char_code", char.toTerm(), code.toTerm())
+
+    fun clause(head: Any, body: Any): Struct =
+        structOf("clause", head.toTerm(), body.toTerm())
+
+    fun copy_term(term: Any, copy: Any): Struct =
+        structOf("copy_term", term.toTerm(), copy.toTerm())
+
+    fun current_prolog_flag(name: Any, value: Any): Struct =
+        structOf("current_prolog_flag", name.toTerm(), value.toTerm())
+
 //    bagof/3
 //    char_code/2
-//    clause/2
 //    close/1
 //    close/2
 //    copy_term/2

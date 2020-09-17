@@ -21,7 +21,6 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Integer as IntegerPrimitive
 import it.unibo.tuprolog.solve.stdlib.primitive.Number as NumberTerm
 import it.unibo.tuprolog.solve.stdlib.primitive.Var as VarPrimitive
 
-
 /**
  * Tests for primitives
  * [AtomPrimitive],
@@ -98,5 +97,4 @@ internal class TypeTestingPrimitivesTest {
     fun nonVarTypeTestingWorksCorrectly() {
         assertTypeTestingWorks(NonVar, nonVarQueryToResult)
     }
-
 }

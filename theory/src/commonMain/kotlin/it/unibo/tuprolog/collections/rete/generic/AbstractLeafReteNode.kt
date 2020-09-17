@@ -13,10 +13,11 @@ internal abstract class AbstractLeafReteNode<E>(override val children: MutableMa
         get() = leafElements.asSequence()
 
     override fun put(element: E, beforeOthers: Boolean) {
-        if (beforeOthers)
+        if (beforeOthers) {
             leafElements.add(0, element)
-        else
+        } else {
             leafElements.add(element)
+        }
     }
 
     override fun removeWithLimit(element: E, limit: Int): Sequence<E> =
@@ -33,8 +34,9 @@ internal abstract class AbstractLeafReteNode<E>(override val children: MutableMa
             .also { leafElements.removeAll(it) }
 
     override fun toString(treefy: Boolean): String =
-        if (treefy)
+        if (treefy) {
             "$header {${leafElements.joinToString(".\n\t", "\n\t", ".\n")}}"
-        else
+        } else {
             toString()
+        }
 }

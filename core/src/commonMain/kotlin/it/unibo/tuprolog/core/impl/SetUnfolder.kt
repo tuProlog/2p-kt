@@ -44,5 +44,4 @@ internal class SetUnfolder(set: Set) : Iterator<Term> {
             }
         }
     }
-
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.serialize
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.serialize.ObjectsUtils.deeplyEqual
 import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 
@@ -10,13 +11,15 @@ import it.unibo.tuprolog.serialize.ObjectsUtils.parseAsObject
 fun <T : Term> Serializer<T>.assertSerializationWorks(expected: String, actual: T) {
     val expectedObj = parseAsObject(expected, mimeType)
     val actualObj = TermObjectifier.default.objectify(actual)
-    kotlin.test.assertTrue("""
+    kotlin.test.assertTrue(
+        """
         |Expected:
         |   $expectedObj
         |got instead:
         |   $actualObj
         |
-    """.trimMargin()) { deeplyEqual(expectedObj, actualObj) }
+    """.trimMargin()
+    ) { deeplyEqual(expectedObj, actualObj) }
 }
 
 /**
@@ -42,13 +45,15 @@ fun Serializer<Term>.assertTermSerializationWorks(expected: String, actualGenera
  */
 fun <T : Term> Deserializer<T>.assertDeserializationWorks(expected: T, actual: String) {
     val deserialized = deserialize(actual)
-    kotlin.test.assertTrue("""
+    kotlin.test.assertTrue(
+        """
         |Expected:
         |   $expected
         |got:
         |   $deserialized
         |
-    """.trimMargin()) { expected.equals(deserialized, false) }
+    """.trimMargin()
+    ) { expected.equals(deserialized, false) }
 }
 
 /**

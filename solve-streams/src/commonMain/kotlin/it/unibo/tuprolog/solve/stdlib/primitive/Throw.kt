@@ -4,11 +4,11 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
@@ -25,35 +25,30 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                 val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
 
                 when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
-
                     // no catch found that can handle thrown exception
                     null, is Substitution.Fail -> {
                         val errorCause = throwArgument.extractErrorCauseChain(request.context)
                         when {
-
                             // if unhandled error is a PrologError, rethrow outside
                             errorCause != null -> throw errorCause
 
                             // if current unhandled exception is some other error, launch it as message
-                            else -> throw SystemError(
-                                "Exception thrown, but no compatible catch/3 found",
-                                errorCause,
-                                request.context,
-                                throwArgument
-                            )
+                            else -> throw SystemError.forUncaughtException(request.context, throwArgument)
                         }
                     }
 
                     // matching catch found, it will handle exception
-                    is Substitution.Unifier -> sequenceOf(with(request) {
-                        val newSubstitution =
-                            (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
+                    is Substitution.Unifier -> sequenceOf(
+                        with(request) {
+                            val newSubstitution =
+                                (context.substitution + catcherUnifyingSubstitution) as Substitution.Unifier
 
-                        replySuccess(
-                            newSubstitution,
-                            sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
-                        )
-                    })
+                            replySuccess(
+                                newSubstitution,
+                                sideEffectManager = context.sideEffectManager.throwCut(ancestorCatch.context)
+                            )
+                        }
+                    )
                 }
             }
         } catch (prologError: PrologError) {
@@ -79,5 +74,4 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                 cause = extra.extractErrorCauseChain(withContext)
             )
         }
-
 }

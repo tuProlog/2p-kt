@@ -65,7 +65,6 @@ internal class CompoundIndex(
             retractAllUnordered(clause)
         }
 
-
     override fun getCache(): Sequence<SituatedIndexedClause> =
         theoryCache.value.asSequence()
 
@@ -113,7 +112,6 @@ internal class CompoundIndex(
         if (clause.isGlobal()) {
             Utils.merge(
                 functors.values.map {
-//                    it.getIndexed(clause)
                     it.extractGlobalIndexedSequence(clause)
                 }
             )
@@ -137,18 +135,19 @@ internal class CompoundIndex(
         }
 
     override fun extractGlobalIndexedSequence(clause: Clause): Sequence<SituatedIndexedClause> {
-        return if (ordered)
+        return if (ordered) {
             Utils.merge(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
                 }
             )
-        else
+        } else {
             Utils.flattenIndexed(
                 functors.values.map {
                     it.extractGlobalIndexedSequence(clause)
                 }
             )
+        }
     }
 
     private fun Clause.nestedFunctor(): String =
@@ -181,5 +180,4 @@ internal class CompoundIndex(
                 )
             }
         )
-
 }

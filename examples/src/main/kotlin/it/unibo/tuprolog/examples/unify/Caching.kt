@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.examples.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 
 fun main() {
@@ -15,6 +19,6 @@ fun main() {
     val unified: Term? = cached.unify(term, template)
 
     println(substitution) // {X_0=abraham}
-    println(match)        // true
-    println(unified)      // father(abraham, isaac)
+    println(match) // true
+    println(unified) // father(abraham, isaac)
 }

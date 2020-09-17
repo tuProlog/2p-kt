@@ -28,7 +28,7 @@ object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between")
         return when (third) {
             is LogicInteger -> {
                 val x = third.value
-                sequenceOf(if (x in bottom .. top) Substitution.empty() else Substitution.failed())
+                sequenceOf(if (x in bottom..top) Substitution.empty() else Substitution.failed())
             }
             is Var -> {
                 if (bottom <= top) {

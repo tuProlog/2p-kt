@@ -14,10 +14,10 @@ object Returns : RuleWrapper<ExecutionContext>("returns", 2) {
 
     override val Scope.head: List<Term>
         get() = sequenceOf(
-            structOf(LeftArrow.functor, varOf(Ref), varOf(Method)), varOf(Res)
+            structOf(LeftArrow.functor, varOf(Ref), varOf(Method)),
+            varOf(Res)
         ).toList()
 
     override val Scope.body: Term
         get() = structOf(InvokeMethod.functor, varOf(Ref), varOf(Method), varOf(Res))
-
 }

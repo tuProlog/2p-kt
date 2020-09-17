@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.stdlib.function
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,5 +27,4 @@ internal class ArcTangentTest {
             ArcTangent.computeOf(Integer.of(1)).`as`<Real>().value.toDouble() * 4
         )
     }
-
 }

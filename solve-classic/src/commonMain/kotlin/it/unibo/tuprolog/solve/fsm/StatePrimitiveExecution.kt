@@ -24,9 +24,8 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
         )
     }
 
-
     override fun computeNext(): State = try {
-        when (val sol = context.primitives.current!!.solution) {
+        when (val sol = context.primitives.current?.solution) {
             is Solution.Yes -> {
                 StateGoalSelection(
                     context.copyFromCurrentPrimitive(
@@ -45,6 +44,9 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
                     context.copyFromCurrentPrimitive()
                 )
             }
+            null -> {
+                StateBacktracking(context.copyFromCurrentPrimitive())
+            }
         }
     } catch (exception: TuPrologRuntimeException) {
         StateException(
@@ -52,5 +54,4 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
             context.copy(step = nextStep())
         )
     }
-
 }

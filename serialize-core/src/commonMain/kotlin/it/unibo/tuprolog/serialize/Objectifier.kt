@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.objectify
+package it.unibo.tuprolog.serialize
 
 import kotlin.js.JsName
 

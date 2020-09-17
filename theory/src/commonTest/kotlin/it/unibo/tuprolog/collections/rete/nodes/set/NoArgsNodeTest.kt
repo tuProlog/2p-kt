@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
 import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ReteNodeUtils
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
@@ -140,5 +144,4 @@ internal class NoArgsNodeTest {
 
         assertSame(emptyNoArgsNode.indexedElements.single(), independentCopy.indexedElements.single())
     }
-
 }

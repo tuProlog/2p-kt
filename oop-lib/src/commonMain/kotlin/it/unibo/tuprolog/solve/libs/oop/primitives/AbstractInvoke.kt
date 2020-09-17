@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.libs.oop.Ref
@@ -52,5 +55,4 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
     }
 
     protected abstract fun Result.Value.getInvocationResult(): Term
-
 }

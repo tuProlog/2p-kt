@@ -4,7 +4,7 @@ import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import kotlin.test.Test
 
-internal class ReteClauseQueueTest : PrototypeClauseQueueTest{
+internal class ReteClauseQueueTest : PrototypeClauseQueueTest {
 
     private val prototype = PrototypeClauseQueueTest.prototype(
         ClauseQueue.Companion::empty,

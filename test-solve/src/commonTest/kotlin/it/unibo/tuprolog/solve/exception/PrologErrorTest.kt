@@ -70,13 +70,15 @@ internal class PrologErrorTest {
     @Test
     fun errorIsComputedCorrectly() {
         assertErrorStructCorrect(underTestPrologError)
-        assertErrorStructCorrect(object : PrologError(context = aContext, type = aType) {
-            override fun updateContext(newContext: ExecutionContext): PrologError =
-                of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+        assertErrorStructCorrect(
+            object : PrologError(context = aContext, type = aType) {
+                override fun updateContext(newContext: ExecutionContext): PrologError =
+                    of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
 
-            override fun pushContext(newContext: ExecutionContext): PrologError =
-                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-        })
+                override fun pushContext(newContext: ExecutionContext): PrologError =
+                    of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+            }
+        )
     }
 
     @Test

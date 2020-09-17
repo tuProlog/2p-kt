@@ -22,5 +22,4 @@ abstract class FunctionWrapper<C : ExecutionContext> : AbstractWrapper<PrologFun
     final override val wrappedImplementation: PrologFunction by lazy {
         functionOf(signature, ::uncheckedImplementation as PrologFunction)
     }
-
 }

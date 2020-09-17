@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.utils
 
-import java.util.*
+import java.util.LinkedList
 
 actual fun <T> dequeOf(vararg items: T): MutableList<T> {
     return dequeOf(items.asIterable())

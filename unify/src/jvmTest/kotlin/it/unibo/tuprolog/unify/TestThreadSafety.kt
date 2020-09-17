@@ -2,7 +2,8 @@ package it.unibo.tuprolog.unify
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.successfulUnifications
-import java.util.*
+import java.util.Collections
+import java.util.LinkedList
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -15,11 +16,13 @@ class TestThreadSafety {
         val executors = Executors.newFixedThreadPool(8)
         val results: MutableList<Future<Substitution>> = Collections.synchronizedList(LinkedList())
         val unificator = Unificator.cached(Unificator.strict())
-        for (i in 1 .. 100) {
+        for (i in 1..100) {
             for (equation in successfulUnifications.keys) {
-                results.add(executors.submit<Substitution> {
-                    unificator.mgu(equation.lhs, equation.rhs)
-                })
+                results.add(
+                    executors.submit<Substitution> {
+                        unificator.mgu(equation.lhs, equation.rhs)
+                    }
+                )
             }
         }
         executors.shutdown()

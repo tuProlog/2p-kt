@@ -29,5 +29,4 @@ class Alias(val alias: Struct, val ref: Ref) : RuleWrapper<ExecutionContext>(FUN
 
     override val Scope.head: List<Term>
         get() = sequenceOf(alias, ref).toList()
-
 }

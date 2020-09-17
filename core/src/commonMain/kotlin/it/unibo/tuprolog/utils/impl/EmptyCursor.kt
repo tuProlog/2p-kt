@@ -7,7 +7,7 @@ internal object EmptyCursor : AbstractCursor<Nothing>() {
         get() = throw NoSuchElementException()
 
     override val current: Nothing?
-        get() = throw NoSuchElementException()
+        get() = null
 
     override val hasNext: Boolean
         get() = false

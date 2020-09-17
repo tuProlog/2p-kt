@@ -56,7 +56,6 @@ class TestTermDeserializer {
         deserializer.assertTermDeserializationWorks("\"other atom\"") {
             atomOf("other atom")
         }
-
     }
 
     @Test
@@ -96,7 +95,8 @@ class TestTermDeserializer {
     fun testListDeserializationInYAML() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, deserializer.mimeType)
-        val actual = """
+        val actual =
+            """
                 |list:
                 |- hello
                 |- 1
@@ -120,7 +120,8 @@ class TestTermDeserializer {
     fun testSetDeserializationInYAML() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, deserializer.mimeType)
-        val actual = """
+        val actual =
+            """
                 |set:
                 |- "hello"
                 |- 1
@@ -142,7 +143,9 @@ class TestTermDeserializer {
 
         deserializer.assertTermDeserializationWorks("{\"fun\":\"f\",\"args\":[\"prova 2\",{\"real\":3.0},{\"list\":[\"qua ci va una lista\",true]}]}") {
             structOf(
-                "f", atomOf("prova 2"), realOf(3.0),
+                "f",
+                atomOf("prova 2"),
+                realOf(3.0),
                 listOf(atomOf("qua ci va una lista"), truthOf(true))
             )
         }
@@ -152,7 +155,8 @@ class TestTermDeserializer {
     fun testStructDeserializationInYAML() {
         val deserializer: TermDeserializer = TermDeserializer.of(MimeType.Yaml)
         assertEquals(MimeType.Yaml, deserializer.mimeType)
-        var actual = """
+        var actual =
+            """
                 |fun: f
                 |args:
                 |- hello
@@ -162,7 +166,8 @@ class TestTermDeserializer {
             structOf("f", atomOf("hello"), numOf(2))
         }
 
-        actual = """
+        actual =
+            """
                 |fun: "f"
                 |args:
                 |- "prova 2"
@@ -173,7 +178,9 @@ class TestTermDeserializer {
                 """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {
             structOf(
-                "f", atomOf("prova 2"), realOf(3.0),
+                "f",
+                atomOf("prova 2"),
+                realOf(3.0),
                 listOf(atomOf("qua ci va una lista"), truthOf(true))
             )
         }
@@ -196,7 +203,8 @@ class TestTermDeserializer {
 
         assertEquals(MimeType.Yaml, deserializer.mimeType)
 
-        val actual = """
+        val actual =
+            """
                 |var: "X"
                 """.trimMargin()
         deserializer.assertTermDeserializationWorks(actual) {

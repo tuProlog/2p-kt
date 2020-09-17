@@ -5,13 +5,13 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.catchAndThrowTheoryExampleNotableGoalToSolution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
+import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.stdlib.primitive.Call
 import it.unibo.tuprolog.solve.stdlib.primitive.Catch
 import it.unibo.tuprolog.solve.stdlib.primitive.Conjunction
 import it.unibo.tuprolog.solve.stdlib.primitive.Throw
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
-import it.unibo.tuprolog.solve.changeQueriesTo
 import it.unibo.tuprolog.solve.yes
 import kotlin.collections.listOf as ktListOf
 
@@ -60,9 +60,9 @@ internal object CatchUtils {
                 prolog {
                     Catch.functor(callRequest.arguments.single(), "X", true).run {
                         createSolveRequest(this, callRequest.context.libraries.theory, updatedPrimitives) to
-                                solutions.map {
-                                    yes("X" to (it.exception as PrologError).errorStruct)
-                                }
+                            solutions.map {
+                                yes("X" to (it.exception as PrologError).errorStruct)
+                            }
                     }
                 }
             }.toTypedArray()
@@ -93,5 +93,4 @@ internal object CatchUtils {
                 ) to solutionList
             }
     }
-
 }

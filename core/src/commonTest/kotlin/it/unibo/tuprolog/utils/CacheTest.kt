@@ -14,7 +14,7 @@ interface CacheTest {
             }
 
         private val ITEMS: List<Pair<String, Int>> = (0 until 26).asSequence()
-            .map { String(charArrayOf('a' + it)) to it }
+            .map { charArrayOf('a' + it).concatToString() to it }
             .toList()
 
         private const val DEFAULT_CAPACITY = 5

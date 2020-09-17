@@ -48,9 +48,11 @@ interface ClauseMultiSet : ClauseCollection {
         @JvmStatic
         @JsName("ofScopes")
         fun of(vararg clause: Scope.() -> Clause): ClauseMultiSet =
-            of(clause.map {
-                Scope.empty(it)
-            })
+            of(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [ClauseMultiSet] from the given [Sequence] of [Clause] */
         @JvmStatic
@@ -82,4 +84,3 @@ interface ClauseMultiSet : ClauseCollection {
         }
     }
 }
-

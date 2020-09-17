@@ -1,15 +1,15 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.name
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
-import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsSpecifier
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object FindType : BinaryRelation.Functional<ExecutionContext>("find_type") {

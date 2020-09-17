@@ -5,7 +5,6 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 /** Transforms an [Equation] of a [Var] with a [Term] to the corresponding [Substitution] */

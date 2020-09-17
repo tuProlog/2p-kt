@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,5 +26,4 @@ internal class SineTest {
             Sine.computeOf(Numeric.of(PI / 2.0))
         )
     }
-
 }

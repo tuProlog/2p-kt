@@ -22,6 +22,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
 }
 
 repositories {
@@ -141,7 +142,7 @@ ktSubprojects.forEachProject {
                 tasks.withType<KotlinJsCompile> {
                     kotlinOptions {
                         moduleKind = "umd"
-                        //noStdlib = true
+                        // noStdlib = true
                         metaInfo = true
                         sourceMap = true
                         sourceMapEmbedSources = "always"
@@ -163,7 +164,6 @@ ktSubprojects.forEachProject {
                 }
             }
         }
-
     }
 
     tasks.withType<KotlinJvmCompile> {
@@ -175,6 +175,7 @@ ktSubprojects.forEachProject {
         }
     }
 
+    configureKtLint()
     configureDokka("jvm", "js")
     configureMavenPublications("packDokka")
     configureUploadToMavenCentral()
@@ -182,6 +183,36 @@ ktSubprojects.forEachProject {
     configureSigning()
     configureJsPackage()
     configureUploadToGithub({ "jvm" in it || "shadow" in it })
+}
+
+with(rootProject) {
+    kotlin {
+        sourceSets {
+            val commonMain by getting {
+                dependencies {
+                    for (subproject in (ktSubprojects - setOf(rootProject.name, "solve-streams", "test-solve"))) {
+                        api(project(subproject))
+                    }
+                }
+            }
+
+            val jvmMain by getting {
+                dependencies {
+                    for (subproject in jvmSubprojects) {
+                        api(project(subproject))
+                    }
+                }
+            }
+
+            val jsMain by getting {
+                dependencies {
+                    for (subproject in jsSubprojects) {
+                        api(project(subproject))
+                    }
+                }
+            }
+        }
+    }
 }
 
 jvmSubprojects.forEachProject {
@@ -192,6 +223,7 @@ jvmSubprojects.forEachProject {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
 
+    configureKtLint()
     configureDokka()
     createMavenPublications("jvm", "java", docArtifact = "packDokka")
     configureUploadToMavenCentral()
@@ -207,6 +239,7 @@ jsSubprojects.forEachProject {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.jfrog.bintray")
 
+    configureKtLint()
     configureDokka()
     createMavenPublications("js", "kotlin", docArtifact = "packDokka")
     configureUploadToMavenCentral()
@@ -214,7 +247,7 @@ jsSubprojects.forEachProject {
     configureSigning()
 }
 
-configure<GithubReleaseExtension> {
+githubRelease {
     if (githubToken != null) {
         token(githubToken)
         owner(githubOwner)
@@ -233,6 +266,20 @@ configure<GithubReleaseExtension> {
             )
         } catch (e: Throwable) {
             e.message?.let { warn(it) }
+        }
+    }
+}
+
+fun Project.configureKtLint() {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    ktlint {
+        debug.set(false)
+        ignoreFailures.set(false)
+        enableExperimentalRules.set(true)
+        filter {
+            exclude("**/generated/**")
+            include("**/kotlin/**")
         }
     }
 }
@@ -327,8 +374,10 @@ fun Project.configureUploadToBintray(vararg publicationNames: String) {
             user = bintrayUser
             key = bintrayKey
             if (publicationNames.isEmpty()) {
-                setPublications(*project.publishing.publications.withType<MavenPublication>().map { it.name }
-                    .toTypedArray())
+                setPublications(
+                    *project.publishing.publications.withType<MavenPublication>().map { it.name }
+                        .toTypedArray()
+                )
             } else {
                 setPublications(*publicationNames)
             }
@@ -382,7 +431,7 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
             } else if (!docArtifact.endsWith("KotlinMultiplatform")) {
                 log(
                     "no javadoc artifact for publication $name in project ${project.name}: " +
-                            "no such a task: $docArtifact"
+                        "no such a task: $docArtifact"
                 )
             }
 
@@ -392,7 +441,6 @@ fun Project.configureMavenPublications(docArtifactBaseName: String) {
 }
 
 fun Project.createMavenPublications(name: String, vararg componentsStrings: String, docArtifact: String? = null) {
-
     val sourcesJar by tasks.creating(Jar::class) {
         archiveBaseName.set(project.name)
         archiveVersion.set(project.version.toString())
@@ -405,8 +453,11 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
             version = project.version.toString()
 
             for (component in componentsStrings) {
-                if (component in components.names)
+                if (component in components.names) {
                     from(components[component])
+                } else {
+                    warn("Missing component $component in ${project.name} for publication $name")
+                }
             }
 
             if (docArtifact != null && docArtifact in tasks.names) {
@@ -415,8 +466,8 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
                 }
             } else if (docArtifact == null || !docArtifact.endsWith("KotlinMultiplatform")) {
                 log(
-                    "no javadoc artifact for publication $name in project ${project.name}: " +
-                            "no such a task: $docArtifact"
+                    "No javadoc artifact for publication $name in project ${project.name}: " +
+                        "no such a task: $docArtifact"
                 )
             }
 
@@ -430,9 +481,9 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
 fun Set<String>.forEachProject(f: Project.() -> Unit) = allprojects.filter { it.name in this }.forEach(f)
 
 fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
-    platform: String, configuration: Action<in GradlePassConfigurationImpl>
+    platform: String,
+    configuration: Action<in GradlePassConfigurationImpl>
 ) {
-
     val low = platform.toLowerCase()
     val up = platform.toUpperCase()
 
@@ -453,6 +504,8 @@ fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatfor
     registerPlatform(platform) { }
 
 fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
+    if (this == rootProject) return
+
     apply<NpmPublishPlugin>()
 
     configure<NpmPublishExtension> {

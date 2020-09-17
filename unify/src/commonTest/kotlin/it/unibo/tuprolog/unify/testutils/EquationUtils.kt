@@ -1,6 +1,19 @@
 package it.unibo.tuprolog.unify.testutils
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Empty
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Equation
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -38,7 +51,7 @@ internal object EquationUtils {
             Scope.empty { listOf(atomOf("a"), varOf("V")) to listOf(atomOf("a"), varOf("V")) },
             Scope.empty {
                 listFrom(arrayListOf(atomOf("a")), last = varOf("V")) to
-                        listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
+                    listFrom(arrayListOf(atomOf("a")), last = varOf("V"))
             },
             Var.anonymous().let { anonymous ->
                 LogicSet.of(Numeric.of(1.5), anonymous) to LogicSet.of(Numeric.of(1.5), anonymous)
@@ -47,11 +60,11 @@ internal object EquationUtils {
             Scope.empty { factOf(structOf("aa", varOf("A"))) to factOf(structOf("aa", varOf("A"))) },
             Scope.empty {
                 directiveOf(atomOf("here"), structOf("f", Truth.TRUE)) to
-                        directiveOf(atomOf("here"), structOf("f", Truth.TRUE))
+                    directiveOf(atomOf("here"), structOf("f", Truth.TRUE))
             },
             Scope.empty {
                 ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.FALSE) to
-                        ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.FALSE)
+                    ruleOf(Struct.fold("k", varOf("A"), varOf("A")), Truth.FALSE)
             },
             Scope.empty {
                 indicatorOf(atomOf("ciao"), varOf("A")) to indicatorOf(atomOf("ciao"), varOf("A"))
@@ -86,10 +99,12 @@ internal object EquationUtils {
     /** The same equations present in [assignmentEquations] but equations on even positions are swapped: Term to Var */
     internal val assignmentEquationsShuffled by lazy {
         assignmentEquations.mapIndexed { i, (variable, term) ->
-            if (i % 2 == 0 || term.isVariable) // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
+            // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
+            if (i % 2 == 0 || term.isVariable) {
                 variable to term
-            else
+            } else {
                 term to variable
+            }
         }
     }
 
@@ -99,9 +114,9 @@ internal object EquationUtils {
             Struct.of("f", Var.of("A")) to Struct.of("f", Var.of("B")),
             Fact.of(Struct.of("aa", Var.of("A"))) to Fact.of(Struct.of("aa", Var.of("B"))),
             Directive.of(Atom.of("here"), Struct.of("f", Var.of("A"))) to
-                    Directive.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
+                Directive.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
             Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.FALSE) to
-                    Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.FALSE)
+                Rule.of(Struct.fold("k", Var.of("B"), Var.of("C")), Truth.FALSE)
         )
     }
 
@@ -129,14 +144,14 @@ internal object EquationUtils {
         listOf(
             LogicList.of(Atom.of("b"), Var.of("V")) to LogicList.of(Atom.of("a"), Var.of("V")),
             LogicList.from(listOf(Atom.of("a")), last = Var.of("V")) to
-                    LogicList.from(listOf(Atom.of("b")), last = Var.of("V")),
+                LogicList.from(listOf(Atom.of("b")), last = Var.of("V")),
             LogicSet.of(Real.of(1.5), Var.anonymous()) to LogicSet.of(Integer.of(1), Var.anonymous()),
             Struct.of("f", Atom.of("A")) to Struct.of("f", Atom.of("B")),
             Fact.of(Struct.of("aa", Atom.of("A"))) to Fact.of(Struct.of("aa", Var.of("A"), Var.of("A"))),
             Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)) to
-                    Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE, Atom.of("extra"))),
+                Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE, Atom.of("extra"))),
             Rule.of(Struct.fold("k", Var.of("A"), Var.of("A")), Truth.FAIL) to
-                    Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.FAIL)
+                Rule.of(Struct.fold("different", Var.of("A"), Var.of("A")), Truth.FAIL)
         )
     }
 
@@ -195,5 +210,4 @@ internal object EquationUtils {
         is Struct -> term.argsSequence.sumBy { countDeepGeneratedEquations(it) }
         else -> fail("Should never be there")
     }
-
 }

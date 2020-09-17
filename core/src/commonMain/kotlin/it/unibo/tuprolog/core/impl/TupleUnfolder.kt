@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 
 internal class TupleUnfolder(tuple: Tuple) : Iterator<Term> {
 
@@ -21,5 +22,4 @@ internal class TupleUnfolder(tuple: Tuple) : Iterator<Term> {
             }
         }
     }
-
 }

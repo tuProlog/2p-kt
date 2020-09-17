@@ -1,15 +1,12 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
+import it.unibo.tuprolog.solve.TestArith
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 class TestStreamsArith : TestArith, SolverFactory by StreamsSolverFactory {
     private val prototype = TestArith.prototype(this)
 
@@ -43,4 +40,3 @@ class TestStreamsArith : TestArith, SolverFactory by StreamsSolverFactory {
         prototype.testArithLessThanEq()
     }
 }
-

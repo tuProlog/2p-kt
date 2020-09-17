@@ -31,5 +31,4 @@ object Multiplication : BinaryMathFunction("*") {
     private fun commonBehaviour(decimal1: BigDecimal, decimal2: BigDecimal): Real =
         // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
         Numeric.of(decimal1 * decimal2)
-
 }

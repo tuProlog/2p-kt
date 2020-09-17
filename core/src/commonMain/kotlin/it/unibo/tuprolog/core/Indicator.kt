@@ -46,8 +46,8 @@ interface Indicator : Struct {
     @JsName("isWellFormed")
     val isWellFormed: Boolean
         get() = nameTerm is Atom &&
-                arityTerm is Integer &&
-                arityTerm.`as`<Integer>().intValue.signum >= 0
+            arityTerm is Integer &&
+            arityTerm.`as`<Integer>().intValue.signum >= 0
 
     /** The indicated functor name, if well-formed */
     @JsName("indicatedName")
@@ -66,6 +66,10 @@ interface Indicator : Struct {
             isGround -> this
             else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
         }
+
+    operator fun component1(): Term = nameTerm
+
+    operator fun component2(): Term = arityTerm
 
     companion object {
 

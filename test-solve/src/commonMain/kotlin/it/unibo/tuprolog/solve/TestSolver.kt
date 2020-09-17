@@ -23,9 +23,9 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutAndConjunctionTheo
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleCutTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.simpleFactTheoryNotableGoalToSolutions
 import it.unibo.tuprolog.solve.TimeRelatedTheories.lessThan500MsGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan600MsGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan500MsGoalToSolution
 
 /** A prototype class for testing solver implementations */
 interface TestSolver : SolverTest {
@@ -35,7 +35,9 @@ interface TestSolver : SolverTest {
             TestSolverImpl(solverFactory)
     }
 
-    fun testUnknownFlag()
+    fun testUnknownFlag1()
+
+    fun testUnknownFlag2()
 
     /** Test presence of correct built-ins */
     fun testBuiltinApi()
@@ -158,5 +160,26 @@ interface TestSolver : SolverTest {
     fun testUniv()
     fun testAppend()
     fun testRetractAll()
-}
 
+    fun testTermGreaterThan()
+    fun testTermGreaterThanOrEqual()
+    fun testTermSame()
+    fun testTermNotSame()
+    fun testTermLowerThan()
+    fun testTermLowerThanOrEqual()
+
+    /** atom_chars/2 test */
+    fun testAtomChars()
+
+    /** atom_length test */
+    fun testAtomLength()
+
+    /** char_code/2 test */
+    fun testCharCode()
+
+    /** atom_codes/2 test */
+    fun testAtomCodes()
+
+    /** atom_concat/3 test */
+    fun testAtomConcat()
+}

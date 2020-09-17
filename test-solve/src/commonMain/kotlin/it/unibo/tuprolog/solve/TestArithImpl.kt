@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.EVALUABLE
 import kotlin.collections.listOf as ktListOf
 
 internal class TestArithImpl(private val solverFactory: SolverFactory) : TestArith {
@@ -41,10 +42,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=\\=", 2),
-                            varOf("N")
+                            varOf("N"),
+                            index = 0
                         )
                     )
                 ),
@@ -57,11 +59,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=\\=", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),
@@ -104,10 +107,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=:=", 2),
-                            varOf("N")
+                            varOf("N"),
+                            index = 0
                         )
                     )
                 ),
@@ -120,11 +124,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=:=", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),
@@ -175,10 +180,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature(">", 2),
-                            varOf("X")
+                            varOf("X"),
+                            index = 0
                         )
                     )
                 ),
@@ -191,11 +197,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature(">", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),
@@ -238,10 +245,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature(">=", 2),
-                            varOf("X")
+                            varOf("X"),
+                            index = 0
                         )
                     )
                 ),
@@ -254,11 +262,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature(">=", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),
@@ -301,10 +310,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("<", 2),
-                            varOf("X")
+                            varOf("X"),
+                            index = 0
                         )
                     )
                 ),
@@ -317,11 +327,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("<", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),
@@ -364,10 +375,11 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        InstantiationError.forGoal(
+                        InstantiationError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=<", 2),
-                            varOf("X")
+                            varOf("X"),
+                            index = 0
                         )
                     )
                 ),
@@ -380,11 +392,12 @@ internal class TestArithImpl(private val solverFactory: SolverFactory) : TestAri
             assertSolutionEquals(
                 ktListOf(
                     query.halt(
-                        TypeError.forGoal(
+                        TypeError.forArgument(
                             DummyInstances.executionContext,
                             Signature("=<", 2),
-                            TypeError.Expected.EVALUABLE,
-                            "floot"(1)
+                            EVALUABLE,
+                            "floot"(1),
+                            index = 0
                         )
                     )
                 ),

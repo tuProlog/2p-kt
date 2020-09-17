@@ -1,4 +1,5 @@
 @file:JvmName("Utils")
+
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause

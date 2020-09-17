@@ -1,11 +1,21 @@
 package it.unibo.tuprolog.dsl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
 import kotlin.js.JsName
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
-interface PrologScope : PrologStdLibScope {
+interface PrologScope : PrologStdLibScope, VariablesAwareScope {
 
     @JsName("stringInvoke")
     operator fun String.invoke(term: Any, vararg terms: Any): Struct =
@@ -108,11 +118,11 @@ interface PrologScope : PrologStdLibScope {
     fun setOf(vararg terms: Any): LogicSet =
         this.setOf(*terms.map { it.toTerm() }.toTypedArray())
 
-    @JsName("consOfAny")
-    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
-
     @JsName("factOfAny")
     fun factOf(term: Any): Fact = factOf(term.toTerm() as Struct)
+
+    @JsName("consOfAny")
+    fun consOf(head: Any, tail: Any): Cons = consOf(head.toTerm(), tail.toTerm())
 
     @JsName("directiveOfAny")
     fun directiveOf(term: Any, vararg terms: Any): Directive =

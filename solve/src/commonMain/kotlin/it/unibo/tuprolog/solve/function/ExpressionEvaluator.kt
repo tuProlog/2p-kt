@@ -1,59 +1,23 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.primitive.Solve
 
 /**
- * A class implementing a visitor that will evaluate expression terms according to context loaded functions
+ * Evaluates a [Term] as an expression, w.r.t. the loaded functions provided through [request].
+ * Throws a [TypeError] in case a non-evaluable sub-term is met.
  *
- * No additional check is implemented at this level
- *
- * @param context the context in which the evaluation should happen
- *
- * @author Enrico
+ * @param request the request of the primitive in which the evaluation should happen
+ * @param index the index of the argument being evalued in the aforementioned primitive
  */
-open class ExpressionEvaluator(private val context: ExecutionContext) : TermVisitor<Term> {
+class ExpressionEvaluator<E : ExecutionContext>(
+    request: Solve.Request<E>,
+    index: Int? = null
+) : AbstractEvaluator<E, Term>(request, index) {
 
-    /** Shorthand to access context loaded functions */
-    protected val loadedFunctions by lazy { context.libraries.functions }
-
-    override fun defaultValue(term: Term): Term = term
-
-    override fun visit(term: Term): Term =
-        super.visit(term.apply { staticCheck(context) })
-
-    override fun visitAtom(term: Atom): Term = loadedFunctions[term.extractSignature()]
-        ?.let { it(Compute.Request(term.extractSignature(), term.argsList, context)).result }
-        ?: term
-
-    override fun visitStruct(term: Struct): Term = loadedFunctions[term.extractSignature()]
-        ?.let {
-            it(
-                Compute.Request(
-                    term.extractSignature(),
-                    term.argsSequence.map { arg -> arg.accept(this).apply { dynamicCheck(term, context) } }.toList(),
-                    context
-                )
-            ).result
-        }
-        ?: term
-
-
-    /**
-     * Template method to implement static checks, i.e. those checks that can be made before evaluating sub-expressions
-     *
-     * This is a stub implementation, that does nothing
-     */
-    protected open fun Term.staticCheck(context: ExecutionContext): Unit = Unit
-
-    /**
-     * Template method to implement dynamic checks, i.e. those checks that must be made after sub-expression evaluation, on its result
-     *
-     * This is a stub implementation, that does nothing
-     */
-    protected open fun Term.dynamicCheck(enclosingTerm: Struct, context: ExecutionContext): Unit = Unit
+    override fun unevaluable(struct: Struct): Term =
+        throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
 }

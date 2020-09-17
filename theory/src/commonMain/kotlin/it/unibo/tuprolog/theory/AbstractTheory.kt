@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
 internal abstract class AbstractTheory : Theory {

@@ -19,7 +19,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         }
     }
 
-    override fun testNonVarFoo() { //foo
+    override fun testNonVarFoo() { // foo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
@@ -33,7 +33,7 @@ internal class TestNonVarImpl(private val solverFactory: SolverFactory) : TestNo
         }
     }
 
-    override fun testNonVarFooCl() { //Foo (CapsLock)
+    override fun testNonVarFooCl() { // Foo (CapsLock)
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 

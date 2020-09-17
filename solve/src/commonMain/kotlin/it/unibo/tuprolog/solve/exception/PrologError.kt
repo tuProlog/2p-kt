@@ -1,10 +1,23 @@
 package it.unibo.tuprolog.solve.exception
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.error.*
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.error.EvaluationError
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.MessageError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
+import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -36,8 +49,8 @@ abstract class PrologError(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), type, extraData)
 
-    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
-            : this(cause?.toString(), cause, context, type, extraData)
+    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null) :
+        this(cause?.toString(), cause, context, type, extraData)
 
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
     val errorStruct: Struct by lazy { generateErrorStruct() }
@@ -52,6 +65,15 @@ abstract class PrologError(
     override fun toString(): String = errorStruct.toString()
 
     companion object {
+
+        internal fun <E : PrologError> message(message: String, f: (String, Atom) -> E): E =
+            f(message, Atom.of(message))
+
+        internal fun Term.pretty(): String =
+            format(TermFormatter.prettyVariables())
+
+        internal fun Signature.pretty(): String =
+            toIndicator().toString()
 
         /**
          * Factory method for [PrologError]s
@@ -78,25 +100,40 @@ abstract class PrologError(
             extraData: Term? = null
         ): PrologError = with(type) {
             when {
-                functor == InstantiationError.typeFunctor -> InstantiationError(message, cause, contexts, extraData)
-                functor == SystemError.typeFunctor -> SystemError(message, cause, contexts, extraData)
-                functor == ExistenceError.typeFunctor && type.arity == 2 ->
-                    ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
-                functor == DomainError.typeFunctor && arity == 2 && DomainError.Expected.fromTerm(args.first()) != null ->
-                    DomainError(
+                functor == InstantiationError.typeFunctor ->
+                    InstantiationError(message, cause, contexts, Var.anonymous(), extraData)
+                functor == SystemError.typeFunctor ->
+                    SystemError(message, cause, contexts, extraData)
+                functor == MessageError.typeFunctor ->
+                    MessageError(message, cause, contexts, extraData)
+                functor == RepresentationError.typeFunctor && type.arity == 1 ->
+                    RepresentationError(
                         message,
                         cause,
                         contexts,
-                        DomainError.Expected.fromTerm(args.first())!!,
-                        args[1],
+                        RepresentationError.Limit.fromTerm(type[0])!!,
                         extraData
                     )
-                functor == TypeError.typeFunctor && arity == 2 && TypeError.Expected.fromTerm(args.first()) != null ->
-                    TypeError(message, cause, contexts, TypeError.Expected.fromTerm(args.first())!!, args[1], extraData)
-                functor == EvaluationError.typeFunctor && arity == 1 && EvaluationError.Type.fromTerm(args.single()) != null ->
-                    EvaluationError(message, cause, contexts, EvaluationError.Type.fromTerm(args.single())!!, extraData)
-                functor == MessageError.typeFunctor -> MessageError(message, cause, contexts, extraData)
+                functor == ExistenceError.typeFunctor && type.arity == 2 ->
+                    ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
+                functor == DomainError.typeFunctor && arity == 2 ->
+                    DomainError(message, cause, contexts, DomainError.Expected.fromTerm(args[0])!!, args[1], extraData)
+                functor == TypeError.typeFunctor && arity == 2 ->
+                    TypeError(message, cause, contexts, TypeError.Expected.fromTerm(args[0])!!, args[1], extraData)
+                functor == EvaluationError.typeFunctor && arity == 1 ->
+                    EvaluationError(message, cause, contexts, EvaluationError.Type.fromTerm(args[0])!!, extraData)
+                functor == PermissionError.typeFunctor && arity == 3 ->
+                    PermissionError(
+                        message,
+                        cause,
+                        contexts,
+                        PermissionError.Operation.fromTerm(args[0])!!,
+                        PermissionError.Permission.fromTerm(args[1])!!,
+                        args[2],
+                        extraData
+                    )
                 else -> object : PrologError(message, cause, contexts, type, extraData) {
+
                     override fun updateContext(newContext: ExecutionContext): PrologError =
                         of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
 

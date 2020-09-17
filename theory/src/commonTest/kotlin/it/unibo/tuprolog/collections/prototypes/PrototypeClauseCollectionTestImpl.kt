@@ -3,7 +3,12 @@ package it.unibo.tuprolog.collections.prototypes
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.PrototypeClauseCollectionTest
 import it.unibo.tuprolog.collections.RetrieveResult
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
@@ -230,5 +235,4 @@ internal abstract class PrototypeClauseCollectionTestImpl(
 
         assertClausesHaveSameLengthAndContent(clauses, retrieveResult.collection)
     }
-
 }

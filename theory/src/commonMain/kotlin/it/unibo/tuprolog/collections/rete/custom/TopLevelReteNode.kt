@@ -9,5 +9,4 @@ internal interface TopLevelReteNode : ReteNode {
 
     /**Retracts the first matching occurrence of the given [Clause] from this [ReteTree]*/
     fun retractFirst(clause: Clause): Sequence<Clause>
-
 }

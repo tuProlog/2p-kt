@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.itemWiseHashCode
 

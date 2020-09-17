@@ -44,5 +44,4 @@ internal class PrologFunctionTest {
                 }
             }
     }
-
 }

@@ -21,15 +21,22 @@ sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
         object Then : If() {
             override val Scope.body: Term
-                get() = tupleOf(structOf("call", varOf("Cond")), MagicCut, varOf("Then"))
+                get() = tupleOf(
+//                    structOf(EnsureExecutable.functor, varOf("Cond")),
+                    structOf("call", varOf("Cond")),
+                    MagicCut,
+                    varOf("Then")
+                )
         }
 
         object Else : If() {
             override val Scope.body: Term
-                get() = tupleOf(MagicCut, varOf("Else"))
-
+                get() = tupleOf(
+                    MagicCut,
+//                    structOf(EnsureExecutable.functor, varOf("Else")),
+                    varOf("Else")
+                )
         }
-
     }
 
     sealed class Or : Semicolon() {

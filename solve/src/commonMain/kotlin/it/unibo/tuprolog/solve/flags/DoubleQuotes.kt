@@ -14,5 +14,4 @@ object DoubleQuotes : NotableFlag {
         get() = ATOM
 
     override val admissibleValues: Sequence<Term> = sequenceOf(ATOM)
-
 }

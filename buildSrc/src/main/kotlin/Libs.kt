@@ -114,6 +114,10 @@ object Libs {
             "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:" +
             Versions.com_github_johnrengelman_shadow_gradle_plugin
 
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String =
+            "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
+            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+
     const val de_fayard_buildsrcversions_gradle_plugin: String =
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
@@ -158,4 +162,9 @@ object Libs {
      * https://github.com/gciatto/kt-math
      */
     const val kt_math: String = "io.github.gciatto:kt-math:" + Versions.kt_math
+
+    /**
+     * https://github.com/pinterest/ktlint
+     */
+    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
 }

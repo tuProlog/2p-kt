@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -24,10 +24,23 @@ object TestingClauseTheories {
     internal val aContext = DummyInstances.executionContext
 
     internal val haltException = HaltException(context = aContext)
-    internal val instantiationError = InstantiationError(context = aContext)
-    internal val typeError =
-        TypeError(context = aContext, expectedType = TypeError.Expected.CALLABLE, actualValue = prolog { numOf(1) })
-    internal val systemError = SystemError(context = aContext)
+
+    internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int? = null) =
+        if (index != null) {
+            InstantiationError.forArgument(aContext, Signature(functor, arity), culprit, index)
+        } else {
+            InstantiationError.forGoal(aContext, Signature(functor, arity), culprit)
+        }
+
+    internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int? = null) =
+        if (index != null) {
+            TypeError.forArgument(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue, index)
+        } else {
+            TypeError.forGoal(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue)
+        }
+
+    internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
+
     internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
 
     /** Utility function to deeply replace all occurrences of one functor with another in a Struct */
@@ -289,11 +302,11 @@ object TestingClauseTheories {
     val customReverseListTheory by lazy {
         prolog {
             theory(
-                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", List.empty()) },
-                { "my_rev"(List.empty(), "L2", "L2") `if` "!" },
+                { "my_reverse"("L1", "L2") `if` "my_rev"("L1", "L2", emptyList) },
+                { "my_rev"(emptyList, "L2", "L2") `if` "!" },
                 {
                     "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
-                            "my_rev"("Xs", "L2", consOf("X", "Acc"))
+                        "my_rev"("Xs", "L2", consOf("X", "Acc"))
                 }
             )
         }
@@ -329,13 +342,13 @@ object TestingClauseTheories {
     val customRangeListGeneratorTheory by lazy {
         prolog {
             theory(
-                { ("range"("N", "N", listOf("N")) `if` "!") },
+                { "range"("N", "N", listOf("N")) `if` "!" },
                 {
-                    ("range"("M", "N", listFrom(ktListOf(varOf("M")), varOf("Ns"))) `if` (
-                            "<"("M", "N") and
-                                    ("M1" `is` (varOf("M") + 1)) and
-                                    "range"("M1", "N", "Ns")
-                            ))
+                    "range"("M", "N", consOf("M", "Ns")) `if` (
+                        "<"("M", "N") and
+                            ("M1" `is` (varOf("M") + 1)) and
+                            "range"("M1", "N", "Ns")
+                        )
                 }
             )
         }
@@ -354,19 +367,18 @@ object TestingClauseTheories {
      * ```
      */
     val customRangeListGeneratorTheoryNotableGoalToSolution by lazy {
+        val N = customRangeListGeneratorTheory.last().head!![1] as Var
         prolog {
             ktListOf(
                 "range"(1, 4, listOf(1, 2, 3, 4)).hasSolutions({ yes() }),
                 "range"(1, 4, listOf(1, 2, 3, 4, 5)).hasSolutions({ no() }),
-                "range"(1, 4, "L").hasSolutions(
-                    { yes("L" to listOf(1, 2, 3, 4)) }
-                ),
-                "range"(1, 1, "L").hasSolutions(
-                    { yes("L" to listOf(1)) }
-                ),
+                "range"(1, 4, "L").hasSolutions({ yes("L" to listOf(1, 2, 3, 4)) }),
+                "range"(1, 1, "L").hasSolutions({ yes("L" to listOf(1)) }),
                 "range"(2, 1, "L").hasSolutions({ no() }),
                 "range"("A", 4, listOf(2, 3, 4)).hasSolutions({ yes("A" to 2) }),
-                "range"(2, "A", listOf(2, 3, 4)).hasSolutions({ halt(instantiationError) })
+                "range"(2, "A", listOf(2, 3, 4)).hasSolutions(
+                    { halt(instantiationError("<", 2, N, 1)) }
+                )
             )
         }
     }
@@ -388,13 +400,13 @@ object TestingClauseTheories {
     val callTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                "call"(true).hasSolutions({ yes() }),
-                "call"(false).hasSolutions({ no() }),
-                "call"("halt").hasSolutions({ halt(haltException) }),
-                "call"("true" and "true").hasSolutions({ yes() }),
-                "call"("!").hasSolutions({ yes() }),
-                "call"("X").hasSolutions({ halt(instantiationError) }),
-                "call"("true" and 1).hasSolutions({ halt(typeError) })
+                call(true).hasSolutions({ yes() }),
+                call(false).hasSolutions({ no() }),
+                call(halt).hasSolutions({ halt(haltException) }),
+                call("true" and "true").hasSolutions({ yes() }),
+                call(`cut`).hasSolutions({ yes() }),
+                call("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
+                call("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1))) })
             )
         }
     }
@@ -414,14 +426,14 @@ object TestingClauseTheories {
     val catchTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                "catch"(true, `_`, false).hasSolutions({ yes() }),
-                "catch"("catch"("throw"("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
+                catch(true, `_`, false).hasSolutions({ yes() }),
+                catch(catch(`throw`("external"("deepBall")), "internal"("I"), false), "external"("E"), true)
                     .hasSolutions({ yes("E" to "deepBall") }),
-                "catch"("throw"("first"), "X", "throw"("second")).hasSolutions(
-                    { halt(systemError) }
+                catch(`throw`("first"), "X", `throw`("second")).hasSolutions(
+                    { halt(systemError(atomOf("second"))) }
                 ),
-                "catch"("throw"("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
-                "catch"("throw"("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
+                catch(`throw`("hello"), "X", true).hasSolutions({ yes("X" to "hello") }),
+                catch(`throw`("hello") and false, "X", true).hasSolutions({ yes("X" to "hello") })
             )
         }
     }
@@ -439,9 +451,11 @@ object TestingClauseTheories {
     val haltTestingGoalsToSolutions by lazy {
         prolog {
             ktListOf(
-                atomOf("halt").hasSolutions({ halt(haltException) }),
-                "catch"("halt", `_`, true).hasSolutions({ halt(haltException) }),
-                "catch"("catch"("throw"("something"), `_`, "halt"), `_`, true).hasSolutions({ halt(haltException) })
+                halt.hasSolutions({ halt(haltException) }),
+                catch(halt, `_`, true).hasSolutions({ halt(haltException) }),
+                catch(catch(`throw`("something"), `_`, halt), `_`, true).hasSolutions(
+                    { halt(haltException) }
+                )
             )
         }
     }

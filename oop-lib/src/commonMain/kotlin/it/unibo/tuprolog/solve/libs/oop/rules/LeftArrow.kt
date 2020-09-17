@@ -13,7 +13,8 @@ object LeftArrow : RuleWrapper<ExecutionContext>("<-", 2) {
 
     override val Scope.head: List<Term>
         get() = sequenceOf(
-            varOf(Ref), varOf(Method)
+            varOf(Ref),
+            varOf(Method)
         ).toList()
 
     override val Scope.body: Term

@@ -1,6 +1,14 @@
 package it.unibo.tuprolog.core.parsing
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
@@ -18,7 +26,6 @@ interface TermParser {
     fun parseTerm(input: String): Term =
         parseTerm(input, defaultOperatorSet)
 
-
     @JsName("parseStructWithOperators")
     fun parseStruct(input: String, operators: OperatorSet): Struct =
         parseTerm(input, operators) as Struct
@@ -26,7 +33,6 @@ interface TermParser {
     @JsName("parseStruct")
     fun parseStruct(input: String): Struct =
         parseStruct(input, defaultOperatorSet)
-
 
     @JsName("parseConstantWithOperators")
     fun parseConstant(input: String, operators: OperatorSet): Constant =
@@ -36,7 +42,6 @@ interface TermParser {
     fun parseConstant(input: String): Constant =
         parseConstant(input, defaultOperatorSet)
 
-
     @JsName("parseVarWithOperators")
     fun parseVar(input: String, operators: OperatorSet): Var =
         parseTerm(input, operators) as Var
@@ -44,7 +49,6 @@ interface TermParser {
     @JsName("parseVar")
     fun parseVar(input: String): Var =
         parseVar(input, defaultOperatorSet)
-
 
     @JsName("parseAtomWithOperators")
     fun parseAtom(input: String, operators: OperatorSet): Atom =
@@ -54,7 +58,6 @@ interface TermParser {
     fun parseAtom(input: String): Atom =
         parseAtom(input, defaultOperatorSet)
 
-
     @JsName("parseNumericWithOperators")
     fun parseNumeric(input: String, operators: OperatorSet): Numeric =
         parseTerm(input, operators) as Numeric
@@ -62,7 +65,6 @@ interface TermParser {
     @JsName("parseNumeric")
     fun parseNumeric(input: String): Numeric =
         parseNumeric(input, defaultOperatorSet)
-
 
     @JsName("parseIntegerWithOperators")
     fun parseInteger(input: String, operators: OperatorSet): Integer =
@@ -72,7 +74,6 @@ interface TermParser {
     fun parseInteger(input: String): Integer =
         parseInteger(input, defaultOperatorSet)
 
-
     @JsName("parseRealWithOperators")
     fun parseReal(input: String, operators: OperatorSet): Real =
         parseTerm(input, operators) as Real
@@ -81,12 +82,11 @@ interface TermParser {
     fun parseReal(input: String): Real =
         parseReal(input, defaultOperatorSet)
 
-
     @JsName("parseClauseWithOperators")
     fun parseClause(input: String, operators: OperatorSet): Clause {
         require(operators.any { it.functor == Clause.FUNCTOR }) {
             "Error while parsing string as Clause: the provided operator set has no " +
-                    "operator for '${Clause.FUNCTOR}'/1 or '${Clause.FUNCTOR}'/1"
+                "operator for '${Clause.FUNCTOR}'/1 or '${Clause.FUNCTOR}'/1"
         }
         return parseTerm(input, operators).toClause()
     }
@@ -116,5 +116,4 @@ interface TermParser {
         @JsName("withOperators")
         fun withOperators(vararg operators: Operator) = withOperators(OperatorSet(*operators))
     }
-
 }

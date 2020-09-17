@@ -1,11 +1,19 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.libs.oop.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.libs.oop.NullRef
+import it.unibo.tuprolog.solve.libs.oop.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConversionException
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
-import kotlin.collections.Set
 
 internal class TermToObjectConverterImpl : TermToObjectConverter {
     override fun convertInto(type: KClass<*>, term: Term): Any? {
@@ -50,7 +58,7 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
         return admissibleTypes(term).asSequence().map { convertInto(it, term) }
     }
 
-    override fun admissibleTypes(term: Term): Set<KClass<*>>  {
+    override fun admissibleTypes(term: Term): Set<KClass<*>> {
         return when (term) {
             is NullRef, is Var -> setOf(Nothing::class)
             is ObjectRef -> setOf(term.`object`::class)

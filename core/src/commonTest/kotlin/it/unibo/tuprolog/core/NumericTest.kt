@@ -35,11 +35,11 @@ internal class NumericTest {
             .map { BigDecimal.of(it) }
             .map {
                 BigDecimal.of(it.unscaledValue.toLong(), it.scale) to
-                        BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
+                    BigDecimal.of(it.unscaledValue.toLong() * 10, it.scale + 1)
             } +
-                RealUtils.stringNumbers
-                    .filterNot { "E" in it || "e" in it }
-                    .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
+            RealUtils.stringNumbers
+                .filterNot { "E" in it || "e" in it }
+                .map { BigDecimal.of(it) to BigDecimal.of(it + "00") }
     }
 
     @Test
