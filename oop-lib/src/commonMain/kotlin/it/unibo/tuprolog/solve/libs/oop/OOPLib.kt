@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.Assign
 import it.unibo.tuprolog.solve.libs.oop.primitives.FindType
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
-import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject
+import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
 import it.unibo.tuprolog.solve.libs.oop.primitives.NullRef
 import it.unibo.tuprolog.solve.libs.oop.primitives.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.primitives.Ref
@@ -19,6 +19,7 @@ import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals
 import it.unibo.tuprolog.solve.libs.oop.rules.Dot
 import it.unibo.tuprolog.solve.libs.oop.rules.FluentReduce
+import it.unibo.tuprolog.solve.libs.oop.rules.NewObject2
 import it.unibo.tuprolog.solve.libs.oop.rules.PropertyReduce
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.theory.Theory
@@ -34,15 +35,17 @@ object OOPLib : AliasedLibrary by
         ),
         theory = Theory.indexedOf(
             sequenceOf(
-                Dot,
                 ColonEquals.Invocation,
                 ColonEquals.Assignment,
+                Dot,
                 FluentReduce.Recursive,
                 FluentReduce.Couple,
                 // FluentReduce.Base,
                 FluentReduce.Trivial,
+                NewObject2,
                 PropertyReduce.Recursive,
                 PropertyReduce.Base,
+                Alias.forType("string", String::class),
                 Alias.forType("array", Array::class),
                 Alias.forType("arraylist", ArrayList::class),
                 *platformSpecificAliases
@@ -50,7 +53,7 @@ object OOPLib : AliasedLibrary by
         ),
         primitives = sequenceOf<PrimitiveWrapper<*>>(
             Assign,
-            NewObject,
+            NewObject3,
             FindType,
             InvokeMethod,
             InvokeStrict,

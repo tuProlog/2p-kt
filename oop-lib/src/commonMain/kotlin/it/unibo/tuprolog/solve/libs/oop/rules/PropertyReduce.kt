@@ -33,11 +33,7 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
         private val P by variables
 
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(
-                listFrom(A, B, last = C),
-                O,
-                P
-            )
+            get() = kotlin.collections.listOf(listFrom(A, B, last = C), O, P)
 
         override val Scope.body: Term
             get() = tupleOf(
@@ -49,9 +45,6 @@ sealed class PropertyReduce : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     object Base : PropertyReduce() {
         override val Scope.head: List<Term>
-            get() = kotlin.collections.listOf(
-                consOf(A, B),
-                A, B
-            )
+            get() = kotlin.collections.listOf(consOf(A, B), A, B)
     }
 }

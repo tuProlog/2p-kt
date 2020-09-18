@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object NewObject : TernaryRelation.Functional<ExecutionContext>("new_object") {
+object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
 
     private val typeFactory = TypeFactory.default
 
