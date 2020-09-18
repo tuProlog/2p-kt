@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -29,7 +30,13 @@ object NewObject : TernaryRelation.Functional<ExecutionContext>("new_object") {
             first
         } else {
             val className = (first as Atom).value
-            typeFactory.typeRefFromName(className)
+            when (val ref = typeFactory.typeRefFromName(className)) {
+                null -> when (val aliased = findRefFromAlias(first)) {
+                    null, is ObjectRef -> null
+                    else -> aliased as TypeRef
+                }
+                else -> ref
+            }
         }
 
         val objectReference = type?.create(*arguments)?.asObjectRef()
