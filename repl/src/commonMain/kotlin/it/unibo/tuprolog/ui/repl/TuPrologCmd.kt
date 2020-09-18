@@ -9,6 +9,8 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
@@ -103,8 +105,12 @@ class TuPrologCmd : CliktCommand(
     fun getSolver(): Solver {
         TermUi.echo("# 2P-Kt version ${Info.VERSION}")
         val theory: Theory = this.loadTheory()
-        val outputChannel = OutputChannel.of<PrologWarning> {
-            TermUi.echo("# ${it.message}", err = true)
+        val outputChannel = OutputChannel.of<PrologWarning> { w ->
+            TermUi.echo("# ${w.message}", err = true)
+            val sep = "\n    at "
+            val formatter = TermFormatter.Companion.prettyExpressions(w.context.operators)
+            val stacktrace = w.prologStackTrace.joinToString(sep) { it.format(formatter) }
+            TermUi.echo("#    at $stacktrace", err = true)
         }
         return if (oop) {
             Solver.classicWithDefaultBuiltins(

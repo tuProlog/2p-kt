@@ -3,8 +3,10 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.XFX
+import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.libs.oop.primitives.Assign
 import it.unibo.tuprolog.solve.libs.oop.primitives.FindType
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
@@ -15,8 +17,9 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.Ref
 import it.unibo.tuprolog.solve.libs.oop.primitives.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals
-import it.unibo.tuprolog.solve.libs.oop.rules.LeftArrow
-import it.unibo.tuprolog.solve.libs.oop.rules.Returns
+import it.unibo.tuprolog.solve.libs.oop.rules.Dot
+import it.unibo.tuprolog.solve.libs.oop.rules.FluentReduce
+import it.unibo.tuprolog.solve.libs.oop.rules.PropertyReduce
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.theory.Theory
 
@@ -25,22 +28,28 @@ internal expect val platformSpecificAliases: Array<Alias>
 object OOPLib : AliasedLibrary by
     Library.aliased(
         operatorSet = OperatorSet(
-            Operator("<-", XFX, 800),
-            Operator("returns", XFX, 850),
+            Operator(".", XFY, 800),
             Operator(":=", XFX, 850),
             Operator("as", XFX, 200),
         ),
         theory = Theory.indexedOf(
             sequenceOf(
-                LeftArrow,
-                Returns,
-                ColonEquals,
+                Dot,
+                ColonEquals.Invocation,
+                ColonEquals.Assignment,
+                FluentReduce.Recursive,
+                FluentReduce.Couple,
+                // FluentReduce.Base,
+                FluentReduce.Trivial,
+                PropertyReduce.Recursive,
+                PropertyReduce.Base,
                 Alias.forType("array", Array::class),
                 Alias.forType("arraylist", ArrayList::class),
                 *platformSpecificAliases
             ).map { it.wrappedImplementation }
         ),
         primitives = sequenceOf<PrimitiveWrapper<*>>(
+            Assign,
             NewObject,
             FindType,
             InvokeMethod,

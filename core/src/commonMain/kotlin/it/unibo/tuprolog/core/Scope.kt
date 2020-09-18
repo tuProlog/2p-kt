@@ -73,7 +73,13 @@ interface Scope {
     fun listOf(terms: Iterable<Term>): LogicList
 
     @JsName("listFrom")
+    fun listFrom(vararg terms: Term, last: Term? = null): LogicList
+
+    @JsName("listFromIterable")
     fun listFrom(terms: Iterable<Term>, last: Term? = null): LogicList
+
+    @JsName("listFromSequence")
+    fun listFrom(terms: Sequence<Term>, last: Term? = null): LogicList
 
     @JsName("setOf")
     fun setOf(vararg terms: Term): LogicSet
