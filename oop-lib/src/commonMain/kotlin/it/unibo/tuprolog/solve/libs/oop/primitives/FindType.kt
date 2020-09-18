@@ -19,24 +19,25 @@ object FindType : BinaryRelation.Functional<ExecutionContext>("find_type") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term
-    ): Substitution {
+    ): Substitution = catchingOopExceptions {
         when {
             first is Var && second is Var -> {
                 ensuringArgumentIsInstantiated(0)
+                Substitution.failed()
             }
             first is Var -> {
                 ensuringArgumentIsAtom(1)
                 ensuringArgumentIsTypeRef(1)
-                return first mguWith Atom.of((second as TypeRef).type.name)
+                first mguWith Atom.of((second as TypeRef).type.name)
             }
             second is Var -> {
                 ensuringArgumentIsAtom(0)
-                return typeFactory.typeRefFromName((first as Atom).value)?.mguWith(second) ?: Substitution.failed()
+                typeFactory.typeRefFromName((first as Atom).value)?.mguWith(second) ?: Substitution.failed()
             }
             else -> {
                 ensuringArgumentIsAtom(0)
+                Substitution.failed()
             }
         }
-        return Substitution.failed()
     }
 }

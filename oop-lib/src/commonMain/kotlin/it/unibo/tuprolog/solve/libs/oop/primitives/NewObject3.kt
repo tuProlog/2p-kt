@@ -24,23 +24,25 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
         ensuringArgumentIsAtom(0)
         ensuringArgumentIsList(1)
 
-        val arguments = (second as List).toArray()
+        return catchingOopExceptions {
+            val arguments = (second as List).toArray()
 
-        val type = if (first is TypeRef) {
-            first
-        } else {
-            val className = (first as Atom).value
-            when (val ref = typeFactory.typeRefFromName(className)) {
-                null -> when (val aliased = findRefFromAlias(first)) {
-                    null, is ObjectRef -> null
-                    else -> aliased as TypeRef
+            val type = if (first is TypeRef) {
+                first
+            } else {
+                val className = (first as Atom).value
+                when (val ref = typeFactory.typeRefFromName(className)) {
+                    null -> when (val aliased = findRefFromAlias(first)) {
+                        null, is ObjectRef -> null
+                        else -> aliased as TypeRef
+                    }
+                    else -> ref
                 }
-                else -> ref
             }
+
+            val objectReference = type?.create(*arguments)?.asObjectRef()
+
+            objectReference?.mguWith(third) ?: Substitution.failed()
         }
-
-        val objectReference = type?.create(*arguments)?.asObjectRef()
-
-        return objectReference?.mguWith(third) ?: Substitution.failed()
     }
 }

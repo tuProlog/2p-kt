@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
+import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.primitive.Solve
 
@@ -37,4 +38,12 @@ fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref
         return found.filterIsInstance<Solution.Yes>().firstOrNull()?.solvedQuery?.get(1)?.castTo()
     }
     return null
+}
+
+inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExceptions(action: Req.() -> R): R {
+    try {
+        return action()
+    } catch (e: OopException) {
+        throw e.toPrologError(context, signature)
+    }
 }

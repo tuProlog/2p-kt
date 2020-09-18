@@ -77,6 +77,7 @@ class RepresentationError(
         MAX_ARITY,
         MAX_INTEGER,
         MIN_INTEGER,
+        OOP_OBJECT,
         TOO_MANY_VARIABLES;
 
         val limit: String by lazy { this.name.toLowerCase() }

@@ -29,14 +29,16 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
 
         val method = second as Struct
 
-        return when (first) {
-            is Ref -> {
-                actuallyInvoke(first, method, third)
-            }
-            else -> {
-                when (val ref = findRefFromAlias(first as Struct)) {
-                    null -> Substitution.failed()
-                    else -> actuallyInvoke(ref, method, third)
+        return catchingOopExceptions {
+            when (first) {
+                is Ref -> {
+                    actuallyInvoke(first, method, third)
+                }
+                else -> {
+                    when (val ref = findRefFromAlias(first as Struct)) {
+                        null -> Substitution.failed()
+                        else -> actuallyInvoke(ref, method, third)
+                    }
                 }
             }
         }

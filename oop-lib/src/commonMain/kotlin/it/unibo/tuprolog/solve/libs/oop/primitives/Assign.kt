@@ -18,11 +18,13 @@ object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
         ensuringArgumentIsAtom(0)
         ensuringArgumentIsAtom(1)
 
-        val ref = when (first) {
-            is Ref -> first
-            else -> findRefFromAlias(first as Atom)
-        } ?: throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, first, 0)
+        return catchingOopExceptions {
+            val ref = when (first) {
+                is Ref -> first
+                else -> findRefFromAlias(first as Atom)
+            } ?: throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, first, 0)
 
-        return ref.assign((second as Atom).value, third)
+            ref.assign((second as Atom).value, third)
+        }
     }
 }

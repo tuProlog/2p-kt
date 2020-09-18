@@ -46,6 +46,19 @@ class ExistenceError(
 
     companion object {
 
+        fun of(
+            context: ExecutionContext,
+            expectedType: ObjectType,
+            culprit: Term,
+            message: String
+        ) = ExistenceError(
+            message = message,
+            context = context,
+            expectedType = expectedType,
+            actualValue = culprit,
+            extraData = Atom.of(message)
+        )
+
         fun forProcedure(
             context: ExecutionContext,
             procedure: Signature
@@ -63,12 +76,12 @@ class ExistenceError(
 
         fun forStream(
             context: ExecutionContext,
-            alias: Atom
-        ) = forStream(context, alias.value)
+            alias: String
+        ) = forStream(context, Atom.of(alias))
 
         fun forStream(
             context: ExecutionContext,
-            alias: String
+            alias: Atom
         ) = message(
             "There exists no stream whose alias is `$alias`"
         ) { m, extra ->
@@ -76,7 +89,7 @@ class ExistenceError(
                 message = m,
                 context = context,
                 expectedType = ObjectType.STREAM,
-                actualValue = Atom.of(alias),
+                actualValue = alias,
                 extraData = extra
             )
         }
@@ -87,14 +100,18 @@ class ExistenceError(
 
     /**
      * A class describing the expected type whose absence caused the error
-     *
-     * @param type the type expected string description
      */
-    enum class ObjectType constructor(private val type: String) : ToTermConvertible {
+    enum class ObjectType : ToTermConvertible {
 
-        PROCEDURE("procedure"),
-        SOURCE_SINK("source_sink"),
-        STREAM("stream");
+        PROCEDURE,
+        SOURCE_SINK,
+        STREAM,
+        OOP_METHOD,
+        OOP_CONSTRUCTOR,
+        OOP_PROPERTY;
+
+        /** The type expected string description */
+        private val type: String by lazy { name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)

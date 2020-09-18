@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
+import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
+import it.unibo.tuprolog.solve.libs.oop.exceptions.PropertyAssignmentException
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -75,7 +78,7 @@ actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KCl
 actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     constructors.firstOrNull { constructor ->
         constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-    } ?: throw MethodInvocationException(this, admissibleTypes)
+    } ?: throw ConstructorInvocationException(this, admissibleTypes)
 
 actual val KClass<*>.fullName: String
     get() = qualifiedName!!
