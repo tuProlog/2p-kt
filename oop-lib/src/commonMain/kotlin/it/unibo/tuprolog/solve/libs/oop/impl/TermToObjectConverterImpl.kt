@@ -58,6 +58,18 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
         return admissibleTypes(term).asSequence().map { convertInto(it, term) }
     }
 
+    override fun mostAdequateType(term: Term): KClass<*> {
+        return when (term) {
+            is NullRef, is Var -> Nothing::class
+            is ObjectRef -> term.`object`::class
+            is Truth -> Boolean::class
+            is Atom -> String::class
+            is Real -> BigDecimal::class
+            is Integer -> BigInteger::class
+            else -> throw TermToObjectConversionException(term)
+        }
+    }
+
     override fun admissibleTypes(term: Term): Set<KClass<*>> {
         return when (term) {
             is NullRef, is Var -> setOf(Nothing::class)

@@ -89,6 +89,7 @@ class PermissionError(
         CLOSE,
         CREATE,
         INPUT,
+        INVOKE,
         MODIFY,
         OPEN,
         OUTPUT,
@@ -125,6 +126,7 @@ class PermissionError(
         PRIVATE_PROCEDURE,
         SOURCE_SINK,
         STATIC_PROCEDURE,
+        OOP_METHOD,
         STREAM,
         TEXT_STREAM;
 

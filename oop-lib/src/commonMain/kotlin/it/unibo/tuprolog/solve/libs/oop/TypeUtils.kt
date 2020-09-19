@@ -13,13 +13,19 @@ expect val KClass<*>.name: String
 
 expect val KClass<*>.fullName: String
 
-expect val KClass<*>.allSupertypes: Sequence<KClass<*>>
+expect fun KClass<*>.allSupertypes(strict: Boolean = false): Sequence<KClass<*>>
 
 infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
-    other.allSupertypes.any { it == this }
+    isSupertypeOf(other, false)
+
+fun KClass<*>.isSupertypeOf(other: KClass<*>, strict: Boolean): Boolean =
+    other.allSupertypes(strict).any { it == this }
 
 infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean =
-    other isSupertypeOf this
+    isSubtypeOf(other, false)
+
+fun KClass<*>.isSubtypeOf(other: KClass<*>, strict: Boolean): Boolean =
+    other.isSupertypeOf(this, strict)
 
 expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
 

@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
@@ -46,4 +48,7 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
     } catch (e: OopException) {
         throw e.toPrologError(context, signature)
     }
+    // catch (e: IllegalCallableAccessException) {
+    //     throw PermissionError.of(context, signature, PermissionError.Operation.ACCESS, PermissionError.Permission.PRIVATE_PROCEDURE, Atom.of(e.message!!))
+    // }
 }

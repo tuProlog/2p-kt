@@ -40,8 +40,8 @@ private val classNamePattern = "^($id):($id(\\.$id)*)$".toRegex()
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
-actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
-    get() = throw TODO_EXCEPTION
+actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
+    throw TODO_EXCEPTION
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = throw TODO_EXCEPTION

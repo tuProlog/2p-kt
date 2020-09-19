@@ -11,6 +11,11 @@ interface TermToObjectConverter {
 
     fun admissibleTypes(term: Term): Set<KClass<*>>
 
+    fun mostAdequateType(term: Term): KClass<*>
+
+    fun convert(term: Term): Any? =
+        convertInto(mostAdequateType(term), term)
+
     companion object {
         val default: TermToObjectConverter = TermToObjectConverterImpl()
     }

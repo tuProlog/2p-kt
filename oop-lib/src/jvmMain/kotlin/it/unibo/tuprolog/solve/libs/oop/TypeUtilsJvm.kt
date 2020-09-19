@@ -4,14 +4,17 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.PropertyAssignmentException
+import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.IllegalCallableAccessException
 
 actual val KClass<*>.companionObjectRef: Optional<out Any>
     get() = Optional.of(companionObjectInstance)
@@ -35,12 +38,15 @@ private val classNamePattern = "^$id(\\.$id)*$".toRegex()
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
-actual val KClass<*>.allSupertypes: Sequence<KClass<*>>
-    get() = supertypes.asSequence()
+actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
+    supertypes.asSequence()
         .map { it.classifier }
         .filterIsInstance<KClass<*>>()
-        .flatMap { sequenceOf(it) + it.allSupertypes }
+        .flatMap { sequenceOf(it) + it.allSupertypes(true) }
         .distinct()
+        .let {
+            if (strict) it else sequenceOf(this) + it
+        }
 
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
@@ -64,21 +70,24 @@ private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
 
 actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
     members.filter { it.name == methodName }
+        .filter { it.visibility == KVisibility.PUBLIC }
         .firstOrNull { method ->
             method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
         } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
 
 actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
     members.filter { it.name == propertyName }
+        .filter { it.visibility == KVisibility.PUBLIC }
         .filterIsInstance<KMutableProperty<*>>()
         .firstOrNull { property ->
             property.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(listOf(admissibleTypes))
         } ?: throw PropertyAssignmentException(this, propertyName, admissibleTypes)
 
 actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    constructors.firstOrNull { constructor ->
-        constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-    } ?: throw ConstructorInvocationException(this, admissibleTypes)
+    constructors.filter { it.visibility == KVisibility.PUBLIC }
+        .firstOrNull { constructor ->
+            constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
+        } ?: throw ConstructorInvocationException(this, admissibleTypes)
 
 actual val KClass<*>.fullName: String
     get() = qualifiedName!!
@@ -120,8 +129,12 @@ private fun KCallable<*>.callWithPrologArguments(
     val args = arguments.mapIndexed { i, it ->
         converter.convertInto(formalArgumentsTypes[i], it)
     }.toTypedArray()
-    val result = if (instance == null) call(*args) else call(instance, *args)
-    return Result.Value(result)
+    try {
+        val result = if (instance == null) call(*args) else call(instance, *args)
+        return Result.Value(result)
+    } catch (e: IllegalCallableAccessException) {
+        throw RuntimePermissionException(this, instance, e)
+    }
 }
 
 actual fun KClass<*>.assign(
