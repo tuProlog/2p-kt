@@ -8,8 +8,8 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.NullRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
