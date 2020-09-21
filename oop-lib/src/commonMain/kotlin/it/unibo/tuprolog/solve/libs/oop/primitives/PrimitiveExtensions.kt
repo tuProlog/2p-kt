@@ -48,7 +48,4 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
     } catch (e: OopException) {
         throw e.toPrologError(context, signature)
     }
-    // catch (e: IllegalCallableAccessException) {
-    //     throw PermissionError.of(context, signature, PermissionError.Operation.ACCESS, PermissionError.Permission.PRIVATE_PROCEDURE, Atom.of(e.message!!))
-    // }
 }
