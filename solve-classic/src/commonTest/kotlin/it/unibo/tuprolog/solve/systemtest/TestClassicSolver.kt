@@ -325,13 +325,11 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testAtomLength() {
         prototype.testAtomLength()
     }
 
     @Test
-    @Ignore
     override fun testCharCode() {
         prototype.testCharCode()
     }
@@ -343,7 +341,6 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testAtomConcat() {
         prototype.testAtomConcat()
     }

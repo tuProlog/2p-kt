@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import kotlin.collections.listOf as ktListOf
+import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.stdlib.primitive.Atom
+import it.unibo.tuprolog.solve.stdlib.primitive.Halt
 
 object TestingAtomBuiltIn {
 
@@ -44,8 +48,20 @@ object TestingAtomBuiltIn {
             ktListOf(
                 atom_length("test", intOf(4)).hasSolutions({ yes() }),
                 atom_length("test", "X").hasSolutions({ yes("X" to 4) }),
-                atom_length("X", intOf(4)).hasSolutions({ no() }), // TODO should throw instantiation_error
-                atom_length(intOf(42), "X").hasSolutions({ yes("X" to 2) }),
+                /*atom_length(
+                    "X",
+                    intOf(5)
+                ).hasSolutions({
+                    halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("atom_length", 2),
+                            varOf("X"),
+                            index = 0
+                        )
+                    )
+                }),*/
+                atom_length("testLength", "X").hasSolutions({ yes("X" to 10) }),
                 atom_length("test", intOf(5)).hasSolutions({ no() })
             )
         }
@@ -67,7 +83,15 @@ object TestingAtomBuiltIn {
             ktListOf(
                 char_code("a", "X").hasSolutions({ yes("X" to 97) }),
                 char_code("X", intOf(97)).hasSolutions({ yes("X" to "a") }),
-                char_code("X", "a").hasSolutions({ no() }), // TODO should throw type_error
+                char_code("g", intOf(104)).hasSolutions({ no() }),
+                /*   char_code("X", "a").hasSolutions({halt(
+                           TypeError.forArgument(
+                               DummyInstances.executionContext,
+                               Signature("char_code", 2),
+                               TypeError.Expected.INTEGER,
+                               args.get(1),
+                               index = 1
+                           ))}),*/
                 char_code("g", intOf(103)).hasSolutions({ yes() })
             )
         }
@@ -91,6 +115,8 @@ object TestingAtomBuiltIn {
                     .hasSolutions({ yes("X" to listOf(97, 98, 99)) }),
                 atom_codes("test", "X")
                     .hasSolutions({ yes("X" to listOf(116, 101, 115, 116)) }),
+                atom_codes("X", listOf(97, 98, 99))
+                    .hasSolutions({ yes("X" to "abc") }),
                 atom_codes("test", listOf(116, 101, 115, 116))
                     .hasSolutions({ yes() }),
                 atom_codes("test", listOf(112, 101, 115, 116))
@@ -117,7 +143,9 @@ object TestingAtomBuiltIn {
                 atom_concat("test", "concat", "test")
                     .hasSolutions({ no() }),
                 atom_concat("test", "X", "testTest")
-                    .hasSolutions({ yes("X" to atomOf("Test")) })
+                    .hasSolutions({ yes("X" to atomOf("Test")) }),
+                atom_concat("X", "query", "testquery")
+                    .hasSolutions({ yes("X" to atomOf("test")) })
             )
         }
     }

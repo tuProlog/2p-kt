@@ -276,5 +276,15 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                     else -> this
                 }
             }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =
+            ensuringArgumentIsInteger(index)
+                .arguments[index].let { arg ->
+                when {
+                    arg !is Integer || arg.intValue < BigInteger.of(65)  || arg.intValue > BigInteger.of(122)  ->
+                        throw RepresentationError.of(context, signature, MAX_ARITY)
+                    else -> this
+                }
+            }
     }
 }

@@ -34,7 +34,7 @@ object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
             }
             second is Var -> {
                 ensuringArgumentIsAtom(0)
-                val charArray = (first as Atom).value.toCharArray()
+                val charArray = (first as Atom).value
                 val chars = LogicList.of(charArray.map { Atom.of("" + it) })
                 Substitution.of(second, chars)
             }
@@ -42,7 +42,7 @@ object AtomChars : BinaryRelation.Functional<ExecutionContext>("atom_chars") {
                 ensuringArgumentIsAtom(0)
                 ensuringArgumentIsList(1)
                 val chars = LogicList.of(
-                    (first as Atom).value.toCharArray().map { Atom.of("" + it) }
+                    (first as Atom).value.map { Atom.of("" + it) }
                 )
                 chars mguWith second
             }

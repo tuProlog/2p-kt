@@ -369,19 +369,16 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
-    @Ignore
     override fun testAtomChars() {
         prototype.testAtomChars()
     }
 
     @Test
-    @Ignore
     override fun testAtomLength() {
         prototype.testAtomLength()
     }
 
     @Test
-    @Ignore
     override fun testCharCode() {
         prototype.testCharCode()
     }
@@ -393,7 +390,6 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
-    @Ignore
     override fun testAtomConcat() {
         prototype.testAtomConcat()
     }
