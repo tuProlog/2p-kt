@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.PropertyAssignmentException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.utils.Optional
+import java.lang.IllegalStateException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -69,11 +70,16 @@ private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
 }
 
 actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    members.filter { it.name == methodName }
-        .filter { it.visibility == KVisibility.PUBLIC }
-        .firstOrNull { method ->
-            method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-        } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
+    try {
+        members.filter { it.name == methodName }
+            .filter { it.visibility == KVisibility.PUBLIC }
+            .firstOrNull { method ->
+                method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
+            } ?: throw MethodInvocationException(this, methodName, admissibleTypes)
+    } catch (e: IllegalStateException) {
+        allSupertypes(strict = true).firstOrNull()?.findMethod(methodName, admissibleTypes)
+            ?: throw MethodInvocationException(this, methodName, admissibleTypes)
+    }
 
 actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
     members.filter { it.name == propertyName }
