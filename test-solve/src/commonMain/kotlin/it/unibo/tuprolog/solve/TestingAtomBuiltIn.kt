@@ -1,11 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import kotlin.collections.listOf as ktListOf
-import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.stdlib.primitive.Atom
-import it.unibo.tuprolog.solve.stdlib.primitive.Halt
 
 object TestingAtomBuiltIn {
 

@@ -35,7 +35,6 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
                 ensuringArgumentIsAtom(2)
                 val result = (third as Atom).value.substringBefore((second as Atom).value)
                 Substitution.of(first, Atom.of(result))
-
             }
 
             second is Var -> {
@@ -58,6 +57,4 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
             }
         }
     }
-
 }
-
