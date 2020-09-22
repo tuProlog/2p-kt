@@ -1,43 +1,57 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
+/**
+ * atom_codes(abc, [97 | X])
+ */
 object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
-        return when {
-            first is Var && second is Var -> {
-                ensuringArgumentIsInstantiated(0)
-                Substitution.failed()
-            }
-            first is Var -> {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
+        when (first) {
+            is Var -> {
+                ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
                 val codeList = second as LogicList
-                var i = 0
-                var result = ""
-                while (i < codeList.toSequence().count()) {
-                    result += codeList[i].toString().toInt().toChar().toString()
-                    i++
+                // var result = ""
+                // val size = codeList.size
+                // for (i in 0 until size) {
+                //     result += codeList[i].toString().toInt().toChar().toString()
+                // }
+                val chars: List<Char> = codeList.toList().map {
+                    when (it) {
+                        is Integer -> {
+                            ensuringTermIsCharCode(it)
+                            it.intValue.toChar()
+                        }
+                        is Var -> {
+                            throw InstantiationError.forArgument(context, signature, it, 1)
+                        }
+                        else -> {
+                            throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, it, 1)
+                        }
+                    }
                 }
-                Substitution.of(first, Atom.of(result))
-            }
-            second is Var -> {
-                ensuringArgumentIsAtom(0)
-                val charArray = (first as Atom).value
-                //val result = listOf(charArray.forEach{(it.toByte().toInt())})
-                val result = LogicList.of(charArray.map { Atom.of("" + it.toByte().toInt().toString()) })
-                Substitution.of(second, result)
+                Substitution.of(first, Atom.of(chars.joinToString(separator = "")))
             }
             else -> {
-                Substitution.failed()
+                ensuringArgumentIsInstantiated(0)
+                ensuringArgumentIsAtom(0)
+                ensuringArgumentIsInstantiated(1)
+                ensuringArgumentIsList(1)
+                val charArray = (first as Atom).value.toCharArray()
+                val result = LogicList.of(charArray.map { Integer.of(it.toInt()) })
+                second mguWith result
             }
         }
-    }
 }
