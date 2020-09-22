@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.toTerm
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -19,13 +19,13 @@ object AtomLength : BinaryRelation.Functional<ExecutionContext>("atom_length") {
             }
             second is Var -> {
                 ensuringArgumentIsAtom(0)
-                val atomLength = (first as Atom).toString().lastIndex.inc()
-                Substitution.of(second, atomLength.toTerm())
+                val atomLength = (first as Atom).value.length
+                Substitution.of(second, Integer.of(atomLength))
             }
             else -> {
-                ensuringArgumentIsNonNegativeInteger(1)
                 ensuringArgumentIsAtom(0)
-                val atomLength = (first as Atom).toString().lastIndex.inc().toTerm()
+                ensuringArgumentIsNonNegativeInteger(1)
+                val atomLength = Integer.of((first as Atom).value.length)
                 atomLength mguWith second
             }
         }
