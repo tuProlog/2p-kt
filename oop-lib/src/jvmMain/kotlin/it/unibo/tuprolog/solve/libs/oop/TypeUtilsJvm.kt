@@ -13,9 +13,9 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.IllegalCallableAccessException
 
 actual val KClass<*>.companionObjectRef: Optional<out Any>
     get() = Optional.of(companionObjectInstance)

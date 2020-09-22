@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
