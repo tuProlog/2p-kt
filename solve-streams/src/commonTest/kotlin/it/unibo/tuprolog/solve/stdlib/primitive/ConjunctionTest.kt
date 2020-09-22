@@ -1,9 +1,12 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.assertSolutionEquals
+import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
@@ -13,6 +16,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ConjunctionUtils.trueA
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ConjunctionUtils.twoMatchesDB
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.PrimitiveUtils.assertOnlyOneSolution
 import it.unibo.tuprolog.solve.testutils.SolverTestUtils.createSolveRequest
+import it.unibo.tuprolog.solve.yes
 import kotlin.test.Test
 import kotlin.collections.listOf as ktListOf
 
@@ -64,7 +68,9 @@ internal class ConjunctionTest {
 
             val goal = "left" and "right"
             val request = Solve.Request(
-                goal.extractSignature(), goal.argsList, StreamsExecutionContext(
+                goal.extractSignature(),
+                goal.argsList,
+                StreamsExecutionContext(
                     substitution = preRequestSubstitution,
                     libraries = Libraries(
                         Library.aliased(

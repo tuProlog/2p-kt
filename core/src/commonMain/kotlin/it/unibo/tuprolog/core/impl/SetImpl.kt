@@ -2,8 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.SetIterator
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.core.Set as LogicSet
 
 internal open class SetImpl(private val item: Term?) :

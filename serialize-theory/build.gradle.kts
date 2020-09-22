@@ -24,14 +24,6 @@ kotlin {
                 }
             }
         }
-
-        js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-//                    api(npm("yaml", "^1.10.0"))
-                }
-            }
-        }
     }
 }
 
@@ -47,4 +39,3 @@ listOf("yaml", "json").forEach {
         main = "${it.toUpperCase()}PrinterKt"
     }
 }
-

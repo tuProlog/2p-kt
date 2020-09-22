@@ -47,5 +47,4 @@ abstract class MathFunction : FunctionWrapper<ExecutionContext> {
         expectedType = TypeError.Expected.INTEGER,
         actualValue = actualValue
     )
-
 }

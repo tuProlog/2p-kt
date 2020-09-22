@@ -43,6 +43,4 @@ internal interface SituatedIndexedClause : IndexedClause {
             }
         }
     }
-
-
 }

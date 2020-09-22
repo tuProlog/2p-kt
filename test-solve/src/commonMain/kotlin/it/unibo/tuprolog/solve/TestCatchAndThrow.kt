@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve
 interface TestCatchAndThrow : SolverTest {
     companion object {
         fun prototype(solverFactory: SolverFactory): TestCatchAndThrow =
-                TestCatchAndThrowImpl(solverFactory)
+            TestCatchAndThrowImpl(solverFactory)
     }
 
     /**

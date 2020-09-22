@@ -1,11 +1,18 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.ClassicExecutionContext
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.appendPrimitives
+import it.unibo.tuprolog.solve.appendRules
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
-
 
 fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
     @Suppress("USELESS_CAST")

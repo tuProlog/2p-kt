@@ -21,7 +21,7 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = float(- 3.3)
+            val query = float(-3.3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -72,5 +72,4 @@ internal class TestFloatImpl(private val solverFactory: SolverFactory) : TestFlo
             )
         }
     }
-
 }

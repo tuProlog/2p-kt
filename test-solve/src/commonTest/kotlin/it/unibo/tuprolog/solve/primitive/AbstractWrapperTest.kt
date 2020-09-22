@@ -47,11 +47,11 @@ internal class AbstractWrapperTest {
             // this class was added since Kotlin/JS won't pass tests using "object literals"
             // maybe in future releases of Kotlin the problem will be solved
 
-            constructor(name: String, arity: Int, vararg: Boolean, value: T)
-                    : this(Signature(name, arity, vararg), value)
+            constructor(name: String, arity: Int, vararg: Boolean, value: T) :
+                this(Signature(name, arity, vararg), value)
 
-            constructor(name: String, arity: Int, value: T)
-                    : this(Signature(name, arity, false), value)
+            constructor(name: String, arity: Int, value: T) :
+                this(Signature(name, arity, false), value)
 
             override val wrappedImplementation: T = value
         }

@@ -55,8 +55,8 @@ class DomainError(
             index: Int? = null
         ): DomainError = message(
             (index?.let { "The $it-th argument" } ?: "An argument") +
-                    "of `${procedure.pretty()}` should be `$expectedDomain`, " +
-                    "but `${actualValue.pretty()}` has been provided instead"
+                "of `${procedure.pretty()}` should be `$expectedDomain`, " +
+                "but `${actualValue.pretty()}` has been provided instead"
         ) { m, extra ->
             DomainError(
                 message = m,

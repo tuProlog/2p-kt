@@ -9,7 +9,11 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.AtomIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.CompoundIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.NumericIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.VariableIndex
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -46,7 +50,6 @@ internal open class FamilyArityReteNode(
         }
     }
 
-
     override fun get(clause: Clause): Sequence<Clause> {
         return if (clause.isGlobal()) {
             if (ordered) {
@@ -69,7 +72,6 @@ internal open class FamilyArityReteNode(
             else getUnordered(clause)
         }
     }
-
 
     override fun assertA(clause: IndexedClause) =
         assertByFirstParameter(clause).assertA(clause + this)
@@ -151,7 +153,6 @@ internal open class FamilyArityReteNode(
             )
         }
 
-
     protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         when (clause.nestedFirstArgument()) {
             is Numeric ->
@@ -178,7 +179,6 @@ internal open class FamilyArityReteNode(
                 )
         }
 
-
     protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         when (clause.nestedFirstArgument()) {
             is Numeric -> Utils.flattenIndexed(
@@ -201,7 +201,6 @@ internal open class FamilyArityReteNode(
             )
         }
 
-
     protected fun anyLookahead(clause: Clause): SituatedIndexedClause? =
         when (clause.nestedFirstArgument()) {
             is Numeric -> {
@@ -223,7 +222,6 @@ internal open class FamilyArityReteNode(
                     ?: compoundIndex.getFirstIndexed(clause)
             }
         }
-
 
     protected fun orderedLookahead(clause: Clause): SituatedIndexedClause? =
         when (clause.nestedFirstArgument()) {
@@ -295,5 +293,4 @@ internal open class FamilyArityReteNode(
 
     private fun Clause.isGlobal(): Boolean =
         this.head!!.nestedFirstArgument(nestingLevel + 1) is Var
-
 }

@@ -12,6 +12,6 @@ class ClausesParserImpl(override val defaultOperatorSet: OperatorSet) : ClausesP
         return PrologParserFactory.parseClauses(input, operators)
             .asSequence()
             .map { it.accept(PrologExpressionVisitor()) }
-            .map { it.toClause()}
+            .map { it.toClause() }
     }
 }

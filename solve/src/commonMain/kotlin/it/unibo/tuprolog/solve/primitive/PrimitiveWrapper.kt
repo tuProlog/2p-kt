@@ -15,15 +15,16 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.OPERATOR_SPECIFIER
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
-import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.CHARACTER_CODE
 import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARITY
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
 import it.unibo.tuprolog.solve.extractSignature
@@ -83,8 +84,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             private val uncheckedPrimitive: Primitive
         ) : PrimitiveWrapper<C>(signature) {
 
-            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive)
-                    : this(Signature(name, arity, vararg), uncheckedPrimitive)
+            constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
+                this(Signature(name, arity, vararg), uncheckedPrimitive)
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
                 uncheckedPrimitive(request)
@@ -234,20 +235,34 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Atom -> throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, arg, index)
+                !is Atom -> throw TypeError.forArgument(context, signature, ATOM, arg, index)
                 else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                is Atom -> {
+                    val string = (arg as Atom).value
+                    when {
+                        string.length == 1 -> this
+                        else -> throw TypeError.forArgument(context, signature, CHARACTER, arg, index)
+                    }
+                }
+                else -> {
+                    throw TypeError.forArgument(context, signature, CHARACTER, arg, index)
+                }
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsSpecifier(index: Int): Solve.Request<C> =
             arguments[index].let { arg ->
                 when {
-                    arg !is Atom -> throw DomainError.forArgument(context, signature, DomainError.Expected.OPERATOR_SPECIFIER, arg, index)
+                    arg !is Atom -> throw DomainError.forArgument(context, signature, OPERATOR_SPECIFIER, arg, index)
                     else -> {
                         try {
                             Specifier.fromTerm(arg)
                             this
                         } catch (e: IllegalArgumentException) {
-                            throw DomainError.forArgument(context, signature, DomainError.Expected.OPERATOR_SPECIFIER, arg, index)
+                            throw DomainError.forArgument(context, signature, OPERATOR_SPECIFIER, arg, index)
                         }
                     }
                 }
@@ -255,7 +270,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsInteger(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
-                !is Integer -> throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, arg, index)
+                !is Integer -> throw TypeError.forArgument(context, signature, INTEGER, arg, index)
                 else -> this
             }
 
@@ -275,7 +290,6 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
                 return this
             }
-
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsNonNegativeInteger(index: Int): Solve.Request<C> =
             ensuringArgumentIsInteger(index)
@@ -298,8 +312,11 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
                 term !is Integer || term.intValue in MIN_CHAR..MAX_CHAR ->
-                    throw RepresentationError.of(context, signature, CHARACTER_CODE)
+                    throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
             }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =
+            ensuringTermIsCharCode(arguments[index])
     }
 }

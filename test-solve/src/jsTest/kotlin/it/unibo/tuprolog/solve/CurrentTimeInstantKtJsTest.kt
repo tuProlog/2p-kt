@@ -22,5 +22,4 @@ internal class CurrentTimeInstantKtJsTest {
             our - official < TOLERANCE
         }
     }
-
 }

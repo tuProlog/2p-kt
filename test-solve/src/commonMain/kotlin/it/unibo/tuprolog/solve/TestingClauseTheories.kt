@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.exception.HaltException
@@ -303,7 +306,7 @@ object TestingClauseTheories {
                 { "my_rev"(emptyList, "L2", "L2") `if` "!" },
                 {
                     "my_rev"(consOf("X", "Xs"), "L2", "Acc") `if`
-                            "my_rev"("Xs", "L2", consOf("X", "Acc"))
+                        "my_rev"("Xs", "L2", consOf("X", "Acc"))
                 }
             )
         }
@@ -342,10 +345,10 @@ object TestingClauseTheories {
                 { "range"("N", "N", listOf("N")) `if` "!" },
                 {
                     "range"("M", "N", consOf("M", "Ns")) `if` (
-                            "<"("M", "N") and
-                                    ("M1" `is` (varOf("M") + 1)) and
-                                    "range"("M1", "N", "Ns")
-                            )
+                        "<"("M", "N") and
+                            ("M1" `is` (varOf("M") + 1)) and
+                            "range"("M1", "N", "Ns")
+                        )
                 }
             )
         }

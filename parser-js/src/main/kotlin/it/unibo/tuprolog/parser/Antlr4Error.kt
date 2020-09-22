@@ -5,15 +5,10 @@ package it.unibo.tuprolog.parser
 
 abstract external class ErrorStrategy {
     fun reset(recognizer: dynamic)
-
     fun recoverInline(recognizer: dynamic)
-
     fun recover(recognizer: dynamic)
-
     fun sync(recognizer: dynamic)
-
     fun inErrorRecoveryMode(recognizer: dynamic)
-
     fun reportError(recognizer: dynamic)
 }
 
@@ -40,13 +35,12 @@ external class DiagnosticErrorListener : ErrorListener {
     constructor()
 
     override fun syntaxError(recognizer: dynamic, offendingSymbol: dynamic, line: Int, column: Int, msg: String, e: dynamic)
-
 }
 
 open external class RecognitionException(params: dynamic) : Throwable {
     val recognizer: dynamic
     val input: dynamic
-    val ctx: dynamic;
+    val ctx: dynamic
     val offendingToken: Token?
 
     fun getExpectedTokens(): dynamic

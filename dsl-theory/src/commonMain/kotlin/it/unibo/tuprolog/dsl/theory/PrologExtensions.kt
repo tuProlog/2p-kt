@@ -1,4 +1,5 @@
 @file:JvmName("PrologExtensions")
+
 package it.unibo.tuprolog.dsl.theory
 
 import kotlin.js.JsName

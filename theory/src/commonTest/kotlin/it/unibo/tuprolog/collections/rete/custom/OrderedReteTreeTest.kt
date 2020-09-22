@@ -9,7 +9,11 @@ import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertPa
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.defaultClauses
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRules
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.factsAndRulesFamilies
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -501,7 +505,6 @@ class OrderedReteTreeTest {
             .map { it.head.functor to it.head.arity }
             .filter { (_, arity) -> arity > 0 }
             .toSet()
-
 
         for ((functor, arity) in families) {
             for (args in groundTerms.allChunksOfSize(arity)) {

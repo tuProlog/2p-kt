@@ -3,8 +3,6 @@ import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Var
 
 fun main() {
-
-
     val l3 = List.from(sequenceOf(Atom.of("1"), Atom.of("2")), Var.of("Tail"))
     println(l3)
     println(l3.freshCopy())
@@ -21,7 +19,6 @@ fun main() {
         println(e.message)
     }
 
-
     val ll3 = List.from(sequenceOf(Atom.of("1"), Atom.of("2"), Var.of("Tail")))
     println(ll3)
     println(ll3.freshCopy())
@@ -36,5 +33,4 @@ fun main() {
     println(ll1)
     println(ll2.freshCopy())
     println(ll2.freshCopy() == ll2)
-
 }

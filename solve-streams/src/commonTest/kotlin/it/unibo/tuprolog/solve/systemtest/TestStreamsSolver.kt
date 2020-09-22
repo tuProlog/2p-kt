@@ -1,12 +1,17 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestSolver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.streams
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -41,8 +46,14 @@ class TestStreamsSolver : SolverFactory, TestSolver {
 
     @Test
     @Ignore
-    override fun testUnknownFlag() {
-        prototype.testUnknownFlag()
+    override fun testUnknownFlag2() {
+        prototype.testUnknownFlag2()
+    }
+
+    @Test
+    @Ignore
+    override fun testUnknownFlag1() {
+        prototype.testUnknownFlag1()
     }
 
     @Test
@@ -110,7 +121,6 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     override fun testIfThenElse2() {
         prototype.testIfThenElse2()
     }
-
 
     @Test
     override fun testTimeout1() {

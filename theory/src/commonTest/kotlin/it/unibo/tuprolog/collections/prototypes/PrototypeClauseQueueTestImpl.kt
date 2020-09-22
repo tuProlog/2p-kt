@@ -4,7 +4,12 @@ import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.PrototypeClauseQueueTest
 import it.unibo.tuprolog.collections.RetrieveResult
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
 import it.unibo.tuprolog.utils.permutations
@@ -67,7 +72,7 @@ internal class PrototypeClauseQueueTestImpl(
     }
 
     override fun retractClauses(collection: ClauseCollection, query: Clause): Sequence<Clause> {
-        return when(val res = (collection as ClauseQueue).retrieve(query)) {
+        return when (val res = (collection as ClauseQueue).retrieve(query)) {
             is RetrieveResult.Success -> res.clauses.asSequence()
             else -> emptySequence()
         }

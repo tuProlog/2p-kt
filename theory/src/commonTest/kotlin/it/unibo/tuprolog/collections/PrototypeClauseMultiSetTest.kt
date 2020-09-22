@@ -26,7 +26,5 @@ internal interface PrototypeClauseMultiSetTest : PrototypeClauseCollectionTest {
                 emptyGenerator,
                 collectionGenerator
             )
-
     }
-
 }

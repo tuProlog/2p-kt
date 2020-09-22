@@ -90,15 +90,18 @@ internal class OperatorSetTest {
                 OperatorSet.DEFAULT.single { it == Operator(expectedFunctor, expectedSpecifier, expectedPriority) }
 
             assertEquals(
-                expectedFunctor, actualOperator.functor,
+                expectedFunctor,
+                actualOperator.functor,
                 "$actualOperator functor expected to be: $expectedFunctor"
             )
             assertEquals(
-                expectedSpecifier, actualOperator.specifier,
+                expectedSpecifier,
+                actualOperator.specifier,
                 "$actualOperator specifier expected to be: $expectedSpecifier"
             )
             assertEquals(
-                expectedPriority, actualOperator.priority,
+                expectedPriority,
+                actualOperator.priority,
                 "$actualOperator priority expected to be: $expectedPriority"
             )
         }

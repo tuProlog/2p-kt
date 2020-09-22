@@ -19,5 +19,4 @@ class TupleIterator(tuple: Tuple) : Iterator<Term> {
             }
         }
     }
-
 }

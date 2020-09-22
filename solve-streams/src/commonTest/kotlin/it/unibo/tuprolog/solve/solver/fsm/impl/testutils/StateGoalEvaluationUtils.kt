@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.StreamsSolver
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.PrologError
@@ -10,6 +9,7 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
+import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.solver.fsm.impl.StateEnd
@@ -45,15 +45,15 @@ internal object StateGoalEvaluationUtils {
     internal val primitiveRequestToNextStateList by lazy {
         mapOf(
             createRequestForPrimitiveResponding { sequenceOf(it.replySuccess(it.context.substitution)) }
-                    to listOf(StateEnd.True::class),
+                to listOf(StateEnd.True::class),
             createRequestForPrimitiveResponding { sequenceOf(it.replyFail()) }
-                    to listOf(StateEnd.False::class),
+                to listOf(StateEnd.False::class),
             createRequestForPrimitiveResponding { sequenceOf(it.replyWith(true), it.replyWith(false)) }
-                    to listOf(StateEnd.True::class, StateEnd.False::class),
+                to listOf(StateEnd.True::class, StateEnd.False::class),
             createRequestForPrimitiveResponding { sequenceOf(it.replyException(HaltException(context = it.context))) }
-                    to listOf(StateEnd.Halt::class),
+                to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding { throw HaltException(context = it.context) }
-                    to listOf(StateEnd.Halt::class),
+                to listOf(StateEnd.Halt::class),
             createRequestForPrimitiveResponding {
                 sequence {
                     yieldAll(StreamsSolver.solveToResponses(createRequestForPrimitiveResponding { throw HaltException(context = it.context) }))

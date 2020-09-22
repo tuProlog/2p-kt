@@ -1,12 +1,16 @@
 package it.unibo.tuprolog.dsl
 
-import it.unibo.tuprolog.core.*
-import kotlin.js.JsName
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
-
+import kotlin.js.JsName
 import it.unibo.tuprolog.core.toTerm as extToTerm
-
 
 internal interface AnyToTermConverter {
 

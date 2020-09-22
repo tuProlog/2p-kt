@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import kotlin.collections.List as KtList
 
-
 // TODO: 16/01/2020 document and test this class
 abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : AbstractWrapper<Rule>(signature) {
 
@@ -36,6 +35,4 @@ abstract class RuleWrapper<C : ExecutionContext>(signature: Signature) : Abstrac
     override fun toString(): String {
         return "RuleWrapper(signature=${signature.toIndicator()}, rule=$wrappedImplementation)"
     }
-
-
 }

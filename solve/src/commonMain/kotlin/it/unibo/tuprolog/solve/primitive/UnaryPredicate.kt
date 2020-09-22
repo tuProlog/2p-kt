@@ -16,7 +16,6 @@ abstract class UnaryPredicate<E : ExecutionContext>(operator: String) : Primitiv
         return request.computeAll(request.arguments[0])
     }
 
-
     abstract class WithoutSideEffects<E : ExecutionContext>(operator: String) : UnaryPredicate<E>(operator) {
         protected abstract fun Solve.Request<E>.computeAllSubstitutions(
             first: Term
@@ -35,7 +34,6 @@ abstract class UnaryPredicate<E : ExecutionContext>(operator: String) : Primitiv
         final override fun Solve.Request<E>.computeAll(first: Term): Sequence<Solve.Response> {
             return sequenceOf(computeOne(first))
         }
-
     }
 
     abstract class Functional<E : ExecutionContext>(operator: String) : NonBacktrackable<E>(operator) {

@@ -19,10 +19,10 @@ internal open class StructImpl(override val functor: String, override val args: 
     override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
 
     override fun structurallyEquals(other: Term): Boolean =
-        other is StructImpl
-                && functor == other.functor
-                && arity == other.arity
-                && (0 until arity).all { args[it] structurallyEquals other[it] }
+        other is StructImpl &&
+            functor == other.functor &&
+            arity == other.arity &&
+            (0 until arity).all { args[it] structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean by lazy {
         functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
@@ -63,10 +63,9 @@ internal open class StructImpl(override val functor: String, override val args: 
 
     override fun toString(): String {
         return (
-                if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
-                ) + (
-                if (arity > 0) "(${args.joinToString(", ")})" else ""
-                )
+            if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
+            ) + (
+            if (arity > 0) "(${args.joinToString(", ")})" else ""
+            )
     }
-
 }

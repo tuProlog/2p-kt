@@ -50,7 +50,6 @@ internal class VariableIndex(
     override fun retractAllIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
         Utils.removeAllLazily(variables, clause).buffered()
 
-
     private fun extractFirst(clause: Clause, index: MutableList<SituatedIndexedClause>): SituatedIndexedClause? {
         val actualIndex = index.indexOfFirst { it.innerClause matches clause }
 
@@ -66,5 +65,4 @@ internal class VariableIndex(
 
     private fun extractGlobalSequence(clause: Clause): Sequence<Clause> =
         extractGlobalIndexedSequence(clause).map { it.innerClause }
-
 }

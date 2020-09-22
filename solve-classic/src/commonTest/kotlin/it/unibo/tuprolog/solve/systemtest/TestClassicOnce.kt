@@ -3,10 +3,9 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestOnce
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestClassicOnce : TestOnce, SolverFactory by ClassicSolverFactory  {
+class TestClassicOnce : TestOnce, SolverFactory by ClassicSolverFactory {
     private val prototype = TestOnce.prototype(this)
 
     @Test

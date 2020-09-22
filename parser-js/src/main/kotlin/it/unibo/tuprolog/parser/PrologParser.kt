@@ -1,8 +1,7 @@
-@file:JsModule("./PrologParser")
+@file:JsModule("@tuprolog/parser-utils")
 @file:JsNonModule
 
 package it.unibo.tuprolog.parser
-
 
 external class PrologParser(input: TokenStream) {
     companion object {
@@ -148,7 +147,6 @@ external class OpContext : ParserRuleContext {
     val priority: Int
     val associativity: String
     val symbol: Token
-
 }
 
 external class TermContext : ParserRuleContext {
@@ -172,7 +170,6 @@ external class NumberContext : ParserRuleContext {
     val isReal: Boolean
     fun integer(): IntegerContext
     fun real(): RealContext
-
 }
 
 external class IntegerContext : ParserRuleContext {
@@ -182,22 +179,16 @@ external class IntegerContext : ParserRuleContext {
     val isChar: Boolean
     val value: Token
     val sign: Token?
-
-
 }
 
 external class RealContext : ParserRuleContext {
     val value: Token
     val sign: Token?
-
-
 }
 
 external class VariableContext : ParserRuleContext {
     val isAnonymous: Boolean
     val value: Token
-
-
 }
 
 external class StructureContext : ParserRuleContext {
@@ -221,7 +212,6 @@ external class ListContext : ParserRuleContext {
     val items: Array<ExpressionContext>
     val tail: ExpressionContext?
 
-
     fun expression(): ExpressionContext
 }
 
@@ -230,7 +220,5 @@ external class SetContext : ParserRuleContext {
     val _expression: ExpressionContext
     val items: Array<ExpressionContext>
 
-
     fun expression(): ExpressionContext
 }
-

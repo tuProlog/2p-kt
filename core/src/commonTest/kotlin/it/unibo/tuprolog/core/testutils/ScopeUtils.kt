@@ -25,7 +25,6 @@ internal object ScopeUtils {
             mutableMapOf("A" to Var.of("A"), "B" to Var.of("B"), "C" to Var.of("C"))
         )
 
-
     /** Contains the variables inside [nonEmptyScopes] */
     internal val nonEmptyScopeVars
         get() = nonEmptyScopes.map { it.values.toList() }

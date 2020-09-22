@@ -21,7 +21,6 @@ private constructor(
         checkClausesCorrect(clauses)
     }
 
-
     override fun get(clause: Clause): Sequence<Clause> =
         clauses.filter {
             it matches clause
@@ -41,7 +40,8 @@ private constructor(
                 RetractResult.Success(
                     ListedTheory(
                         newTheory
-                    ), listOf(toBeActuallyRetracted)
+                    ),
+                    listOf(toBeActuallyRetracted)
                 )
             }
         }
@@ -76,7 +76,8 @@ private constructor(
                 RetractResult.Success(
                     ListedTheory(
                         newTheory
-                    ), toBeActuallyRetracted
+                    ),
+                    toBeActuallyRetracted
                 )
             }
         }

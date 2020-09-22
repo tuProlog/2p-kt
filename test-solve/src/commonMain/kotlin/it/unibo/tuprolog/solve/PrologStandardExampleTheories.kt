@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.TestingClauseTheories.instantiationError
-import it.unibo.tuprolog.solve.TestingClauseTheories.replaceAllFunctors
 import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
 import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
 import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
@@ -81,7 +80,7 @@ object PrologStandardExampleTheories {
     val prologStandardExampleWithCutTheory by lazy {
         prolog {
             theory({ "p"("X", "Y") `if` ("q"("X") and "!" and "r"("X", "Y")) }) +
-                    theoryOf(*prologStandardExampleTheory.clauses.drop(1).toTypedArray())
+                theoryOf(*prologStandardExampleTheory.clauses.drop(1).toTypedArray())
         }
     }
 

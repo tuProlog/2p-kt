@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.theory
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.IndexedTheory
 import it.unibo.tuprolog.theory.impl.ListedTheory
 import kotlin.js.JsName
@@ -174,9 +181,11 @@ interface Theory : Iterable<Clause> {
         @JvmStatic
         @JsName("indexedOfScopes")
         fun indexedOf(vararg clauses: Scope.() -> Clause): Theory =
-            indexedOf(clauses.map {
-                Scope.empty(it)
-            })
+            indexedOf(
+                clauses.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
         @JvmStatic
@@ -207,9 +216,11 @@ interface Theory : Iterable<Clause> {
         @JvmStatic
         @JsName("listedOfScopes")
         fun listedOf(vararg clause: Scope.() -> Clause): Theory =
-            listedOf(clause.map {
-                Scope.empty(it)
-            })
+            listedOf(
+                clause.map {
+                    Scope.empty(it)
+                }
+            )
 
         /** Creates a [Theory] backed by a list, containing the given clauses */
         @JvmStatic

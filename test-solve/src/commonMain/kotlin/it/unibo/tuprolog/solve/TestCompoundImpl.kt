@@ -11,8 +11,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -21,12 +21,12 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = compound(- 33.3)
+            val query = compound(-33.3)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -39,8 +39,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -53,8 +53,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -67,8 +67,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.no()),
-                    solutions
+                kotlin.collections.listOf(query.no()),
+                solutions
             )
         }
     }
@@ -81,8 +81,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }
@@ -95,8 +95,8 @@ internal class TestCompoundImpl(private val solverFactory: SolverFactory) : Test
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(query.yes()),
-                    solutions
+                kotlin.collections.listOf(query.yes()),
+                solutions
             )
         }
     }

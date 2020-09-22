@@ -20,5 +20,4 @@ object IntegerDivision : IntegersBinaryMathFunction("//") {
         } else {
             Numeric.of(integer1.value / integer2.value)
         }
-
 }

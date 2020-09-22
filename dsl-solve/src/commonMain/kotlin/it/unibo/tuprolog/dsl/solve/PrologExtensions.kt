@@ -1,4 +1,5 @@
 @file:JvmName("PrologExtensions")
+
 package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.solve.SolverFactory

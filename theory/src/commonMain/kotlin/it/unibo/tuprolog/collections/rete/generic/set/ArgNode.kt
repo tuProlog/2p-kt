@@ -33,7 +33,6 @@ internal data class ArgNode(
         }
 
         else -> children.getOrPut(null) { RuleNode() }
-
     }.put(element, beforeOthers)
 
     override fun selectChildren(element: Rule): Sequence<ReteNode<*, Rule>?> = when {

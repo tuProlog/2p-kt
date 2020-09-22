@@ -169,14 +169,15 @@ internal class StructTest {
         Struct.fold("f", sequenceOf(Var.anonymous()), Var.anonymous())
     }
 
-
     private val arbitraryFoldedStructElements = listOf(Atom.of("hello"), Atom.of("world"), Atom.of("!"))
     private val arbitraryFoldedStructCorrectInstance =
         StructImpl(
-            "f", arrayOf(
+            "f",
+            arrayOf(
                 Atom.of("hello"),
                 StructImpl(
-                    "f", arrayOf(
+                    "f",
+                    arrayOf(
                         Atom.of("world"),
                         Atom.of("!")
                     )

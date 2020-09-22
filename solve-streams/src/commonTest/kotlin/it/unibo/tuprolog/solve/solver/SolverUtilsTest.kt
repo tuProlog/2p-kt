@@ -1,12 +1,33 @@
 package it.unibo.tuprolog.solve.solver
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.solve.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.yes
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Test class for SolverUtils.kt
@@ -104,11 +125,13 @@ internal class SolverUtilsTest {
     @Test
     fun moreThanOneWorksLazily() {
         assertTrue {
-            moreThanOne(sequence {
-                yield(1)
-                yield(1)
-                fail("Should not evaluate entire sequence")
-            })
+            moreThanOne(
+                sequence {
+                    yield(1)
+                    yield(1)
+                    fail("Should not evaluate entire sequence")
+                }
+            )
         }
     }
 

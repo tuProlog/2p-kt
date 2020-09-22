@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core
 
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
-
 import kotlin.collections.Collection as KtCollection
 
 /**
@@ -93,7 +92,8 @@ sealed class Substitution : Map<Var, Term> {
         filter { (key, value) -> predicate(key, value) }
 
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
-    class Unifier(mappings: Map<Var, Term>) : Substitution(),
+    class Unifier(mappings: Map<Var, Term>) :
+        Substitution(),
         Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
 
         // NOTE: no check for contradictions is made upon object construction
@@ -162,7 +162,6 @@ sealed class Substitution : Map<Var, Term> {
         override fun filter(variables: KtCollection<Var>): Fail = Fail
         override fun toString(): String = "{Failed Substitution}"
     }
-
 
     /** Substitution companion with factory functionality */
     companion object {
@@ -258,7 +257,6 @@ sealed class Substitution : Map<Var, Term> {
 
         /** Utility function to trim all Map variable chains, i.e. all var keys will be bound to the last possible term */
         private fun Map<Var, Term>.trimVariableChains(): Map<Var, Term> {
-
             /** Utility function to trim a single variable chain against a provided map, returning the last term */
             fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
                 val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
@@ -272,9 +270,10 @@ sealed class Substitution : Map<Var, Term> {
 
             return when {
                 size < 2 -> this
-                else -> this.mapValues { (varKey, term) ->
-                    term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
-                }
+                else ->
+                    this.mapValues { (varKey, term) ->
+                        term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
+                    }
             }
         }
 

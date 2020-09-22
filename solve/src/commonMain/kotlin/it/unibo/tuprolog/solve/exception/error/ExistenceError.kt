@@ -70,7 +70,7 @@ class ExistenceError(
             context: ExecutionContext,
             alias: String
         ) = message(
-            "There exists no stream whose alias is `${alias}`"
+            "There exists no stream whose alias is `$alias`"
         ) { m, extra ->
             ExistenceError(
                 message = m,
@@ -113,6 +113,4 @@ class ExistenceError(
             }
         }
     }
-
-
 }

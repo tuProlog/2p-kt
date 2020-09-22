@@ -13,7 +13,7 @@ fun main() {
             val unificator = Unificator.default
 
             val mgu = unificator.mgu(term, otherTerm, occurCheckEnabled = false)
-            println(mgu)    // {X_0=f(X_0), Y_1=a} => WRONG
+            println(mgu) // {X_0=f(X_0), Y_1=a} => WRONG
         }
     }
 }

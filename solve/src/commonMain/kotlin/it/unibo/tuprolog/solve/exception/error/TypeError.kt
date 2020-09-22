@@ -59,8 +59,8 @@ class TypeError(
             index: Int? = null
         ) = message(
             (index?.let { "The $it-th argument" } ?: "An argument") +
-                    " of `${procedure.pretty()}` should be a list of `$expectedType`, " +
-                    "but `${actualValue.pretty()}` has been provided instead"
+                " of `${procedure.pretty()}` should be a list of `$expectedType`, " +
+                "but `${actualValue.pretty()}` has been provided instead"
         ) { m, extra ->
             TypeError(
                 message = m,
@@ -80,8 +80,8 @@ class TypeError(
         ) =
             message(
                 (index?.let { "The $it-th argument" } ?: "An argument") +
-                        " of `${procedure.pretty()}` should be a `$expectedType`, " +
-                        "but `${actualValue.pretty()}` has been provided instead"
+                    " of `${procedure.pretty()}` should be a `$expectedType`, " +
+                    "but `${actualValue.pretty()}` has been provided instead"
             ) { m, extra ->
                 TypeError(
                     message = m,
@@ -112,7 +112,6 @@ class TypeError(
         /** The type error Struct functor */
         const val typeFunctor = "type_error"
     }
-
 
     /**
      * A class describing the expected type whose absence caused the error

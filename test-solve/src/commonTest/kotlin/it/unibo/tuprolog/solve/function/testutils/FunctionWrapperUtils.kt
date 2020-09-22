@@ -2,14 +2,14 @@ package it.unibo.tuprolog.solve.function.testutils
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.solve.DummyInstances
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.function.Compute
 import it.unibo.tuprolog.solve.function.FunctionWrapper
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.primitive.testutils.WrapperUtils
-import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.ExecutionContext
 import kotlin.test.assertTrue
 
 /**

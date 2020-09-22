@@ -3,7 +3,6 @@ package it.unibo.tuprolog.ui.repl
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.output.TermUi
 import com.github.ajalt.clikt.output.defaultCliktConsole
-import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.TermFormatter.Companion.prettyExpressions
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -29,12 +28,12 @@ object TuPrologUtils {
     }
 
     private fun printYesSolution(sol: Solution.Yes, operatorSet: OperatorSet) {
-        TermUi.echo("yes: ${sol.solvedQuery.format(prettyExpressions(operatorSet))}.")
+        val formatter = prettyExpressions(operatorSet)
+        TermUi.echo("yes: ${sol.solvedQuery.format(formatter)}.")
         if (sol.substitution.isNotEmpty()) {
-            val sep = "\n    "
-            val substitutions = sol.substitution.entries.joinToString(sep) {
-                val prettyVariable = it.key.format(TermFormatter.prettyVariables())
-                val prettyValue = it.value.format(prettyExpressions(operatorSet))
+            val substitutions = sol.substitution.entries.joinToString("\n    ") {
+                val prettyVariable = it.key.format(formatter)
+                val prettyValue = it.value.format(formatter)
                 "$prettyVariable = $prettyValue"
             }
             TermUi.echo("    $substitutions")
@@ -57,14 +56,15 @@ object TuPrologUtils {
                     TermUi.echo("halt: ${ex.message?.trim()}")
                 }
                 val sep = "\n    at "
-                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(prettyExpressions(operatorSet)) }
+                val formatter = prettyExpressions(operatorSet)
+                val stacktrace = ex.prologStackTrace.joinToString(sep) { it.format(formatter) }
                 TermUi.echo("    at $stacktrace")
             }
         }
     }
 
     fun printParseException(e: ParseException) {
-        TermUi.echo(e.message?.capitalize(), err = true)
+        TermUi.echo("# ${e.message?.capitalize()}", err = true)
     }
 
     private fun printEndOfSolutions() {

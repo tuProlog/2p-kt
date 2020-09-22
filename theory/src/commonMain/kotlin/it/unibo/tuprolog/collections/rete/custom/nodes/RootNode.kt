@@ -42,7 +42,7 @@ internal class RootNode(
         }
 
     override fun retractOnly(clause: Clause, limit: Int): Sequence<Clause> =
-        (1 .. limit).asSequence().flatMap { retractFirst(clause) }.buffered()
+        (1..limit).asSequence().flatMap { retractFirst(clause) }.buffered()
 
     override fun retractAll(clause: Clause): Sequence<Clause> =
         if (clause.isDirective) {

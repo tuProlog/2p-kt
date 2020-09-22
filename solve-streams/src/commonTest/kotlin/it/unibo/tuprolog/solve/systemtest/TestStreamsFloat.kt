@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.TestFloat
 import kotlin.test.Test
 
-class TestStreamsFloat : TestFloat, SolverFactory by StreamsSolverFactory  {
+class TestStreamsFloat : TestFloat, SolverFactory by StreamsSolverFactory {
     private val prototype = TestFloat.prototype(this)
 
     @Test

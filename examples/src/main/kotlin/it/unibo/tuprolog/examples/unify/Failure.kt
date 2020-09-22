@@ -16,8 +16,8 @@ fun main() {
     val match: Boolean = unificator.match(term, template)
     val unified: Term? = unificator.unify(term, template)
 
-    println(substitution is Substitution.Fail)  // true
-    println(substitution.isFailed)              // true
-    println(match)                              // false
-    println(unified)                            // null
+    println(substitution is Substitution.Fail) // true
+    println(substitution.isFailed) // true
+    println(match) // false
+    println(unified) // null
 }

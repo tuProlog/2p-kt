@@ -35,6 +35,4 @@ object FloatingPointDivision : BinaryMathFunction("/") {
         } else {
             Numeric.of(dividend.div(divisor, MathContext())!!)
         }
-
-
 }

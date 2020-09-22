@@ -1,13 +1,8 @@
 package it.unibo.tuprolog.solve.systemtest
 
-import it.unibo.tuprolog.solve.*
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.AliasedLibrary
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.stdlib.DefaultBuiltins
-import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.solve.ClassicSolverFactory
+import it.unibo.tuprolog.solve.SolverFactory
+import it.unibo.tuprolog.solve.TestArg
 import kotlin.test.Test
 
 class TestClassicArg : TestArg, SolverFactory by ClassicSolverFactory {
@@ -20,67 +15,67 @@ class TestClassicArg : TestArg, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    override fun testArgFromFooX(){
+    override fun testArgFromFooX() {
         prototype.testArgFromFooX()
     }
 
     @Test
-    override fun testArgFromFoo2(){
+    override fun testArgFromFoo2() {
         prototype.testArgFromFoo2()
     }
 
     @Test
-    override fun testArgFromFooInF(){
+    override fun testArgFromFooInF() {
         prototype.testArgFromFooInF()
     }
 
     @Test
-    override fun testArgFromFooY(){
+    override fun testArgFromFooY() {
         prototype.testArgFromFooY()
     }
 
     @Test
-    override fun testArgFromFooInSecondTerm(){
+    override fun testArgFromFooInSecondTerm() {
         prototype.testArgFromFooInSecondTerm()
     }
 
     @Test
-    override fun testArgFromFooInFoo(){
+    override fun testArgFromFooInFoo() {
         prototype.testArgFromFooInFoo()
     }
 
     @Test
-    override fun testArgNumberFromFoo(){
+    override fun testArgNumberFromFoo() {
         prototype.testArgNumberFromFoo()
     }
 
     @Test
-    override fun testArgXFromFoo(){
+    override fun testArgXFromFoo() {
         prototype.testArgXFromFoo()
     }
 
     @Test
-    override fun testArgNumberFromX(){
+    override fun testArgNumberFromX() {
         prototype.testArgNumberFromX()
     }
 
     @Test
-    override fun testArgFromAtom(){
+    override fun testArgFromAtom() {
         prototype.testArgFromAtom()
     }
 
     @Test
-    override fun testArgFromNumber(){
+    override fun testArgFromNumber() {
         prototype.testArgFromNumber()
     }
 
     @Test
-    override fun testNegativeArgFromFoo(){
+    override fun testNegativeArgFromFoo() {
         prototype.testNegativeArgFromFoo()
     }
 
     @Test
-    override fun testArgAFromFoo(){
+    override fun testArgAFromFoo() {
         prototype.testArgAFromFoo()
     }
 }

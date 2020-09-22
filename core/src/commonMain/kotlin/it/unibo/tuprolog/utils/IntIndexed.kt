@@ -16,4 +16,3 @@ interface IntIndexed<T> : Indexed<Int, T>, Comparable<IntIndexed<T>> {
         }
     }
 }
-

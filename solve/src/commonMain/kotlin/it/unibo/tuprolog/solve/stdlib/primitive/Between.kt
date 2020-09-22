@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import org.gciatto.kt.math.BigInteger
 import it.unibo.tuprolog.core.Integer as LogicInteger
 
-
 object Between : TernaryRelation.WithoutSideEffects<ExecutionContext>("between") {
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(

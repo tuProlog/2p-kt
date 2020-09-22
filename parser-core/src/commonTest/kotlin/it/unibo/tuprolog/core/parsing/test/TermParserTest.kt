@@ -22,5 +22,4 @@ class TermParserTest {
             parser.assertTermIsCorrectlyParsed(it.first, it.second)
         }
     }
-
 }

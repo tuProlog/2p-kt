@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.serialize
 
 object Instances {
-    val commonRulesInJSON = """
+    val commonRulesInJSON =
+        """
         |[
         |  {
         |    "head":{

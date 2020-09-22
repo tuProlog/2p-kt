@@ -1,10 +1,7 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
 
 /**

@@ -143,6 +143,9 @@ interface PrologStdLibScope : PrologAwareScope {
     fun retract(clause: Any): Struct =
         structOf("retract", clause.toTerm())
 
+    fun append(left: Any, right: Any, result: Any): Struct =
+        structOf("append", left.toTerm(), right.toTerm(), result.toTerm())
+
     fun retractall(clause: Any): Struct =
         structOf("retractall", clause.toTerm())
 

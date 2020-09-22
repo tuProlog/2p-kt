@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.dsl.unify
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.PrologScope
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName

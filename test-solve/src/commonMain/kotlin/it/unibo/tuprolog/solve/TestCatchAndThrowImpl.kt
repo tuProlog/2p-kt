@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve
 
-
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.SystemError
 
@@ -13,16 +12,16 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(
-                            query.halt(
-                                    SystemError.forUncaughtException(
-                                            DummyInstances.executionContext,
-                                            atomOf("blabla")
+                kotlin.collections.listOf(
+                    query.halt(
+                        SystemError.forUncaughtException(
+                            DummyInstances.executionContext,
+                            atomOf("blabla")
 
-                                    )
-                            )
-                    ),
-                    solutions
+                        )
+                    )
+                ),
+                solutions
             )
         }
     }
@@ -35,9 +34,10 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    kotlin.collections.listOf(
-                            query.no()),
-                    solutions
+                kotlin.collections.listOf(
+                    query.no()
+                ),
+                solutions
             )
         }
     }

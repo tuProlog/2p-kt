@@ -33,5 +33,4 @@ class TestClassicNumber : TestNumber, SolverFactory by ClassicSolverFactory {
     override fun testXNum() {
         prototype.testXNum()
     }
-
 }

@@ -1,7 +1,16 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Tuple
 
 internal abstract class AbstractTermFormatter : TermFormatter {
 
@@ -11,7 +20,7 @@ internal abstract class AbstractTermFormatter : TermFormatter {
 
     override fun visitStruct(term: Struct): String =
         (if (term.isFunctorWellFormed) term.functor else Struct.escapeFunctor(term.functor)) +
-                term.argsSequence.map { it.accept(childFormatter()) }.joinToString(", ", "(", ")")
+            term.argsSequence.map { it.accept(childFormatter()) }.joinToString(", ", "(", ")")
 
     override fun visitSet(term: Set): String =
         term.unfoldedList.joinToString(", ", "{", "}") {

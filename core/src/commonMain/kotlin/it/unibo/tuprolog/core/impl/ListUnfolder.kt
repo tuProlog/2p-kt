@@ -28,5 +28,4 @@ internal class ListUnfolder(list: List) : Iterator<Term> {
             }
         }
     }
-
 }

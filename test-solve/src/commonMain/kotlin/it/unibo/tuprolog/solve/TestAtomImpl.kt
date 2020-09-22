@@ -13,8 +13,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -27,8 +27,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -41,8 +41,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -55,8 +55,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -69,8 +69,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.yes()),
-                    solutions
+                ktListOf(query.yes()),
+                solutions
             )
         }
     }
@@ -83,8 +83,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }
@@ -97,8 +97,8 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                    ktListOf(query.no()),
-                    solutions
+                ktListOf(query.no()),
+                solutions
             )
         }
     }

@@ -3,10 +3,9 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestCopyTerm
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-class TestClassicCopyTerm  : TestCopyTerm, SolverFactory by ClassicSolverFactory  {
+class TestClassicCopyTerm : TestCopyTerm, SolverFactory by ClassicSolverFactory {
     private val prototype = TestCopyTerm.prototype(this)
 
     @Test

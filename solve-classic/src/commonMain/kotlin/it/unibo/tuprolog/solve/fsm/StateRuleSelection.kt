@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.fsm
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ChoicePointContext
 import it.unibo.tuprolog.solve.ClassicExecutionContext
 import it.unibo.tuprolog.solve.Signature
@@ -12,6 +16,7 @@ import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
+import it.unibo.tuprolog.theory.Theory
 
 internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
@@ -46,23 +51,32 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
             context.copy(step = nextStep())
         )
 
-    private fun missingProcedure(missingPredicateSignature: Signature): State =
-        when (context.flags[Unknown]) {
-            Unknown.ERROR -> exceptionalState(
-                ExistenceError.forProcedure(
-                    context = context,
-                    procedure = missingPredicateSignature
-                )
-            )
-            Unknown.WARNING -> failureState.also {
-                context.warnings?.write(
-                    MissingPredicate(
-                        context = context,
-                        signature = missingPredicateSignature
-                    )
-                )
+    private fun missingProcedure(ruleSources: Sequence<Theory>, missing: Signature): State =
+        when (val unknown = context.flags[Unknown]) {
+            Unknown.FAIL -> failureState
+            else -> {
+                if (ruleSources.none { missing.toIndicator() in it }) {
+                    when (unknown) {
+                        Unknown.ERROR -> exceptionalState(
+                            ExistenceError.forProcedure(
+                                context = context,
+                                procedure = missing
+                            )
+                        )
+                        Unknown.WARNING -> failureState.also {
+                            context.warnings?.write(
+                                MissingPredicate(
+                                    context = context,
+                                    signature = missing
+                                )
+                            )
+                        }
+                        else -> failureState
+                    }
+                } else {
+                    failureState
+                }
             }
-            else -> failureState
         }
 
     private val ignoreState: StateGoalSelection
@@ -74,16 +88,16 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
 
     private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
         val cutLimit = if (magicCut) {
-                this.pathToRoot.firstOrNull()
-            } else {
-                this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
-            }
-            return if (cutLimit == null) {
-                CutLimit.None
-            } else {
-                CutLimit.Actual(cutLimit.depth, cutLimit.procedure)
-            }
+            this.pathToRoot.firstOrNull()
+        } else {
+            this.pathToRoot.firstOrNull { it.procedure?.extractSignature() !in transparentToCut }
         }
+        return if (cutLimit == null) {
+            CutLimit.None
+        } else {
+            CutLimit.Actual(cutLimit.depth, cutLimit.procedure)
+        }
+    }
 
     private fun ChoicePointContext?.performCut(cutLimit: CutLimit): ChoicePointContext? {
         return when {
@@ -91,8 +105,8 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                 null
             }
             cutLimit is CutLimit.None ||
-            cutLimit.depthToCut > executionContext!!.depth ||
-            cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
+                cutLimit.depthToCut > executionContext!!.depth ||
+                cutLimit.depthToCut == executionContext!!.depth && cutLimit.procedure != executionContext!!.procedure -> {
                 this
             }
             else -> {
@@ -112,7 +126,6 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
     }
 
     override fun computeNext(): State {
-
         return when (val currentGoal = context.currentGoal!!) {
             is Var -> {
                 exceptionalState(
@@ -158,7 +171,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                         )
                     }
 
-                    else -> missingProcedure(currentGoal.extractSignature())
+                    else -> missingProcedure(ruleSources, currentGoal.extractSignature())
                 }
             }
             else -> {

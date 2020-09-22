@@ -93,14 +93,4 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
     override fun toString(): String {
         return "LRUCache(${toSequence().map { "${it.first} = ${it.second}" }.joinToString(", ")})"
     }
-
-    //    private fun getKeyToEvict(): K? =
-//        insertionOrder[(nextFreeIndex + size) % capacity].value
-//
-//    private fun pop(): K {
-//        val leastRecentIndex = (nextFreeIndex + capacity + 1) % capacity
-//        val result = insertionOrder[leastRecentIndex]
-//        insertionOrder[leastRecentIndex] = Optional.empty()
-//        cache.remove(result)
-//    }
 }

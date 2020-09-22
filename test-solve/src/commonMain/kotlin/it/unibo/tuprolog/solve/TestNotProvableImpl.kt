@@ -9,12 +9,13 @@ class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotPro
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query =  "not"(true)
+            val query = "not"(true)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()),
+                    query.no()
+                ),
                 solutions
             )
         }
@@ -24,12 +25,13 @@ class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotPro
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query =  "not"("!")
+            val query = "not"("!")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.no()),
+                    query.no()
+                ),
                 solutions
             )
         }
@@ -39,12 +41,13 @@ class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotPro
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query =  "not"(("!" and fail))
+            val query = "not"(("!" and fail))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
-                    query.yes()),
+                    query.yes()
+                ),
                 solutions
             )
         }

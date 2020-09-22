@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.core.List
-import it.unibo.tuprolog.core.Set
+import it.unibo.tuprolog.core.Var
 
 internal class TermFormatterWithPrettyVariables : AbstractTermFormatter() {
 

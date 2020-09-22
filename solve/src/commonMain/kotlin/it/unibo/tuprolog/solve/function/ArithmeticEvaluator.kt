@@ -1,6 +1,12 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -10,7 +16,11 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.NUMBER
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
-import it.unibo.tuprolog.solve.stdlib.function.*
+import it.unibo.tuprolog.solve.stdlib.function.BitwiseAnd
+import it.unibo.tuprolog.solve.stdlib.function.BitwiseComplement
+import it.unibo.tuprolog.solve.stdlib.function.BitwiseLeftShift
+import it.unibo.tuprolog.solve.stdlib.function.BitwiseOr
+import it.unibo.tuprolog.solve.stdlib.function.BitwiseRightShift
 
 /**
  * Evaluates an expression as a [Numeric] term.

@@ -15,4 +15,3 @@ interface Formatter<T> {
     @JsName("format")
     fun format(value: T): String
 }
-

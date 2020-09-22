@@ -64,7 +64,7 @@ class PermissionError(
             culprit: Term
         ): PermissionError = message(
             "Permission error while executing ${procedure.pretty()}: " +
-                    "operation of type `$operation` is not possible on $permission: ${culprit.pretty()}"
+                "operation of type `$operation` is not possible on $permission: ${culprit.pretty()}"
         ) { m, extra ->
             PermissionError(
                 message = m,

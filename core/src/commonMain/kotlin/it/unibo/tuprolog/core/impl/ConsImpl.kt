@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
-import it.unibo.tuprolog.utils.dequeOf
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
-import it.unibo.tuprolog.core.List as LogicList
 
 internal class ConsImpl(override val head: Term, override val tail: Term) :
     CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
@@ -44,7 +44,7 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
         val (ending, take) = if (isWellFormed) {
             "]" to size
         } else {
-            " | ${last}]" to size - 1
+            " | $last]" to size - 1
         }
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
     }

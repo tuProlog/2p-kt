@@ -6,7 +6,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
-import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import kotlin.collections.List as KtList
 import kotlin.collections.listOf as ktListOf
 
@@ -38,7 +37,6 @@ sealed class Semicolon : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
                     varOf("Else")
                 )
         }
-
     }
 
     sealed class Or : Semicolon() {

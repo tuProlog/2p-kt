@@ -56,4 +56,3 @@ interface Real : Numeric {
         fun of(real: String): Real = of(BigDecimal.of(real))
     }
 }
-

@@ -50,10 +50,9 @@ class SystemError constructor(
             }
 
         fun forUncaughtException(context: ExecutionContext, exception: PrologError): SystemError =
-            when(exception) {
+            when (exception) {
                 is MessageError -> forUncaughtException(context, exception.content)
                 else -> forUncaughtException(context, exception.errorStruct)
             }
-
     }
 }

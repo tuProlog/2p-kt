@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 
 internal class PrologScopeImpl : PrologScope, Scope by Scope.empty() {
 
-    private val anyToTermConverter = AnyToTermConverter.of(this);
+    private val anyToTermConverter = AnyToTermConverter.of(this)
 
     override fun Any.toTerm(): Term =
         anyToTermConverter.toTerm(this)

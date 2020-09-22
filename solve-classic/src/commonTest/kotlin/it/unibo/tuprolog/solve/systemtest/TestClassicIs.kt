@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestIs
 import kotlin.test.Test
 
-class TestClassicIs : TestIs, SolverFactory by ClassicSolverFactory  {
+class TestClassicIs : TestIs, SolverFactory by ClassicSolverFactory {
     private val prototype = TestIs.prototype(this)
 
     @Test
@@ -14,7 +14,7 @@ class TestClassicIs : TestIs, SolverFactory by ClassicSolverFactory  {
     }
 
     @Test
-    override fun testIsXY(){
+    override fun testIsXY() {
         prototype.testIsXY()
     }
 

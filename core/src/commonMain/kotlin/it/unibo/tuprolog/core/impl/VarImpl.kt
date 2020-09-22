@@ -13,7 +13,7 @@ internal class VarImpl(override val name: String, private val identifier: Long =
         @Synchronized
         private fun instanceId(name: String): Long {
             val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
-            nameToInstanceCount[name]  = count
+            nameToInstanceCount[name] = count
             return count
         }
     }

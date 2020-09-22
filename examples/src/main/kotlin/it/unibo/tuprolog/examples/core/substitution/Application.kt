@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.examples.core.substitution
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 
 /**
  *

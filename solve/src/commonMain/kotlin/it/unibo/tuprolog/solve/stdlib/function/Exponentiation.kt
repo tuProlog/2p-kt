@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.function.BinaryMathFunction
 import org.gciatto.kt.math.BigDecimal
 import kotlin.math.pow
 
-
 /**
  * Implementation of `'**'/2` arithmetic functor
  *

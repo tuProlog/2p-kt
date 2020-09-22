@@ -1,10 +1,23 @@
 package it.unibo.tuprolog.solve.exception
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.exception.error.*
+import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.ErrorUtils.errorStructOf
+import it.unibo.tuprolog.solve.exception.error.EvaluationError
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.MessageError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
+import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -36,8 +49,8 @@ abstract class PrologError(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), type, extraData)
 
-    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null)
-            : this(cause?.toString(), cause, context, type, extraData)
+    constructor(cause: Throwable?, context: ExecutionContext, type: Struct, extraData: Term? = null) :
+        this(cause?.toString(), cause, context, type, extraData)
 
     /** The error Struct as described in Prolog standard: `error(error_type, error_extra)` */
     val errorStruct: Struct by lazy { generateErrorStruct() }
@@ -126,7 +139,6 @@ abstract class PrologError(
 
                     override fun pushContext(newContext: ExecutionContext): PrologError =
                         of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
-
                 }
             }
         }

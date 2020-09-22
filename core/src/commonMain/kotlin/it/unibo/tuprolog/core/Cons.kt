@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.ConsImpl
 import kotlin.js.JsName
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import it.unibo.tuprolog.core.List as LogicList
 
