@@ -311,12 +311,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
-                term !is Integer || term.intValue in MIN_CHAR..MAX_CHAR ->
+                term !is Integer || term.intValue !in MIN_CHAR..MAX_CHAR ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =
-            ensuringTermIsCharCode(arguments[index])
+            ensuringArgumentIsInteger(index).ensuringTermIsCharCode(arguments[index])
     }
 }

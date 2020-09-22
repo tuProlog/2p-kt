@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
 object TestingAtomBuiltIn {
@@ -80,14 +81,17 @@ object TestingAtomBuiltIn {
                 char_code("a", "X").hasSolutions({ yes("X" to 97) }),
                 char_code("X", intOf(97)).hasSolutions({ yes("X" to "a") }),
                 char_code("g", intOf(104)).hasSolutions({ no() }),
-                /*   char_code("X", "a").hasSolutions({halt(
-                           TypeError.forArgument(
-                               DummyInstances.executionContext,
-                               Signature("char_code", 2),
-                               TypeError.Expected.INTEGER,
-                               args.get(1),
-                               index = 1
-                           ))}),*/
+                char_code("X", "a").hasSolutions({
+                    halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("char_code", 2),
+                            TypeError.Expected.INTEGER,
+                            atomOf("a"),
+                            index = 1
+                        )
+                    )
+                }),
                 char_code("g", intOf(103)).hasSolutions({ yes() })
             )
         }

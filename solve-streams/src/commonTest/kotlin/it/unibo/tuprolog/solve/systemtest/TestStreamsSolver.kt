@@ -389,12 +389,12 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     }
 
     @Test
+    @Ignore
     override fun testCharCode() {
         prototype.testCharCode()
     }
 
     @Test
-    @Ignore
     override fun testAtomCodes() {
         prototype.testAtomCodes()
     }

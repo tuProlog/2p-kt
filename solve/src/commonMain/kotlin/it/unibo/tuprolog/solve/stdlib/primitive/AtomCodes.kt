@@ -47,8 +47,9 @@ object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
             else -> {
                 ensuringArgumentIsInstantiated(0)
                 ensuringArgumentIsAtom(0)
-                ensuringArgumentIsInstantiated(1)
-                ensuringArgumentIsList(1)
+                if (second !is Var) {
+                    ensuringArgumentIsList(1)
+                }
                 val charArray = (first as Atom).value.toCharArray()
                 val result = LogicList.of(charArray.map { Integer.of(it.toInt()) })
                 second mguWith result
