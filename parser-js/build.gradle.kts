@@ -47,12 +47,26 @@ configure<NpmPublishExtension> {
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
         homepage = projectHomepage
-        bugs = Bugs(projectIssues, "gcEmail")
+        bugs = Bugs(projectIssues, gcEmail)
         license = projectLicense
         name = "@tuprolog/$name"
-        dependencies = dependencies?.mapKeys {
-            if ("2p" in it.key) "@tuprolog/${it.key}" else it.key
-        }?.toMutableMap()
+        dependencies = dependencies?.filterKeys { key -> "kotlin-test" !in key }
+            ?.mapKeys { (key, _) ->
+                if ("2p" in key) "@tuprolog/$key" else key
+            }?.mapValues { (key, value) ->
+                val temp = if (value.startsWith("file:")) {
+                    value.split('/', '\\').last()
+                } else {
+                    value
+                }
+                if ("2p" in key) temp.substringBefore('+') else temp
+            }?.toMutableMap()
+        version = version?.substringBefore('+')
+    }
+
+    liftJsSources { _, _, line ->
+        line.replace("'2p", "'@tuprolog/2p")
+            .replace("\"2p", "\"@tuprolog/2p")
     }
 }
 
