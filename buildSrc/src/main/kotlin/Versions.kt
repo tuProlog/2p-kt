@@ -46,7 +46,7 @@ object Versions {
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 
-    const val kt_math: String = "0.2.0"
+    const val kt_math: String = "0.2.2"
 
     const val ktlint: String = "0.39.0"
 
