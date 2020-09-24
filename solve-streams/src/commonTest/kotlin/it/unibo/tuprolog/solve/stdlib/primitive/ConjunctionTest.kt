@@ -72,7 +72,7 @@ internal class ConjunctionTest {
                 goal.argsList,
                 StreamsExecutionContext(
                     substitution = preRequestSubstitution,
-                    libraries = Libraries(
+                    libraries = Libraries.of(
                         Library.aliased(
                             alias = "conjunction.test",
                             primitives = mapOf(

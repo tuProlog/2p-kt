@@ -28,7 +28,7 @@ import kotlin.collections.List as KtList
  */
 internal object SolveUtils {
 
-    internal val someLibraries = Libraries()
+    internal val someLibraries = Libraries.empty()
     internal val someFlags = emptyMap<String, Term>()
     internal val aStaticKB = Theory.empty()
     internal val aDynamicKB = Theory.empty()
@@ -44,7 +44,7 @@ internal object SolveUtils {
     internal val varargArgumentList = anArgumentList + Truth.TRUE
 
     internal val differentLibraries by lazy {
-        Libraries(Library.aliased(alias = "test")).also { assertNotEquals(it, someLibraries) }
+        Libraries.of(Library.aliased(alias = "test")).also { assertNotEquals(it, someLibraries) }
     }
     internal val differentFlags by lazy {
         mapOf<String, Term>(Truth.TRUE.value to Truth.FAIL).also { assertNotEquals(it, someFlags) }

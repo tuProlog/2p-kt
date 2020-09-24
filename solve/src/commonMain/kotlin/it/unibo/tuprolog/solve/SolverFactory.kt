@@ -12,7 +12,7 @@ interface SolverFactory {
 
     @JsName("defaultLibraries")
     val defaultLibraries: Libraries
-        get() = Libraries()
+        get() = Libraries.empty()
 
     @JsName("defaultBuiltins")
     val defaultBuiltins: AliasedLibrary

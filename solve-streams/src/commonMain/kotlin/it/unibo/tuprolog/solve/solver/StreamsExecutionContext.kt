@@ -26,8 +26,8 @@ import it.unibo.tuprolog.theory.Theory
  * @author Enrico
  */
 internal data class StreamsExecutionContext(
-    override val libraries: Libraries = Libraries(),
-    override val flags: FlagStore = FlagStore.EMPTY,
+    override val libraries: Libraries = Libraries.empty(),
+    override val flags: FlagStore = FlagStore.empty(),
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),

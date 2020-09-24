@@ -29,31 +29,31 @@ internal class LibrariesTest {
         listOf(emptyLibrary, library, overridingLibrary, overriddenLibrary, duplicatedAliasLibrary)
 
     /** A test instance with [differentAliasInstances] */
-    private val librariesInstance = Libraries(differentAliasInstances)
+    private val librariesInstance = Libraries.of(differentAliasInstances)
 
     @Test
     fun iterableConstructor() {
-        assertEquals(differentAliasInstances.toSet(), Libraries(differentAliasInstances).libraries.toSet())
+        assertEquals(differentAliasInstances.toSet(), Libraries.of(differentAliasInstances).libraries.toSet())
     }
 
     @Test
     fun sequenceConstructor() {
-        assertEquals(differentAliasInstances.toSet(), Libraries(differentAliasInstances.asSequence()).libraries.toSet())
+        assertEquals(differentAliasInstances.toSet(), Libraries.of(differentAliasInstances.asSequence()).libraries.toSet())
     }
 
     @Test
     fun varargConstructor() {
         assertEquals(
             differentAliasInstances.toSet(),
-            Libraries(*differentAliasInstances.toTypedArray()).libraries.toSet()
+            Libraries.of(*differentAliasInstances.toTypedArray()).libraries.toSet()
         )
     }
 
     @Test
     fun constructorsOverrideDuplicatedAliasesLibrariesWithLastInOrder() {
-        assertEquals((allLibInstances - library).toSet(), Libraries(allLibInstances).libraries.toSet())
-        assertEquals((allLibInstances - library).toSet(), Libraries(*allLibInstances.toTypedArray()).libraries.toSet())
-        assertEquals((allLibInstances - library).toSet(), Libraries(allLibInstances.asSequence()).libraries.toSet())
+        assertEquals((allLibInstances - library).toSet(), Libraries.of(allLibInstances).libraries.toSet())
+        assertEquals((allLibInstances - library).toSet(), Libraries.of(*allLibInstances.toTypedArray()).libraries.toSet())
+        assertEquals((allLibInstances - library).toSet(), Libraries.of(allLibInstances.asSequence()).libraries.toSet())
     }
 
     @Test
@@ -69,42 +69,42 @@ internal class LibrariesTest {
     @Test
     fun operatorsCorrectWithSingleLibrary() {
         val correct = allLibInstances.map { it.operators }
-        val toBeTested = allLibInstances.map { Libraries(it).operators }
+        val toBeTested = allLibInstances.map { Libraries.of(it).operators }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 
     @Test
     fun operatorsShouldReturnOverriddenOnesByLastlyAddedLibrary() {
-        assertEquals(library.operators, Libraries(library, emptyLibrary).operators)
-        assertEquals(overriddenLibrary.operators, Libraries(library, overridingLibrary).operators)
+        assertEquals(library.operators, Libraries.of(library, emptyLibrary).operators)
+        assertEquals(overriddenLibrary.operators, Libraries.of(library, overridingLibrary).operators)
     }
 
     @Test
     fun theoryCorrectWithSingleLibrary() {
         val correct = allLibInstances.map { it.theory }
-        val toBeTested = allLibInstances.map { Libraries(it).theory }
+        val toBeTested = allLibInstances.map { Libraries.of(it).theory }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 
     @Test
     fun theoryShouldReturnAllClausesComposingAllProvidedTheories() {
-        assertEquals(library.theory, Libraries(library, emptyLibrary).theory)
-        assertEquals(overriddenLibrary.theory, Libraries(library, overridingLibrary).theory)
+        assertEquals(library.theory, Libraries.of(library, emptyLibrary).theory)
+        assertEquals(overriddenLibrary.theory, Libraries.of(library, overridingLibrary).theory)
     }
 
     @Test
     fun primitivesCorrectWithSingleLibrary() {
         val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.primitives) }
-        val toBeTested = allLibInstances.map { Libraries(it).primitives }
+        val toBeTested = allLibInstances.map { Libraries.of(it).primitives }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 
     @Test
     fun primitivesShouldReturnNonAliasedOverriddenPrimitiveFromLastlyAddedLibrary() {
-        val toBeTested = Libraries(library, overridingLibrary)
+        val toBeTested = Libraries.of(library, overridingLibrary)
 
         assertEquals(
             overriddenLibrary.primitives,
@@ -116,24 +116,24 @@ internal class LibrariesTest {
     fun primitivesShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
         val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.primitives) +
             library.primitives.map { aliasPrimitiveOrFunction(library.alias, it) }
-        val toBeTested = Libraries(library, overridingLibrary)
+        val toBeTested = Libraries.of(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.primitives)
 
-        assertEquals(aliasLibraryMap(library.alias, library.primitives), Libraries(library, emptyLibrary).primitives)
+        assertEquals(aliasLibraryMap(library.alias, library.primitives), Libraries.of(library, emptyLibrary).primitives)
     }
 
     @Test
     fun functionsCorrectWithSingleLibrary() {
         val correct = allLibInstances.map { aliasLibraryMap(it.alias, it.functions) }
-        val toBeTested = allLibInstances.map { Libraries(it).functions }
+        val toBeTested = allLibInstances.map { Libraries.of(it).functions }
 
         correct.zip(toBeTested).forEach { (expected, actual) -> assertEquals(expected, actual) }
     }
 
     @Test
     fun functionsShouldReturnNonAliasedOverriddenPrimitiveFromLastlyAddedLibrary() {
-        val toBeTested = Libraries(library, overridingLibrary)
+        val toBeTested = Libraries.of(library, overridingLibrary)
 
         assertEquals(
             overriddenLibrary.functions,
@@ -145,23 +145,23 @@ internal class LibrariesTest {
     fun functionsShouldReturnAllAliasedPrimitivesEvenAfterOverriding() {
         val correct = aliasLibraryMap(overridingLibrary.alias, overriddenLibrary.functions) +
             library.functions.map { aliasPrimitiveOrFunction(library.alias, it) }
-        val toBeTested = Libraries(library, overridingLibrary)
+        val toBeTested = Libraries.of(library, overridingLibrary)
 
         assertEquals(correct, toBeTested.functions)
 
-        assertEquals(aliasLibraryMap(library.alias, library.functions), Libraries(library, emptyLibrary).functions)
+        assertEquals(aliasLibraryMap(library.alias, library.functions), Libraries.of(library, emptyLibrary).functions)
     }
 
     @Test
     fun plusLibraryShouldAddANonPresentLibrary() {
-        val toBeTested = Libraries(library) + overridingLibrary
+        val toBeTested = Libraries.of(library) + overridingLibrary
 
-        assertEquals(Libraries(library, overridingLibrary), toBeTested)
+        assertEquals(Libraries.of(library, overridingLibrary), toBeTested)
     }
 
     @Test
     fun plusLibraryWithAlreadyPresentAliasLibraryComplains() {
-        assertFailsWith<AlreadyLoadedLibraryException> { Libraries(library) + duplicatedAliasLibrary }
+        assertFailsWith<AlreadyLoadedLibraryException> { Libraries.of(library) + duplicatedAliasLibrary }
     }
 
     @Test
@@ -170,31 +170,31 @@ internal class LibrariesTest {
         val instancesCount = instances.count()
 
         assertEquals(
-            Libraries(instances),
-            Libraries(instances.take(instancesCount / 2)) + Libraries(instances.drop(instancesCount / 2))
+            Libraries.of(instances),
+            Libraries.of(instances.take(instancesCount / 2)) + Libraries.of(instances.drop(instancesCount / 2))
         )
     }
 
     @Test
     fun plusLibraryGroupWithAlreadyPresentAliasLibraryComplains() {
-        assertFailsWith<AlreadyLoadedLibraryException> { Libraries(library) + Libraries(duplicatedAliasLibrary) }
+        assertFailsWith<AlreadyLoadedLibraryException> { Libraries.of(library) + Libraries.of(duplicatedAliasLibrary) }
     }
 
     @Test
     fun updateShouldSubstituteAlreadyPresentAliasedLibrary() {
-        val toBeTested = Libraries(library).update(duplicatedAliasLibrary)
+        val toBeTested = Libraries.of(library).update(duplicatedAliasLibrary)
 
-        assertNotEquals(Libraries(library), toBeTested)
-        assertEquals(Libraries(duplicatedAliasLibrary), toBeTested)
+        assertNotEquals(Libraries.of(library), toBeTested)
+        assertEquals(Libraries.of(duplicatedAliasLibrary), toBeTested)
     }
 
     @Test
     fun updateShouldComplainIfNoLibraryLoadedWithSomeAlias() {
-        assertFailsWith<IllegalArgumentException> { Libraries(library).update(emptyLibrary) }
+        assertFailsWith<IllegalArgumentException> { Libraries.of(library).update(emptyLibrary) }
     }
 
     @Test
     fun equalsWorksAsExpected() {
-        assertEquals(Libraries(differentAliasInstances), Libraries(differentAliasInstances))
+        assertEquals(Libraries.of(differentAliasInstances), Libraries.of(differentAliasInstances))
     }
 }

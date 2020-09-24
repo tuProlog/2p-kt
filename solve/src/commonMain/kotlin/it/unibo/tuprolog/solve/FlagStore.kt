@@ -63,6 +63,10 @@ class FlagStore private constructor(private val flags: Map<String, Term>) : Map<
             DoubleQuotes
         )
 
+        @JsName("empty")
+        @JvmStatic
+        fun empty() = EMPTY
+
         @JsName("ofMap")
         @JvmStatic
         fun of(flags: Map<String, Term>) = FlagStore(flags)
