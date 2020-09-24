@@ -6,7 +6,6 @@ import kotlin.jvm.JvmStatic
 
 interface InputChannel<T> : Channel<T> {
     companion object {
-
         @JvmStatic
         @JsName("stdIn")
         fun stdIn(): InputChannel<String> = stdin()

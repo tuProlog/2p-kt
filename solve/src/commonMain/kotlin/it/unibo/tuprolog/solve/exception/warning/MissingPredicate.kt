@@ -3,11 +3,12 @@ package it.unibo.tuprolog.solve.exception.warning
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import kotlin.js.JsName
 
 class MissingPredicate(
     cause: Throwable?,
     contexts: Array<ExecutionContext>,
-    val signature: Signature
+    @JsName("signature") val signature: Signature
 ) : PrologWarning("No such a predicate: ${signature.toIndicator()}", cause, contexts) {
 
     constructor(

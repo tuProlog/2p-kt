@@ -19,7 +19,7 @@ internal class TypeErrorTest {
     private val aCallableTypeError = TypeError(
         context = PrologErrorUtils.aContext,
         expectedType = testErrorType,
-        actualValue = callableTypeErrorActualValue
+        culprit = callableTypeErrorActualValue
     )
     private val correctTypeFunctor = "type_error"
 
@@ -53,6 +53,6 @@ internal class TypeErrorTest {
 
     @Test
     fun typeErrorActualValueCorrect() {
-        assertEquals(callableTypeErrorActualValue, aCallableTypeError.actualValue)
+        assertEquals(callableTypeErrorActualValue, aCallableTypeError.culprit)
     }
 }

@@ -143,7 +143,6 @@ interface PrologScope : PrologStdLibScope, VariablesAwareScope {
     @JsName("rule")
     fun rule(function: PrologScope.() -> Any): Rule = PrologScope.empty().function().toTerm() as Rule
 
-    @JsName("clause")
     fun clause(function: PrologScope.() -> Any): Clause = PrologScope.empty().function().let {
         when (val t = it.toTerm()) {
             is Clause -> t
