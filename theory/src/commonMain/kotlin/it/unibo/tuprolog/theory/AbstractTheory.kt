@@ -71,13 +71,14 @@ internal abstract class AbstractTheory : Theory {
         return result
     }
 
-    override val size: Long by lazy {
-        var i: Long = 0
-        for (clause in clauses) {
-            i++
+    override val size: Long
+        get() {
+            var i: Long = 0
+            for (clause in clauses) {
+                i++
+            }
+            return i
         }
-        i
-    }
 
     override fun plus(theory: Theory): Theory =
         createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
@@ -102,6 +103,8 @@ internal abstract class AbstractTheory : Theory {
 
     protected abstract fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory
 
-    override fun retract(clauses: Sequence<Clause>): RetractResult =
+    override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
         retract(clauses.asIterable())
+
+    abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
 }

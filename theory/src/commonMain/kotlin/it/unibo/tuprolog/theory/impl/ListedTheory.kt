@@ -10,8 +10,8 @@ import kotlin.collections.List as KtList
 
 internal class ListedTheory
 private constructor(
-    override val clauses: KtList<Clause>
-) : AbstractTheory() {
+    clauses: KtList<Clause>
+) : AbstractListedTheory(clauses) {
 
     constructor(clauses: Iterable<Clause>) : this(clauses.toList()) {
         checkClausesCorrect(clauses)
@@ -21,16 +21,11 @@ private constructor(
         checkClausesCorrect(clauses)
     }
 
-    override fun get(clause: Clause): Sequence<Clause> =
-        clauses.filter {
-            it matches clause
-        }.asSequence()
-
     override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
         return ListedTheory(clauses)
     }
 
-    override fun retract(clause: Clause): RetractResult {
+    override fun retract(clause: Clause): RetractResult<ListedTheory> {
         val retractability = clauses.filter { it matches clause }
         return when {
             retractability.none() -> RetractResult.Failure(this)
@@ -47,7 +42,7 @@ private constructor(
         }
     }
 
-    override fun retract(clauses: Iterable<Clause>): RetractResult {
+    override fun retract(clauses: Iterable<Clause>): RetractResult<ListedTheory> {
         val residual = dequeOf(this.clauses)
         val removed = dequeOf<Clause>()
         val i = residual.iterator()
@@ -65,7 +60,7 @@ private constructor(
         }
     }
 
-    override fun retractAll(clause: Clause): RetractResult {
+    override fun retractAll(clause: Clause): RetractResult<ListedTheory> {
         val retractability = clauses.filter { it matches clause }
         return when {
             retractability.none() -> RetractResult.Failure(this)
@@ -82,4 +77,19 @@ private constructor(
             }
         }
     }
+
+    private val hashCodeCache: Int by lazy {
+        super.hashCode()
+    }
+
+    override fun hashCode(): Int {
+        return hashCodeCache
+    }
+
+    private val sizeCache: Long by lazy {
+        super.size
+    }
+
+    override val size: Long
+        get() = sizeCache
 }
