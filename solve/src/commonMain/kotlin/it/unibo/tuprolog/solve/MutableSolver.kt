@@ -79,16 +79,16 @@ interface MutableSolver : Solver {
     fun assertZ(fact: Struct)
 
     @JsName("retract")
-    fun retract(clause: Clause): RetractResult
+    fun retract(clause: Clause): RetractResult<Theory>
 
     @JsName("retractByHead")
-    fun retract(fact: Struct): RetractResult
+    fun retract(fact: Struct): RetractResult<Theory>
 
     @JsName("retractAll")
-    fun retractAll(clause: Clause): RetractResult
+    fun retractAll(clause: Clause): RetractResult<Theory>
 
     @JsName("retractAllBeHead")
-    fun retractAll(fact: Struct): RetractResult
+    fun retractAll(fact: Struct): RetractResult<Theory>
 
     @JsName("setFlag")
     fun setFlag(name: String, value: Term)

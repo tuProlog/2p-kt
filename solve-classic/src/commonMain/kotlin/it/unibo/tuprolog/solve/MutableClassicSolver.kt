@@ -96,7 +96,7 @@ internal class MutableClassicSolver(
         }
     }
 
-    override fun retract(clause: Clause): RetractResult {
+    override fun retract(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retract(clause)
         updateContext {
             copy(dynamicKb = result.theory)
@@ -104,7 +104,7 @@ internal class MutableClassicSolver(
         return result
     }
 
-    override fun retract(fact: Struct): RetractResult {
+    override fun retract(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retract(fact)
         updateContext {
             copy(dynamicKb = result.theory)
@@ -112,7 +112,7 @@ internal class MutableClassicSolver(
         return result
     }
 
-    override fun retractAll(clause: Clause): RetractResult {
+    override fun retractAll(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retractAll(clause)
         updateContext {
             copy(dynamicKb = result.theory)
@@ -120,7 +120,7 @@ internal class MutableClassicSolver(
         return result
     }
 
-    override fun retractAll(fact: Struct): RetractResult {
+    override fun retractAll(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retractAll(fact)
         updateContext {
             copy(dynamicKb = result.theory)
