@@ -5,17 +5,21 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
 internal abstract class AbstractTheory : Theory {
 
-    override fun plus(clause: Clause): Theory = super.plus(TheoryUtils.checkClauseCorrect(clause))
+    override fun plus(clause: Clause): Theory = super.plus(checkClauseCorrect(clause))
 
-    override fun contains(clause: Clause): Boolean = get(clause).any()
+    override fun contains(clause: Clause): Boolean =
+        get(clause).any()
 
-    override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
+    override fun contains(head: Struct): Boolean =
+        contains(Rule.of(head, Var.anonymous()))
 
-    override fun contains(indicator: Indicator): Boolean = get(indicator).any()
+    override fun contains(indicator: Indicator): Boolean =
+        get(indicator).any()
 
     override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it as Rule }
 
@@ -74,9 +78,8 @@ internal abstract class AbstractTheory : Theory {
     override val size: Long
         get() {
             var i: Long = 0
-            for (clause in clauses) {
-                i++
-            }
+            val iter = iterator()
+            while (iter.hasNext()) { iter.next(); i++ }
             return i
         }
 
@@ -84,7 +87,7 @@ internal abstract class AbstractTheory : Theory {
         createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
 
     override fun assertA(clause: Clause): Theory =
-        createNewTheory(checkClausesCorrect(sequenceOf(clause)) + clauses.asSequence())
+        createNewTheory(checkClausesCorrect(clause) + clauses.asSequence())
 
     override fun assertA(clauses: Iterable<Clause>): Theory =
         createNewTheory(checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence())

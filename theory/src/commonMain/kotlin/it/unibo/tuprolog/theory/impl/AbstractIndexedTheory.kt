@@ -7,7 +7,7 @@ import it.unibo.tuprolog.theory.AbstractTheory
 internal abstract class AbstractIndexedTheory protected constructor(queue: ClauseQueue) : AbstractTheory() {
     protected open val queue: ClauseQueue = queue
 
-    override val clauses: Iterable<Clause> by lazy { queue.toList() }
+    override val clauses: Iterable<Clause> get() = Iterable { queue.iterator() }
 
     override fun get(clause: Clause): Sequence<Clause> = queue[clause]
 }

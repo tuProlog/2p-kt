@@ -10,11 +10,16 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.TheoryUtils
+import it.unibo.tuprolog.testutils.TheoryUtils.clausesQueryResultsMap
 import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
 import it.unibo.tuprolog.testutils.TheoryUtils.deepQueries
 import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
 import it.unibo.tuprolog.testutils.TheoryUtils.negativeMemberQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.notWellFormedClauses
 import it.unibo.tuprolog.testutils.TheoryUtils.positiveMemberQueries
+import it.unibo.tuprolog.testutils.TheoryUtils.rulesQueryResultByFunctorAndArity
+import it.unibo.tuprolog.testutils.TheoryUtils.rulesQueryWithVarBodyResultsMap
+import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauses
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -32,330 +37,439 @@ class PrototypeTheoryTest(
     private val theoryGenerator: (Iterable<Clause>) -> Theory
 ) {
 
-    private lateinit var emptyTheory: Theory
-    private lateinit var filledTheory: Theory
+    private data class FreshTheoriesScope(var emptyTheory: Theory, var filledTheory: Theory)
+
+    private fun <R> withFreshTheories(
+        emptyTheory: Theory = emptyTheoryGenerator(),
+        filledTheory: Theory = theoryGenerator(wellFormedClauses),
+        action: FreshTheoriesScope.() -> R
+    ): R = FreshTheoriesScope(emptyTheory, filledTheory).action()
 
     private val anIndependentFact: Fact = Fact.of(Atom.of("myTestingFact"))
+
     private val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
 
     private val successfulRetractQueryResultMap by lazy {
-        TheoryUtils.clausesQueryResultsMap.filterValues { it.isNotEmpty() }
-    }
-    private val successfulRetractQueryWithBodyVarResultsMap by lazy {
-        TheoryUtils.rulesQueryWithVarBodyResultsMap.filterValues { it.isNotEmpty() }
+        clausesQueryResultsMap.filterValues { it.isNotEmpty() }
     }
 
-    fun init() {
-        emptyTheory = emptyTheoryGenerator()
-        filledTheory = theoryGenerator(TheoryUtils.wellFormedClauses)
+    private val successfulRetractQueryWithBodyVarResultsMap by lazy {
+        rulesQueryWithVarBodyResultsMap.filterValues { it.isNotEmpty() }
     }
 
     fun theoryComplainsIFProvidingNotWellFormedClausesUponConstruction() {
-        assertFailsWith<IllegalArgumentException> { theoryGenerator(TheoryUtils.notWellFormedClauses) }
+        assertFailsWith<IllegalArgumentException> { theoryGenerator(notWellFormedClauses) }
     }
 
     fun clausesCorrect() {
-        assertTrue(emptyTheory.clauses.none())
-        assertClauseHeadPartialOrderingRespected(TheoryUtils.wellFormedClauses, filledTheory.clauses)
+        withFreshTheories {
+            assertTrue(emptyTheory.clauses.none())
+            assertClauseHeadPartialOrderingRespected(wellFormedClauses, filledTheory.clauses)
+        }
     }
 
     fun rulesCorrect() {
-        val rules = TheoryUtils.wellFormedClauses.filterIsInstance<Rule>()
+        withFreshTheories {
+            val rules = wellFormedClauses.filterIsInstance<Rule>()
 
-        assertClauseHeadPartialOrderingRespected(rules, filledTheory.rules)
-        assertTrue(emptyTheory.rules.none())
+            assertClauseHeadPartialOrderingRespected(rules, filledTheory.rules)
+            assertTrue(emptyTheory.rules.none())
+        }
     }
 
     fun directivesCorrect() {
-        val directives = TheoryUtils.wellFormedClauses.filterIsInstance<Directive>()
+        withFreshTheories {
+            val directives = wellFormedClauses.filterIsInstance<Directive>()
 
-        assertClauseHeadPartialOrderingRespected(directives, filledTheory.directives)
-        assertTrue(emptyTheory.directives.none())
+            assertClauseHeadPartialOrderingRespected(directives, filledTheory.directives)
+            assertTrue(emptyTheory.directives.none())
+        }
     }
 
     fun plusTheoryPreservesOrder() {
-        val (firstHalfClauses, secondHalfClauses) = TheoryUtils.wellFormedClausesHelves
-        val toBeTested = theoryGenerator(firstHalfClauses) + theoryGenerator(secondHalfClauses)
+        withFreshTheories {
+            val (firstHalfClauses, secondHalfClauses) = TheoryUtils.wellFormedClausesHelves
+            val toBeTested = theoryGenerator(firstHalfClauses) + theoryGenerator(secondHalfClauses)
 
-        assertEquals(filledTheory.clauses, toBeTested.clauses)
+            assertClausesHaveSameLengthAndContent(filledTheory.clauses, toBeTested.clauses)
+        }
     }
 
     fun plusTheoryFailsOnBadTheory() {
-        val badTheory = object : Theory by emptyTheoryGenerator() {
-            override val clauses: Iterable<Clause> = TheoryUtils.notWellFormedClauses
+        withFreshTheories {
+            val badTheory = object : Theory by emptyTheoryGenerator() {
+                override val clauses: Iterable<Clause> = notWellFormedClauses
+            }
+            assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
         }
-        assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
     }
 
     fun plusClause() {
-        val (firstHalfClauses, secondHalfClauses) = TheoryUtils.wellFormedClausesHelves
-        var toBeTested: Theory = theoryGenerator(firstHalfClauses)
-        secondHalfClauses.forEach { toBeTested += it }
+        withFreshTheories {
+            val (firstHalfClauses, secondHalfClauses) = TheoryUtils.wellFormedClausesHelves
+            var toBeTested: Theory = theoryGenerator(firstHalfClauses)
+            secondHalfClauses.forEach { toBeTested += it }
 
-        assertEquals(filledTheory.clauses, toBeTested.clauses)
+            assertClausesHaveSameLengthAndContent(filledTheory.clauses, toBeTested.clauses)
+        }
     }
 
     fun plusClauseRespectsPartialOrdering() {
-        val toBeTested = filledTheory + aRule
+        withFreshTheories {
+            val toBeTested = filledTheory + aRule
 
-        assertClauseHeadPartialOrderingRespected(TheoryUtils.wellFormedClauses + aRule, toBeTested.clauses)
+            assertClauseHeadPartialOrderingRespected(wellFormedClauses + aRule, toBeTested.clauses)
+        }
     }
 
     fun plusClauseReturnsNewUnlinkedTheoryInstance() {
-        val toBeTested = filledTheory + anIndependentFact
+        withFreshTheories {
+            val toBeTested = filledTheory + anIndependentFact
 
-        assertFalse(anIndependentFact in filledTheory)
-        assertTrue(anIndependentFact in toBeTested)
+            assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
+            assertTrue(anIndependentFact in toBeTested)
+        }
     }
 
     fun plusClauseComplainsOnBadClause() {
-        TheoryUtils.notWellFormedClauses.forEach {
-            assertFailsWith<IllegalArgumentException> { filledTheory + it }
+        withFreshTheories {
+            notWellFormedClauses.forEach {
+                assertFailsWith<IllegalArgumentException> { filledTheory + it }
+            }
         }
     }
 
     fun containsClauseReturnsTrueWithPresentClauses() {
-        TheoryUtils.wellFormedClauses.forEach {
-            assertTrue { it in filledTheory }
-        }
+        withFreshTheories {
+            wellFormedClauses.forEach {
+                assertTrue { it in filledTheory }
+            }
 
-        TheoryUtils.clausesQueryResultsMap.forEach { (query, result) ->
-            if (result.isNotEmpty()) assertTrue { query in filledTheory }
+            clausesQueryResultsMap.forEach { (query, result) ->
+                if (result.isNotEmpty()) assertTrue { query in filledTheory }
+            }
         }
     }
 
     fun containsClauseReturnsFalseWithNonPresentClauses() {
-        assertFalse(anIndependentFact in filledTheory)
+        withFreshTheories {
+            assertFalse(anIndependentFact in filledTheory)
 
-        TheoryUtils.clausesQueryResultsMap.forEach { (query, result) ->
-            if (result.isEmpty()) assertFalse { query in filledTheory }
+            clausesQueryResultsMap.forEach { (query, result) ->
+                if (result.isEmpty()) assertFalse { query in filledTheory }
+            }
         }
     }
 
     fun containsStructReturnsTrueIfMatchingHeadIsFound() {
-        TheoryUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { it.head in filledTheory }
+        withFreshTheories {
+            wellFormedClauses.filterIsInstance<Rule>().forEach {
+                assertTrue { it.head in filledTheory }
+            }
         }
     }
 
     fun containsStructReturnsFalseIfNoMatchingHeadIsFound() {
-        assertFalse(anIndependentFact.head in filledTheory)
+        withFreshTheories {
+            assertFalse(anIndependentFact.head in filledTheory)
+        }
     }
 
     fun containsIndicatorReturnsTrueIfMatchingClauseIsFound() {
-        TheoryUtils.wellFormedClauses.filterIsInstance<Rule>().forEach {
-            assertTrue { it.head.indicator in filledTheory }
-        }
-
-        TheoryUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
-            .forEach { (query, result) ->
-                if (result.isNotEmpty()) assertTrue { query.head.indicator in filledTheory }
+        withFreshTheories {
+            wellFormedClauses.filterIsInstance<Rule>().forEach {
+                assertTrue { it.head.indicator in filledTheory }
             }
+
+            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+                .forEach { (query, result) ->
+                    if (result.isNotEmpty()) assertTrue { query.head.indicator in filledTheory }
+                }
+        }
     }
 
     fun containsIndicatorReturnsFalseIfNoMatchingClauseIsFound() {
-        assertFalse(filledTheory.contains(anIndependentFact.head.indicator))
+        withFreshTheories {
+            assertFalse(filledTheory.contains(anIndependentFact.head.indicator))
 
-        TheoryUtils.clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
-            .forEach { (query, result) ->
-                if (result.isEmpty()) assertFalse { query.head.indicator in filledTheory }
-            }
+            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+                .forEach { (query, result) ->
+                    if (result.isEmpty()) assertFalse { query.head.indicator in filledTheory }
+                }
+        }
     }
 
     fun containsIndicatorComplainsIfIndicatorNonWellFormed() {
-        assertFailsWith<IllegalArgumentException> {
-            Indicator.of(Var.anonymous(), Var.anonymous()) in filledTheory
+        withFreshTheories {
+            assertFailsWith<IllegalArgumentException> {
+                Indicator.of(Var.anonymous(), Var.anonymous()) in filledTheory
+            }
         }
     }
 
     fun getClause() {
-        TheoryUtils.clausesQueryResultsMap.forEach { (query, result) ->
-            assertEquals(result, filledTheory[query].toList())
+        withFreshTheories {
+            clausesQueryResultsMap.forEach { (query, result) ->
+                assertEquals(result, filledTheory[query].toList())
+            }
         }
     }
 
     fun getStruct() {
-        TheoryUtils.rulesQueryWithVarBodyResultsMap
-            .forEach { (query, result) ->
-                val a = filledTheory[query.head].toList()
-                assertEquals(result, a)
-            }
+        withFreshTheories {
+            rulesQueryWithVarBodyResultsMap
+                .forEach { (query, result) ->
+                    val a = filledTheory[query.head].toList()
+                    assertEquals(result, a)
+                }
+        }
     }
 
     fun getIndicator() {
-        TheoryUtils.rulesQueryResultByFunctorAndArity
-            .forEach { (query, result) ->
-                val a = filledTheory[query.head.indicator].toList()
-                assertEquals(result, a)
-            }
+        withFreshTheories {
+            rulesQueryResultByFunctorAndArity
+                .forEach { (query, result) ->
+                    val a = filledTheory[query.head.indicator].toList()
+                    assertEquals(result, a)
+                }
+        }
     }
 
     fun getIndicatorComplainsIfIndicatorNonWellFormed() {
-        assertFailsWith<IllegalArgumentException> {
-            filledTheory.get(Indicator.of(Var.anonymous(), Var.anonymous()))
+        withFreshTheories {
+            assertFailsWith<IllegalArgumentException> {
+                filledTheory.get(Indicator.of(Var.anonymous(), Var.anonymous()))
+            }
         }
     }
 
     fun assertAClause() {
-        val correctPartiallyOrderedClauses = TheoryUtils.wellFormedClauses.toMutableList()
-            .apply { add(0, aRule) }
-        val toBeTested = filledTheory.assertA(aRule)
+        withFreshTheories {
+            val correctPartiallyOrderedClauses = wellFormedClauses.toMutableList().apply { add(0, aRule) }
+            val toBeTested = filledTheory.assertA(aRule)
 
-        assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+            assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+        }
     }
 
     fun assertAClauseComplainsOnBadClause() {
-        TheoryUtils.notWellFormedClauses.forEach {
-            assertFailsWith<IllegalArgumentException> { filledTheory.assertA(it) }
+        withFreshTheories {
+            notWellFormedClauses.forEach {
+                assertFailsWith<IllegalArgumentException> { filledTheory.assertA(it) }
+            }
         }
     }
 
     fun assertAStruct() {
-        val correctPartiallyOrderedClauses = TheoryUtils.wellFormedClauses.toMutableList()
-            .apply { add(0, Fact.of(aRule.head)) }
-        val toBeTested = filledTheory.assertA(aRule.head)
+        withFreshTheories {
+            val correctPartiallyOrderedClauses = wellFormedClauses.toMutableList()
+                .apply { add(0, Fact.of(aRule.head)) }
+            val toBeTested = filledTheory.assertA(aRule.head)
 
-        assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+            assertClauseHeadPartialOrderingRespected(correctPartiallyOrderedClauses, toBeTested.clauses)
+        }
+    }
+
+    private fun FreshTheoriesScope.assertTrueIfMutableFalseOtherwise(boolean: Boolean) {
+        if (filledTheory is MutableTheory) {
+            assertTrue(boolean)
+        } else {
+            assertFalse(boolean)
+        }
+    }
+
+    private fun FreshTheoriesScope.assertFalseIfMutableTrueOtherwise(boolean: Boolean) {
+        if (filledTheory is MutableTheory) {
+            assertFalse(boolean)
+        } else {
+            assertTrue(boolean)
+        }
     }
 
     fun assertACreatesNewUnlinkedInstance() {
-        val toBeTested = filledTheory.assertA(anIndependentFact)
+        withFreshTheories {
+            val toBeTested = filledTheory.assertA(anIndependentFact)
 
-        assertFalse(anIndependentFact in filledTheory)
-        assertTrue(anIndependentFact in toBeTested)
+            assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
+            assertTrue(anIndependentFact in toBeTested)
+        }
     }
 
     fun assertZClause() {
-        val toBeTested = filledTheory.assertZ(aRule)
+        withFreshTheories {
+            val toBeTested = filledTheory.assertZ(aRule)
 
-        assertClauseHeadPartialOrderingRespected(TheoryUtils.wellFormedClauses + aRule, toBeTested.clauses)
+            assertClauseHeadPartialOrderingRespected(wellFormedClauses + aRule, toBeTested.clauses)
+        }
     }
 
     fun assertZClauseComplainsOnBadClause() {
-        TheoryUtils.notWellFormedClauses.forEach {
-            assertFailsWith<IllegalArgumentException> { filledTheory.assertZ(it) }
+        withFreshTheories {
+            notWellFormedClauses.forEach {
+                assertFailsWith<IllegalArgumentException> { filledTheory.assertZ(it) }
+            }
         }
     }
 
     fun assertZStruct() {
-        val toBeTested = filledTheory.assertZ(aRule.head)
+        withFreshTheories {
+            val toBeTested = filledTheory.assertZ(aRule.head)
 
-        assertClauseHeadPartialOrderingRespected(
-            TheoryUtils.wellFormedClauses + Fact.of(aRule.head),
-            toBeTested.clauses
-        )
+            assertClauseHeadPartialOrderingRespected(
+                wellFormedClauses + Fact.of(aRule.head),
+                toBeTested.clauses
+            )
+        }
     }
 
     fun assertZCreatesNewUnlinkedInstance() {
-        val toBeTested = filledTheory.assertZ(anIndependentFact)
+        withFreshTheories {
+            val toBeTested = filledTheory.assertZ(anIndependentFact)
 
-        assertFalse(anIndependentFact in filledTheory)
-        assertTrue(anIndependentFact in toBeTested)
+            assertTrueIfMutableFalseOtherwise(anIndependentFact in filledTheory)
+            assertTrue(anIndependentFact in toBeTested)
+        }
     }
 
     fun retractClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        TheoryUtils.clausesQueryResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retract(query)
+        withFreshTheories {
+            clausesQueryResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retract(query)
 
-            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-            else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+                else assertTrue { retractResult is RetractResult.Success }
+            }
         }
     }
 
     fun retractClauseRemovesOnlyFirstMatchingClause() {
-        successfulRetractQueryResultMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retract(query) as RetractResult.Success
+        withFreshTheories {
+            successfulRetractQueryResultMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retract(query) as RetractResult.Success
 
-            assertEquals(listOf(result.first()), retractResult.clauses.toList())
+                assertEquals(listOf(result.first()), retractResult.clauses.toList())
+            }
         }
     }
 
     fun retractStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        TheoryUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retract(query)
+        withFreshTheories {
+            rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retract(query)
 
-            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-            else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+                else assertTrue { retractResult is RetractResult.Success }
+            }
         }
     }
 
     fun retractStructRemovesOnlyFirstMatchingClause() {
-        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retract(query.head) as RetractResult.Success
+        withFreshTheories {
+            successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retract(query.head) as RetractResult.Success
 
-            assertEquals(listOf(result.first()), retractResult.clauses.toList())
+                assertEquals(listOf(result.first()), retractResult.clauses.toList())
+            }
         }
     }
 
     fun retractCreatesNewUnlinkedInstanceIfSuccessful() {
-        val aDatabaseClause = filledTheory.clauses.first()
-        val toBeTested = filledTheory.retract(aDatabaseClause).theory
+        withFreshTheories {
+            val aDatabaseClause = filledTheory.clauses.first()
+            val toBeTested = filledTheory.retract(aDatabaseClause).theory
 
-        assertNotSame(filledTheory, toBeTested)
-        assertTrue(aDatabaseClause in filledTheory)
-        assertFalse(aDatabaseClause in toBeTested)
+            assertSameIfMutableNotSameOtherwise(filledTheory, toBeTested)
+            assertFalseIfMutableTrueOtherwise(aDatabaseClause in filledTheory)
+            assertFalse(aDatabaseClause in toBeTested)
+        }
     }
 
     fun retractReturnsSameTheoryOnFailure() {
-        val toBeTested = filledTheory.retract(anIndependentFact).theory
+        withFreshTheories {
+            val toBeTested = filledTheory.retract(anIndependentFact).theory
 
-        assertSame(filledTheory, toBeTested)
+            assertSame(filledTheory, toBeTested) // TODO take care of mutable theories here
+        }
     }
 
     fun retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        TheoryUtils.clausesQueryResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retractAll(query)
+        withFreshTheories {
+            clausesQueryResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retractAll(query)
 
-            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-            else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+                else assertTrue { retractResult is RetractResult.Success }
+            }
         }
     }
 
     fun retractAllClauseRemovesOnlyFirstMatchingClause() {
-        successfulRetractQueryResultMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retractAll(query) as RetractResult.Success
+        withFreshTheories {
+            successfulRetractQueryResultMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retractAll(query) as RetractResult.Success
 
-            assertEquals(result, retractResult.clauses.toList())
+                assertEquals(result, retractResult.clauses.toList())
+            }
         }
     }
 
     fun retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        TheoryUtils.rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retractAll(query)
+        withFreshTheories {
+            rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retractAll(query)
 
-            if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
-            else assertTrue { retractResult is RetractResult.Success }
+                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+                else assertTrue { retractResult is RetractResult.Success }
+            }
         }
     }
 
     fun retractAllStructRemovesOnlyFirstMatchingClause() {
-        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
-            val retractResult = filledTheory.retractAll(query.head) as RetractResult.Success
+        withFreshTheories {
+            successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+                val retractResult = filledTheory.retractAll(query.head) as RetractResult.Success
 
-            assertEquals(result, retractResult.clauses.toList())
+                assertEquals(result, retractResult.clauses.toList())
+            }
+        }
+    }
+
+    private fun assertSameIfMutableNotSameOtherwise(first: Theory, second: Theory) {
+        if (first is MutableTheory && second is MutableTheory) {
+            assertSame(first, second)
+        } else if (first !is MutableTheory && second !is MutableTheory) {
+            assertNotSame(first, second)
+        } else {
+            throw IllegalStateException("There must be a problem: trying to compare a mutable theory with an immutable one")
         }
     }
 
     fun retractAllCreatesNewUnlinkedInstanceIfSuccessful() {
-        val aDatabaseClause = filledTheory.clauses.first()
-        val toBeTested = filledTheory.retractAll(aDatabaseClause).theory
+        withFreshTheories {
+            val aDatabaseClause = filledTheory.clauses.first()
+            val toBeTested = filledTheory.retractAll(aDatabaseClause).theory
 
-        assertNotSame(filledTheory, toBeTested)
-        assertTrue(aDatabaseClause in filledTheory)
-        assertFalse(aDatabaseClause in toBeTested)
+            assertSameIfMutableNotSameOtherwise(filledTheory, toBeTested)
+            assertFalseIfMutableTrueOtherwise(aDatabaseClause in filledTheory)
+            assertFalse(aDatabaseClause in toBeTested)
+        }
     }
 
     fun retractAllReturnsSameTheoryOnFailure() {
-        val toBeTested = filledTheory.retractAll(anIndependentFact).theory
+        withFreshTheories {
+            val toBeTested = filledTheory.retractAll(anIndependentFact).theory
 
-        assertSame(filledTheory, toBeTested)
+            assertSame(filledTheory, toBeTested)
+        }
     }
 
     fun iteratorReturnsCorrectInstance() {
-        assertEquals(
-            filledTheory.clauses.iterator().asSequence().toList(),
-            filledTheory.iterator().asSequence().toList()
-        )
+        withFreshTheories {
+            assertClausesHaveSameLengthAndContent(
+                filledTheory.clauses.iterator().asSequence(),
+                filledTheory.iterator().asSequence()
+            )
+        }
     }
 
     fun getTakesUnificationIntoAccount() {

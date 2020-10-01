@@ -9,6 +9,7 @@ import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
 internal class MutableIndexedTheory private constructor(override val queue: MutableClauseQueue) :
@@ -19,12 +20,16 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
         checkClausesCorrect(clauses)
     }
 
+    /** Construct a Clause database from given clauses */
+    constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
+
+    override val clauses: List<Clause> get() = queue.toList()
+
+    override fun iterator(): Iterator<Clause> = queue.iterator()
+
     override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
         return MutableIndexedTheory(clauses)
     }
-
-    /** Construct a Clause database from given clauses */
-    constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
 
     override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> {
         return queue.retrieve(clause).toRetractResult()
@@ -51,7 +56,7 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
     }
 
     override fun plus(clause: Clause): MutableIndexedTheory {
-        return assertZ(clause)
+        return assertZ(checkClauseCorrect(clause))
     }
 
     override fun plus(theory: Theory): MutableIndexedTheory {
@@ -59,12 +64,12 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
     }
 
     override fun assertA(clause: Clause): MutableIndexedTheory {
-        return this.also { it.queue.addFirst(clause) }
+        return this.also { it.queue.addFirst(checkClauseCorrect(clause)) }
     }
 
     override fun assertA(clauses: Iterable<Clause>): MutableIndexedTheory {
         return this.also {
-            for (clause in clauses.toList().asReversed()) {
+            for (clause in checkClausesCorrect(clauses).toList().asReversed()) {
                 it.queue.addFirst(clause)
             }
         }
@@ -75,15 +80,15 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
     }
 
     override fun assertZ(clause: Clause): MutableIndexedTheory {
-        return this.also { it.queue.addLast(clause) }
+        return this.also { it.queue.addLast(checkClauseCorrect(clause)) }
     }
 
     override fun assertZ(clauses: Iterable<Clause>): MutableIndexedTheory {
-        return this.also { it.queue.addAll(clauses) }
+        return this.also { it.queue.addAll(checkClausesCorrect(clauses)) }
     }
 
     override fun assertZ(clauses: Sequence<Clause>): MutableIndexedTheory {
-        return assertZ(clauses.asIterable())
+        return assertZ(checkClausesCorrect(clauses.asIterable()))
     }
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableIndexedTheory> {
