@@ -23,11 +23,8 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleT
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLengthTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
+import it.unibo.tuprolog.solve.TestingBuiltIn.numbCharsTesting
+import it.unibo.tuprolog.solve.TestingBuiltIn.numbCodesTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
@@ -1444,6 +1441,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         )
     }
 
+    /*
+
     override fun testAtomChars() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
@@ -1483,4 +1482,30 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             mediumDuration
         )
     }
+
+    override fun testSubAtom() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            subAtomTesting,
+            mediumDuration
+        )
+    } */
+
+    override fun testNumbChars() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            numbCharsTesting,
+            mediumDuration
+        )
+    }
+
+    override fun testNumbCodes() {
+        assertSolverSolutionsCorrect(
+            solverFactory.solverWithDefaultBuiltins(),
+            numbCodesTesting,
+            mediumDuration
+        )
+    }
+
+
 }

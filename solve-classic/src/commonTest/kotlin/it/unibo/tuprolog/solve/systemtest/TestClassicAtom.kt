@@ -43,4 +43,36 @@ class TestClassicAtom : TestAtom, SolverFactory by ClassicSolverFactory {
     override fun testAtomNumDec() {
         prototype.testAtomNumDec()
     }
+
+    @Test
+    override fun testAtomChars() {
+        prototype.testAtomChars()
+    }
+
+
+    @Test
+    override fun testAtomCodes() {
+       prototype.testAtomCodes()
+    }
+
+    @Test
+    override fun testAtomConcat() {
+        prototype.testAtomConcat()
+    }
+
+    @Test
+    override fun testAtomLength() {
+        prototype.testAtomLength()
+    }
+
+    @Test
+    override fun testCharCode() {
+        prototype.testCharCode()
+    }
+
+    @Test
+    override fun testSubAtom() {
+        prototype.testSubAtom()
+    }
+
 }

@@ -325,6 +325,7 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
         prototype.testTermNotSame()
     }
 
+    /*
     @Test
     override fun testAtomChars() {
         prototype.testAtomChars()
@@ -350,4 +351,22 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     override fun testAtomConcat() {
         prototype.testAtomConcat()
     }
+
+    @Test
+    override fun testSubAtom() {
+        prototype.testSubAtom()
+    } */
+
+    @Test
+    @Ignore
+    override fun testNumbChars() {
+        prototype.testNumbChars()
+    }
+
+    @Test
+    @Ignore
+    override fun testNumbCodes() {
+        prototype.testNumbCodes()
+    }
+
 }

@@ -168,6 +168,7 @@ interface TestSolver : SolverTest {
     fun testTermLowerThan()
     fun testTermLowerThanOrEqual()
 
+    /*
     /** atom_chars/2 test */
     fun testAtomChars()
 
@@ -182,4 +183,15 @@ interface TestSolver : SolverTest {
 
     /** atom_concat/3 test */
     fun testAtomConcat()
+
+    /** sub_atom/5 test */
+    fun testSubAtom() */
+
+    /** number_chars/2 test*/
+    fun testNumbChars()
+
+    /** number_code/2 test*/
+    fun testNumbCodes()
+
+
 }
