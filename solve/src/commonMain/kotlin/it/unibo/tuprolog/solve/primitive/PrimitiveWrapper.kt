@@ -242,7 +242,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 is Atom -> {
-                    val string = (arg as Atom).value
+                    val string = arg.value
                     when {
                         string.length == 1 -> this
                         else -> throw TypeError.forArgument(context, signature, CHARACTER, arg, index)

@@ -16,4 +16,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("repeat") 
         TODO("Not yet implemented")
     }
 
+    // private data class SubString(val start: Int, val end: Int, val value: String)
+    //
+    // private fun String.substrings(): Sequence<SubString> = sequence {  }
 }
