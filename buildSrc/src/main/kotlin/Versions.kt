@@ -34,7 +34,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.21.1"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.0"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.10"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
@@ -46,7 +46,7 @@ object Versions {
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 
-    const val kt_math: String = "0.2.0"
+    const val kt_math: String = "0.2.2"
 
     const val ktlint: String = "0.39.0"
 

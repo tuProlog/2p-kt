@@ -7,6 +7,8 @@ import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The domain error occurs when something has the correct type but the value is not admissible
@@ -15,7 +17,7 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
  * @param expectedDomain The expected domain, that wouldn't have raised the error
- * @param actualValue The value not respecting [expectedDomain]
+ * @param culprit The value not respecting [expectedDomain]
  * @param extraData The possible extra data to be carried with the error
  */
 @Suppress("MemberVisibilityCanBePrivate")
@@ -23,8 +25,8 @@ class DomainError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val expectedDomain: Expected,
-    val actualValue: Term,
+    @JsName("expectedDomain") val expectedDomain: Expected,
+    @JsName("culprit") val culprit: Term,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -38,15 +40,17 @@ class DomainError(
     ) : this(message, cause, arrayOf(context), expectedDomain, actualValue, extraData)
 
     override fun updateContext(newContext: ExecutionContext): DomainError =
-        DomainError(message, cause, contexts.setFirst(newContext), expectedDomain, actualValue, extraData)
+        DomainError(message, cause, contexts.setFirst(newContext), expectedDomain, culprit, extraData)
 
     override fun pushContext(newContext: ExecutionContext): DomainError =
-        DomainError(message, cause, contexts.addLast(newContext), expectedDomain, actualValue, extraData)
+        DomainError(message, cause, contexts.addLast(newContext), expectedDomain, culprit, extraData)
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, expectedDomain.toTerm(), actualValue) }
+    override val type: Struct by lazy { Struct.of(super.type.functor, expectedDomain.toTerm(), culprit) }
 
     companion object {
 
+        @JsName("forArgument")
+        @JvmStatic
         fun forArgument(
             context: ExecutionContext,
             procedure: Signature,
@@ -67,6 +71,8 @@ class DomainError(
             )
         }
 
+        @JsName("forGoal")
+        @JvmStatic
         fun forGoal(
             context: ExecutionContext,
             procedure: Signature,
@@ -133,6 +139,7 @@ class DomainError(
         DIRECTIVE;
 
         /** The expected domain string description */
+        @JsName("domain")
         val domain: String by lazy { name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
@@ -143,9 +150,13 @@ class DomainError(
         companion object {
 
             /** Returns the Expected instance described by [domain]; creates a new instance only if [domain] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(domain: String): Expected = valueOf(domain.toUpperCase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Expected? = when (term) {
                 is Atom -> of(term.value)
                 else -> null

@@ -8,14 +8,12 @@ import it.unibo.tuprolog.solve.library.exception.NoSuchALibraryException
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /** A class representing an agglomerate of libraries with an alias */
-class Libraries(libraries: Sequence<AliasedLibrary>) :
+class Libraries private constructor(libraries: Sequence<AliasedLibrary>) :
     LibraryGroup<AliasedLibrary>,
     Map<String, AliasedLibrary> by (libraries.map { it.alias to it }.toMap()) {
-
-    constructor(vararg library: AliasedLibrary) : this(library.asSequence())
-    constructor(libraries: Iterable<AliasedLibrary>) : this(libraries.asSequence())
 
     /** All library aliases of libraries included in this library group */
     @JsName("libraryAliases")
@@ -121,5 +119,21 @@ class Libraries(libraries: Sequence<AliasedLibrary>) :
 
         private fun noSuchALibraryError(alias: String): Nothing =
             throw NoSuchALibraryException("No library with alias `$alias` has been loaded")
+
+        @JsName("empty")
+        @JvmStatic
+        fun empty() = Libraries(emptySequence())
+
+        @JsName("of")
+        @JvmStatic
+        fun of(vararg library: AliasedLibrary) = Libraries(sequenceOf(*library))
+
+        @JsName("ofIterable")
+        @JvmStatic
+        fun of(libraries: Iterable<AliasedLibrary>) = Libraries(libraries.asSequence())
+
+        @JsName("ofSequence")
+        @JvmStatic
+        fun of(libraries: Sequence<AliasedLibrary>) = Libraries(libraries)
     }
 }

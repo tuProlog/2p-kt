@@ -127,15 +127,15 @@ sealed class SideEffect {
     }
 
     data class AddLibraries(val libraries: Libraries) : SideEffect() {
-        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries(libraries))
-        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries(libraries))
-        constructor(vararg libraries: AliasedLibrary) : this(Libraries(*libraries))
+        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(vararg libraries: AliasedLibrary) : this(Libraries.of(*libraries))
     }
 
     data class ResetLibraries(val libraries: Libraries) : SideEffect() {
-        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries(libraries))
-        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries(libraries))
-        constructor(vararg libraries: AliasedLibrary) : this(Libraries(*libraries))
+        constructor(libraries: Iterable<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(libraries: Sequence<AliasedLibrary>) : this(Libraries.of(libraries))
+        constructor(vararg libraries: AliasedLibrary) : this(Libraries.of(*libraries))
     }
 
     data class SetOperators(val operators: Iterable<Operator>) : SideEffect() {

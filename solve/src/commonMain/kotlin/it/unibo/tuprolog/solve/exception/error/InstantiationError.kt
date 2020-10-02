@@ -6,6 +6,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The instantiation error occurs when some Term is a Variable, and it should not
@@ -21,7 +23,7 @@ class InstantiationError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val culprit: Var = Var.anonymous(),
+    @JsName("culprit") val culprit: Var = Var.anonymous(),
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -44,6 +46,8 @@ class InstantiationError(
         /** The instantiation error Struct functor */
         const val typeFunctor = "instantiation_error"
 
+        @JsName("forArgument")
+        @JvmStatic
         fun forArgument(context: ExecutionContext, procedure: Signature, variable: Var, index: Int? = null) =
             message(
                 "${index?.let { "The $it-th argument" } ?: "The argument"} `${variable.pretty()}` " +
@@ -57,6 +61,8 @@ class InstantiationError(
                 )
             }
 
+        @JsName("forGoal")
+        @JvmStatic
         fun forGoal(context: ExecutionContext, procedure: Signature, variable: Var) =
             message(
                 "Uninstantiated subgoal ${variable.pretty()} in procedure ${procedure.pretty()}"

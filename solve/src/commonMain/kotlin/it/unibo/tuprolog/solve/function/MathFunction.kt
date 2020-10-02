@@ -45,6 +45,6 @@ abstract class MathFunction : FunctionWrapper<ExecutionContext> {
         "Operator `$opName` accepts only integers!",
         context = context,
         expectedType = TypeError.Expected.INTEGER,
-        actualValue = actualValue
+        culprit = actualValue
     )
 }

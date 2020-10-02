@@ -24,7 +24,7 @@ internal object ArithmeticEvaluatorUtils {
 
     /** A context with [CommonBuiltins] loaded */
     internal val commonFunctionsContext = object : ExecutionContext by ExpressionEvaluatorUtils.noFunctionsContext {
-        override val libraries: Libraries = Libraries(CommonBuiltins)
+        override val libraries: Libraries = Libraries.of(CommonBuiltins)
     }
 
     /** A context with [CommonBuiltins] loaded */

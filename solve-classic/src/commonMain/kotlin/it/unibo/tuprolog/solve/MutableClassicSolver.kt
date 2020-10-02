@@ -2,14 +2,16 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
 internal class MutableClassicSolver(
-    libraries: Libraries = Libraries(),
-    flags: FlagStore = FlagStore.EMPTY,
+    libraries: Libraries = Libraries.empty(),
+    flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
@@ -124,5 +126,23 @@ internal class MutableClassicSolver(
             copy(dynamicKb = result.theory)
         }
         return result
+    }
+
+    override fun setFlag(name: String, value: Term) {
+        updateContext {
+            copy(flags = flags.set(name, value))
+        }
+    }
+
+    override fun setFlag(flag: Pair<String, Term>) {
+        updateContext {
+            copy(flags = flags + flag)
+        }
+    }
+
+    override fun setFlag(flag: NotableFlag) {
+        updateContext {
+            copy(flags = flags + flag)
+        }
     }
 }

@@ -90,7 +90,7 @@ internal object CallUtils {
                         TypeError(
                             context = aContext,
                             expectedType = TypeError.Expected.CALLABLE,
-                            actualValue = true and 1
+                            culprit = true and 1
                         )
                     )
                 })

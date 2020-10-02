@@ -6,6 +6,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The evaluation error occurs when some problem occurs in evaluating an arithmetic expression
@@ -22,7 +24,7 @@ class EvaluationError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val errorType: Type,
+    @JsName("errorType") val errorType: Type,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -64,6 +66,8 @@ class EvaluationError(
         companion object {
 
             /** Gets [Type] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Type? = when (term) {
                 is Atom ->
                     try {

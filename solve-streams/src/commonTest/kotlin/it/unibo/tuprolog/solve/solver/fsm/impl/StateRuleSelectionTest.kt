@@ -37,7 +37,7 @@ internal class StateRuleSelectionTest {
         theQuery.extractSignature(),
         theQuery.argsList,
         StreamsExecutionContext(
-            libraries = Libraries(
+            libraries = Libraries.of(
                 Library.aliased(
                     alias = "testLib",
                     theory = prolog { theory({ "f"("a") }) }
@@ -104,7 +104,7 @@ internal class StateRuleSelectionTest {
     @Test
     fun stateRuleSelectionUsesCombinationOfStaticAndDynamicKBWhenLibraryTheoriesDoesntProvideMatches() {
         val dynamicAndStaticKBSolveRequest =
-            with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries())) }
+            with(threeDBSolveRequest) { copy(context = context.copy(libraries = Libraries.empty())) }
         val correctSubstitutions = prolog {
             ktListOf(
                 theQueryVariable to "b",

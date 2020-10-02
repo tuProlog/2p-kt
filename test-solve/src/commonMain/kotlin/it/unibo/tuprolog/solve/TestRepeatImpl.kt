@@ -7,7 +7,7 @@ internal class TestRepeatImpl(private val solverFactory: SolverFactory) : TestRe
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (repeat and "!" and fail)
+            val query = (repeat and (cut and fail))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

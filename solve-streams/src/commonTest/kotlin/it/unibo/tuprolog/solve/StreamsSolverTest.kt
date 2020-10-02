@@ -16,8 +16,8 @@ internal class StreamsSolverTest {
     fun defaultConstructorParameters() {
         val toBeTested = StreamsSolver()
 
-        assertEquals(Libraries(), toBeTested.libraries)
-        assertEquals(FlagStore.EMPTY, toBeTested.flags)
+        assertEquals(Libraries.empty(), toBeTested.libraries)
+        assertEquals(FlagStore.empty(), toBeTested.flags)
         assertEquals(Theory.empty(), toBeTested.staticKb)
         assertEquals(Theory.empty(), toBeTested.dynamicKb)
     }
