@@ -192,6 +192,4 @@ interface TestSolver : SolverTest {
 
     /** number_code/2 test*/
     fun testNumbCodes()
-
-
 }

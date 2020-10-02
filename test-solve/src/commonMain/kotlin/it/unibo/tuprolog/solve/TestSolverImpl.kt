@@ -1506,6 +1506,4 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             mediumDuration
         )
     }
-
-
 }

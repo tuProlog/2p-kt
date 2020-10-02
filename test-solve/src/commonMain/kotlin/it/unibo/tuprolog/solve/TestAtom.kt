@@ -100,7 +100,6 @@ interface TestAtom : SolverTest {
 
     fun testAtomCodes()
 
-
     /**
      * atom_length Testing
      *

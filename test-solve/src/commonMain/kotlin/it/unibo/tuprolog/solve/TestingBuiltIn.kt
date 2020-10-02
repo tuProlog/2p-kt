@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
 object TestingBuiltIn {
@@ -153,7 +152,6 @@ object TestingBuiltIn {
 
     */
 
-
     /*
     [sub_atom('ab', Before, Length, After, Sub_atom),
     [[Before <-- 1, Length <-- 0, Sub_atom <-- ''],
@@ -212,7 +210,7 @@ object TestingBuiltIn {
                 number_chars(3.3, listOf("3", ".", "3")).hasSolutions({ yes() }),
                 number_chars("X", listOf("\n", "3")).hasSolutions({ yes("X" to 3) }),
                 number_chars("X", listOf("4", ".", "2")).hasSolutions({ yes("X" to 4.2) }),
-                //number_chars("X",listOf("3",".","3","E","+","0")).hasSolutions({yes("X" to 3.3)}),
+                // number_chars("X",listOf("3",".","3","E","+","0")).hasSolutions({yes("X" to 3.3)}),
                 number_chars("X", "L").hasSolutions({
                     halt(
                         InstantiationError.forArgument(
@@ -241,17 +239,15 @@ object TestingBuiltIn {
         prolog {
             ktListOf(
                 number_codes(33, "L").hasSolutions({ yes("L" to listOf(51, 51)) }),
-                number_codes("X",listOf(51, 51) ).hasSolutions({ yes("X" to 33 ) }),
-                number_codes(33.0, "L").hasSolutions({ yes("L" to listOf("51", "51","46","48")) }),
-                number_codes(33.0,"L").hasSolutions({yes("L" to listOf("0'3", "0'3"))}),
+                number_codes("X", listOf(51, 51)).hasSolutions({ yes("X" to 33) }),
+                number_codes(33.0, "L").hasSolutions({ yes("L" to listOf("51", "51", "46", "48")) }),
+                number_codes(33.0, "L").hasSolutions({ yes("L" to listOf("0'3", "0'3")) }),
                 number_codes(33, listOf("0'3", "0'3")).hasSolutions({ yes() }),
-                number_codes(33.0, listOf("0'3","0'.","0'3","0'E","0'+","0'0","0'1")).hasSolutions({ yes() }),
-                number_codes("X",listOf("0'2", "0'5") ).hasSolutions({ yes("X" to 25 ) }),
-                number_codes("X",listOf("0'0","39", "0'a") ).hasSolutions({ yes("X" to 97 ) }),
+                number_codes(33.0, listOf("0'3", "0'.", "0'3", "0'E", "0'+", "0'0", "0'1")).hasSolutions({ yes() }),
+                number_codes("X", listOf("0'2", "0'5")).hasSolutions({ yes("X" to 25) }),
+                number_codes("X", listOf("0'0", "39", "0'a")).hasSolutions({ yes("X" to 97) }),
 
             )
         }
     }
-
-
 }

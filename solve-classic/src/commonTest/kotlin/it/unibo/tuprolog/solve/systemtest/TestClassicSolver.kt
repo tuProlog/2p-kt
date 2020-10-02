@@ -368,5 +368,4 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     override fun testNumbCodes() {
         prototype.testNumbCodes()
     }
-
 }

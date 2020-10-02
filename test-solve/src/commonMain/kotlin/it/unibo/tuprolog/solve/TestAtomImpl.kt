@@ -131,7 +131,6 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
                     .hasSolutions({ no() })
             )
         }
-
     }
 
     override fun testAtomLength() {
@@ -205,7 +204,7 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
                 sub_atom("abracadabra", intOf(3), "L", intOf(3), "S")
                     .hasSolutions({ yes("L" to 5); yes("X" to atomOf("acada")) }),
                 sub_atom("abracadabra", "B", 2, "A", "ab")
-                    .hasSolutions({ yes("B" to 0); yes("A" to 9) }).also { ("B" to 0);("A" to 9) },
+                    .hasSolutions({ yes("B" to 0); yes("A" to 9) }).also { ("B" to 0); ("A" to 9) },
                 sub_atom("banana", intOf(3), intOf(2), "_", "S")
                     .hasSolutions({ yes("S" to atomOf("an")) }),
             )

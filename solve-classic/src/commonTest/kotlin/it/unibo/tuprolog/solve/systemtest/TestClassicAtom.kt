@@ -49,10 +49,9 @@ class TestClassicAtom : TestAtom, SolverFactory by ClassicSolverFactory {
         prototype.testAtomChars()
     }
 
-
     @Test
     override fun testAtomCodes() {
-       prototype.testAtomCodes()
+        prototype.testAtomCodes()
     }
 
     @Test
@@ -74,5 +73,4 @@ class TestClassicAtom : TestAtom, SolverFactory by ClassicSolverFactory {
     override fun testSubAtom() {
         prototype.testSubAtom()
     }
-
 }

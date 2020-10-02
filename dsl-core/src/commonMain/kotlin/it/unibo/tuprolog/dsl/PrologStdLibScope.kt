@@ -209,16 +209,14 @@ interface PrologStdLibScope : PrologAwareScope {
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
 
-    fun sub_atom(atom: Any, before: Any, length: Any,after: Any, sub_atom: Any): Struct =
-        structOf("sub_atom", atom.toTerm(), before.toTerm(),length.toTerm(),after.toTerm(),sub_atom.toTerm())
+    fun sub_atom(atom: Any, before: Any, length: Any, after: Any, sub_atom: Any): Struct =
+        structOf("sub_atom", atom.toTerm(), before.toTerm(), length.toTerm(), after.toTerm(), sub_atom.toTerm())
 
-    fun number_chars(first: Any, second: Any): Struct=
+    fun number_chars(first: Any, second: Any): Struct =
         structOf("number_chars", first.toTerm(), second.toTerm())
 
-    fun number_codes(first: Any, second: Any): Struct=
+    fun number_codes(first: Any, second: Any): Struct =
         structOf("number_codes", first.toTerm(), second.toTerm())
-
-
 
 //    bagof/3
 //    close/1
