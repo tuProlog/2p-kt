@@ -176,8 +176,18 @@ interface PrologStdLibScope : PrologAwareScope {
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
 
+    fun sub_atom(atom: Any, before: Any, length: Any,after: Any, sub_atom: Any): Struct =
+        structOf("sub_atom", atom.toTerm(), before.toTerm(),length.toTerm(),after.toTerm(),sub_atom.toTerm())
+
+    fun number_chars(first: Any, second: Any): Struct=
+        structOf("number_chars", first.toTerm(), second.toTerm())
+
+    fun number_codes(first: Any, second: Any): Struct=
+        structOf("number_codes", first.toTerm(), second.toTerm())
+
+
+
 //    bagof/3
-//    char_code/2
 //    close/1
 //    close/2
 //    copy_term/2
@@ -220,7 +230,6 @@ interface PrologStdLibScope : PrologAwareScope {
 //    set_stream_position/2
 //    setof/3
 //    stream_property/2
-//    sub_atom/5
 //    unify_with_occurs_check/2
 //    write_canonical/1
 //    write_canonical/2

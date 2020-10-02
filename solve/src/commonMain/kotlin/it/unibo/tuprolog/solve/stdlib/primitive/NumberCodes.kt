@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -11,23 +10,15 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
-import it.unibo.tuprolog.core.List as LogicList
+import kotlin.collections.List
 
-/**
- * atom_codes(abc, [97 | X])
- */
-object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
-        when (first) {
+object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes") {
+    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
+        return when (first) {
             is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
-                val codeList = second as LogicList
-                // var result = ""
-                // val size = codeList.size
-                // for (i in 0 until size) {
-                //     result += codeList[i].toString().toInt().toChar().toString()
-                // }
+                val codeList = second as it.unibo.tuprolog.core.List
                 val chars: List<Char> = codeList.toList().map {
                     when (it) {
                         is Integer -> {
@@ -42,17 +33,25 @@ object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
                         }
                     }
                 }
-                Substitution.of(first, Atom.of(chars.joinToString(separator = "")))
+                val number = Atom.of(chars.joinToString(separator = ""))
+                Substitution.of(first, (Numeric.of((number.value))))
             }
             else -> {
                 ensuringArgumentIsInstantiated(0)
-                ensuringArgumentIsAtom(0)
+                ensuringArgumentIsNumeric(0)
                 if (second !is Var) {
                     ensuringArgumentIsList(1)
                 }
-                val charArray = (first as Atom).value
-                val result = LogicList.of(charArray.map { Integer.of(it.toInt()) })
-                second mguWith result
+                if ((first as Numeric).isReal) {
+                    val number = (first as Real).toString().toAtom().value
+                    val result = it.unibo.tuprolog.core.List.of(number.map { Numeric.of(it.toInt()) })
+                    second mguWith result
+                } else {
+                    val number = first.toString().toAtom().value
+                    val result = it.unibo.tuprolog.core.List.of(number.map { Numeric.of(it.toInt()) })
+                    second mguWith result
+                }
             }
         }
+    }
 }
