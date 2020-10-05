@@ -20,5 +20,5 @@ include("parser-theory")
 include("serialize-core")
 include("serialize-theory")
 include("repl")
-
+include("ide")
 include("examples")

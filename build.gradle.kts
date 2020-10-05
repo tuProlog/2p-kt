@@ -69,7 +69,7 @@ val githubToken = getPropertyOrWarnForAbsence("githubToken")
 val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
 val allSubprojects = allprojects.map { it.name }.toSet()
-val jvmSubprojects = setOf("parser-jvm", "examples")
+val jvmSubprojects = setOf("parser-jvm", "examples", "ide")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
 

@@ -89,6 +89,21 @@ object Libs {
             Versions.org_jetbrains_kotlin
 
     /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+
+    /**
      * http://www.antlr.org
      */
     const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
@@ -122,6 +137,10 @@ object Libs {
             "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
             Versions.de_fayard_buildsrcversions_gradle_plugin
 
+    const val org_openjfx_javafxplugin_gradle_plugin: String =
+            "org.openjfx.javafxplugin:org.openjfx.javafxplugin.gradle.plugin:" +
+            Versions.org_openjfx_javafxplugin_gradle_plugin
+
     const val com_eden_orchidplugin_gradle_plugin: String =
             "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
             Versions.com_eden_orchidplugin_gradle_plugin
@@ -152,6 +171,11 @@ object Libs {
      */
     const val jackson_core: String = "com.fasterxml.jackson.core:jackson-core:" +
             Versions.jackson_core
+
+    /**
+     * https://github.com/FXMisc/RichTextFX/#richtextfx
+     */
+    const val richtextfx: String = "org.fxmisc.richtext:richtextfx:" + Versions.richtextfx
 
     /**
      * http://plantuml.sourceforge.net
