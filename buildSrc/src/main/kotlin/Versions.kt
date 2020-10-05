@@ -1,4 +1,3 @@
-import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -18,7 +17,7 @@ object Versions {
 
     const val org_jetbrains_kotlin: String = "1.4.10"
 
-    const val org_openjfx: String = "11.0.2" // available: "15"
+    const val org_openjfx: String = "15" // "11.0.2" // available: "15"
 
     const val org_antlr: String = "4.8-1"
 
