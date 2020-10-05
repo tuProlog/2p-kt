@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 public class TuPrologFx extends Application {
     private static final int width = 700;
 
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override
     public void start(Stage stage) {
@@ -24,10 +27,6 @@ public class TuPrologFx extends Application {
         stage.show();
 
         //maingra
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 
     @Override

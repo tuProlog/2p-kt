@@ -4,7 +4,7 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.solve.Solution
 import java.io.File
-import java.util.*
+import java.util.Optional
 
 interface SolverController {
 
@@ -15,6 +15,7 @@ interface SolverController {
     fun printHaltSolution(solution: Solution.Halt): String
     fun printBinding(solution: Solution): String
     fun printException(solution: Solution): String
+
     // setExceptionListener
     fun addExceptionListener(listener: ExceptionListener)
 

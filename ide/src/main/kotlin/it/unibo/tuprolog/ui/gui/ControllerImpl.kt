@@ -16,12 +16,11 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parse
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.ArrayList
+import java.util.Optional
 import kotlin.system.exitProcess
 
-
 class ControllerImpl : SolverController {
-
 
     private lateinit var solver: Solver
     private var exception: ArrayList<ExceptionListener> = ArrayList<ExceptionListener>()
@@ -47,12 +46,16 @@ class ControllerImpl : SolverController {
         }
     }
 
-    override fun solveQuery(query: String/*, stdInText: String*/, files: Set<File>, timeout: Optional<Int>): Iterable<Solution> {
+    override fun solveQuery(
+        query: String/*, stdInText: String*/,
+        files: Set<File>,
+        timeout: Optional<Int>
+    ): Iterable<Solution> {
         val theory: Theory = this.loadTheory(files)
 //        val stdInReader = BufferedReader(StringReader(stdInText))
 //        val stdInIterator = stdInText.iterator()
         solver = Solver.classicWithDefaultBuiltins(
-                staticKb = theory //,
+            staticKb = theory //,
 //                stdIn = InputChannel.of { stdInIterator.next() }
         )
         val solutions = readEvalPrint(query, timeout)
@@ -101,7 +104,6 @@ class ControllerImpl : SolverController {
                 printHaltSolution(sol)
             }
         }
-
     }
 
     override fun printYesSolution(solution: Solution.Yes): String {
@@ -160,6 +162,5 @@ class ControllerImpl : SolverController {
 
         return sb.toString()
     }
-
 }
 

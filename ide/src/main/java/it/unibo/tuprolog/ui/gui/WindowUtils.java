@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.ui.gui;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

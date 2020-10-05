@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.Solution;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
@@ -23,37 +22,28 @@ import java.util.*;
 
 public class TuPrologPane extends BorderPane {
 
-    private final static int defaultInsets = 5;
-
-
     public static final String file = "File";
     public static final String edit = "Edit";
     public static final String window = "Window";
     public static final String help = "Help";
-
     public static final String newfile = "New file";
     public static final String open = "Open";
     public static final String save = "Save";
     public static final String saveas = "Save as";
     public static final String rename = "Rename";
     public static final String libraries = "Libraries";
-
     public static final String undo = "Undo";
     public static final String redo = "Redo";
     public static final String copy = "Copy";
     public static final String cut = "Cut";
     public static final String paste = "Paste";
-
     public static final String darktheme = "Dark theme";
     public static final String lighttheme = "Light theme";
     public static final String fontsize = "Font size";
-
     public static final String about = "About";
-
     public static final String insetquery = "Insert query";
     public static final String timeout = "Timeout";
     public static final String solve = "Solve";
-
     public static final String solution = "Solution";
     public static final String bindings = "Bindings";
     //public static final String input = "Input";
@@ -61,21 +51,14 @@ public class TuPrologPane extends BorderPane {
     public static final String exception = "Exception";
     public static final String next = "Next";
     public static final String stop = "Stop";
-    //public static final String send = "Send";
-
     public static final String untitled = "Untitled";
-
-
-    private final SolverController myController;
+    //public static final String send = "Send";
+    private final static int defaultInsets = 5;
     private static Map<Tab, File> openFiles = new HashMap<>();
     private static Map<Tab, CodeArea> openTabs = new HashMap<>();
-    private int untitledIndex = 0;
     private static ArrayList<String> darkcodearea = new ArrayList<>();
     private static ArrayList<String> lightcodearea = new ArrayList<>();
-    private SyntaxColoring syntaxColoring;
-
     private static int fsize = 12;
-    private Iterator<Solution> sol;
     private static String style = "";
     private static TabPane tabPaneTheory;
     private static TextField queryField;
@@ -85,7 +68,10 @@ public class TuPrologPane extends BorderPane {
     //private TextArea inputText;
     private static TextArea outputText;
     private static TextArea exceptionText;
-
+    private final SolverController myController;
+    private int untitledIndex = 0;
+    private SyntaxColoring syntaxColoring;
+    private Iterator<Solution> sol;
     private HelpUtils helpUtils = new HelpUtils();
     private EditUtils editUtils = new EditUtils();
     private WindowUtils windowUtils = new WindowUtils();
@@ -622,7 +608,6 @@ public class TuPrologPane extends BorderPane {
     public void librariesHandler(ActionEvent e) {
 
     }
-
 
 
 }
