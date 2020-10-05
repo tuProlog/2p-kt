@@ -1,0 +1,10 @@
+.styled-text-area .text{
+    -fx-fill: black;
+}
+
+.caret{
+    -fx-fill: black;
+}
+.code-area .lineno {
+     -fx-background-color: #D0D0D0;
+}

@@ -20,6 +20,7 @@ application {
 
 dependencies {
     api(project(":solve-classic"))
+    api(project(":parser-theory"))
     api(kotlin("stdlib-jdk8"))
 
     implementation(Libs.richtextfx)
