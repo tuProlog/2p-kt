@@ -167,29 +167,4 @@ interface TestSolver : SolverTest {
     fun testTermNotSame()
     fun testTermLowerThan()
     fun testTermLowerThanOrEqual()
-
-    /*
-    /** atom_chars/2 test */
-    fun testAtomChars()
-
-    /** atom_length test */
-    fun testAtomLength()
-
-    /** char_code/2 test */
-    fun testCharCode()
-
-    /** atom_codes/2 test */
-    fun testAtomCodes()
-
-    /** atom_concat/3 test */
-    fun testAtomConcat()
-
-    /** sub_atom/5 test */
-    fun testSubAtom() */
-
-    /** number_chars/2 test*/
-    fun testNumbChars()
-
-    /** number_code/2 test*/
-    fun testNumbCodes()
 }

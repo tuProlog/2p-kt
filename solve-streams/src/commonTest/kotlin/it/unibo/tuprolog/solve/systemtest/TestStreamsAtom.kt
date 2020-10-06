@@ -68,9 +68,4 @@ class TestStreamsAtom : TestAtom, SolverFactory by StreamsSolverFactory {
     override fun testCharCode() {
         prototype.testCharCode()
     }
-
-    @Test
-    override fun testSubAtom() {
-        prototype.testSubAtom()
-    }
 }

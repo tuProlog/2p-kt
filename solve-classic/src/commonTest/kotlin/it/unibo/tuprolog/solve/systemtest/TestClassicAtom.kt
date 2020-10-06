@@ -68,9 +68,4 @@ class TestClassicAtom : TestAtom, SolverFactory by ClassicSolverFactory {
     override fun testCharCode() {
         prototype.testCharCode()
     }
-
-    @Test
-    override fun testSubAtom() {
-        prototype.testSubAtom()
-    }
 }

@@ -193,21 +193,4 @@ internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom
             )
         }
     }
-
-    override fun testSubAtom() {
-        prolog {
-            ktListOf(
-                sub_atom("abracadabra", intOf(0), intOf(5), "_", "S")
-                    .hasSolutions({ yes("X" to atomOf("abrac")) }),
-                sub_atom("abracadabra", "_", intOf(5), intOf(0), "S")
-                    .hasSolutions({ yes("X" to atomOf("dabra")) }),
-                sub_atom("abracadabra", intOf(3), "L", intOf(3), "S")
-                    .hasSolutions({ yes("L" to 5); yes("X" to atomOf("acada")) }),
-                sub_atom("abracadabra", "B", 2, "A", "ab")
-                    .hasSolutions({ yes("B" to 0); yes("A" to 9) }).also { ("B" to 0); ("A" to 9) },
-                sub_atom("banana", intOf(3), intOf(2), "_", "S")
-                    .hasSolutions({ yes("S" to atomOf("an")) }),
-            )
-        }
-    }
 }

@@ -140,19 +140,4 @@ interface TestAtom : SolverTest {
      */
 
     fun testCharCode()
-
-    /** sub_atom Testing
-     *
-     * Contained requests:
-     * ```prolog
-     * ?- sub_atom(abracadabra, 0, 5, _, S2).
-     * ?- sub_atom(abracadabra, _, 5, 0, S2),
-     * ?-sub_atom(abracadabra, 3, L, 3, S2),
-     * ?-sub_atom(abracadabra, Before, 2, After, ab),
-     * ?-sub_atom('Banana', 3, 2, _, S2),
-     * ?-
-     * ```
-     */
-
-    fun testSubAtom()
 }
