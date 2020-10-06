@@ -23,8 +23,6 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleT
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingBuiltIn.numbCharsTesting
-import it.unibo.tuprolog.solve.TestingBuiltIn.numbCodesTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
