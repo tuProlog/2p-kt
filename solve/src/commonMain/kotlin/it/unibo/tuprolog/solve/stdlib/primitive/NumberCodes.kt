@@ -1,19 +1,17 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import it.unibo.tuprolog.core.*
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Real
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.toAtom
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import kotlin.collections.List
+import it.unibo.tuprolog.core.List as LogicList
 
 object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
@@ -21,7 +19,7 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
             is Var -> {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
-                val codeList = second as it.unibo.tuprolog.core.List
+                val codeList = second as LogicList
                 val chars: List<Char> = codeList.toList().map {
                     when (it) {
                         is Integer -> {
@@ -45,15 +43,9 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
                 if (second !is Var) {
                     ensuringArgumentIsList(1)
                 }
-                if ((first as Numeric).isReal) {
-                    val number = (first as Real).toString().toAtom().value
-                    val result = it.unibo.tuprolog.core.List.of(number.map { Numeric.of(it.toInt()) })
-                    second mguWith result
-                } else {
-                    val number = first.toString().toAtom().value
-                    val result = it.unibo.tuprolog.core.List.of(number.map { Numeric.of(it.toInt()) })
-                    second mguWith result
-                }
+                val number = first.toString().toAtom().value
+                val result = LogicList.of(number.map { Numeric.of(it.toInt()) })
+                second mguWith result
             }
         }
     }

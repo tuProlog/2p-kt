@@ -19,6 +19,7 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
                 ensuringAllArgumentsAreInstantiated()
                 Substitution.failed()
             }
+
             first is Var -> {
                 ensuringArgumentIsList(1)
                 val chars = second as LogicList
