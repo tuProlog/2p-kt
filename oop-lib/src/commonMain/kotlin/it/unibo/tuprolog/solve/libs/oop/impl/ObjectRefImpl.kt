@@ -9,12 +9,13 @@ import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Result
 import it.unibo.tuprolog.solve.libs.oop.assign
 import it.unibo.tuprolog.solve.libs.oop.fullName
+import it.unibo.tuprolog.solve.libs.oop.identifier
 import it.unibo.tuprolog.solve.libs.oop.invoke
 
 @Suppress("UNCHECKED_CAST")
 internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by Atom.of(nameOf(`object`)) {
     companion object {
-        private fun nameOf(any: Any): String = "<object:${any::class.fullName}#${any.hashCode()}>"
+        private fun nameOf(any: Any): String = "<object:${any::class.fullName}#${any.identifier}>"
     }
 
     override val isConstant: Boolean

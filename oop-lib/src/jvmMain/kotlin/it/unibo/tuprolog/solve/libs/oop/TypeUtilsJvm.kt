@@ -160,3 +160,6 @@ actual fun KClass<*>.create(
     val constructorRef = findConstructor(arguments.map { converter.admissibleTypes(it) })
     return constructorRef.callWithPrologArguments(converter, arguments)
 }
+
+actual val Any.identifier: String
+    get() = System.identityHashCode(this).toString(16)

@@ -59,6 +59,8 @@ expect fun KClass<*>.create(
 
 internal const val id = "[a-zA-Z_][a-zA-Z0-9_]+"
 
+expect val Any.identifier: String
+
 expect val CLASS_NAME_PATTERN: Regex
 
 expect val KClass<*>.companionObjectRef: Optional<out Any>

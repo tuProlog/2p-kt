@@ -82,3 +82,6 @@ actual fun KClass<*>.assign(
 ): Result {
     throw TODO_EXCEPTION
 }
+
+actual val Any.identifier: String
+    get() = identifier.hashCode().toString(16)
