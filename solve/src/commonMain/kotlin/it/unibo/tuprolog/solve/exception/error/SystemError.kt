@@ -4,6 +4,8 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The system error occurs when an internal problem occurred and if not caught, it will halt inferential machine
@@ -40,6 +42,8 @@ class SystemError constructor(
         /** The system error Struct functor */
         const val typeFunctor = "system_error"
 
+        @JsName("forUncaughtException")
+        @JvmStatic
         fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =
             message("Uncaught exception `${exception.pretty()}`") { m, extra ->
                 SystemError(
@@ -49,7 +53,9 @@ class SystemError constructor(
                 )
             }
 
-        fun forUncaughtException(context: ExecutionContext, exception: PrologError): SystemError =
+        @JsName("forUncaughtError")
+        @JvmStatic
+        fun forUncaughtError(context: ExecutionContext, exception: PrologError): SystemError =
             when (exception) {
                 is MessageError -> forUncaughtException(context, exception.content)
                 else -> forUncaughtException(context, exception.errorStruct)

@@ -161,7 +161,7 @@ internal class SolverUtilsTest {
             dynamicKb = Theory.empty(),
             staticKb = aContext.staticKb.assertA(aClause),
             flags = FlagStore.of("someFlag" to Atom.of("someFlagValue")),
-            libraries = Libraries()
+            libraries = Libraries.empty()
         )
 
         val toBeTested = solveRequest.newSolveRequest(solveRequest.query, toPropagateContextData = modifiedContext)

@@ -77,7 +77,7 @@ internal object StateGoalEvaluationUtils {
                 throw TypeError(
                     context = it.context,
                     expectedType = TypeError.Expected.CALLABLE,
-                    actualValue = Var.of("X")
+                    culprit = Var.of("X")
                 )
             }
         )

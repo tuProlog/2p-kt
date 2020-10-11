@@ -85,3 +85,7 @@ actual fun KClass<*>.assign(
 
 actual val Any.identifier: String
     get() = identifier.hashCode().toString(16)
+
+actual fun KCallable<*>.pretty(): String {
+    return toString()
+}

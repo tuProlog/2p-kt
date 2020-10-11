@@ -19,160 +19,193 @@ interface PrologStdLibScope : PrologAwareScope {
     val repeat: Atom
         get() = atomOf("repeat")
 
-    @JsName("cut")
     val cut: Atom
         get() = atomOf("!")
 
+    @JsName("at_end_of_stream1")
     fun at_end_of_stream(alias: Any): Struct =
         structOf("at_end_of_stream", alias.toTerm())
 
+    @JsName("call1")
     fun call(goal: Any): Struct =
         structOf("call", goal.toTerm())
 
+    @JsName("catch3")
     fun `catch`(goal: Any, error: Any, continuation: Any): Struct =
         structOf("catch", goal.toTerm(), error.toTerm(), continuation.toTerm())
 
+    @JsName("throw1")
     fun `throw`(error: Any): Struct =
         structOf("throw", error.toTerm())
 
+    @JsName("not1")
     fun not(goal: Any): Struct =
         structOf("not", goal.toTerm())
 
+    @JsName("naf1")
     fun naf(goal: Any): Struct =
         structOf("\\+", goal.toTerm())
 
+    @JsName("assert1")
     fun assert(clause: Any): Struct =
         structOf("assert", clause.toTerm())
 
+    @JsName("asserta1")
     fun asserta(clause: Any): Struct =
         structOf("asserta", clause.toTerm())
 
+    @JsName("assertz1")
     fun assertz(clause: Any): Struct =
         structOf("assertz", clause.toTerm())
 
+    @JsName("arg3")
     fun arg(index: Any, compound: Any, argument: Any): Struct =
         structOf("arg", index.toTerm(), compound.toTerm(), argument.toTerm())
 
+    @JsName("atom1")
     fun atom(atom: Any): Struct =
         structOf("atom", atom.toTerm())
 
+    @JsName("atomic1")
     fun atomic(atomic: Any): Struct =
         structOf("atomic", atomic.toTerm())
 
+    @JsName("between3")
     fun between(min: Any, max: Any, number: Any): Struct =
         structOf("between", min.toTerm(), max.toTerm(), number.toTerm())
 
+    @JsName("callable1")
     fun callable(goal: Any): Struct =
         structOf("callable", goal.toTerm())
 
+    @JsName("compound1")
     fun compound(struct: Any): Struct =
         structOf("compound", struct.toTerm())
 
+    @JsName("current_op3")
     fun current_op(precedence: Any, specifier: Any, functor: Any): Struct =
         structOf("current_op", precedence.toTerm(), specifier.toTerm(), functor.toTerm())
 
+    @JsName("op3")
     fun op(precedence: Any, specifier: Any, functor: Any): Struct =
         structOf("op", precedence.toTerm(), specifier.toTerm(), functor.toTerm())
 
+    @JsName("findall3")
     fun findall(template: Any, goal: Any, bag: Any): Struct =
         structOf("findall", template.toTerm(), goal.toTerm(), bag.toTerm())
 
+    @JsName("float1")
     fun float(number: Any): Struct =
         structOf("float", number.toTerm())
 
+    @JsName("functor3")
     fun functor(struct: Any, functor: Any, arity: Any): Struct =
         structOf("functor", struct.toTerm(), functor.toTerm(), arity.toTerm())
 
+    @JsName("ground1")
     fun ground(term: Any): Struct =
         structOf("ground", term.toTerm())
 
+    @JsName("integer1")
     fun integer(number: Any): Struct =
         structOf("integer", number.toTerm())
 
+    @JsName("natural")
     fun natural(number: Any): Struct =
         structOf("natural", number.toTerm())
 
+    @JsName("nonvar1")
     fun nonvar(number: Any): Struct =
         structOf("nonvar", number.toTerm())
 
+    @JsName("number1")
     fun number(number: Any): Struct =
         structOf("number", number.toTerm())
 
+    @JsName("var1")
     fun `var`(term: Any): Struct =
         structOf("var", term.toTerm())
 
+    @JsName("write1")
     fun write(term: Any): Struct =
         structOf("write", term.toTerm())
 
-    infix fun Any.unify(right: Any): Struct =
-        structOf("=", this.toTerm(), right.toTerm())
-
-    infix fun Any.nunify(right: Any): Struct =
-        structOf("\\=", this.toTerm(), right.toTerm())
-
-    @JsName("anyUniv")
+    @JsName("univ2")
     infix fun Any.univ(other: Any): Struct = structOf("=..", this.toTerm(), other.toTerm())
 
-    @JsName("eq")
+    @JsName("eq2")
     infix fun Any.`=`(right: Any): Struct =
         structOf("=", this.toTerm(), right.toTerm())
 
-    @JsName("neq")
+    @JsName("neq2")
     infix fun Any.`!=`(right: Any): Struct =
         structOf("\\=", this.toTerm(), right.toTerm())
 
-    @JsName("id")
+    @JsName("id2")
     infix fun Any.`==`(right: Any): Struct =
         structOf("==", this.toTerm(), right.toTerm())
 
-    @JsName("nid")
+    @JsName("nid2")
     infix fun Any.`!==`(right: Any): Struct =
         structOf("\\==", this.toTerm(), right.toTerm())
 
-    @JsName("arithEq")
+    @JsName("arithEq2")
     infix fun Any.`===`(right: Any): Struct =
         structOf("=:=", this.toTerm(), right.toTerm())
 
-    @JsName("arithNeq")
+    @JsName("arithNeq2")
     infix fun Any.`=!=`(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
 
+    @JsName("member2")
     fun member(item: Any, list: Any): Struct =
         structOf("member", item.toTerm(), list.toTerm())
 
+    @JsName("retract1")
     fun retract(clause: Any): Struct =
         structOf("retract", clause.toTerm())
 
+    @JsName("append3")
     fun append(left: Any, right: Any, result: Any): Struct =
         structOf("append", left.toTerm(), right.toTerm(), result.toTerm())
 
+    @JsName("retractall1")
     fun retractall(clause: Any): Struct =
         structOf("retractall", clause.toTerm())
 
+    @JsName("abolish1")
     fun abolish(indicator: Any): Struct =
         structOf("abolish", indicator.toTerm())
 
+    @JsName("atom_chars2")
     fun atom_chars(atom: Any, chars: Any): Struct =
         structOf("atom_chars", atom.toTerm(), chars.toTerm())
 
+    @JsName("atom_codes2")
     fun atom_codes(atom: Any, codes: Any): Struct =
         structOf("atom_codes", atom.toTerm(), codes.toTerm())
 
+    @JsName("atom_concat3")
     fun atom_concat(first: Any, second: Any, result: Any): Struct =
         structOf("atom_concat", first.toTerm(), second.toTerm(), result.toTerm())
 
+    @JsName("atom_length2")
     fun atom_length(atom: Any, length: Any): Struct =
         structOf("atom_length", atom.toTerm(), length.toTerm())
 
+    @JsName("char_code2")
     fun char_code(char: Any, code: Any): Struct =
         structOf("char_code", char.toTerm(), code.toTerm())
 
+    @JsName("clause2")
     fun clause(head: Any, body: Any): Struct =
         structOf("clause", head.toTerm(), body.toTerm())
 
+    @JsName("copy_term2")
     fun copy_term(term: Any, copy: Any): Struct =
         structOf("copy_term", term.toTerm(), copy.toTerm())
 
+    @JsName("current_prolog_flag2")
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
 

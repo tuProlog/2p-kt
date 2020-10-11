@@ -115,7 +115,7 @@ class TuPrologCmd : CliktCommand(
         return if (oop) {
             Solver.classicWithDefaultBuiltins(
                 staticKb = theory,
-                libraries = Libraries(OOPLib),
+                libraries = Libraries.of(OOPLib),
                 warnings = outputChannel
             )
         } else {

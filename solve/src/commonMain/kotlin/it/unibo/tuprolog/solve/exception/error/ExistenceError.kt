@@ -7,6 +7,8 @@ import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The existence error occurs when an object on which an operation is to be performed does not exist
@@ -14,16 +16,16 @@ import it.unibo.tuprolog.solve.exception.PrologError
  * @param message the detail message string.
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
- * @param expectedType The type of the missing object
- * @param actualValue The object whose lack caused the error
+ * @param expectedObject The type of the missing object
+ * @param culprit The object whose lack caused the error
  * @param extraData The possible extra data to be carried with the error
  */
 class ExistenceError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val expectedType: ObjectType,
-    val actualValue: Term,
+    @JsName("expectedObject") val expectedObject: ObjectType,
+    @JsName("culprit") val culprit: Term,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -31,21 +33,23 @@ class ExistenceError(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
-        expectedType: ObjectType,
+        expectedObject: ObjectType,
         actualValue: Term,
         extraData: Term? = null
-    ) : this(message, cause, arrayOf(context), expectedType, actualValue, extraData)
+    ) : this(message, cause, arrayOf(context), expectedObject, actualValue, extraData)
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
+    override val type: Struct by lazy { Struct.of(super.type.functor, expectedObject.toTerm(), culprit) }
 
     override fun updateContext(newContext: ExecutionContext): ExistenceError =
-        ExistenceError(message, cause, contexts.setFirst(newContext), expectedType, actualValue, extraData)
+        ExistenceError(message, cause, contexts.setFirst(newContext), expectedObject, culprit, extraData)
 
     override fun pushContext(newContext: ExecutionContext): ExistenceError =
-        ExistenceError(message, cause, contexts.addLast(newContext), expectedType, actualValue, extraData)
+        ExistenceError(message, cause, contexts.addLast(newContext), expectedObject, culprit, extraData)
 
     companion object {
 
+        @JsName("of")
+        @JvmStatic
         fun of(
             context: ExecutionContext,
             expectedType: ObjectType,
@@ -54,11 +58,13 @@ class ExistenceError(
         ) = ExistenceError(
             message = message,
             context = context,
-            expectedType = expectedType,
+            expectedObject = expectedType,
             actualValue = culprit,
             extraData = Atom.of(message)
         )
 
+        @JsName("forProcedure")
+        @JvmStatic
         fun forProcedure(
             context: ExecutionContext,
             procedure: Signature
@@ -68,28 +74,32 @@ class ExistenceError(
             ExistenceError(
                 message = m,
                 context = context,
-                expectedType = ObjectType.PROCEDURE,
+                expectedObject = ObjectType.PROCEDURE,
                 actualValue = procedure.toIndicator(),
                 extraData = extra
             )
         }
 
-        fun forStream(
-            context: ExecutionContext,
-            alias: String
-        ) = forStream(context, Atom.of(alias))
-
+        @JsName("forStream")
+        @JvmStatic
         fun forStream(
             context: ExecutionContext,
             alias: Atom
+        ) = forStream(context, alias.value)
+
+        @JsName("forStreamWithAlias")
+        @JvmStatic
+        fun forStream(
+            context: ExecutionContext,
+            alias: String
         ) = message(
             "There exists no stream whose alias is `$alias`"
         ) { m, extra ->
             ExistenceError(
                 message = m,
                 context = context,
-                expectedType = ObjectType.STREAM,
-                actualValue = alias,
+                expectedObject = ObjectType.STREAM,
+                actualValue = Atom.of(alias),
                 extraData = extra
             )
         }
@@ -122,9 +132,13 @@ class ExistenceError(
         companion object {
 
             /** Returns the [ObjectType] instance described by [type]; creates a new instance only if [type] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(type: String): ObjectType = valueOf(type)
 
             /** Gets [ObjectType] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): ObjectType? = when (term) {
                 is Atom -> of(term.value)
                 else -> null

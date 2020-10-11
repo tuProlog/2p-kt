@@ -46,7 +46,7 @@ fun gt(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
 fun main() {
     prolog {
         val solver = Solver.classicWithDefaultBuiltins(
-            libraries = Libraries(
+            libraries = Libraries.of(
                 Library.aliased(
                     primitives = mapOf(gtSignature to ::gt),
                     alias = "it.unibo.lrizzato.myprimives"

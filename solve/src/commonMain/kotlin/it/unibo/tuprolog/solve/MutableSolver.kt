@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.RetractResult
@@ -87,6 +89,15 @@ interface MutableSolver : Solver {
 
     @JsName("retractAllBeHead")
     fun retractAll(fact: Struct): RetractResult
+
+    @JsName("setFlag")
+    fun setFlag(name: String, value: Term)
+
+    @JsName("setFlagPair")
+    fun setFlag(flag: Pair<String, Term>)
+
+    @JsName("setFlagNotable")
+    fun setFlag(flag: NotableFlag)
 
     companion object {
         // To be extended through extension methods

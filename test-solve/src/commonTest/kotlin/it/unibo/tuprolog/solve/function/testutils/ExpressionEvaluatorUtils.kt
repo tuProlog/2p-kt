@@ -21,7 +21,7 @@ internal object ExpressionEvaluatorUtils {
 
     /** A context with empty functions map */
     internal val noFunctionsContext = object : ExecutionContext by DummyInstances.executionContext {
-        override val libraries: Libraries = Libraries()
+        override val libraries: Libraries = Libraries.empty()
     }
 
     internal val noFunctionRequest = Solve.Request(
@@ -79,7 +79,7 @@ internal object ExpressionEvaluatorUtils {
     /** Creates a context with provided signature-function binding */
     private fun createContextWithFunctionBy(signature: Signature, function: PrologFunction): ExecutionContext =
         object : ExecutionContext by DummyInstances.executionContext {
-            override val libraries: Libraries = Libraries(
+            override val libraries: Libraries = Libraries.of(
                 Library.aliased(
                     alias = "test.expression.evaluator",
                     functions = mapOf(signature to function)

@@ -68,3 +68,5 @@ expect val KClass<*>.companionObjectRef: Optional<out Any>
 expect val KClass<*>.companionObjectType: Optional<out KClass<*>>
 
 expect fun kClassFromName(qualifiedName: String): Optional<out KClass<*>>
+
+expect fun KCallable<*>.pretty(): String

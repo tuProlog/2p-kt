@@ -9,6 +9,7 @@ import it.unibo.tuprolog.utils.Optional
 import java.lang.IllegalStateException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KTypeParameter
@@ -163,3 +164,20 @@ actual fun KClass<*>.create(
 
 actual val Any.identifier: String
     get() = System.identityHashCode(this).toString(16)
+
+actual fun KCallable<*>.pretty(): String =
+    "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
+
+private fun KClassifier?.pretty(): String =
+    if (this is KClass<*>) {
+        fullName
+    } else {
+        "$this"
+    }
+
+private fun KParameter.pretty(): String =
+    when (kind) {
+        KParameter.Kind.INSTANCE -> "<this>"
+        KParameter.Kind.EXTENSION_RECEIVER -> "<this>:${type.classifier.pretty()}"
+        else -> "$name:${type.classifier}"
+    }

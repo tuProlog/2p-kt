@@ -18,4 +18,4 @@ interface AliasedLibrary : Library {
 
 /** Creates a library group from this library aliased and the "added" one */
 operator fun <L : AliasedLibrary> L.plus(library: L): LibraryGroup<AliasedLibrary> =
-    Libraries(this, library)
+    Libraries.of(this, library)

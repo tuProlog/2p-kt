@@ -525,11 +525,17 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
             bugs = Bugs(projectIssues, gcEmail)
             license = projectLicense
             name = "@tuprolog/$name"
-            dependencies = dependencies?.mapKeys {
-                if ("2p" in it.key) "@tuprolog/${it.key}" else it.key
-            }?.mapValues {
-                if ("2p" in it.key) it.value.substringBefore('+') else it.value
-            }?.toMutableMap()
+            dependencies = dependencies?.filterKeys { key -> "kotlin-test" !in key }
+                ?.mapKeys { (key, _) ->
+                    if ("2p" in key) "@tuprolog/$key" else key
+                }?.mapValues { (key, value) ->
+                    val temp = if (value.startsWith("file:")) {
+                        value.split('/', '\\').last()
+                    } else {
+                        value
+                    }
+                    if ("2p" in key) temp.substringBefore('+') else temp
+                }?.toMutableMap()
             version = version?.substringBefore('+')
         }
 
