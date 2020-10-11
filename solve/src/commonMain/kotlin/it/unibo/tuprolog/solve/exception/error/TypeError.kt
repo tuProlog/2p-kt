@@ -49,7 +49,20 @@ class TypeError(
 
     companion object {
 
-        // TODO: 16/01/2020 test factories
+        fun of(
+            context: ExecutionContext,
+            expectedType: Expected,
+            actualValue: Term,
+            message: String
+        ) = message(message) { m, extra ->
+            TypeError(
+                message = m,
+                context = context,
+                expectedType = expectedType,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
 
         fun forArgumentList(
             context: ExecutionContext,
@@ -126,6 +139,7 @@ class TypeError(
         CALLABLE,
         CHARACTER,
         COMPOUND,
+        DEALIASING_EXPRESSION,
         EVALUABLE,
         FLOAT,
         INTEGER,

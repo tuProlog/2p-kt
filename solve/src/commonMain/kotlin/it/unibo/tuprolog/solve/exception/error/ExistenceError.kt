@@ -106,6 +106,7 @@ class ExistenceError(
         PROCEDURE,
         SOURCE_SINK,
         STREAM,
+        OOP_ALIAS,
         OOP_METHOD,
         OOP_CONSTRUCTOR,
         OOP_PROPERTY;

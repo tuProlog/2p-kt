@@ -1,12 +1,16 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.exception.error.ExistenceError.ObjectType.OOP_ALIAS
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
 
@@ -22,9 +26,15 @@ object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
             val ref = when (first) {
                 is Ref -> first
                 else -> findRefFromAlias(first as Atom)
-            } ?: throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, first, 0)
+            }
 
-            ref.assign((second as Atom).value, third)
+            val value = if (third matches DEALIASING_TEMPLATE) {
+                findRefFromAlias(third as Struct)
+            } else {
+                third
+            }
+
+            ref.assign((second as Atom).value, value)
         }
     }
 }

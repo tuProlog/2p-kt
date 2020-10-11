@@ -2,10 +2,10 @@ package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -21,22 +21,25 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
         second: Term,
         third: Term
     ): Substitution {
-        ensuringArgumentIsAtom(0)
+        ensuringArgumentIsStruct(0)
         ensuringArgumentIsList(1)
 
         return catchingOopExceptions {
             val arguments = (second as List).toArray()
 
-            val type = if (first is TypeRef) {
-                first
-            } else {
-                val className = (first as Atom).value
-                when (val ref = typeFactory.typeRefFromName(className)) {
-                    null -> when (val aliased = findRefFromAlias(first)) {
-                        null, is ObjectRef -> null
-                        else -> aliased as TypeRef
-                    }
-                    else -> ref
+            val type = when {
+                first is TypeRef -> {
+                    first
+                }
+                first is Atom -> {
+                    typeFactory.typeRefFromName(first.value)
+                }
+                first.isDealiasingExpression -> {
+                    findRefFromAlias(first as Struct) as? TypeRef
+                }
+                else -> {
+                    ensuringArgumentIsTypeRef(0)
+                    return Substitution.failed()
                 }
             }
 
