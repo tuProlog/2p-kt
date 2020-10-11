@@ -15,10 +15,10 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
 class MalformedAliasException(
     val dealiasingExpression: Struct
 ) : OopException(
-    "This is not a dealiasing expression `${dealiasingExpression}` in the form ${
-        DEALIASING_TEMPLATE.format(
-            prettyExpressions()
-        )
+    "This is not a dealiasing expression `$dealiasingExpression` in the form ${
+    DEALIASING_TEMPLATE.format(
+        prettyExpressions()
+    )
     }"
 ) {
 

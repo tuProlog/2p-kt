@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.operators.Specifier.FX
 import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
