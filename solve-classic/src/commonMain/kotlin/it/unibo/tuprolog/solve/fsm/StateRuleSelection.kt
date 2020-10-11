@@ -180,7 +180,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                         context = context,
                         procedure = context.procedure!!.extractSignature(),
                         expectedType = TypeError.Expected.CALLABLE,
-                        actualValue = currentGoal
+                        culprit = currentGoal
                     )
                 )
             }

@@ -35,7 +35,7 @@ internal object Call : PrimitiveWrapper<StreamsExecutionContext>("call", 1) {
                     message = "call/1 argument is neither a Variable nor a well-formed goal",
                     context = request.context,
                     expectedType = TypeError.Expected.CALLABLE,
-                    actualValue = toBeCalledGoal
+                    culprit = toBeCalledGoal
                 )
             }
         }

@@ -27,7 +27,7 @@ internal object SolverTestUtils {
         query.extractSignature(),
         query.argsList,
         StreamsExecutionContext(
-            libraries = Libraries(
+            libraries = Libraries.of(
                 Library.aliased(
                     alias = "solve.solver.test",
                     theory = database,

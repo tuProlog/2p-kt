@@ -8,6 +8,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * The type error occurs when something is not of [Expected] type
@@ -16,7 +18,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
  * @param expectedType The type expected, that wouldn't have raised the error
- * @param actualValue The value not respecting [expectedType]
+ * @param culprit The value not respecting [expectedType]
  * @param extraData The possible extra data to be carried with the error
  *
  * @author Enrico
@@ -25,8 +27,8 @@ class TypeError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val expectedType: Expected,
-    val actualValue: Term,
+    @JsName("expectedType") val expectedType: Expected,
+    @JsName("culprit") val culprit: Term,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -35,76 +37,97 @@ class TypeError(
         cause: Throwable? = null,
         context: ExecutionContext,
         expectedType: Expected,
-        actualValue: Term,
+        culprit: Term,
         extraData: Term? = null
-    ) : this(message, cause, arrayOf(context), expectedType, actualValue, extraData)
+    ) : this(message, cause, arrayOf(context), expectedType, culprit, extraData)
 
     override fun updateContext(newContext: ExecutionContext): TypeError =
-        TypeError(message, cause, contexts.setFirst(newContext), expectedType, actualValue, extraData)
+        TypeError(message, cause, contexts.setFirst(newContext), expectedType, culprit, extraData)
 
     override fun pushContext(newContext: ExecutionContext): TypeError =
-        TypeError(message, cause, contexts.addLast(newContext), expectedType, actualValue, extraData)
+        TypeError(message, cause, contexts.addLast(newContext), expectedType, culprit, extraData)
 
-    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), actualValue) }
+    override val type: Struct by lazy { Struct.of(super.type.functor, expectedType.toTerm(), culprit) }
 
     companion object {
 
-        // TODO: 16/01/2020 test factories
+        @JsName("of")
+        @JvmStatic
+        fun of(
+            context: ExecutionContext,
+            expectedType: Expected,
+            actualValue: Term,
+            message: String
+        ) = message(message) { m, extra ->
+            TypeError(
+                message = m,
+                context = context,
+                expectedType = expectedType,
+                culprit = actualValue,
+                extraData = extra
+            )
+        }
 
+        @JsName("forArgumentList")
+        @JvmStatic
         fun forArgumentList(
             context: ExecutionContext,
             procedure: Signature,
             expectedType: Expected,
-            actualValue: Term,
+            culprit: Term,
             index: Int? = null
         ) = message(
             (index?.let { "The $it-th argument" } ?: "An argument") +
                 " of `${procedure.pretty()}` should be a list of `$expectedType`, " +
-                "but `${actualValue.pretty()}` has been provided instead"
+                "but `${culprit.pretty()}` has been provided instead"
         ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
-                actualValue = actualValue,
+                culprit = culprit,
                 extraData = extra
             )
         }
 
+        @JsName("forArgument")
+        @JvmStatic
         fun forArgument(
             context: ExecutionContext,
             procedure: Signature,
             expectedType: Expected,
-            actualValue: Term,
+            culprit: Term,
             index: Int? = null
         ) =
             message(
                 (index?.let { "The $it-th argument" } ?: "An argument") +
                     " of `${procedure.pretty()}` should be a `$expectedType`, " +
-                    "but `${actualValue.pretty()}` has been provided instead"
+                    "but `${culprit.pretty()}` has been provided instead"
             ) { m, extra ->
                 TypeError(
                     message = m,
                     context = context,
                     expectedType = expectedType,
-                    actualValue = actualValue,
+                    culprit = culprit,
                     extraData = extra
                 )
             }
 
+        @JsName("forGoal")
+        @JvmStatic
         fun forGoal(
             context: ExecutionContext,
             procedure: Signature,
             expectedType: Expected,
-            actualValue: Term
+            culprit: Term
         ) = message(
-            "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not a $expectedType term"
+            "Subgoal `${culprit.pretty()}` of ${procedure.pretty()} is not a $expectedType term"
         ) { m, extra ->
             TypeError(
                 message = m,
                 context = context,
                 expectedType = expectedType,
-                actualValue = actualValue,
+                culprit = culprit,
                 extraData = extra
             )
         }
@@ -126,15 +149,17 @@ class TypeError(
         CALLABLE,
         CHARACTER,
         COMPOUND,
+        DEALIASING_EXPRESSION,
         EVALUABLE,
         FLOAT,
-        IN_BYTE,
-        IN_CHARACTER,
         INTEGER,
         LIST,
         NUMBER,
+        OBJECT_REFERENCE,
         PAIR,
-        PREDICATE_INDICATOR;
+        PREDICATE_INDICATOR,
+        REFERENCE,
+        TYPE_REFERENCE;
 
         /**
          * The type expected string description
@@ -148,9 +173,13 @@ class TypeError(
 
         companion object {
             /** Returns the Expected instance described by [type]; creates a new instance only if [type] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(type: String): Expected = valueOf(type.toUpperCase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Expected? = when (term) {
                 is Atom -> of(term.value)
                 else -> null

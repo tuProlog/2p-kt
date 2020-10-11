@@ -7,6 +7,8 @@ import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * A permission error occurs when an attempt to perform a prohibited operation is made
@@ -23,9 +25,9 @@ class PermissionError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val operation: Operation,
-    val permission: Permission,
-    val culprit: Term,
+    @JsName("operation") val operation: Operation,
+    @JsName("permission") val permission: Permission,
+    @JsName("culprit") val culprit: Term,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -56,6 +58,8 @@ class PermissionError(
 
     companion object {
 
+        @JsName("of")
+        @JvmStatic
         fun of(
             context: ExecutionContext,
             procedure: Signature,
@@ -89,11 +93,13 @@ class PermissionError(
         CLOSE,
         CREATE,
         INPUT,
+        INVOKE,
         MODIFY,
         OPEN,
         OUTPUT,
         REPOSITION;
 
+        @JsName("operation")
         val operation: String by lazy { this.name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
@@ -104,9 +110,13 @@ class PermissionError(
         companion object {
 
             /** Returns the [Operation] instance described by [operation]; creates a new instance only if [operation] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(operation: String): Operation = valueOf(operation.toUpperCase())
 
             /** Gets [Operation] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Operation? = when (term) {
                 is Atom -> of(term.value)
                 else -> null
@@ -125,9 +135,11 @@ class PermissionError(
         PRIVATE_PROCEDURE,
         SOURCE_SINK,
         STATIC_PROCEDURE,
+        OOP_METHOD,
         STREAM,
         TEXT_STREAM;
 
+        @JsName("permission")
         val permission: String by lazy { this.name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
@@ -138,9 +150,13 @@ class PermissionError(
         companion object {
 
             /** Returns the [Permission] instance described by [permission]; creates a new instance only if [permission] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(permission: String): Permission = valueOf(permission.toUpperCase())
 
             /** Gets [Permission] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Permission? = when (term) {
                 is Atom -> of(term.value)
                 else -> null

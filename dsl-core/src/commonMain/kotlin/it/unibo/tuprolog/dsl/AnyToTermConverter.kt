@@ -35,7 +35,8 @@ internal interface AnyToTermConverter {
         is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
         is Sequence<*> -> any.map { toTerm(it!!) }.extToTerm()
         is Iterable<*> -> any.map { toTerm(it!!) }.extToTerm()
-        else -> any.raiseErrorConvertingTo(Term::class)
+        else ->
+            any.raiseErrorConvertingTo(Term::class)
     }
 
     val Number.isInteger: Boolean

@@ -7,6 +7,8 @@ import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  *  A representation error occurs when an implementation limit has been breached
@@ -22,7 +24,7 @@ class RepresentationError(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
-    val limit: Limit,
+    @JsName("limit") val limit: Limit,
     extraData: Term? = null
 ) : PrologError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
 
@@ -48,6 +50,8 @@ class RepresentationError(
     }
 
     companion object {
+        @JsName("of")
+        @JvmStatic
         fun of(
             context: ExecutionContext,
             signature: Signature,
@@ -77,8 +81,10 @@ class RepresentationError(
         MAX_ARITY,
         MAX_INTEGER,
         MIN_INTEGER,
+        OOP_OBJECT,
         TOO_MANY_VARIABLES;
 
+        @JsName("limit")
         val limit: String by lazy { this.name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
@@ -89,9 +95,13 @@ class RepresentationError(
         companion object {
 
             /** Returns the [Limit] instance described by [limit]; creates a new instance only if [limit] was not predefined */
+            @JsName("of")
+            @JvmStatic
             fun of(limit: String): Limit = valueOf(limit.toUpperCase())
 
             /** Gets [Limit] instance from [term] representation, if possible */
+            @JsName("fromTerm")
+            @JvmStatic
             fun fromTerm(term: Term): Limit? = when (term) {
                 is Atom -> of(term.value)
                 else -> null

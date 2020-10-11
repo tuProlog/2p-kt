@@ -30,7 +30,7 @@ internal data class StateException(
 
     private fun TuPrologRuntimeException.toPublicException(): TuPrologRuntimeException =
         when (this) {
-            is MessageError -> SystemError.forUncaughtException(this@StateException.context, this)
+            is MessageError -> SystemError.forUncaughtError(this@StateException.context, this)
             else -> this
         }
 

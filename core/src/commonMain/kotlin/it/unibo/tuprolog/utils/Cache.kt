@@ -36,6 +36,20 @@ interface Cache<K, V> {
     operator fun get(key: K): Optional<out V>
 
     /**
+     * Retrieves the cached value corresponding to the provided [key], or stores a cache for the key in case it is missing
+     * @param key is the key used for indexing the pair
+     * @param valueGenerator is the function aimed at generating the value to be cached
+     * @return the value corresponding to [key], if any, or the value produced by [valueGenerator] otherwise
+     */
+    fun getOrSet(key: K, valueGenerator: () -> V): V =
+        when (val got = get(key)) {
+            is Optional.Some -> got.value
+            else -> {
+                valueGenerator().also { set(key, it) }
+            }
+        }
+
+    /**
      * Converts this cache to an immutable map
      */
     fun toMap(): Map<K, V>

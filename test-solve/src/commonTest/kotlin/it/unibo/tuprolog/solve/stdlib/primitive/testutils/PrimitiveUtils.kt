@@ -17,7 +17,7 @@ import it.unibo.tuprolog.theory.Theory
 internal object PrimitiveUtils {
 
     private fun contextWith(database: Theory) = object : ExecutionContext by DummyInstances.executionContext {
-        override val libraries: Libraries = Libraries(CommonBuiltins)
+        override val libraries: Libraries = Libraries.of(CommonBuiltins)
         override val staticKb: Theory = database
     }
 

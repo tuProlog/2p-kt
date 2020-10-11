@@ -61,7 +61,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
                                 1
                             ),
                             expectedType = TypeError.Expected.CALLABLE,
-                            actualValue = goal
+                            culprit = goal
                         )
                     )
                 }

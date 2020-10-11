@@ -19,6 +19,6 @@ internal class LibraryAliasedTest {
     fun plusCreatesCorrectLibraryGroup() {
         val toBeTested = library + overridingLibrary
 
-        assertEquals(Libraries(library, overridingLibrary), toBeTested)
+        assertEquals(Libraries.of(library, overridingLibrary), toBeTested)
     }
 }

@@ -20,5 +20,6 @@ include("parser-theory")
 include("serialize-core")
 include("serialize-theory")
 include("repl")
+include("oop-lib")
 
 include("examples")
