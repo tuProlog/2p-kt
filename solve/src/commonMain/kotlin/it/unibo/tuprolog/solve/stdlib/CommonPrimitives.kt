@@ -36,7 +36,7 @@ object CommonPrimitives {
             CurrentPrologFlag,
             EnsureExecutable,
             FindAll,
-            Float,
+            //Float,
             Functor,
             Ground,
             Halt,
