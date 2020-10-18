@@ -94,7 +94,6 @@ class SyntaxColoring(
     }
 
     private val patternCache: Cached<Regex> = Cached.of {
-        println(keywords(operators).asGroup(KEYWORD))
         pattern(operators)
     }
 
@@ -113,7 +112,6 @@ class SyntaxColoring(
             }
             spansBuilder.add(listOf(styleClass), to - from)
             lastKwEnd = to
-            println("${match.value} : $styleClass")
         }
         spansBuilder.add(emptyList(), text.length - lastKwEnd)
         return spansBuilder.create()
