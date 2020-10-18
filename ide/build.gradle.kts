@@ -11,11 +11,11 @@ plugins {
 
 javafx {
     version = Versions.org_openjfx
-    modules = listOf("javafx.controls")
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 application {
-    mainClassName = "it.unibo.tuprolog.ui.gui.TuPrologFx"
+    mainClassName = "it.unibo.tuprolog.ui.gui.PrologIDE"
 }
 
 dependencies {
@@ -26,7 +26,6 @@ dependencies {
     implementation(Libs.richtextfx)
     testImplementation(kotlin("test-junit"))
 }
-
 
 configure<JavaPluginConvention> {
     targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")

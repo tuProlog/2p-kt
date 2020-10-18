@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="767.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.tuprolog.ui.gui.PrologIDEController">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="btnNewFile" mnemonicParsing="false" onAction="#onNewFilePressed" text="New" />
+                        <MenuItem fx:id="btnOpenFile" mnemonicParsing="false" text="Open…" />
+                        <Menu mnemonicParsing="false" text="Open Recent" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="btnCloseFile" mnemonicParsing="false" text="Close" />
+                        <MenuItem fx:id="btnSaveFile" mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" text="Save As…" />
+                        <MenuItem fx:id="btnReloadFile" mnemonicParsing="false" text="Revert" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="btnSettings" mnemonicParsing="false" text="Settings…" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="btnQuit" mnemonicParsing="false" onAction="#onQuitRequested" text="Quit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo" />
+                        <MenuItem mnemonicParsing="false" text="Redo" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Cut" />
+                        <MenuItem mnemonicParsing="false" text="Copy" />
+                        <MenuItem mnemonicParsing="false" text="Paste" />
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Select All" />
+                        <MenuItem mnemonicParsing="false" text="Unselect All" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="btnAbout" mnemonicParsing="false" text="About 2P" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <SplitPane dividerPositions="0.65" orientation="VERTICAL" prefHeight="228.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+            <items>
+                <TabPane fx:id="tabsFiles" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
+                <BorderPane>
+                    <center>
+                        <TabPane fx:id="tabsStreams" prefHeight="157.0" prefWidth="638.0" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+                                <Tab fx:id="tabSolutions" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Solutions">
+                                    <content>
+                                        <ListView fx:id="lsvSolutions" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tabStdin" closable="false" disable="true" onSelectionChanged="#onTabSelectionChanged" text="Stdin">
+                                    <content>
+                                        <TextArea fx:id="txaStdin" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tabStdout" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stdout">
+                                    <content>
+                                        <TextArea fx:id="txaStdout" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tabStderr" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stderr">
+                                    <content>
+                                        <TextArea fx:id="txaStderr" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tabWarnings" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Warnings">
+                                    <content>
+                                        <ListView fx:id="lsvWarnings" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tabOperators" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Operators">
+                                    <TableView fx:id="tbvOperators" prefHeight="200.0" prefWidth="200.0">
+                              <columns>
+                                 <TableColumn fx:id="tbcFunctor" prefWidth="100.0" text="Functor" />
+                                 <TableColumn fx:id="tbcPriority" prefWidth="100.0" text="Priority" />
+                                 <TableColumn fx:id="tbcSpecifier" prefWidth="100.0" text="Specifier" />
+                              </columns></TableView>
+                                </Tab>
+                        <Tab fx:id="tabFlags" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Flags">
+                           <content>
+                              <TableView fx:id="tbvFlags" prefHeight="200.0" prefWidth="200.0">
+                                 <columns>
+                                    <TableColumn fx:id="tbcKey" prefWidth="150.0" text="Flag" />
+                                    <TableColumn fx:id="tbcValue" prefWidth="150.0" text="Value" />
+                                 </columns>
+                              </TableView>
+                           </content>
+                        </Tab>
+                                <Tab fx:id="tabLibraries" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Libraries">
+                                    <content>
+                                        <TreeView fx:id="trvLibraries" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                        <Tab fx:id="tabStaticKb" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Static KB">
+                           <content>
+                              <TextArea fx:id="txaStaticKb" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                        </Tab>
+                                <Tab fx:id="tabDynamicKb" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Dynamic KB">
+                                    <content>
+                                        <TextArea fx:id="txaDynamicKb" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </center>
+                    <top>
+                        <HBox alignment="CENTER_LEFT" fillHeight="false" BorderPane.alignment="CENTER">
+                            <children>
+                                <Label text="?-" />
+                                <TextField fx:id="txfQuery" onAction="#onActionPerformedOnQuery" onKeyTyped="#onKeyTypedOnQuery" HBox.hgrow="SOMETIMES">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="&gt;" />
+                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="&gt;&gt;" />
+                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="X">
+                                    <HBox.margin>
+                                        <Insets left="10.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </top>
+                    <bottom>
+                        <BorderPane BorderPane.alignment="CENTER">
+                            <center>
+                                <ProgressBar fx:id="prbResolution" prefWidth="200.0" visible="false" />
+                            </center>
+                            <left>
+                                <Label fx:id="lblStatus" text="Idle" BorderPane.alignment="BOTTOM_LEFT" />
+                            </left>
+                            <right>
+                                <Label fx:id="lblCaret" text="Line: 1 | Column: 1" BorderPane.alignment="CENTER_RIGHT" />
+                            </right>
+                        </BorderPane>
+                    </bottom>
+                </BorderPane>
+            </items>
+        </SplitPane>
+    </children>
+</VBox>
