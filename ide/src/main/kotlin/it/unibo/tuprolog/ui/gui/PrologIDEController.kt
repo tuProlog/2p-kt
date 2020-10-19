@@ -37,6 +37,7 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Region
 import javafx.stage.Stage
+import org.fxmisc.richtext.CodeArea
 import java.io.File
 import java.net.URL
 import java.util.ResourceBundle
@@ -234,7 +235,7 @@ class PrologIDEController : Initializable {
     }
 
     private fun onFileLoaded(e: Pair<File, String>) = onUiThread {
-        tabsFiles.tabs.add(FileTabView(e.first, model, e.second))
+        tabsFiles.tabs.add(FileTabView(e.first, model, this, e.second))
     }
 
     private fun onStdoutPrinted(output: String) = onUiThread {
@@ -357,9 +358,8 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onKeyTypedOnCurrentFile(e: KeyEvent) {
-        (e.source as? TextArea)?.let {
-            onCaretMovedIn(e.source as TextArea)
-            model.setCurrentFile(it.text)
+        (e.source as? CodeArea)?.let {
+            onCaretMovedIn(it)
         }
     }
 
@@ -424,30 +424,30 @@ class PrologIDEController : Initializable {
         }
     }
 
-    private fun onCaretMovedIn(textArea: TextArea) {
-        val (l, c) = textArea.text.caretLocation(textArea.caretPosition)
-        lblCaret.text = "Line: $l | Column: $c"
+    private fun onCaretMovedIn(area: CodeArea) {
+        // val (l, c) = area.text.caretLocation(area.caretPosition)
+        lblCaret.text = "Line: ${area.caretPosition + 1} | Column: ${area.caretColumn + 1}"
     }
 
-    private fun String.caretLocation(position: Int): Pair<Int, Int> {
-        val portion = this.subSequence(0, position)
-        val lines = portion.count { it == '\n' } + 1
-        val lastLine = portion.lastIndexOf('\n')
-        val columns = position - lastLine
-        return lines to columns
-    }
+    // private fun String.caretLocation(position: Int): Pair<Int, Int> {
+    //     val portion = this.subSequence(0, position)
+    //     val lines = portion.count { it == '\n' } + 1
+    //     val lastLine = portion.lastIndexOf('\n')
+    //     val columns = position - lastLine
+    //     return lines to columns
+    // }
 
     @FXML
     fun onMouseClickedOnCurrentFile(e: MouseEvent) {
-        (e.source as? TextArea)?.let {
-            onCaretMovedIn(e.source as TextArea)
+        (e.source as? CodeArea)?.let {
+            onCaretMovedIn(it)
         }
     }
 
     @FXML
     fun onKeyPressedOnCurrentFile(e: KeyEvent) {
-        (e.source as? TextArea)?.let {
-            onCaretMovedIn(e.source as TextArea)
+        (e.source as? CodeArea)?.let {
+            onCaretMovedIn(it)
         }
     }
 
