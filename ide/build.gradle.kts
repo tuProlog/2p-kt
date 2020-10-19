@@ -24,7 +24,7 @@ javafx {
 
 application {
     // mainModule.set("2p-ide")
-    mainClassName = "it.unibo.tuprolog.ui.gui.PrologIDE"
+    mainClassName = "it.unibo.tuprolog.ui.gui.Main"
 }
 
 dependencies {
