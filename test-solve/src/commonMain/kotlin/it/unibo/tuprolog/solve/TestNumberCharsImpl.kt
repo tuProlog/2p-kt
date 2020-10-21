@@ -91,12 +91,12 @@ class TestNumberCharsImpl(private val solverFactory: SolverFactory) : TestNumber
     override fun testNumberCharsCompleteCase() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
+            // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
+            val query = number_chars(X, listOf("3", ".", "9"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 3.3)),
+                kotlin.collections.listOf(query.yes("X" to 3.9)),
                 solutions
             )
         }

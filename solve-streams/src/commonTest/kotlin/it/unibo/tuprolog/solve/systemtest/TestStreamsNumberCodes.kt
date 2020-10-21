@@ -20,25 +20,21 @@ class TestStreamsNumberCodes : TestNumberCodes, SolverFactory by StreamsSolverFa
     }
 
     @Test
-    @Ignore
     override fun testNumberCodesListIsVar2() {
         prototype.testNumberCodesListIsVar2()
     }
 
     @Test
-    @Ignore
     override fun testNumberCodesOk() {
         prototype.testNumberCodesOk()
     }
 
     @Test
-    @Ignore
     override fun testNumberCodesCompleteTest() {
         prototype.testNumberCodesCompleteTest()
     }
 
     @Test
-    @Ignore
     override fun testNumberCodesNegativeNumber() {
         prototype.testNumberCodesNegativeNumber()
     }

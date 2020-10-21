@@ -6,11 +6,11 @@ class TestSubAtomImpl(private val solverFactory: SolverFactory) : TestSubAtom {
     override fun testSubAtomSubIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = sub_atom("abracadabra", intOf(0), intOf(5), "_", "S")
+            val query = sub_atom("abracadabra", intOf(0), intOf(1), intOf(10), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to atomOf("abrac"))),
+                kotlin.collections.listOf(query.yes("S" to atomOf("a"))),
                 solutions
             )
         }

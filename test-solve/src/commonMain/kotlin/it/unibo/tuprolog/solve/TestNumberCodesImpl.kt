@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumberCodes {
     override fun testNumberCodesListIsVar() {
@@ -35,11 +36,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_chars(33, "L")
+            val query = number_codes(9921.1, "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf(51, 51))),
+                kotlin.collections.listOf(query.yes("L" to listOf(57, 57, 50, 49, 46, 49))),
                 solutions
             )
         }
@@ -49,7 +50,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes(33, listOf("0'3", "0'3"))
+            val query = number_codes(33, listOf(51, 51))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -63,7 +64,7 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes(33.0, listOf("0'3", "0'.", "0'3", "0'E", "0'+", "0'0", "0'1"))
+            val query = number_codes(34, listOf(51, 52))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -77,11 +78,11 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes("X", listOf("-", "0'2", "0'5"))
+            val query = number_codes("X", listOf(45, 51, 46, 56))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to -25)),
+                kotlin.collections.listOf(query.yes("X" to -3.8)),
                 solutions
             )
         }
@@ -91,11 +92,21 @@ class TestNumberCodesImpl(private val solverFactory: SolverFactory) : TestNumber
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = number_codes("X", listOf("0'0", "39", "0'a"))
+            val query = number_codes("a", "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to 97)),
+                kotlin.collections.listOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("number_codes", 2),
+                            TypeError.Expected.NUMBER,
+                            atomOf("a"),
+                            index = 0
+                        )
+                    )
+                ),
                 solutions
             )
         }

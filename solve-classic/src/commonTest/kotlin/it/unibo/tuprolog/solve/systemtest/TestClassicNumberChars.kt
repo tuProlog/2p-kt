@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestNumberChars
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestClassicNumberChars : TestNumberChars, SolverFactory by ClassicSolverFactory {
@@ -38,7 +37,6 @@ class TestClassicNumberChars : TestNumberChars, SolverFactory by ClassicSolverFa
     }
 
     @Test
-    @Ignore
     override fun testNumberCharsCompleteCase() {
         prototype.testNumberCharsCompleteCase()
     }
