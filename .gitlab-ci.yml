@@ -35,17 +35,22 @@ cache:
     - '**/build/'
 
 stages:
+  - check
   - build
   - test
   - doc
   - sign
   - deploy
 
-Compile & Check Style:
+Check Code Style:
+  stage: check
+  script:
+    - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
+
+Compile:
   stage: build
   script:
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
-    - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
 
 Test JVM:
   stage: test
@@ -75,7 +80,6 @@ Sign Artefacts:
 Deploy to Bintray:
   stage: deploy
   script:
-    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
     - $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Bintray
@@ -86,8 +90,7 @@ Deploy to Bintray:
 Deploy to Maven Central:
   stage: deploy
   script:
-    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
-    - $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+    - $GCMD $BEFORE_TASK $CENTRAL_TASK $AFTER_TASK $GOPTS
   environment:
     name: Maven Central
     url: "https://oss.sonatype.org"
