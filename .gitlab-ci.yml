@@ -11,6 +11,8 @@ variables:
   TEST_TASK: "check -x dokka"
   TEST_JVM_TASK: "jvmTest -x dokka"
   TEST_JS_TASK: "clean jsTest -x dokka"
+  DOC_TASK: "dokka"
+  SIGN_TASK: "signAllPublications"
   BINTRAY_TASK: "publishAllToBintray"
   CENTRAL_TASK: "publishAllPublicationsToMavenRepository"
   JS_COMPILE_TASK: "clean jsMain"
@@ -26,9 +28,18 @@ before_script:
 cache:
   paths:
     - $HOME/.gradle/
+    - $HOME/.m2/
     - gradle/
     - .gradle/
     - build/
+    - '**/build/'
+
+stages:
+  - build
+  - test
+  - doc
+  - sign
+  - deploy
 
 Compile & Check Style:
   stage: build
@@ -47,9 +58,25 @@ Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
 
+Generate Doc:
+  stage: doc
+  script:
+    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
+  only:
+    - /^(master)|(release)|(develop)$/
+
+Sign Artefacts:
+  stage: sign
+  script:
+    - $GCMD $BEFORE_TASK $SIGN_TASK $AFTER_TASK $GOPTS
+  only:
+    - /^(master)|(release)|(develop)$/
+
 Deploy to Bintray:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
+    - $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
@@ -58,7 +85,9 @@ Deploy to Bintray:
 
 Deploy to Maven Central:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $CENTRAL_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
+    - $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Maven Central
     url: "https://oss.sonatype.org"
