@@ -14,7 +14,7 @@ import javafx.stage.WindowEvent
 import java.net.URL
 import kotlin.system.exitProcess
 
-class PrologIDE : Application() {
+class PrologIDEApplication : Application() {
     override fun start(stage: Stage) {
         try {
             val loader = FXMLLoader(javaClass.getResource("PrologIDEView.fxml"))
@@ -50,19 +50,19 @@ class PrologIDE : Application() {
 
     companion object {
 
-        val JAVA_KEYWORDS_LIGHT: URL = PrologIDE::class.java.getResource("java-keywords-light.css")
+        val JAVA_KEYWORDS_LIGHT: URL = PrologIDEApplication::class.java.getResource("java-keywords-light.css")
 
-        val JAVA_KEYWORDS_DARK: URL = PrologIDE::class.java.getResource("java-keywords-dark.css")
+        val JAVA_KEYWORDS_DARK: URL = PrologIDEApplication::class.java.getResource("java-keywords-dark.css")
 
-        val LIGHT_CODE_AREA: URL = PrologIDE::class.java.getResource("light-code-area.css")
+        val LIGHT_CODE_AREA: URL = PrologIDEApplication::class.java.getResource("light-code-area.css")
 
-        val DARK_CODE_AREA: URL = PrologIDE::class.java.getResource("dark-code-area.css")
+        val DARK_CODE_AREA: URL = PrologIDEApplication::class.java.getResource("dark-code-area.css")
 
-        val TUPROLOG_LOGO: URL = PrologIDE::class.java.getResource("2p-logo.png")
+        val TUPROLOG_LOGO: URL = PrologIDEApplication::class.java.getResource("2p-logo.png")
 
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(PrologIDE::class.java)
+            launch(PrologIDEApplication::class.java)
         }
     }
 }

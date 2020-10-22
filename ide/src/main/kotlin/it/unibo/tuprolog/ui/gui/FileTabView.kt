@@ -5,6 +5,7 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Tab
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -15,6 +16,7 @@ import java.io.IOException
 class FileTabView(
     private val file: File,
     private val model: PrologIDEModel,
+    private val ideController: PrologIDEController,
     initialText: String = ""
 ) : Tab() {
 
@@ -59,12 +61,19 @@ class FileTabView(
     }
 
     @FXML
+    fun onMousePressedOnCodeArea(e: MouseEvent) {
+        ideController.onMouseClickedOnCurrentFile(e)
+    }
+
+    @FXML
     fun onKeyTypedOnCodeArea(e: KeyEvent) {
         model.setFile(file, codeArea.text)
+        ideController.onKeyTypedOnCurrentFile(e)
     }
 
     @FXML
     fun onKeyPressedOnCodeArea(e: KeyEvent) {
         model.setFile(file, codeArea.text)
+        ideController.onKeyPressedOnCurrentFile(e)
     }
 }

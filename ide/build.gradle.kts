@@ -1,7 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val javaVersion: String by project
 val ktFreeCompilerArgsJvm: String by project
@@ -23,7 +23,7 @@ javafx {
 
 application {
     // mainModule.set("2p-ide")
-    mainClassName = "it.unibo.tuprolog.ui.gui.PrologIDE"
+    mainClassName = "it.unibo.tuprolog.ui.gui.Main"
 }
 
 dependencies {
