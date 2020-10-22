@@ -308,7 +308,6 @@ fun Project.configureDokka(vararg platforms: String) {
     tasks.withType<DokkaTask>().configureEach {
         outputDirectory.set(docDir)
 
-
         dokkaSourceSets {
             if (platforms.isNotEmpty()) {
                 for (p in platforms) {
