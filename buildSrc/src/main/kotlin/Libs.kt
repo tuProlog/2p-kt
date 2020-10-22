@@ -42,6 +42,12 @@ object Libs {
     /**
      * https://kotlinlang.org/
      */
+    const val kotlin_reflect: String = "org.jetbrains.kotlin:kotlin-reflect:" +
+            Versions.org_jetbrains_kotlin
+
+    /**
+     * https://kotlinlang.org/
+     */
     const val kotlin_scripting_compiler_embeddable: String =
             "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:" +
             Versions.org_jetbrains_kotlin
@@ -97,6 +103,11 @@ object Libs {
      * https://openjdk.java.net/projects/openjfx/
      */
     const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+
+    /**
+     * https://openjdk.java.net/projects/openjfx/
+     */
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
 
     /**
      * https://openjdk.java.net/projects/openjfx/

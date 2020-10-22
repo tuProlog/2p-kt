@@ -1,3 +1,4 @@
+import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -17,7 +18,7 @@ object Versions {
 
     const val org_jetbrains_kotlin: String = "1.4.10"
 
-    const val org_openjfx: String = "15" // "11.0.2" // available: "15"
+    const val org_openjfx: String = "15.0.1"
 
     const val org_antlr: String = "4.8-1"
 
@@ -27,9 +28,9 @@ object Versions {
 
     const val org_jetbrains_kotlin_multiplatform_gradle_plugin: String = "1.4.10"
 
-    const val com_github_johnrengelman_shadow_gradle_plugin: String = "6.0.0"
+    const val com_github_johnrengelman_shadow_gradle_plugin: String = "6.1.0"
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.4.0"
+    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.4.1"
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
@@ -37,7 +38,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.21.1"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.10"
+    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.10.2"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
@@ -56,11 +57,11 @@ object Versions {
     const val ktlint: String = "0.39.0"
 
     /**
-     * Current version: "6.6.1"
+     * Current version: "6.7"
      * See issue 19: How to update Gradle itself?
      * https://github.com/jmfayard/buildSrcVersions/issues/19
      */
-    const val gradleLatestVersion: String = "6.6.1"
+    const val gradleLatestVersion: String = "6.7"
 }
 
 /**
