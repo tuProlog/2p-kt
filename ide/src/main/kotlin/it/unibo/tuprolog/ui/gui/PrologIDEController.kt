@@ -20,7 +20,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Label
-import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.ProgressBar
@@ -194,32 +193,11 @@ class PrologIDEController : Initializable {
         model.onWarning.subscribe(this::onWarning)
         model.onError.subscribe(this::onError)
         model.onFileLoaded.subscribe(this::onFileLoaded)
+        model.onNewSolver.subscribe(this::onNewSolver)
+        model.onNewStaticKb.subscribe(this::onNewStaticKb)
 
-        lsvSolutions.setCellFactory {
-            object : ListCell<Solution>() {
-                override fun updateItem(item: Solution?, empty: Boolean) {
-                    super.updateItem(item, empty)
-                    if (empty || item == null) {
-                        graphic = null
-                    } else {
-                        graphic = SolutionView.of(item)
-                    }
-                }
-            }
-        }
-
-        lsvWarnings.setCellFactory {
-            object : ListCell<PrologWarning>() {
-                override fun updateItem(item: PrologWarning?, empty: Boolean) {
-                    super.updateItem(item, empty)
-                    if (empty || item == null) {
-                        graphic = null
-                    } else {
-                        graphic = Label(item.message)
-                    }
-                }
-            }
-        }
+        lsvSolutions.setCellFactory { ListCellView { SolutionView.of(it) } }
+        lsvWarnings.setCellFactory { ListCellView { Label(it.message) } }
 
         tbcFunctor.cellValueFactory = PropertyValueFactory(Operator::functor.name)
         tbcSpecifier.cellValueFactory = PropertyValueFactory(Operator::specifier.name)
@@ -231,6 +209,15 @@ class PrologIDEController : Initializable {
         trvLibraries.root = TreeItem("Loaded libraries:")
 
         model.newFile()
+        model.reset()
+    }
+
+    private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
+        updateContextSensitiveView(e)
+    }
+
+    private fun onNewStaticKb(e: SolverEvent<Unit>) = onUiThread {
+        updateContextSensitiveView(e)
     }
 
     private fun onFileLoaded(e: Pair<File, String>) = onUiThread {
@@ -265,8 +252,7 @@ class PrologIDEController : Initializable {
             ""
         }
 
-    private fun updatingContextSensitiveView(event: SolverEvent<*>, action: () -> Unit) {
-        action()
+    private fun updateContextSensitiveView(event: SolverEvent<*>) {
         if (event.operators != lastEvent?.operators) {
             tbvOperators.items.setAll(event.operators)
             tabOperators.showNotification()
@@ -276,9 +262,12 @@ class PrologIDEController : Initializable {
             tabFlags.showNotification()
         }
         if (event.libraries != lastEvent?.libraries) {
-            trvLibraries.root.children.setAll(
-                event.libraries.libraries.map { LibraryView(it) }
-            )
+            with(trvLibraries.root) {
+                children.setAll(event.libraries.libraries.map { LibraryView(it) })
+                if (children.isNotEmpty()) {
+                    isExpanded = true
+                }
+            }
             tabLibraries.showNotification()
         }
         if (event.staticKb != lastEvent?.staticKb) {
@@ -289,6 +278,11 @@ class PrologIDEController : Initializable {
             txaDynamicKb.text = event.dynamicKb.pretty()
             tabDynamicKb.showNotification()
         }
+    }
+
+    private fun updatingContextSensitiveView(event: SolverEvent<*>, action: () -> Unit) {
+        action()
+        updateContextSensitiveView(event)
     }
 
     private fun onStderrPrinted(output: String) = onUiThread {

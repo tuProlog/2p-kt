@@ -14,7 +14,6 @@ plugins {
     kotlin("jvm")
     id("org.openjfx.javafxplugin") version Versions.org_openjfx_javafxplugin_gradle_plugin
     id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
-    // id("org.beryx.jlink") version "2.22.1"
 }
 
 javafx {
@@ -56,9 +55,11 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("redist")
     sourceSets.main {
-        runtimeClasspath.filter { it.exists() }.map { if (it.isDirectory) it else zipTree(it) }.forEach {
-            from(it)
-        }
+        runtimeClasspath.filter { it.exists() }
+            .map { if (it.isDirectory) it else zipTree(it) }
+            .forEach {
+                from(it)
+            }
     }
     from(files("${rootProject.projectDir}/LICENSE"))
 
@@ -68,13 +69,6 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
         println("Generated: ${archiveFile.get()}")
     }
 }
-
-// jlink{
-//     launcher {
-//         name = "2p-ide"
-//     }
-//     // imageZip.set(project.file("${project.buildDir}/image-zip/2p-ide.zip"))
-// }
 
 if (!githubToken.isNullOrBlank()) {
     rootProject.configure<GithubReleaseExtension> {

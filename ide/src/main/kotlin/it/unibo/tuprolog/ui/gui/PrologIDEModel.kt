@@ -3,8 +3,10 @@ package it.unibo.tuprolog.ui.gui
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.primitive.Solve
 import org.reactfx.EventStream
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -60,6 +62,8 @@ interface PrologIDEModel {
 
     fun stop()
 
+    fun reset()
+
     var query: String
 
 //    var goal: Struct
@@ -73,6 +77,10 @@ interface PrologIDEModel {
     val onFileClosed: EventStream<File>
 
     val onQueryChanged: EventStream<String>
+
+    val onNewSolver: EventStream<SolverEvent<Unit>>
+
+    val onNewStaticKb: EventStream<SolverEvent<Unit>>
 
     val onNewQuery: EventStream<SolverEvent<Struct>>
 

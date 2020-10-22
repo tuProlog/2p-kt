@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
+import it.unibo.tuprolog.utils.Cached
 import org.reactfx.EventSource
 import java.io.File
 import java.util.EnumSet
@@ -82,11 +83,20 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
         }
     }
 
-    private val solver = MutableSolver.classicWithDefaultBuiltins(
-        stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
-        stdErr = OutputChannel.of { onStderrPrinted.push(it) },
-        warnings = OutputChannel.of { onWarning.push(it) },
-    )
+    private val solver = Cached.of {
+        MutableSolver.classicWithDefaultBuiltins(
+            stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
+            stdErr = OutputChannel.of { onStderrPrinted.push(it) },
+            warnings = OutputChannel.of { onWarning.push(it) },
+        ).also {
+            onNewSolver.push(SolverEvent(Unit, it))
+        }
+    }
+
+    override fun reset() {
+        solver.invalidate()
+        solver.regenerate()
+    }
 
     private var solutions: Iterator<Solution>? = null
     private var solutionCount = 0
@@ -102,7 +112,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun solveAll() {
         solveImpl {
             state = State.COMPUTING
-            onResolutionStarted.push(SolverEvent(++solutionCount, solver))
+            onResolutionStarted.push(SolverEvent(++solutionCount, solver.value))
             nextAllImpl()
         }
     }
@@ -112,7 +122,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             try {
                 solutions = newResolution()
                 solutionCount = 0
-                onNewQuery.push(SolverEvent(lastGoal!!, solver))
+                onNewQuery.push(SolverEvent(lastGoal!!, solver.value))
                 continuation()
             } catch (e: ParseException) {
                 onError.push(e)
@@ -121,22 +131,25 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     }
 
     private fun newResolution(): Iterator<Solution> {
-        lastGoal = query.parseAsStruct(solver.operators)
-        val theory = currentFile?.let { getFile(it) }?.parseAsTheory(solver.operators) ?: Theory.empty()
-        solver.loadStaticKb(theory)
-        return solver.solve(lastGoal!!, timeout).iterator()
+        solver.value.let { s ->
+            lastGoal = query.parseAsStruct(s.operators)
+            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(s.operators) ?: Theory.empty()
+            s.loadStaticKb(theory)
+            onNewStaticKb.push(SolverEvent(Unit, s))
+            return s.solve(lastGoal!!, timeout).iterator()
+        }
     }
 
     override var timeout: TimeDuration = 5000
 
     private fun nextImpl() {
         executor.execute {
-            onResolutionStarted.push(SolverEvent(++solutionCount, solver))
+            onResolutionStarted.push(SolverEvent(++solutionCount, solver.value))
             val sol = solutions!!.next()
-            onResolutionOver.push(SolverEvent(solutionCount, solver))
-            onNewSolution.push(SolverEvent(sol, solver))
+            onResolutionOver.push(SolverEvent(solutionCount, solver.value))
+            onNewSolution.push(SolverEvent(sol, solver.value))
             state = if (!sol.isYes || !solutions!!.hasNext()) {
-                onQueryOver.push(SolverEvent(sol.query, solver))
+                onQueryOver.push(SolverEvent(sol.query, solver.value))
                 State.IDLE
             } else {
                 State.SOLUTION
@@ -149,10 +162,10 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             val sol = solutions!!.next()
 //            onResolutionOver.push(solutionCount)
             solutionCount++
-            onNewSolution.push(SolverEvent(sol, solver))
+            onNewSolution.push(SolverEvent(sol, solver.value))
             if (!solutions!!.hasNext() || state != State.COMPUTING) {
-                onResolutionOver.push(SolverEvent(solutionCount, solver))
-                onQueryOver.push(SolverEvent(sol.query, solver))
+                onResolutionOver.push(SolverEvent(solutionCount, solver.value))
+                onQueryOver.push(SolverEvent(sol.query, solver.value))
                 state = State.IDLE
             } else {
                 nextAllImpl()
@@ -170,7 +183,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun nextAll() {
         ensuringStateIs(State.SOLUTION) {
             state = State.COMPUTING
-            onResolutionStarted.push(SolverEvent(+solutionCount, solver))
+            onResolutionStarted.push(SolverEvent(solutionCount, solver.value))
             nextAllImpl()
         }
     }
@@ -178,7 +191,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun stop() {
         ensuringStateIs(State.SOLUTION) {
             state = State.IDLE
-            onQueryOver.push(SolverEvent(lastGoal!!, solver))
+            onQueryOver.push(SolverEvent(lastGoal!!, solver.value))
         }
     }
 
@@ -199,6 +212,10 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override val onQueryChanged: EventSource<String> = EventSource()
 
     override val onNewQuery: EventSource<SolverEvent<Struct>> = EventSource()
+
+    override val onNewSolver: EventSource<SolverEvent<Unit>> = EventSource()
+
+    override val onNewStaticKb: EventSource<SolverEvent<Unit>> = EventSource()
 
     override val onResolutionStarted: EventSource<SolverEvent<Int>> = EventSource()
 

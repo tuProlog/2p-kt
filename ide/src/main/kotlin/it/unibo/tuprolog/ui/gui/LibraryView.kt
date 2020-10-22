@@ -5,7 +5,7 @@ import javafx.scene.control.TreeItem
 
 class LibraryView(library: AliasedLibrary) : TreeItem<String>(library.alias) {
     init {
-        isExpanded = true
+        isExpanded = false
 
         val functionsChild = TreeItem("Functions")
         val predicatesChild = TreeItem("Predicates")
