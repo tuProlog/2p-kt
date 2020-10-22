@@ -422,7 +422,7 @@ class PrologIDEController : Initializable {
 
     private fun onCaretMovedIn(area: CodeArea) {
         val (l, c) = area.text.caretLocation(area.caretPosition)
-        lblCaret.text = "Line: ${l} | Column: ${c}"
+        lblCaret.text = "Line: $l | Column: $c"
     }
 
     private fun String.caretLocation(position: Int): Pair<Int, Int> {
@@ -474,12 +474,13 @@ class PrologIDEController : Initializable {
             it.fitWidth = TUPROLOG_LOGO.width * 0.3
             it.fitHeight = TUPROLOG_LOGO.height * 0.3
         }
-        dialog.contentText = """
+        dialog.contentText =
+            """
             |Running on:
             |  - 2P-Kt v${Info.VERSION}
             |  - JVM v${System.getProperty("java.version")}
             |  - JavaFX v${System.getProperties().get("javafx.runtime.version")}
-        """.trimMargin()
+            """.trimMargin()
         dialog.showAndWait()
     }
 }
