@@ -1,5 +1,12 @@
 rootProject.name = "2p"
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+}
+
 include("documentation")
 
 include("core")

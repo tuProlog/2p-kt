@@ -38,7 +38,7 @@ object Versions {
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.21.1"
 
-    const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.10.2"
+    const val org_jetbrains_dokka_gradle_plugin: String = "1.4.10.2"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
