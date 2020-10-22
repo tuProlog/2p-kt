@@ -26,11 +26,17 @@ application {
     mainClassName = "it.unibo.tuprolog.ui.gui.Main"
 }
 
+val linuxOnly by configurations.creating { isTransitive = true }
+
 dependencies {
     api(project(":solve-classic"))
     api(project(":parser-theory"))
     api(kotlin("stdlib-jdk8"))
     api(Libs.richtextfx)
+
+    runtimeOnly("${Libs.javafx_graphics}:win")
+    runtimeOnly("${Libs.javafx_graphics}:linux")
+    runtimeOnly("${Libs.javafx_graphics}:mac")
 
     testImplementation(kotlin("test-junit"))
 }
