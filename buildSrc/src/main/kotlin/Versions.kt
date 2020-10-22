@@ -1,4 +1,3 @@
-import kotlin.String
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -12,11 +11,13 @@ import org.gradle.plugin.use.PluginDependencySpec
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val com_fasterxml_jackson_dataformat: String = "2.11.2"
+    const val com_fasterxml_jackson_dataformat: String = "2.11.3"
 
     const val io_github_javaeden_orchid: String = "0.21.1"
 
     const val org_jetbrains_kotlin: String = "1.4.10"
+
+    const val org_openjfx: String = "15" // "11.0.2" // available: "15"
 
     const val org_antlr: String = "4.8-1"
 
@@ -32,17 +33,21 @@ object Versions {
 
     const val de_fayard_buildsrcversions_gradle_plugin: String = "0.7.0"
 
+    const val org_openjfx_javafxplugin_gradle_plugin: String = "0.0.9"
+
     const val com_eden_orchidplugin_gradle_plugin: String = "0.21.1"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.1" // available: "1.4.10"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.5"
 
-    const val jackson_datatype_jsr310: String = "2.11.2"
+    const val jackson_datatype_jsr310: String = "2.11.3"
 
     const val clikt_multiplatform: String = "2.8.0"
 
-    const val jackson_core: String = "2.11.2"
+    const val jackson_core: String = "2.11.3"
+
+    const val richtextfx: String = "0.10.5"
 
     const val plantuml: String = "1.2020.2" // available: "8059"
 

@@ -21,5 +21,5 @@ include("serialize-core")
 include("serialize-theory")
 include("repl")
 include("oop-lib")
-
+include("ide")
 include("examples")
