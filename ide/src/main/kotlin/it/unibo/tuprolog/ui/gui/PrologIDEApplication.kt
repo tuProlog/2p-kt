@@ -8,10 +8,8 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
-import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
-import java.net.URL
 import kotlin.system.exitProcess
 
 class PrologIDEApplication : Application() {
@@ -19,12 +17,12 @@ class PrologIDEApplication : Application() {
         try {
             val loader = FXMLLoader(javaClass.getResource("PrologIDEView.fxml"))
             val root = loader.load<Parent>()
-            stage.title = "tuProlog IDE v$VERSION"
+            stage.title = "tuProlog IDE"
             stage.scene = Scene(root)
-            stage.icons.add(Image(TUPROLOG_LOGO.openStream()))
+            stage.icons.add(TUPROLOG_LOGO)
             stage.onCloseRequest = EventHandler(this::onCloseRequest)
-            stage.scene.stylesheets += JAVA_KEYWORDS_LIGHT.toExternalForm()
-            stage.scene.stylesheets += LIGHT_CODE_AREA.toExternalForm()
+            stage.scene.stylesheets += JAVA_KEYWORDS_LIGHT
+            stage.scene.stylesheets += LIGHT_CODE_AREA
             stage.show()
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -49,17 +47,6 @@ class PrologIDEApplication : Application() {
     }
 
     companion object {
-
-        val JAVA_KEYWORDS_LIGHT: URL = PrologIDEApplication::class.java.getResource("java-keywords-light.css")
-
-        val JAVA_KEYWORDS_DARK: URL = PrologIDEApplication::class.java.getResource("java-keywords-dark.css")
-
-        val LIGHT_CODE_AREA: URL = PrologIDEApplication::class.java.getResource("light-code-area.css")
-
-        val DARK_CODE_AREA: URL = PrologIDEApplication::class.java.getResource("dark-code-area.css")
-
-        val TUPROLOG_LOGO: URL = PrologIDEApplication::class.java.getResource("2p-logo.png")
-
         @JvmStatic
         fun main(args: Array<String>) {
             launch(PrologIDEApplication::class.java)

@@ -57,7 +57,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem fx:id="btnAbout" disable="true" mnemonicParsing="false" text="About 2P" />
+                        <MenuItem fx:id="btnAbout" mnemonicParsing="false" onAction="#onAbout" text="About 2P" />
                     </items>
                 </Menu>
             </menus>

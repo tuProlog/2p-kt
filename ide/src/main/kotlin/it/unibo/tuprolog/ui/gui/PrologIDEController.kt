@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.gui
 
+import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
@@ -32,6 +33,7 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.control.cell.PropertyValueFactory
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Region
@@ -419,17 +421,17 @@ class PrologIDEController : Initializable {
     }
 
     private fun onCaretMovedIn(area: CodeArea) {
-        // val (l, c) = area.text.caretLocation(area.caretPosition)
-        lblCaret.text = "Line: ${area.caretPosition + 1} | Column: ${area.caretColumn + 1}"
+        val (l, c) = area.text.caretLocation(area.caretPosition)
+        lblCaret.text = "Line: ${l} | Column: ${c}"
     }
 
-    // private fun String.caretLocation(position: Int): Pair<Int, Int> {
-    //     val portion = this.subSequence(0, position)
-    //     val lines = portion.count { it == '\n' } + 1
-    //     val lastLine = portion.lastIndexOf('\n')
-    //     val columns = position - lastLine
-    //     return lines to columns
-    // }
+    private fun String.caretLocation(position: Int): Pair<Int, Int> {
+        val portion = this.subSequence(0, position)
+        val lines = portion.count { it == '\n' } + 1
+        val lastLine = portion.lastIndexOf('\n')
+        val columns = position - lastLine
+        return lines to columns
+    }
 
     @FXML
     fun onMouseClickedOnCurrentFile(e: MouseEvent) {
@@ -461,5 +463,23 @@ class PrologIDEController : Initializable {
     @FXML
     fun onNewFilePressed(e: ActionEvent) {
         model.newFile()
+    }
+
+    @FXML
+    fun onAbout(e: ActionEvent) {
+        val dialog = Alert(Alert.AlertType.INFORMATION)
+        dialog.title = "About"
+        dialog.headerText = "tuProlog IDE v${Info.VERSION}"
+        dialog.dialogPane.graphic = ImageView(TUPROLOG_LOGO).also {
+            it.fitWidth = TUPROLOG_LOGO.width * 0.3
+            it.fitHeight = TUPROLOG_LOGO.height * 0.3
+        }
+        dialog.contentText = """
+            |Running on:
+            |  - 2P-Kt v${Info.VERSION}
+            |  - JVM v${System.getProperty("java.version")}
+            |  - JavaFX v${System.getProperties().get("javafx.runtime.version")}
+        """.trimMargin()
+        dialog.showAndWait()
     }
 }
