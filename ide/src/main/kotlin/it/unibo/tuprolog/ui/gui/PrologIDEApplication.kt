@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.ui.gui
 
-import it.unibo.tuprolog.Info.VERSION
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
