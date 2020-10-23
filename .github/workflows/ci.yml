@@ -50,10 +50,10 @@ jobs:
         run: ./gradlew $OPTS jvmTest
 
       - name: Archive JVM Test Reports
-          uses: actions/upload-artifact@v2
-          with:
-            name: jvm-test-reports
-            path: '**/build/reports/tests/jvmTest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: jvm-test-reports
+          path: '**/build/reports/tests/jvmTest'
 
       - name: Test JS
         run: ./gradlew $OPTS jsTest
