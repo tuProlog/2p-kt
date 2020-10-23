@@ -6,15 +6,15 @@ variables:
   BEFORE_TASK: ""
   AFTER_TASK: ""
   GCMD: "gradle"
-  BUILD_TASK: "clean assemble"
-  CHECK_CODE_TASK: "ktlintCheck"
+  BUILD_TASK: "clean assemble --parallel"
+  CHECK_CODE_TASK: "ktlintCheck --parallel"
   TEST_TASK: "check -x dokkaHtml"
   TEST_JVM_TASK: "jvmTest -x dokkaHtml"
   TEST_JS_TASK: "clean jsTest -x dokkaHtml"
-  DOC_TASK: "dokkaHtml"
-  SIGN_TASK: "signAllPublications"
-  BINTRAY_TASK: "publishAllToBintray"
-  CENTRAL_TASK: "publishAllPublicationsToMavenRepository"
+  DOC_TASK: "dokkaHtml --parallel"
+  SIGN_TASK: "signAllPublications --parallel"
+  BINTRAY_TASK: "publishAllToBintray --parallel"
+  CENTRAL_TASK: "publishAllPublicationsToMavenRepository --parallel"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
@@ -33,6 +33,7 @@ cache:
     - .gradle/
     - build/
     - '**/build/'
+    - core/src/commonMain/kotlin/it/unibo/tuprolog/Info.kt
 
 stages:
   - check
