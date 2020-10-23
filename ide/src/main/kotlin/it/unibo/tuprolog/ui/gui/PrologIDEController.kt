@@ -660,7 +660,6 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onSettingsPressed(e: ActionEvent) {
-
     }
 
     @FXML
