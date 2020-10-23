@@ -1,4 +1,4 @@
-name: ci
+name: quick-check
 on:
   push:
     branches:
@@ -21,7 +21,7 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 15 # The JDK version to make available on the path.
+          java-version: 15.0.1 # The JDK version to make available on the path.
           java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
           architecture: x64 # (x64 or x86) - defaults to x64
 
@@ -29,10 +29,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Setup Gradle
-        run: ./gradlew
-
-      - name: Setup Gradle
         run: ./gradlew $GOPTS
+
+      - name: Show Env
+        run: ./gradlew --version
 
       - name: Check Code Style
         run: ./gradlew $OPTS ktlintCheck --parallel
