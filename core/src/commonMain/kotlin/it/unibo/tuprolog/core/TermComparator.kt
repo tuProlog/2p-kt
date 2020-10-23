@@ -3,12 +3,12 @@ package it.unibo.tuprolog.core
 interface TermComparator<T : Term> : Comparator<T> {
     object AtomComparator : TermComparator<Atom> {
         override fun compare(a: Atom, b: Atom): Int =
-            a.value.compareTo(b.value)
+            compareStringsLocaleIndependently(a.value, b.value)
     }
 
     object VarComparator : TermComparator<Var> {
         override fun compare(a: Var, b: Var): Int =
-            a.completeName.compareTo(b.completeName)
+            compareStringsLocaleIndependently(a.completeName, b.completeName)
     }
 
     object RealComparator : TermComparator<Real> {

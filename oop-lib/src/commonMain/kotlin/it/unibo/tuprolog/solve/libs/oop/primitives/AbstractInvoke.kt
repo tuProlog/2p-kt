@@ -28,7 +28,7 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
                     actuallyInvoke(first, method, third)
                 }
                 is Struct -> {
-                    val ref = findRefFromAlias(first as Struct)
+                    val ref = findRefFromAlias(first)
                     actuallyInvoke(ref, method, third)
                 }
                 else -> Substitution.failed()
