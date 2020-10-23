@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.ui.gui
 
+import it.unibo.tuprolog.core.operators.OperatorSet
 import javafx.event.Event
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -49,6 +50,10 @@ class FileTabView(
 
     @FXML
     lateinit var codeArea: CodeArea
+
+    fun notifyOperators(operators: OperatorSet) {
+        syntaxColoring.operators = operators
+    }
 
 //    @FXML
 //    lateinit var btnClose: Button

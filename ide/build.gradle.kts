@@ -31,6 +31,7 @@ val linuxOnly by configurations.creating { isTransitive = true }
 dependencies {
     api(project(":solve-classic"))
     api(project(":parser-theory"))
+    api(project(":oop-lib"))
     api(kotlin("stdlib-jdk8"))
     api(Libs.richtextfx)
 

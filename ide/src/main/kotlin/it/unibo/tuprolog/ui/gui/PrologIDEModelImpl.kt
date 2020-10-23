@@ -10,6 +10,8 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
@@ -85,6 +87,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private val solver = Cached.of {
         MutableSolver.classicWithDefaultBuiltins(
+            libraries = Libraries.of(OOPLib),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },

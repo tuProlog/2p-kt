@@ -184,6 +184,9 @@ class PrologIDEController : Initializable {
             f()
         }
 
+    private val tabs: Sequence<FileTabView>
+        get() = tabsFiles.tabs.asSequence().filterIsInstance<FileTabView>()
+
     @FXML
     override fun initialize(location: URL, resources: ResourceBundle?) {
         model.onResolutionStarted.subscribe(this::onResolutionStarted)
@@ -259,6 +262,7 @@ class PrologIDEController : Initializable {
         if (event.operators != lastEvent?.operators) {
             tbvOperators.items.setAll(event.operators)
             tabOperators.showNotification()
+            tabs.forEach { it.notifyOperators(event.operators) }
         }
         if (event.flags != lastEvent?.flags) {
             tbvFlags.items.setAll(event.flags.map { it.toPair() })
