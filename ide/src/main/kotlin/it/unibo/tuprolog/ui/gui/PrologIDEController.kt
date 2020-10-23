@@ -251,7 +251,7 @@ class PrologIDEController : Initializable {
 
     private fun Theory.pretty(): String =
         if (size > 0) {
-            clauses.asSequence().joinToString(".\n", postfix = ".") {
+            clauses.joinToString(".\n", postfix = ".") {
                 it.format(TermFormatter.prettyExpressions())
             }
         } else {

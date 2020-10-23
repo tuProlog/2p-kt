@@ -20,61 +20,94 @@ internal class MutableClassicSolver(
 
     override fun loadLibrary(library: AliasedLibrary) {
         updateContext {
-            copy(libraries = libraries + library)
+            val newLibraries = libraries + library
+            copy(
+                libraries = newLibraries,
+                operators = operators + getAllOperators(newLibraries).toOperatorSet()
+            )
         }
     }
 
     override fun unloadLibrary(library: AliasedLibrary) {
         updateContext {
-            copy(libraries = libraries - library)
+            val newLibraries = libraries + library
+            copy(
+                libraries = newLibraries,
+                operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun setLibraries(libraries: Libraries) {
         updateContext {
-            copy(libraries = libraries)
+            copy(
+                libraries = libraries,
+                operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun loadStaticKb(theory: Theory) {
         updateContext {
-            copy(staticKb = theory)
+            copy(
+                staticKb = theory,
+                operators = getAllOperators(libraries, theory, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun appendStaticKb(theory: Theory) {
         updateContext {
-            copy(staticKb = staticKb + theory)
+            val newStaticKb = staticKb + theory
+            copy(
+                staticKb = newStaticKb,
+                operators = operators + theory.getAllOperators().toOperatorSet()
+            )
         }
     }
 
     override fun resetStaticKb() {
         updateContext {
-            copy(staticKb = Theory.empty())
+            copy(
+                staticKb = Theory.empty(),
+                operators = getAllOperators(libraries, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun loadDynamicKb(theory: Theory) {
         updateContext {
-            copy(dynamicKb = theory)
+            copy(
+                dynamicKb = theory,
+                operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
+            )
         }
     }
 
     override fun appendDynamicKb(theory: Theory) {
         updateContext {
-            copy(dynamicKb = dynamicKb + theory)
+            copy(
+                dynamicKb = theory,
+                operators = operators + theory.getAllOperators().toOperatorSet()
+            )
         }
     }
 
     override fun resetDynamicKb() {
         updateContext {
-            copy(dynamicKb = Theory.empty())
+            copy(
+                dynamicKb = Theory.empty(),
+                operators = getAllOperators(libraries, staticKb).toOperatorSet()
+            )
         }
     }
 
     override fun assertA(clause: Clause) {
         updateContext {
-            copy(dynamicKb = dynamicKb.assertA(clause))
+            copy(
+                dynamicKb = dynamicKb.assertA(clause),
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
     }
 
@@ -86,7 +119,10 @@ internal class MutableClassicSolver(
 
     override fun assertZ(clause: Clause) {
         updateContext {
-            copy(dynamicKb = dynamicKb.assertZ(clause))
+            copy(
+                dynamicKb = dynamicKb.assertZ(clause),
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
     }
 
@@ -99,7 +135,10 @@ internal class MutableClassicSolver(
     override fun retract(clause: Clause): RetractResult {
         val result = dynamicKb.retract(clause)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(
+                dynamicKb = result.theory,
+                operators = operators - listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
         return result
     }
@@ -115,7 +154,10 @@ internal class MutableClassicSolver(
     override fun retractAll(clause: Clause): RetractResult {
         val result = dynamicKb.retractAll(clause)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(
+                dynamicKb = result.theory,
+                operators = operators - result.theory.getAllOperators().toOperatorSet()
+            )
         }
         return result
     }
