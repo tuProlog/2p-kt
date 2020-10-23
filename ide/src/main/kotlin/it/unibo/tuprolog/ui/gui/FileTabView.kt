@@ -15,7 +15,7 @@ import java.io.IOException
 
 @Suppress("UNUSED_PARAMETER")
 class FileTabView(
-    private val file: File,
+    public val file: File,
     private val model: PrologIDEModel,
     private val ideController: PrologIDEController,
     initialText: String = ""
@@ -53,6 +53,7 @@ class FileTabView(
 
     fun notifyOperators(operators: OperatorSet) {
         syntaxColoring.operators = operators
+        syntaxColoring.applyHighlightingNow()
     }
 
 //    @FXML

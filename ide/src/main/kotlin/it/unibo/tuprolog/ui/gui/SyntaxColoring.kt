@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.utils.Cached
+import javafx.application.Platform
 import javafx.concurrent.Task
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.model.StyleSpans
@@ -52,6 +53,12 @@ class SyntaxColoring(
         codeArea.setStyleSpans(0, highlighting)
     }
 
+    fun applyHighlightingNow() {
+        Platform.runLater {
+            applyHighlighting(computeHighlighting(codeArea.text))
+        }
+    }
+
     @Volatile
     private var subscription: Subscription? = null
 
@@ -94,7 +101,7 @@ class SyntaxColoring(
     }
 
     private val patternCache: Cached<Regex> = Cached.of {
-        pattern(operators)
+        pattern(this.operators)
     }
 
     private fun computeHighlighting(text: String): StyleSpans<Collection<String>> {

@@ -184,8 +184,14 @@ class PrologIDEController : Initializable {
             f()
         }
 
-    private val tabs: Sequence<FileTabView>
+    private val fileTabs: Sequence<FileTabView>
         get() = tabsFiles.tabs.asSequence().filterIsInstance<FileTabView>()
+
+    private val streamsTabs: Sequence<Tab>
+        get() = tabsStreams.tabs.asSequence()
+
+    private val currentFileTab: FileTabView?
+        get() = fileTabs.firstOrNull { it.file == model.currentFile }
 
     @FXML
     override fun initialize(location: URL, resources: ResourceBundle?) {
@@ -216,6 +222,10 @@ class PrologIDEController : Initializable {
 
         model.newFile()
         model.reset()
+
+        Platform.runLater {
+            streamsTabs.forEach { it.hideNotification() }
+        }
     }
 
     private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
@@ -262,7 +272,9 @@ class PrologIDEController : Initializable {
         if (event.operators != lastEvent?.operators) {
             tbvOperators.items.setAll(event.operators)
             tabOperators.showNotification()
-            tabs.forEach { it.notifyOperators(event.operators) }
+            fileTabs.forEach {
+                it.notifyOperators(event.operators)
+            }
         }
         if (event.flags != lastEvent?.flags) {
             tbvFlags.items.setAll(event.flags.map { it.toPair() })
