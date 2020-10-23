@@ -39,6 +39,7 @@ jobs:
 
       - name: Archive KtLint Reports
         uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: ktlint-reports
           path: '**/build/reports/ktlint'
@@ -51,6 +52,7 @@ jobs:
 
       - name: Archive JVM Test Reports
         uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: jvm-test-reports
           path: '**/build/reports/tests/jvmTest'
@@ -59,6 +61,7 @@ jobs:
         run: ./gradlew $OPTS jsTest
 
       - name: Archive JS Test Reports
+        if: failure()
         uses: actions/upload-artifact@v2
         with:
           name: js-test-reports
