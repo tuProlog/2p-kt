@@ -28,31 +28,31 @@
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem fx:id="btnNewFile" mnemonicParsing="false" onAction="#onNewFilePressed" text="New" />
-                        <MenuItem fx:id="btnOpenFile" disable="true" mnemonicParsing="false" text="Open…" />
+                        <MenuItem fx:id="btnOpenFile" mnemonicParsing="false" onAction="#onOpenFilePressed" text="Open…" />
                         <Menu disable="true" mnemonicParsing="false" text="Open Recent" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="btnCloseFile" disable="true" mnemonicParsing="false" text="Close" />
-                        <MenuItem fx:id="btnSaveFile" disable="true" mnemonicParsing="false" text="Save" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Save As…" />
-                        <MenuItem fx:id="btnReloadFile" disable="true" mnemonicParsing="false" text="Revert" />
+                        <MenuItem fx:id="btnCloseFile" mnemonicParsing="false" onAction="#onCloseFilePressed" text="Close" />
+                        <MenuItem fx:id="btnSaveFile" mnemonicParsing="false" onAction="#onSaveFilePressed" text="Save" />
+                        <MenuItem fx:id="btnSaveFileAs" mnemonicParsing="false" onAction="#onSaveFileAsPressed" text="Save As…" />
+                        <MenuItem fx:id="btnReloadFile" mnemonicParsing="false" onAction="#onReloadFilePressed" text="Revert" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="btnSettings" disable="true" mnemonicParsing="false" text="Settings…" />
+                        <MenuItem fx:id="btnSettings" disable="true" mnemonicParsing="false" onAction="#onSettingsPressed" text="Settings…" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="btnQuit" mnemonicParsing="false" onAction="#onQuitRequested" text="Quit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem disable="true" mnemonicParsing="false" text="Undo" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Redo" />
+                        <MenuItem fx:id="btnUndo" mnemonicParsing="false" onAction="#onUndoPressed" text="Undo" />
+                        <MenuItem fx:id="btnRedo" mnemonicParsing="false" onAction="#onRedoPressed" text="Redo" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Cut" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Copy" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Paste" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Delete" />
+                        <MenuItem fx:id="btnCut" mnemonicParsing="false" onAction="#onCutPressed" text="Cut" />
+                        <MenuItem fx:id="btnCopy" mnemonicParsing="false" onAction="#onCopyPressed" text="Copy" />
+                        <MenuItem fx:id="btnPaste" mnemonicParsing="false" onAction="#onPastePressed" text="Paste" />
+                        <MenuItem fx:id="btnDelete" mnemonicParsing="false" onAction="#onDeletePressed" text="Delete" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Select All" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="Unselect All" />
+                        <MenuItem fx:id="btnSelectAll" mnemonicParsing="false" onAction="#onSelectAllPressed" text="Select All" />
+                        <MenuItem fx:id="btnUnselectAll" mnemonicParsing="false" onAction="#onUnselectAllPressed" text="Unselect All" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

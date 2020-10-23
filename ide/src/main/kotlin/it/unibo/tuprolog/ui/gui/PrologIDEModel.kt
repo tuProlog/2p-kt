@@ -36,9 +36,13 @@ interface PrologIDEModel {
 
     fun selectFile(file: File)
 
+    fun closeFile(file: File)
+
     fun getFile(file: File): String
 
     fun setFile(file: File, theory: String)
+
+    fun renameFile(file: File, newFile: File)
 
     fun setCurrentFile(theory: String)
 

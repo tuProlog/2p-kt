@@ -37,6 +37,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Region
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
@@ -82,6 +83,9 @@ class PrologIDEController : Initializable {
     private lateinit var btnSaveFile: MenuItem
 
     @FXML
+    private lateinit var btnSaveFileAs: MenuItem
+
+    @FXML
     private lateinit var btnReloadFile: MenuItem
 
     @FXML
@@ -89,6 +93,30 @@ class PrologIDEController : Initializable {
 
     @FXML
     private lateinit var btnQuit: MenuItem
+
+    @FXML
+    private lateinit var btnUndo: MenuItem
+
+    @FXML
+    private lateinit var btnRedo: MenuItem
+
+    @FXML
+    private lateinit var btnCut: MenuItem
+
+    @FXML
+    private lateinit var btnCopy: MenuItem
+
+    @FXML
+    private lateinit var btnPaste: MenuItem
+
+    @FXML
+    private lateinit var btnDelete: MenuItem
+
+    @FXML
+    private lateinit var btnSelectAll: MenuItem
+
+    @FXML
+    private lateinit var btnUnselectAll: MenuItem
 
     @FXML
     private lateinit var btnAbout: MenuItem
@@ -205,6 +233,8 @@ class PrologIDEController : Initializable {
         model.onWarning.subscribe(this::onWarning)
         model.onError.subscribe(this::onError)
         model.onFileLoaded.subscribe(this::onFileLoaded)
+        model.onFileClosed.subscribe(this::onFileClosed)
+        model.onFileSelected.subscribe(this::onFileSelected)
         model.onNewSolver.subscribe(this::onNewSolver)
         model.onNewStaticKb.subscribe(this::onNewStaticKb)
 
@@ -238,6 +268,40 @@ class PrologIDEController : Initializable {
 
     private fun onFileLoaded(e: Pair<File, String>) = onUiThread {
         tabsFiles.tabs.add(FileTabView(e.first, model, this, e.second))
+        handleSomeOpenFiles()
+    }
+
+    private fun onFileClosed(e: File) = onUiThread {
+        fileTabs.firstOrNull { it.file == e }?.let {
+            tabsFiles.tabs -= it
+            handleNoMoreOpenFiles()
+        }
+    }
+
+    private fun onFileSelected(e: File) = onUiThread {
+        fileTabs.firstOrNull { it.file == e }?.let {
+            it.updateSyntaxColoring()
+            tabsFiles.selectionModel.select(it)
+        }
+    }
+
+    private fun handleNoMoreOpenFiles() {
+        if (fileTabs.none()) {
+            btnCloseFile.isDisable = true
+            btnSaveFile.isDisable = true
+            btnSaveFileAs.isDisable = true
+            btnReloadFile.isDisable = true
+            lblStatus.text = "Line: - | Column: -"
+        }
+    }
+
+    private fun handleSomeOpenFiles() {
+        if (fileTabs.any()) {
+            btnCloseFile.isDisable = false
+            btnSaveFile.isDisable = false
+            btnSaveFileAs.isDisable = false
+            btnReloadFile.isDisable = false
+        }
     }
 
     private fun onStdoutPrinted(output: String) = onUiThread {
@@ -479,6 +543,124 @@ class PrologIDEController : Initializable {
     @FXML
     fun onNewFilePressed(e: ActionEvent) {
         model.newFile()
+    }
+
+    @FXML
+    fun onOpenFilePressed(e: ActionEvent) {
+        val fileChooser = FileChooser()
+        fileChooser.extensionFilters.addAll(
+            FileChooser.ExtensionFilter("Prolog file", "*.pl", "*.2p"),
+            FileChooser.ExtensionFilter("Text file", "*.txt"),
+            FileChooser.ExtensionFilter("Any file", "*"),
+        )
+        fileChooser.initialDirectory = File(System.getProperty("user.home"))
+        fileChooser.title = "Open file..."
+        val file = fileChooser.showOpenDialog(stage)
+        model.loadFile(file)
+    }
+
+    @FXML
+    fun onCloseFilePressed(e: ActionEvent) {
+        model.closeFile(model.currentFile!!)
+    }
+
+    @FXML
+    fun onSaveFilePressed(e: ActionEvent) {
+        try {
+            model.saveFile(model.currentFile!!)
+            val alert = Alert(Alert.AlertType.INFORMATION)
+            alert.title = "Save file"
+            alert.headerText = "File correctly saved"
+            alert.contentText = model.currentFile?.canonicalPath
+            alert.dialogPane.minHeight = Region.USE_PREF_SIZE
+            alert.showAndWait()
+        } catch (e: Exception) {
+            TODO()
+        }
+    }
+
+    @FXML
+    fun onSaveFileAsPressed(e: ActionEvent) {
+        val fileChooser = FileChooser()
+        fileChooser.extensionFilters.addAll(
+            FileChooser.ExtensionFilter("Prolog file", "*.pl"),
+            FileChooser.ExtensionFilter("Text file", "*.txt"),
+            FileChooser.ExtensionFilter("2P file", "*.2p"),
+        )
+        fileChooser.initialDirectory = File(System.getProperty("user.home"))
+        fileChooser.title = "Save file as..."
+        val file = fileChooser.showSaveDialog(stage)
+        model.renameFile(model.currentFile!!, file)
+        model.saveFile(file)
+        currentFileTab?.file = file
+    }
+
+    @FXML
+    fun onReloadFilePressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.wholeText = model.currentFile!!.readText()
+        }
+    }
+
+    @FXML
+    fun onUndoPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.undo()
+        }
+    }
+
+    @FXML
+    fun onRedoPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.redo()
+        }
+    }
+
+    @FXML
+    fun onCutPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.cut()
+        }
+    }
+
+    @FXML
+    fun onCopyPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.copy()
+        }
+    }
+
+    @FXML
+    fun onPastePressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.paste()
+        }
+    }
+
+    @FXML
+    fun onDeletePressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.deleteText(it.codeArea.selection)
+        }
+    }
+
+    @FXML
+    fun onSelectAllPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.selectAll()
+        }
+    }
+
+    @FXML
+    fun onUnselectAllPressed(e: ActionEvent) {
+        currentFileTab?.let {
+            it.codeArea.deselect()
+        }
+    }
+
+    @FXML
+    fun onSettingsPressed(e: ActionEvent) {
+
     }
 
     @FXML

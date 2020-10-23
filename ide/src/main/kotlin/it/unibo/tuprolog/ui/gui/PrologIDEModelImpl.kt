@@ -59,6 +59,11 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
         files[file] = theory
     }
 
+    override fun renameFile(file: File, newFile: File) {
+        files[newFile] = files[file]!!
+        files -= file
+    }
+
     override fun setCurrentFile(theory: String) {
         setFile(currentFile!!, theory)
     }
@@ -197,6 +202,11 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             state = State.IDLE
             onQueryOver.push(SolverEvent(lastGoal!!, solver.value))
         }
+    }
+
+    override fun closeFile(file: File) {
+        files -= file
+        onFileClosed.push(file)
     }
 
     override var query: String = ""

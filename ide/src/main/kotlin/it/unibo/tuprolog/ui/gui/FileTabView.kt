@@ -15,7 +15,7 @@ import java.io.IOException
 
 @Suppress("UNUSED_PARAMETER")
 class FileTabView(
-    public val file: File,
+    file: File,
     private val model: PrologIDEModel,
     private val ideController: PrologIDEController,
     initialText: String = ""
@@ -51,8 +51,19 @@ class FileTabView(
     @FXML
     lateinit var codeArea: CodeArea
 
+    var wholeText: String
+        get() = codeArea.text
+        set(value) {
+            codeArea.replaceText(value)
+            model.setFile(file, codeArea.text)
+        }
+
     fun notifyOperators(operators: OperatorSet) {
         syntaxColoring.operators = operators
+        syntaxColoring.applyHighlightingNow()
+    }
+
+    fun updateSyntaxColoring() {
         syntaxColoring.applyHighlightingNow()
     }
 
@@ -65,6 +76,13 @@ class FileTabView(
             model.selectFile(file)
         }
     }
+
+    var file: File = file
+        get
+        set(value) {
+            field = value
+            text = value.name
+        }
 
     @FXML
     fun onMousePressedOnCodeArea(e: MouseEvent) {
