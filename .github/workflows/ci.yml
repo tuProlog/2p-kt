@@ -1,0 +1,74 @@
+name: ci
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      - name: Set up Environment
+        uses: allenevans/set-env@v1.0.0
+        with:
+          PROJECT_NAME: 2P-Kt
+          GOPTS: "--no-daemon --console=plain"
+          
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15 # The JDK version to make available on the path.
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+          architecture: x64 # (x64 or x86) - defaults to x64
+
+      - name: Ensure Gradle Wrapper is Executable
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        run: ./gradlew
+
+      - name: Setup Gradle
+        run: ./gradlew $GOPTS
+
+      - name: Check Code Style
+        run: ./gradlew $OPTS ktlintCheck --parallel
+
+      - name: Archive KtLint Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: ktlint-reports
+          path: '**/build/reports/ktlint'
+
+      - name: Compile
+        run: ./gradlew $OPTS assemble --parallel
+
+      - name: Test JVM
+        run: ./gradlew $OPTS jvmTest
+
+      - name: Archive JVM Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: jvm-test-reports
+          path: '**/build/reports/tests/jvmTest'
+
+      - name: Test JS
+        run: ./gradlew $OPTS jsTest
+
+      - name: Archive JS Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: js-test-reports
+          path: '**/build/reports/tests/jsTest'
+
+      - name: Generate Doc
+        run: ./gradlew $OPTS dokkaHtml --parallel
+
+      - name: Archive Doc
+        uses: actions/upload-artifact@v2
+        with:
+          name: api-references
+          path: build/dokka/htmlMultiModule
