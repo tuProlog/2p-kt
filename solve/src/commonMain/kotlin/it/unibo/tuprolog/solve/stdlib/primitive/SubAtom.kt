@@ -2,13 +2,16 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.toTerm
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.QuinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
 
-object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("repeat") {
+object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term, // string
         second: Term, // before
@@ -16,21 +19,21 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("repeat") 
         fourth: Term, // after
         fifth: Term // sub
     ): Sequence<Substitution> {
-        return if (fifth.isVariable) {
+        return if (fifth is Var) {
             ensuringArgumentIsAtom(0)
-            if (second.isVariable) {
-                if (fourth.isVariable) {
+            if (second is Var) {
+                if (fourth is Var) {
                     sequence<Substitution> {
                         yield(second mguWith 0.toTerm())
                         yield(third mguWith "".length.toTerm())
-                        yield(fourth mguWith (first as Atom).toString().length.toTerm())
+                        yield(fourth mguWith (first as Atom).value.length.toTerm())
                         yield(fifth mguWith "".toTerm())
                     }
                 } else { // before and sub are var, after is defined
                     ensuringArgumentIsInteger(3)
                     sequence<Substitution> {
-                        val sub = (first as Atom).toString().substring(0, fourth as Int)
-                        yield(second mguWith 0.toTerm())
+                        val sub = (first as Atom).toString().substring(0, (fourth as Integer).intValue.toInt())
+                        yield(second mguWith Integer.of(0))
                         yield(third mguWith sub.length.toTerm())
                         yield(fifth mguWith sub.toTerm())
                     }
@@ -40,8 +43,8 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("repeat") 
                 if (fourth.isVariable) { // before is defined, sub and after are var
                     sequence<Substitution> {
                         yield(third mguWith "".length.toTerm())
-                        yield(fourth mguWith (first as Atom).toString().length.minus(second as Int).toTerm())
-                        yield(fifth mguWith "".toTerm()) // deve cambiare
+                        yield(fourth mguWith (first as Atom).value.length.minus(second as Int).toTerm())
+                        yield(fifth mguWith Atom.of("")) // deve cambiare
                     }
                 } else {
                     ensuringArgumentIsInteger(3) // before and after are defined, sub is var

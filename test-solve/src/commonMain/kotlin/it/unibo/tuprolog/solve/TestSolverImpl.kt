@@ -298,6 +298,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(Retract)
                 assertHasPredicateInAPI(RetractAll)
                 assertHasPredicateInAPI(Sleep)
+                assertHasPredicateInAPI(Signature("sub_atom", 5))
                 assertHasPredicateInAPI(TermGreaterThan)
                 assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)
