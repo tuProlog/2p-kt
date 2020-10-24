@@ -56,6 +56,8 @@ jobs:
         run: |
           curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
           [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
+          jabba install ${{ env.jdk-version }}
+          jabba use ${{ env.jdk-version }}
 
 #      - &cache_gradle
       - name: Cache Gradle Data
@@ -149,6 +151,8 @@ jobs:
         run: |
           curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
           [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
+          jabba install ${{ env.jdk-version }}
+          jabba use ${{ env.jdk-version }}
           
 #      - *cache_gradle
       - name: Cache Gradle Data
