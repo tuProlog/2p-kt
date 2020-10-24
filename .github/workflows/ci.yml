@@ -4,6 +4,10 @@ on:
     branches:
       - master
       - develop
+env:
+  jdk-version: openjdk@~1.15.0
+  project-name: 2P-Kt
+  gradle-options: "--no-daemon --console=plain"
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -11,9 +15,6 @@ jobs:
       - &cache_jdk
         name: Cache JDK
         uses: actions/cache@v2
-        env:
-          jdk-version: &jdk_version
-            openjdk@~1.15.0
         with:
           path: $HOME/.jabba
           key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
@@ -23,8 +24,6 @@ jobs:
 
       - &install_jdk
         uses: battila7/jdk-via-jabba@v1
-        with:
-          jdk: *jdk_version
 
       - name: Show Env
         run: gradle --version
@@ -40,22 +39,22 @@ jobs:
         with:
           fetch-depth: 0 # all history
 
-      - &setup_env
-        name: Set up Environment
-        uses: allenevans/set-env@v1.0.0
+#      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
         with:
-          PROJECT_NAME: 2P-Kt
-          GOPTS: "--no-daemon --console=plain"
+          path: $HOME/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+            ${{ runner.os }}-
 
-      - *cache_jdk
-
-      - *install_jdk
+#      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
 
       - &cache_gradle
         name: Cache Gradle Data
         uses: actions/cache@v2
-        env:
-          jdk-version: *jdk_version
         with:
           path: |
             $HOME/.m2
@@ -69,10 +68,10 @@ jobs:
             ${{ runner.os }}-
 
       - name: Setup Gradle
-        run: gradle $GOPTS
+        run: gradle ${{ env.gradle-options }}
 
       - name: Check Code Style
-        run: gradle $OPTS ktlintCheck --parallel
+        run: gradle ${{ env.gradle-options }} ktlintCheck --parallel
 
       - name: Archive KtLint Reports
         uses: actions/upload-artifact@v2
@@ -82,10 +81,10 @@ jobs:
           path: '**/build/reports/ktlint'
 
       - name: Compile
-        run: gradle $OPTS assemble --parallel
+        run: gradle ${{ env.gradle-options }} assemble --parallel
 
       - name: Test JVM
-        run: gradle $OPTS jvmTest
+        run: gradle ${{ env.gradle-options }} jvmTest
 
       - name: Archive JVM Test Reports
         uses: actions/upload-artifact@v2
@@ -95,7 +94,7 @@ jobs:
           path: '**/build/reports/tests/jvmTest'
 
       - name: Test JS
-        run: gradle $OPTS jsTest
+        run: gradle ${{ env.gradle-options }} jsTest
 
       - name: Archive JS Test Reports
         if: failure()
@@ -105,10 +104,10 @@ jobs:
           path: '**/build/reports/tests/jsTest'
 
       - name: Generate Doc
-        run: gradle $OPTS dokkaHtml --parallel
+        run: gradle ${{ env.gradle-options }} dokkaHtml --parallel
 
       - name: Generate Molti-Module Doc
-        run: gradle $OPTS dokkaHtmlMultiModule --parallel
+        run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
 
       - name: Archive Doc
         uses: actions/upload-artifact@v2
@@ -124,17 +123,45 @@ jobs:
       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
     steps:
-      - *checkout_code
-      - *setup_env
-      - *cache_jdk
-      - *install_jdk
-      - *cache_gradle
-
+#      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+        
+#      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+            ${{ runner.os }}-
+        
+#      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+          
+#      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            $HOME/.m2
+            $HOME/.gradle/caches
+            $HOME/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-
+            
       - name: Sign Archives
-        run: gradle $OPTS signAllPublications --parallel
+        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on GitHub Maven Repo
-        run: gradle $OPTS publishAllPublicationsToMavenRepository --parallel
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
         env:
           ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/tuProlog
           ORG_GRADLE_PROJECT_ossrhUsername: ${{ github.actor }}
