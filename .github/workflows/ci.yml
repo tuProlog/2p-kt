@@ -108,7 +108,7 @@ jobs:
         run: gradle $OPTS dokkaHtml --parallel
 
       - name: Generate Molti-Module Doc
-          run: gradle $OPTS dokkaHtmlMultiModule --parallel
+        run: gradle $OPTS dokkaHtmlMultiModule --parallel
 
       - name: Archive Doc
         uses: actions/upload-artifact@v2
@@ -116,16 +116,22 @@ jobs:
           name: api-references
           path: build/dokka/htmlMultiModule
 
-  deploy-github:
+  deploy-maven-github:
     runs-on: ubuntu-latest
     needs:
       - build
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
     steps:
       - *checkout_code
       - *setup_env
       - *cache_jdk
       - *install_jdk
       - *cache_gradle
+
+      - name: Sign Archives
+        run: gradle $OPTS signAllPublications --parallel
 
       - name: Publish on GitHub Maven Repo
         run: gradle $OPTS publishAllPublicationsToMavenRepository --parallel
