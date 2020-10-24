@@ -232,7 +232,8 @@ jobs:
             ${{ runner.os }}-
 
       - name: Publish on NPM
-        run: gradle ${{ env.gradle-options }} npmPublish
+        run: |
+          gradle ${{ env.gradle-options }} --stacktrace clean jsMain npmPublish
         env:
           ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
 
