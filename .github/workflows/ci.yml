@@ -12,8 +12,8 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - &cache_jdk
-        name: Cache JDK
+#      - &cache_jdk
+      - name: Cache JDK
         uses: actions/cache@v2
         with:
           path: $HOME/.jabba
@@ -22,8 +22,8 @@ jobs:
             ${{ runner.os }}-jdk-
             ${{ runner.os }}-
 
-      - &install_jdk
-        uses: battila7/jdk-via-jabba@v1
+#      - &install_jdk
+      - uses: battila7/jdk-via-jabba@v1
 
       - name: Show Env
         run: gradle --version
@@ -33,8 +33,8 @@ jobs:
     needs:
       - setup
     steps:
-      - &checkout_code
-        name: Checkout code
+#      - &checkout_code
+      - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0 # all history
@@ -52,8 +52,8 @@ jobs:
 #      - *install_jdk
       - uses: battila7/jdk-via-jabba@v1
 
-      - &cache_gradle
-        name: Cache Gradle Data
+#      - &cache_gradle
+      - name: Cache Gradle Data
         uses: actions/cache@v2
         with:
           path: |
