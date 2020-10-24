@@ -16,7 +16,7 @@ jobs:
       - name: Cache JDK
         uses: actions/cache@v2
         with:
-          path: $HOME/.jabba
+          path: ~/.jabba
           key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
           restore-keys: |
             ${{ runner.os }}-jdk-
@@ -45,25 +45,26 @@ jobs:
       - name: Cache JDK
         uses: actions/cache@v2
         with:
-          path: $HOME/.jabba
+          path: ~/.jabba
           key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
           restore-keys: |
             ${{ runner.os }}-jdk-
             ${{ runner.os }}-
 
 #      - *install_jdk
-      - uses: battila7/jdk-via-jabba@v1
-        with:
-          jdk: ${{ env.jdk-version }}
+      - name: Restore JDK
+        run: |
+          curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
+          [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
 
 #      - &cache_gradle
       - name: Cache Gradle Data
         uses: actions/cache@v2
         with:
           path: |
-            $HOME/.m2
-            $HOME/.gradle/caches
-            $HOME/gradle/wrapper
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
             **/build
             **/.gradle
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -137,25 +138,26 @@ jobs:
       - name: Cache JDK
         uses: actions/cache@v2
         with:
-          path: $HOME/.jabba
+          path: ~/.jabba
           key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
           restore-keys: |
             ${{ runner.os }}-jdk-
             ${{ runner.os }}-
         
 #      - *install_jdk
-      - uses: battila7/jdk-via-jabba@v1
-        with:
-          jdk: ${{ env.jdk-version }}
+      - name: Restore JDK
+        run: |
+          curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
+          [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
           
 #      - *cache_gradle
       - name: Cache Gradle Data
         uses: actions/cache@v2
         with:
           path: |
-            $HOME/.m2
-            $HOME/.gradle/caches
-            $HOME/gradle/wrapper
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
             **/build
             **/.gradle
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
