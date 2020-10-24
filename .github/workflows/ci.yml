@@ -24,6 +24,7 @@ jobs:
 
 #      - &install_jdk
       - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
         with:
           jdk: ${{ env.jdk-version }}
 
@@ -52,12 +53,10 @@ jobs:
             ${{ runner.os }}-
 
 #      - *install_jdk
-      - name: Restore JDK
-        run: |
-          curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
-          [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
-          jabba install ${{ env.jdk-version }}
-          jabba use ${{ env.jdk-version }}
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
 
 #      - &cache_gradle
       - name: Cache Gradle Data
@@ -147,12 +146,10 @@ jobs:
             ${{ runner.os }}-
         
 #      - *install_jdk
-      - name: Restore JDK
-        run: |
-          curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
-          [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
-          jabba install ${{ env.jdk-version }}
-          jabba use ${{ env.jdk-version }}
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
           
 #      - *cache_gradle
       - name: Cache Gradle Data
