@@ -26,19 +26,19 @@ jobs:
 #          architecture: x64 # (x64 or x86) - defaults to x64
       - uses: battila7/jdk-via-jabba@v1
         with:
-          jdk: jabba install openjdk@~1.15.0
+          jdk: jabba install openjdk@1.15.0-1
 
-      - name: Ensure Gradle Wrapper is Executable
-        run: chmod +x gradlew
+#      - name: Ensure Gradle Wrapper is Executable
+#        run: chmod +x gradlew
 
       - name: Setup Gradle
-        run: ./gradlew $GOPTS
+        run: gradle $GOPTS
 
       - name: Show Env
-        run: ./gradlew --version
+        run: gradle --version
 
       - name: Check Code Style
-        run: ./gradlew $OPTS ktlintCheck --parallel
+        run: gradle $OPTS ktlintCheck --parallel
 
       - name: Archive KtLint Reports
         uses: actions/upload-artifact@v2
@@ -48,10 +48,10 @@ jobs:
           path: '**/build/reports/ktlint'
 
       - name: Compile
-        run: ./gradlew $OPTS assemble --parallel
+        run: gradle $OPTS assemble --parallel
 
       - name: Test JVM
-        run: ./gradlew $OPTS jvmTest
+        run: gradle $OPTS jvmTest
 
       - name: Archive JVM Test Reports
         uses: actions/upload-artifact@v2
@@ -61,7 +61,7 @@ jobs:
           path: '**/build/reports/tests/jvmTest'
 
       - name: Test JS
-        run: ./gradlew $OPTS jsTest
+        run: gradle $OPTS jsTest
 
       - name: Archive JS Test Reports
         if: failure()
@@ -71,7 +71,7 @@ jobs:
           path: '**/build/reports/tests/jsTest'
 
       - name: Generate Doc
-        run: ./gradlew $OPTS dokkaHtml --parallel
+        run: gradle $OPTS dokkaHtml --parallel
 
       - name: Archive Doc
         uses: actions/upload-artifact@v2
