@@ -172,6 +172,13 @@ jobs:
       - name: Publish on GitHub Maven Repo
         run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
         env:
-          ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/tuProlog
+          ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/$${{ github.repository }}
           ORG_GRADLE_PROJECT_ossrhUsername: ${{ github.actor }}
           ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish on Bintray Maven Repo
+        run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/$${{ github.repository }}
+          ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
+          ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_USER }}
