@@ -16,11 +16,13 @@ class NpmPublishPlugin : Plugin<Project> {
         val setRegistry = tasks.maybeCreate(setRegistryName, Exec::class.java).also {
             it.group = "nodeJs"
             it.standardOutput = System.out
+            it.errorOutput = System.err
         }
         val setToken = tasks.maybeCreate("${name}SetToken", Exec::class.java).also {
             it.dependsOn(setRegistry)
             it.group = "nodeJs"
             it.standardOutput = System.out
+            it.errorOutput = System.err
         }
         extension.onExtensionChanged.add {
             setRegistry.executable = node.absolutePath
@@ -42,6 +44,7 @@ class NpmPublishPlugin : Plugin<Project> {
         val publish = tasks.maybeCreate(name, Exec::class.java).also {
             it.group = "nodeJs"
             it.standardOutput = System.out
+            it.errorOutput = System.err
         }
         extension.onExtensionChanged.add {
             publish.executable = node.absolutePath
