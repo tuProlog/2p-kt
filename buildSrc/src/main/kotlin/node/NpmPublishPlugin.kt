@@ -6,10 +6,21 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
+import java.io.File
 
 class NpmPublishPlugin : Plugin<Project> {
 
     private lateinit var extension: NpmPublishExtension
+
+    private fun Exec.configSecurityWarning() {
+        doFirst {
+            listOf(executable, args?.get(0)).forEach {
+                if (it == null || File(it).exists()) {
+                    System.err.println("[WARNING]: Missing executable $it")
+                }
+            }
+        }
+    }
 
     private fun Project.createNpmLoginTask(name: String): DefaultTask {
         val setRegistryName = "${name}SetRegistry"
@@ -17,12 +28,14 @@ class NpmPublishPlugin : Plugin<Project> {
             it.group = "nodeJs"
             it.standardOutput = System.out
             it.errorOutput = System.err
+            it.configSecurityWarning()
         }
         val setToken = tasks.maybeCreate("${name}SetToken", Exec::class.java).also {
             it.dependsOn(setRegistry)
             it.group = "nodeJs"
             it.standardOutput = System.out
             it.errorOutput = System.err
+            it.configSecurityWarning()
         }
         extension.onExtensionChanged.add {
             setRegistry.executable = node.absolutePath
@@ -45,6 +58,7 @@ class NpmPublishPlugin : Plugin<Project> {
             it.group = "nodeJs"
             it.standardOutput = System.out
             it.errorOutput = System.err
+            it.configSecurityWarning()
         }
         extension.onExtensionChanged.add {
             publish.executable = node.absolutePath
