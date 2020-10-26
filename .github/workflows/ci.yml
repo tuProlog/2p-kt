@@ -237,7 +237,7 @@ jobs:
       - name: Archive Doc
         uses: actions/upload-artifact@v2
         with:
-          name: api-references
+          name: api-reference
           path: build/dokka/htmlMultiModule
 
       - name: Sign Archives
