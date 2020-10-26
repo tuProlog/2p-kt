@@ -64,12 +64,10 @@ open class NpmPublishExtension {
         }
 
     internal val node: File
-        get() = possibleNodePaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?:
-            error("Node executable not found")
+        get() = possibleNodePaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?: File("")
 
     internal val npm: File
-        get() = possibleNpmPaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?:
-            error("NPM executable not found")
+        get() = possibleNpmPaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?: File("")
 
     internal val npmProject: File
         get() = packageJson.parentFile ?: File("")
