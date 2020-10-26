@@ -231,14 +231,14 @@ jobs:
       - name: Generate Doc
         run: gradle ${{ env.gradle-options }} dokkaHtml --parallel
 
-      - name: Generate Molti-Module Doc
+      - name: Generate Multi-Module Doc
         run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
 
-      - name: Archive Doc
-        uses: actions/upload-artifact@v2
-        with:
-          name: api-reference
-          path: build/dokka/htmlMultiModule
+#      - name: Archive Doc
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: api-reference
+#          path: build/dokka/htmlMultiModule
 
       - name: Sign Archives
         run: gradle ${{ env.gradle-options }} signAllPublications --parallel
@@ -483,7 +483,7 @@ jobs:
 
       - name: Publish on NPM
         run: |
-          gradle ${{ env.gradle-options }} clean jsMain npmPublish
+          gradle ${{ env.gradle-options }} jsMain npmPublish
         env:
           ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
 
