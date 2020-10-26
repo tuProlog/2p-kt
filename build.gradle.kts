@@ -4,6 +4,7 @@ import node.Bugs
 import node.NpmPublishExtension
 import node.NpmPublishPlugin
 import node.People
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
@@ -180,7 +181,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub({ "jvm" in it || "shadow" in it })
+    configureUploadToGithub({ "shadow" in it })
 }
 
 with(rootProject) {
@@ -211,6 +212,17 @@ with(rootProject) {
             }
         }
     }
+
+    val dokkaHtmlMultiModule by tasks.getting(DokkaMultiModuleTask::class)
+    val packDokkaMultiModule by tasks.registering(Zip::class) {
+        group = "documentation"
+        dependsOn(dokkaHtmlMultiModule)
+        from(dokkaHtmlMultiModule.outputDirectory.get())
+        archiveBaseName.set(project.name)
+        archiveVersion.set(project.version.toString())
+        archiveAppendix.set("documentation")
+    }
+    configureUploadToGithub(packDokkaMultiModule.get())
 }
 
 jvmSubprojects.forEachProject {
@@ -227,7 +239,7 @@ jvmSubprojects.forEachProject {
     configureUploadToMavenCentral()
     configureUploadToBintray()
     configureSigning()
-    configureUploadToGithub()
+    configureUploadToGithub({ "shadow" in it })
 }
 
 jsSubprojects.forEachProject {
@@ -283,24 +295,34 @@ fun Project.configureKtLint() {
 }
 
 fun Project.configureUploadToGithub(
+    vararg tasks: Zip
+) {
+    if (githubToken == null) return
+
+    val archiveFiles = tasks.map { it.archiveFile }
+
+    rootProject.githubRelease {
+        releaseAssets(*(releaseAssets.toList() + archiveFiles).toTypedArray())
+    }
+
+    rootProject.tasks.withType(GithubReleaseTask::class) {
+        dependsOn(*tasks)
+    }
+}
+
+fun Project.configureUploadToGithub(
     jarTaskPositiveFilter: (String) -> Boolean = { "jar" in it },
     jarTaskNegativeFilter: (String) -> Boolean = { "dokka" in it || "source" in it }
 ) {
     if (githubToken == null) return
 
-    val jarTasks = tasks.withType(Jar::class).asSequence()
+    val zipTasks = tasks.withType(Zip::class).asSequence()
         .filter { jarTaskPositiveFilter(it.name.toLowerCase()) }
         .filter { !jarTaskNegativeFilter(it.name.toLowerCase()) }
-        .map { it.archiveFile }
         .toList()
+        .toTypedArray()
 
-    rootProject.githubRelease {
-        releaseAssets(*(releaseAssets.toList() + jarTasks).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(*jarTasks.toTypedArray())
-    }
+    configureUploadToGithub(*zipTasks)
 }
 
 fun Project.configureDokka(vararg platforms: String) {
