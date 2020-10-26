@@ -43,6 +43,12 @@ configure<NpmPublishExtension> {
     packageJson.set(tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson)
     nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
     jsCompileTask.set("mainClasses")
+    jsSourcesDir.set(
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().asSequence()
+            .filter { "Test" !in it.name }
+            .map { it.outputFile.parentFile }
+            .first()
+    )
 
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
