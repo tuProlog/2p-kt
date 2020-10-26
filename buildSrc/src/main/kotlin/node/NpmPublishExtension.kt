@@ -2,11 +2,19 @@ package node
 
 import com.google.gson.JsonObject
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
-open class NpmPublishExtension {
+open class NpmPublishExtension(objects: ObjectFactory) {
 
     companion object {
+
+        const val NAME = "npmPublishing"
+
         private val isWindows: Boolean
             get() = File.separatorChar == '\\'
 
@@ -25,84 +33,56 @@ open class NpmPublishExtension {
             sequenceOf("lib/", "").map { it + npmScriptSubpath }
     }
 
-    internal var onExtensionChanged: MutableList<NpmPublishExtension.() -> Unit> = mutableListOf()
+    val nodeRoot: Property<File> = objects.property()
 
-    var nodeRoot: File = File("")
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val nodeSetupTask: Property<String> = objects.property()
 
-    var nodeSetupTask: String? = null
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val jsCompileTask: Property<String> = objects.property()
 
-    var jsCompileTask: String? = null
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val packageJson: Property<File> = objects.property()
 
-    var packageJson: File = File("")
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val token: Property<String>  = objects.property()
 
-    var token: String  = ""
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val registry: Property<String>  = objects.property(String::class.java).also {
+        it.set("registry.npmjs.org")
+    }
 
-    var registry = "registry.npmjs.org"
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
+    val node: Provider<File> = nodeRoot.map { nodeRoot ->
+        possibleNodePaths.map { nodeRoot.resolve(it) }.first { it.exists() }
+    }
 
-    internal val node: File
-        get() = possibleNodePaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?: File("")
+    val npm: Provider<File> = nodeRoot.map { nodeRoot ->
+        possibleNpmPaths.map { nodeRoot.resolve(it) }.first { it.exists() }
+    }
 
-    internal val npm: File
-        get() = possibleNpmPaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?: File("")
+    val npmProject: Provider<File> = packageJson.map { it.parentFile }
 
-    internal val npmProject: File
-        get() = packageJson.parentFile ?: File("")
+    val jsSourcesDir: Property<File>  = objects.property(File::class.java).also {
+        File("build/")
+    }
 
-    var jsSourcesDir: File = File("build/")
-        set(value) {
-            field = value
-            onExtensionChanged.forEach { it(this) }
-        }
 
-    private val _packageJsonliftingActions: MutableList<Action<PackageJson>> = mutableListOf()
-    private val _packageJsonRawLiftingActions: MutableList<Action<JsonObject>> = mutableListOf()
-    private val _jsLiftingActions: MutableList<FileLineTransformer> = mutableListOf()
+    internal val packageJsonLiftingActions = objects.listProperty<Action<PackageJson>>()
 
-    internal val packageJsonLiftingActions: List<Action<PackageJson>>
-        get() = _packageJsonliftingActions.toList()
+    internal val packageJsonRawLiftingActions = objects.listProperty<Action<JsonObject>>()
 
-    internal val packageJsonRawLiftingActions: List<Action<JsonObject>>
-        get() = _packageJsonRawLiftingActions.toList()
-
-    internal val jsSourcesLiftingActions: List<FileLineTransformer>
-        get() = _jsLiftingActions.toList()
+    internal val jsSourcesLiftingActions = objects.listProperty<FileLineTransformer>()
 
     fun liftPackageJson(action: Action<PackageJson>) {
-        _packageJsonliftingActions.add(action)
-        onExtensionChanged.forEach { it(this) }
+        with(packageJsonLiftingActions) {
+            add(action)
+        }
     }
 
     fun liftPackageJsonRaw(action: Action<JsonObject>) {
-        _packageJsonRawLiftingActions.add(action)
-        onExtensionChanged.forEach { it(this) }
+        with(packageJsonRawLiftingActions) {
+            add(action)
+        }
     }
 
     fun liftJsSources(lineTransformer: FileLineTransformer) {
-        _jsLiftingActions.add(lineTransformer)
-        onExtensionChanged.forEach { it(this) }
+        with(jsSourcesLiftingActions) {
+            add(lineTransformer)
+        }
     }
 }

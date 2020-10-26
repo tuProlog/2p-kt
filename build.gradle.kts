@@ -507,15 +507,15 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
     apply<NpmPublishPlugin>()
 
     configure<NpmPublishExtension> {
-        nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
-        token = npmToken ?: ""
-        packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
-        nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
-        jsCompileTask = compileTask
-        jsSourcesDir = tasks.withType<Kotlin2JsCompile>().asSequence()
+        nodeRoot.set(rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first())
+        token.set(npmToken ?: "")
+        packageJson.set(tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson)
+        nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
+        jsCompileTask.set(compileTask)
+        jsSourcesDir.set(tasks.withType<Kotlin2JsCompile>().asSequence()
             .filter { "Test" !in it.name }
             .map { it.outputFile.parentFile }
-            .first()
+            .first())
 
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
