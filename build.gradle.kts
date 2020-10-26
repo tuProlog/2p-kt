@@ -512,10 +512,12 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
         packageJson.set(tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson)
         nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
         jsCompileTask.set(compileTask)
-        jsSourcesDir.set(tasks.withType<Kotlin2JsCompile>().asSequence()
-            .filter { "Test" !in it.name }
-            .map { it.outputFile.parentFile }
-            .first())
+        jsSourcesDir.set(
+            tasks.withType<Kotlin2JsCompile>().asSequence()
+                .filter { "Test" !in it.name }
+                .map { it.outputFile.parentFile }
+                .first()
+        )
 
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
