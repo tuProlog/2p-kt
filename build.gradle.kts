@@ -1,4 +1,3 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import node.Bugs
@@ -295,7 +294,7 @@ fun Project.configureUploadToGithub(
         .map { it.archiveFile }
         .toList()
 
-    rootProject.configure<GithubReleaseExtension> {
+    rootProject.githubRelease {
         releaseAssets(*(releaseAssets.toList() + jarTasks).toTypedArray())
     }
 

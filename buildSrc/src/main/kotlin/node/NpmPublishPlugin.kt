@@ -15,22 +15,38 @@ class NpmPublishPlugin : Plugin<Project> {
     private fun Exec.configSecurityWarning() {
         doFirst {
             listOf(executable, args?.get(0)).forEach {
-                if (it == null || File(it).exists()) {
-                    System.err.println("[WARNING]: Missing executable $it")
+                if (it == null || !File(it).exists()) {
+                    System.err.println("[WARNING] [$path] Missing executable $it")
                 }
+            }
+        }
+    }
+
+    private fun NpmPublishExtension.setDependenciesFrom(
+        task1: Task,
+        vararg otherTasks: Task,
+        taskNameSelector: NpmPublishExtension.() -> String?
+    ) {
+        val setupTask = this.taskNameSelector() ?: return
+        sequenceOf(task1, *otherTasks).forEach {
+            if (it.project.tasks.findByPath(setupTask) != null ||
+                it.project.rootProject.tasks.findByPath(setupTask) != null) {
+                it.dependsOn(setupTask)
+            } else {
+                error("Task ${it.path} cannot depend on $setupTask, since the latter does not exist")
             }
         }
     }
 
     private fun Project.createNpmLoginTask(name: String): DefaultTask {
         val setRegistryName = "${name}SetRegistry"
-        val setRegistry = tasks.maybeCreate(setRegistryName, Exec::class.java).also {
+        val setRegistry = rootProject.tasks.maybeCreate(setRegistryName, Exec::class.java).also {
             it.group = "nodeJs"
             it.standardOutput = System.out
             it.errorOutput = System.err
             it.configSecurityWarning()
         }
-        val setToken = tasks.maybeCreate("${name}SetToken", Exec::class.java).also {
+        val setToken = rootProject.tasks.maybeCreate("${name}SetToken", Exec::class.java).also {
             it.dependsOn(setRegistry)
             it.group = "nodeJs"
             it.standardOutput = System.out
@@ -42,12 +58,9 @@ class NpmPublishPlugin : Plugin<Project> {
             setRegistry.setArgs(listOf(npm, "set", "registry", "https://$registry/"))
             setToken.executable = node.absolutePath
             setToken.setArgs(listOf(npm, "set", "//$registry/:_authToken", token))
-            nodeSetupTask?.let {
-                setRegistry.dependsOn(it)
-                setToken.dependsOn(it)
-            }
+            setDependenciesFrom(setRegistry, setToken) { nodeSetupTask }
         }
-        return tasks.maybeCreate(name, DefaultTask::class.java).also {
+        return rootProject.tasks.maybeCreate(name, DefaultTask::class.java).also {
             it.group = "nodeJs"
             it.dependsOn(setToken)
         }
@@ -63,8 +76,8 @@ class NpmPublishPlugin : Plugin<Project> {
         extension.onExtensionChanged.add {
             publish.executable = node.absolutePath
             publish.setArgs(listOf(npm, "publish", npmProject, "--access", "public"))
-            nodeSetupTask?.let { publish.dependsOn(it) }
-            jsCompileTask?.let { publish.dependsOn(it) }
+            setDependenciesFrom(publish) { nodeSetupTask }
+            setDependenciesFrom(publish) { jsCompileTask }
         }
         return publish
     }
@@ -79,7 +92,7 @@ class NpmPublishPlugin : Plugin<Project> {
         }
         extension.onExtensionChanged.add {
             copy.destinationDir = packageJson.parentFile
-            jsCompileTask?.let { copy.dependsOn(it) }
+            setDependenciesFrom(copy) { jsCompileTask }
         }
         return copy
     }
@@ -91,7 +104,7 @@ class NpmPublishPlugin : Plugin<Project> {
         extension.onExtensionChanged.add {
             lift.jsSourcesDir = jsSourcesDir
             lift.liftingActions = jsSourcesLiftingActions
-            jsCompileTask?.let { lift.dependsOn(it) }
+            setDependenciesFrom(lift) { jsCompileTask }
         }
         return lift
     }
@@ -104,7 +117,7 @@ class NpmPublishPlugin : Plugin<Project> {
             lift.packageJsonFile = packageJson
             lift.liftingActions = packageJsonLiftingActions
             lift.rawLiftingActions = packageJsonRawLiftingActions
-            jsCompileTask?.let { lift.dependsOn(it) }
+            setDependenciesFrom(lift) { jsCompileTask }
         }
         return lift
     }

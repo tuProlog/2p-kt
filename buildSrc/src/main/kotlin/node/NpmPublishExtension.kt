@@ -27,77 +27,54 @@ open class NpmPublishExtension {
 
     internal var onExtensionChanged: MutableList<NpmPublishExtension.() -> Unit> = mutableListOf()
 
-    private var _nodeRoot: File = File("")
-    var nodeRoot: File
-        get() = _nodeRoot
-        set(value) {
-            _nodeRoot = value
-            _node = null
-            onExtensionChanged.forEach { it(this) }
-        }
-
-    private var _nodeSetupTask: String? = null
-    var nodeSetupTask: String?
-        get() = _nodeSetupTask
-        set(value) {
-            _nodeSetupTask = value
-            onExtensionChanged.forEach { it(this) }
-        }
-
-    private var _jsCompileTask: String? = null
-    var jsCompileTask: String?
-        get() = _jsCompileTask
-        set(value) {
-            _jsCompileTask = value
-            onExtensionChanged.forEach { it(this) }
-        }
-
-    private var _packageJson: File = File("")
-    var packageJson: File
-        get() = _packageJson
-        set(value) {
-            _packageJson = value
-            onExtensionChanged.forEach { it(this) }
-        }
-
-    private var _token: String = ""
-    var token: String
-        get() = _token
-        set(value) {
-            _token = value
-            onExtensionChanged.forEach { it(this) }
-        }
-
-    var registry = "registry.npmjs.org"
-        get() = field
+    var nodeRoot: File = File("")
         set(value) {
             field = value
             onExtensionChanged.forEach { it(this) }
         }
 
-    private var _node: File? = null
-    internal val node: File
-        get() {
-            if (_node == null) {
-                _node = possibleNodePaths.map { nodeRoot.resolve(it) }.find { it.exists() }
-            }
-            return _node ?: File("")
+    var nodeSetupTask: String? = null
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
         }
 
-    private var _npm: File? = null
-    internal val npm: File
-        get() {
-            if (_npm == null) {
-                _npm = possibleNpmPaths.map { nodeRoot.resolve(it) }.find { it.exists() }
-            }
-            return _npm ?: File("")
+    var jsCompileTask: String? = null
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
         }
+
+    var packageJson: File = File("")
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
+        }
+
+    var token: String  = ""
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
+        }
+
+    var registry = "registry.npmjs.org"
+        set(value) {
+            field = value
+            onExtensionChanged.forEach { it(this) }
+        }
+
+    internal val node: File
+        get() = possibleNodePaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?:
+            error("Node executable not found")
+
+    internal val npm: File
+        get() = possibleNpmPaths.map { nodeRoot.resolve(it) }.firstOrNull { it.exists() } ?:
+            error("NPM executable not found")
 
     internal val npmProject: File
         get() = packageJson.parentFile ?: File("")
 
     var jsSourcesDir: File = File("build/")
-        get() = field
         set(value) {
             field = value
             onExtensionChanged.forEach { it(this) }
