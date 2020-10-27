@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
 #      - *cache_jdk
       - name: Cache JDK
@@ -104,7 +104,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
@@ -167,7 +167,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
@@ -225,7 +225,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
 #      - *cache_jdk
       - name: Cache JDK
@@ -282,7 +282,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
@@ -338,7 +338,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
@@ -392,7 +392,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
@@ -442,7 +442,7 @@ jobs:
           fetch-depth: 0 # all history
 
       - name: Get All Tags
-        run: git fetch --tags
+        run: git fetch --tags || echo Fail to fetch tags
 
       #      - *cache_jdk
       - name: Cache JDK
