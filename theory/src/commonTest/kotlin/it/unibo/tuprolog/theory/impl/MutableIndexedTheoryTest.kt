@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.theory.impl
 
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.PrototypeTheoryTest
-import it.unibo.tuprolog.theory.Theory
 import kotlin.test.Test
 
-internal class ListedTheoryTest {
+internal class MutableIndexedTheoryTest {
 
     private val prototype = PrototypeTheoryTest(
-        Theory.Companion::emptyListed,
-        Theory.Companion::listedOf
+        MutableTheory.Companion::emptyIndexed,
+        MutableTheory.Companion::indexedOf
     )
 
     // @BeforeTest

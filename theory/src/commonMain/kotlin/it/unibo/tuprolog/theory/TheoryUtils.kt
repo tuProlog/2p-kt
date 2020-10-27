@@ -13,20 +13,20 @@ internal object TheoryUtils {
             }
         }
 
+    fun checkClausesCorrect(vararg clauses: Clause) =
+        clauses.asSequence().also { actualCheck(it) }
+
+    private fun actualCheck(clauses: Sequence<Clause>) {
+        require(clauses.all { it.isWellFormed }) {
+            "ClauseDatabase can contain only well formed clauses: these aren't " +
+                "${clauses.filterNot { it.isWellFormed }.toList()}"
+        }
+    }
+
     /** Utility method to check more than one clause well-formed property */
     fun checkClausesCorrect(clauses: Iterable<Clause>) =
-        clauses.also {
-            require(clauses.all { it.isWellFormed }) {
-                "ClauseDatabase can contain only well formed clauses: these aren't " +
-                    "${clauses.filterNot { it.isWellFormed }.toList()}"
-            }
-        }
+        clauses.also { actualCheck(it.asSequence()) }
 
     fun checkClausesCorrect(clauses: Sequence<Clause>) =
-        clauses.also {
-            require(clauses.all { it.isWellFormed }) {
-                "ClauseDatabase can contain only well formed clauses: these aren't " +
-                    "${clauses.filterNot { it.isWellFormed }.toList()}"
-            }
-        }
+        clauses.also { actualCheck(it) }
 }
