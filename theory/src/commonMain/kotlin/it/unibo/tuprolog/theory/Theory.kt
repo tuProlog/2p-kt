@@ -15,6 +15,10 @@ import kotlin.jvm.JvmStatic
 
 interface Theory : Iterable<Clause> {
 
+    val isMutable: Boolean get() = false
+
+    fun toMutableTheory(): MutableTheory
+
     /** All [Clause]s in this theory */
     @JsName("clauses")
     val clauses: Iterable<Clause>

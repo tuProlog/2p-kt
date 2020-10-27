@@ -2,6 +2,7 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
@@ -40,6 +41,10 @@ private constructor(
                 )
             }
         }
+    }
+
+    override fun toMutableTheory(): MutableTheory {
+        return MutableTheory.listedOf(this)
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<ListedTheory> {

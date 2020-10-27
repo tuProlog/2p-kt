@@ -5,6 +5,7 @@ import it.unibo.tuprolog.collections.MutableClauseQueue
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.utils.dequeOf
@@ -33,6 +34,10 @@ internal class IndexedTheory private constructor(queue: ClauseQueue) : AbstractI
                 (retracted as RetrieveResult.Success).clauses
             )
         }
+    }
+
+    override fun toMutableTheory(): MutableTheory {
+        return MutableTheory.indexedOf(this)
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<IndexedTheory> {

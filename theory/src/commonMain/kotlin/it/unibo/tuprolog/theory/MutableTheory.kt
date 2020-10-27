@@ -14,6 +14,10 @@ import kotlin.jvm.JvmStatic
 
 interface MutableTheory : Theory {
 
+    override val isMutable: Boolean get() = true
+
+    override fun toMutableTheory(): MutableTheory = this
+
     override operator fun plus(theory: Theory): MutableTheory
 
     override operator fun plus(clause: Clause): MutableTheory = assertZ(clause)
