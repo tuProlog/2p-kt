@@ -46,7 +46,7 @@ other aimed at  (de)serialising terms theories, namely `serialize-theory`,
 
 * a module for using Prolog via a command-line interface, namely `repl`,
 
-* a module for using Prolog via a GUI, namely `ide`.
+* a module for using Prolog via a graphical user interface (GUI), namely `ide`.
     
 The modular, unopinionated architecture of 2P-Kt is deliberately aimed at supporting and encouraging extensions towards 
 other sorts of symbolic AI systems than Prolog---such as ASP, tabled-Prolog, Problog, etc.
