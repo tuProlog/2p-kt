@@ -1,12 +1,12 @@
-name: ci
+name: on-develop
 on:
   push:
     branches:
-      - master
       - develop
 env:
   jdk-version: openjdk@~1.15.0
   project-name: 2P-Kt
+  workflow: develop
   gradle-options: "--no-daemon --console=plain --stacktrace"
 jobs:
   setup:
@@ -66,9 +66,9 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
 
       - name: Setup Gradle
         run: gradle ${{ env.gradle-options }}
@@ -125,9 +125,9 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
 
       - name: Test JVM
         run: gradle ${{ env.gradle-options }} jvmTest
@@ -185,15 +185,21 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
 
       - name: Generate Doc
         run: gradle ${{ env.gradle-options }} dokkaHtml --parallel
 
       - name: Generate Multi-Module Doc
         run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
+
+      - name: Sign Archives
+        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
 
   deploy-maven-github:
     runs-on: ubuntu-latest
@@ -234,12 +240,13 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-github
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
-      - name: Sign Archives
-        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+#      - name: Sign Archives
+#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on GitHub Maven Repo
         run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
@@ -287,72 +294,19 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-bintray
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
-      - name: Sign Archives
-        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+#      - name: Sign Archives
+#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on Bintray Maven Repo
         run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel || gradle ${{ env.gradle-options }} publishAllToBintray --parallel
         env:
           ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
           ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_KEY }}
-
-  deploy-maven-central:
-    runs-on: ubuntu-latest
-    if: contains(github.ref, 'master')
-    needs:
-      - prepare-artifacts
-    env:
-      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
-    steps:
-      #      - *checkout_code
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # all history
-
-      #      - *cache_jdk
-      - name: Cache JDK
-        uses: actions/cache@v2
-        with:
-          path: ~/.jabba
-          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
-          restore-keys: |
-            ${{ runner.os }}-jdk-
-
-      #      - *install_jdk
-      - uses: battila7/jdk-via-jabba@v1
-        name: Restore JDK
-        with:
-          jdk: ${{ env.jdk-version }}
-
-      #      - *cache_gradle
-      - name: Cache Gradle Data
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.gradle/caches
-            ~/gradle/wrapper
-            **/build
-            **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
-
-      - name: Sign Archives
-        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
-
-      - name: Publish on Maven Central Repo
-        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
-#        if: contains(github.ref, 'master')
-        env:
-          ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
 
   deploy-npm:
     runs-on: ubuntu-latest
@@ -390,9 +344,10 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-npm
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-npm
 
       - name: Publish on NPM
         run: |
@@ -436,9 +391,10 @@ jobs:
             ~/gradle/wrapper
             **/build
             **/.gradle
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-github
           restore-keys: |
-            ${{ runner.os }}-gradle-${{ github.sha }}
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-github
 
       - name: Publish GitHub Release
         run: gradle ${{ env.gradle-options }} githubRelease || gradle ${{ env.gradle-options }} githubRelease

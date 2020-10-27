@@ -1,0 +1,456 @@
+name: on-release
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+env:
+  jdk-version: openjdk@~1.15.0
+  project-name: 2P-Kt
+  workflow: release
+  gradle-options: "--no-daemon --console=plain --stacktrace"
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+#      - &cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+#      - &install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      - name: Show Env
+        run: gradle --version
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - setup
+    steps:
+#      - &checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+#      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+#      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+#      - &cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+
+      - name: Setup Gradle
+        run: gradle ${{ env.gradle-options }}
+
+      - name: Check Code Style
+        run: gradle ${{ env.gradle-options }} ktlintCheck --parallel
+
+      - name: Archive KtLint Reports
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ktlint-reports
+          path: '**/build/reports/ktlint'
+
+      - name: Clean
+        run: gradle ${{ env.gradle-options }} clean
+
+      - name: Compile
+        run: gradle ${{ env.gradle-options }} assemble --parallel
+
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+
+      - name: Test JVM
+        run: gradle ${{ env.gradle-options }} jvmTest
+
+      - name: Archive JVM Test Reports
+        uses: actions/upload-artifact@v2
+        if: failure() || success()
+        with:
+          name: jvm-test-reports
+          path: '**/build/reports/tests/jvmTest'
+
+      - name: Test JS
+        run: gradle ${{ env.gradle-options }} jsTest || gradle ${{ env.gradle-options }} clean jsTest
+
+      - name: Archive JS Test Reports
+        if: failure() || success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: js-test-reports
+          path: '**/build/reports/tests/jsTest'
+
+  prepare-artifacts:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
+
+      - name: Generate Doc
+        run: gradle ${{ env.gradle-options }} dokkaHtml --parallel
+
+      - name: Generate Multi-Module Doc
+        run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
+
+      - name: Sign Archives
+        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+  deploy-maven-github:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-artifacts
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+    steps:
+#      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+#      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+#      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+#      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-github
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
+
+#      - name: Sign Archives
+#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+
+      - name: Publish on GitHub Maven Repo
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/${{ github.repository }}
+          ORG_GRADLE_PROJECT_ossrhUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-maven-bintray:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-artifacts
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-bintray
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
+
+#      - name: Sign Archives
+#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+
+      - name: Publish on Bintray Maven Repo
+        run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel || gradle ${{ env.gradle-options }} publishAllToBintray --parallel
+        env:
+          ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
+          ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_KEY }}
+
+  deploy-maven-central:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-artifacts
+    env:
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-central
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
+
+#      - name: Sign Archives
+#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+
+      - name: Publish on Maven Central Repo
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+#        if: contains(github.ref, 'master')
+        env:
+          ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
+
+  deploy-npm:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-npm
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-npm
+
+      - name: Publish on NPM
+        run: |
+          gradle ${{ env.gradle-options }} jsMain npmPublish || gradle ${{ env.gradle-options }} clean jsMain npmPublish
+        env:
+          ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
+
+  deploy-github:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-artifacts
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-github
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-prepare
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-github
+
+      - name: Publish GitHub Release
+        run: gradle ${{ env.gradle-options }} githubRelease || gradle ${{ env.gradle-options }} githubRelease
+        env:
+          ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUB_TOKEN }}
