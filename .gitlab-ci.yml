@@ -48,6 +48,8 @@ Check Code Style:
   script:
     - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
   needs: []
+  only:
+    - branches
 
 Compile:
   stage: build
@@ -55,6 +57,8 @@ Compile:
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
   needs:
     - job: Check Code Style
+  only:
+    - branches
 
 Test JVM:
   stage: test
@@ -64,12 +68,16 @@ Test JVM:
       junit: "**/build/test-results/jvmTest/*.xml"
   needs:
     - job: Compile
+  only:
+    - branches
 
 Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
   needs:
     - job: Compile
+  only:
+    - branches
 
 Generate Doc:
   stage: doc
