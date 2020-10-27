@@ -60,7 +60,11 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
     }
 
     override fun plus(theory: Theory): MutableIndexedTheory {
-        return assertZ(theory)
+        return if (theory === this) {
+            assertZ(checkClausesCorrect(theory.toList()))
+        } else {
+            assertZ(checkClausesCorrect(theory))
+        }
     }
 
     override fun assertA(clause: Clause): MutableIndexedTheory {

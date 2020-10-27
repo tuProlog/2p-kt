@@ -99,6 +99,7 @@ class PrototypeTheoryTest(
         withFreshTheories {
             val badTheory = object : Theory by emptyTheoryGenerator() {
                 override val clauses: Iterable<Clause> = notWellFormedClauses
+                override fun iterator(): Iterator<Clause> = notWellFormedClauses.iterator()
             }
             assertFailsWith<IllegalArgumentException> { filledTheory + badTheory }
         }
@@ -343,8 +344,9 @@ class PrototypeTheoryTest(
     }
 
     fun retractClauseRemovesOnlyFirstMatchingClause() {
-        withFreshTheories {
-            successfulRetractQueryResultMap.forEach { (query, result) ->
+        successfulRetractQueryResultMap.forEach { (query, result) ->
+            withFreshTheories {
+
                 val retractResult = filledTheory.retract(query) as RetractResult.Success
 
                 assertEquals(listOf(result.first()), retractResult.clauses.toList())
@@ -364,8 +366,8 @@ class PrototypeTheoryTest(
     }
 
     fun retractStructRemovesOnlyFirstMatchingClause() {
-        withFreshTheories {
-            successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+            withFreshTheories {
                 val retractResult = filledTheory.retract(query.head) as RetractResult.Success
 
                 assertEquals(listOf(result.first()), retractResult.clauses.toList())
@@ -393,8 +395,8 @@ class PrototypeTheoryTest(
     }
 
     fun retractAllClauseReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        withFreshTheories {
-            clausesQueryResultsMap.forEach { (query, result) ->
+        clausesQueryResultsMap.forEach { (query, result) ->
+            withFreshTheories {
                 val retractResult = filledTheory.retractAll(query)
 
                 if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
@@ -404,8 +406,8 @@ class PrototypeTheoryTest(
     }
 
     fun retractAllClauseRemovesOnlyFirstMatchingClause() {
-        withFreshTheories {
-            successfulRetractQueryResultMap.forEach { (query, result) ->
+        successfulRetractQueryResultMap.forEach { (query, result) ->
+            withFreshTheories {
                 val retractResult = filledTheory.retractAll(query) as RetractResult.Success
 
                 assertEquals(result, retractResult.clauses.toList())
@@ -414,8 +416,8 @@ class PrototypeTheoryTest(
     }
 
     fun retractAllStructReturnsFailureIfEmptyRetractedCollectionSuccessOtherwise() {
-        withFreshTheories {
-            rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+        rulesQueryWithVarBodyResultsMap.forEach { (query, result) ->
+            withFreshTheories {
                 val retractResult = filledTheory.retractAll(query)
 
                 if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
@@ -425,8 +427,8 @@ class PrototypeTheoryTest(
     }
 
     fun retractAllStructRemovesOnlyFirstMatchingClause() {
-        withFreshTheories {
-            successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+        successfulRetractQueryWithBodyVarResultsMap.forEach { (query, result) ->
+            withFreshTheories {
                 val retractResult = filledTheory.retractAll(query.head) as RetractResult.Success
 
                 assertEquals(result, retractResult.clauses.toList())
