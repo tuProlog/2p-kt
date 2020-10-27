@@ -77,6 +77,7 @@ Generate Doc:
     - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
   only:
     - /^(master)|(release)|(develop)$/
+  when: manual
   needs:
     - job: Test JVM
     - job: Test JS
