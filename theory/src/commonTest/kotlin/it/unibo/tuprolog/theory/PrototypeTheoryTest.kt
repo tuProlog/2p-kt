@@ -346,7 +346,6 @@ class PrototypeTheoryTest(
     fun retractClauseRemovesOnlyFirstMatchingClause() {
         successfulRetractQueryResultMap.forEach { (query, result) ->
             withFreshTheories {
-
                 val retractResult = filledTheory.retract(query) as RetractResult.Success
 
                 assertEquals(listOf(result.first()), retractResult.clauses.toList())

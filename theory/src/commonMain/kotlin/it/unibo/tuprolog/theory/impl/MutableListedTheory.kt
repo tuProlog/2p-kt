@@ -6,6 +6,7 @@ import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
@@ -72,15 +73,19 @@ private constructor(
     }
 
     override fun plus(theory: Theory): MutableListedTheory {
-        return assertZ(theory)
+        if (theory === this) {
+            return assertZ(theory.toList())
+        } else {
+            return assertZ(theory)
+        }
     }
 
     override fun assertA(clause: Clause): MutableListedTheory {
-        return this.also { it.clauses.addFirst(clause) }
+        return this.also { it.clauses.addFirst(checkClauseCorrect(clause)) }
     }
 
     override fun assertA(clauses: Iterable<Clause>): MutableListedTheory {
-        return this.also { it.clauses.addFirst(clauses) }
+        return this.also { it.clauses.addFirst(checkClausesCorrect(clauses)) }
     }
 
     override fun assertA(clauses: Sequence<Clause>): MutableListedTheory {
@@ -88,11 +93,11 @@ private constructor(
     }
 
     override fun assertZ(clause: Clause): MutableListedTheory {
-        return this.also { it.clauses.add(clause) }
+        return this.also { it.clauses.add(checkClauseCorrect(clause)) }
     }
 
     override fun assertZ(clauses: Iterable<Clause>): MutableListedTheory {
-        return this.also { it.clauses.addAll(clauses) }
+        return this.also { it.clauses.addAll(checkClausesCorrect(clauses)) }
     }
 
     override fun assertZ(clauses: Sequence<Clause>): MutableListedTheory {
