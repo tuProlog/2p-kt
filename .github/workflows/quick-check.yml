@@ -41,6 +41,9 @@ jobs:
         with:
           fetch-depth: 0 # all history
 
+      - name: Get All Tags
+        run: git fetch --prune --unshallow --tags
+
 #      - *cache_jdk
       - name: Cache JDK
         uses: actions/cache@v2
@@ -99,6 +102,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0 # all history
+
+      - name: Get All Tags
+        run: git fetch --prune --unshallow --tags
 
       #      - *cache_jdk
       - name: Cache JDK
