@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<fx:root type="VBox" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      <children>
+         <HBox alignment="CENTER_LEFT">
+            <children>
+               <Circle fx:id="led" fill="LIME" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                  <HBox.margin>
+                     <Insets right="10.0" />
+                  </HBox.margin>
+               </Circle>
+               <Label fx:id="status" alignment="CENTER_RIGHT" text="yes:" />
+               <Label fx:id="query" text="member(1, [1, 2, 3])">
+                  <HBox.margin>
+                     <Insets left="10.0" />
+                  </HBox.margin>
+               </Label>
+            </children>
+         </HBox>
+      </children>
+</fx:root>

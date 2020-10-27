@@ -51,6 +51,23 @@ class TypeError(
 
     companion object {
 
+        @JsName("of")
+        @JvmStatic
+        fun of(
+            context: ExecutionContext,
+            expectedType: Expected,
+            actualValue: Term,
+            message: String
+        ) = message(message) { m, extra ->
+            TypeError(
+                message = m,
+                context = context,
+                expectedType = expectedType,
+                culprit = actualValue,
+                extraData = extra
+            )
+        }
+
         @JsName("forArgumentList")
         @JvmStatic
         fun forArgumentList(
@@ -132,15 +149,17 @@ class TypeError(
         CALLABLE,
         CHARACTER,
         COMPOUND,
+        DEALIASING_EXPRESSION,
         EVALUABLE,
         FLOAT,
-        IN_BYTE,
-        IN_CHARACTER,
         INTEGER,
         LIST,
         NUMBER,
+        OBJECT_REFERENCE,
         PAIR,
-        PREDICATE_INDICATOR;
+        PREDICATE_INDICATOR,
+        REFERENCE,
+        TYPE_REFERENCE;
 
         /**
          * The type expected string description

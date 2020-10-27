@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(Libs.clikt_multiplatform)
                 api(project(":core"))
+                api(project(":oop-lib"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
             }
@@ -52,7 +53,7 @@ tasks.create("run", JavaExec::class.java) {
     }
 }
 
-if (githubToken != null) {
+if (!githubToken.isNullOrBlank()) {
     rootProject.configure<GithubReleaseExtension> {
         releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
     }

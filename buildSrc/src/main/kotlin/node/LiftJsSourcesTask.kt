@@ -1,26 +1,31 @@
 package node
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Internal
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
 import java.io.BufferedWriter
 import java.io.File
 import java.io.OutputStreamWriter
 
-open class LiftJsSourcesTask : DefaultTask() {
+open class LiftJsSourcesTask : AbstractNodeDefaultTask() {
 
-    internal var liftingActions: List<FileLineTransformer> = emptyList()
-        @Internal
-        get() = field
-        set(value) {
-            field = value
-        }
+    @Input
+    val liftingActions = project.objects.listProperty<FileLineTransformer>()
 
-    @Internal
-    lateinit var jsSourcesDir: File
+    @Input
+    val jsSourcesDir: Property<File> = project.objects.property()
+
+    override fun defaultValuesFrom(extension: NpmPublishExtension) {
+        super.defaultValuesFrom(extension)
+        jsSourcesDir.set(extension.jsSourcesDir)
+        liftingActions.set(extension.jsSourcesLiftingActions)
+    }
 
     @TaskAction
     fun lift() {
+        val jsSourcesDir = this.jsSourcesDir.get()
         if (!jsSourcesDir.exists() || !jsSourcesDir.isDirectory) {
             throw IllegalStateException("$jsSourcesDir is not a valid directory path")
         }
@@ -31,7 +36,7 @@ open class LiftJsSourcesTask : DefaultTask() {
                 file.useLines {
                     for (indexedLine in it.withIndex()) {
                         var line = indexedLine.value
-                        for (liftAction in liftingActions) {
+                        for (liftAction in liftingActions.getOrElse(emptyList())) {
                             line = liftAction.invoke(file, indexedLine.index, line)
                         }
                         output.write(line)
@@ -43,5 +48,4 @@ open class LiftJsSourcesTask : DefaultTask() {
             temp.renameTo(file)
         }
     }
-
 }

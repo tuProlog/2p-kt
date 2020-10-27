@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import org.fxmisc.richtext.CodeArea?>
+<fx:root type="Tab" text="Untitled Tab" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+         onSelectionChanged="#onTabSelectionChanged"
+         closable="true">
+  <content>
+      <CodeArea fx:id="codeArea" onKeyTyped="#onKeyTypedOnCodeArea" onKeyPressed="#onKeyPressedOnCodeArea" onMouseClicked="#onMousePressedOnCodeArea" prefHeight="200.0" prefWidth="200.0" />
+  </content>
+<!--    <graphic>-->
+<!--        <Button mnemonicParsing="false" text="X" fx:id="btnClose" />-->
+<!--    </graphic>-->
+</fx:root>

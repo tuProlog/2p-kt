@@ -1,5 +1,12 @@
 rootProject.name = "2p"
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+}
+
 include("documentation")
 
 include("core")
@@ -20,5 +27,6 @@ include("parser-theory")
 include("serialize-core")
 include("serialize-theory")
 include("repl")
-
+include("oop-lib")
+include("ide")
 include("examples")

@@ -1,0 +1,156 @@
+name: quick-check
+on:
+  push:
+    branches:
+      - '*'
+env:
+  jdk-version: openjdk@~1.15.0
+  project-name: 2P-Kt
+  workflow: quick-check
+  gradle-options: "--no-daemon --console=plain --stacktrace"
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+#      - &cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+#      - &install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      - name: Show Env
+        run: gradle --version
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - setup
+    steps:
+#      - &checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+#      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+#      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+#      - &cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+
+      - name: Setup Gradle
+        run: gradle ${{ env.gradle-options }}
+
+      - name: Check Code Style
+        run: gradle ${{ env.gradle-options }} ktlintCheck --parallel
+
+      - name: Archive KtLint Reports
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ktlint-reports
+          path: '**/build/reports/ktlint'
+
+      - name: Clean
+        run: gradle ${{ env.gradle-options }} clean
+
+      - name: Compile
+        run: gradle ${{ env.gradle-options }} assemble --parallel
+
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      #      - *checkout_code
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # all history
+
+      - name: Get All Tags
+        run: git fetch --tags -f
+
+      #      - *cache_jdk
+      - name: Cache JDK
+        uses: actions/cache@v2
+        with:
+          path: ~/.jabba
+          key: ${{ runner.os }}-jdk-${{ env.jdk-version }}
+          restore-keys: |
+            ${{ runner.os }}-jdk-
+
+      #      - *install_jdk
+      - uses: battila7/jdk-via-jabba@v1
+        name: Restore JDK
+        with:
+          jdk: ${{ env.jdk-version }}
+
+      #      - *cache_gradle
+      - name: Cache Gradle Data
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/gradle/wrapper
+            **/build
+            **/.gradle
+          key: ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
+          restore-keys: |
+            ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
+
+      - name: Test JVM
+        run: gradle ${{ env.gradle-options }} jvmTest
+
+      - name: Archive JVM Test Reports
+        uses: actions/upload-artifact@v2
+        if: failure() || success()
+        with:
+          name: jvm-test-reports
+          path: '**/build/reports/tests/jvmTest'
+
+      - name: Test JS
+        run: gradle ${{ env.gradle-options }} jsTest || gradle ${{ env.gradle-options }} clean jsTest
+
+      - name: Archive JS Test Reports
+        if: failure() || success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: js-test-reports
+          path: '**/build/reports/tests/jsTest'

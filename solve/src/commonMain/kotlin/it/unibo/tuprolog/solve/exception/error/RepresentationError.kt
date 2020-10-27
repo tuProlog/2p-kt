@@ -81,6 +81,7 @@ class RepresentationError(
         MAX_ARITY,
         MAX_INTEGER,
         MIN_INTEGER,
+        OOP_OBJECT,
         TOO_MANY_VARIABLES;
 
         @JsName("limit")

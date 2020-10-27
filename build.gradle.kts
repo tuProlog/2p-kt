@@ -1,12 +1,11 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import node.Bugs
 import node.NpmPublishExtension
 import node.NpmPublishPlugin
 import node.People
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.GradlePassConfigurationImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
@@ -69,7 +68,7 @@ val githubToken = getPropertyOrWarnForAbsence("githubToken")
 val npmToken = getPropertyOrWarnForAbsence("npmToken")
 
 val allSubprojects = allprojects.map { it.name }.toSet()
-val jvmSubprojects = setOf("parser-jvm", "examples")
+val jvmSubprojects = setOf("parser-jvm", "examples", "ide")
 val jsSubprojects = setOf("parser-js")
 val docSubprojects = setOf("documentation")
 
@@ -182,7 +181,7 @@ ktSubprojects.forEachProject {
     configureUploadToBintray("kotlinMultiplatform", "js", "jvm", "metadata")
     configureSigning()
     configureJsPackage()
-    configureUploadToGithub({ "jvm" in it || "shadow" in it })
+    configureUploadToGithub({ "shadow" in it })
 }
 
 with(rootProject) {
@@ -213,6 +212,17 @@ with(rootProject) {
             }
         }
     }
+
+    val dokkaHtmlMultiModule by tasks.getting(DokkaMultiModuleTask::class)
+    val packDokkaMultiModule by tasks.registering(Zip::class) {
+        group = "documentation"
+        dependsOn(dokkaHtmlMultiModule)
+        from(dokkaHtmlMultiModule.outputDirectory.get())
+        archiveBaseName.set(project.name)
+        archiveVersion.set(project.version.toString())
+        archiveAppendix.set("documentation")
+    }
+    configureUploadToGithub(packDokkaMultiModule.get())
 }
 
 jvmSubprojects.forEachProject {
@@ -229,7 +239,7 @@ jvmSubprojects.forEachProject {
     configureUploadToMavenCentral()
     configureUploadToBintray()
     configureSigning()
-    configureUploadToGithub()
+    configureUploadToGithub({ "shadow" in it })
 }
 
 jsSubprojects.forEachProject {
@@ -285,34 +295,45 @@ fun Project.configureKtLint() {
 }
 
 fun Project.configureUploadToGithub(
+    vararg tasks: Zip
+) {
+    if (githubToken == null) return
+
+    val archiveFiles = tasks.map { it.archiveFile }
+
+    rootProject.githubRelease {
+        releaseAssets(*(releaseAssets.toList() + archiveFiles).toTypedArray())
+    }
+
+    rootProject.tasks.withType(GithubReleaseTask::class) {
+        dependsOn(*tasks)
+    }
+}
+
+fun Project.configureUploadToGithub(
     jarTaskPositiveFilter: (String) -> Boolean = { "jar" in it },
     jarTaskNegativeFilter: (String) -> Boolean = { "dokka" in it || "source" in it }
 ) {
     if (githubToken == null) return
 
-    val jarTasks = tasks.withType(Jar::class).asSequence()
+    val zipTasks = tasks.withType(Zip::class).asSequence()
         .filter { jarTaskPositiveFilter(it.name.toLowerCase()) }
         .filter { !jarTaskNegativeFilter(it.name.toLowerCase()) }
-        .map { it.archiveFile }
         .toList()
+        .toTypedArray()
 
-    rootProject.configure<GithubReleaseExtension> {
-        releaseAssets(*(releaseAssets.toList() + jarTasks).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(*jarTasks.toTypedArray())
-    }
+    configureUploadToGithub(*zipTasks)
 }
 
 fun Project.configureDokka(vararg platforms: String) {
-    tasks.withType<DokkaTask> {
-        outputDirectory = docDir
-        outputFormat = "html"
+    tasks.withType<DokkaTask>().configureEach {
+        outputDirectory.set(docDir)
 
-        if (platforms.isNotEmpty()) {
-            multiplatform {
-                platforms.forEach { registerPlatform(it) }
+        dokkaSourceSets {
+            if (platforms.isNotEmpty()) {
+                for (p in platforms) {
+                    named("${p}Main")
+                }
             }
         }
     }
@@ -329,7 +350,7 @@ fun Project.configureDokka(vararg platforms: String) {
 
             task<Jar>(packDokkaForPlatform) {
                 group = "documentation"
-                dependsOn("dokka")
+                dependsOn("dokkaHtml")
                 from(docDir)
                 archiveBaseName.set(project.name)
                 archiveVersion.set(project.version.toString())
@@ -342,7 +363,7 @@ fun Project.configureDokka(vararg platforms: String) {
     } else {
         val packDokka by tasks.creating(Jar::class) {
             group = "documentation"
-            dependsOn("dokka")
+            dependsOn("dokkaHtml")
             from(docDir)
             archiveBaseName.set(project.name)
             archiveVersion.set(project.version.toString())
@@ -480,44 +501,23 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
 
 fun Set<String>.forEachProject(f: Project.() -> Unit) = allprojects.filter { it.name in this }.forEach(f)
 
-fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(
-    platform: String,
-    configuration: Action<in GradlePassConfigurationImpl>
-) {
-    val low = platform.toLowerCase()
-    val up = platform.toUpperCase()
-
-    register(low) {
-        targets = listOf(up)
-        this@register.platform = low
-        includeNonPublic = false
-        reportUndocumented = false
-        collectInheritedExtensionsFromLibraries = true
-        skipEmptyPackages = true
-        noStdlibLink = true
-        noJdkLink = true
-        configuration(this@register)
-    }
-}
-
-fun NamedDomainObjectContainerScope<GradlePassConfigurationImpl>.registerPlatform(platform: String) =
-    registerPlatform(platform) { }
-
 fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
     if (this == rootProject) return
 
     apply<NpmPublishPlugin>()
 
     configure<NpmPublishExtension> {
-        nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
-        token = npmToken ?: ""
-        packageJson = tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson
-        nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
-        jsCompileTask = compileTask
-        jsSourcesDir = tasks.withType<Kotlin2JsCompile>().asSequence()
-            .filter { "Test" !in it.name }
-            .map { it.outputFile.parentFile }
-            .first()
+        nodeRoot.set(rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first())
+        token.set(npmToken ?: "")
+        packageJson.set(tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson)
+        nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
+        jsCompileTask.set(compileTask)
+        jsSourcesDir.set(
+            tasks.withType<Kotlin2JsCompile>().asSequence()
+                .filter { "Test" !in it.name }
+                .map { it.outputFile.parentFile }
+                .first()
+        )
 
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))

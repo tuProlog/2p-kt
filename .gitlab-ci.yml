@@ -6,13 +6,15 @@ variables:
   BEFORE_TASK: ""
   AFTER_TASK: ""
   GCMD: "gradle"
-  BUILD_TASK: "clean assemble"
-  CHECK_CODE_TASK: "ktlintCheck"
-  TEST_TASK: "check -x dokka"
-  TEST_JVM_TASK: "jvmTest -x dokka"
-  TEST_JS_TASK: "clean jsTest -x dokka"
-  BINTRAY_TASK: "publishAllToBintray"
-  CENTRAL_TASK: "publishAllPublicationsToMavenRepository"
+  BUILD_TASK: "clean assemble --parallel"
+  CHECK_CODE_TASK: "ktlintCheck --parallel"
+  TEST_TASK: "check -x dokkaHtml"
+  TEST_JVM_TASK: "jvmTest -x dokkaHtml"
+  TEST_JS_TASK: "clean jsTest -x dokkaHtml"
+  DOC_TASK: "dokkaHtml --parallel"
+  SIGN_TASK: "signAllPublications --parallel"
+  BINTRAY_TASK: "publishAllToBintray --parallel"
+  CENTRAL_TASK: "publishAllPublicationsToMavenRepository --parallel"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
@@ -26,15 +28,37 @@ before_script:
 cache:
   paths:
     - $HOME/.gradle/
+    - $HOME/.m2/
     - gradle/
     - .gradle/
     - build/
+    - '**/build/'
+    - core/src/commonMain/kotlin/it/unibo/tuprolog/Info.kt
 
-Compile & Check Style:
+stages:
+  - check
+  - build
+  - test
+  - doc
+  - sign
+  - deploy
+
+Check Code Style:
+  stage: check
+  script:
+    - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
+  needs: []
+  only:
+    - branches
+
+Compile:
   stage: build
   script:
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
-    - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
+  needs:
+    - job: Check Code Style
+  only:
+    - branches
 
 Test JVM:
   stage: test
@@ -42,28 +66,65 @@ Test JVM:
   artifacts:
     reports:
       junit: "**/build/test-results/jvmTest/*.xml"
+  needs:
+    - job: Compile
+  only:
+    - branches
 
 Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
+  needs:
+    - job: Compile
+  only:
+    - branches
+
+Generate Doc:
+  stage: doc
+  script:
+    - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
+  only:
+    - /^(master)|(release)|(develop)$/
+  when: manual
+  needs:
+    - job: Test JVM
+    - job: Test JS
+
+Sign Artefacts:
+  stage: sign
+  script:
+    - $GCMD $BEFORE_TASK $SIGN_TASK $AFTER_TASK $GOPTS
+  only:
+    - /^(master)|(release)|(develop)$/
+  when: manual
+  needs:
+    - job: Generate Doc
 
 Deploy to Bintray:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $BINTRAY_TASK $AFTER_TASK $GOPTS
   environment:
     name: Bintray
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
     - /^(master)|(release)|(develop)$/
+  when: manual
+  needs:
+    - job: Sign Artefacts
 
 Deploy to Maven Central:
   stage: deploy
-  script: $GCMD $BEFORE_TASK $CENTRAL_TASK $AFTER_TASK $GOPTS
+  script:
+    - $GCMD $BEFORE_TASK $CENTRAL_TASK $AFTER_TASK $GOPTS
   environment:
     name: Maven Central
     url: "https://oss.sonatype.org"
   only:
     - /^(master)|(release)$/
+  when: manual
+  needs:
+    - job: Sign Artefacts
 
 Deploy to NPM:
   stage: deploy
@@ -75,6 +136,9 @@ Deploy to NPM:
     url: "https://www.npmjs.com/org/tuprolog"
   only:
     - /^(master)|(release)|(develop)$/
+  when: manual
+  needs:
+    - job: Sign Artefacts
 
 Deploy to GitHub:
   stage: deploy
@@ -85,6 +149,9 @@ Deploy to GitHub:
     url: "https://github.com/tuProlog/2p-kt/releases"
   only:
     - /^(master)|(release)|(develop)$/
+  when: manual
+  needs:
+    - job: Sign Artefacts
 
 pages:
   script:
@@ -94,6 +161,6 @@ pages:
   artifacts:
     paths:
       - public
-  allow_failure: true
+#  allow_failure: true
   only:
     - /^(master)|(release)|(documentation)$/

@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.kotlin.dsl.KotlinClosure2
 import org.gradle.kotlin.dsl.withType
+import java.io.File
 
 private val FULL_VERSION_REGEX = "^[0-9]+\\.[0-9]+\\.[0-9]+$".toRegex()
 
@@ -73,5 +74,5 @@ fun Project.getPropertyOrWarnForAbsence(key: String): String? {
 
 //fun capitalize(s: String) = s[0].toUpperCase() + s.substring(1)
 
-val Project.docDir: String
-    get() = "$buildDir/doc"
+val Project.docDir: File
+    get() = buildDir.resolve("doc")

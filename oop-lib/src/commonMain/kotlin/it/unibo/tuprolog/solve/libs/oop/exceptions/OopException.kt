@@ -1,0 +1,35 @@
+package it.unibo.tuprolog.solve.libs.oop.exceptions
+
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.exception.PrologError
+import it.unibo.tuprolog.solve.libs.oop.name
+import kotlin.jvm.JvmOverloads
+import kotlin.reflect.KClass
+
+abstract class OopException : TuPrologException {
+
+    @JvmOverloads
+    constructor(message: String? = null, cause: Throwable? = null) : super(message, cause)
+
+    constructor(cause: Throwable?) : super(cause)
+
+    abstract fun toPrologError(
+        context: ExecutionContext,
+        signature: Signature
+    ): PrologError
+
+    protected abstract val culprit: Term
+
+    companion object {
+        internal fun List<Set<KClass<*>>>.pretty(): String {
+            return joinToString { it.pretty() }
+        }
+
+        internal fun Set<KClass<*>>.pretty(): String {
+            return joinToString("|") { it.name }
+        }
+    }
+}

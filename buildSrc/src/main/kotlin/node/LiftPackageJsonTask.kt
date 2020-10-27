@@ -3,38 +3,40 @@ package node
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Internal
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
-open class LiftPackageJsonTask : DefaultTask() {
+open class LiftPackageJsonTask : AbstractNodeDefaultTask() {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
+
+    @Input
+    protected val packageJsonFile: Property<File> = project.objects.property()
+
     private var packageJson: PackageJson? = null
+
     private lateinit var packageJsonRaw: JsonObject
 
-    internal var  liftingActions: List<Action<PackageJson>> = emptyList()
-        @Internal
-        get() = field
-        set(value) {
-            field = value
-        }
+    private val liftingActions = project.objects.listProperty<Action<PackageJson>>()
 
-    internal var rawLiftingActions: List<Action<JsonObject>> = emptyList()
-        @Internal
-        get() = field
-        set(value) {
-            field = value
-        }
+    private val rawLiftingActions = project.objects.listProperty<Action<JsonObject>>()
 
-    @Internal
-    lateinit var packageJsonFile: File
+    override fun defaultValuesFrom(extension: NpmPublishExtension) {
+        super.defaultValuesFrom(extension)
+        packageJsonFile.set(extension.packageJson)
+        liftingActions.set(extension.packageJsonLiftingActions)
+        rawLiftingActions.set(extension.packageJsonRawLiftingActions)
+    }
 
     @TaskAction
     fun lift() {
+        val packageJsonFile = this.packageJsonFile.get()
         if (!packageJsonFile.exists()) {
             error("File ${packageJsonFile.path} does not exist")
         }
@@ -44,6 +46,7 @@ open class LiftPackageJsonTask : DefaultTask() {
     }
 
     private fun resolve() {
+        val packageJsonFile = this.packageJsonFile.get()
         packageJsonRaw = gson.fromJson(FileReader(packageJsonFile), JsonObject::class.java)
         packageJson = try {
             PackageJson.fromJson(packageJsonRaw)
@@ -55,14 +58,14 @@ open class LiftPackageJsonTask : DefaultTask() {
 
     private fun performLifting() {
         if (packageJson == null) {
-            rawLiftingActions.forEach { it.execute(packageJsonRaw) }
+            rawLiftingActions.getOrElse(emptyList()).forEach { it.execute(packageJsonRaw) }
         } else {
-            liftingActions.forEach { it.execute(packageJson!!) }
+            liftingActions.getOrElse(emptyList()).forEach { it.execute(packageJson!!) }
         }
     }
 
     private fun save() {
-        FileWriter(packageJsonFile).use {
+        FileWriter(packageJsonFile.get()).use {
             gson.toJson(packageJson?.toJson() ?: packageJsonRaw, it)
         }
     }
