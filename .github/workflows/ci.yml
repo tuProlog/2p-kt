@@ -140,7 +140,7 @@ jobs:
           path: '**/build/reports/tests/jvmTest'
 
       - name: Test JS
-        run: gradle ${{ env.gradle-options }} jsTest
+        run: gradle ${{ env.gradle-options }} jsTest || gradle ${{ env.gradle-options }} clean jsTest
 
       - name: Archive JS Test Reports
         if: failure() || success()
@@ -251,7 +251,7 @@ jobs:
             ${{ runner.os }}-gradle-${{ github.sha }}
 
       - name: Publish on GitHub Maven Repo
-        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
         env:
           ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/${{ github.repository }}
           ORG_GRADLE_PROJECT_ossrhUsername: ${{ github.actor }}
@@ -301,7 +301,7 @@ jobs:
             ${{ runner.os }}-gradle-${{ github.sha }}
 
       - name: Publish on Bintray Maven Repo
-        run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel
+        run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel || gradle ${{ env.gradle-options }} publishAllToBintray --parallel
         env:
           ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
           ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_KEY }}
@@ -351,7 +351,7 @@ jobs:
             ${{ runner.os }}-gradle-${{ github.sha }}
 
       - name: Publish on Maven Central Repo
-        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
 #        if: contains(github.ref, 'master')
         env:
           ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
@@ -399,7 +399,7 @@ jobs:
 
       - name: Publish on NPM
         run: |
-          gradle ${{ env.gradle-options }} jsMain npmPublish
+          gradle ${{ env.gradle-options }} jsMain npmPublish || gradle ${{ env.gradle-options }} clean jsMain npmPublish
         env:
           ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
 
@@ -444,6 +444,6 @@ jobs:
             ${{ runner.os }}-gradle-${{ github.sha }}
 
       - name: Publish GitHub Release
-        run: gradle ${{ env.gradle-options }} githubRelease
+        run: gradle ${{ env.gradle-options }} githubRelease || gradle ${{ env.gradle-options }} githubRelease
         env:
           ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUB_TOKEN }}
