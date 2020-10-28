@@ -22,7 +22,7 @@ kotlin {
                         |object Info {
                         |    const val VERSION = "${rootProject.version}"
                         |    
-                        |    val PLATFORM: Platform = currentPlatform()
+                        |    val PLATFORM: Platform by lazy {  currentPlatform() }
                         |}
                         |""".trimMargin()
                     )
