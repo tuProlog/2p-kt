@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 
 /**
  * An exception that could occur during Solver execution
@@ -27,8 +28,7 @@ open class TuPrologRuntimeException(
         cause: Throwable? = null,
         context: ExecutionContext,
         vararg otherContexts: ExecutionContext
-    ) :
-        this(message, cause, arrayOf(context, *otherContexts))
+    ) : this(message, cause, arrayOf(context, *otherContexts))
 
     constructor(cause: Throwable?, context: ExecutionContext) : this(cause?.toString(), cause, context)
 

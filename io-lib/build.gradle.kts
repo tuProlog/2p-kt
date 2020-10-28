@@ -1,5 +1,4 @@
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -8,32 +7,11 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
-            dependsOn(commonMain)
-        }
-
-        jvm {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(main.defaultSourceSet)
-            }
-        }
-
         js {
-
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(main.defaultSourceSet)
+            compilations["main"].defaultSourceSet {
+                dependencies {
+                    api(npm("node-fetch", "^2.6.1"))
+                }
             }
         }
     }

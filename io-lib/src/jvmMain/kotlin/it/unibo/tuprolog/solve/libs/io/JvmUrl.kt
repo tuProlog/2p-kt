@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.str
+import it.unibo.tuprolog.solve.libs.io.Url.Companion.toString
+import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import java.io.BufferedInputStream
 import java.io.BufferedReader
@@ -10,12 +10,12 @@ import java.net.MalformedURLException
 import java.net.URL
 import kotlin.streams.asSequence
 
-class JvmUrl(private val url: URL) : Url {
+data class JvmUrl(private val url: URL) : Url {
 
     constructor(string: String) : this(string.toUrl())
 
     constructor(protocol: String, host: String = "", port: Int? = null, path: String = "", query: String? = null) :
-        this("$protocol://$host${port?.ensureValidPort()?.str { ":$it" }}$path${query.str { "?$it" }}")
+        this(toString(protocol, host, port, path, query))
 
     override val protocol: String
         get() = url.protocol
@@ -33,27 +33,36 @@ class JvmUrl(private val url: URL) : Url {
         get() = url.query
 
     override fun readAsText(): String =
-        BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+        try {
+            BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+        } catch (e: java.io.IOException) {
+            throw IOException(e.message, e)
+        }
 
     override fun readAsByteArray(): ByteArray =
-        BufferedInputStream(url.openStream()).readAllBytes()
+        try {
+            BufferedInputStream(url.openStream()).readAllBytes()
+        } catch (e: java.io.IOException) {
+            throw IOException(e.message, e)
+        }
 
-    override fun resolve(child: String): Url = JvmUrl(protocol, host, port, "$path/$child", query)
+    override fun readAsTextAsync(callback: (String?, IOException?) -> Unit) {
+        try {
+            callback(readAsText(), null)
+        } catch (e: IOException) {
+            callback(null, e)
+        }
+    }
+
+    override fun readAsByteArrayAsync(callback: (ByteArray?, IOException?) -> Unit) {
+        try {
+            callback(readAsByteArray(), null)
+        } catch (e: IOException) {
+            callback(null, e)
+        }
+    }
 
     override fun toString(): String = url.toString()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Url) return false
-
-        if (toString() != other.toString()) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return toString().hashCode()
-    }
 
     companion object {
         private fun String.toUrl(): URL =
