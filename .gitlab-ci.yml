@@ -39,8 +39,8 @@ stages:
   - check
   - build
   - test
-  - doc
-  - sign
+#  - doc
+#  - sign
   - deploy
 
 Check Code Style:
@@ -80,7 +80,8 @@ Test JS:
 #    - job: Compile
 
 Generate Doc:
-  stage: doc
+#  stage: doc
+  stage: deploy
   script:
     - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
   only:
@@ -91,7 +92,8 @@ Generate Doc:
 #    - job: Test JS
 
 Sign Artefacts:
-  stage: sign
+  #  stage: doc
+  stage: deploy
   script:
     - $GCMD $BEFORE_TASK $SIGN_TASK $AFTER_TASK $GOPTS
   only:
