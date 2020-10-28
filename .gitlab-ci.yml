@@ -47,12 +47,16 @@ Check Code Style:
   stage: check
   script:
     - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
-#  needs: []
+  only:
+    - branches
+  #  needs: []
 
 Compile:
   stage: build
   script:
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
+  only:
+    - branches
 #  needs:
 #    - job: Check Code Style
 
@@ -62,12 +66,16 @@ Test JVM:
   artifacts:
     reports:
       junit: "**/build/test-results/jvmTest/*.xml"
+  only:
+    - branches
 #  needs:
 #    - job: Compile
 
 Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
+  only:
+    - branches
 #  needs:
 #    - job: Compile
 
