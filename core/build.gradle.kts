@@ -21,6 +21,8 @@ kotlin {
                         |
                         |object Info {
                         |    const val VERSION = "${rootProject.version}"
+                        |    
+                        |    val PLATFORM: Platform = currentPlatform()
                         |}
                         |""".trimMargin()
                     )
