@@ -47,14 +47,14 @@ Check Code Style:
   stage: check
   script:
     - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
-  needs: []
+#  needs: []
 
 Compile:
   stage: build
   script:
     - $GCMD $BEFORE_TASK $BUILD_TASK $AFTER_TASK $GOPTS
-  needs:
-    - job: Check Code Style
+#  needs:
+#    - job: Check Code Style
 
 Test JVM:
   stage: test
@@ -62,14 +62,14 @@ Test JVM:
   artifacts:
     reports:
       junit: "**/build/test-results/jvmTest/*.xml"
-  needs:
-    - job: Compile
+#  needs:
+#    - job: Compile
 
 Test JS:
   stage: test
   script: $GCMD $BEFORE_TASK $TEST_JS_TASK $AFTER_TASK $GOPTS
-  needs:
-    - job: Compile
+#  needs:
+#    - job: Compile
 
 Generate Doc:
   stage: doc
@@ -78,9 +78,9 @@ Generate Doc:
   only:
     - /^(master)|(release)|(develop)$/
   when: manual
-  needs:
-    - job: Test JVM
-    - job: Test JS
+#  needs:
+#    - job: Test JVM
+#    - job: Test JS
 
 Sign Artefacts:
   stage: sign
@@ -89,8 +89,8 @@ Sign Artefacts:
   only:
     - /^(master)|(release)|(develop)$/
   when: manual
-  needs:
-    - job: Generate Doc
+#  needs:
+#    - job: Generate Doc
 
 Deploy to Bintray:
   stage: deploy
@@ -102,8 +102,8 @@ Deploy to Bintray:
   only:
     - /^(master)|(release)|(develop)$/
   when: manual
-  needs:
-    - job: Sign Artefacts
+#  needs:
+#    - job: Sign Artefacts
 
 Deploy to Maven Central:
   stage: deploy
@@ -115,8 +115,8 @@ Deploy to Maven Central:
   only:
     - /^(master)|(release)$/
   when: manual
-  needs:
-    - job: Sign Artefacts
+#  needs:
+#    - job: Sign Artefacts
 
 Deploy to NPM:
   stage: deploy
@@ -129,8 +129,8 @@ Deploy to NPM:
   only:
     - /^(master)|(release)|(develop)$/
   when: manual
-  needs:
-    - job: Sign Artefacts
+#  needs:
+#    - job: Sign Artefacts
 
 Deploy to GitHub:
   stage: deploy
@@ -142,8 +142,8 @@ Deploy to GitHub:
   only:
     - /^(master)|(release)|(develop)$/
   when: manual
-  needs:
-    - job: Sign Artefacts
+#  needs:
+#    - job: Sign Artefacts
 
 pages:
   script:
