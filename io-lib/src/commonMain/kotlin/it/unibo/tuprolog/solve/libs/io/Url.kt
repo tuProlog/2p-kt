@@ -38,7 +38,21 @@ interface Url {
     @JsName("div")
     operator fun div(child: String): Url = resolve(child)
 
+    @JsName("isFile")
+    val isFile: Boolean
+        get() = protocol == "file" && host.isBlank() && port == null && query == null
+
+    @JsName("isHttp")
+    val isHttp: Boolean
+        get() = protocol.startsWith("http") && host.isNotBlank()
+
     companion object {
+
+        internal fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
+            if (this == null) "" else transformation(this)
+
+        internal fun Int.ensureValidPort(): Int =
+            if (this < 0) throw IllegalArgumentException("Invalid port: $this") else this
 
         internal enum class UrlField { PROTOCOL, UNIT, HOST, PORT, PATH, QUERY, ANCHOR }
 

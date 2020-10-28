@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.solve.libs.io
 
+import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
+import it.unibo.tuprolog.solve.libs.io.Url.Companion.str
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.IllegalArgumentException
 import java.net.MalformedURLException
 import java.net.URL
 import kotlin.streams.asSequence
@@ -39,13 +40,22 @@ class JvmUrl(private val url: URL) : Url {
 
     override fun resolve(child: String): Url = JvmUrl(protocol, host, port, "$path/$child", query)
 
+    override fun toString(): String = url.toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Url) return false
+
+        if (toString() != other.toString()) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return toString().hashCode()
+    }
+
     companion object {
-        private fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
-            if (this == null) "" else transformation(this)
-
-        private fun Int.ensureValidPort(): Int =
-            if (this < 0) throw IllegalArgumentException("Invalid port: $this") else this
-
         private fun String.toUrl(): URL =
             try {
                 URL(this)
