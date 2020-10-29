@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.ExecutionContext
 import kotlin.js.JsName
-import kotlin.jvm.JvmOverloads
 
 /**
  * An exception that could occur during Solver execution
