@@ -22,7 +22,7 @@ private val FETCH by lazy {
     if (Info.PLATFORM == Platform.BROWSER) {
         window
     } else {
-        js("require('node-fetch')")
+        js("{ fetch: require('node-fetch') }")
     }
 }
 
@@ -42,6 +42,7 @@ private fun ArrayBuffer.toUInt8Array(): Uint8Array =
 private fun ArrayBuffer.toByteArray(): ByteArray =
     toUInt8Array().toByteArray()
 
+@Suppress("UNUSED_PARAMETER")
 private fun browserReadText(path: String): String =
     throw IOException("Reading a local file in browser is not supported, yet")
 
@@ -59,6 +60,7 @@ fun readText(path: String): String =
         nodeReadText(path)
     }
 
+@Suppress("UNUSED_PARAMETER")
 private fun browserReadBin(path: String): ByteArray =
     throw IOException("Reading a local file in browser is not supported, yet")
 
@@ -76,6 +78,7 @@ fun readBin(path: String): ByteArray =
         nodeReadBin(path)
     }
 
+@Suppress("UNUSED_PARAMETER")
 private fun browserReadTextAsync(path: String, callback: (String?, IOException?) -> Unit) =
     callback(null, IOException("Reading a local file in browser is not supported, yet"))
 
@@ -95,6 +98,7 @@ fun readTextAsync(path: String, callback: (String?, IOException?) -> Unit) =
         nodeReadTextAsync(path, callback)
     }
 
+@Suppress("UNUSED_PARAMETER")
 private fun browserReadBinAsync(path: String, callback: (ByteArray?, IOException?) -> Unit) =
     callback(null, IOException("Reading a local file in browser is not supported, yet"))
 

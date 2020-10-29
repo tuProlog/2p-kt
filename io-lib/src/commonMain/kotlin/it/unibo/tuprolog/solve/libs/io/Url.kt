@@ -1,12 +1,5 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.ANCHOR
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.HOST
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PATH
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PORT
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PROTOCOL
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.QUERY
-import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.UNIT
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -56,7 +49,7 @@ interface Url {
 
     companion object {
 
-        internal fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
+        private fun <T : Any> T?.str(transformation: (T) -> String = { it.toString() }): String =
             if (this == null) "" else transformation(this)
 
         internal fun Int.ensureValidPort(): Int =
@@ -64,11 +57,29 @@ interface Url {
 
         internal enum class UrlField { PROTOCOL, UNIT, HOST, PORT, PATH, QUERY, ANCHOR }
 
+        private fun urlRegex(protocol: String? = null, unit: String? = null, host: String? = null, port: String? = null, path: String? = null, query: String? = null, anchor: String? = null): Regex {
+            val protocolGroup =
+                """(${protocol.str { "?<$it>" }}[\w]+)"""
+            val unitGroup =
+                """(\/?${unit.str { "?$it" }}[a-z]\:)"""
+            val hostGroup =
+                """(${host.str { "?<$it>" }}[^\s]+[.][a-z]{2,})"""
+            val portGroup =
+                """(${port.str { "?<$it>" }}\d+)"""
+            val pathGroup =
+                """(${path.str { "?<$it>" }}(?:\/[^\s?\#\/]+)*\/?)"""
+            val queryGroup =
+                """(${query.str { "?<$it>" }}[^\s\/?#]+)"""
+            val anchorGroup =
+                """(${anchor.str { "?<$it>" }}.*)"""
+            return Regex(
+                """$protocolGroup\:\/+(?:$unitGroup|$hostGroup(?:\:$portGroup)?)$pathGroup(?:\?$queryGroup?)?(?:\#$anchorGroup)?""",
+                RegexOption.IGNORE_CASE
+            )
+        }
+
         @JvmStatic
-        val URL_REGEX = Regex(
-            """(?<$PROTOCOL>[\w]+):\/\/(?:(?<$UNIT>[a-z]\:)|(?<$HOST>[^\s]+[.][a-z]{2,4})(?:\:(?<$PORT>\d+))?)(?<$PATH>(?:\/[^\s?\#\/]+)+)?(?:\/)?(\?(?<$QUERY>[^\s\/?#]+)?)?(?:\#(?<$ANCHOR>.*))?""",
-            RegexOption.IGNORE_CASE
-        )
+        val URL_REGEX = urlRegex()
 
         internal fun parse(string: String): Map<UrlField, String?>? {
             val match = URL_REGEX.matchEntire(string)?.groups?.toList()
@@ -76,7 +87,7 @@ interface Url {
                 // ?.let { it as? MatchNamedGroupCollection }
                 ?.let { groups ->
                     UrlField.values()
-                        .map { it to (groups[it.ordinal]?.value) }
+                        .map { it to (groups[it.ordinal + 1]?.value) }
                         .toMap()
                 }
         }
