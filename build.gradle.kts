@@ -1,16 +1,12 @@
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import node.Bugs
-import node.NpmPublishExtension
-import node.NpmPublishPlugin
-import node.People
+import io.github.gciatto.kt.node.Bugs
+import io.github.gciatto.kt.node.NpmPublishPlugin
+import io.github.gciatto.kt.node.People
 import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin apply true
@@ -22,6 +18,7 @@ plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
     id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("io.github.gciatto.kt-npm-publish") version "0.1.7"
 }
 
 repositories {
@@ -506,18 +503,8 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
 
     apply<NpmPublishPlugin>()
 
-    configure<NpmPublishExtension> {
-        nodeRoot.set(rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first())
-        token.set(npmToken ?: "")
-        packageJson.set(tasks.getByName<KotlinPackageJsonTask>(packageJsonTask).packageJson)
-        nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
-        jsCompileTask.set(compileTask)
-        jsSourcesDir.set(
-            tasks.withType<Kotlin2JsCompile>().asSequence()
-                .filter { "Test" !in it.name }
-                .map { it.outputFile.parentFile }
-                .first()
-        )
+    npmPublishing {
+        defaultValuesFrom(rootProject)
 
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))

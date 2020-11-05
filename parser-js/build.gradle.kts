@@ -1,11 +1,9 @@
-import node.Bugs
-import node.NpmPublishExtension
-import node.NpmPublishPlugin
-import node.People
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import io.github.gciatto.kt.node.Bugs
+import io.github.gciatto.kt.node.People
 
-apply<NpmPublishPlugin>()
+plugins {
+    id("io.github.gciatto.kt-npm-publish")
+}
 
 val gcName: String by project
 val gcEmail: String by project
@@ -37,18 +35,9 @@ kotlin {
     }
 }
 
-configure<NpmPublishExtension> {
-    nodeRoot.set(rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first())
-    token.set(npmToken)
-    packageJson.set(tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson)
-    nodeSetupTask.set(rootProject.tasks.getByName("kotlinNodeJsSetup").path)
-    jsCompileTask.set("mainClasses")
-    jsSourcesDir.set(
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().asSequence()
-            .filter { "Test" !in it.name }
-            .map { it.outputFile.parentFile }
-            .first()
-    )
+npmPublishing {
+    defaultValuesFrom(rootProject)
+    // packageJson.set(tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson)
 
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
