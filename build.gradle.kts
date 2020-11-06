@@ -542,17 +542,19 @@ val Project.isFullVersion: Boolean
 
 fun Project.configureTestResultPrinting() {
     tasks.withType<AbstractTestTask> {
-        afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
-            if (desc.parent == null) { // will match the outermost suite
-                println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
-            }
-        }))
+        afterSuite(
+            KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
+                if (desc.parent == null) { // will match the outermost suite
+                    println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
+                }
+            })
+        )
     }
 }
 
 fun MavenPublication.configurePom(projectName: String) {
     pom {
-        name.set("2P in Kotlin -- Module `${projectName}`")
+        name.set("2P in Kotlin -- Module `$projectName`")
         description.set(projectDescription)
         url.set(projectHome)
         licenses {
