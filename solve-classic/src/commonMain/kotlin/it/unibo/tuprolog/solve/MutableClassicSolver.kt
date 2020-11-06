@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
@@ -13,7 +14,7 @@ internal class MutableClassicSolver(
     libraries: Libraries = Libraries.empty(),
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
+    dynamicKb: Theory = MutableTheory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
@@ -78,7 +79,7 @@ internal class MutableClassicSolver(
     override fun loadDynamicKb(theory: Theory) {
         updateContext {
             copy(
-                dynamicKb = theory,
+                dynamicKb = theory.toMutableTheory(),
                 operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
             )
         }
@@ -87,7 +88,7 @@ internal class MutableClassicSolver(
     override fun appendDynamicKb(theory: Theory) {
         updateContext {
             copy(
-                dynamicKb = theory,
+                dynamicKb = theory.toMutableTheory(),
                 operators = operators + theory.getAllOperators().toOperatorSet()
             )
         }
@@ -96,7 +97,7 @@ internal class MutableClassicSolver(
     override fun resetDynamicKb() {
         updateContext {
             copy(
-                dynamicKb = Theory.empty(),
+                dynamicKb = MutableTheory.empty(),
                 operators = getAllOperators(libraries, staticKb).toOperatorSet()
             )
         }
@@ -132,40 +133,40 @@ internal class MutableClassicSolver(
         }
     }
 
-    override fun retract(clause: Clause): RetractResult {
+    override fun retract(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retract(clause)
         updateContext {
             copy(
-                dynamicKb = result.theory,
+                dynamicKb = result.theory.toMutableTheory(),
                 operators = operators - listOf(clause).getAllOperators().toOperatorSet()
             )
         }
         return result
     }
 
-    override fun retract(fact: Struct): RetractResult {
+    override fun retract(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retract(fact)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(dynamicKb = result.theory.toMutableTheory())
         }
         return result
     }
 
-    override fun retractAll(clause: Clause): RetractResult {
+    override fun retractAll(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retractAll(clause)
         updateContext {
             copy(
-                dynamicKb = result.theory,
+                dynamicKb = result.theory.toMutableTheory(),
                 operators = operators - result.theory.getAllOperators().toOperatorSet()
             )
         }
         return result
     }
 
-    override fun retractAll(fact: Struct): RetractResult {
+    override fun retractAll(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retractAll(fact)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(dynamicKb = result.theory.toMutableTheory())
         }
         return result
     }

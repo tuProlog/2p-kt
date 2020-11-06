@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList
@@ -22,7 +23,7 @@ data class ClassicExecutionContext(
     override val libraries: Libraries = Libraries.empty(),
     override val flags: FlagStore = FlagStore.empty(),
     override val staticKb: Theory = Theory.empty(),
-    override val dynamicKb: Theory = Theory.empty(),
+    override val dynamicKb: MutableTheory = MutableTheory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
@@ -48,6 +49,7 @@ data class ClassicExecutionContext(
     val hasOpenAlternatives: Boolean
         get() = choicePoints?.hasOpenAlternatives ?: false
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val isActivationRecord: Boolean
         get() = parent == null || parent.depth == depth - 1
 
@@ -109,7 +111,7 @@ data class ClassicExecutionContext(
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
-            dynamicKb = dynamicKb,
+            dynamicKb = dynamicKb.toMutableTheory(),
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels
