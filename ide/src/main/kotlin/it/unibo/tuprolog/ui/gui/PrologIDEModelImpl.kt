@@ -141,9 +141,9 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     private fun newResolution(): Iterator<Solution> {
         solver.value.let { s ->
             val old = s.operators
-            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(s.operators) ?: Theory.empty()
+            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(old) ?: Theory.empty()
             s.loadStaticKb(theory)
-            lastGoal = query.parseAsStruct(s.operators)
+            lastGoal = query.parseAsStruct(old)
             onNewStaticKb.push(SolverEvent(Unit, s))
             return s.solve(lastGoal!!, timeout).iterator()
         }

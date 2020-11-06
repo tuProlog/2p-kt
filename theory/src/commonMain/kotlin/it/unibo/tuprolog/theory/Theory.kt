@@ -15,6 +15,10 @@ import kotlin.jvm.JvmStatic
 
 interface Theory : Iterable<Clause> {
 
+    val isMutable: Boolean get() = false
+
+    fun toMutableTheory(): MutableTheory
+
     /** All [Clause]s in this theory */
     @JsName("clauses")
     val clauses: Iterable<Clause>
@@ -99,27 +103,29 @@ interface Theory : Iterable<Clause> {
 
     /** Tries to delete a matching clause from this theory */
     @JsName("retract")
-    fun retract(clause: Clause): RetractResult
+    fun retract(clause: Clause): RetractResult<Theory>
 
     /** Tries to delete the matching clauses from this theory */
     @JsName("retractIterable")
-    fun retract(clauses: Iterable<Clause>): RetractResult
+    fun retract(clauses: Iterable<Clause>): RetractResult<Theory>
 
     /** Tries to delete the matching clauses from this theory */
     @JsName("retractSequence")
-    fun retract(clauses: Sequence<Clause>): RetractResult
+    fun retract(clauses: Sequence<Clause>): RetractResult<Theory>
 
     /** Tries to delete a matching clause from this theory */
     @JsName("retractByHead")
-    fun retract(head: Struct): RetractResult = retract(Rule.of(head, Var.anonymous()))
+    fun retract(head: Struct): RetractResult<Theory> =
+        retract(Rule.of(head, Var.anonymous()))
 
     /** Tries to delete all matching clauses from this theory */
     @JsName("retractAll")
-    fun retractAll(clause: Clause): RetractResult
+    fun retractAll(clause: Clause): RetractResult<Theory>
 
     /** Tries to delete all matching clauses from this theory */
     @JsName("retractAllByHead")
-    fun retractAll(head: Struct): RetractResult = retractAll(Rule.of(head, Var.anonymous()))
+    fun retractAll(head: Struct): RetractResult<Theory> =
+        retractAll(Rule.of(head, Var.anonymous()))
 
     @JsName("abolish")
     fun abolish(indicator: Indicator): Theory
