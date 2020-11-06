@@ -21,10 +21,10 @@ plugins {
 }
 
 repositories {
-    maven(Repos.Mirrors.mavenCentralEurope)
+    maven("https://maven-central-eu.storage-download.googleapis.com/maven2")
     mavenCentral()
     jcenter()
-    maven(Repos.dokka)
+    maven("https://dl.bintray.com/kotlin/dokka")
 }
 
 group = "it.unibo.tuprolog"

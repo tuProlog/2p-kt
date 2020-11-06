@@ -14,15 +14,13 @@ configurations {
 }
 
 dependencies {
-    orchidRuntimeOnly(Libs.orchiddocs)
-    orchidRuntimeOnly(Libs.orchidkotlindoc)
-    orchidRuntimeOnly(Libs.orchidplugindocs)
-//    orchidRuntimeOnly(Libs.orchidasciidoc)
-//    orchidRuntimeOnly(Libs.orchiddiagrams)
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:_")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:_")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:_")
 
     val plantuml by configurations.getting
 
-    plantuml(Libs.plantuml)
+    plantuml("net.sourceforge.plantuml:plantuml:_")
 }
 
 repositories {

@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Libs.clikt_multiplatform)
+                api("com.github.ajalt:clikt-multiplatform:_")
                 api(project(":core"))
                 api(project(":oop-lib"))
                 api(project(":solve-classic"))
