@@ -5,7 +5,7 @@ plugins {
 configurations {
     val orchidRuntimeOnly by getting {
         resolutionStrategy {
-            force(Libs.plantuml)
+            force("net.sourceforge.plantuml:plantuml:_")
         }
     }
     create("plantuml") {
@@ -26,11 +26,11 @@ dependencies {
 repositories {
     mavenCentral()
     jcenter()
-    maven(Repos.kotlinx)
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 // env ORG_GRADLE_PROJECT_orchidBaseUrl
-val orchidBaseUrl = getPropertyOrWarnForAbsence("orchidBaseUrl")
+val orchidBaseUrl: String? by project
 
 orchid {
     theme = "Editorial"

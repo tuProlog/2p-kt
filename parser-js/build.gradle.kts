@@ -16,14 +16,14 @@ val npmToken: String by project
 val generatedSrcDir = "$buildDir/generated-src/antlr/main"
 
 kotlin {
-    target {
+    js {
         nodejs()
     }
 
     with(sourceSets["main"]) {
         dependencies {
             api(kotlin("stdlib-js"))
-            api(npm("antlr4", "^${Versions.org_antlr.replace("-1", ".0")}"))
+            api(npm("antlr4", "^4.8.0"))
             api(npm("@tuprolog/parser-utils", "0.2.2"))
         }
     }

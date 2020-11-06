@@ -51,6 +51,9 @@ val projectLicense: String by project
 val projectIssues: String by project
 val githubOwner: String by project
 val githubRepo: String by project
+val projectDescription: String by project
+val projectHome: String by project
+val projectLicenseUrl: String by project
 
 val mochaTimeout: String by project
 
@@ -531,3 +534,71 @@ fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compil
         }
     }
 }
+
+private val FULL_VERSION_REGEX = "^[0-9]+\\.[0-9]+\\.[0-9]+$".toRegex()
+
+val Project.isFullVersion: Boolean
+    get() = version.toString().matches(FULL_VERSION_REGEX)
+
+fun Project.configureTestResultPrinting() {
+    tasks.withType<AbstractTestTask> {
+        afterSuite(KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
+            if (desc.parent == null) { // will match the outermost suite
+                println("Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
+            }
+        }))
+    }
+}
+
+fun MavenPublication.configurePom(projectName: String) {
+    pom {
+        name.set("2P in Kotlin -- Module `${projectName}`")
+        description.set(projectDescription)
+        url.set(projectHome)
+        licenses {
+            license {
+                name.set(projectLicense)
+                url.set(projectLicenseUrl)
+            }
+        }
+
+        developers {
+            developer {
+                name.set(gcName)
+                email.set(gcEmail)
+                url.set(gcUrl)
+                organization.set("University of Bologna")
+                organizationUrl.set("https://www.unibo.it/it")
+            }
+            developer {
+                name.set("Enrico Siboni")
+                email.set("enrico.siboni3@studio.unibo.it")
+                url.set("https://www.linkedin.com/in/enrico-siboni/")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git:///gitlab.com/pika-lab/tuprolog/2p-in-kotlin.git")
+            url.set("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin")
+        }
+    }
+}
+
+fun log(message: String) {
+    println("LOG: $message")
+}
+
+fun warn(message: String) {
+    System.err.println("WARNING: $message")
+}
+
+fun Project.getPropertyOrWarnForAbsence(key: String): String? {
+    val value = property(key)?.toString()
+    if (value.isNullOrBlank()) {
+        warn("$key is not set")
+    }
+    return value
+}
+
+val Project.docDir: File
+    get() = buildDir.resolve("doc")
