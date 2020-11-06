@@ -47,6 +47,9 @@ Check Code Style:
   stage: check
   script:
     - $GCMD $BEFORE_TASK $CHECK_CODE_TASK $AFTER_TASK $GOPTS
+  artifacts:
+    paths:
+      - "**/build/reports/ktlint/"
   only:
     - branches
   #  needs: []
