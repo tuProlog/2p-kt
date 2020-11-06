@@ -12,8 +12,8 @@ plugins {
     application
     java
     kotlin("jvm")
-    id("org.openjfx.javafxplugin") version Versions.org_openjfx_javafxplugin_gradle_plugin
-    id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
+    id("org.openjfx.javafxplugin")
+    id("com.github.johnrengelman.shadow")
 }
 
 javafx {

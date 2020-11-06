@@ -1,5 +1,5 @@
 plugins {
-    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
+    id("com.eden.orchidPlugin")
 }
 
 configurations {

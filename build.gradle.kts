@@ -9,16 +9,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
-    kotlin("multiplatform") version Versions.org_jetbrains_kotlin_multiplatform_gradle_plugin apply true
+    kotlin("multiplatform")
     id("maven-publish")
     signing
-    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
-    // id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
-    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
-    id("io.github.gciatto.kt-npm-publish") version Versions.io_github_gciatto_kt_npm_publish_gradle_plugin
+    id("org.jetbrains.dokka")
+    id("com.jfrog.bintray")
+    id("org.danilopianini.git-sensitive-semantic-versioning")
+    id("com.github.breadmoirai.github-release")
+    id("org.jlleitschuh.gradle.ktlint")
+    id("io.github.gciatto.kt-npm-publish")
 }
 
 repositories {
