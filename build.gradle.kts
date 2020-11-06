@@ -18,7 +18,7 @@ plugins {
     id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     id("com.github.breadmoirai.github-release") version Versions.com_github_breadmoirai_github_release_gradle_plugin
     id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
-    id("io.github.gciatto.kt-npm-publish") version "0.1.7"
+    id("io.github.gciatto.kt-npm-publish") version Versions.io_github_gciatto_kt_npm_publish_gradle_plugin
 }
 
 repositories {
