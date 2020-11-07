@@ -1,6 +1,7 @@
 import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import io.github.gciatto.kt.node.Bugs
+import io.github.gciatto.kt.node.NpmPublishExtension
 import io.github.gciatto.kt.node.NpmPublishPlugin
 import io.github.gciatto.kt.node.People
 import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
@@ -17,7 +18,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("com.github.breadmoirai.github-release")
     id("org.jlleitschuh.gradle.ktlint")
-    id("io.github.gciatto.kt-npm-publish")
+    id("io.github.gciatto.kt-npm-publish") apply false
 }
 
 repositories {
@@ -500,14 +501,14 @@ fun Project.createMavenPublications(name: String, vararg componentsStrings: Stri
 
 fun Set<String>.forEachProject(f: Project.() -> Unit) = allprojects.filter { it.name in this }.forEach(f)
 
-fun Project.configureJsPackage(packageJsonTask: String = "jsPackageJson", compileTask: String = "jsMainClasses") {
-    if (this == rootProject) return
+fun Project.configureJsPackage() {
+    if (project == rootProject) return
 
     apply<NpmPublishPlugin>()
 
-    npmPublishing {
-        defaultValuesFrom(rootProject)
-
+    configure<NpmPublishExtension> {
+        defaultValuesFrom(project)
+        token.set(npmToken)
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
             homepage = projectHomepage

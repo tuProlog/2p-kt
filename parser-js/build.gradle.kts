@@ -36,9 +36,8 @@ kotlin {
 }
 
 npmPublishing {
-    defaultValuesFrom(rootProject)
-    // packageJson.set(tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson)
-
+    defaultValuesFrom(project)
+    token.set(npmToken)
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
         homepage = projectHomepage
