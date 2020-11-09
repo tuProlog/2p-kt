@@ -40,6 +40,24 @@ Also, the `isYes()`, `isNo()` and `isHalt()` properties can be used to query a `
 
 ### Exceptions
 
+During the solving process, exceptions can occur. The Prolog standard defines many errors; in 2p-Kt such errors are defined in the implementation language with a one-to-one mapping.
+
+`TuPrologRuntimeException` is the base type of all exceptions happening at run-time. Each instance carries three elements of information that help to understand in which circumstances the exception was raised:
+
+- `message: String?`, a detailed string describing the exception;
+- `cause: Throwable?`, what caused the exception;
+- `contexts: Array<ExecutionContext>`, a stack of contexts localising the exception.
+
+Let's list some notable `TuPrologRuntimeException` subtypes:
+
+- `PrologError`, the base class for all Standard Prolog errors;
+- `HaltException`, denoting an error occured inside the engine during its execution, indicating that the resolution process should be halted;
+- `TimeoutException`, raised when the maxixum duration allowed for execution has been exceeded, suggesting that the execution should be terminated.
+
+The Prolog ISO standard states that when a Prolog exception cannot be handled properly, a `SystemError` - a sub-type of `PrologError` - should be raised. If even this exception cannot be handled, the resolution process is halted by means of a `HaltException`.
+
+Further information about this topic can be found [at this page](errors-and-exceptions.md).
+
 ## Mutable aspects of Solvers
 
 ### Libraries
