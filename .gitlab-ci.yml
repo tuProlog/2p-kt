@@ -19,7 +19,8 @@ variables:
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
   PAGES_TASK: "orchidBuild"
-  ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
+  # ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/"
+  ORG_GRADLE_PROJECT_orchidBaseUrl: "https://pika-lab.gitlab.io/courses/as/projects/sa-project-rizzato-1920/"
 
 before_script:
   - chmod +x gradlew
