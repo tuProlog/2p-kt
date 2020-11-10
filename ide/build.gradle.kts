@@ -12,12 +12,14 @@ plugins {
     application
     java
     kotlin("jvm")
-    id("org.openjfx.javafxplugin") version Versions.org_openjfx_javafxplugin_gradle_plugin
-    id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
+    id("org.openjfx.javafxplugin")
+    id("com.github.johnrengelman.shadow")
 }
 
+val javaFxVersion: String by project
+
 javafx {
-    version = Versions.org_openjfx
+    version = javaFxVersion
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
@@ -33,16 +35,16 @@ dependencies {
     api(project(":parser-theory"))
     api(project(":oop-lib"))
     api(kotlin("stdlib-jdk8"))
-    api(Libs.richtextfx)
+    api("org.fxmisc.richtext:richtextfx:_")
 
-    runtimeOnly("${Libs.javafx_graphics}:win")
-    runtimeOnly("${Libs.javafx_graphics}:linux")
-    runtimeOnly("${Libs.javafx_graphics}:mac")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
 
     testImplementation(kotlin("test-junit"))
 }
 
-configure<JavaPluginConvention> {
+java {
     targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
     sourceCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
 }

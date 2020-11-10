@@ -12,7 +12,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-configure<JavaPluginConvention> {
+java {
     targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
     sourceCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
 }
