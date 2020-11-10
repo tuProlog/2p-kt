@@ -56,7 +56,7 @@ Let's list some notable `TuPrologRuntimeException` subtypes:
 
 The Prolog ISO standard states that when a Prolog exception cannot be handled properly, a `SystemError` - a sub-type of `PrologError` - should be raised. If even this exception cannot be handled, the resolution process is halted by means of a `HaltException`.
 
-Further information about this topic can be found [at this page]({{ site.baseUrl }}/wiki/Rationale and Architecture/errors-and-exceptions).
+Further information about this topic can be found [at this page]({{ site.baseUrl }}/wiki/Rationale%20and%20Architecture/errors-and-exceptions).
 
 ## Mutable aspects of Solvers
 
