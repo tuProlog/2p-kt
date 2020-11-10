@@ -68,7 +68,7 @@ Every `Solver` instance employs a number of different assets behind the scenes t
 - a set of flags;
 - an input channel and an output channel.
 
-As the title suggests, these properties are considered as mutable in the sense that they are meant to change inside the engine _while_ the resolution is being performed. In fact, these objects are represented as immutable data structures, which can be modified at implementation language level by using [mutable solvers].(#mutable-solvers).
+As the title suggests, these properties are considered as mutable in the sense that they are meant to change inside the engine _while_ the resolution is being performed. In fact, these objects are represented as immutable data structures, which can be modified at implementation language level by using [mutable solvers](#mutable-solvers).
 
 ### Libraries
 
