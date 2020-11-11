@@ -1,3 +1,6 @@
+---
+---
+
 ## Solver
 
 In logic programming, resolution is the process of trying to find a solution to some goal by producing a suitable substitution, given a logic theory.
