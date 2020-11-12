@@ -85,6 +85,26 @@ Since more than one library could be loaded at the same time, clashes can occur 
 
 ### Operators
 
+An `Operator` is a basic Prolog concept. It is a structured term with an arity of 1 or 2, which can be written in prefix, infix or postfix notation without parentheses. All operators currently known by a library are contained in an `OperatorSet` object.
+
+Each `Operator` is defined through the following elements:
+
+- a name (`Atom`),
+- a `Specifier`, defining its notation and associativity,
+- an integer settings its priority.
+
+`Specifier`s can only represent one of the following syntaxes:
+
+|         | Left-associative | Non-associative | Right-associative |
+|:-------:|:----------------:|:---------------:|:-----------------:|
+|  **Prefix** |                  |        FX       |         FY        |
+|  **Infix**  |        YFX       |       XFX       |        XFY        |
+| **Postfix** |        YF        |        XF       |                   |
+
+The `F` indicates the *name* of the specifier, while the number of `X` and `Y` defines the *arity* of the specifier. `X` and `Y` also define the implicit *associativity* of the operands: `Y` means that the side in which it is located is associative, whereas `X` indicates that its side is non-associative.
+
+Implicit associativity is very useful for avoiding parentheses when writing sub-expressions with the same operator. For example, if the `'x'` is left-associative (`YFX`) the expression `(1 + 2 + 3 + 4)` is evaluated as the term `'+'('+'('+'(1, 2), 3), 4)))`.
+
 ### Knowledge bases
 
 ### Flags
