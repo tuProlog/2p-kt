@@ -75,6 +75,14 @@ As the title suggests, these properties are considered as mutable in the sense t
 
 ### Libraries
 
+A `Library` is a container for:
+
+- operators,
+- [Prolog theories]({{ site.baseUrl }}/wiki/Rationale%20and%20Architecture/clasuedb-theories-and-RETE) (in the form of `Theory`s, which define custom predicates),
+- [primitives and functions]({{ site.baseUrl }}/wiki/Rationale%20and%20Architecture/primitives-and-functions).
+
+Since more than one library could be loaded at the same time, clashes can occur between predicate indicators. In order to overcome them, we provide a `AliasedLibrary` type which encapsulates a custom alias name. This allows the solver to search for predicates with both their plain name and their fully qualified name (alias + indicator).
+
 ### Operators
 
 ### Knowledge bases
