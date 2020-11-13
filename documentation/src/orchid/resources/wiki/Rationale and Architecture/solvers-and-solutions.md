@@ -97,15 +97,9 @@ Each `Operator` is defined through the following elements:
 
 |         | Left-associative | Non-associative | Right-associative |
 |---------|:----------------:|:---------------:|:-----------------:|
-| **Prefix**  |n/a|`FX`|`FY`|
-| **Infix**   |`YFX`|`XFX`|`XFY`|
-| **Postfix** |`YF`|`XF`|n/a|
-
-<!-- |         | Left-associative | Non-associative | Right-associative |
-|---------|:----------------:|:---------------:|:-----------------:|
-| **Prefix**  |        n/a       |        `FX`       |         `FY`        |
-| **Infix**   |        `YFX`       |       `XFX`       |        `XFY`        |
-| **Postfix** |        `YF`        |        `XF`       |        n/a        | -->
+| Prefix  |        n/a       |        `FX`       |         `FY`        |
+| Infix   |        `YFX`       |       `XFX`       |        `XFY`        |
+| Postfix |        `YF`        |        `XF`       |        n/a        |
 
 The `F` indicates the *name* of the specifier, while the number of `X` and `Y` defines the *arity* of the specifier. `X` and `Y` also define the implicit *associativity* of the operands: `Y` means that the side in which it is located is associative, whereas `X` indicates that its side is non-associative.
 
