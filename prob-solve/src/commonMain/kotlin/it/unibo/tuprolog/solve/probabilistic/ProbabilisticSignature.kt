@@ -1,13 +1,20 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.probabilistic
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
+import it.unibo.tuprolog.solve.Signature
 import kotlin.js.JsName
 
+/**
+ * Represents the probabilistic signature of a query Struct or a Primitive, namely a signature along with its
+ * probability of being true.
+ *
+ * @author Jason Dellaluce
+ */
 data class ProbabilisticSignature(
-    @JsName("signature")
+        @JsName("signature")
     val signature: Signature,
-    @JsName("probability")
+        @JsName("probability")
     val probability: Double,
 ) : ToTermConvertible {
 
