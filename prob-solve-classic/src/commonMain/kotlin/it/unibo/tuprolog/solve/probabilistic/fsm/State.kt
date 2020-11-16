@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 
 interface State {
-    val context: ClassicExecutionContext
+    val context: ClassicProbabilisticExecutionContext
 
     fun next(): State
 }
 
-fun State.clone(context: ClassicExecutionContext = this.context): State =
+fun State.clone(context: ClassicProbabilisticExecutionContext = this.context): State =
     when (this) {
         is StateBacktracking -> copy(context)
         is StateEnd -> copy(solution, context)

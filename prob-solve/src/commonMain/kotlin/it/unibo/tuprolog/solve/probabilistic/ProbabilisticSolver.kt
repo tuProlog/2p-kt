@@ -11,6 +11,11 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 interface ProbabilisticSolver : Solver {
+    @JsName("probSolveWorld")
+    fun probSolveWorld(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticWorld>
+
+    @JsName("probSolveWorldMaxDuration")
+    fun probSolveWorld(goal: Struct): Sequence<ProbabilisticWorld> = probSolveWorld(goal, TimeDuration.MAX_VALUE)
 
     @JsName("probSolve")
     fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticSolution>

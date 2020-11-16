@@ -6,10 +6,10 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.probabilistic.fsm.EndState
 import it.unibo.tuprolog.solve.probabilistic.fsm.State
 
-internal class SolutionIterator(
+internal class ProbabilisticWorldIterator(
     state: State,
     private val onStateTransition: (State, Long) -> Unit = { _, _ -> Unit }
-) : Iterator<Solution> {
+) : Iterator<ProbabilisticWorld> {
 
     var state: State = state
         private set
@@ -21,13 +21,16 @@ internal class SolutionIterator(
         return state.let { it !is EndState || it.hasOpenAlternatives }
     }
 
-    override fun next(): Solution {
+    override fun next(): ProbabilisticWorld {
         do {
             state = state.next()
             step += 1
             onStateTransition(state, step)
         } while (state !is EndState)
-        return (state as EndState).solution.cleanUp()
+        return ProbabilisticWorld(
+            (state as EndState).solution.cleanUp(),
+            (state as EndState).context.proofConjunction
+        )
     }
 
     private fun Solution.cleanUp(): Solution =

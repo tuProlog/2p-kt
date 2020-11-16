@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Solution
 
-internal data class StateBacktracking(override val context: ClassicExecutionContext) : AbstractState(context) {
+internal data class StateBacktracking(override val context: ClassicProbabilisticExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
         val choicePoints = context.choicePoints
         return if (choicePoints.let { it === null || !it.hasOpenAlternatives }) {

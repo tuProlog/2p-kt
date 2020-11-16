@@ -19,9 +19,10 @@ internal class MutableClassicProbabilisticSolver(
     dynamicKb: Theory = MutableTheory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
-    representationFactory: ProbabilisticRepresentationFactory
+    private val representationFactory: ProbabilisticRepresentationFactory,
+    prologSolver: Solver,
 ) : ClassicProbabilisticSolver(
-        libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, representationFactory
+        libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, representationFactory, prologSolver
     ),
     MutableProbabilisticSolver {
 
@@ -55,21 +56,25 @@ internal class MutableClassicProbabilisticSolver(
     }
 
     override fun loadStaticKb(theory: Theory) {
-        updateContext {
-            copy(
-                staticKb = theory,
-                operators = getAllOperators(libraries, theory, dynamicKb).toOperatorSet()
-            )
+        representationFactory.from(theory).let {
+            updateContext {
+                copy(
+                    staticKb = it,
+                    operators = getAllOperators(libraries, it, dynamicKb).toOperatorSet()
+                )
+            }
         }
     }
 
     override fun appendStaticKb(theory: Theory) {
-        updateContext {
-            val newStaticKb = staticKb + theory
-            copy(
-                staticKb = newStaticKb,
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
+        representationFactory.from(theory).let {
+            updateContext {
+                val newStaticKb = staticKb + it
+                copy(
+                    staticKb = newStaticKb,
+                    operators = operators + it.getAllOperators().toOperatorSet()
+                )
+            }
         }
     }
 
@@ -83,20 +88,24 @@ internal class MutableClassicProbabilisticSolver(
     }
 
     override fun loadDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
-            )
+        representationFactory.from(theory).let {
+            updateContext {
+                copy(
+                    dynamicKb = it.toMutableTheory(),
+                    operators = getAllOperators(libraries, staticKb, it).toOperatorSet()
+                )
+            }
         }
     }
 
     override fun appendDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
+        representationFactory.from(theory).let {
+            updateContext {
+                copy(
+                    dynamicKb = it.toMutableTheory(),
+                    operators = operators + it.getAllOperators().toOperatorSet()
+                )
+            }
         }
     }
 

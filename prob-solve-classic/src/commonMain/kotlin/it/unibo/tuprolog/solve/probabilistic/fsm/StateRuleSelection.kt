@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.probabilistic.ChoicePointContext
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
@@ -18,7 +18,7 @@ import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
 
-internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+internal data class StateRuleSelection(override val context: ClassicProbabilisticExecutionContext) : AbstractState(context) {
 
     companion object {
         val transparentToCut = setOf(
@@ -86,7 +86,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
 
     private fun Term.isCut(): Boolean = this is Atom && value == "!"
 
-    private fun ClassicExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
+    private fun ClassicProbabilisticExecutionContext.computeCutLimit(magicCut: Boolean = false): CutLimit {
         val cutLimit = if (magicCut) {
             this.pathToRoot.firstOrNull()
         } else {
@@ -149,7 +149,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                     }
 
                     currentGoal.isCut() -> {
-                        val cutLimit = computeCutLimit(currentGoal is MagicCut)
+                        val cutLimit = computeCutLimit(currentGoal.toPrologTerm() is MagicCut)
 
                         ignoreState.let {
                             it.copy(

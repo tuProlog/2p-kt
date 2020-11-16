@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.probabilistic.fsm
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.exception.PrologError
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.MessageError
@@ -15,7 +15,7 @@ import it.unibo.tuprolog.utils.plus
 
 internal data class StateException(
     override val exception: TuPrologRuntimeException,
-    override val context: ClassicExecutionContext
+    override val context: ClassicProbabilisticExecutionContext
 ) : ExceptionalState, AbstractState(context) {
 
     private fun Struct.isCatch(): Boolean =
@@ -60,7 +60,9 @@ internal data class StateException(
                                 val newSubstitution =
                                     (context.substitution + catcher).filter(context.interestingVariables)
                                 val subGoals = catchGoal[2][newSubstitution]
-                                val newGoals = subGoals.toGoals() + context.goals.next
+                                val newGoals = subGoals.toGoals().map{
+                                    context.representationFactory.from(it)
+                                } + context.goals.next
 
                                 StateGoalSelection(
                                     context.copy(

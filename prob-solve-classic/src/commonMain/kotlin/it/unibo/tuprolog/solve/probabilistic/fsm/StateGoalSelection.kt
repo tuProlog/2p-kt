@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Solution
 
-internal data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+internal data class StateGoalSelection(override val context: ClassicProbabilisticExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
         return if (context.goals.isOver) {
             if (context.isRoot) {
@@ -12,9 +12,16 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                     context.copy(step = nextStep())
                 )
             } else {
-
+                var newProofConjunction = context.proofConjunction
+                val parentGoal = context.parent!!.currentGoal
+                val curSubstitution = context.substitution
+                parentGoal.let {
+                    newProofConjunction = newProofConjunction.plus(
+                        context.representationFactory.from(it!![curSubstitution])
+                    )
+                }
                 StateGoalSelection(
-                    with(context.parent!!) {
+                    with(context.parent) {
                         copy(
                             choicePoints = context.choicePoints,
                             flags = context.flags,
@@ -29,16 +36,22 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                             inputChannels = context.inputChannels,
                             outputChannels = context.outputChannels,
                             libraries = context.libraries,
+                            proofConjunction = newProofConjunction
                         )
                     }
                 )
             }
         } else {
-            val goalsWithSubstitution = context.goals.map { it[context.substitution] }
+            val goalsWithSubstitution = context.goals.map {
+                it[context.substitution]
+            }
+            val goalsWithProbability = goalsWithSubstitution.map {
+                context.representationFactory.from(it)
+            }
 
             StatePrimitiveSelection(
                 context.copy(
-                    goals = goalsWithSubstitution,
+                    goals = goalsWithProbability,
                     step = nextStep()
                 )
             )

@@ -1,12 +1,7 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.probabilistic.appendPrimitives
 import it.unibo.tuprolog.solve.probabilistic.appendRules
@@ -32,11 +27,11 @@ fun Term.toGoals(): Cursor<out Term> =
         }
     }.cursor()
 
-fun ClassicExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
+fun ClassicProbabilisticExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = true): ClassicProbabilisticExecutionContext {
     val currentGoal = this.currentGoal as Struct
 
     return copy(
-        goals = currentGoal.toGoals(),
+        goals = currentGoal.toGoals().map{representationFactory.from(it)},
         procedure = if (inferProcedureFromGoals) currentGoal else procedure,
         parent = this,
         depth = depth + 1,
@@ -44,7 +39,7 @@ fun ClassicExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = t
     )
 }
 
-fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ClassicExecutionContext {
+fun ClassicProbabilisticExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ClassicProbabilisticExecutionContext {
     val newChoicePointContext = if (rules.hasNext) {
         choicePoints.appendRules(rules.next, this)
     } else {
@@ -57,7 +52,7 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
     )
 }
 
-fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
+fun ClassicProbabilisticExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicProbabilisticExecutionContext {
     val newChoicePointContext = if (primitiveExecutions.hasNext) {
         choicePoints.appendPrimitives(primitiveExecutions.next, this)
     } else {
@@ -66,33 +61,33 @@ fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions:
 
     return copy(
         primitives = primitiveExecutions,
-        choicePoints = newChoicePointContext
+        choicePoints = newChoicePointContext,
     )
 }
 
-fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
+fun ClassicProbabilisticExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true
-): ClassicExecutionContext {
+): ClassicProbabilisticExecutionContext {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
 
-fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
+fun ClassicProbabilisticExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
     inferProcedureFromGoals: Boolean = true
-): ClassicExecutionContext {
+): ClassicProbabilisticExecutionContext {
     val tempExecutionContext = createTempChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
 // TODO Giovanni's review needed!! with Git > Show History
-fun ClassicExecutionContext.toRequest(
+fun ClassicProbabilisticExecutionContext.toRequest(
     goal: Struct,
     signature: Signature
-): Solve.Request<ClassicExecutionContext> =
+): Solve.Request<ClassicProbabilisticExecutionContext> =
     Solve.Request(
         signature,
         goal.argsList,

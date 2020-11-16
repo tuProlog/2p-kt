@@ -17,7 +17,7 @@ interface ProbabilisticClause: Clause {
     companion object
 
     @JsName("toPrologClause")
-    fun toPrologClause(): Term
+    fun toPrologClause(): Clause
 
     @JsName("toProbability")
     fun toProbability(): Term

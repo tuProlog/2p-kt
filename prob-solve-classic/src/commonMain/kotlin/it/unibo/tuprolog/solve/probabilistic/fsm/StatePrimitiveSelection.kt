@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.probabilistic.fsm
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
-internal data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+internal data class StatePrimitiveSelection(override val context: ClassicProbabilisticExecutionContext) : AbstractState(context) {
 
     private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
         return StateException(
@@ -21,7 +21,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
 
     override fun computeNext(): State {
         return with(context) {
-            when (val goal = currentGoal!!) {
+            when (val goal = currentGoal!!.toPrologTerm()) {
                 is Var -> {
                     exceptionalState(
                         InstantiationError.forGoal(
@@ -43,7 +43,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
                             val primitiveExecutions = primitive(req).cursor()
 
                             StatePrimitiveExecution(
-                                context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions)
+                                context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions),
                             )
                         } catch (exception: TuPrologRuntimeException) {
                             exceptionalState(exception.updateContext(context))

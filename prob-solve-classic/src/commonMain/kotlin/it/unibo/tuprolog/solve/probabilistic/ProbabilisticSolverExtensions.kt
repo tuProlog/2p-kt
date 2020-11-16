@@ -35,7 +35,7 @@ fun ProbabilisticSolver.Companion.classicWithDefaultBuiltins(
     stdOut: OutputChannel<String> = ClassicProbabilisticSolverFactory.defaultOutputChannel,
     stdErr: OutputChannel<String> = ClassicProbabilisticSolverFactory.defaultErrorChannel,
     warnings: OutputChannel<PrologWarning> = ClassicProbabilisticSolverFactory.defaultWarningsChannel
-): Solver =
+): ProbabilisticSolver =
     ClassicProbabilisticSolverFactory.solverWithDefaultBuiltins(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
 @JsName("classicMutableSolver")

@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.probabilistic
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -21,7 +20,7 @@ import it.unibo.tuprolog.utils.Cursor
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
-data class ClassicExecutionContext(
+data class ClassicProbabilisticExecutionContext(
     override val procedure: Struct? = null,
     override val libraries: Libraries = Libraries.empty(),
     override val flags: FlagStore = FlagStore.empty(),
@@ -32,13 +31,13 @@ data class ClassicExecutionContext(
     override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct = Truth.TRUE,
-    val goals: Cursor<out Term> = Cursor.empty(),
+    val goals: Cursor<out ProbabilisticTerm> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
     val startTime: TimeInstant = 0,
     val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     val choicePoints: ChoicePointContext? = null,
-    val parent: ClassicExecutionContext? = null,
+    val parent: ClassicProbabilisticExecutionContext? = null,
     val depth: Int = 0,
     val step: Long = 0,
     val representationFactory: ProbabilisticRepresentationFactory,
@@ -58,8 +57,8 @@ data class ClassicExecutionContext(
     val isActivationRecord: Boolean
         get() = parent == null || parent.depth == depth - 1
 
-    val pathToRoot: Sequence<ClassicExecutionContext> = sequence {
-        var current: ClassicExecutionContext? = this@ClassicExecutionContext
+    val pathToRoot: Sequence<ClassicProbabilisticExecutionContext> = sequence {
+        var current: ClassicProbabilisticExecutionContext? = this@ClassicProbabilisticExecutionContext
         while (current != null) {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             yield(current!!)
@@ -67,7 +66,7 @@ data class ClassicExecutionContext(
         }
     }
 
-    val currentGoal: Term?
+    val currentGoal: ProbabilisticTerm?
         get() = if (goals.isOver) null else goals.current
 
     val interestingVariables: KtSet<Var> by lazy {
@@ -111,7 +110,7 @@ data class ClassicExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore<*>,
         outputChannels: OutputStore<*>
-    ): ClassicExecutionContext {
+    ): ClassicProbabilisticExecutionContext {
         return copy(
             libraries = libraries,
             flags = flags,
@@ -123,16 +122,16 @@ data class ClassicExecutionContext(
         )
     }
 
-    override fun apply(sideEffect: SideEffect): ClassicExecutionContext {
-        return super.apply(sideEffect) as ClassicExecutionContext
+    override fun apply(sideEffect: SideEffect): ClassicProbabilisticExecutionContext {
+        return super.apply(sideEffect) as ClassicProbabilisticExecutionContext
     }
 
-    override fun apply(sideEffects: Iterable<SideEffect>): ClassicExecutionContext {
-        return super.apply(sideEffects) as ClassicExecutionContext
+    override fun apply(sideEffects: Iterable<SideEffect>): ClassicProbabilisticExecutionContext {
+        return super.apply(sideEffects) as ClassicProbabilisticExecutionContext
     }
 
-    override fun apply(sideEffects: Sequence<SideEffect>): ClassicExecutionContext {
-        return super.apply(sideEffects) as ClassicExecutionContext
+    override fun apply(sideEffects: Sequence<SideEffect>): ClassicProbabilisticExecutionContext {
+        return super.apply(sideEffects) as ClassicProbabilisticExecutionContext
     }
 
     override fun toString(): String {

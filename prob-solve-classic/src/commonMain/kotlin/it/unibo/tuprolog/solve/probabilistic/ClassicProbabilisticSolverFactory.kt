@@ -7,8 +7,10 @@ import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDOUT
 import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.WARNINGS
 import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.classic
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.function.PrologFunction
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -56,11 +58,21 @@ object ClassicProbabilisticSolverFactory : ProbabilisticSolverFactory {
         ClassicProbabilisticSolver(
             libraries,
             flags,
-            staticKb,
-            dynamicKb,
+            representationFactory.from(staticKb),
+            representationFactory.from(dynamicKb),
             mapOf(STDIN to stdIn),
             mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings),
-            representationFactory
+            representationFactory,
+            Solver.classic(
+                libraries,
+                flags,
+                representationFactory.from(staticKb).toPrologTheory(),
+                representationFactory.from(dynamicKb).toPrologTheory(),
+                stdIn,
+                stdOut,
+                stdErr,
+                warnings
+            )
         )
 
     override fun mutableSolverOf(
@@ -76,10 +88,20 @@ object ClassicProbabilisticSolverFactory : ProbabilisticSolverFactory {
         MutableClassicProbabilisticSolver(
             libraries,
             flags,
-            staticKb,
-            dynamicKb,
+            representationFactory.from(staticKb),
+            representationFactory.from(dynamicKb),
             mapOf(STDIN to stdIn),
             mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings),
-            representationFactory
+            representationFactory,
+            Solver.classic(
+                libraries,
+                flags,
+                representationFactory.from(staticKb).toPrologTheory(),
+                representationFactory.from(dynamicKb).toPrologTheory(),
+                stdIn,
+                stdOut,
+                stdErr,
+                warnings
+            )
         )
 }

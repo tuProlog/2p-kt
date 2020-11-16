@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Term
 
 internal class ProbLogTerm(private val prologTerm: Term, private val probability: Term):
     ProbabilisticTerm,
-    Term by
+    Struct by
         if (prologTerm is Struct && prologTerm.functor == ProbLogLibrary.PROB_FUNCTOR) {
             prologTerm
         } else {
@@ -13,10 +13,10 @@ internal class ProbLogTerm(private val prologTerm: Term, private val probability
         } {
 
     override fun toProbability(): Term {
-        return (this as Struct)[0]
+        return this[0]
     }
 
     override fun toPrologTerm(): Term {
-        return (this as Struct)[1]
+        return this[1]
     }
 }

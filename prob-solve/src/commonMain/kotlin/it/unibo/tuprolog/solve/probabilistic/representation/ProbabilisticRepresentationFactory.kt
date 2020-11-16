@@ -14,14 +14,20 @@ interface ProbabilisticRepresentationFactory {
     @JsName("defaultBuiltins")
     val defaultBuiltins: AliasedLibrary
 
-    @JsName("fromPrologTerm")
-    fun fromPrologTerm(term: Term, probability: Term): ProbabilisticTerm
+    @JsName("fromTermAndProbability")
+    fun from(term: Term, probability: Term): ProbabilisticTerm
 
-    @JsName("fromPrologClause")
-    fun fromPrologClause(clause: Clause, probability: Term): ProbabilisticClause
+    @JsName("fromTerm")
+    fun from(term: Term): ProbabilisticTerm
 
-    @JsName("fromPrologTheory")
-    fun fromPrologTheory(theory: Theory): ProbabilisticTheory
+    @JsName("fromClause")
+    fun from(clause: Clause): ProbabilisticClause
+
+    @JsName("fromClauseAndProbability")
+    fun from(clause: Clause, probability: Term): ProbabilisticClause
+
+    @JsName("fromTheory")
+    fun from(theory: Theory): ProbabilisticTheory
 
 
 }

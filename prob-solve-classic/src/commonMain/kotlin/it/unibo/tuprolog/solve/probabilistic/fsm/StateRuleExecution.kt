@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.probabilistic.fsm
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.prepareForExecution
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
-internal data class StateRuleExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
+internal data class StateRuleExecution(override val context: ClassicProbabilisticExecutionContext) : AbstractState(context) {
     private val failureState: StateBacktracking
         get() = StateBacktracking(
             context.copy(rules = Cursor.empty(), step = nextStep())
@@ -20,7 +20,7 @@ internal data class StateRuleExecution(override val context: ClassicExecutionCon
 
                 StateGoalSelection(
                     context.copy(
-                        goals = subGoals.toGoals(),
+                        goals = subGoals.toGoals().map{context.representationFactory.from(it)},
                         rules = Cursor.empty(),
                         substitution = newSubstitution,
                         step = nextStep()

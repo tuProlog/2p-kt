@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
-internal abstract class AbstractState(override val context: ClassicExecutionContext) : State {
+internal abstract class AbstractState(override val context: ClassicProbabilisticExecutionContext) : State {
 
     protected val executionTime: TimeInstant by lazy {
         currentTime()

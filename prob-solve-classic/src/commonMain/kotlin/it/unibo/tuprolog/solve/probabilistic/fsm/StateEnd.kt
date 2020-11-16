@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
-import it.unibo.tuprolog.solve.probabilistic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.solve.Solution
 
 internal data class StateEnd(
     override val solution: Solution,
-    override val context: ClassicExecutionContext
+    override val context: ClassicProbabilisticExecutionContext
 ) : AbstractEndState(solution, context) {
 
     override val isTimeout: Boolean

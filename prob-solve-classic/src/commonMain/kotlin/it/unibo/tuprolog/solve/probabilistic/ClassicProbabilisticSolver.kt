@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve.probabilistic
 
-import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.*
@@ -13,6 +11,20 @@ import it.unibo.tuprolog.solve.probabilistic.representation.ProbabilisticReprese
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
+/**
+ * This is a direct porting of the SLD FSM implemented in [ClassicSolver], adapted to support probabilistic reasoning.
+ * As this implements [Solver], it is completely backwards compatible with classic logic reasoning.
+ *
+ * TODO: This implementation provides good coverage over the basic features proposed in ProbLog,
+ * however the following is still missing:
+ *   - Negated goals
+ *   - Annotated disjunctions
+ *   - Fail rules (Need to be translated into true ones with negated probability)
+ *   - BDD construction
+ *   - BDD resolution
+ *
+ * @author Jason Dellaluce
+ */
 internal open class ClassicProbabilisticSolver(
     libraries: Libraries = Libraries.empty(),
     flags: FlagStore = FlagStore.empty(),
@@ -20,11 +32,12 @@ internal open class ClassicProbabilisticSolver(
     dynamicKb: Theory = MutableTheory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
-    private val representationFactory: ProbabilisticRepresentationFactory
+    private val representationFactory: ProbabilisticRepresentationFactory,
+    private val prologSolver: Solver,
 ) : ProbabilisticSolver {
 
     private var state: State = StateInit(
-        ClassicExecutionContext(
+        ClassicProbabilisticExecutionContext(
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
@@ -36,7 +49,7 @@ internal open class ClassicProbabilisticSolver(
         )
     )
 
-    protected fun updateContext(contextMapper: ClassicExecutionContext.() -> ClassicExecutionContext) {
+    protected fun updateContext(contextMapper: ClassicProbabilisticExecutionContext.() -> ClassicProbabilisticExecutionContext) {
         val ctx = state.context
         val newCtx = ctx.contextMapper()
         if (newCtx != ctx) {
@@ -45,7 +58,11 @@ internal open class ClassicProbabilisticSolver(
     }
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
-        val initialContext = ClassicExecutionContext(
+        return prologSolver.solve(goal, maxDuration)
+    }
+
+    override fun probSolveWorld(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticWorld> {
+        val initialContext = ClassicProbabilisticExecutionContext(
             query = goal,
             libraries = libraries,
             flags = flags,
@@ -61,14 +78,10 @@ internal open class ClassicProbabilisticSolver(
 
         state = StateInit(initialContext)
 
-        return SolutionIterator(state) { newState, newStep ->
+        return ProbabilisticWorldIterator(state) { newState, newStep ->
             require(newState.context.step == newStep)
             state = newState
         }.asSequence()
-    }
-
-    fun probSolveWorld(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticWorld> {
-        TODO("Not yet implemented")
     }
 
     override fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticSolution> {

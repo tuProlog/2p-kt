@@ -16,7 +16,7 @@ internal class ProbLogClauseIterable(private val theory: Theory): Iterable<Claus
 
         override fun next(): Clause {
             val next = iterator.next()
-            return ProbLogClause(next, Numeric.of(1.0))
+            return ProbLogRepresentationFactory.from(next, Numeric.of(1.0))
         }
     }
 }
