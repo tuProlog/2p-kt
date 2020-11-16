@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.probabilistic
 
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.probabilistic.representation.ProbabilisticTerm
 import kotlin.js.JsName
 
 /**
@@ -8,12 +9,9 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-data class ProbabilisticProof (
+data class ProbabilisticWorld (
         @JsName("solution")
         val solution: Solution,
-        @JsName("proofSignatures")
-        val proofSignatures: Iterable<ProbabilisticSignature>,
-) {
-    val probability: Double
-        get() = proofSignatures.map { s -> s.probability }.reduce(Double::times)
-}
+        @JsName("proofConjunction")
+        val proofConjunction: Iterable<ProbabilisticTerm>,
+)

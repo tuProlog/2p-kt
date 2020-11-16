@@ -6,18 +6,11 @@ import it.unibo.tuprolog.solve.TimeDuration
 import kotlin.js.JsName
 
 /**
- * Represents a Probabilistic Logic goal solver, based on Prolog and backward compatible with it.
+ * Represents a probabilistic logic goal solver, based on Prolog and backwards compatible with it.
  *
  * @author Jason Dellaluce
  */
 interface ProbabilisticSolver : Solver {
-
-    @JsName("probProve")
-    fun probProve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticProof>
-
-    @JsName("probProveMaxDuration")
-    fun probProve(goal: Struct): Sequence<ProbabilisticProof> =
-            probProve(goal, TimeDuration.MAX_VALUE)
 
     @JsName("probSolve")
     fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticSolution>

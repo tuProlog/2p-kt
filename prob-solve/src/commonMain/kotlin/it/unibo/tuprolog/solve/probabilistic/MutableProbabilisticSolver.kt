@@ -7,7 +7,7 @@ import it.unibo.tuprolog.solve.MutableSolver
  *
  * @author Jason Dellaluce
  */
-interface ProbabilisticMutableSolver : ProbabilisticSolver, MutableSolver {
+interface MutableProbabilisticSolver : ProbabilisticSolver, MutableSolver {
 
     companion object {
         // To be extended through extension methods
