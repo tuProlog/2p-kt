@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.probabilistic.representation
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
@@ -17,10 +18,16 @@ internal class ProbLogClause(private val prologClause: Clause, private val proba
             )
         } {
     override fun toPrologClause(): Clause {
-        return prologClause
+        return if (this.head == null)
+            return this
+        else
+            Clause.of(this.head[1] as Struct, this.body)
     }
 
     override fun toProbability(): Term {
-        return probability
+        return if (this.head == null)
+            return Numeric.of(1.0)
+        else
+            this.head[0]
     }
 }
