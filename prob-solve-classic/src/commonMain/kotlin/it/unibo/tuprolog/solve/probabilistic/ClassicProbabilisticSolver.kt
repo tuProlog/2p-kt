@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.Theory
  * however the following is still missing:
  *   - Negated goals
  *   - Annotated disjunctions
+ *   - Evidence predicates
  *   - Fail rules (Need to be translated into true ones with negated probability)
  *   - BDD construction
  *   - BDD resolution
@@ -33,7 +34,7 @@ internal open class ClassicProbabilisticSolver(
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
     private val representationFactory: ProbabilisticRepresentationFactory,
-    private val prologSolver: Solver,
+    private val prologSolver: MutableSolver,
 ) : ProbabilisticSolver {
 
     private var state: State = StateInit(
@@ -54,11 +55,15 @@ internal open class ClassicProbabilisticSolver(
         val newCtx = ctx.contextMapper()
         if (newCtx != ctx) {
             state = state.clone(newCtx)
+            prologSolver.resetStaticKb()
+            prologSolver.resetDynamicKb()
+            prologSolver.loadStaticKb(representationFactory.from(newCtx.staticKb).toPrologTheory())
+            prologSolver.loadDynamicKb(representationFactory.from(newCtx.dynamicKb).toPrologTheory())
         }
     }
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
-        return prologSolver.solve(goal, maxDuration)
+        return probSolveWorld(goal, maxDuration).map{it.solution}
     }
 
     override fun probSolveWorld(goal: Struct, maxDuration: TimeDuration): Sequence<ProbabilisticWorld> {

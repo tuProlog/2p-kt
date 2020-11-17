@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.probabilistic.fsm
 
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.probabilistic.ClassicProbabilisticExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
@@ -9,7 +10,7 @@ internal data class StateInit(override val context: ClassicProbabilisticExecutio
     override fun computeNext(): State {
         return StateGoalSelection(
             context.copy(
-                goals = context.query.toGoals().map{context.representationFactory.from(it)},
+                goals = context.query.toGoals().map{context.representationFactory.from(it, Var.anonymous())},
                 rules = Cursor.empty(),
                 primitives = Cursor.empty(),
                 substitution = Substitution.empty(),

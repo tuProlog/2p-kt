@@ -13,6 +13,10 @@ internal object ProbLogRepresentationFactory: ProbabilisticRepresentationFactory
         return from(term, Var.of("PROB"))
     }
 
+    override fun from(clause: Clause): ProbabilisticClause {
+        return from(clause, Var.of("PROB"))
+    }
+
     override fun from(term: Term, probability: Term): ProbabilisticTerm {
         return when(term) {
             is Truth -> ProbLogTruth(term)
@@ -22,14 +26,13 @@ internal object ProbLogRepresentationFactory: ProbabilisticRepresentationFactory
 
     override fun from(clause: Clause, probability: Term): ProbabilisticClause {
         return when(clause) {
-            is Rule -> ProbLogRule(clause, probability)
+            is Rule -> when(clause) {
+                is Fact -> ProbLogFact(clause, probability)
+                else -> ProbLogRule(clause, probability)
+            }
             is Directive -> ProbLogDirective(clause, probability)
             else -> ProbLogClause(clause, probability)
         }
-    }
-
-    override fun from(clause: Clause): ProbabilisticClause {
-        return from(clause, Var.of("PROB"))
     }
 
     override fun from(theory: Theory): ProbabilisticTheory {

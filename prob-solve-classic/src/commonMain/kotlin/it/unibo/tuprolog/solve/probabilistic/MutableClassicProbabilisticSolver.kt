@@ -20,7 +20,7 @@ internal class MutableClassicProbabilisticSolver(
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
     private val representationFactory: ProbabilisticRepresentationFactory,
-    prologSolver: Solver,
+    prologSolver: MutableSolver,
 ) : ClassicProbabilisticSolver(
         libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, representationFactory, prologSolver
     ),

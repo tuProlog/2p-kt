@@ -10,7 +10,8 @@ internal class ProbLogTerm(private val prologTerm: Term, private val probability
             prologTerm
         } else {
             Struct.of(ProbLogLibrary.PROB_FUNCTOR, probability, prologTerm)
-        } {
+        }
+    {
 
     override fun toProbability(): Term {
         return this[0]

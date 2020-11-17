@@ -44,6 +44,6 @@ internal class ProbabilisticWorldIterator(
     }
 
     private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
-        return filter { _, term -> (term !is Var) || (term in toRetain) }
+        return filter { key, term -> !key.isAnonymous && ((term !is Var) || (term in toRetain)) }
     }
 }
