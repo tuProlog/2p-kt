@@ -13,6 +13,8 @@ import it.unibo.tuprolog.struct.exception.DataStructureOperationException
  * This implementation has been based on and inspired by the following resources:
  *   - https://www.inf.unibz.it/~artale/FM/slide7.pdf
  *   - https://github.com/TUK-CPS/jAADD
+ *
+ * @author Jason Dellaluce
  */
 internal abstract class AbstractBinaryDecisionDiagram<T>(
         val index: Int,

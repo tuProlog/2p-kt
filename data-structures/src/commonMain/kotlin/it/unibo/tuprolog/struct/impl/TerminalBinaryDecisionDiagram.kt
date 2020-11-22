@@ -2,7 +2,6 @@ package it.unibo.tuprolog.struct.impl
 
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.struct.exception.DataStructureOperationException
 
 internal class TerminalBinaryDecisionDiagram<T>(
         bVal: Boolean
