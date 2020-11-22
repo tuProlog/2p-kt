@@ -4,54 +4,51 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
+class TestAtomCharsImpl(private val solverFactory: SolverFactory) : TestAtomChars {
 
-    override fun testBagXInDifferentValues() {
+    override fun atomCharsTestFirstIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "S")
+            val query = atom_chars("X", listOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1, 2))),
+                kotlin.collections.listOf(query.yes("X" to "test")),
                 solutions
             )
         }
     }
 
-    override fun testBagOfFindX() {
+    override fun atomCharsTestYes() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = bagof("X", ("X" `=` 1) or ("X" `=` 2), "X")
+            val query = atom_chars("test", listOf("t", "e", "s", "t"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(1, 2))),
+                kotlin.collections.listOf(query.yes()),
                 solutions
             )
         }
     }
 
-    override fun testBagOfYXZ() {
+    override fun atomCharsTestOneCharIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = bagof("X", ("X" `=` "Y") or ("X" `=` "Z"), "L")
+            val query = atom_chars("test", listOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf("Y", "Z"))),
+                kotlin.collections.listOf(query.yes(("T" to "t"))),
                 solutions
             )
         }
     }
 
-    override fun testBagOfFail() {
+    override fun atomCharsTestFailure() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = bagof("X", fail, "L")
+            val query = atom_chars("test1", listOf("t", "e", "s", "T"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -61,25 +58,36 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         }
     }
 
-    override fun testBagOfSameAsFindall() {
+    override fun atomCharsTestEmpty() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            // val apexTEMPLATE = Struct.of("^", Y, X)
-            val query = bagof("X", "Y^"("X" `=` 1) or ("Y" `=` 2), "S")
+            val query = atom_chars("", "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1))),
+                kotlin.collections.listOf(query.yes("L" to emptyList)),
                 solutions
             )
         }
     }
 
-    override fun testBagOfInstanceError() {
+    override fun atomCharsTestListHead() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
+            val query = atom_chars("ac", listOf("a", "C"))
+            val solutions = solver.solve(query, mediumDuration).toList()
 
-            val query = bagof("X", "G", "S")
+            assertSolutionEquals(
+                kotlin.collections.listOf(query.yes("C" to "c")),
+                solutions
+            )
+        }
+    }
+
+    override fun atomCharsTestIstantationErrorCheck() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val query = atom_chars("A", "L")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -87,9 +95,9 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("bagof", 3),
-                            varOf("G"),
-                            index = 1
+                            Signature("atom_chars", 2),
+                            varOf("A"),
+                            index = 0
                         )
                     )
                 ),
@@ -98,11 +106,10 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         }
     }
 
-    override fun testBagOfTypeError() {
+    override fun atomCharsTestTypeErrorCheck() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = bagof("X", 1, "S")
+            val query = atom_chars("A", "iso")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -110,9 +117,9 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
-                            Signature("bagof", 3),
-                            TypeError.Expected.CALLABLE,
-                            numOf(1),
+                            Signature("atom_chars", 2),
+                            TypeError.Expected.LIST,
+                            atomOf("iso"),
                             index = 1
                         )
                     )

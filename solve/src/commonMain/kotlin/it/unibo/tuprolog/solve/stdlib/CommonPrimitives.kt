@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.stdlib
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
-import it.unibo.tuprolog.solve.stdlib.primitive.Float
 import it.unibo.tuprolog.solve.stdlib.primitive.*
+import it.unibo.tuprolog.solve.stdlib.primitive.Float
 import kotlin.Number
 
 object CommonPrimitives {

@@ -3,105 +3,83 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.collections.listOf as ktListOf
 
-internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom {
+class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLength {
 
-    override fun testAtomAtom() {
+    override fun testAtomLengthNoVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom("atom")
+            val query = atom_length("test", 4)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                kotlin.collections.listOf(query.yes()),
                 solutions
             )
         }
     }
 
-    override fun testAtomString() {
+    override fun testAtomLengthSecondIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom("string")
+            val query = atom_length("test", X)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                kotlin.collections.listOf(query.yes("X" to 4)),
                 solutions
             )
         }
     }
 
-    override fun testAtomAofB() {
+    override fun testAtomLengthFirstIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom("a"("b"))
+            val query = char_code("X", "a")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                kotlin.collections.listOf(
+                    query.halt(
+                        TypeError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("char_code", 2),
+                            TypeError.Expected.INTEGER,
+                            atomOf("a"),
+                            index = 1
+                        )
+                    )
+                ),
                 solutions
             )
         }
     }
 
-    override fun testAtomVar() {
+    override fun testAtomLengthSecondIsVar2() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom("Var")
+            val query = atom_length("testLength", X)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.no()),
+                kotlin.collections.listOf(query.yes("X" to 10)),
                 solutions
             )
         }
     }
 
-    override fun testAtomEmptyList() {
+    override fun testAtomLengthFail() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom(emptyList)
+            val query = atom_length("test", 5)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                ktListOf(query.yes()),
+                kotlin.collections.listOf(query.no()),
                 solutions
             )
         }
     }
 
-    override fun testAtomNum() {
-        prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = atom(6)
-            val solutions = solver.solve(query, mediumDuration).toList()
-
-            assertSolutionEquals(
-                ktListOf(query.no()),
-                solutions
-            )
-        }
-    }
-
-    override fun testAtomNumDec() {
-        prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins()
-
-            val query = atom(3.3)
-            val solutions = solver.solve(query, mediumDuration).toList()
-
-            assertSolutionEquals(
-                ktListOf(query.no()),
-                solutions
-            )
-        }
-    }
 }

@@ -10,26 +10,58 @@ class TestStreamSubAtom : TestSubAtom, SolverFactory by StreamsSolverFactory {
     private val prototype = TestSubAtom.prototype(this)
 
     @Test
-    @Ignore
     override fun testSubAtomSubIsVar() {
         prototype.testSubAtomSubIsVar()
     }
 
     @Test
-    @Ignore
     override fun testSubAtomSubIsVar2() {
         prototype.testSubAtomSubIsVar2()
     }
 
     @Test
-    @Ignore
     override fun testSubAtomSubIsVar3() {
         prototype.testSubAtomSubIsVar3()
     }
 
     @Test
-    @Ignore
     override fun testSubAtomDoubleVar4() {
         prototype.testSubAtomDoubleVar4()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomInstantiationError() {
+        prototype.testSubAtomInstantiationError()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomTypeErrorAtomIsInteger() {
+        prototype.testSubAtomTypeErrorAtomIsInteger()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomTypeErrorSubIsInteger() {
+        prototype.testSubAtomTypeErrorSubIsInteger()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomTypeErrorBeforeIsNotInteger() {
+        prototype.testSubAtomTypeErrorBeforeIsNotInteger()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomTypeErrorLengthIsNotInteger() {
+        prototype.testSubAtomTypeErrorLengthIsNotInteger()
+    }
+
+    @Test
+    @Ignore
+    override fun testSubAtomTypeErrorAfterIsNotInteger() {
+        prototype.testSubAtomTypeErrorAfterIsNotInteger()
     }
 }
