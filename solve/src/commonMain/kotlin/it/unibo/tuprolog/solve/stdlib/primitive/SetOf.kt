@@ -36,7 +36,7 @@ object SetOf : TernaryRelation.WithoutSideEffects<ExecutionContext>("setof") {
         }
         val sols = solve(second as Struct).toList()
         val free = (second.variables - first.variables).toSet()
-        val interesting = free.minus(uninteresting)
+        val interesting = free - uninteresting
         val groups = sols.groupBy { it.substitution.filter(interesting) }
         return groups.asSequence().map { (sub, sols) ->
             val listP = sols.filterIsInstance<Solution.Yes>()

@@ -23,10 +23,8 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
             first is Var -> {
                 ensuringArgumentIsList(1)
                 val chars = second as LogicList
-                val number: Atom = Atom.of(
-                    chars.toSequence().map { (it as Atom).value[0] }.joinToString("").trim()
-                )
-                Substitution.of(first, (Numeric.of((number.value))))
+                val numberString = chars.toSequence().map { (it as Atom).value[0] }.joinToString("").trim()
+                Substitution.of(first, Numeric.of(numberString))
             }
             second is Var -> {
                 ensuringArgumentIsNumeric(0)

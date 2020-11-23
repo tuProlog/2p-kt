@@ -25,7 +25,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                 if (fourth is Var) {
                     sequence<Substitution> {
                         yield(second mguWith Integer.ZERO)
-                        yield(third mguWith Integer.of("".length))
+                        yield(third mguWith Integer.ZERO)
                         yield(fourth mguWith Integer.of((first as Atom).value.length))
                         yield(fifth mguWith Atom.of(""))
                     }
@@ -81,7 +81,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
             ensuringArgumentIsAtom(4)
             if (second.isVariable) {
                 if (fourth.isVariable) {
-                    sequence<Substitution> {
+                    sequence {
                         val result = (fifth as Atom).value
                         val before = (first as Atom).value.substringBefore(result, "").length
                         val after = first.value.substringAfter(result, "").length
@@ -92,7 +92,7 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                         }
                     }
                 } else {
-                    sequence<Substitution> {
+                    sequence {
                         val result = (fifth as Atom).value
                         val before = (first as Atom).value.substringBefore(result, "").length
                         yield(second mguWith Integer.of(before))

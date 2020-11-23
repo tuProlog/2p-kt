@@ -1,12 +1,10 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.toAtom
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -36,8 +34,8 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
                         }
                     }
                 }
-                val number = Atom.of(chars.joinToString(separator = ""))
-                Substitution.of(first, (Numeric.of((number.value))))
+                val numberString = chars.joinToString(separator = "")
+                Substitution.of(first, Numeric.of(numberString))
             }
             else -> {
                 ensuringArgumentIsInstantiated(0)
@@ -45,8 +43,8 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
                 if (second !is Var) {
                     ensuringArgumentIsList(1)
                 }
-                val number = first.toString().toAtom().value
-                val result = LogicList.of(number.map { Numeric.of(it.toInt()) })
+                val numberString = first.toString()
+                val result = LogicList.of(numberString.map { Integer.of(it.toInt()) })
                 second mguWith result
             }
         }
