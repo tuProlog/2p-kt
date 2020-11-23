@@ -26,6 +26,7 @@ class TestStreamsBagOf : TestBagOf, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
+    @Ignore
     override fun testBagOfFail() {
         prototype.testBagOfFail()
     }
