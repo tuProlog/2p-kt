@@ -43,7 +43,7 @@ Also, the `isYes()`, `isNo()` and `isHalt()` properties can be used to query a `
 
 ### Exceptions
 
-During the solving process, exceptions can occur. The Prolog standard defines many errors; in 2p-Kt such errors are defined in the implementation language with a one-to-one mapping.
+During the solving process, exceptions can occur. The Prolog standard defines many errors; in 2P-Kt such errors are defined in the implementation language with a one-to-one mapping.
 
 `TuPrologRuntimeException` is the base type of all exceptions happening at run-time. Each instance carries three elements of information that help to understand in which circumstances the exception was raised:
 
@@ -106,6 +106,13 @@ The `F` indicates the *name* of the specifier, while the number of `X` and `Y` d
 Implicit associativity is very useful for avoiding parentheses when writing sub-expressions with the same operator. For example, if the `'x'` is left-associative (`YFX`) the expression `(1 + 2 + 3 + 4)` is evaluated as the term `'+'('+'('+'(1, 2), 3), 4)))`.
 
 ### Knowledge bases
+
+A knowledge base - also known as _theory_  - contains the set of clauses which is used by the solver to prove that a goal is true. Each solver comprises two knowledge bases:
+
+- a _static_ knowledge base, which cannot be modified at runtime;
+- a _dynamic_ knowledge base, that allows clauses to be inserted or removed from it.
+
+In 2P-Kt, knowledge bases can be created and manipulated via the `Theory` interface. A more thorough look on such API can be found [in the dedicated page]({{ site.baseUrl }}/wiki/Rationale%20and%20Architecture/clausedb-theories-and-RETE).
 
 ### Flags
 
