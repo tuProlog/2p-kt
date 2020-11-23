@@ -116,6 +116,16 @@ In 2P-Kt, knowledge bases can be created and manipulated via the `Theory` interf
 
 ### Flags
 
+In Prolog, a flag is an atom associated with a value that can be either defined by the implementation or the user. Each flag has a name, a value and a range of possible values.
+
+In 2P-Kt, flags are usually read-only properties, meaning that they are meant to act as static, global variables that can be accessed to retrieve information about the engine. For instance, one might want to check the maximum integer value that can be represented, the number of logical processors available, and so on.
+
+In 2P-Kt solvers manage their flags via a container of type `FlagStore`, which is an immutable data structure mapping flag names to the respective `Term`s. Implementation-defined flags are conceived as sub-classes of the `NotableFlag` interface, which indeed exposes the following properties:
+
+- `name: String`, the name of the flag;
+- `defaultTerm: Term`, the default value associated to the flag;
+- `admissibleValues: Sequence<Term>`, a collection of admissible values that the flag can carry.
+
 ### Channels
 
 ## Mutable solvers
