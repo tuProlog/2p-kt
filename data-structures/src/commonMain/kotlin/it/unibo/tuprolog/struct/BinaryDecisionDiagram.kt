@@ -9,8 +9,8 @@ import kotlin.js.JsName
  *
  * Each node of the diagram represents a single boolean entry with variable value
  * and part of a Boolean function. [T] is the type with which a variable is represented.
- * In the context of a formula, variables with the same index indicate the same
- * Boolean variable.
+ * In the context of a formula, variables for which the [compareTo] method returns 0 indicate
+ * the same Boolean variable.
  *
  * Each BDD node has a directed edge to two sub-BDDs: the "high"
  * BDD that leads to a true Terminal, and the "low" BDD that
@@ -21,7 +21,7 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface BinaryDecisionDiagram<T> {
+interface BinaryDecisionDiagram<T: Comparable<T>> {
 
     companion object {
 

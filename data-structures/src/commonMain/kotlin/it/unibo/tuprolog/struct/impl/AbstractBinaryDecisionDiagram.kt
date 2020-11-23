@@ -16,8 +16,7 @@ import it.unibo.tuprolog.struct.exception.DataStructureOperationException
  *
  * @author Jason Dellaluce
  */
-internal abstract class AbstractBinaryDecisionDiagram<T>(
-        val index: Int,
+internal abstract class AbstractBinaryDecisionDiagram<T: Comparable<T>>(
         val boolValue: Boolean?,
         val value: T?,
         val low: AbstractBinaryDecisionDiagram<T>?,

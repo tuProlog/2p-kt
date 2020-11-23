@@ -9,7 +9,7 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface BinaryDecisionDiagramVisitor<T> {
+interface BinaryDecisionDiagramVisitor<T: Comparable<T>> {
 
     companion object
 

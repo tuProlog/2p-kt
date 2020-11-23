@@ -3,10 +3,9 @@ package it.unibo.tuprolog.struct.impl
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
 
-internal class TerminalBinaryDecisionDiagram<T>(
+internal class TerminalBinaryDecisionDiagram<T: Comparable<T>>(
         bVal: Boolean
 ): AbstractBinaryDecisionDiagram<T>(
-        index = Int.MAX_VALUE,
         boolValue = bVal,
         value = null,
         low = null,
@@ -30,7 +29,6 @@ internal class TerminalBinaryDecisionDiagram<T>(
             return TerminalBinaryDecisionDiagram<T>(binaryOp(boolValue!!, other.boolValue!!))
 
         return VariableBinaryDecisionDiagram<T>(
-            other.index,
             other.value!!,
             apply(other.low!!, binaryOp),
             apply(other.high!!, binaryOp)
@@ -38,8 +36,8 @@ internal class TerminalBinaryDecisionDiagram<T>(
     }
 }
 
-fun <T> BinaryDecisionDiagram.Companion.ofTrueTerminal(): BinaryDecisionDiagram<T> =
+fun <T: Comparable<T>> BinaryDecisionDiagram.Companion.ofTrueTerminal(): BinaryDecisionDiagram<T> =
     TerminalBinaryDecisionDiagram<T>(true)
 
-fun <T> BinaryDecisionDiagram.Companion.ofFalseTerminal(): BinaryDecisionDiagram<T> =
+fun <T: Comparable<T>> BinaryDecisionDiagram.Companion.ofFalseTerminal(): BinaryDecisionDiagram<T> =
     TerminalBinaryDecisionDiagram<T>(false)

@@ -9,6 +9,11 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 interface ProbSolver: Solver {
+
+    companion object {
+        // To be extended through extension methods
+    }
+
     @JsName("probSolve")
     fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbSolution>
 
