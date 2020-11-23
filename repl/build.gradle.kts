@@ -3,15 +3,16 @@ import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
+    id("com.github.johnrengelman.shadow")
 }
 
 kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Libs.clikt_multiplatform)
+                api("com.github.ajalt:clikt-multiplatform:_")
                 api(project(":core"))
+                api(project(":oop-lib"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
             }
@@ -52,7 +53,7 @@ tasks.create("run", JavaExec::class.java) {
     }
 }
 
-if (githubToken != null) {
+if (!githubToken.isNullOrBlank()) {
     rootProject.configure<GithubReleaseExtension> {
         releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
     }

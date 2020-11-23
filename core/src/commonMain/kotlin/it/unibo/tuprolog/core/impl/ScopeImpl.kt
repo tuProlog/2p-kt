@@ -90,6 +90,12 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun listOf(vararg terms: Term): LogicList =
         LogicList.of(*terms)
 
+    override fun listFrom(vararg terms: Term, last: Term?): LogicList =
+        LogicList.from(*terms, last = last)
+
+    override fun listFrom(terms: Sequence<Term>, last: Term?): LogicList =
+        LogicList.from(terms, last)
+
     override fun listFrom(terms: Iterable<Term>, last: Term?): LogicList =
         LogicList.from(terms, last)
 

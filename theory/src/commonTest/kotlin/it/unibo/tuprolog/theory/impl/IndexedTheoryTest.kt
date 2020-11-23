@@ -2,7 +2,6 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.theory.PrototypeTheoryTest
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 internal class IndexedTheoryTest {
@@ -12,10 +11,10 @@ internal class IndexedTheoryTest {
         Theory.Companion::indexedOf
     )
 
-    @BeforeTest
-    fun init() {
-        prototype.init()
-    }
+    // @BeforeTest
+    // fun init() {
+    //     prototype.init()
+    // }
 
     @Test
     fun theoryComplainsIFProvidingNotWellFormedClausesUponConstruction() {

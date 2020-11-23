@@ -6,13 +6,14 @@ import it.unibo.tuprolog.solve.fsm.State
 import it.unibo.tuprolog.solve.fsm.StateInit
 import it.unibo.tuprolog.solve.fsm.clone
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
 internal open class ClassicSolver(
     libraries: Libraries = Libraries.empty(),
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
+    dynamicKb: Theory = MutableTheory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : Solver {
@@ -22,7 +23,7 @@ internal open class ClassicSolver(
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
-            dynamicKb = dynamicKb,
+            dynamicKb = dynamicKb.toMutableTheory(),
             operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
             inputChannels = inputChannels,
             outputChannels = outputChannels
@@ -43,7 +44,7 @@ internal open class ClassicSolver(
             libraries = libraries,
             flags = flags,
             staticKb = staticKb,
-            dynamicKb = dynamicKb,
+            dynamicKb = dynamicKb.toMutableTheory(),
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,

@@ -1,4 +1,19 @@
+import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+
 rootProject.name = "2p"
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("de.fayard:dependencies:0.+")
+    }
+}
+
+bootstrapRefreshVersionsAndDependencies()
 
 include("documentation")
 
@@ -20,5 +35,6 @@ include("parser-theory")
 include("serialize-core")
 include("serialize-theory")
 include("repl")
-
+include("oop-lib")
+include("ide")
 include("examples")

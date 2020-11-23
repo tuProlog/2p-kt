@@ -1,11 +1,9 @@
-import node.Bugs
-import node.NpmPublishExtension
-import node.NpmPublishPlugin
-import node.People
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import io.github.gciatto.kt.node.Bugs
+import io.github.gciatto.kt.node.People
 
-apply<NpmPublishPlugin>()
+plugins {
+    id("io.github.gciatto.kt-npm-publish")
+}
 
 val gcName: String by project
 val gcEmail: String by project
@@ -18,14 +16,14 @@ val npmToken: String by project
 val generatedSrcDir = "$buildDir/generated-src/antlr/main"
 
 kotlin {
-    target {
+    js {
         nodejs()
     }
 
     with(sourceSets["main"]) {
         dependencies {
             api(kotlin("stdlib-js"))
-            api(npm("antlr4", "^${Versions.org_antlr.replace("-1", ".0")}"))
+            api(npm("antlr4", "^4.8.0"))
             api(npm("@tuprolog/parser-utils", "0.2.2"))
         }
     }
@@ -37,13 +35,9 @@ kotlin {
     }
 }
 
-configure<NpmPublishExtension> {
-    nodeRoot = rootProject.tasks.withType<NodeJsSetupTask>().asSequence().map { it.destination }.first()
-    token = npmToken
-    packageJson = tasks.getByName<KotlinPackageJsonTask>("packageJson").packageJson
-    nodeSetupTask = rootProject.tasks.getByName("kotlinNodeJsSetup").path
-    jsCompileTask = "mainClasses"
-
+npmPublishing {
+    defaultValuesFrom(project)
+    token.set(npmToken)
     liftPackageJson {
         people = mutableListOf(People(gcName, gcEmail, gcUrl))
         homepage = projectHomepage

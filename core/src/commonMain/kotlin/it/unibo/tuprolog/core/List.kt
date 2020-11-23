@@ -56,6 +56,10 @@ interface List : Collection {
         fun of(items: Iterable<Term>): List = from(items.toList(), empty())
 
         @JvmStatic
+        @JsName("ofSequence")
+        fun of(items: Sequence<Term>): List = from(items.toList(), empty())
+
+        @JvmStatic
         @JsName("from")
         fun from(vararg items: Term, last: Term?): List =
             from(items.toList(), last)

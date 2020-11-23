@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
@@ -13,68 +14,101 @@ internal class MutableClassicSolver(
     libraries: Libraries = Libraries.empty(),
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = Theory.empty(),
+    dynamicKb: Theory = MutableTheory.empty(),
     inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {
         updateContext {
-            copy(libraries = libraries + library)
+            val newLibraries = libraries + library
+            copy(
+                libraries = newLibraries,
+                operators = operators + getAllOperators(newLibraries).toOperatorSet()
+            )
         }
     }
 
     override fun unloadLibrary(library: AliasedLibrary) {
         updateContext {
-            copy(libraries = libraries - library)
+            val newLibraries = libraries + library
+            copy(
+                libraries = newLibraries,
+                operators = getAllOperators(newLibraries, staticKb, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun setLibraries(libraries: Libraries) {
         updateContext {
-            copy(libraries = libraries)
+            copy(
+                libraries = libraries,
+                operators = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun loadStaticKb(theory: Theory) {
         updateContext {
-            copy(staticKb = theory)
+            copy(
+                staticKb = theory,
+                operators = getAllOperators(libraries, theory, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun appendStaticKb(theory: Theory) {
         updateContext {
-            copy(staticKb = staticKb + theory)
+            val newStaticKb = staticKb + theory
+            copy(
+                staticKb = newStaticKb,
+                operators = operators + theory.getAllOperators().toOperatorSet()
+            )
         }
     }
 
     override fun resetStaticKb() {
         updateContext {
-            copy(staticKb = Theory.empty())
+            copy(
+                staticKb = Theory.empty(),
+                operators = getAllOperators(libraries, dynamicKb).toOperatorSet()
+            )
         }
     }
 
     override fun loadDynamicKb(theory: Theory) {
         updateContext {
-            copy(dynamicKb = theory)
+            copy(
+                dynamicKb = theory.toMutableTheory(),
+                operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
+            )
         }
     }
 
     override fun appendDynamicKb(theory: Theory) {
         updateContext {
-            copy(dynamicKb = dynamicKb + theory)
+            copy(
+                dynamicKb = theory.toMutableTheory(),
+                operators = operators + theory.getAllOperators().toOperatorSet()
+            )
         }
     }
 
     override fun resetDynamicKb() {
         updateContext {
-            copy(dynamicKb = Theory.empty())
+            copy(
+                dynamicKb = MutableTheory.empty(),
+                operators = getAllOperators(libraries, staticKb).toOperatorSet()
+            )
         }
     }
 
     override fun assertA(clause: Clause) {
         updateContext {
-            copy(dynamicKb = dynamicKb.assertA(clause))
+            copy(
+                dynamicKb = dynamicKb.assertA(clause),
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
     }
 
@@ -86,7 +120,10 @@ internal class MutableClassicSolver(
 
     override fun assertZ(clause: Clause) {
         updateContext {
-            copy(dynamicKb = dynamicKb.assertZ(clause))
+            copy(
+                dynamicKb = dynamicKb.assertZ(clause),
+                operators = operators + listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
     }
 
@@ -96,34 +133,40 @@ internal class MutableClassicSolver(
         }
     }
 
-    override fun retract(clause: Clause): RetractResult {
+    override fun retract(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retract(clause)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(
+                dynamicKb = result.theory.toMutableTheory(),
+                operators = operators - listOf(clause).getAllOperators().toOperatorSet()
+            )
         }
         return result
     }
 
-    override fun retract(fact: Struct): RetractResult {
+    override fun retract(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retract(fact)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(dynamicKb = result.theory.toMutableTheory())
         }
         return result
     }
 
-    override fun retractAll(clause: Clause): RetractResult {
+    override fun retractAll(clause: Clause): RetractResult<Theory> {
         val result = dynamicKb.retractAll(clause)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(
+                dynamicKb = result.theory.toMutableTheory(),
+                operators = operators - result.theory.getAllOperators().toOperatorSet()
+            )
         }
         return result
     }
 
-    override fun retractAll(fact: Struct): RetractResult {
+    override fun retractAll(fact: Struct): RetractResult<Theory> {
         val result = dynamicKb.retractAll(fact)
         updateContext {
-            copy(dynamicKb = result.theory)
+            copy(dynamicKb = result.theory.toMutableTheory())
         }
         return result
     }

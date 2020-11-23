@@ -14,8 +14,8 @@ val javaVersion: String by project
 val ktFreeCompilerArgsJvm: String by project
 
 dependencies {
-    antlr("org.antlr", "antlr4", Versions.org_antlr)
-    api("org.antlr", "antlr4-runtime", Versions.org_antlr)
+    antlr("org.antlr:antlr4:_")
+    api("org.antlr:antlr4-runtime:_")
 
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))

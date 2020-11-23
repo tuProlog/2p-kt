@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.PrologError
 import kotlin.js.JsName
-import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
 /**
@@ -49,7 +48,22 @@ class ExistenceError(
 
     companion object {
 
-        @JvmName("forProcedure")
+        @JsName("of")
+        @JvmStatic
+        fun of(
+            context: ExecutionContext,
+            expectedType: ObjectType,
+            culprit: Term,
+            message: String
+        ) = ExistenceError(
+            message = message,
+            context = context,
+            expectedObject = expectedType,
+            actualValue = culprit,
+            extraData = Atom.of(message)
+        )
+
+        @JsName("forProcedure")
         @JvmStatic
         fun forProcedure(
             context: ExecutionContext,
@@ -66,14 +80,14 @@ class ExistenceError(
             )
         }
 
-        @JvmName("forStream")
+        @JsName("forStream")
         @JvmStatic
         fun forStream(
             context: ExecutionContext,
             alias: Atom
         ) = forStream(context, alias.value)
 
-        @JvmName("forStream")
+        @JsName("forStreamWithAlias")
         @JvmStatic
         fun forStream(
             context: ExecutionContext,
@@ -96,14 +110,19 @@ class ExistenceError(
 
     /**
      * A class describing the expected type whose absence caused the error
-     *
-     * @param type the type expected string description
      */
-    enum class ObjectType constructor(private val type: String) : ToTermConvertible {
+    enum class ObjectType : ToTermConvertible {
 
-        PROCEDURE("procedure"),
-        SOURCE_SINK("source_sink"),
-        STREAM("stream");
+        PROCEDURE,
+        SOURCE_SINK,
+        STREAM,
+        OOP_ALIAS,
+        OOP_METHOD,
+        OOP_CONSTRUCTOR,
+        OOP_PROPERTY;
+
+        /** The type expected string description */
+        private val type: String by lazy { name.toLowerCase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)
