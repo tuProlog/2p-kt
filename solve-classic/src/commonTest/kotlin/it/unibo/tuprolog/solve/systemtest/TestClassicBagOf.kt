@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestBagOf
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestClassicBagOf : TestBagOf, SolverFactory by ClassicSolverFactory {
