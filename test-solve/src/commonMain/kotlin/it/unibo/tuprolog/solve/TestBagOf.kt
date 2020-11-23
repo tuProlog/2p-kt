@@ -11,9 +11,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?- bagof(X,(X=1;X=2),L)
      * ```
-     *
      */
-
     fun testBagXInDifferentValues()
 
     /**
@@ -21,9 +19,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?-bagof(X,(X=1;X=2),X)
      * ```
-     *
      */
-
     fun testBagOfFindX()
 
     /**
@@ -31,9 +27,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?- bagof(X,(X=Y;X=Z),L)
      * ```
-     *
      */
-
     fun testBagOfYXZ()
 
     /**
@@ -41,9 +35,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?- bagof(X,fail,L).
      * ```
-     *
      */
-
     fun testBagOfFail()
 
     /**
@@ -51,9 +43,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?- bagof(X,Y^((X=1,Y=2)),S).
      * ```
-     *
      */
-
     fun testBagOfSameAsFindall()
 
     /**
@@ -61,9 +51,7 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?-bagof(X,Y^Z,L)
      * ```
-     *
      */
-
     fun testBagOfInstanceError()
 
     /**
@@ -71,8 +59,6 @@ interface TestBagOf : SolverTest {
      * ```prolog
      * ?- bagof(X,1,L)
      * ```
-     *
      */
-
     fun testBagOfTypeError()
 }

@@ -13,7 +13,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1, 2))),
+                ktListOf(query.yes("S" to listOf(1, 2))),
                 solutions
             )
         }
@@ -27,7 +27,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(1, 2))),
+                ktListOf(query.yes("X" to listOf(1, 2))),
                 solutions
             )
         }
@@ -41,7 +41,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf("Y", "Z"))),
+                ktListOf(query.yes("L" to listOf("Y", "Z"))),
                 solutions
             )
         }
@@ -55,7 +55,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                ktListOf(query.no()),
                 solutions
             )
         }
@@ -64,12 +64,12 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
     override fun testBagOfSameAsFindall() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            // val apexTEMPLATE = Struct.of("^", Y, X)
-            val query = bagof("X", "Y^"(("X" `=` 1) or ("Y" `=` 2)), "S")
+
+            val query = bagof("X", "Y" `^` (("X" `=` 1) or ("Y" `=` 2)), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1))),
+                ktListOf(query.yes("S" to listOf(1))),
                 solutions
             )
         }
@@ -83,7 +83,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         InstantiationError.forArgument(
                             DummyInstances.executionContext,
@@ -106,7 +106,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,

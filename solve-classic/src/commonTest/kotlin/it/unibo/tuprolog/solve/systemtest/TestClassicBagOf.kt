@@ -30,7 +30,6 @@ class TestClassicBagOf : TestBagOf, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testBagOfSameAsFindall() {
         prototype.testBagOfSameAsFindall()
     }

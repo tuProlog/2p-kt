@@ -11,9 +11,7 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,(X=1;X=2),L)
      * ```
-     *
      */
-
     fun testSetOfBasic()
 
     /**
@@ -21,9 +19,7 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,(X=1;X=2),X)
      * ```
-     *
      */
-
     fun testSetOfX()
 
     /**
@@ -31,9 +27,7 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,(X=2;X=1),L)
      * ```
-     *
      */
-
     fun testSetOfNoSorted()
 
     /**
@@ -41,9 +35,7 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,(X=2;X=2),L)
      * ```
-     *
      */
-
     fun testSetOfDoubled()
 
     /**
@@ -51,9 +43,7 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,fail,L)
      * ```
-     *
      */
-
     fun testSetOfFail()
 
     /**
@@ -61,8 +51,6 @@ interface TestSetOf : SolverTest {
      * ```prolog
      * ?- setof(X,Y^((X=1,Y=1);(X=2,Y=2)),S)
      * ```
-     *
      */
-
     fun testSetOfAsFindAll()
 }

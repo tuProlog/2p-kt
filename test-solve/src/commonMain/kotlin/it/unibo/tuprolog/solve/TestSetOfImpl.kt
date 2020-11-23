@@ -12,7 +12,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1, 2))),
+                ktListOf(query.yes("S" to listOf(1, 2))),
                 solutions
             )
         }
@@ -26,7 +26,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(1, 2))),
+                ktListOf(query.yes("X" to listOf(1, 2))),
                 solutions
             )
         }
@@ -40,7 +40,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(1, 2))),
+                ktListOf(query.yes("X" to listOf(1, 2))),
                 solutions
             )
         }
@@ -54,7 +54,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("L" to listOf(2))),
+                ktListOf(query.yes("L" to listOf(2))),
                 solutions
             )
         }
@@ -68,7 +68,7 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                ktListOf(query.no()),
                 solutions
             )
         }
@@ -78,11 +78,11 @@ class TestSetOfImpl(private val solverFactory: SolverFactory) : TestSetOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = setof("X", "Y^"((("X" `=` 1) or ("Y" `=` 1)) or (("X" `=` 2) or ("Y" `=` 2))), "S")
+            val query = setof("X", "Y" `^` ((("X" `=` 1) or ("Y" `=` 1)) or (("X" `=` 2) or ("Y" `=` 2))), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("S" to listOf(1, 2))),
+                ktListOf(query.yes("S" to listOf(1, 2))),
                 solutions
             )
         }
