@@ -65,9 +65,4 @@ interface TestAtomLength : SolverTest {
      */
 
     fun testAtomLengthFail()
-
-
-
-
-
 }

@@ -71,5 +71,4 @@ interface TestAtom : SolverTest {
      * fails on a solver initialized with default built-ins and with and empty theory.
      */
     fun testAtomNumDec()
-
 }

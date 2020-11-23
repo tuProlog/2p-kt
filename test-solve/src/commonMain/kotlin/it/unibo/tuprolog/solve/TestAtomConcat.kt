@@ -15,7 +15,6 @@ interface TestAtomConcat : SolverTest {
      *
      */
 
-
     fun testAtomConcatThirdIsVar()
 
     /**
@@ -50,8 +49,4 @@ interface TestAtomConcat : SolverTest {
      */
 
     fun testAtomConcatFirstIsVar()
-
-
-
-
 }

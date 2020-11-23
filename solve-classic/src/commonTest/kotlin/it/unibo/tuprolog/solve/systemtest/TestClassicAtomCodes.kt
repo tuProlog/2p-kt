@@ -7,7 +7,7 @@ import kotlin.test.Test
 
 class TestClassicAtomCodes : TestAtomCodes, SolverFactory by ClassicSolverFactory {
     private val prototype = TestAtomCodes.prototype(this)
-    
+
     @Test
     override fun testAtomCodesSecondIsVar1() {
         prototype.testAtomCodesSecondIsVar1()

@@ -60,5 +60,4 @@ interface TestAtomCodes : SolverTest {
      */
 
     fun testAtomCodesFail()
-
 }

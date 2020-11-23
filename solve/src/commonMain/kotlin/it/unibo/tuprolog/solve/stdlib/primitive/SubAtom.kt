@@ -53,7 +53,6 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
                             val result = (first as Atom).value.substring((second as Integer).intValue.toInt())
                             yield(fifth mguWith Atom.of(result))
                             yield(Integer.of(result.length) mguWith third)
-                            // yield(fourth mguWith (first as Atom).value.length.minus(second as Integer).toTerm())
                             yield(fourth mguWith Integer.of(first.value.length - second.intValue.toInt()))
                         } else {
                             ensuringArgumentIsInteger(2)

@@ -27,5 +27,4 @@ class TestClassicAtomConcat : TestAtomConcat, SolverFactory by ClassicSolverFact
     override fun testAtomConcatFirstIsVar() {
         prototype.testAtomConcatFirstIsVar()
     }
-
 }

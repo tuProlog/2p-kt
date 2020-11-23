@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 
-class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCodes{
+class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCodes {
 
     override fun testAtomCodesSecondIsVar1() {
         prolog {
@@ -11,7 +11,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes("X" to listOf(97,98,99))),
+                kotlin.collections.listOf(query.yes("X" to listOf(97, 98, 99))),
                 solutions
             )
         }
@@ -33,7 +33,7 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
     override fun testAtomCodesFirstIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_codes("X", listOf(97,98,99))
+            val query = atom_codes("X", listOf(97, 98, 99))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -68,6 +68,4 @@ class TestAtomCodesImpl(private val solverFactory: SolverFactory) : TestAtomCode
             )
         }
     }
-
-
 }

@@ -65,7 +65,7 @@ class TestBagOfImpl(private val solverFactory: SolverFactory) : TestBagOf {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
             // val apexTEMPLATE = Struct.of("^", Y, X)
-            val query = bagof("X", "Y^"("X" `=` 1) or ("Y" `=` 2), "S")
+            val query = bagof("X", "Y^"(("X" `=` 1) or ("Y" `=` 2)), "S")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

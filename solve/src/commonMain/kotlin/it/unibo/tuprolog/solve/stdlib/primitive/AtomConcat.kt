@@ -12,6 +12,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 /**
  * atom_concat(ab, cd, abcd).
  */
+
 object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,

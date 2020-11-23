@@ -13,9 +13,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
-/**
- * atom_codes(abc, [97 | X])
- */
 object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution =
         when (first) {
@@ -23,11 +20,6 @@ object AtomCodes : BinaryRelation.Functional<ExecutionContext>("atom_codes") {
                 ensuringArgumentIsInstantiated(1)
                 ensuringArgumentIsList(1)
                 val codeList = second as LogicList
-                // var result = ""
-                // val size = codeList.size
-                // for (i in 0 until size) {
-                //     result += codeList[i].toString().toInt().toChar().toString()
-                // }
                 val chars: List<Char> = codeList.toList().map {
                     when (it) {
                         is Integer -> {

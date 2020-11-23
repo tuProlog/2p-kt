@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestAtomLength
 import kotlin.test.Test
 
-
 class TestClassicAtomLength : TestAtomLength, SolverFactory by ClassicSolverFactory {
     private val prototype = TestAtomLength.prototype(this)
 
@@ -33,5 +32,4 @@ class TestClassicAtomLength : TestAtomLength, SolverFactory by ClassicSolverFact
     override fun testAtomLengthFail() {
         prototype.testAtomLengthFail()
     }
-
 }

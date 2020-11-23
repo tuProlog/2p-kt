@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.systemtest
 
-
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.StreamsSolverFactory
 import it.unibo.tuprolog.solve.TestCharCode

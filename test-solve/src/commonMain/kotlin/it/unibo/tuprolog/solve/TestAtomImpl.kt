@@ -1,8 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
 internal class TestAtomImpl(private val solverFactory: SolverFactory) : TestAtom {

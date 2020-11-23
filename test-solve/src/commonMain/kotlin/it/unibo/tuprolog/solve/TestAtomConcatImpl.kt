@@ -7,7 +7,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     override fun testAtomConcatThirdIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_concat("test", "concat","X")
+            val query = atom_concat("test", "concat", "X")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -20,7 +20,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     override fun testAtomConcatFails() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_concat("test", "concat","test")
+            val query = atom_concat("test", "concat", "test")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -33,7 +33,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     override fun testAtomConcatSecondIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_concat("test", "X","testTest")
+            val query = atom_concat("test", "X", "testTest")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -46,7 +46,7 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
     override fun testAtomConcatFirstIsVar() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
-            val query = atom_concat("X", "query","testquery")
+            val query = atom_concat("X", "query", "testquery")
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -55,6 +55,4 @@ class TestAtomConcatImpl(private val solverFactory: SolverFactory) : TestAtomCon
             )
         }
     }
-
-
 }

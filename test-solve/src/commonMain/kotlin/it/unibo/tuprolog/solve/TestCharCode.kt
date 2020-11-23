@@ -18,12 +18,47 @@ interface TestCharCode : SolverTest {
      * ```
      */
 
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- char_code(a,X).
+     * ```
+     * succeeds.
+     *
+     */
+
     fun testCharCodeSecondIsVar()
+
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- char_code(X,97).
+     * ```
+     * succeeds.
+     *
+     */
 
     fun testCharCodeFirstIsVar()
 
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- char_code(X,a).
+     * ```
+     * Fails.
+     *
+     */
+
     fun testCharCodeTypeError()
 
-    fun testCharCodeFails()
+    /**
+     * Tests the queries
+     * ```prolog
+     * ?- char_code(g,104).
+     * ```
+     * Fails.
+     *
+     */
 
+    fun testCharCodeFails()
 }

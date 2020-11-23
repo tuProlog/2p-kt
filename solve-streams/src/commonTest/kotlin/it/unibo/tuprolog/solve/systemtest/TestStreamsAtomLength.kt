@@ -34,5 +34,4 @@ class TestStreamsAtomLength : TestAtomLength, SolverFactory by StreamsSolverFact
     override fun testAtomLengthFail() {
         prototype.testAtomLengthFail()
     }
-
 }

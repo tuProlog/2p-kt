@@ -28,5 +28,4 @@ class TestStreamsAtomConcat : TestAtomConcat, SolverFactory by StreamsSolverFact
     override fun testAtomConcatFirstIsVar() {
         prototype.testAtomConcatFirstIsVar()
     }
-
 }

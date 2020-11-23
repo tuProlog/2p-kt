@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
 class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLength {
@@ -80,6 +79,4 @@ class TestAtomLengthImpl(private val solverFactory: SolverFactory) : TestAtomLen
             )
         }
     }
-
-
 }
