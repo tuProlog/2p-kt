@@ -9,11 +9,16 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
 
 object BagOf : TernaryRelation.WithoutSideEffects<ExecutionContext>("bagof") {
+
+    private val VARS = Var.of("VARS")
+    private val GOAL = Var.of("GOAL")
+
+    private val APEX_TEMPLATE = Struct.of("^", VARS, GOAL)
+
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
@@ -21,27 +26,31 @@ object BagOf : TernaryRelation.WithoutSideEffects<ExecutionContext>("bagof") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
-        var uninteresting: Set<Var> = emptySet()
-        val apexTEMPLATE = Struct.of("^", Var.anonymous(), Var.anonymous())
-        if (second matches apexTEMPLATE) {
-            if (apexTEMPLATE.getArgAt(1) is Tuple) {
-                uninteresting = (apexTEMPLATE.getArgAt(1) as Tuple).toSequence().filterIsInstance<Var>().toSet()
-            } else if (apexTEMPLATE.getArgAt(1) is Var) {
-                uninteresting = setOf(apexTEMPLATE.getArgAt(1) as Var)
-            } else {
-                uninteresting = emptySet()
+        val mgu = APEX_TEMPLATE mguWith second
+        val uninteresting: Set<Var> = when (mgu) {
+            is Substitution.Unifier -> when (val vars = mgu[VARS]) {
+                is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
+                is Var -> setOf(vars)
+                else -> emptySet()
             }
-        } else {
-            (apexTEMPLATE[1] as Var) mguWith second
+            else -> emptySet()
         }
-        val sols = solve(second as Struct).toList()
-        val free = (second.variables - first.variables).toSet()
+        val goal = if (mgu is Substitution.Unifier) mgu[GOAL] else second
+        val solutions = solve(goal as Struct)
+            .map {
+                when (it) {
+                    is Solution.Halt -> throw it.exception.pushContext(context)
+                    else -> it
+                }
+            }.filterIsInstance<Solution.Yes>().toList()
+        val free = goal.variables.toSet() - first.variables.toSet()
         val interesting = free - uninteresting
-        val groups = sols.groupBy { it.substitution.filter(interesting) }
+        val groups = solutions.groupBy { it.substitution.filter(interesting) }
+        val nonPresentable = first.variables.toSet()
         return groups.asSequence().map { (sub, sols) ->
-            val listP = sols.filterIsInstance<Solution.Yes>()
-                .map { first[it.substitution].freshCopy() }
-            sub + Substitution.of(third as Var, LogicList.from(listP))
+            val solValues =
+                sols.map { first[it.substitution] }.filterNot { it in nonPresentable }.map { it.freshCopy() }
+            sub + (third mguWith LogicList.of(solValues))
         }
     }
 }
