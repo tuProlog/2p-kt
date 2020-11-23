@@ -75,11 +75,20 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun setOf(terms: Iterable<Term>): LogicSet =
         LogicSet.of(terms)
 
+    override fun <T> ktSetOf(vararg items: T): Set<T> = kotlin.collections.setOf(*items)
+
+    override fun <T> ktEmptySet(): Set<T> = kotlin.collections.emptySet()
+
     override fun setOf(vararg terms: Term): LogicSet =
         LogicSet.of(*terms)
 
     override fun listOf(terms: Iterable<Term>): LogicList =
         LogicList.of(terms)
+
+    override fun <T> ktListOf(vararg items: T): List<T> = kotlin.collections.listOf(*items)
+
+
+    override fun <T> ktEmptyList(): List<T> = kotlin.collections.emptyList()
 
     override val emptyList: EmptyList
         get() = EmptyList()
