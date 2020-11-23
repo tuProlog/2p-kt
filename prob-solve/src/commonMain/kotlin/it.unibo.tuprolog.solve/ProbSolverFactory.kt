@@ -1,6 +1,5 @@
-package it.unibo.tuprolog.solve.probabilistic
+package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -9,7 +8,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 
-interface ProbabilisticSolverFactory {
+interface ProbSolverFactory {
 
     @JsName("defaultLibraries")
     val defaultLibraries: Libraries
@@ -56,7 +55,7 @@ interface ProbabilisticSolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
-    ): ProbabilisticSolver
+    ): ProbSolver
 
     @JsName("solverOfLibrariesAndKBs")
     fun solverOf(
@@ -154,7 +153,7 @@ interface ProbabilisticSolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
-    ): ProbabilisticSolver = solverOf(
+    ): ProbSolver = solverOf(
         otherLibraries + defaultBuiltins,
         flags,
         staticKb,
@@ -246,7 +245,7 @@ interface ProbabilisticSolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
-    ): MutableProbabilisticSolver
+    ): MutableProbSolver
 
     @JsName("mutableSolverOfLibrariesAndKBs")
     fun mutableSolverOf(
@@ -344,9 +343,17 @@ interface ProbabilisticSolverFactory {
         stdOut: OutputChannel<String> = defaultOutputChannel,
         stdErr: OutputChannel<String> = defaultErrorChannel,
         warnings: OutputChannel<PrologWarning> = defaultWarningsChannel
-    ): MutableProbabilisticSolver =
-        mutableSolverOf(otherLibraries + defaultBuiltins, flags, staticKb,
-            dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ): MutableProbSolver =
+        mutableSolverOf(
+            otherLibraries + defaultBuiltins,
+            flags,
+            staticKb,
+            dynamicKb,
+            stdIn,
+            stdOut,
+            stdErr,
+            warnings
+        )
 
     @JsName("mutableSolverWithDefaultBuiltinsAndLibrariesAndKBs")
     fun mutableSolverWithDefaultBuiltins(

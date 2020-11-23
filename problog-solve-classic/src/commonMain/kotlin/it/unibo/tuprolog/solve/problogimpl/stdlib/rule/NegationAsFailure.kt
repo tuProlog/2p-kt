@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.problogimpl.stdlib.rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.problogimpl.stdlib.DefaultBuiltins.PROB_NEGATION_FUNC
 import it.unibo.tuprolog.solve.problogimpl.stdlib.magic.MagicProbNegation
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
@@ -15,7 +14,7 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
 
     override val Scope.head: KtList<Term>
         get() = ktListOf(
-                varOf("X")
+            varOf("X")
         )
 
     abstract override val Scope.body: Term
@@ -23,11 +22,11 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
     object Fail : NegationAsFailure() {
         override val Scope.body: Term
             get() = tupleOf(
-                    structOf(EnsureExecutable.functor, varOf("X")),
-                    structOf(Call.functor, varOf("X")),
-                    MagicCut,
-                    MagicProbNegation,
-                    MagicCut
+                structOf(EnsureExecutable.functor, varOf("X")),
+                structOf(Call.functor, varOf("X")),
+                MagicCut,
+                MagicProbNegation,
+                MagicCut
             )
     }
 

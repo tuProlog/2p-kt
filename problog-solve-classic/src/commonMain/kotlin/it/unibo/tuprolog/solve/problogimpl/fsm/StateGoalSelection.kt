@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.solve.problogimpl.fsm
 
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.ProblogClassicExecutionContext
-import it.unibo.tuprolog.solve.problogimpl.ProblogFact
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.problogimpl.stdlib.DefaultBuiltins
+import it.unibo.tuprolog.solve.problogimpl.ProblogFact
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.impl.ofVar
 
@@ -21,7 +19,7 @@ internal data class StateGoalSelection(override val context: ProblogClassicExecu
                 /* Apply a substitution to the most recent Probabilistic Rule/Fact */
                 var curBDD = context.bdd
                 val curProbRule = context.probRule
-                if(curProbRule != null) {
+                if (curProbRule != null) {
                     val factWithSubstitution = curProbRule[context.substitution]
 
                     /* Map the result in a Probabilisitc Fact and rebuild the BDD */

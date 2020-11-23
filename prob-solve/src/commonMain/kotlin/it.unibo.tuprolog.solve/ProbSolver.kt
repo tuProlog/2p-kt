@@ -8,7 +8,7 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface ProbSolver: Solver {
+interface ProbSolver : Solver {
 
     companion object {
         // To be extended through extension methods

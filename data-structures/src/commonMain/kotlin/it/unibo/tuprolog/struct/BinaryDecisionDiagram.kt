@@ -21,10 +21,9 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface BinaryDecisionDiagram<T: Comparable<T>> {
+interface BinaryDecisionDiagram<T : Comparable<T>> {
 
     companion object {
-
     }
 
     @JsName("not")
@@ -38,5 +37,4 @@ interface BinaryDecisionDiagram<T: Comparable<T>> {
 
     @JsName("accept")
     fun accept(visitor: BinaryDecisionDiagramVisitor<T>)
-
 }

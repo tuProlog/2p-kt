@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import kotlin.js.JsName
 
-
 /** A class representing a solution to a goal probabilistic */
 data class ProbSolution(
     /** The Prolog logic solution on which the probabilistic solution relies on */

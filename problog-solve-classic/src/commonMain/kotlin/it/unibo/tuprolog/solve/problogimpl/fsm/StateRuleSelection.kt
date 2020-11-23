@@ -16,7 +16,6 @@ import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.problogimpl.probability
-import it.unibo.tuprolog.solve.problogimpl.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.problogimpl.stdlib.magic.MagicProbNegation
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory

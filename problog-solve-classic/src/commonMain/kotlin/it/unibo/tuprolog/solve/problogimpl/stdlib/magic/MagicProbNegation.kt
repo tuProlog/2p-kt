@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.problogimpl.stdlib.magic
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 /** This is used internally to execute the probabilistic logic negation predicate, which should be
  * backwards compatible with Prolog's "Negation as Failure", but has different behavior depending

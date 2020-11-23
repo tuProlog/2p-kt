@@ -5,7 +5,7 @@ import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
 
 class ProblogBinaryDecisionDiagramVisitor(
     private val table: MutableMap<String, Double> = mutableMapOf()
-): BinaryDecisionDiagramVisitor<ProblogFact> {
+) : BinaryDecisionDiagramVisitor<ProblogFact> {
     var prob = 0.0
 
     override fun visit(value: Boolean) {
@@ -13,9 +13,9 @@ class ProblogBinaryDecisionDiagramVisitor(
     }
 
     override fun visit(
-            value: ProblogFact,
-            low: BinaryDecisionDiagram<ProblogFact>,
-            high: BinaryDecisionDiagram<ProblogFact>
+        value: ProblogFact,
+        low: BinaryDecisionDiagram<ProblogFact>,
+        high: BinaryDecisionDiagram<ProblogFact>
     ) {
         val valueKey = "${value.id}_${value.head}"
         val tableProb = table[valueKey]
@@ -28,7 +28,7 @@ class ProblogBinaryDecisionDiagramVisitor(
 
         /* Calculate probability and store it in table for later */
         prob = value.probability * high.probability(table)
-            + (1.0 - value.probability) * low.probability(table)
+        +(1.0 - value.probability) * low.probability(table)
         table[valueKey] = prob
     }
 }

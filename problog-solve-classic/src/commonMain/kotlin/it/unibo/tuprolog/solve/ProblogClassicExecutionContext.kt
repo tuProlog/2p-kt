@@ -23,27 +23,27 @@ import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
 data class ProblogClassicExecutionContext(
-        override val procedure: Struct? = null,
-        override val libraries: Libraries = Libraries.empty(),
-        override val flags: FlagStore = FlagStore.empty(),
-        override val staticKb: Theory = Theory.empty(),
-        override val dynamicKb: MutableTheory = MutableTheory.empty(),
-        override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
-        override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
-        override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
-        override val substitution: Substitution.Unifier = Substitution.empty(),
-        val query: Struct = Truth.TRUE,
-        val goals: Cursor<out Term> = Cursor.empty(),
-        val rules: Cursor<out Rule> = Cursor.empty(),
-        val primitives: Cursor<out Solve.Response> = Cursor.empty(),
-        val startTime: TimeInstant = 0,
-        val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
-        val choicePoints: ProblogChoicePointContext? = null,
-        val parent: ProblogClassicExecutionContext? = null,
-        val depth: Int = 0,
-        val step: Long = 0,
-        val probRule: ProblogRule? = null,
-        val bdd: BinaryDecisionDiagram<ProblogFact> = BinaryDecisionDiagram.ofTrueTerminal()
+    override val procedure: Struct? = null,
+    override val libraries: Libraries = Libraries.empty(),
+    override val flags: FlagStore = FlagStore.empty(),
+    override val staticKb: Theory = Theory.empty(),
+    override val dynamicKb: MutableTheory = MutableTheory.empty(),
+    override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
+    override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
+    override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
+    override val substitution: Substitution.Unifier = Substitution.empty(),
+    val query: Struct = Truth.TRUE,
+    val goals: Cursor<out Term> = Cursor.empty(),
+    val rules: Cursor<out Rule> = Cursor.empty(),
+    val primitives: Cursor<out Solve.Response> = Cursor.empty(),
+    val startTime: TimeInstant = 0,
+    val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    val choicePoints: ProblogChoicePointContext? = null,
+    val parent: ProblogClassicExecutionContext? = null,
+    val depth: Int = 0,
+    val step: Long = 0,
+    val probRule: ProblogRule? = null,
+    val bdd: BinaryDecisionDiagram<ProblogFact> = BinaryDecisionDiagram.ofTrueTerminal()
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))

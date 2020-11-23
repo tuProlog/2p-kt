@@ -1,8 +1,12 @@
 package it.unibo.tuprolog.solve.problogimpl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
 
-class ProblogFact(override val id: Int, override val probability: Double, override val head: Struct):
+class ProblogFact(override val id: Int, override val probability: Double, override val head: Struct) :
     Fact, ProblogRule(id, probability, head) {
     override fun freshCopy(): ProblogFact = ProblogFact(id, probability, head.freshCopy())
 
@@ -24,5 +28,4 @@ class ProblogFact(override val id: Int, override val probability: Double, overri
 
     override val body: Term
         get() = Truth.TRUE
-
 }

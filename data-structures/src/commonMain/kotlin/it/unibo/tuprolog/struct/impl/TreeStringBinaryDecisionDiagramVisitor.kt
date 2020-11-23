@@ -3,7 +3,7 @@ package it.unibo.tuprolog.struct.impl
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
 
-internal class TreeStringBinaryDecisionDiagramVisitor<T: Comparable<T>>: BinaryDecisionDiagramVisitor<T> {
+internal class TreeStringBinaryDecisionDiagramVisitor<T : Comparable<T>> : BinaryDecisionDiagramVisitor<T> {
 
     private var index = 0
     val stringBuilder = StringBuilder()
@@ -23,17 +23,16 @@ internal class TreeStringBinaryDecisionDiagramVisitor<T: Comparable<T>>: BinaryD
     }
 
     private fun printSpaces() {
-        for(i in 0 until index) {
+        for (i in 0 until index) {
             stringBuilder.append("\t")
         }
     }
-
 }
 
-fun <T: Comparable<T>> BinaryDecisionDiagramVisitor.Companion.ofTreePrint(): BinaryDecisionDiagramVisitor<T> =
+fun <T : Comparable<T>> BinaryDecisionDiagramVisitor.Companion.ofTreePrint(): BinaryDecisionDiagramVisitor<T> =
     TreeStringBinaryDecisionDiagramVisitor<T>()
 
-fun <T: Comparable<T>> BinaryDecisionDiagram<T>.toTreeString(): String {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toTreeString(): String {
     val visitor = TreeStringBinaryDecisionDiagramVisitor<T>()
     this.accept(visitor)
     return visitor.stringBuilder.toString()

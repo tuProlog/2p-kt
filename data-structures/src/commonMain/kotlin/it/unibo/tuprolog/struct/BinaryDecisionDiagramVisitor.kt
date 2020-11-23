@@ -9,7 +9,7 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface BinaryDecisionDiagramVisitor<T: Comparable<T>> {
+interface BinaryDecisionDiagramVisitor<T : Comparable<T>> {
 
     companion object
 
@@ -18,5 +18,4 @@ interface BinaryDecisionDiagramVisitor<T: Comparable<T>> {
 
     @JsName("visitVar")
     fun visit(value: T, low: BinaryDecisionDiagram<T>, high: BinaryDecisionDiagram<T>)
-
 }

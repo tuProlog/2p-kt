@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 class TestBinaryDecisionDiagram {
     private val doubleEpsilon = 0.0001
 
-    private class ComparablePair(val id: Long, val first: String, val second: Double): Comparable<ComparablePair> {
+    private class ComparablePair(val id: Long, val first: String, val second: Double) : Comparable<ComparablePair> {
         override fun compareTo(other: ComparablePair): Int {
             return this.id.compareTo(other.id)
         }
@@ -20,7 +20,7 @@ class TestBinaryDecisionDiagram {
 
     /* Internal visitor to calculate a probability over a probabilistic boolean formula
        (a.k.a. a boolean formula in which each variable represents a probability value. */
-    private class ProbBinaryDecisionDiagramVisitor: BinaryDecisionDiagramVisitor<ComparablePair> {
+    private class ProbBinaryDecisionDiagramVisitor : BinaryDecisionDiagramVisitor<ComparablePair> {
         var prob = 0.0
 
         override fun visit(value: Boolean) {
@@ -46,12 +46,12 @@ class TestBinaryDecisionDiagram {
     @Test
     fun testProbabilitySomeHeads() {
         val bdd = (
-                BinaryDecisionDiagram.ofVar(ComparablePair(0, "someHeads", 0.2)) and
+            BinaryDecisionDiagram.ofVar(ComparablePair(0, "someHeads", 0.2)) and
                 BinaryDecisionDiagram.ofVar(ComparablePair(1, "heads1", 0.5))
-                ) or (
-                BinaryDecisionDiagram.ofVar(ComparablePair(2, "someHeads", 0.5)) and
+            ) or (
+            BinaryDecisionDiagram.ofVar(ComparablePair(2, "someHeads", 0.5)) and
                 BinaryDecisionDiagram.ofVar(ComparablePair(3, "heads2", 0.6))
-                )
+            )
         val visitor = ProbBinaryDecisionDiagramVisitor()
         bdd.accept(visitor)
         println(bdd.toTreeString())
@@ -66,21 +66,18 @@ class TestBinaryDecisionDiagram {
         val burglary = BinaryDecisionDiagram.ofVar(ComparablePair(0, "burglary", 0.7))
         val earthquake = BinaryDecisionDiagram.ofVar(ComparablePair(1, "earthquake", 0.2))
         val solution = (
-                BinaryDecisionDiagram.ofVar(ComparablePair(2, "alarm", 0.9))
-                        and burglary and earthquake
-                ) or (
-                BinaryDecisionDiagram.ofVar(ComparablePair(3, "alarm", 0.8))
-                        and burglary and earthquake.not()
-                ) or (
-                BinaryDecisionDiagram.ofVar(ComparablePair(4, "alarm", 0.1))
-                        and burglary.not() and earthquake
-                )
+            BinaryDecisionDiagram.ofVar(ComparablePair(2, "alarm", 0.9))
+                and burglary and earthquake
+            ) or (
+            BinaryDecisionDiagram.ofVar(ComparablePair(3, "alarm", 0.8))
+                and burglary and earthquake.not()
+            ) or (
+            BinaryDecisionDiagram.ofVar(ComparablePair(4, "alarm", 0.1))
+                and burglary.not() and earthquake
+            )
         val visitor = ProbBinaryDecisionDiagramVisitor()
         solution.accept(visitor)
         assertTrue(visitor.prob >= 0.58 - doubleEpsilon)
         assertTrue(visitor.prob <= 0.58 + doubleEpsilon)
     }
-
-
 }
-

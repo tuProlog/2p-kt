@@ -2,14 +2,14 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.problogimpl.ProblogFact
 import it.unibo.tuprolog.solve.problogimpl.fsm.EndState
 import it.unibo.tuprolog.solve.problogimpl.fsm.State
-import it.unibo.tuprolog.solve.problogimpl.ProblogFact
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 
 internal class ProblogClassicSolutionIterator(
-        state: State,
-        private val onStateTransition: (State, Long) -> Unit = { _, _ -> Unit }
+    state: State,
+    private val onStateTransition: (State, Long) -> Unit = { _, _ -> Unit }
 ) : Iterator<Pair<Solution, BinaryDecisionDiagram<ProblogFact>>> {
 
     var state: State = state

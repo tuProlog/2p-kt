@@ -3,7 +3,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":new-prob-solve"))
+                api(project(":prob-solve"))
                 api(project(":data-structures"))
             }
         }

@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.problogimpl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problogimpl.stdlib.DefaultBuiltins
 import kotlin.collections.List
@@ -51,5 +55,4 @@ abstract class ProblogClauseMapper {
 
         return listOf(rule)
     }
-
 }

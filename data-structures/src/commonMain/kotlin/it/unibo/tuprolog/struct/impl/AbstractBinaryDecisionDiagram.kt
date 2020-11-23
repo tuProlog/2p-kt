@@ -16,23 +16,23 @@ import it.unibo.tuprolog.struct.exception.DataStructureOperationException
  *
  * @author Jason Dellaluce
  */
-internal abstract class AbstractBinaryDecisionDiagram<T: Comparable<T>>(
-        val boolValue: Boolean?,
-        val value: T?,
-        val low: AbstractBinaryDecisionDiagram<T>?,
-        val high: AbstractBinaryDecisionDiagram<T>?,
-): BinaryDecisionDiagram<T> {
+internal abstract class AbstractBinaryDecisionDiagram<T : Comparable<T>>(
+    val boolValue: Boolean?,
+    val value: T?,
+    val low: AbstractBinaryDecisionDiagram<T>?,
+    val high: AbstractBinaryDecisionDiagram<T>?,
+) : BinaryDecisionDiagram<T> {
 
     abstract val isTerminal: Boolean
 
     abstract fun apply(
-            other: AbstractBinaryDecisionDiagram<T>,
-            binaryOp: (first: Boolean, second: Boolean) -> Boolean
+        other: AbstractBinaryDecisionDiagram<T>,
+        binaryOp: (first: Boolean, second: Boolean) -> Boolean
     ): AbstractBinaryDecisionDiagram<T>
 
     abstract fun apply(
-            unaryOp: (first: Boolean) -> Boolean
-    ) : AbstractBinaryDecisionDiagram<T>
+        unaryOp: (first: Boolean) -> Boolean
+    ): AbstractBinaryDecisionDiagram<T>
 
     override fun not(): BinaryDecisionDiagram<T> {
         return apply() { a -> !a }
@@ -47,8 +47,9 @@ internal abstract class AbstractBinaryDecisionDiagram<T: Comparable<T>>(
     }
 
     private fun otherAsInternalImpl(other: BinaryDecisionDiagram<T>): AbstractBinaryDecisionDiagram<T> {
-        if (other !is AbstractBinaryDecisionDiagram)
+        if (other !is AbstractBinaryDecisionDiagram) {
             throw DataStructureOperationException("Operations over different BDD implementations are not supported yet")
+        }
         return other
     }
 }
