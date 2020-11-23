@@ -157,6 +157,14 @@ interface PrologStdLibScope : PrologAwareScope {
     infix fun Any.`=!=`(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
 
+    @JsName("power")
+    infix fun Any.`**`(right: Any): Struct =
+        structOf("**", this.toTerm(), right.toTerm())
+
+    @JsName("pow")
+    infix fun Any.`^`(right: Any): Struct =
+        structOf("^", this.toTerm(), right.toTerm())
+
     @JsName("member2")
     fun member(item: Any, list: Any): Struct =
         structOf("member", item.toTerm(), list.toTerm())
