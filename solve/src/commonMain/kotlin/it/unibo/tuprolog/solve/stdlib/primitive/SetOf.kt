@@ -1,14 +1,17 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.toTerm
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
-import kotlin.collections.Set
 
 object SetOf : TernaryRelation.WithoutSideEffects<ExecutionContext>("setof") {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
