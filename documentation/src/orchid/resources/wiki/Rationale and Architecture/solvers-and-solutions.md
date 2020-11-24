@@ -128,5 +128,36 @@ In 2P-Kt solvers manage their flags via a container of type `FlagStore`, which i
 
 ### Channels
 
+In 2P-Kt, the I/O interaction with a `Solver` is abstracted away in order to allow for a more flexible way of handling in- and out-going information.
+
+This abstraction is quite straightforward: the `Channel` interface represents a generic I/O channel, and its children `InputChannel` and `OutputChannel` capture the separation between input and output.
+
+Notice that each `Channel` is generic in the type of the elements that are been transmitted through it. This means that, in principle, any type of information can be handled, making the design more flexible. 
+
+### Channel listeners
+
+Each channel can be observed by registering one or more `Listener`s to it, which are just functions that are called each time an element passes through the channel. Like `Channel`s, `Listener`s also define a type parameter that determines the type of information that is being treated.
+
+The `Channel` interface exposes a few methods that allow `Listener`s to be configured:
+
+- `addListener(listener: Listener<T>)` registers a new `Listener`; 
+- `removeListener(listener: Listener<T>)` removes a `Listener` from the `Solver`;
+- `clearListeners()` removes all `Listener` from the `Solver.
+
+### Channel storage
+
+Each `Solver` can store multiple input and output channel. In order to organize them better, each solver collects them into two groups, of type `InputStore` and `OutputStore`, which map channel names to their actual instances.
+
+### Default channels
+
+Some useful channels are defined by default. These are declared in the `Channels` module as functions:
+
+- `stdin(): InputChannel<String>` returns the standard input channel;
+- `<T> stdout(): OutputChannel<T>` returns the standard output channel;
+- `<T> stderr(): OutputChannel<T>` returns the standard error channel;
+- `warning(): OutputChannel<PrologWarning>` returns the channel used to receive Prolog warnings from the engine.
+
+These functions are conceived as platform-specific APIs, meaning that their actual implementation depends on the platform where the engine is being executed. This is done to enforce decoupling, thanks to Kotlin's support for [multiplatform programming](https://kotlinlang.org/docs/reference/multiplatform.html).
+
 ## Mutable solvers
 
