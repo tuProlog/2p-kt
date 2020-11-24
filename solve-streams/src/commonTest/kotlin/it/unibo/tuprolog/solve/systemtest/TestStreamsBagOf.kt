@@ -32,7 +32,6 @@ class TestStreamsBagOf : TestBagOf, SolverFactory by StreamsSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testBagOfSameAsFindall() {
         prototype.testBagOfSameAsFindall()
     }

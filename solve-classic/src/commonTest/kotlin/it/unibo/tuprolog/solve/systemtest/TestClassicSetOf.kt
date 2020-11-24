@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSetOf
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestClassicSetOf : TestSetOf, SolverFactory by ClassicSolverFactory {
@@ -35,7 +34,6 @@ class TestClassicSetOf : TestSetOf, SolverFactory by ClassicSolverFactory {
     }
 
     @Test
-    @Ignore
     override fun testSetOfAsFindAll() {
         prototype.testSetOfAsFindAll()
     }
