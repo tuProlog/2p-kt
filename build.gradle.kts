@@ -509,6 +509,7 @@ fun Project.configureJsPackage() {
     configure<NpmPublishExtension> {
         defaultValuesFrom(project)
         token.set(npmToken)
+        packageJson.set(packageJson.get().parentFile.resolve("package.json"))
         liftPackageJson {
             people = mutableListOf(People(gcName, gcEmail, gcUrl))
             homepage = projectHomepage
