@@ -1,3 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-object BagOf : AbstractSetOfAndBagOf("bagof", false)
+import it.unibo.tuprolog.core.Term
+
+object BagOf : AbstractCollectionOf("bagof") {
+    override fun processSolutions(list: List<Term>): Iterable<Term> = list
+}

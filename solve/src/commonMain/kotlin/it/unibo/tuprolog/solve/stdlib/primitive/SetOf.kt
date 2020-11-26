@@ -1,3 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-object SetOf : AbstractSetOfAndBagOf("setof", true)
+import it.unibo.tuprolog.core.Term
+
+object SetOf : AbstractCollectionOf("setof") {
+    override fun processSolutions(list: List<Term>): Iterable<Term> =
+        list.toHashSet()
+}

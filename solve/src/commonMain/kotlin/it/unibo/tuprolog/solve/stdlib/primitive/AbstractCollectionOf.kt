@@ -13,10 +13,9 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
-abstract class AbstractSetOfAndBagOf(val name: String, val set: Boolean) : TernaryRelation.WithoutSideEffects<ExecutionContext>(name) {
+abstract class AbstractCollectionOf(val name: String) : TernaryRelation.WithoutSideEffects<ExecutionContext>(name) {
     private val VARS = Var.of("VARS")
     private val GOAL = Var.of("GOAL")
-
     private val APEX_TEMPLATE = Struct.of("^", VARS, GOAL)
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
@@ -48,13 +47,12 @@ abstract class AbstractSetOfAndBagOf(val name: String, val set: Boolean) : Terna
         val groups = solutions.groupBy { it.substitution.filter(interesting) }
         val nonPresentable = first.variables.toSet()
         return groups.asSequence().map { (sub, sols) ->
-            val solValues =
-                sols.map { first[it.substitution] }.filterNot { it in nonPresentable }.map { it.freshCopy() }
-            if (!set) {
-                sub + (third mguWith LogicList.of(solValues))
-            } else {
-                sub + (third mguWith LogicList.of(solValues.toHashSet()))
-            }
+            val solValues = sols.map { first[it.substitution] }
+                .filterNot { it in nonPresentable }
+                .map { it.freshCopy() }
+            sub + (third mguWith LogicList.of(processSolutions(solValues)))
         }
     }
+
+    protected abstract fun processSolutions(list: List<Term>): Iterable<Term>
 }
