@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.systemtest
 import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSolver
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
@@ -323,34 +322,5 @@ class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
     @Test
     override fun testTermNotSame() {
         prototype.testTermNotSame()
-    }
-
-    @Test
-    override fun testAtomChars() {
-        prototype.testAtomChars()
-    }
-
-    @Test
-    @Ignore
-    override fun testAtomLength() {
-        prototype.testAtomLength()
-    }
-
-    @Test
-    @Ignore
-    override fun testCharCode() {
-        prototype.testCharCode()
-    }
-
-    @Test
-    @Ignore
-    override fun testAtomCodes() {
-        prototype.testAtomCodes()
-    }
-
-    @Test
-    @Ignore
-    override fun testAtomConcat() {
-        prototype.testAtomConcat()
     }
 }

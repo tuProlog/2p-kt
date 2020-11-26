@@ -23,11 +23,6 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleT
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLengthTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
@@ -303,6 +298,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(Retract)
                 assertHasPredicateInAPI(RetractAll)
                 assertHasPredicateInAPI(Sleep)
+                assertHasPredicateInAPI(Signature("sub_atom", 5))
                 assertHasPredicateInAPI(TermGreaterThan)
                 assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)
@@ -1440,46 +1436,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomChars() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomCharsTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomLength() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomLengthTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testCharCode() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            charCodeTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomCodes() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomCodesTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomConcat() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomConcatTesting,
             mediumDuration
         )
     }

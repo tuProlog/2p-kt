@@ -8,7 +8,7 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = (catch(true, "C", write(atomOf("something"))) and "throw"("blabla"))
+            val query = (catch(true, C, write("something")) and `throw`("blabla"))
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
@@ -17,7 +17,6 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
                         SystemError.forUncaughtException(
                             DummyInstances.executionContext,
                             atomOf("blabla")
-
                         )
                     )
                 ),
@@ -30,7 +29,7 @@ internal class TestCatchAndThrowImpl(private val solverFactory: SolverFactory) :
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val query = catch("number_chars"("A", "L"), "error"("instantiation_error" and `_`), fail)
+            val query = catch(number_chars("A", "L"), "error"("instantiation_error", `_`), fail)
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(

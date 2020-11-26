@@ -21,7 +21,7 @@ kotlin {
         js {
             compilations["main"].defaultSourceSet {
                 dependencies {
-                    api(npm("yaml", "^1.10.0"))
+                    api(npm("yaml", "1.10.0"))
                 }
             }
         }
