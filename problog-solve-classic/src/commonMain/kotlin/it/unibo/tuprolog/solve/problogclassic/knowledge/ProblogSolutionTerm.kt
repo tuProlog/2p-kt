@@ -10,7 +10,7 @@ import it.unibo.tuprolog.struct.BinaryDecisionDiagram
  * @author Jason Dellaluce
  * */
 data class ProblogSolutionTerm(
-    val clauseId: Int,
+    val clauseId: Long,
     val probability: Double,
     val term: Term,
 ) : Comparable<ProblogSolutionTerm> {
@@ -31,9 +31,10 @@ data class ProblogSolutionTerm(
     }
 
     override fun hashCode(): Int {
-        var result = clauseId
+        var result = clauseId.hashCode()
         result = 31 * result + probability.hashCode()
         result = 31 * result + term.hashCode()
         return result
     }
+
 }

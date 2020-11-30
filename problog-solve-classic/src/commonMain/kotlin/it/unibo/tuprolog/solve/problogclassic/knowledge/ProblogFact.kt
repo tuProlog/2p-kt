@@ -12,7 +12,7 @@ import it.unibo.tuprolog.core.Truth
  *
  * @author Jason Dellaluce
  * */
-class ProblogFact(override val id: Int, override val probability: Double, override val head: Struct) :
+class ProblogFact(override val id: Long, override val probability: Double, override val head: Struct) :
     Fact, ProblogRule(id, probability, head) {
     override fun freshCopy(): ProblogFact = ProblogFact(id, probability, head.freshCopy())
 

@@ -21,7 +21,7 @@ import kotlin.collections.List
  * @author Jason Dellaluce
  * */
 internal abstract class ProblogClauseMapper {
-    private var clauseIndex = 1
+    private var clauseIndex = 1L
 
     protected fun mapClause(clause: Clause): List<Clause> {
         return when (clause) {

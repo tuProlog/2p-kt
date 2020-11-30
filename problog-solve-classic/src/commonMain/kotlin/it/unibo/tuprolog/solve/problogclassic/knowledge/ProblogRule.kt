@@ -12,7 +12,7 @@ import it.unibo.tuprolog.core.Term
  * @author Jason Dellaluce
  * */
 open class ProblogRule(
-    open val id: Int,
+    open val id: Long,
     open val probability: Double,
     override val head: Struct,
     private vararg val b: Term
