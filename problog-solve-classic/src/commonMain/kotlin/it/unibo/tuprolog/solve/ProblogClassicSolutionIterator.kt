@@ -2,15 +2,15 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.problogimpl.ProblogFact
-import it.unibo.tuprolog.solve.problogimpl.fsm.EndState
-import it.unibo.tuprolog.solve.problogimpl.fsm.State
+import it.unibo.tuprolog.solve.problogclassic.fsm.EndState
+import it.unibo.tuprolog.solve.problogclassic.fsm.State
+import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 
 internal class ProblogClassicSolutionIterator(
     state: State,
-    private val onStateTransition: (State, Long) -> Unit = { _, _ -> Unit }
-) : Iterator<Pair<Solution, BinaryDecisionDiagram<ProblogFact>>> {
+    private val onStateTransition: (State, Long) -> Unit = { _, _ -> }
+) : Iterator<Pair<Solution, BinaryDecisionDiagram<ProblogSolutionTerm>>> {
 
     var state: State = state
         private set
@@ -22,7 +22,7 @@ internal class ProblogClassicSolutionIterator(
         return state.let { it !is EndState || it.hasOpenAlternatives }
     }
 
-    override fun next(): Pair<Solution, BinaryDecisionDiagram<ProblogFact>> {
+    override fun next(): Pair<Solution, BinaryDecisionDiagram<ProblogSolutionTerm>> {
         do {
             state = state.next()
             step += 1

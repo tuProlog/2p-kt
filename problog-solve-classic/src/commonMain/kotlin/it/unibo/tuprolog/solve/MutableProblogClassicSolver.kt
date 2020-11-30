@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.problogimpl.ProblogTheory
+import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory

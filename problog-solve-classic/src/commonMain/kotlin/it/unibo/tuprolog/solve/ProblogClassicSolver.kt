@@ -3,13 +3,14 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.problogimpl.ProblogBinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.solve.problogimpl.ProblogFact
-import it.unibo.tuprolog.solve.problogimpl.fsm.State
-import it.unibo.tuprolog.solve.problogimpl.fsm.StateInit
-import it.unibo.tuprolog.solve.problogimpl.fsm.clone
+import it.unibo.tuprolog.solve.problogclassic.ProblogClassicExecutionContext
+import it.unibo.tuprolog.solve.problogclassic.fsm.State
+import it.unibo.tuprolog.solve.problogclassic.fsm.StateInit
+import it.unibo.tuprolog.solve.problogclassic.fsm.clone
+import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
+import it.unibo.tuprolog.solve.problogclassic.probability
+import it.unibo.tuprolog.solve.problogclassic.problogOr
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
-import it.unibo.tuprolog.struct.impl.ofFalseTerminal
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
@@ -22,14 +23,14 @@ internal open class ProblogClassicSolver(
     outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
 ) : ProbSolver {
 
-    private fun probMapSolutionGroup(group: List<Pair<Solution, BinaryDecisionDiagram<ProblogFact>>>): ProbSolution {
-        var solutionBDD = BinaryDecisionDiagram.ofFalseTerminal<ProblogFact>()
+    private fun probMapSolutionGroup(
+        group: List<Pair<Solution, BinaryDecisionDiagram<ProblogSolutionTerm>>>
+    ): ProbSolution {
+        var solutionBDD: BinaryDecisionDiagram<ProblogSolutionTerm> = BinaryDecisionDiagram.Terminal(false)
         group.forEach {
-            solutionBDD = solutionBDD or it.second
+            solutionBDD = solutionBDD problogOr it.second
         }
-        val visitor = ProblogBinaryDecisionDiagramVisitor()
-        solutionBDD.accept(visitor)
-        return ProbSolution(group[0].first, visitor.prob)
+        return ProbSolution(group[0].first, solutionBDD.probability())
     }
 
     override fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbSolution> {
@@ -39,7 +40,7 @@ internal open class ProblogClassicSolver(
     }
 
     override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
-        // TODO: Switch to normal solving
+        // TODO: Switch back to normal solving
         return probSolve(goal, maxDuration).map { it.asSolution() }
     }
 
@@ -63,8 +64,8 @@ internal open class ProblogClassicSolver(
         }
     }
 
-    protected fun solveInternal(goal: Struct, maxDuration: TimeDuration):
-        Sequence<Pair<Solution, BinaryDecisionDiagram<ProblogFact>>> {
+    private fun solveInternal(goal: Struct, maxDuration: TimeDuration):
+        Sequence<Pair<Solution, BinaryDecisionDiagram<ProblogSolutionTerm>>> {
             val initialContext = ProblogClassicExecutionContext(
                 query = goal,
                 libraries = libraries,
