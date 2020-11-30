@@ -16,25 +16,33 @@ import kotlin.js.JsName
  * BDD that leads to a true Terminal, and the "low" BDD that
  * leads to a false Terminal.
  *
- * A Terminal is a BDD mode that has no edges to other BDDs, and represents
- * a non-variable known Boolean value (either True or False).
- *
  * @author Jason Dellaluce
- */
-interface BinaryDecisionDiagram<T : Comparable<T>> {
-
-    companion object {
-    }
-
-    @JsName("not")
-    fun not(): BinaryDecisionDiagram<T>
-
-    @JsName("and")
-    infix fun and(other: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T>
-
-    @JsName("or")
-    infix fun or(other: BinaryDecisionDiagram<T>): BinaryDecisionDiagram<T>
+ * */
+sealed class BinaryDecisionDiagram<T : Comparable<T>> {
 
     @JsName("accept")
-    fun accept(visitor: BinaryDecisionDiagramVisitor<T>)
+    abstract fun accept(visitor: BinaryDecisionDiagramVisitor<T>)
+
+    /**
+     * A [Terminal] is a BDD mode that has no edges to other BDDs, and represent
+     * a non-variable known Boolean value (either True or False).
+     * */
+    data class Terminal<T : Comparable<T>>(val value: Boolean) : BinaryDecisionDiagram<T>() {
+        override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
+            visitor.visit(this)
+        }
+    }
+
+    /**
+     * A [Var] is a BDD node representing a Boolean variable.
+     * */
+    data class Var<T : Comparable<T>>(
+        val value: T,
+        val low: BinaryDecisionDiagram<T> = Terminal(false),
+        val high: BinaryDecisionDiagram<T> = Terminal(true)
+    ) : BinaryDecisionDiagram<T>() {
+        override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
+            visitor.visit(this)
+        }
+    }
 }
