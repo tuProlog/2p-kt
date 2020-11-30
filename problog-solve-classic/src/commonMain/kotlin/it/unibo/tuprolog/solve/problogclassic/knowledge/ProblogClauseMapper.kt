@@ -41,11 +41,10 @@ internal abstract class ProblogClauseMapper {
             }
 
             /* Extract probability */
-            val probTerm = rule.head[0]
-            if (probTerm !is Numeric) {
-                throw TuPrologException("Variable probabilities are not supported: ${rule.head}")
+            var probability = when(val probTerm = rule.head[0]) {
+                is Numeric -> probTerm.decimalValue.toDouble()
+                else -> parseArithmeticDivisionTerm(probTerm)
             }
-            var probability = probTerm.decimalValue.toDouble()
 
             /* Extract predicate */
             val predicateTerm = rule.head[1]
@@ -109,13 +108,29 @@ internal abstract class ProblogClauseMapper {
         if (head is Struct) {
             curHead = if (head.functor == Semicolon.FUNCTOR) head[0] else head
             if (curHead is Struct && curHead.functor == DefaultBuiltins.PROB_FUNCTOR) {
-                if (curHead[0] !is Numeric) {
-                    throw TuPrologException("Variable probability is not supported for annotated disjunctions: ${curHead[0]}")
+                val curHeadProbTerm = curHead[0]
+                curHeadProb = when(curHeadProbTerm) {
+                    is Numeric -> curHeadProbTerm.decimalValue.toDouble()
+                    else -> parseArithmeticDivisionTerm(curHeadProbTerm)
                 }
-                curHeadProb = (curHead[0] as Numeric).decimalValue.toDouble()
                 curHead = curHead[1]
             }
         }
         accumulator.add(Struct.of(DefaultBuiltins.PROB_FUNCTOR, Numeric.of(curHeadProb), curHead))
+    }
+
+    private fun parseArithmeticDivisionTerm(term: Term): Double {
+        val termStr = term.toString().replace("\\s".toRegex(), "")
+        val regexMatch = Regex("([0-9.]+)(/)([0-9.]+).*").find(termStr)
+                ?: throw TuPrologException(
+                        "Unsupported probability notation in annotated disjunction: $termStr")
+        val (dividendStr, _, divisorStr) = regexMatch.destructured
+        val dividend = dividendStr.toDoubleOrNull()
+        val divisor = divisorStr.toDoubleOrNull()
+        if (dividend == null || divisor == null) {
+            throw TuPrologException(
+                    "Unable to parse arithmetic division expression: $termStr")
+        }
+        return dividend / divisor
     }
 }
