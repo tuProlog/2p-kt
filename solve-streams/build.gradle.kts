@@ -1,9 +1,14 @@
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
+plugins {
+    kotlin("multiplatform")
+}
+
 val jvmStackSize: String by project
 val jvmMaxHeapSize: String by project
 
 kotlin {
+
     sourceSets {
         val commonMain by getting {
             dependencies {

@@ -1,4 +1,7 @@
-// Project specific kotlin multiplatform configuration
+plugins {
+    kotlin("multiplatform")
+}
+
 kotlin {
 
     sourceSets {

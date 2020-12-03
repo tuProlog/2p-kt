@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val javaVersion: String by project
-val ktFreeCompilerArgsJvm: String by project
+plugins {
+    kotlin("jvm") apply false
+    `java-library`
+}
 
 dependencies {
 
@@ -10,16 +12,4 @@ dependencies {
     api(kotlin("stdlib-jdk8"))
 
     testImplementation(kotlin("test-junit"))
-}
-
-java {
-    targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
-    sourceCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.$javaVersion"
-        freeCompilerArgs = ktFreeCompilerArgsJvm.split(";").toList()
-    }
 }

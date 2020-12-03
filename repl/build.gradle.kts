@@ -3,6 +3,7 @@ import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
+    kotlin("multiplatform")
     id("com.github.johnrengelman.shadow")
 }
 
