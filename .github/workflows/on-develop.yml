@@ -263,9 +263,9 @@ jobs:
       - name: Publish on GitHub Maven Repo
         run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
         env:
-          ORG_GRADLE_PROJECT_sonatypeUrl: https://maven.pkg.github.com/${{ github.repository }}
-          ORG_GRADLE_PROJECT_ossrhUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_mavenRepo: https://maven.pkg.github.com/${{ github.repository }}
+          ORG_GRADLE_PROJECT_mavenUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-maven-bintray:
     runs-on: ubuntu-latest
