@@ -1,5 +1,4 @@
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -10,25 +9,15 @@ kotlin {
             }
         }
 
-        jvm {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependencies {
-                    implementation(kotlin("test-junit"))
-                }
+        val jvmMain by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
             }
         }
 
-        js {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependencies {
-                    implementation(kotlin("test-js"))
-                }
+        val jsMain by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
     }
