@@ -30,6 +30,7 @@ val shadowJar by tasks.getting(ShadowJar::class) {
         kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration
     )
     from(kotlin.jvm().compilations.getByName("main").output)
+    from(files("${rootProject.projectDir}/LICENSE"))
     manifest {
         attributes("Main-Class" to mainKlass)
     }

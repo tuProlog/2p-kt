@@ -28,14 +28,14 @@ javafx {
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
+val entryPoint = "it.unibo.tuprolog.ui.gui.Main"
+
 application {
-    mainClass.set("it.unibo.tuprolog.ui.gui.Main")
+    mainClassName = entryPoint
 }
 
 val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
-    manifest {
-        attributes("Main-Class" to application.mainClass.get())
-    }
+    manifest { attributes("Main-Class" to entryPoint) }
     archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("redist")
@@ -47,12 +47,7 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
             }
     }
     from(files("${rootProject.projectDir}/LICENSE"))
-
     dependsOn("classes")
-
-    doLast {
-        println("Generated: ${archiveFile.get()}")
-    }
 }
 
 configureUploadToGithub(shadowJar)
