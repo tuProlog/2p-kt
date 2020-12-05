@@ -19,6 +19,7 @@ gitSemVer {
 println("${rootProject.name} version: $version")
 
 kotlinMultiplatform {
+    preventPublishingOfRootProject.set(true)
     jvmOnlyProjects("examples", "ide", "parser-jvm")
     jsOnlyProjects("parser-js")
     otherProjects("documentation")
@@ -36,7 +37,7 @@ kotlinMultiplatform {
 kotlin {
     sourceSets {
         val commonMain by getting {
-            ktProjects.filter { it.name !in setOf("solve-streams", "test-solve") }.forEach {
+            ktProjects.filter { it.name !in setOf("test-solve") }.forEach {
                 dependencies {
                     api(project(":${it.name}"))
                 }
