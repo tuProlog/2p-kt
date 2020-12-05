@@ -2,10 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintCheckTask
 import org.jlleitschuh.gradle.ktlint.KtlintFormatTask
 
-plugins {
-    kotlin("multiplatform")
-}
-
 val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
 

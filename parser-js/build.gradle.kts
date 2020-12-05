@@ -1,11 +1,4 @@
-plugins {
-    kotlin("js") apply false
-}
-
 kotlin {
-
-    println(sourceSets.forEach(::println))
-
     with(sourceSets["main"]) {
         dependencies {
             api(kotlin("stdlib-js"))

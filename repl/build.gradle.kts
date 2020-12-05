@@ -3,7 +3,6 @@ import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("multiplatform")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -25,7 +24,7 @@ val githubToken: String? by project
 val arguments: String? by project
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
-val shadowJar by tasks.creating(ShadowJar::class.java) {
+val shadowJar by tasks.getting(ShadowJar::class) {
     dependsOn("jvmMainClasses")
     archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveClassifier.set("redist")

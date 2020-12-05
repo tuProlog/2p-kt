@@ -7,8 +7,6 @@ val arguments: String? by project
 
 plugins {
     application
-    `java-library`
-    kotlin("jvm") apply false
     id("org.openjfx.javafxplugin")
     id("com.github.johnrengelman.shadow")
 }

@@ -19,5 +19,6 @@ kotlinMultiplatform {
     jvmOnlyProjects("examples", "ide", "parser-jvm")
     jsOnlyProjects("parser-js")
     otherProjects("documentation")
+    ktProjects(allOtherSubprojects)
     developer("Giovanni Ciatto", "giovanni.ciatto@unibo.it", "http://about.me/gciatto")
 }
