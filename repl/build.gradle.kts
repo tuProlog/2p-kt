@@ -1,6 +1,5 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
     id("com.github.johnrengelman.shadow")
@@ -20,7 +19,6 @@ kotlin {
     }
 }
 
-val githubToken: String? by project
 val arguments: String? by project
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
@@ -37,6 +35,8 @@ val shadowJar by tasks.getting(ShadowJar::class) {
     }
 }
 
+configureUploadToGithub(shadowJar)
+
 tasks.create("run", JavaExec::class.java) {
     group = "application"
     dependsOn("jvmMainClasses")
@@ -50,15 +50,5 @@ tasks.create("run", JavaExec::class.java) {
         if (it != null) {
             args = it.split("\\s+".toRegex()).filterNot { a -> a.isBlank() }
         }
-    }
-}
-
-if (!githubToken.isNullOrBlank()) {
-    rootProject.configure<GithubReleaseExtension> {
-        releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(shadowJar)
     }
 }

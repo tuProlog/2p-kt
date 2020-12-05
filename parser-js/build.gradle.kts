@@ -1,15 +1,17 @@
 kotlin {
-    with(sourceSets["main"]) {
-        dependencies {
-            api(kotlin("stdlib-js"))
-            api(npm("antlr4", "4.8.0"))
-            api(npm("@tuprolog/parser-utils", "0.2.3"))
+    sourceSets {
+        val main by getting {
+            dependencies {
+                api(kotlin("stdlib-js"))
+                api(npm("antlr4", "4.8.0"))
+                api(npm("@tuprolog/parser-utils", "0.2.3"))
+            }
         }
-    }
 
-    with(sourceSets["test"]) {
-        dependencies {
-            implementation(kotlin("test-js"))
+        val test by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
         }
     }
 }

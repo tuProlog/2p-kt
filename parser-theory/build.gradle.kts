@@ -1,5 +1,4 @@
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -16,19 +15,15 @@ kotlin {
             }
         }
 
-        jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-                    api(project(":parser-jvm"))
-                }
+        val jvmMain by getting {
+            dependencies {
+                api(project(":parser-jvm"))
             }
         }
 
-        js {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-                    api(project(":parser-js"))
-                }
+        val jsMain by getting {
+            dependencies {
+                api(project(":parser-js"))
             }
         }
     }

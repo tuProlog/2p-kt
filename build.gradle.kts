@@ -3,7 +3,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
 }
 
-group = "io.unibo.tuprolog"
+group = "it.unibo.tuprolog"
 
 gitSemVer {
     minimumVersion.set("0.1.0")

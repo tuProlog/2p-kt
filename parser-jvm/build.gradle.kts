@@ -22,13 +22,13 @@ tasks.generateGrammarSource {
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
 }
 
-// tasks.getByName<Jar>("sourcesJar") {
-//     project.sourceSets.forEach { sourceSet ->
-//         sourceSet.allSource.sourceDirectories.forEach {
-//             from(it)
-//         }
-//         sourceSet.resources.sourceDirectories.forEach {
-//             from(it)
-//         }
-//     }
-// }
+tasks.getByName<Jar>("sourcesJar") {
+    project.sourceSets.forEach { sourceSet ->
+        sourceSet.allSource.sourceDirectories.forEach {
+            from(it)
+        }
+        sourceSet.resources.sourceDirectories.forEach {
+            from(it)
+        }
+    }
+}

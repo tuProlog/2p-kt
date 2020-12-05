@@ -1,9 +1,5 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-val githubToken: String? by project
-val arguments: String? by project
+import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
     application
@@ -12,6 +8,7 @@ plugins {
 }
 
 val javaFxVersion: String by project
+val arguments: String? by project
 
 dependencies {
     api(project(":oop-lib"))
@@ -34,7 +31,6 @@ javafx {
 application {
     mainClass.set("it.unibo.tuprolog.ui.gui.Main")
 }
-
 
 val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     manifest {
@@ -59,12 +55,4 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
     }
 }
 
-if (!githubToken.isNullOrBlank()) {
-    rootProject.configure<GithubReleaseExtension> {
-        releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(shadowJar)
-    }
-}
+configureUploadToGithub(shadowJar)
