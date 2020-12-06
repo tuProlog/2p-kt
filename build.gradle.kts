@@ -16,6 +16,11 @@ gitSemVer {
     version = computeGitSemVer() // THIS IS MANDATORY, AND MUST BE LAST IN THIS BLOCK!
 }
 
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
+}
+
 println("${rootProject.name} version: $version")
 
 kotlinMultiplatform {
