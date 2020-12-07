@@ -1,5 +1,5 @@
-import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.jsProjects
+import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
 import java.time.Duration
 
