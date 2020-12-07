@@ -1,9 +1,12 @@
 import io.github.gciatto.kt.mpp.ProjectExtensions.jvmProjects
+import io.github.gciatto.kt.mpp.ProjectExtensions.jsProjects
 import io.github.gciatto.kt.mpp.ProjectExtensions.ktProjects
+import java.time.Duration
 
 plugins {
     id("io.github.gciatto.kt-mpp-pp")
     id("org.danilopianini.git-sensitive-semantic-versioning")
+    id("de.marcphilipp.nexus-publish")
 }
 
 group = "it.unibo.tuprolog"
@@ -55,5 +58,18 @@ kotlin {
                 }
             }
         }
+    }
+}
+
+(ktProjects + jvmProjects + jsProjects + rootProject).forEach {
+    it.apply(plugin = "de.marcphilipp.nexus-publish")
+    it.nexusPublishing {
+        repositories {
+            sonatype {
+                username.set(project.property("mavenUsername").toString())
+                password.set(project.property("mavenPassword").toString())
+            }
+        }
+        clientTimeout.set(Duration.ofMinutes(10))
     }
 }

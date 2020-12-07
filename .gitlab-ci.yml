@@ -14,7 +14,7 @@ variables:
   DOC_TASK: "dokkaHtml --parallel"
   SIGN_TASK: "signAllPublications --parallel"
   BINTRAY_TASK: "publishAllToBintray --parallel"
-  CENTRAL_TASK: "publishAllPublicationsToMavenRepository --parallel"
+  CENTRAL_TASK: "publishAllPublicationsToSonatype"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
