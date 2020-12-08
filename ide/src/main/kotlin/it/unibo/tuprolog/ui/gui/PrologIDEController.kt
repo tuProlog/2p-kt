@@ -4,7 +4,6 @@ import it.unibo.tuprolog.Info
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
-import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
@@ -379,7 +378,7 @@ class PrologIDEController : Initializable {
         tabWarnings.showNotification()
     }
 
-    private fun onError(exception: TuPrologException) = onUiThread {
+    private fun onError(exception: Exception) = onUiThread {
         val dialog = Alert(Alert.AlertType.ERROR)
         dialog.headerText = exception::class.java.simpleName
         dialog.title = "Error"
@@ -575,7 +574,7 @@ class PrologIDEController : Initializable {
             alert.dialogPane.minHeight = Region.USE_PREF_SIZE
             alert.showAndWait()
         } catch (e: Exception) {
-            TODO()
+            onError(e)
         }
     }
 
