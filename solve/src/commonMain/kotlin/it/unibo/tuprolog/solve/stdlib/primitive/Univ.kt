@@ -12,49 +12,40 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.core.List as LogicList
-import kotlin.collections.listOf as ktListOf
 
 /**
  * Implementation of '=..'/2 predicate
  */
 object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
-    private fun univ(first: Term, second: it.unibo.tuprolog.core.List): Substitution {
+    private fun decompose(first: Struct, second: Term): Substitution {
+        val decomposed = LogicList.of(Atom.of(first.functor), *first.args)
+        return second mguWith decomposed
+    }
+
+    private fun recompose(first: Term, second: LogicList): Substitution {
         val list = second.toList()
-        return if (list.isNotEmpty() && list[0] is Atom) {
-            first mguWith Struct.of(list[0].castTo<Atom>().value, list.drop(1))
-        } else {
-            Substitution.failed()
-        }
+        val composed = Struct.of(list[0].castTo<Atom>().value, list.subList(1, list.size))
+        return first mguWith composed
     }
 
     override fun Solve.Request<ExecutionContext>.computeOneSubstitution(first: Term, second: Term): Substitution {
         return when (first) {
             is Struct -> {
                 when (second) {
-                    is LogicList -> {
-                        univ(first, second)
-                    }
-                    is Var -> {
-                        second mguWith LogicList.of(
-                            ktListOf(Atom.of(first.functor)) + first.argsList
-                        )
-                    }
+                    is LogicList -> decompose(first, second)
+                    is Var -> decompose(first, second)
                     else -> {
-                        // TODO expected here should be LIST | VARIABLE or something like that
                         throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, second, 1)
                     }
                 }
             }
             is Var -> {
                 when (second) {
-                    is LogicList -> {
-                        univ(first, second)
-                    }
+                    is LogicList -> recompose(first, second)
                     is Var -> {
                         throw InstantiationError.forArgument(context, signature, first, 0)
                     }
                     else -> {
-                        // TODO expected here should be LIST | VARIABLE or something like that
                         throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, second, 1)
                     }
                 }
