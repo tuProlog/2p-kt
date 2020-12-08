@@ -1,16 +1,15 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
-    id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
+    id("com.github.johnrengelman.shadow")
 }
 
 kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Libs.clikt_multiplatform)
+                api("com.github.ajalt:clikt-multiplatform:_")
                 api(project(":core"))
                 api(project(":oop-lib"))
                 api(project(":solve-classic"))
@@ -20,11 +19,10 @@ kotlin {
     }
 }
 
-val githubToken: String? by project
 val arguments: String? by project
 val mainKlass = "it.unibo.tuprolog.ui.repl.Main"
 
-val shadowJar by tasks.creating(ShadowJar::class.java) {
+val shadowJar by tasks.getting(ShadowJar::class) {
     dependsOn("jvmMainClasses")
     archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveClassifier.set("redist")
@@ -32,10 +30,13 @@ val shadowJar by tasks.creating(ShadowJar::class.java) {
         kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration
     )
     from(kotlin.jvm().compilations.getByName("main").output)
+    from(files("${rootProject.projectDir}/LICENSE"))
     manifest {
         attributes("Main-Class" to mainKlass)
     }
 }
+
+configureUploadToGithub(shadowJar)
 
 tasks.create("run", JavaExec::class.java) {
     group = "application"
@@ -50,15 +51,5 @@ tasks.create("run", JavaExec::class.java) {
         if (it != null) {
             args = it.split("\\s+".toRegex()).filterNot { a -> a.isBlank() }
         }
-    }
-}
-
-if (!githubToken.isNullOrBlank()) {
-    rootProject.configure<GithubReleaseExtension> {
-        releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(shadowJar)
     }
 }

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.classicWithDefaultBuiltins
+import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
@@ -141,9 +141,9 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     private fun newResolution(): Iterator<Solution> {
         solver.value.let { s ->
             val old = s.operators
-            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(s.operators) ?: Theory.empty()
+            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(old) ?: Theory.empty()
             s.loadStaticKb(theory)
-            lastGoal = query.parseAsStruct(s.operators)
+            lastGoal = query.parseAsStruct(old)
             onNewStaticKb.push(SolverEvent(Unit, s))
             return s.solve(lastGoal!!, timeout).iterator()
         }

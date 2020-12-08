@@ -1,11 +1,11 @@
 plugins {
-    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
+    id("com.eden.orchidPlugin")
 }
 
 configurations {
     val orchidRuntimeOnly by getting {
         resolutionStrategy {
-            force(Libs.plantuml)
+            force("net.sourceforge.plantuml:plantuml:_")
         }
     }
     create("plantuml") {
@@ -14,25 +14,23 @@ configurations {
 }
 
 dependencies {
-    orchidRuntimeOnly(Libs.orchiddocs)
-    orchidRuntimeOnly(Libs.orchidkotlindoc)
-    orchidRuntimeOnly(Libs.orchidplugindocs)
-//    orchidRuntimeOnly(Libs.orchidasciidoc)
-//    orchidRuntimeOnly(Libs.orchiddiagrams)
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:_")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:_")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:_")
 
     val plantuml by configurations.getting
 
-    plantuml(Libs.plantuml)
+    plantuml("net.sourceforge.plantuml:plantuml:_")
 }
 
 repositories {
     mavenCentral()
     jcenter()
-    maven(Repos.kotlinx)
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 // env ORG_GRADLE_PROJECT_orchidBaseUrl
-val orchidBaseUrl = getPropertyOrWarnForAbsence("orchidBaseUrl")
+val orchidBaseUrl: String? by project
 
 orchid {
     theme = "Editorial"

@@ -38,7 +38,12 @@ class PrototypeProperIndexingTest(
             Fact.of(Struct.of("g", Numeric.of(1)))
         )
 
-    private val theory = theoryGenerator(mixedClausesTheory)
+    private data class FreshTheoryScope(val theory: Theory)
+
+    private fun <R> withFreshTheory(
+        theory: Theory = theoryGenerator(mixedClausesTheory),
+        action: FreshTheoryScope.() -> R
+    ): R = FreshTheoryScope(theory).action()
 
     private val expectedIndexingOverF1 =
         listOf(
@@ -81,12 +86,6 @@ class PrototypeProperIndexingTest(
     private val newF2VarClause = Fact.of(Struct.of("f", Var.of("Z"), Var.of("Z")))
     private val newF2MixedClause = Fact.of(Struct.of("f", Var.of("Z"), Numeric.of(0)))
 
-    private val knownG1AtomClause = Fact.of(Struct.of("g", Numeric.of(2)))
-    private val knownG1VarClause = Fact.of(Struct.of("g", Var.of("X")))
-    private val knownG2AtomClause = Fact.of(Struct.of("g", Atom.of("b"), Atom.of("a")))
-    private val knownG2VarClause = Fact.of(Struct.of("g", Var.of("X"), Var.of("Y")))
-    private val knownG2MixedClause = Fact.of(Struct.of("g", Var.of("X"), Atom.of("a")))
-
     private val anonymousF1Clause = Fact.of(Struct.of("f", Var.anonymous()))
     private val anonymousF2Clause = Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))
     private val anonymousG1Clause = Fact.of(Struct.of("g", Var.anonymous()))
@@ -105,188 +104,242 @@ class PrototypeProperIndexingTest(
                 Integer.of(3)
             )
         )
-        val theory = theoryGenerator(listOf(fact))
-
-        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))])
-        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Struct.of("f", Var.anonymous(), Var.anonymous()), Var.anonymous()))])
-        assertClausesHaveSameLengthAndContent(sequenceOf(fact), theory[Fact.of(Struct.of("f", Struct.of("f", Struct.of("f", Var.anonymous()), Var.anonymous()), Var.anonymous()))])
+        withFreshTheory(theoryGenerator(listOf(fact))) {
+            assertClausesHaveSameLengthAndContent(
+                sequenceOf(fact),
+                theory[Fact.of(Struct.of("f", Var.anonymous(), Var.anonymous()))]
+            )
+            assertClausesHaveSameLengthAndContent(
+                sequenceOf(fact),
+                theory[Fact.of(Struct.of("f", Struct.of("f", Var.anonymous(), Var.anonymous()), Var.anonymous()))]
+            )
+            assertClausesHaveSameLengthAndContent(
+                sequenceOf(fact),
+                theory[
+                    Fact.of(
+                        Struct.of(
+                            "f",
+                            Struct.of("f", Struct.of("f", Var.anonymous()), Var.anonymous()),
+                            Var.anonymous()
+                        )
+                    )
+                ]
+            )
+        }
     }
 
     fun correctIndexingOverDedicatedTheoryForF1Family() {
-        val generatedIndexingOverF1Family =
-            theory.clauses.toList().filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val generatedIndexingOverF1Family =
+                theory.clauses.toList().filter { it matches anonymousF1Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF1, generatedIndexingOverF1Family)
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF1, generatedIndexingOverF1Family)
+        }
     }
 
     fun correctIndexingOverDedicatedTheoryForF2Family() {
-        val generatedIndexingOverF2Family =
-            theory.clauses.toList().filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingOverF2Family =
+                theory.clauses.toList().filter { it matches anonymousF2Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF2, generatedIndexingOverF2Family)
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2, generatedIndexingOverF2Family)
+        }
     }
 
     fun correctIndexingOverDedicatedTheoryG1Family() {
-        val generatedIndexingOverG1Family =
-            theory.clauses.toList().filter { it matches anonymousG1Clause }
+        withFreshTheory {
+            val generatedIndexingOverG1Family =
+                theory.clauses.toList().filter { it matches anonymousG1Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverG1, generatedIndexingOverG1Family)
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverG1, generatedIndexingOverG1Family)
+        }
     }
 
     fun correctIndexingOverDedicatedTheoryG2Family() {
-        val generatedIndexingOverG2Family =
-            theory.clauses.toList().filter { it matches anonymousG2Clause }
+        withFreshTheory {
+            val generatedIndexingOverG2Family =
+                theory.clauses.toList().filter { it matches anonymousG2Clause }
 
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverG2, generatedIndexingOverG2Family)
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverG2, generatedIndexingOverG2Family)
+        }
     }
 
     fun correctIndexingAfterTheoriesConcatenationForF1Family() {
-        val generatedIndexingOverDoubledDatabaseForF1Family =
-            (theory + theory).clauses.toList().filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val doubledDatabase = (theory + theory)
+            val generatedIndexingOverDoubledDatabaseForF1Family =
+                doubledDatabase.clauses.toList().filter { it matches anonymousF1Clause }
 
-        assertClausesHaveSameLengthAndContent(
-            expectedIndexingOverF1 + expectedIndexingOverF1,
-            generatedIndexingOverDoubledDatabaseForF1Family
-        )
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF1 + expectedIndexingOverF1,
+                generatedIndexingOverDoubledDatabaseForF1Family
+            )
+        }
     }
 
     fun correctIndexingAfterTheoriesConcatenationForF2Family() {
-        val generatedIndexingOverDoubledDatabaseForF2Family =
-            (theory + theory).clauses.toList().filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingOverDoubledDatabaseForF2Family =
+                (theory + theory).clauses.toList().filter { it matches anonymousF2Clause }
 
-        assertClausesHaveSameLengthAndContent(
-            expectedIndexingOverF2 + expectedIndexingOverF2,
-            generatedIndexingOverDoubledDatabaseForF2Family
-        )
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverF2 + expectedIndexingOverF2,
+                generatedIndexingOverDoubledDatabaseForF2Family
+            )
+        }
     }
 
     fun correctIndexingAfterTheoriesConcatenationForG1Family() {
-        val generatedIndexingOverDoubledDatabaseForG1Family =
-            (theory + theory).clauses.toList().filter { it matches anonymousG1Clause }
+        withFreshTheory {
+            val generatedIndexingOverDoubledDatabaseForG1Family =
+                (theory + theory).clauses.toList().filter { it matches anonymousG1Clause }
 
-        assertClausesHaveSameLengthAndContent(
-            expectedIndexingOverG1 + expectedIndexingOverG1,
-            generatedIndexingOverDoubledDatabaseForG1Family
-        )
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverG1 + expectedIndexingOverG1,
+                generatedIndexingOverDoubledDatabaseForG1Family
+            )
+        }
     }
 
     fun correctIndexingAfterTheoriesConcatenationForG2Family() {
-        val generatedIndexingOverDoubledDatabaseForG2Family =
-            (theory + theory).clauses.toList().filter { it matches anonymousG2Clause }
+        withFreshTheory {
+            val generatedIndexingOverDoubledDatabaseForG2Family =
+                (theory + theory).clauses.toList().filter { it matches anonymousG2Clause }
 
-        assertClausesHaveSameLengthAndContent(
-            expectedIndexingOverG2 + expectedIndexingOverG2,
-            generatedIndexingOverDoubledDatabaseForG2Family
-        )
+            assertClausesHaveSameLengthAndContent(
+                expectedIndexingOverG2 + expectedIndexingOverG2,
+                generatedIndexingOverDoubledDatabaseForG2Family
+            )
+        }
     }
 
     fun correctIndexingAfterOneArityAtomClauseAssertionA() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertA(newF1AtomClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertA(newF1AtomClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF1Clause }
 
-        assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.first())
-        assertClausesHaveSameLengthAndContent(listOf(newF1AtomClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.first())
+            assertClausesHaveSameLengthAndContent(listOf(newF1AtomClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterOneArityVariableClauseAssertionA() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertA(newF1VarClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertA(newF1VarClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF1Clause }
 
-        assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.first())
-        assertClausesHaveSameLengthAndContent(listOf(newF1VarClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.first())
+            assertClausesHaveSameLengthAndContent(listOf(newF1VarClause) + expectedIndexingOverF1, generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityAtomClauseAssertionA() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertA(newF2AtomClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertA(newF2AtomClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.first())
-        assertClausesHaveSameLengthAndContent(listOf(newF2AtomClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.first())
+            assertClausesHaveSameLengthAndContent(listOf(newF2AtomClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityVarClauseAssertionA() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertA(newF2VarClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertA(newF2VarClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.first())
-        assertClausesHaveSameLengthAndContent(listOf(newF2VarClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.first())
+            assertClausesHaveSameLengthAndContent(listOf(newF2VarClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityMixedClauseAssertionA() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertA(newF2MixedClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertA(newF2MixedClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.first())
-        assertClausesHaveSameLengthAndContent(listOf(newF2MixedClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.first())
+            assertClausesHaveSameLengthAndContent(listOf(newF2MixedClause) + expectedIndexingOverF2, generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterOneArityAtomClauseAssertionZ() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertZ(newF1AtomClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertZ(newF1AtomClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF1Clause }
 
-        assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1AtomClause), generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1AtomClause), generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterOneArityVariableClauseAssertionZ() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertZ(newF1VarClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF1Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertZ(newF1VarClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF1Clause }
 
-        assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.asReversed().first())
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1VarClause), generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.asReversed().first())
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF1 + listOf(newF1VarClause), generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityAtomClauseAssertionZ() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertZ(newF2AtomClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertZ(newF2AtomClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2AtomClause), generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2AtomClause), generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityVariableClauseAssertionZ() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertZ(newF2VarClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertZ(newF2VarClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.asReversed().first())
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2VarClause), generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.asReversed().first())
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2VarClause), generatedIndexingAfterAssertionA)
+        }
     }
 
     fun correctIndexingAfterTwoArityMixedClauseAssertionZ() {
-        val generatedIndexingAfterAssertionA =
-            theory.assertZ(newF2MixedClause)
-                .clauses
-                .toList()
-                .filter { it matches anonymousF2Clause }
+        withFreshTheory {
+            val generatedIndexingAfterAssertionA =
+                theory.assertZ(newF2MixedClause)
+                    .clauses
+                    .toList()
+                    .filter { it matches anonymousF2Clause }
 
-        assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
-        assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2MixedClause), generatedIndexingAfterAssertionA)
+            assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
+            assertClausesHaveSameLengthAndContent(expectedIndexingOverF2 + listOf(newF2MixedClause), generatedIndexingAfterAssertionA)
+        }
     }
 }

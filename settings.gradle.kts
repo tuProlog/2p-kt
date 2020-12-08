@@ -1,11 +1,19 @@
+import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+
 rootProject.name = "2p"
 
-pluginManagement {
+buildscript {
     repositories {
         gradlePluginPortal()
+        mavenCentral()
         jcenter()
     }
+    dependencies {
+        classpath("de.fayard:dependencies:0.+")
+    }
 }
+
+bootstrapRefreshVersionsAndDependencies()
 
 include("documentation")
 

@@ -1,5 +1,4 @@
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -14,14 +13,12 @@ kotlin {
             }
         }
 
-        jvm {
-            compilations["main"].defaultSourceSet {
-                dependencies {
-                    implementation(Libs.jackson_core)
-                    implementation(Libs.jackson_datatype_jsr310)
-                    implementation(Libs.jackson_dataformat_yaml)
-                    implementation(Libs.jackson_dataformat_xml)
-                }
+        val jvmMain by getting {
+            dependencies {
+                implementation("com.fasterxml.jackson.core:jackson-core:_")
+                implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
+                implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:_")
+                implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:_")
             }
         }
     }

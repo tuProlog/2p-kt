@@ -1,14 +1,15 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.KtlintCheckTask
+import org.jlleitschuh.gradle.ktlint.KtlintFormatTask
 
 val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
 
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Libs.kt_math)
+                api("io.github.gciatto:kt-math:_")
             }
 
             val infoKtFile = kotlin.srcDirs.first().absoluteFile.resolve("$tuPrologPackageDir/Info.kt")
@@ -30,10 +31,14 @@ kotlin {
                 outputs.file(infoKtFile)
             }
 
-            tasks.withType<KotlinCompile<*>>().forEach {
+            val addDependecyAction: (Task) -> Unit = {
                 it.dependsOn(createInfoKt)
                 it.inputs.file(infoKtFile)
             }
+
+            tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
+            tasks.withType<KtlintFormatTask>().forEach(addDependecyAction)
+            tasks.withType<KtlintCheckTask>().forEach(addDependecyAction)
         }
     }
 }

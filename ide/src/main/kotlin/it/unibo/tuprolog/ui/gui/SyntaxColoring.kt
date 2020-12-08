@@ -204,6 +204,7 @@ class SyntaxColoring(
         private const val FULLSTOP = "FULLSTOP"
 
         private fun pattern(operators: OperatorSet) = anyOf(
+            COMMENT_PATTERN.asGroup(COMMENT),
             keywords(operators).asGroup(KEYWORD),
             PAREN_PATTERN.asGroup(PAREN),
             BRACE_PATTERN.asGroup(BRACE),
@@ -213,7 +214,6 @@ class SyntaxColoring(
             VARIABLE_PATTERN.asGroup(VARIABLE),
             NUMBER_PATTERN.asGroup(NUMBER),
             STRING_PATTERN.asGroup(STRING),
-            COMMENT_PATTERN.asGroup(COMMENT),
             FULLSTOP_PATTERN.asGroup(FULLSTOP),
         )
 

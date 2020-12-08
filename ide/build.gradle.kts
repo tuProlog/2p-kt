@@ -1,63 +1,41 @@
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension
-import com.github.breadmoirai.githubreleaseplugin.GithubReleaseTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-val javaVersion: String by project
-val ktFreeCompilerArgsJvm: String by project
-val githubToken: String? by project
-val arguments: String? by project
+import io.github.gciatto.kt.mpp.ProjectConfiguration.configureUploadToGithub
 
 plugins {
     application
-    java
-    kotlin("jvm")
-    id("org.openjfx.javafxplugin") version Versions.org_openjfx_javafxplugin_gradle_plugin
-    id("com.github.johnrengelman.shadow") version Versions.com_github_johnrengelman_shadow_gradle_plugin
+    id("org.openjfx.javafxplugin")
+    id("com.github.johnrengelman.shadow")
 }
 
-javafx {
-    version = Versions.org_openjfx
-    modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
-}
-
-application {
-    // mainModule.set("2p-ide")
-    mainClassName = "it.unibo.tuprolog.ui.gui.Main"
-}
-
-val linuxOnly by configurations.creating { isTransitive = true }
+val javaFxVersion: String by project
+val arguments: String? by project
 
 dependencies {
-    api(project(":solve-classic"))
-    api(project(":parser-theory"))
     api(project(":oop-lib"))
-    api(kotlin("stdlib-jdk8"))
-    api(Libs.richtextfx)
+    api(project(":parser-theory"))
+    api(project(":solve-classic"))
+    api("org.fxmisc.richtext:richtextfx:_")
 
-    runtimeOnly("${Libs.javafx_graphics}:win")
-    runtimeOnly("${Libs.javafx_graphics}:linux")
-    runtimeOnly("${Libs.javafx_graphics}:mac")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:win")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+    runtimeOnly("org.openjfx:javafx-graphics:$javaFxVersion:mac")
 
     testImplementation(kotlin("test-junit"))
 }
 
-configure<JavaPluginConvention> {
-    targetCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
-    sourceCompatibility = JavaVersion.valueOf("VERSION_1_$javaVersion")
+javafx {
+    version = javaFxVersion
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.$javaVersion"
-        freeCompilerArgs = ktFreeCompilerArgsJvm.split(";").toList()
-    }
+val entryPoint = "it.unibo.tuprolog.ui.gui.Main"
+
+application {
+    mainClassName = entryPoint
 }
 
 val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
-    manifest {
-        attributes("Main-Class" to application.mainClassName)
-    }
+    manifest { attributes("Main-Class" to entryPoint) }
     archiveBaseName.set("${rootProject.name}-${project.name}")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("redist")
@@ -69,20 +47,7 @@ val shadowJar = tasks.getByName<ShadowJar>("shadowJar") {
             }
     }
     from(files("${rootProject.projectDir}/LICENSE"))
-
     dependsOn("classes")
-
-    doLast {
-        println("Generated: ${archiveFile.get()}")
-    }
 }
 
-if (!githubToken.isNullOrBlank()) {
-    rootProject.configure<GithubReleaseExtension> {
-        releaseAssets(*(releaseAssets.toList() + shadowJar).toTypedArray())
-    }
-
-    rootProject.tasks.withType(GithubReleaseTask::class) {
-        dependsOn(shadowJar)
-    }
-}
+configureUploadToGithub(shadowJar)
