@@ -4,6 +4,7 @@ kotlin {
             dependencies {
                 api(project(":solve"))
                 api(project(":parser-theory"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
             }
         }
 
