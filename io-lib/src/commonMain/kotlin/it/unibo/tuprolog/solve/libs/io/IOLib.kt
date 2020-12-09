@@ -9,6 +9,7 @@ object IOLib : AliasedLibrary by
     Library.aliased(
         operatorSet = OperatorSet(),
         theory = Theory.empty(),
+        functions = emptyMap(),
         primitives = emptyMap(),
         alias = "prolog.io"
     )
