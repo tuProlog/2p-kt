@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.libs.io
 
-import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -19,12 +18,6 @@ interface Url {
 
     @JsName("query")
     val query: String?
-
-    @JsName("readAsTextAsync")
-    fun readAsTextAsync(callback: (String?, IOException?) -> Unit)
-
-    @JsName("readAsByteArrayAsync")
-    fun readAsByteArrayAsync(callback: (ByteArray?, IOException?) -> Unit)
 
     @JsName("readAsText")
     fun readAsText(): String

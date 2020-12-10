@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.PROTOCOL
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.UrlField.QUERY
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.ensureValidPort
 import it.unibo.tuprolog.solve.libs.io.Url.Companion.parse
-import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 
 class JsUrl : Url {
@@ -46,7 +45,7 @@ class JsUrl : Url {
         if (isFile) {
             return readText(path)
         } else {
-            throw IOException("Reading a remote file synchronously is not supported, yet")
+            return fetch(url, "UTF-8")
         }
     }
 
@@ -54,23 +53,7 @@ class JsUrl : Url {
         if (isFile) {
             return readBin(path)
         } else {
-            throw IOException("Reading a remote file synchronously is not supported, yet")
-        }
-    }
-
-    override fun readAsTextAsync(callback: (String?, IOException?) -> Unit) {
-        if (isFile) {
-            readTextAsync(path, callback)
-        } else {
-            fetchTextAsync(toString(), callback)
-        }
-    }
-
-    override fun readAsByteArrayAsync(callback: (ByteArray?, IOException?) -> Unit) {
-        if (isFile) {
-            readBinAsync(path, callback)
-        } else {
-            fetchBinAsync(toString(), callback)
+            return fetch(url, "UTF-8").encodeToByteArray()
         }
     }
 

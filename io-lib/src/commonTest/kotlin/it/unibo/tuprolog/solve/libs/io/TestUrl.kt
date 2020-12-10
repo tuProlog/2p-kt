@@ -5,6 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class TestUrl {
     @Test
@@ -42,42 +43,75 @@ class TestUrl {
     }
 
     @Test
-    fun testAsyncTextRetrieval() {
+    fun testPrologScriptRetrieval() {
+        val url = Url.of("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/snippets/2048665/raw/master/parents.pl")
+        val text = url.readAsText()
+
+        assertEquals(
+            """
+            |male(james1).
+            |male(charles1).
+            |male(charles2).
+            |male(james2).
+            |male(george1).
+            |
+            |female(catherine).
+            |female(elizabeth).
+            |female(sophia).
+            |
+            |parent(charles1, james1).
+            |parent(elizabeth, james1).
+            |parent(charles2, charles1).
+            |parent(catherine, charles1).
+            |parent(james2, charles1).
+            |parent(sophia, elizabeth).
+            |parent(george1, sophia).
+            |
+            |mother(X, Y) :- female(X), parent(X, Y).
+            |father(X, Y) :- male(X), parent(X, Y).
+            """.trimMargin(),
+            text.trim()
+        )
+    }
+
+    @Test
+    fun testTextRetrieval() {
         val url = Url.of("https://www.example.com")
-        url.readAsTextAsync { text, err ->
-            assertNull(err)
-            assertTrue {
-                text?.contains("<html>") ?: false
-            }
+        val text = url.readAsText()
+
+        assertTrue {
+            text.contains("<html>")
         }
     }
 
     @Test
-    fun testAsyncBinRetrieval() {
+    fun testBinRetrieval() {
         val url = Url.of("https://www.example.com")
-        url.readAsByteArrayAsync { bytes, err ->
-            assertNull(err)
-            assertTrue {
-                bytes?.size?.let { it > 0 } ?: false
-            }
+        val bytes = url.readAsByteArray()
+        assertTrue {
+            bytes.isNotEmpty()
         }
     }
 
     @Test
-    fun testAsyncTextRetrievalFailure() {
+    fun testTextRetrievalFailure() {
         val url = Url.of("https://www.invented.nodomain")
-        url.readAsTextAsync { text, err ->
-            assertNull(text)
-            assertTrue { err is IOException }
+        try {
+            url.readAsText()
+            fail()
+        } catch (e: IOException) {
+            // success
         }
     }
 
     @Test
-    fun testAsyncBinRetrievalFailure() {
+    fun testBinRetrievalFailure() {
         val url = Url.of("https://www.invented.nodomain")
-        url.readAsByteArrayAsync { bytes, err ->
-            assertNull(bytes)
-            assertTrue { err is IOException }
+        try {
+            url.readAsByteArray()
+            fail()
+        } catch (e: IOException) {
+            // success
         }
     }
 }

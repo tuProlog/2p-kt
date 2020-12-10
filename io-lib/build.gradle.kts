@@ -10,7 +10,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                api(npm("node-fetch", "^2.6.1"))
+                implementation(npm("sync-request", "6.1.0"))
             }
         }
     }

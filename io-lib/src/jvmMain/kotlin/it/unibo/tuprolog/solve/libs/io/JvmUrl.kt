@@ -46,22 +46,6 @@ data class JvmUrl(private val url: URL) : Url {
             throw IOException(e.message, e)
         }
 
-    override fun readAsTextAsync(callback: (String?, IOException?) -> Unit) {
-        try {
-            callback(readAsText(), null)
-        } catch (e: IOException) {
-            callback(null, e)
-        }
-    }
-
-    override fun readAsByteArrayAsync(callback: (ByteArray?, IOException?) -> Unit) {
-        try {
-            callback(readAsByteArray(), null)
-        } catch (e: IOException) {
-            callback(null, e)
-        }
-    }
-
     override fun toString(): String = url.toString()
 
     companion object {
