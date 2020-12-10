@@ -159,6 +159,7 @@ class TypeError(
         PAIR,
         PREDICATE_INDICATOR,
         REFERENCE,
+        TYPE_REFERENCE,
         URL;
 
         /**

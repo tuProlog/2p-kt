@@ -75,7 +75,7 @@ class SyntaxError constructor(
                 |Syntax error at $row:$column while parsing clause $index: $message
                 |Input source:
                 |   ${input.replace("\n", "\n|   ")}
-                """.trimIndent()
+                """.trimMargin()
             ) { m, extra ->
                 SyntaxError(
                     message = m,
