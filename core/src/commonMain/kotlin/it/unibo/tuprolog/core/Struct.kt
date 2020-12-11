@@ -94,6 +94,8 @@ interface Struct : Term {
     @JsName("get")
     operator fun get(index: Int): Term = getArgAt(index)
 
+    override fun tag(name: String, value: Any): Struct
+
     companion object {
 
         /** The pattern of a well-formed functor for a Struct */

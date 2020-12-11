@@ -26,6 +26,8 @@ interface Numeric : Constant {
     @JsName("compareValueTo")
     fun compareValueTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
+    override fun tag(name: String, value: Any): Numeric
+
     companion object {
 
         @JvmStatic

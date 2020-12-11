@@ -9,6 +9,8 @@ interface Empty : Atom {
 
     override fun freshCopy(scope: Scope): Empty = this
 
+    override fun tag(name: String, value: Any): Empty
+
     companion object {
 
         const val EMPTY_LIST_FUNCTOR = "[]"

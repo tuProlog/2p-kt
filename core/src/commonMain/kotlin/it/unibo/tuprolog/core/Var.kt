@@ -33,6 +33,8 @@ interface Var : Term {
     @JsName("isNameWellFormed")
     val isNameWellFormed: Boolean
 
+    override fun tag(name: String, value: Any): Var
+
     companion object {
 
         const val ANONYMOUS_VAR_NAME = "_"

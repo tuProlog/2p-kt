@@ -41,6 +41,8 @@ interface List : Collection {
             }
         }
 
+    override fun tag(name: String, value: Any): List
+
     companion object {
 
         @JvmStatic

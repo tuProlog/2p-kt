@@ -6,7 +6,10 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
 @Suppress("EqualsOrHashCode")
-internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
+internal open class StructImpl(
+    override val functor: String, override val args: Array<Term>,
+    tags: Map<String, Any>,
+) : TermImpl(tags), Struct {
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
 
@@ -17,6 +20,10 @@ internal open class StructImpl(override val functor: String, override val args: 
     override val argsList: List<Term> by lazy { super.argsList }
 
     override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
+
+    override fun tag(name: String, value: Any): Struct {
+        return StructImpl(functor, args, extendTags(name, value))
+    }
 
     override fun structurallyEquals(other: Term): Boolean =
         other is StructImpl &&

@@ -28,4 +28,6 @@ interface Collection : Struct {
 
     @JsName("unfold")
     fun unfold(): Sequence<Term>
+
+    override fun tag(name: String, value: Any): Collection
 }

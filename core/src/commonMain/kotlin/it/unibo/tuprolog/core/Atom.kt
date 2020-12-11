@@ -41,6 +41,8 @@ interface Atom : Struct, Constant {
 
     override fun freshCopy(scope: Scope): Atom = this
 
+    override fun tag(name: String, value: Any): Atom
+
     companion object {
 
         @JvmStatic

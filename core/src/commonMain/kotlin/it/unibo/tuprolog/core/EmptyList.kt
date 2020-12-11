@@ -29,6 +29,8 @@ interface EmptyList : Empty, LogicList {
 
     override fun freshCopy(scope: Scope): EmptyList = this
 
+    override fun tag(name: String, value: Any): EmptyList
+
     companion object {
 
         const val FUNCTOR: String = Empty.EMPTY_LIST_FUNCTOR

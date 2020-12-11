@@ -46,6 +46,8 @@ interface Clause : Struct {
 
     override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 
+    override fun tag(name: String, value: Any): Clause
+
     companion object {
 
         const val FUNCTOR = ":-"

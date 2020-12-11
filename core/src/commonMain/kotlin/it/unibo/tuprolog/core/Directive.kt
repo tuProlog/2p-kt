@@ -22,6 +22,8 @@ interface Directive : Clause {
 
     override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 
+    override fun tag(name: String, value: Any): Directive
+
     companion object {
         @JvmStatic
         @JsName("ofIterable")

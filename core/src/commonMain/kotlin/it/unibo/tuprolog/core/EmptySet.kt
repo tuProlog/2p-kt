@@ -14,6 +14,8 @@ interface EmptySet : Empty, LogicSet {
 
     override fun freshCopy(scope: Scope): EmptySet = this
 
+    override fun tag(name: String, value: Any): EmptySet
+
     companion object {
         const val FUNCTOR: String = Empty.EMPTY_SET_FUNCTOR
 
