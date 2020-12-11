@@ -14,7 +14,7 @@ variables:
   DOC_TASK: "dokkaHtml --parallel"
   SIGN_TASK: "signAllPublications --parallel"
   BINTRAY_TASK: "publishAllToBintray --parallel"
-  CENTRAL_TASK: "publishAllPublicationsToMavenRepository --parallel"
+  CENTRAL_TASK: "publishAllPublicationsToSonatype"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
   GITHUB_PUBLISH_TASK: "githubRelease"
@@ -39,8 +39,8 @@ stages:
   - check
   - build
   - test
-#  - doc
-#  - sign
+  #  - doc
+  #  - sign
   - deploy
 
 Check Code Style:
@@ -83,7 +83,7 @@ Test JS:
 #    - job: Compile
 
 Generate Doc:
-#  stage: doc
+  #  stage: doc
   stage: deploy
   script:
     - $GCMD $BEFORE_TASK $DOC_TASK $AFTER_TASK $GOPTS
@@ -166,6 +166,6 @@ pages:
   artifacts:
     paths:
       - public
-#  allow_failure: true
+  #  allow_failure: true
   only:
     - /^(master)|(release)|(documentation)$/

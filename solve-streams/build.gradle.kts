@@ -4,7 +4,6 @@ val jvmStackSize: String by project
 val jvmMaxHeapSize: String by project
 
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -14,35 +13,8 @@ kotlin {
         }
 
         val commonTest by getting {
-            dependsOn(commonMain)
             dependencies {
                 api(project(":test-solve"))
-            }
-        }
-
-        jvm {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(commonTest)
-                dependsOn(main.defaultSourceSet)
-            }
-        }
-
-        js {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(commonTest)
-                dependsOn(main.defaultSourceSet)
             }
         }
     }

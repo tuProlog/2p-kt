@@ -2,12 +2,12 @@ package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
-import it.unibo.tuprolog.solve.ClassicSolverFactory
 import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory

@@ -57,5 +57,14 @@ interface Integer : Numeric {
         @JvmStatic
         @JsName("parseRadix")
         fun of(integer: String, radix: Int): Integer = of(BigInteger.of(integer, radix))
+
+        @JvmField
+        val ZERO = Integer.of(BigInteger.ZERO)
+
+        @JvmField
+        val ONE = Integer.of(BigInteger.ONE)
+
+        @JvmField
+        val MINUS_ONE = Integer.of(BigInteger.of(-1))
     }
 }
