@@ -39,8 +39,6 @@ interface Tuple : Collection {
             else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
         }
 
-    override fun tag(name: String, value: Any): Tuple
-
     companion object {
 
         const val FUNCTOR = ","

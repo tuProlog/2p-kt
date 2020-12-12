@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 
 /**

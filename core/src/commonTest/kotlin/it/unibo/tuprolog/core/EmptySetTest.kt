@@ -13,6 +13,6 @@ internal class EmptySetTest {
 
     @Test
     fun emptySetCompanionReturnsEmptySetImpl() {
-        assertSame(EmptySetImpl, EmptySet())
+        assertSame(EmptySetImpl(), EmptySet())
     }
 }

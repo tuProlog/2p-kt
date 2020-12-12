@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Term
 
 @Suppress("EqualsOrHashCode")
-internal abstract class TermImpl(override val tags: Map<String, Any>) : Term {
+internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap()) : Term {
 
     protected abstract val hashCodeCache: Int
 
@@ -14,7 +14,4 @@ internal abstract class TermImpl(override val tags: Map<String, Any>) : Term {
 
     override fun toString(): String =
         throw NotImplementedError("Subclasses should override this method")
-
-    protected fun extendTags(name: String, value: Any) =
-        tags + (name to value)
 }

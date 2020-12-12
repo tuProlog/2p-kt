@@ -30,8 +30,6 @@ interface Set : Collection {
             else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
         }
 
-    override fun tag(name: String, value: Any): Set
-
     companion object {
 
         const val FUNCTOR = "{}"

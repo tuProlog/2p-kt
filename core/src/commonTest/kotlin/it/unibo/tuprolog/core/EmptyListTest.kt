@@ -13,6 +13,6 @@ internal class EmptyListTest {
 
     @Test
     fun emptyListCompanionReturnsEmptyListImpl() {
-        assertSame(EmptyListImpl, EmptyList())
+        assertSame(EmptyListImpl(), EmptyList())
     }
 }

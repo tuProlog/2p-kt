@@ -7,7 +7,10 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
-internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
+internal class IntegerImpl(
+    override val value: BigInteger,
+    tags: Map<String, Any> = emptyMap()
+) : NumericImpl(tags), Integer {
 
     override val decimalValue: BigDecimal by lazy {
         BigDecimal.of(intValue)
@@ -16,6 +19,10 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
     override val intValue: BigInteger = value
 
     override fun toString(): String = value.toString()
+
+    override fun replaceTags(tags: Map<String, Any>): Integer {
+        return IntegerImpl(value, tags)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -5,8 +5,11 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
-internal class ConsImpl(override val head: Term, override val tail: Term) :
-    CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
+internal class ConsImpl(
+    override val head: Term,
+    override val tail: Term,
+    tags: Map<String, Any> = emptyMap()
+) : CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail), tags), Cons {
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { LogicListIterator.All(this) }.asSequence()
@@ -47,5 +50,9 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
             " | $last]" to size - 1
         }
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
+    }
+
+    override fun replaceTags(tags: Map<String, Any>): Cons {
+        return ConsImpl(head, tail, tags)
     }
 }

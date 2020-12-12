@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-internal object EmptySetImpl : SetImpl(null), EmptySet {
+internal class EmptySetImpl(
+    tags: Map<String, Any> = emptyMap()
+) : SetImpl(null, tags), EmptySet {
 
     override val args: Array<Term> by lazy { super<EmptySet>.args }
 
@@ -17,4 +19,8 @@ internal object EmptySetImpl : SetImpl(null), EmptySet {
     override val size: Int get() = 0
 
     override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
+
+    override fun replaceTags(tags: Map<String, Any>): EmptySet {
+        return EmptySetImpl(tags)
+    }
 }

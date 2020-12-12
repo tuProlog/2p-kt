@@ -71,8 +71,6 @@ interface Indicator : Struct {
 
     operator fun component2(): Term = arityTerm
 
-    override fun tag(name: String, value: Any): Indicator
-
     companion object {
 
         /** The canonical indicator functor: `/` */

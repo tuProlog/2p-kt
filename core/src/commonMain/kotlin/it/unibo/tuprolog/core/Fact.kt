@@ -16,8 +16,6 @@ interface Fact : Rule {
 
     override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
 
-    override fun tag(name: String, value: Any): Fact
-
     companion object {
         @JvmStatic
         @JsName("of")

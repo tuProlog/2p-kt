@@ -2,11 +2,15 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Clause.Companion.bodyWellFormedVisitor
+import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
-internal abstract class ClauseImpl(override val head: Struct?, override val body: Term) :
-    StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body))), Clause {
+internal abstract class ClauseImpl(
+    override val head: Struct?,
+    override val body: Term,
+    tags: Map<String, Any>
+) : StructImpl(Clause.FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body)), tags), Clause {
 
     override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
@@ -19,4 +23,8 @@ internal abstract class ClauseImpl(override val head: Struct?, override val body
             null -> "$functor $body"
             else -> "$head $functor $body"
         }
+
+    override fun replaceTags(tags: Map<String, Any>): Clause {
+        throw NotImplementedError("Subclasses of ${ClauseImpl::class.simpleName} must implement this method")
+    }
 }

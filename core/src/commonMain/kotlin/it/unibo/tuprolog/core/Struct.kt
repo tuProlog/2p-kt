@@ -94,8 +94,6 @@ interface Struct : Term {
     @JsName("get")
     operator fun get(index: Int): Term = getArgAt(index)
 
-    override fun tag(name: String, value: Any): Struct
-
     companion object {
 
         /** The pattern of a well-formed functor for a Struct */
@@ -135,7 +133,7 @@ interface Struct : Term {
                 args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
                 args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
-                else -> StructImpl(functor, args.toTypedArray())
+                else -> StructImpl(functor, args.toTypedArray(), emptyMap())
             }
 
         @JvmStatic

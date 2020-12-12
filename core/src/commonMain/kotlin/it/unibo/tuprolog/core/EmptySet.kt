@@ -14,17 +14,15 @@ interface EmptySet : Empty, LogicSet {
 
     override fun freshCopy(scope: Scope): EmptySet = this
 
-    override fun tag(name: String, value: Any): EmptySet
-
     companion object {
         const val FUNCTOR: String = Empty.EMPTY_SET_FUNCTOR
 
         @JvmStatic
         @JsName("invoke")
-        operator fun invoke(): EmptySet = EmptySetImpl
+        operator fun invoke(): EmptySet = EmptySetImpl()
 
         @JvmStatic
         @JsName("instance")
-        val instance: EmptySet = EmptySetImpl
+        val instance: EmptySet = EmptySetImpl()
     }
 }

@@ -4,8 +4,11 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.TupleIterator
 
-internal class TupleImpl(override val left: Term, override val right: Term) :
-    CollectionImpl(Tuple.FUNCTOR, arrayOf(left, right)), Tuple {
+internal class TupleImpl(
+    override val left: Term,
+    override val right: Term,
+    tags: Map<String, Any> = emptyMap()
+) : CollectionImpl(Tuple.FUNCTOR, arrayOf(left, right), tags), Tuple {
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { TupleIterator(this) }.asSequence()

@@ -16,8 +16,6 @@ interface Truth : Atom {
 
     override fun freshCopy(scope: Scope): Truth = this
 
-    override fun tag(name: String, value: Any): Truth
-
     companion object {
 
         @JvmField

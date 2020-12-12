@@ -6,7 +6,10 @@ import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
-internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
+internal class RealImpl(
+    override val value: BigDecimal,
+    tags: Map<String, Any> = emptyMap()
+) : NumericImpl(tags), Real {
 
     override val decimalValue: BigDecimal = value
 
@@ -16,6 +19,10 @@ internal class RealImpl(override val value: BigDecimal) : NumericImpl(), Real {
 
     override fun toString(): String =
         Real.toStringEnsuringDecimal(value)
+
+    override fun replaceTags(tags: Map<String, Any>): Real {
+        return RealImpl(value, tags)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -4,8 +4,10 @@ import it.unibo.tuprolog.core.SetIterator
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Set as LogicSet
 
-internal open class SetImpl(private val item: Term?) :
-    CollectionImpl(LogicSet.FUNCTOR, listOfNotNull(item).toTypedArray()), LogicSet {
+internal open class SetImpl(
+    private val item: Term?,
+    tags: Map<String, Any> = emptyMap()
+) : CollectionImpl(LogicSet.FUNCTOR, listOfNotNull(item).toTypedArray(), tags), LogicSet {
 
     override val functor: String = super<LogicSet>.functor
 
@@ -18,4 +20,8 @@ internal open class SetImpl(private val item: Term?) :
         Iterable { SetUnfolder(this) }.asSequence()
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
+
+    override fun replaceTags(tags: Map<String, Any>): LogicSet {
+        return SetImpl(item, tags)
+    }
 }

@@ -1,13 +1,12 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
 internal open class AtomImpl(
     override val functor: String,
-    tags: Map<String, Any>
+    tags: Map<String, Any> = emptyMap()
 ) : StructImpl(functor, emptyArray(), tags), Atom {
 
     override val args: Array<Term> = super<StructImpl>.args
@@ -21,7 +20,7 @@ internal open class AtomImpl(
     override val variables: Sequence<Var>
         get() = emptySequence()
 
-    override fun tag(name: String, value: Any): Atom {
-        return AtomImpl(functor, extendTags(name, value))
+    override fun replaceTags(tags: Map<String, Any>): Atom {
+        return AtomImpl(functor, tags)
     }
 }

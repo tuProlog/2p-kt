@@ -9,8 +9,6 @@ interface Constant : Term {
     @JsName("value")
     val value: Any
 
-    override fun tag(name: String, value: Any): Constant
-
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
      */

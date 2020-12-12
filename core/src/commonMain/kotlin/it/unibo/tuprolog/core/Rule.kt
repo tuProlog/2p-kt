@@ -21,8 +21,6 @@ interface Rule : Clause {
 
     override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
 
-    override fun tag(name: String, value: Any): Rule
-
     companion object {
 
         const val FUNCTOR = ":-"

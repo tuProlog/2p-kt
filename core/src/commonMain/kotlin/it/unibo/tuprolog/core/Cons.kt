@@ -32,8 +32,6 @@ interface Cons : LogicList {
 
     override fun freshCopy(scope: Scope): Cons = super.freshCopy(scope) as Cons
 
-    override fun tag(name: String, value: Any): Cons
-
     companion object {
 
         const val FUNCTOR = "."

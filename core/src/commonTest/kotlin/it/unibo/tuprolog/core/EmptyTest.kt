@@ -14,11 +14,11 @@ class EmptyTest {
 
     @Test
     fun listMethodShouldReturnEmptyList() {
-        assertSame(EmptyListImpl, Empty.list())
+        assertSame(EmptyListImpl(), Empty.list())
     }
 
     @Test
     fun setMethodShouldReturnEmptySet() {
-        assertSame(EmptySetImpl, Empty.set())
+        assertSame(EmptySetImpl(), Empty.set())
     }
 }

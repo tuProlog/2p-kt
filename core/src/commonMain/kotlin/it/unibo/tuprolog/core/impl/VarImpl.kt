@@ -1,11 +1,17 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.setTags
 import kotlin.jvm.Synchronized
 
 @Suppress("EqualsOrHashCode")
-internal class VarImpl(override val name: String, private val identifier: Long = instanceId(name)) : TermImpl(), Var {
+internal class VarImpl(
+    override val name: String,
+    private val identifier: Long = instanceId(name),
+    tags: Map<String, Any> = emptyMap()
+) : TermImpl(tags), Var {
 
     companion object {
         private val nameToInstanceCount = mutableMapOf<String, Long>()
@@ -30,9 +36,19 @@ internal class VarImpl(override val name: String, private val identifier: Long =
 
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
 
-    override fun freshCopy(): Var = VarImpl(name)
+    override fun freshCopy(): Var = VarImpl(name, tags = tags)
+
+    override fun freshCopy(scope: Scope): Var =
+        when {
+            isAnonymous -> scope.anonymous().setTags(tags)
+            else -> scope.varOf(name)
+        }
 
     override fun toString(): String = if (isNameWellFormed) completeName else Var.escapeName(completeName)
+
+    override fun replaceTags(tags: Map<String, Any>): Var {
+        return VarImpl(name, identifier, tags)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
