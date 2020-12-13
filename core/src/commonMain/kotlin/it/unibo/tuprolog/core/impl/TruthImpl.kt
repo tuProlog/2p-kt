@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Truth
 
 internal class TruthImpl(
@@ -12,4 +13,8 @@ internal class TruthImpl(
 
     override fun replaceTags(tags: Map<String, Any>): Truth =
         TruthImpl(value, isTrue, tags)
+
+    override fun freshCopy(): Truth = this
+
+    override fun freshCopy(scope: Scope): Truth = this
 }

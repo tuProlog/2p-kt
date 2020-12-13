@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
@@ -17,4 +18,8 @@ internal class FactImpl(
     override fun replaceTags(tags: Map<String, Any>): Fact {
         return FactImpl(head, tags)
     }
+
+    override fun freshCopy(): Fact = super.freshCopy() as Fact
+
+    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
 }

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 
 internal class EmptyListImpl(
@@ -24,4 +25,8 @@ internal class EmptyListImpl(
     override fun replaceTags(tags: Map<String, Any>): EmptyList {
         return EmptyListImpl(tags)
     }
+
+    override fun freshCopy(): EmptyList = this
+
+    override fun freshCopy(scope: Scope): EmptyList = this
 }

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptySet
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
@@ -23,4 +24,8 @@ internal class EmptySetImpl(
     override fun replaceTags(tags: Map<String, Any>): EmptySet {
         return EmptySetImpl(tags)
     }
+
+    override fun freshCopy(): EmptySet = this
+
+    override fun freshCopy(scope: Scope): EmptySet = this
 }

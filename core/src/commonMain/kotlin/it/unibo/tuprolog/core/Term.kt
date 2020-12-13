@@ -296,7 +296,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
     @JsName("freshCopy")
-    fun freshCopy(): Term = freshCopy(Scope.empty())
+    fun freshCopy(): Term
 
     /**
      * Returns a fresh copy of this Term, similarly to `freshCopy`, possibly reusing variables from the provided scope,
@@ -307,7 +307,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
     @JsName("freshCopyFromScope")
-    fun freshCopy(scope: Scope): Term = this
+    fun freshCopy(scope: Scope): Term
 
     /**
      * Applies a [Substitution] to the current term, producing a new [Term] which differs from the current

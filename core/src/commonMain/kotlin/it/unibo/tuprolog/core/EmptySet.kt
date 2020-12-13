@@ -10,9 +10,9 @@ interface EmptySet : Empty, LogicSet {
     override val isEmptySet: Boolean
         get() = true
 
-    override fun freshCopy(): EmptySet = this
+    override fun freshCopy(): EmptySet
 
-    override fun freshCopy(scope: Scope): EmptySet = this
+    override fun freshCopy(scope: Scope): EmptySet
 
     companion object {
         const val FUNCTOR: String = Empty.EMPTY_SET_FUNCTOR

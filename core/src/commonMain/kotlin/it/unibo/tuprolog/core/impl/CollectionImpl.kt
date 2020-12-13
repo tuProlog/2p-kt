@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Collection
+import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -36,4 +38,8 @@ internal abstract class CollectionImpl(
     override fun replaceTags(tags: Map<String, Any>): Collection {
         throw NotImplementedError("Subclasses of ${CollectionImpl::class.simpleName} must implement this method")
     }
+
+    abstract override fun freshCopy(): Collection
+
+    abstract override fun freshCopy(scope: Scope): Collection
 }

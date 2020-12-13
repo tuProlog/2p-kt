@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
@@ -46,4 +47,8 @@ internal class IntegerImpl(
             is Integer -> value.compareTo(other.value)
             else -> super<NumericImpl>.compareValueTo(other)
         }
+
+    override fun freshCopy(): Integer = this
+
+    override fun freshCopy(scope: Scope): Integer = this
 }

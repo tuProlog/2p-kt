@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.TupleIterator
+import it.unibo.tuprolog.utils.setTags
 
 internal class TupleImpl(
     override val left: Term,
@@ -23,4 +25,13 @@ internal class TupleImpl(
     override val args: Array<Term> get() = super<CollectionImpl>.args
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
+
+    override fun freshCopy(): Tuple =
+        freshCopy(Scope.empty())
+
+    override fun freshCopy(scope: Scope): Tuple =
+        when {
+            isGround -> this
+            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable()).setTags(tags)
+        }
 }

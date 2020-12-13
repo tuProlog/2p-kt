@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
@@ -39,4 +40,8 @@ internal class RealImpl(
     }
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
+
+    override fun freshCopy(): Real = this
+
+    override fun freshCopy(scope: Scope): Real = this
 }

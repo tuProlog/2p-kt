@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Clause.Companion.bodyWellFormedVisitor
 import it.unibo.tuprolog.core.Collection
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
@@ -27,4 +28,8 @@ internal abstract class ClauseImpl(
     override fun replaceTags(tags: Map<String, Any>): Clause {
         throw NotImplementedError("Subclasses of ${ClauseImpl::class.simpleName} must implement this method")
     }
+
+    override fun freshCopy(): Clause = super.freshCopy() as Clause
+
+    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 }

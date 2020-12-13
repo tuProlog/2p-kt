@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 
 /**
@@ -27,4 +28,12 @@ internal class IndicatorImpl(
     override fun replaceTags(tags: Map<String, Any>): Indicator {
         return IndicatorImpl(nameTerm, arityTerm, tags)
     }
+
+    override fun freshCopy(): Indicator = super.freshCopy() as Indicator
+
+    override fun freshCopy(scope: Scope): Indicator =
+        when {
+            isGround -> this
+            else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
+        }
 }

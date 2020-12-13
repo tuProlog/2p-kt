@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -21,6 +22,13 @@ internal open class StructImpl(
     override val argsList: List<Term> by lazy { super.argsList }
 
     override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
+
+    override fun freshCopy(): Struct = super.freshCopy() as Struct
+
+    override fun freshCopy(scope: Scope): Struct = when {
+        isGround -> this
+        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
+    }
 
     override fun replaceTags(tags: Map<String, Any>): Struct =
         StructImpl(functor, args, tags)

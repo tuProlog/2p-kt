@@ -37,9 +37,9 @@ interface Atom : Struct, Constant {
     override val variables: Sequence<Var>
         get() = emptySequence()
 
-    override fun freshCopy(): Atom = this
+    override fun freshCopy(): Atom
 
-    override fun freshCopy(scope: Scope): Atom = this
+    override fun freshCopy(scope: Scope): Atom
 
     companion object {
 

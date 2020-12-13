@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 
@@ -14,4 +15,8 @@ internal class DirectiveImpl(
     override fun replaceTags(tags: Map<String, Any>): Directive {
         return DirectiveImpl(body, tags)
     }
+
+    override fun freshCopy(): Directive = super.freshCopy() as Directive
+
+    override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
 }

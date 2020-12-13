@@ -22,13 +22,9 @@ interface Set : Collection {
 
     override fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun freshCopy(): Set = super.freshCopy() as Set
+    override fun freshCopy(): Set
 
-    override fun freshCopy(scope: Scope): Set =
-        when {
-            isGround -> this
-            else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
-        }
+    override fun freshCopy(scope: Scope): Set
 
     companion object {
 

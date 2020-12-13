@@ -40,9 +40,9 @@ internal class VarImpl(
 
     override fun freshCopy(scope: Scope): Var =
         when {
-            isAnonymous -> scope.anonymous().setTags(tags)
+            isAnonymous -> scope.anonymous()
             else -> scope.varOf(name)
-        }
+        }.setTags(tags)
 
     override fun toString(): String = if (isNameWellFormed) completeName else Var.escapeName(completeName)
 

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.SetIterator
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Set as LogicSet
@@ -24,4 +25,13 @@ internal open class SetImpl(
     override fun replaceTags(tags: Map<String, Any>): LogicSet {
         return SetImpl(item, tags)
     }
+
+    override fun freshCopy(): LogicSet =
+        super.freshCopy() as LogicSet
+
+    override fun freshCopy(scope: Scope): LogicSet =
+        when {
+            isGround -> this
+            else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
+        }
 }

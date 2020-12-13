@@ -56,12 +56,9 @@ interface Struct : Term {
     override val variables: Sequence<Var>
         get() = argsSequence.flatMap { it.variables }
 
-    override fun freshCopy(): Struct = super.freshCopy() as Struct
+    override fun freshCopy(): Struct
 
-    override fun freshCopy(scope: Scope): Struct = when {
-        isGround -> this
-        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
-    }
+    override fun freshCopy(scope: Scope): Struct
 
     @JsName("functor")
     val functor: String

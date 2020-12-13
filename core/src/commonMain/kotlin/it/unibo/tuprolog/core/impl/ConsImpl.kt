@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
@@ -55,4 +56,8 @@ internal class ConsImpl(
     override fun replaceTags(tags: Map<String, Any>): Cons {
         return ConsImpl(head, tail, tags)
     }
+
+    override fun freshCopy(): Cons = super.freshCopy() as Cons
+
+    override fun freshCopy(scope: Scope): Cons = super.freshCopy(scope) as Cons
 }
