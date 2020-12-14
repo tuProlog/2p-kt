@@ -8,6 +8,9 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class TestUrl {
+
+    private val testScriptsBaseUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/snippets/2048665/raw/master"
+
     @Test
     fun testCreation1() {
         val urlString = "http://www.example.com:80/"
@@ -43,33 +46,23 @@ class TestUrl {
     }
 
     @Test
-    fun testPrologScriptRetrieval() {
-        val url = Url.of("https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/snippets/2048665/raw/master/parents.pl")
+    fun testWrongPrologScriptRetrieval() {
+        val url = Url.of("$testScriptsBaseUrl/parents-wrong.pl")
         val text = url.readAsText()
 
         assertEquals(
-            """
-            |male(james1).
-            |male(charles1).
-            |male(charles2).
-            |male(james2).
-            |male(george1).
-            |
-            |female(catherine).
-            |female(elizabeth).
-            |female(sophia).
-            |
-            |parent(charles1, james1).
-            |parent(elizabeth, james1).
-            |parent(charles2, charles1).
-            |parent(catherine, charles1).
-            |parent(james2, charles1).
-            |parent(sophia, elizabeth).
-            |parent(george1, sophia).
-            |
-            |mother(X, Y) :- female(X), parent(X, Y).
-            |father(X, Y) :- male(X), parent(X, Y).
-            """.trimMargin(),
+            ExampleFiles.WRONG_PARENTS,
+            text.trim()
+        )
+    }
+
+    @Test
+    fun testPrologScriptRetrieval() {
+        val url = Url.of("$testScriptsBaseUrl/parents.pl")
+        val text = url.readAsText()
+
+        assertEquals(
+            ExampleFiles.PARENTS,
             text.trim()
         )
     }

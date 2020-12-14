@@ -8,6 +8,12 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":test-solve"))
+            }
+        }
+
         val jsMain by getting {
             dependencies {
                 implementation(npm("sync-request", "6.1.0"))
