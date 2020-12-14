@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve.libs.io
 
 object ExampleFiles {
-    val PARENTS = """
+    val PARENTS =
+        """
             |male(james1).
             |male(charles1).
             |male(charles2).
@@ -24,7 +25,8 @@ object ExampleFiles {
             |father(X, Y) :- male(X), parent(X, Y).
             """.trimMargin()
 
-    val WRONG_PARENTS = """
+    val WRONG_PARENTS =
+        """
             |male(james1).
             |male(charles1).
             |male(charles2).

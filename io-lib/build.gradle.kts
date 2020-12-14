@@ -11,6 +11,8 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(project(":test-solve"))
+                implementation(project(":solve-classic"))
+                implementation(project(":solve-streams"))
             }
         }
 
