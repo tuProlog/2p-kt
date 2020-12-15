@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
+import it.unibo.tuprolog.theory.parsing.ClausesParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -65,6 +66,12 @@ class TestUrl {
             ExampleFiles.PARENTS,
             text.trim()
         )
+
+        val parsed = ClausesParser.withDefaultOperators.parseTheory(text)
+
+        assertTrue {
+            ExampleTheories.PARENTS.equals(parsed, useVarCompleteName = false)
+        }
     }
 
     @Test

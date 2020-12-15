@@ -4,6 +4,7 @@ import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.libs.io.TestConsult
 
 class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
+
     override fun testConsultWorksLocally() {
         TODO("Not yet implemented")
     }
