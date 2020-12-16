@@ -10,8 +10,6 @@ import kotlin.test.fail
 
 class TestUrl {
 
-    private val testScriptsBaseUrl = "https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/-/snippets/2048665/raw/master"
-
     @Test
     fun testCreation1() {
         val urlString = "http://www.example.com:80/"
@@ -48,7 +46,7 @@ class TestUrl {
 
     @Test
     fun testWrongPrologScriptRetrieval() {
-        val url = Url.of("$testScriptsBaseUrl/parents-wrong.pl")
+        val url = Url.of(ExampleUrls.WRONG_PARENTS)
         val text = url.readAsText()
 
         assertEquals(
@@ -59,7 +57,8 @@ class TestUrl {
 
     @Test
     fun testPrologScriptRetrieval() {
-        val url = Url.of("$testScriptsBaseUrl/parents.pl")
+        val url = Url.of(ExampleUrls.PARENTS)
+        println(url)
         val text = url.readAsText()
 
         assertEquals(
@@ -141,5 +140,23 @@ class TestUrl {
             url.readAsText().trim(),
             url.readAsByteArray().decodeToString().trim()
         )
+    }
+
+    @Test
+    fun testUrlParsing() {
+        var url = findResource("Parents.pl")
+        assertEquals("file", url.protocol)
+        assertTrue { url.host.isBlank() }
+        assertNull(url.port)
+        assertNull(url.query)
+        assertTrue { url.isFile }
+        assertTrue { url.path.endsWith("/Parents.pl") }
+        url = Url.of(url.toString())
+        assertEquals("file", url.protocol)
+        assertTrue { url.host.isBlank() }
+        assertNull(url.port)
+        assertNull(url.query)
+        assertTrue { url.isFile }
+        assertTrue { url.path.endsWith("/Parents.pl") }
     }
 }

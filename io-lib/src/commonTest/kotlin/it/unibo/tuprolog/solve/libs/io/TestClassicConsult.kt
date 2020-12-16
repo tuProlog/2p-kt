@@ -8,6 +8,11 @@ class TestClassicConsult : TestConsult, SolverFactory by ClassicSolverFactory {
     private val prototype = TestConsult.prototype(this)
 
     @Test
+    override fun testApi() {
+        prototype.testApi()
+    }
+
+    @Test
     override fun testConsultWorksLocally() {
         prototype.testConsultWorksLocally()
     }

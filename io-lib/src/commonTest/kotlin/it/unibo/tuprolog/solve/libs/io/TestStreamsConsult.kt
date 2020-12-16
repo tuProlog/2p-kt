@@ -8,6 +8,11 @@ class TestStreamsConsult : TestConsult, SolverFactory by StreamsSolverFactory {
     private val prototype = TestConsult.prototype(this)
 
     @Test
+    override fun testApi() {
+        prototype.testApi()
+    }
+
+    @Test
     override fun testConsultWorksLocally() {
         prototype.testConsultWorksLocally()
     }

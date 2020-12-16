@@ -40,7 +40,7 @@ internal abstract class AbstractTheory : Theory {
         return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
     }
 
-    override fun toString(): String = "${Theory::class.simpleName}(clauses=$clauses)"
+    override fun toString(): String = "${this::class.simpleName}{ ${clauses.joinToString(". ")} }"
 
     override fun toString(asPrologText: Boolean): String = when (asPrologText) {
         true -> clauses.joinToString(".\n", "", ".\n")

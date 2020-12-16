@@ -22,7 +22,7 @@ private val REQUEST: dynamic by lazy {
 
 internal fun fetch(url: String, encoding: String): String {
     try {
-        val response = REQUEST("GET", url, js("{ cache: 'file' }"))
+        val response = REQUEST("GET", url, js("{}")) // js("{ cache: 'file' }"))
         return response.getBody(encoding)
     } catch (e: Throwable) {
         throw IOException(e.message, e)
@@ -49,7 +49,7 @@ private fun nodeReadText(path: String): String =
     try {
         FS.readFileSync(path, READ_TEXT).unsafeCast<String>()
     } catch (e: Throwable) {
-        throw IOException("Error while reading file $path", e)
+        throw IOException("Error while reading file `$path`: ${e.message}", e)
     }
 
 fun readText(path: String): String =

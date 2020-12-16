@@ -34,11 +34,11 @@ interface Url {
 
     @JsName("isFile")
     val isFile: Boolean
-        get() = protocol == "file" && host.isBlank() && port == null && query == null
+        get() = protocol == "file"
 
     @JsName("isHttp")
     val isHttp: Boolean
-        get() = protocol.startsWith("http") && host.isNotBlank()
+        get() = protocol.startsWith("http")
 
     companion object {
 
@@ -56,7 +56,7 @@ interface Url {
             val unitGroup =
                 """(\/?${unit.str { "?$it" }}[a-z]\:)"""
             val hostGroup =
-                """(${host.str { "?<$it>" }}[^\s]+[.][a-z]{2,})"""
+                """(${host.str { "?<$it>" }}[^\s/]+[.][a-z]{2,})"""
             val portGroup =
                 """(${port.str { "?<$it>" }}\d+)"""
             val pathGroup =
@@ -66,7 +66,7 @@ interface Url {
             val anchorGroup =
                 """(${anchor.str { "?<$it>" }}.*)"""
             return Regex(
-                """$protocolGroup\:\/+(?:$unitGroup|$hostGroup(?:\:$portGroup)?)$pathGroup(?:\?$queryGroup?)?(?:\#$anchorGroup)?""",
+                """$protocolGroup\:\/+(?:$unitGroup|$hostGroup(?:\:$portGroup)?)?$pathGroup(?:\?$queryGroup?)?(?:\#$anchorGroup)?""",
                 RegexOption.IGNORE_CASE
             )
         }
