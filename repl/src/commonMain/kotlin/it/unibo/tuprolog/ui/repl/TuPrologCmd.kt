@@ -19,6 +19,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 
@@ -112,15 +113,16 @@ class TuPrologCmd : CliktCommand(
             val stacktrace = w.prologStackTrace.joinToString(sep) { it.format(formatter) }
             TermUi.echo("#    at $stacktrace", err = true)
         }
-        return if (oop) {
-            Solver.classicWithDefaultBuiltins(
-                staticKb = theory,
-                libraries = Libraries.of(OOPLib),
-                warnings = outputChannel
-            )
+        val additionalLibraries = if (oop) {
+            Libraries.of(IOLib, OOPLib)
         } else {
-            Solver.classicWithDefaultBuiltins(staticKb = theory, warnings = outputChannel)
-        }.also {
+            Libraries.of(IOLib)
+        }
+        return Solver.classicWithDefaultBuiltins(
+            staticKb = theory,
+            libraries = additionalLibraries,
+            warnings = outputChannel
+        ).also {
             for ((_, library) in it.libraries) {
                 TermUi.echo("# Successfully loaded library `${library.alias}`")
             }

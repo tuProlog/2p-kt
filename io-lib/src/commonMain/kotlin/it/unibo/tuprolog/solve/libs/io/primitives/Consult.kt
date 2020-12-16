@@ -19,6 +19,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 object Consult : UnaryPredicate.NonBacktrackable<ExecutionContext>("consult") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
+        ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsAtom(0)
         val urlString = (first as Atom).value
         try {

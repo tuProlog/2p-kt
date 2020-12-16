@@ -97,7 +97,7 @@ class SyntaxError constructor(
             val lines = this.lineSequence().drop(line - 1).take(1).toList()
             if (lines.isEmpty()) return this
             val padding = kotlin.math.max(line.log10(), (line - 1).log10())
-            val prefix = if (line > 1) { "${(line - 1).toString().padStart(padding)}: ...\n"} else ""
+            val prefix = if (line > 1) { "${(line - 1).toString().padStart(padding)}: ...\n" } else ""
             val culprit = "${line.toString().padStart(padding)}: ${lines.last()}\n"
             val detector = "".padStart(padding + column + 1) + "^ " + (message ?: "")
             return prefix + culprit + detector
