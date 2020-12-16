@@ -237,7 +237,10 @@ interface PrologStdLibScope : PrologAwareScope {
     fun setof(template: Any, goal: Any, bag: Any): Struct =
         structOf("setof", template.toTerm(), goal.toTerm(), bag.toTerm())
 
-//    bagof/3
+    @JsName("consult1")
+    fun consult(url: Any): Struct =
+        structOf("consult", url.toTerm())
+
 //    close/1
 //    close/2
 //    copy_term/2
@@ -278,7 +281,6 @@ interface PrologStdLibScope : PrologAwareScope {
 //    set_output/1
 //    set_prolog_flag/2
 //    set_stream_position/2
-//    setof/3
 //    stream_property/2
 //    unify_with_occurs_check/2
 //    write_canonical/1
