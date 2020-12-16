@@ -50,6 +50,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
                     assertTrue { it is Solution.Halt }
                     val solution = it as Solution.Halt
                     assertTrue { solution.exception is SyntaxError }
+                    println(solution.exception)
                 }
             } catch (e: AssertionError) {
                 throw AssertionError("Unexpected solutions: $solutions")
@@ -74,6 +75,7 @@ class TestConsultImpl(private val solverFactory: SolverFactory) : TestConsult {
                     assertTrue { it is Solution.Halt }
                     val solution = it as Solution.Halt
                     assertTrue { solution.exception is SystemError }
+                    println(solution.exception)
                 }
             } catch (e: AssertionError) {
                 throw AssertionError("Unexpected solutions: $solutions")

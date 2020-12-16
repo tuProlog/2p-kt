@@ -73,8 +73,7 @@ class SyntaxError constructor(
             message(
                 """
                 |Syntax error at $row:$column while parsing clause $index: $message
-                |Input source:
-                |   ${input.replace("\n", "\n|   ")}
+                |   ${input.errorDetector(row, column, message).replace("\n", "\n|   ")}
                 """.trimMargin()
             ) { m, extra ->
                 SyntaxError(
@@ -83,5 +82,25 @@ class SyntaxError constructor(
                     extraData = extra
                 )
             }
+
+        private fun Int.log10(): Int {
+            var result = 0
+            var current = this
+            do {
+                current /= 10
+                result++
+            } while (current > 0)
+            return result
+        }
+
+        private fun String.errorDetector(line: Int, column: Int, message: String? = null): String {
+            val lines = this.lineSequence().drop(line - 1).take(1).toList()
+            if (lines.isEmpty()) return this
+            val padding = kotlin.math.max(line.log10(), (line - 1).log10())
+            val prefix = if (line > 1) { "${(line - 1).toString().padStart(padding)}: ...\n"} else ""
+            val culprit = "${line.toString().padStart(padding)}: ${lines.last()}\n"
+            val detector = "".padStart(padding + column + 1) + "^ " + (message ?: "")
+            return prefix + culprit + detector
+        }
     }
 }
