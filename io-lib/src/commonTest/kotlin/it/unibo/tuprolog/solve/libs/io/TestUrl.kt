@@ -114,4 +114,32 @@ class TestUrl {
             // success
         }
     }
+
+    @Test
+    fun testLocalFileRetrievalAsText() {
+        var url = findResource("Parents.pl")
+        assertEquals(
+            ExampleFiles.PARENTS,
+            url.readAsText().trim()
+        )
+        url = findResource("WrongParents.pl")
+        assertEquals(
+            ExampleFiles.WRONG_PARENTS,
+            url.readAsText().trim()
+        )
+    }
+
+    @Test
+    fun testLocalFileRetrievalAsBytes() {
+        var url = findResource("Parents.pl")
+        assertEquals(
+            url.readAsText().trim(),
+            url.readAsByteArray().decodeToString().trim()
+        )
+        url = findResource("WrongParents.pl")
+        assertEquals(
+            url.readAsText().trim(),
+            url.readAsByteArray().decodeToString().trim()
+        )
+    }
 }

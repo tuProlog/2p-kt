@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+
 kotlin {
     sourceSets {
         val commonMain by getting {
@@ -20,6 +22,17 @@ kotlin {
             dependencies {
                 implementation(npm("sync-request", "6.1.0"))
             }
+        }
+
+        val jsTest by getting
+
+        val testCompileTask = tasks.withType<Kotlin2JsCompile>().matching { "Test" in it.name }.single()
+        tasks.maybeCreate("copyTaskJsResources", Copy::class.java).run {
+            listOf(commonMain, jsMain, commonTest, jsTest).forEach { sourceSet ->
+                from(sourceSet.resources.files)
+            }
+            into(testCompileTask.outputFile.parentFile.parentFile)
+            testCompileTask.dependsOn(this)
         }
     }
 }

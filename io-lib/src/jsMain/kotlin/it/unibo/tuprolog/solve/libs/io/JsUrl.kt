@@ -50,11 +50,7 @@ class JsUrl : Url {
     }
 
     override fun readAsByteArray(): ByteArray {
-        if (isFile) {
-            return readBin(path)
-        } else {
-            return fetch(url, "UTF-8").encodeToByteArray()
-        }
+        return readAsText().encodeToByteArray()
     }
 
     override fun equals(other: Any?): Boolean {

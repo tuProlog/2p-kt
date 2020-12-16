@@ -110,6 +110,6 @@ interface Url {
         fun of(string: String): Url = parseUrl(string)
 
         internal fun toString(protocol: String, host: String = "", port: Int? = null, path: String = "", query: String? = null): String =
-            "$protocol://$host${port?.ensureValidPort()?.str { ":$it" }}$path${query.str { "?$it" }}"
+            "$protocol://$host${port?.ensureValidPort().str { ":$it" }}$path${query.str { "?$it" }}"
     }
 }
