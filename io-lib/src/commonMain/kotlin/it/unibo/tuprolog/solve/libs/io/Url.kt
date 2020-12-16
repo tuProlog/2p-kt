@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.libs.io
 
+import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -107,7 +108,15 @@ interface Url {
 
         @JvmStatic
         @JsName("of")
-        fun of(string: String): Url = parseUrl(string)
+        fun of(string: String): Url = try {
+            parseUrl(string)
+        } catch (e: InvalidUrlException) {
+            try {
+                parseUrl("file://$string")
+            } catch (_: InvalidUrlException) {
+                throw e
+            }
+        }
 
         internal fun toString(protocol: String, host: String = "", port: Int? = null, path: String = "", query: String? = null): String =
             "$protocol://$host${port?.ensureValidPort().str { ":$it" }}$path${query.str { "?$it" }}"
