@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.libs.io.exceptions.IOException
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import java.io.BufferedInputStream
 import java.io.BufferedReader
+import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.net.MalformedURLException
 import java.net.URL
@@ -35,8 +36,10 @@ data class JvmUrl(private val url: URL) : Url {
     override fun readAsText(): String =
         try {
             BufferedReader(InputStreamReader(url.openStream())).lines().asSequence().joinToString("\n")
+        } catch (e: FileNotFoundException) {
+            throw IOException("Cannot find resource: $url", e)
         } catch (e: java.io.IOException) {
-            throw IOException(e.message, e)
+            throw IOException("Generic I/O error while accessing: $url", e)
         }
 
     override fun readAsByteArray(): ByteArray =

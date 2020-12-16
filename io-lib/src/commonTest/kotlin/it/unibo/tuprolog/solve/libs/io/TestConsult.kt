@@ -15,4 +15,12 @@ interface TestConsult : SolverTest {
     fun testConsultWorksLocally()
 
     fun testConsultWorksRemotely()
+
+    fun testConsultingWrongTheoryWorksLocally()
+
+    fun testConsultingWrongTheoryWorksRemotely()
+
+    fun testConsultingMissingTheoryWorksLocally()
+
+    fun testConsultingMissingTheoryWorksRemotely()
 }

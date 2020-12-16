@@ -21,4 +21,24 @@ class TestClassicConsult : TestConsult, SolverFactory by ClassicSolverFactory {
     override fun testConsultWorksRemotely() {
         prototype.testConsultWorksRemotely()
     }
+
+    @Test
+    override fun testConsultingWrongTheoryWorksLocally() {
+        prototype.testConsultWorksRemotely()
+    }
+
+    @Test
+    override fun testConsultingWrongTheoryWorksRemotely() {
+        prototype.testConsultingWrongTheoryWorksRemotely()
+    }
+
+    @Test
+    override fun testConsultingMissingTheoryWorksLocally() {
+        prototype.testConsultingMissingTheoryWorksLocally()
+    }
+
+    @Test
+    override fun testConsultingMissingTheoryWorksRemotely() {
+        prototype.testConsultingMissingTheoryWorksRemotely()
+    }
 }
