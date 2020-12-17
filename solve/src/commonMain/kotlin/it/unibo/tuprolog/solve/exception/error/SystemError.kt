@@ -42,6 +42,17 @@ class SystemError constructor(
         /** The system error Struct functor */
         const val typeFunctor = "system_error"
 
+        @JsName("forUncaughtKtException")
+        @JvmStatic
+        fun forUncaughtException(context: ExecutionContext, exception: Exception): SystemError =
+            message("Uncaught exception `${exception::class.simpleName}: ${exception.message}`") { m, extra ->
+                SystemError(
+                    message = m,
+                    context = context,
+                    extraData = extra
+                )
+            }
+
         @JsName("forUncaughtException")
         @JvmStatic
         fun forUncaughtException(context: ExecutionContext, exception: Term): SystemError =

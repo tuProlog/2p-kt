@@ -12,6 +12,7 @@ kotlin {
                 api("com.github.ajalt:clikt-multiplatform:_")
                 api(project(":core"))
                 api(project(":oop-lib"))
+                api(project(":io-lib"))
                 api(project(":solve-classic"))
                 api(project(":parser-theory"))
             }

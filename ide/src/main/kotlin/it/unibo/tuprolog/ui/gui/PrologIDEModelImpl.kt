@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
@@ -92,7 +93,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private val solver = Cached.of {
         MutableSolver.classicWithDefaultBuiltins(
-            libraries = Libraries.of(OOPLib),
+            libraries = Libraries.of(OOPLib, IOLib),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },

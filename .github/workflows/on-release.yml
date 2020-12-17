@@ -374,7 +374,7 @@ jobs:
 #        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on Maven Central Repo
-        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+        run: gradle ${{ env.gradle-options }} publishAllPublicationsToSonatype
 #        if: contains(github.ref, 'master')
         env:
           ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.OSSRH_USERNAME }}
