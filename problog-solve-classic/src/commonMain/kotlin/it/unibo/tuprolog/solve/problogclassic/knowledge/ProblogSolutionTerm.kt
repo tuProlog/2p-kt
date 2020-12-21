@@ -36,5 +36,4 @@ data class ProblogSolutionTerm(
         result = 31 * result + term.hashCode()
         return result
     }
-
 }

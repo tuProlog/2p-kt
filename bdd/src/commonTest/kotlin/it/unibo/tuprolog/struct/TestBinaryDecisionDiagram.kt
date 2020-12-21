@@ -1,9 +1,5 @@
 package it.unibo.tuprolog.struct
 
-import it.unibo.tuprolog.struct.impl.applyAnd
-import it.unibo.tuprolog.struct.impl.applyNot
-import it.unibo.tuprolog.struct.impl.applyOr
-import it.unibo.tuprolog.struct.impl.toTreeString
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

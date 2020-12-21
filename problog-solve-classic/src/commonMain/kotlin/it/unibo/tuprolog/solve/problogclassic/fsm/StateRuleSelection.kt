@@ -15,7 +15,6 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.problogclassic.ProblogChoicePointContext
 import it.unibo.tuprolog.solve.problogclassic.ProblogClassicExecutionContext
-import it.unibo.tuprolog.solve.problogclassic.probability
 import it.unibo.tuprolog.solve.problogclassic.problogNot
 import it.unibo.tuprolog.solve.problogclassic.stdlib.magic.MagicProbNegation
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut

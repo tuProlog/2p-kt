@@ -2,8 +2,12 @@ package it.unibo.tuprolog.struct.impl
 
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
-import kotlin.js.JsName
 
+/**
+ * Formats a [BinaryDecisionDiagram] as a tree-like string.
+ *
+ * @author Jason Dellaluce
+ */
 internal class TreeStringBinaryDecisionDiagramVisitor<T : Comparable<T>> : BinaryDecisionDiagramVisitor<T> {
 
     private var depth = 0
@@ -28,16 +32,4 @@ internal class TreeStringBinaryDecisionDiagramVisitor<T : Comparable<T>> : Binar
         node.high.accept(this)
         depth--
     }
-}
-
-/**
- * Formats a [BinaryDecisionDiagram] as a tree-like string.
- *
- * @author Jason Dellaluce
- */
-@JsName("toTreeString")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toTreeString(): String {
-    val visitor = TreeStringBinaryDecisionDiagramVisitor<T>()
-    this.accept(visitor)
-    return visitor.stringBuilder.toString()
 }

@@ -2,12 +2,10 @@ package it.unibo.tuprolog.struct.impl
 
 import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.struct.exception.DataStructureOperationException
-import kotlin.js.JsName
 
 /**
  * This visitor implements the "Apply" [BinaryDecisionDiagram] construction algorithm. Although it is one of
- * the simplest solutions for BDD construction, it is able to produce Reduced Ordered Binary Decision Diagrams (ROBDD).
+ * the simplest solutions for BDD construction, it is able to produce Ordered Binary Decision Diagrams (OBDD).
  * The "apply" operation can be used to perform any boolean operation over BDDs.
  *
  * @author Jason Dellaluce
@@ -23,7 +21,11 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
         }
 
         override fun visit(node: BinaryDecisionDiagram.Var<T>) {
-            result = BinaryDecisionDiagram.Var(node.value, node.low.apply(operator), node.high.apply(operator))
+            val lowVisitor = Unary<T>(operator)
+            val highVisitor = Unary<T>(operator)
+            node.low.accept(lowVisitor)
+            node.high.accept(highVisitor)
+            result = BinaryDecisionDiagram.Var(node.value, lowVisitor.result!!, highVisitor.result!!)
         }
     }
 
@@ -37,10 +39,14 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
                     BinaryDecisionDiagram.Terminal(operator(node.value, thatNode.value))
                 }
                 is BinaryDecisionDiagram.Var -> {
+                    val lowVisitor = Binary(thatNode.low, operator)
+                    val highVisitor = Binary(thatNode.high, operator)
+                    node.accept(lowVisitor)
+                    node.accept(highVisitor)
                     BinaryDecisionDiagram.Var(
                         thatNode.value,
-                        node.apply(thatNode.low, operator),
-                        node.apply(thatNode.high, operator)
+                        lowVisitor.result!!,
+                        highVisitor.result!!,
                     )
                 }
             }
@@ -49,7 +55,9 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
         override fun visit(node: BinaryDecisionDiagram.Var<T>) {
             result = when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
-                    thatNode.apply(node, operator)
+                    val visitor = Binary(node, operator)
+                    thatNode.accept(visitor)
+                    visitor.result!!
                 }
                 is BinaryDecisionDiagram.Var -> {
                     val newValue: T
@@ -75,69 +83,17 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
                         secondHigh = thatNode
                     }
 
+                    val lowVisitor = Binary(secondLow, operator)
+                    val highVisitor = Binary(secondHigh, operator)
+                    firstLow.accept(lowVisitor)
+                    firstHigh.accept(highVisitor)
                     BinaryDecisionDiagram.Var(
                         newValue,
-                        firstLow.apply(secondLow, operator),
-                        firstHigh.apply(secondHigh, operator)
+                        lowVisitor.result!!,
+                        highVisitor.result!!
                     )
                 }
             }
         }
     }
 }
-
-internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
-    unaryOp: (Boolean) -> Boolean
-): BinaryDecisionDiagram<T> {
-    val visitor = ApplyBinaryDecisionDiagramVisitor.Unary<T>(unaryOp)
-    this.accept(visitor)
-    if (visitor.result != null) {
-        return visitor.result!!
-    }
-    throw DataStructureOperationException("Null result on BDD apply unary operation")
-}
-
-internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
-    that: BinaryDecisionDiagram<T>,
-    binaryOp: (Boolean, Boolean) -> Boolean
-): BinaryDecisionDiagram<T> {
-    val visitor = ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp)
-    this.accept(visitor)
-    if (visitor.result != null) {
-        return visitor.result!!
-    }
-    throw DataStructureOperationException("Null result on BDD apply binary operation")
-}
-
-/**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "Not" unary boolean operation.
- * @author Jason Dellaluce
- */
-@JsName("applyNot")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyNot(): BinaryDecisionDiagram<T> {
-    return this.apply { a -> !a }
-}
-
-/**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "And" binary boolean operation over
- * [this] BDD and another one, returning a newly constructed BDD as result.
- *
- * @author Jason Dellaluce
- */
-@JsName("applyAnd")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyAnd(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a && b }
-    }
-
-/**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "Or" binary boolean operation over
- * [this] BDD and another one, returning a newly constructed BDD as result.
- *
- * @author Jason Dellaluce
- */
-@JsName("applyOr")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyOr(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a || b }
-    }

@@ -40,6 +40,7 @@ kotlinMultiplatform {
     developer("Davide Greco", "davide.greco4@studio.unibo.it")
     developer("Silvia Lanzoni", "silvia.lanzoni5@studio.unibo.it")
     developer("Lorenzo Rizzato", "lorenzo.rizzato@studio.unibo.it")
+    developer("Jason Dellaluce", "jason.dellaluce@studio.unibo.it")
 }
 
 kotlin {
