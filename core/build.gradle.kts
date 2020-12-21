@@ -6,7 +6,6 @@ val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
 
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {

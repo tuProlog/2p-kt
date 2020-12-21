@@ -157,6 +157,14 @@ interface PrologStdLibScope : PrologAwareScope {
     infix fun Any.`=!=`(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
 
+    @JsName("power")
+    infix fun Any.`**`(right: Any): Struct =
+        structOf("**", this.toTerm(), right.toTerm())
+
+    @JsName("pow")
+    infix fun Any.`^`(right: Any): Struct =
+        structOf("^", this.toTerm(), right.toTerm())
+
     @JsName("member2")
     fun member(item: Any, list: Any): Struct =
         structOf("member", item.toTerm(), list.toTerm())
@@ -209,8 +217,27 @@ interface PrologStdLibScope : PrologAwareScope {
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
 
+    @JsName("sub_atom5")
+    fun sub_atom(atom: Any, before: Any, length: Any, after: Any, sub_atom: Any): Struct =
+        structOf("sub_atom", atom.toTerm(), before.toTerm(), length.toTerm(), after.toTerm(), sub_atom.toTerm())
+
+    @JsName("number_chars2")
+    fun number_chars(first: Any, second: Any): Struct =
+        structOf("number_chars", first.toTerm(), second.toTerm())
+
+    @JsName("number_codes2")
+    fun number_codes(first: Any, second: Any): Struct =
+        structOf("number_codes", first.toTerm(), second.toTerm())
+
+    @JsName("bagof3")
+    fun bagof(template: Any, goal: Any, bag: Any): Struct =
+        structOf("bagof", template.toTerm(), goal.toTerm(), bag.toTerm())
+
+    @JsName("setof3")
+    fun setof(template: Any, goal: Any, bag: Any): Struct =
+        structOf("setof", template.toTerm(), goal.toTerm(), bag.toTerm())
+
 //    bagof/3
-//    char_code/2
 //    close/1
 //    close/2
 //    copy_term/2
@@ -253,7 +280,6 @@ interface PrologStdLibScope : PrologAwareScope {
 //    set_stream_position/2
 //    setof/3
 //    stream_property/2
-//    sub_atom/5
 //    unify_with_occurs_check/2
 //    write_canonical/1
 //    write_canonical/2

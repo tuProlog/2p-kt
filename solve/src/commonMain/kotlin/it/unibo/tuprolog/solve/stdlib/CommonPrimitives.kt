@@ -16,9 +16,14 @@ import it.unibo.tuprolog.solve.stdlib.primitive.AssertA
 import it.unibo.tuprolog.solve.stdlib.primitive.AssertZ
 import it.unibo.tuprolog.solve.stdlib.primitive.Atom
 import it.unibo.tuprolog.solve.stdlib.primitive.AtomChars
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomCodes
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomConcat
+import it.unibo.tuprolog.solve.stdlib.primitive.AtomLength
 import it.unibo.tuprolog.solve.stdlib.primitive.Atomic
+import it.unibo.tuprolog.solve.stdlib.primitive.BagOf
 import it.unibo.tuprolog.solve.stdlib.primitive.Between
 import it.unibo.tuprolog.solve.stdlib.primitive.Callable
+import it.unibo.tuprolog.solve.stdlib.primitive.CharCode
 import it.unibo.tuprolog.solve.stdlib.primitive.Clause
 import it.unibo.tuprolog.solve.stdlib.primitive.Compound
 import it.unibo.tuprolog.solve.stdlib.primitive.CopyTerm
@@ -37,11 +42,15 @@ import it.unibo.tuprolog.solve.stdlib.primitive.NewLine
 import it.unibo.tuprolog.solve.stdlib.primitive.NonVar
 import it.unibo.tuprolog.solve.stdlib.primitive.NotUnifiableWith
 import it.unibo.tuprolog.solve.stdlib.primitive.Number
+import it.unibo.tuprolog.solve.stdlib.primitive.NumberChars
+import it.unibo.tuprolog.solve.stdlib.primitive.NumberCodes
 import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
 import it.unibo.tuprolog.solve.stdlib.primitive.Retract
 import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
+import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
+import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThanOrEqualTo
 import it.unibo.tuprolog.solve.stdlib.primitive.TermIdentical
@@ -71,9 +80,14 @@ object CommonPrimitives {
             AssertZ,
             Atom,
             AtomChars,
+            AtomCodes,
+            AtomConcat,
             Atomic,
+            AtomLength,
             Between,
+            BagOf,
             Callable,
+            CharCode,
             Clause,
             Compound,
             CopyTerm,
@@ -92,11 +106,15 @@ object CommonPrimitives {
             NonVar,
             NotUnifiableWith,
             Number,
+            NumberChars,
+            NumberCodes,
             Op,
             Repeat,
             Retract,
             RetractAll,
+            SetOf,
             Sleep,
+            SubAtom,
             TermGreaterThan,
             TermGreaterThanOrEqualTo,
             TermIdentical,
