@@ -26,7 +26,6 @@ sealed class NegationAsFailure : RuleWrapper<ExecutionContext>(FUNCTOR, ARITY) {
                 structOf(Call.functor, varOf("X")),
                 MagicCut,
                 MagicProbNegation,
-                MagicCut
             )
     }
 

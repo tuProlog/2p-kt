@@ -84,12 +84,20 @@ internal abstract class ProblogClauseMapper {
         var probSum = 0.0
         return disjointHeads.map { cur ->
             val curProb = (cur[0] as Numeric).decimalValue.toDouble()
-            var curRuleBody = body
-            prevHeadList.forEach { curRuleBody = Struct.of(Comma.functor, curRuleBody, Struct.of(NegationAsFailure.FUNCTOR, it)) }
             val curRuleHead = if (cur[1] is Struct) cur[1] as Struct else Struct.of(cur[1].toString())
-            prevHeadList.add(curRuleHead)
+            var curRuleBody = body
+
             probSum += curProb
-            ProblogRule(clauseIndex++, curProb / (1.0 - (probSum - curProb)), curRuleHead, curRuleBody)
+            prevHeadList.forEach {
+                curRuleBody = Struct.of(Comma.functor, curRuleBody, Struct.of(NegationAsFailure.FUNCTOR, it))
+            }
+            prevHeadList.add(curRuleHead)
+            ProblogRule(
+                    clauseIndex++,
+                    curProb / (1.0 - (probSum - curProb)),
+                    curRuleHead,
+                    curRuleBody
+            )
         }.toList()
     }
 

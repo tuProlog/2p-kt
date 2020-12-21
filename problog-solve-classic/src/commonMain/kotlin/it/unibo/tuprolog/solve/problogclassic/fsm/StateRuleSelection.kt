@@ -143,20 +143,21 @@ internal data class StateRuleSelection(override val context: ProblogClassicExecu
                 val ruleSources = sequenceOf(libraries.theory, staticKb, dynamicKb)
 
                 when {
+                    /**
+                     * This catches the concept of "probabilistic negation". This means if a negate goal is true
+                     * we should not transit to a fail state, but we should negate the current BDD instead.
+                     *
+                     * @author Jason Dellaluce
+                     */
                     currentGoal is MagicProbNegation -> {
-                        val negBdd = context.bdd.problogNot()
-                        /* TODO: This is quite an expensive check, maybe we can avoid it */
-                        if (negBdd.probability() == 0.0) {
-                            failureState
-                        } else {
-                            ignoreState.let {
-                                it.copy(
-                                    context = it.context.copy(
-                                        bdd = negBdd,
-                                        probRules = probRules
-                                    )
+                        ignoreState.let {
+                            it.copy(
+                                context = it.context.copy(
+                                    bdd = context.bdd.problogNot(),
+                                    probRules = probRules,
+                                    step = nextStep()
                                 )
-                            }
+                            )
                         }
                     }
 
