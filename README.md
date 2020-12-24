@@ -1,10 +1,12 @@
-# 2P in Kotlin
+# 2P-Kt
 
 Some quick links:
-* [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (the one used by developers)
-* [GitHub Repository](https://github.com/tuProlog/2p-kt) (where JVM releases are hosted)
+* [Home Page](http://tuprolog.unibo.it)
+* [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (used by developers)
+* [GitHub Repository](https://github.com/tuProlog/2p-kt) (public mirrored repository where JVM binaries are hosted)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
-* [Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted)
+* [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
+* [Bintray Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases)
 * [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/)
 
 ## Intro
