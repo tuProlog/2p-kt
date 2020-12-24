@@ -13,7 +13,6 @@ internal class AnyBinaryDecisionDiagramVisitor<T : Comparable<T>>(
     var result = false
 
     override fun visit(node: BinaryDecisionDiagram.Terminal<T>) {
-
     }
 
     override fun visit(node: BinaryDecisionDiagram.Var<T>) {

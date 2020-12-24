@@ -62,7 +62,7 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
  * element in the original [BinaryDecisionDiagram]. The internal structure of the diagram is maintained.
  */
 @JsName("map")
-fun <T : Comparable<T>, E: Comparable<E>> BinaryDecisionDiagram<T>.map(
+fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
     mapper: (T) -> E
 ): BinaryDecisionDiagram<E> {
     return this.expansion(

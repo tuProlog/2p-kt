@@ -64,7 +64,6 @@ class TestBinaryDecisionDiagram {
             )
         val visitor = ProbBinaryDecisionDiagramVisitor()
         bdd.accept(visitor)
-        println(bdd.toTreeString())
         assertTrue(visitor.prob >= 0.37 - doubleEpsilon)
         assertTrue(visitor.prob <= 0.37 + doubleEpsilon)
     }
