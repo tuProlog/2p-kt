@@ -18,12 +18,13 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 
-class TuPrologCmd : CliktCommand(
+class TuPrologCmd(vararg additionalLibraries: AliasedLibrary) : CliktCommand(
     invokeWithoutSubcommand = true,
     allowMultipleSubcommands = true,
     name = "java -jar 2p-repl.jar",
@@ -33,6 +34,8 @@ class TuPrologCmd : CliktCommand(
     companion object {
         const val DEFAULT_TIMEOUT: Int = 1000 // 1 s
     }
+
+    private val additionalLibraries: Array<out AliasedLibrary> = additionalLibraries
 
     private val files: List<String> by option("-T", "--theory", help = "Path of theory file to be loaded")
         .multiple()
@@ -113,14 +116,14 @@ class TuPrologCmd : CliktCommand(
             val stacktrace = w.prologStackTrace.joinToString(sep) { it.format(formatter) }
             TermUi.echo("#    at $stacktrace", err = true)
         }
-        val additionalLibraries = if (oop) {
-            Libraries.of(IOLib, OOPLib)
+        val libraries = if (oop) {
+            Libraries.of(IOLib, OOPLib, *additionalLibraries)
         } else {
-            Libraries.of(IOLib)
+            Libraries.of(IOLib, *additionalLibraries)
         }
         return Solver.classicWithDefaultBuiltins(
             staticKb = theory,
-            libraries = additionalLibraries,
+            libraries = libraries,
             warnings = outputChannel
         ).also {
             for ((_, library) in it.libraries) {
