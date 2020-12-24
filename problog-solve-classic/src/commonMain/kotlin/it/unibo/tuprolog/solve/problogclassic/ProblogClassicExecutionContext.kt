@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.problogclassic
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -26,7 +27,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogRule
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
 import it.unibo.tuprolog.solve.toOperatorSet
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.Cursor

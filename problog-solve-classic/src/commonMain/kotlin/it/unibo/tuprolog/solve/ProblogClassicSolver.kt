@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.Libraries
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.solve.problogclassic.fsm.clone
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
 import it.unibo.tuprolog.solve.problogclassic.probability
 import it.unibo.tuprolog.solve.problogclassic.problogOr
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 

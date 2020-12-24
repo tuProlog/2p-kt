@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.problogclassic.fsm
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -14,7 +15,6 @@ import it.unibo.tuprolog.solve.problogclassic.appendRules
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogRule
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
 import it.unibo.tuprolog.solve.problogclassic.problogAnd
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 

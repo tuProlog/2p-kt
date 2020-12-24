@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.struct.impl
+package it.unibo.tuprolog.bdd.impl
 
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
-import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
 
 /**
  * This visitor implements the "Apply" [BinaryDecisionDiagram] construction algorithm. Although it is one of

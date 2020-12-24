@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.problogclassic
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
+import it.unibo.tuprolog.bdd.applyAnd
+import it.unibo.tuprolog.bdd.applyNot
+import it.unibo.tuprolog.bdd.applyOr
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
-import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.struct.impl.applyAnd
-import it.unibo.tuprolog.struct.impl.applyNot
-import it.unibo.tuprolog.struct.impl.applyOr
 import kotlin.js.JsName
 
 /**

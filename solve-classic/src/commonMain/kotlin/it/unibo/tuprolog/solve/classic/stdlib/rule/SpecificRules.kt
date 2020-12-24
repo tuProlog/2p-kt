@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.classic.stdlib.rule
 import it.unibo.tuprolog.theory.Theory
 
 object SpecificRules {
-    val wrappers = sequenceOf(
+    private val wrappers = sequenceOf(
         Catch,
         Call,
         Comma,

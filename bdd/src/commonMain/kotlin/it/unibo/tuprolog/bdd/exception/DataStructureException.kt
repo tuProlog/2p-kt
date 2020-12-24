@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.struct.exception
+package it.unibo.tuprolog.bdd.exception
 
 import it.unibo.tuprolog.core.exception.TuPrologException
 import kotlin.jvm.JvmOverloads

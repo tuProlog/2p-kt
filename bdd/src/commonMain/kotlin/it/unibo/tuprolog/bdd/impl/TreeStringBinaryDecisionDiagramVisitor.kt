@@ -1,7 +1,7 @@
-package it.unibo.tuprolog.struct.impl
+package it.unibo.tuprolog.bdd.impl
 
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
-import it.unibo.tuprolog.struct.BinaryDecisionDiagramVisitor
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
 
 /**
  * Formats a [BinaryDecisionDiagram] as a tree-like string.

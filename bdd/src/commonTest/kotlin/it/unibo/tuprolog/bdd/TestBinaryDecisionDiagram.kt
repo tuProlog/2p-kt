@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.struct
+package it.unibo.tuprolog.bdd
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.problogclassic.knowledge
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 
 /**
  * This represents a solved ground term involved in the resolution of a probabilistic logic query.

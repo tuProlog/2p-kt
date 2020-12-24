@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problogclassic.fsm.EndState
 import it.unibo.tuprolog.solve.problogclassic.fsm.State
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
-import it.unibo.tuprolog.struct.BinaryDecisionDiagram
 
 internal class ProblogClassicSolutionIterator(
     state: State,
