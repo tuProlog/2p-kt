@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
  * Represents a Prolog Goal solver
@@ -18,6 +19,17 @@ interface Solver : ExecutionContextAware {
     fun solve(goal: Struct): Sequence<Solution> = solve(goal, TimeDuration.MAX_VALUE)
 
     companion object {
-        // To be extended through extension methods
+
+        @JvmStatic
+        @JsName("classic")
+        val classic: SolverFactory by lazy {
+            classicSolverFactory()
+        }
+
+        @JvmStatic
+        @JsName("streams")
+        val streams: SolverFactory by lazy {
+            streamsSolverFactory()
+        }
     }
 }

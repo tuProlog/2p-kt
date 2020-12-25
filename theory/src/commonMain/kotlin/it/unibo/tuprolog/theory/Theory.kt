@@ -134,6 +134,9 @@ interface Theory : Iterable<Clause> {
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String
 
+    @JsName("equalsUsingVarCompleteNames")
+    fun equals(other: Theory, useVarCompleteName: Boolean): Boolean
+
     companion object {
 
         private val EMPTY: Theory =
