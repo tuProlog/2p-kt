@@ -21,9 +21,7 @@ internal open class AtomImpl(
     override val variables: Sequence<Var>
         get() = emptySequence()
 
-    override fun replaceTags(tags: Map<String, Any>): Atom {
-        return AtomImpl(functor, tags)
-    }
+    override fun replaceTags(tags: Map<String, Any>): Atom = AtomImpl(functor, tags)
 
     override fun freshCopy(): Atom = this
 

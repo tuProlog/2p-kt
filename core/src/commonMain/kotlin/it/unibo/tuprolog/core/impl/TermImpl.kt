@@ -10,11 +10,9 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
 
     final override fun hashCode(): Int = hashCodeCache
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        throw NotImplementedError("Subclasses should override this method")
+    abstract override fun equals(other: Term, useVarCompleteName: Boolean): Boolean
 
-    override fun toString(): String =
-        throw NotImplementedError("Subclasses should override this method")
+    abstract override fun toString(): String
 
     override fun freshCopy(): Term = this
 

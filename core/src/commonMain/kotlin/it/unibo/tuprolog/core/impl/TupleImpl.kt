@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.TupleIterator
@@ -17,8 +19,7 @@ internal class TupleImpl(
 
     override val size: Int get() = unfoldedList.size
 
-    override fun unfold(): Sequence<Term> =
-        Iterable { TupleUnfolder(this) }.asSequence()
+    override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
 
     override val functor: String = Tuple.FUNCTOR
 
@@ -26,12 +27,13 @@ internal class TupleImpl(
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
 
-    override fun freshCopy(): Tuple =
-        freshCopy(Scope.empty())
+    override fun replaceTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
+
+    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
 
     override fun freshCopy(scope: Scope): Tuple =
         when {
             isGround -> this
-            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable()).setTags(tags)
+            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
 }

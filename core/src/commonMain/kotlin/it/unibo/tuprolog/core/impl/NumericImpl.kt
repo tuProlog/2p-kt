@@ -9,6 +9,7 @@ import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
 internal abstract class NumericImpl(tags: Map<String, Any>) : TermImpl(tags), Numeric {
+
     override fun structurallyEquals(other: Term): Boolean =
         other is NumericImpl && decimalValue.compareTo(other.decimalValue) == 0
 
@@ -16,15 +17,11 @@ internal abstract class NumericImpl(tags: Map<String, Any>) : TermImpl(tags), Nu
 
     abstract override val intValue: BigInteger
 
-    override fun equals(other: Any?): Boolean =
-        throw NotImplementedError("Subclasses should override this method")
+    abstract override fun equals(other: Any?): Boolean
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        throw NotImplementedError("Subclasses should override this method")
+    abstract override fun equals(other: Term, useVarCompleteName: Boolean): Boolean
 
-    override fun replaceTags(tags: Map<String, Any>): Numeric {
-        throw NotImplementedError("Subclasses should override this method")
-    }
+    abstract override fun replaceTags(tags: Map<String, Any>): Numeric
 
     abstract override fun freshCopy(): Numeric
 

@@ -14,16 +14,9 @@ internal class RealImpl(
 
     override val decimalValue: BigDecimal = value
 
-    override val intValue: BigInteger by lazy {
-        value.toBigInteger()
-    }
+    override val intValue: BigInteger by lazy { value.toBigInteger() }
 
-    override fun toString(): String =
-        Real.toStringEnsuringDecimal(value)
-
-    override fun replaceTags(tags: Map<String, Any>): Real {
-        return RealImpl(value, tags)
-    }
+    override fun toString(): String = Real.toStringEnsuringDecimal(value)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,6 +33,8 @@ internal class RealImpl(
     }
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
+
+    override fun replaceTags(tags: Map<String, Any>): Real = RealImpl(value, tags)
 
     override fun freshCopy(): Real = this
 

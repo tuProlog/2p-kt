@@ -21,9 +21,7 @@ internal class EmptySetImpl(
 
     override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
 
-    override fun replaceTags(tags: Map<String, Any>): EmptySet {
-        return EmptySetImpl(tags)
-    }
+    override fun replaceTags(tags: Map<String, Any>): EmptySet = EmptySetImpl(tags)
 
     override fun freshCopy(): EmptySet = this
 

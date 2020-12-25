@@ -137,7 +137,7 @@ internal class TermFormatterWithPrettyExpressions(
         priorityPredicate: (Int) -> Boolean,
         specifierPredicate: Specifier.() -> Boolean
     ): Pair<Specifier, Int>? {
-        return operators[functor]?.asSequence()
+        return this[functor]?.asSequence()
             ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
             ?.filter { it.key.name !in forceParentheses }
             ?.map { it.toPair() }

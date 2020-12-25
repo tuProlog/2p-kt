@@ -13,17 +13,11 @@ internal class IntegerImpl(
     tags: Map<String, Any> = emptyMap()
 ) : NumericImpl(tags), Integer {
 
-    override val decimalValue: BigDecimal by lazy {
-        BigDecimal.of(intValue)
-    }
+    override val decimalValue: BigDecimal by lazy { BigDecimal.of(intValue) }
 
     override val intValue: BigInteger = value
 
     override fun toString(): String = value.toString()
-
-    override fun replaceTags(tags: Map<String, Any>): Integer {
-        return IntegerImpl(value, tags)
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -36,9 +30,7 @@ internal class IntegerImpl(
     private inline fun equalsToInteger(other: Integer) =
         value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        return other is Integer && equalsToInteger(other)
-    }
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean = other is Integer && equalsToInteger(other)
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 
@@ -47,6 +39,8 @@ internal class IntegerImpl(
             is Integer -> value.compareTo(other.value)
             else -> super<NumericImpl>.compareValueTo(other)
         }
+
+    override fun replaceTags(tags: Map<String, Any>): Integer = IntegerImpl(value, tags)
 
     override fun freshCopy(): Integer = this
 

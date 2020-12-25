@@ -10,9 +10,8 @@ internal open class RuleImpl(
     override val body: Term,
     tags: Map<String, Any> = emptyMap()
 ) : ClauseImpl(head, body, tags), Rule {
-    override fun replaceTags(tags: Map<String, Any>): Rule {
-        return RuleImpl(head, body, tags)
-    }
+
+    override fun replaceTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
 
     override fun freshCopy(): Rule = super.freshCopy() as Rule
 

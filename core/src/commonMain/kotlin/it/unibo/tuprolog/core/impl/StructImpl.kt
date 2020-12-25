@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
 internal open class StructImpl(
@@ -27,7 +28,7 @@ internal open class StructImpl(
 
     override fun freshCopy(scope: Scope): Struct = when {
         isGround -> this
-        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
+        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
     }
 
     override fun replaceTags(tags: Map<String, Any>): Struct =
@@ -39,9 +40,7 @@ internal open class StructImpl(
             arity == other.arity &&
             (0 until arity).all { args[it] structurallyEquals other[it] }
 
-    override val isFunctorWellFormed: Boolean by lazy {
-        functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
-    }
+    override val isFunctorWellFormed: Boolean by lazy { functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN }
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -72,15 +71,11 @@ internal open class StructImpl(
         result
     }
 
-    protected open fun argsHashCode(): Int {
-        return args.contentHashCode()
-    }
+    protected open fun argsHashCode(): Int = args.contentHashCode()
 
     override fun toString(): String {
-        return (
-            if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
-            ) + (
-            if (arity > 0) "(${args.joinToString(", ")})" else ""
-            )
+        val functor = if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
+        val args = if (arity > 0) "(${args.joinToString(", ")})" else ""
+        return functor + args
     }
 }

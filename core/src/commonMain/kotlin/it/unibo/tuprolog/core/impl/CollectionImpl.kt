@@ -35,11 +35,9 @@ internal abstract class CollectionImpl(
         unfoldedSequence.flatMap { it.variables }
     }
 
-    override fun replaceTags(tags: Map<String, Any>): Collection {
-        throw NotImplementedError("Subclasses of ${CollectionImpl::class.simpleName} must implement this method")
-    }
+    abstract override fun replaceTags(tags: Map<String, Any>): Collection
 
-    abstract override fun freshCopy(): Collection
+    override fun freshCopy(): Collection = super.freshCopy() as Collection
 
-    abstract override fun freshCopy(scope: Scope): Collection
+    override fun freshCopy(scope: Scope): Collection = super.freshCopy() as Collection
 }

@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Clause.Companion.bodyWellFormedVisitor
-import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -25,9 +24,7 @@ internal abstract class ClauseImpl(
             else -> "$head $functor $body"
         }
 
-    override fun replaceTags(tags: Map<String, Any>): Clause {
-        throw NotImplementedError("Subclasses of ${ClauseImpl::class.simpleName} must implement this method")
-    }
+    abstract override fun replaceTags(tags: Map<String, Any>): Clause
 
     override fun freshCopy(): Clause = super.freshCopy() as Clause
 

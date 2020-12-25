@@ -12,9 +12,7 @@ internal class DirectiveImpl(
 
     override val head: Struct? = super<Directive>.head
 
-    override fun replaceTags(tags: Map<String, Any>): Directive {
-        return DirectiveImpl(body, tags)
-    }
+    override fun replaceTags(tags: Map<String, Any>): Directive = DirectiveImpl(body, tags)
 
     override fun freshCopy(): Directive = super.freshCopy() as Directive
 
