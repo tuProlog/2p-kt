@@ -7,7 +7,7 @@ object SpecificRules {
         Prob.And,
         Prob.Or,
         Prob.Arrow,
-        Prob.DisjointNegation,
+        Prob.Disjunction,
         Prob.Negation,
         ProbQuery,
         ProbSolveConditional,

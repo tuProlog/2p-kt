@@ -203,7 +203,7 @@ object ProblogClauseMapper {
 
             probSum += curProb
             prevHeadList.forEach {
-                curRuleBody = Struct.of(",", curRuleBody, Struct.of(Prob.DisjointNegation.FUNCTOR, it))
+                curRuleBody = Struct.of(",", curRuleBody, Struct.of(Prob.Disjunction.FUNCTOR, it))
             }
             prevHeadList.add(curRuleHead)
             mapProbabilisticRule(

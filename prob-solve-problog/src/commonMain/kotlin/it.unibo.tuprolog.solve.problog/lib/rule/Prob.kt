@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
+import it.unibo.tuprolog.solve.problog.lib.primitive.EnsureBuiltin
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildNot
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
@@ -107,8 +108,8 @@ sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
             }
     }
 
-    object DisjointNegation : Prob() {
-        const val FUNCTOR = "${ProblogLib.PREDICATE_PREFIX}PrologNeg"
+    object Disjunction : Prob() {
+        const val FUNCTOR = "${ProblogLib.PREDICATE_PREFIX}Disjunction"
 
         override val Scope.head: List<Term>
             get() = ktListOf(
@@ -135,6 +136,13 @@ sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
             )
 
         override val Scope.body: Term
-            get() = varOf("X")
+            get() {
+                val xVar = varOf("X")
+                return tupleOf(
+                    structOf(EnsureBuiltin.functor, xVar),
+                    xVar,
+                    atomOf("!")
+                )
+            }
     }
 }

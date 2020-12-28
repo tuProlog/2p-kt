@@ -10,6 +10,12 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                api(project(":parser-theory"))
+            }
+        }
+
         jvm {
             val main = compilations["main"]
             val test = compilations["test"]
@@ -19,6 +25,7 @@ kotlin {
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)
+                dependsOn(commonTest)
             }
         }
 
@@ -32,6 +39,7 @@ kotlin {
             }
             test.defaultSourceSet {
                 dependsOn(main.defaultSourceSet)
+                dependsOn(commonTest)
             }
         }
     }
