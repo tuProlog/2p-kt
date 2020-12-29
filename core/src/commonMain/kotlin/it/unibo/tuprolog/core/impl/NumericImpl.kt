@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
@@ -21,7 +20,7 @@ internal abstract class NumericImpl(tags: Map<String, Any>) : TermImpl(tags), Nu
 
     abstract override fun equals(other: Term, useVarCompleteName: Boolean): Boolean
 
-    abstract override fun replaceTags(tags: Map<String, Any>): Numeric
+    abstract override fun copyWithTags(tags: Map<String, Any>): Numeric
 
     abstract override fun freshCopy(): Numeric
 

@@ -22,7 +22,7 @@ internal class EmptyListImpl(
     override val last: Term
         get() = this
 
-    override fun replaceTags(tags: Map<String, Any>): EmptyList = EmptyListImpl(tags)
+    override fun copyWithTags(tags: Map<String, Any>): EmptyList = EmptyListImpl(tags)
 
     override fun freshCopy(): EmptyList = this
 

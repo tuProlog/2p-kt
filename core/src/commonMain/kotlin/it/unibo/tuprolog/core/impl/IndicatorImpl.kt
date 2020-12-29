@@ -25,7 +25,7 @@ internal class IndicatorImpl(
 
     override fun toString(): String = "$nameTerm${Indicator.FUNCTOR}$arityTerm"
 
-    override fun replaceTags(tags: Map<String, Any>): Indicator = IndicatorImpl(nameTerm, arityTerm, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Indicator = IndicatorImpl(nameTerm, arityTerm, tags)
 
     override fun freshCopy(): Indicator = super.freshCopy() as Indicator
 

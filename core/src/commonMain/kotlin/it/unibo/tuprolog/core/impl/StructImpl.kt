@@ -24,14 +24,14 @@ internal open class StructImpl(
 
     override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
 
-    override fun freshCopy(): Struct = super.freshCopy() as Struct
+    override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
     override fun freshCopy(scope: Scope): Struct = when {
         isGround -> this
         else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
     }
 
-    override fun replaceTags(tags: Map<String, Any>): Struct =
+    override fun copyWithTags(tags: Map<String, Any>): Struct =
         StructImpl(functor, args, tags)
 
     override fun structurallyEquals(other: Term): Boolean =

@@ -15,7 +15,7 @@ internal class FactImpl(
 
     override val body: Term = super<RuleImpl>.body
 
-    override fun replaceTags(tags: Map<String, Any>): Fact = FactImpl(head, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Fact = FactImpl(head, tags)
 
     override fun freshCopy(): Fact = super.freshCopy() as Fact
 

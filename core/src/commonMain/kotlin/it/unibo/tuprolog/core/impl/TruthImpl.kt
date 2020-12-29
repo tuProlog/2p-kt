@@ -11,7 +11,7 @@ internal class TruthImpl(
 
     override fun toString(): String = value
 
-    override fun replaceTags(tags: Map<String, Any>): Truth = TruthImpl(value, isTrue, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Truth = TruthImpl(value, isTrue, tags)
 
     override fun freshCopy(): Truth = this
 

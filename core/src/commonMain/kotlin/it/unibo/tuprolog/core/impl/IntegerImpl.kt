@@ -40,7 +40,7 @@ internal class IntegerImpl(
             else -> super<NumericImpl>.compareValueTo(other)
         }
 
-    override fun replaceTags(tags: Map<String, Any>): Integer = IntegerImpl(value, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Integer = IntegerImpl(value, tags)
 
     override fun freshCopy(): Integer = this
 

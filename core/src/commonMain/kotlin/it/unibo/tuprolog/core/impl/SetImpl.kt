@@ -22,7 +22,7 @@ internal open class SetImpl(
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
 
-    override fun replaceTags(tags: Map<String, Any>): LogicSet = SetImpl(item, tags)
+    override fun copyWithTags(tags: Map<String, Any>): LogicSet = SetImpl(item, tags)
 
     override fun freshCopy(): LogicSet = super.freshCopy() as LogicSet
 

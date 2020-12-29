@@ -17,4 +17,13 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
     override fun freshCopy(): Term = this
 
     override fun freshCopy(scope: Scope): Term = this
+
+    final override fun replaceTags(tags: Map<String, Any>): Term =
+        if (this.tags != tags) {
+            copyWithTags(tags)
+        } else {
+            this
+        }
+
+    protected abstract fun copyWithTags(tags: Map<String, Any>): Term
 }

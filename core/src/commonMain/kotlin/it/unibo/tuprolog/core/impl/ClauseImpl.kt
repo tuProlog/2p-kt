@@ -24,7 +24,7 @@ internal abstract class ClauseImpl(
             else -> "$head $functor $body"
         }
 
-    abstract override fun replaceTags(tags: Map<String, Any>): Clause
+    abstract override fun copyWithTags(tags: Map<String, Any>): Clause
 
     override fun freshCopy(): Clause = super.freshCopy() as Clause
 

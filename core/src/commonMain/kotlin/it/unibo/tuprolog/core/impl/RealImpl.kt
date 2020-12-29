@@ -34,7 +34,7 @@ internal class RealImpl(
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 
-    override fun replaceTags(tags: Map<String, Any>): Real = RealImpl(value, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Real = RealImpl(value, tags)
 
     override fun freshCopy(): Real = this
 

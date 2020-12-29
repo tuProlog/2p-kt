@@ -11,7 +11,7 @@ internal open class RuleImpl(
     tags: Map<String, Any> = emptyMap()
 ) : ClauseImpl(head, body, tags), Rule {
 
-    override fun replaceTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
 
     override fun freshCopy(): Rule = super.freshCopy() as Rule
 

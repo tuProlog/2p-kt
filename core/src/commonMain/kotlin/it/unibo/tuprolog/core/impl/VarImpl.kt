@@ -32,7 +32,7 @@ internal class VarImpl(
 
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
 
-    override fun replaceTags(tags: Map<String, Any>): Var = VarImpl(name, identifier, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Var = VarImpl(name, identifier, tags)
 
     override fun freshCopy(): Var = VarImpl(name, tags = tags)
 

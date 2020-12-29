@@ -49,7 +49,7 @@ internal class ConsImpl(
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
     }
 
-    override fun replaceTags(tags: Map<String, Any>): Cons = ConsImpl(head, tail, tags)
+    override fun copyWithTags(tags: Map<String, Any>): Cons = ConsImpl(head, tail, tags)
 
     override fun freshCopy(): Cons = super.freshCopy() as Cons
 
