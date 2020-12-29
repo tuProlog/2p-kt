@@ -30,6 +30,8 @@ object TestUtils {
                     s -> s.solution is Solution.Yes
             }.toList()
 
+            var currentActual: ExpectedSolution? = null
+            var currentExpected: ExpectedSolution? = null
             assertFalse(
                 expectedSolutions
                     .any { s ->
@@ -38,10 +40,12 @@ object TestUtils {
                                 sol.solution.solvedQuery!!,
                                 sol.probability!!
                             )
+                            currentActual = solution
+                            currentExpected = s
                             s.first == solution.first && tolerantDoubleEquals(s.second, solution.second)
                         }
                     },
-                "Failed to assert expected solution (query=${it.first}, solutions=${expectedSolutions})"
+                """Failed to assert expected solution: expected=${currentExpected}, actual=${currentActual}"""
             )
         }
     }
