@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.testutils.ConsUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -26,13 +25,13 @@ internal class ListTest {
     @Test
     fun emptyReturnsEmptyList() {
         assertEqualities(Empty.list(), LogicList.empty())
-        assertSame(Empty.list(), LogicList.empty())
+        assertEquals(Empty.list(), LogicList.empty())
     }
 
     @Test
     fun ofNoVarargTerms() {
         assertEqualities(Empty.list(), LogicList.of())
-        assertSame(Empty.list(), LogicList.of())
+        assertEquals(Empty.list(), LogicList.of())
     }
 
     @Test
@@ -47,7 +46,7 @@ internal class ListTest {
         val toBeTested = LogicList.of(emptyList<Term>().asIterable())
 
         assertEqualities(Empty.list(), toBeTested)
-        assertSame(Empty.list(), toBeTested)
+        assertEquals(Empty.list(), toBeTested)
     }
 
     @Test
@@ -61,7 +60,7 @@ internal class ListTest {
         val toBeTested = LogicList.from(emptyList<Term>().asIterable())
 
         assertEqualities(Empty.list(), toBeTested)
-        assertSame(Empty.list(), toBeTested)
+        assertEquals(Empty.list(), toBeTested)
     }
 
     @Test
@@ -69,7 +68,7 @@ internal class ListTest {
         val toBeTested = LogicList.from(emptyList<Term>().asIterable(), Empty.list())
 
         assertEqualities(Empty.list(), toBeTested)
-        assertSame(Empty.list(), toBeTested)
+        assertEquals(Empty.list(), toBeTested)
     }
 
     @Test
@@ -96,7 +95,7 @@ internal class ListTest {
         val toBeTested = LogicList.from(emptyList<Term>().asSequence())
 
         assertEqualities(Empty.list(), toBeTested)
-        assertSame(Empty.list(), toBeTested)
+        assertEquals(Empty.list(), toBeTested)
     }
 
     @Test
@@ -104,7 +103,7 @@ internal class ListTest {
         val toBeTested = LogicList.from(emptyList<Term>().asSequence(), Empty.list())
 
         assertEqualities(Empty.list(), toBeTested)
-        assertSame(Empty.list(), toBeTested)
+        assertEquals(Empty.list(), toBeTested)
     }
 
     @Test
