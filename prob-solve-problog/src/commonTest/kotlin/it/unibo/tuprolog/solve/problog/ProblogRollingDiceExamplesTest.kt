@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-
 import kotlin.test.Test
 
 class ProblogRollingDiceExamplesTest {
@@ -77,8 +76,8 @@ class ProblogRollingDiceExamplesTest {
     }
 
     /***
-    * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#negation-as-failure
-    * */
+     * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#negation-as-failure
+     * */
     @Test
     fun testNegationAsFailure2() {
         TestUtils.assertQueryWithSolutions(
@@ -248,5 +247,4 @@ class ProblogRollingDiceExamplesTest {
 //            )
 //        )
 //    }
-
 }

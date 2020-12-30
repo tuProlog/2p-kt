@@ -2,8 +2,6 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.FlagStore
@@ -15,11 +13,8 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
 import it.unibo.tuprolog.solve.problog.lib.rule.ProbQuery
 import it.unibo.tuprolog.theory.Theory
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 internal open class ProblogProbSolver(
     private val solver: Solver

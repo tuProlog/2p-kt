@@ -4,7 +4,6 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.applyAnd
 import it.unibo.tuprolog.bdd.applyNot
 import it.unibo.tuprolog.bdd.applyOr
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -12,9 +11,9 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
+import it.unibo.tuprolog.solve.problog.lib.ProblogLib.DD_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EVIDENCE_PREDICATE
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
-import it.unibo.tuprolog.solve.problog.lib.ProblogLib.SOLUTION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -27,8 +26,12 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
         val termVar = Var.of("TermVar")
         val truthVar = Var.of("TruthVar")
         val result = solve(
-            Struct.of(",",
-                Struct.of(EnsurePrologCall.functor, Atom.of(EVIDENCE_PREDICATE)),
+            Struct.of(
+                ",",
+                Struct.of(
+                    EnsurePrologCall.functor,
+                    Struct.of(EVIDENCE_PREDICATE, Var.of("A"), Var.of("B"))
+                ),
                 Struct.of(EVIDENCE_PREDICATE, termVar, truthVar)
             )
         )
@@ -36,7 +39,7 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
             .map {
                 val truth = it.substitution[truthVar]
                 val term = it.substitution[termVar]
-                val bddVar = Var.of(SOLUTION_VAR_NAME)
+                val bddVar = Var.of(DD_VAR_NAME)
                 val solutionsBdd = solve(Struct.of(Prob.FUNCTOR, bddVar, term!!))
                     .toList()
                     .map { s -> s.substitution[bddVar] }
@@ -55,11 +58,13 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
             }
             .toList()
 
-        val objectRef = ProblogObjectRef(if (result.isEmpty()) {
-            BinaryDecisionDiagram.Terminal(true)
-        } else {
-            result.reduce { acc, t -> t applyAnd acc }
-        })
+        val objectRef = ProblogObjectRef(
+            if (result.isEmpty()) {
+                BinaryDecisionDiagram.Terminal(true)
+            } else {
+                result.reduce { acc, t -> t applyAnd acc }
+            }
+        )
         return replyWith(first mguWith objectRef)
     }
 }

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
+package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Indicator
@@ -18,7 +18,7 @@ internal class MappedProblogTheory(
     private var delegate: Theory = Theory.indexedOf(
         when (inputClauses) {
             is ProblogTheory -> inputClauses
-            else -> inputClauses.flatMap { ProblogClauseMapper.apply(it) }
+            else -> inputClauses.flatMap { ClauseMappingUtils.map(it) }
         }
     )
 
@@ -30,17 +30,17 @@ internal class MappedProblogTheory(
     }
 
     override fun assertA(clauses: Iterable<Clause>): ProblogTheory {
-        val newDelegate = delegate.assertA(clauses.flatMap { ProblogClauseMapper.apply(it) })
+        val newDelegate = delegate.assertA(clauses.flatMap { ClauseMappingUtils.map(it) })
         return MappedProblogTheory(newDelegate)
     }
 
     override fun assertZ(clauses: Iterable<Clause>): ProblogTheory {
-        val newDelegate = delegate.assertZ(clauses.flatMap { ProblogClauseMapper.apply(it) })
+        val newDelegate = delegate.assertZ(clauses.flatMap { ClauseMappingUtils.map(it) })
         return MappedProblogTheory(newDelegate)
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<ProblogTheory> {
-        val result = delegate.retract(clauses.flatMap { ProblogClauseMapper.apply(it) })
+        val result = delegate.retract(clauses.flatMap { ClauseMappingUtils.map(it) })
         val newDelegate = result.theory
         return when (result) {
             is RetractResult.Success -> RetractResult.Success(MappedProblogTheory(newDelegate), result.clauses)
@@ -55,7 +55,7 @@ internal class MappedProblogTheory(
 
     /* NOTE: Double-check this, i'm not 100% sure this is gonna work */
     override fun retractAll(clause: Clause): RetractResult<ProblogTheory> {
-        val mappedClauses = ProblogClauseMapper.apply(clause)
+        val mappedClauses = ClauseMappingUtils.map(clause)
         var result: RetractResult<Theory>? = null
         for (c in mappedClauses) {
             if (result == null || result !is RetractResult.Failure) {

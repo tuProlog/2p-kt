@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
+package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Indicator
@@ -19,7 +19,7 @@ internal class MappedMutableProblogTheory(
     private val delegate: MutableTheory = MutableTheory.indexedOf(
         when (inputClauses) {
             is ProblogTheory -> inputClauses
-            else -> inputClauses.flatMap { ProblogClauseMapper.apply(it) }
+            else -> inputClauses.flatMap { ClauseMappingUtils.map(it) }
         }
     )
 
@@ -29,12 +29,12 @@ internal class MappedMutableProblogTheory(
     }
 
     override fun assertA(clauses: Iterable<Clause>): MutableProblogTheory {
-        delegate.assertA(clauses.flatMap { ProblogClauseMapper.apply(it) })
+        delegate.assertA(clauses.flatMap { ClauseMappingUtils.map(it) })
         return this
     }
 
     override fun assertZ(clauses: Iterable<Clause>): MutableProblogTheory {
-        delegate.assertZ(clauses.flatMap { ProblogClauseMapper.apply(it) })
+        delegate.assertZ(clauses.flatMap { ClauseMappingUtils.map(it) })
         return this
     }
 

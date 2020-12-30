@@ -18,7 +18,8 @@ object ProbCalc : BinaryRelation.NonBacktrackable<ExecutionContext>("${ProblogLi
         ensuringArgumentIsCallable(1)
         return if (second is ProblogObjectRef) {
             val probability = second.bdd.expansion(0.0, 1.0) {
-                node, low, high -> node.probability * high + (1.0 - node.probability) * low
+                node, low, high ->
+                node.probability * high + (1.0 - node.probability) * low
             }
             replyWith(first mguWith Numeric.of(probability))
         } else {

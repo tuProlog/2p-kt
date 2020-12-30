@@ -7,7 +7,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.MappedProblogTheory
+import it.unibo.tuprolog.solve.problog.lib.knowledge.mapping.MappedProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName

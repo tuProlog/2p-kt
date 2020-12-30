@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-
 import kotlin.test.Test
 
 class ProblogBayesianNetworksExamplesTest {
@@ -82,7 +81,7 @@ class ProblogBayesianNetworksExamplesTest {
                 0.1::calls(X) :- \+alarm, person(X).
                 evidence(calls(john),true).
                 evidence(calls(mary),true).
-            """ .parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),

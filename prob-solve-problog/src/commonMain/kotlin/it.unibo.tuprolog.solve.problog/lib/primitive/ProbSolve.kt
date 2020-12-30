@@ -10,8 +10,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.problog.lib.ProblogLib.DD_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
-import it.unibo.tuprolog.solve.problog.lib.ProblogLib.SOLUTION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
@@ -25,16 +25,17 @@ object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDIC
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
-        val bddVar = Var.of(SOLUTION_VAR_NAME)
+        val bddVar = Var.of(DD_VAR_NAME)
         val solutions = solve(Struct.of(Prob.FUNCTOR, bddVar, second)).toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
         if (error != null) {
             return sequenceOf(Substitution.failed())
         }
-        return if(!solutions.asSequence().filterIsInstance<Solution.Yes>().any()) {
+        return if (!solutions.asSequence().filterIsInstance<Solution.Yes>().any()) {
             sequenceOf(
                 Substitution.of( // Add implicit "No" solution
-                first mguWith ProblogObjectRef(BinaryDecisionDiagram.Terminal(false)))
+                    first mguWith ProblogObjectRef(BinaryDecisionDiagram.Terminal(false))
+                )
             )
         } else {
             solutions

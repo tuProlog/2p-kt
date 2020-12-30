@@ -4,14 +4,10 @@ import it.unibo.tuprolog.theory.Theory
 
 object SpecificRules {
     private val wrappers = sequenceOf(
-        Prob.And,
-        Prob.Or,
-        Prob.Arrow,
-        Prob.Disjunction,
         Prob.Negation.Not,
         Prob.Negation.NegationAsFailure,
-        ProbQuery,
         ProbSolveConditional,
+        ProbQuery,
         Prob.Prolog,
     )
 

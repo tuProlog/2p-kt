@@ -27,7 +27,8 @@ object TestUtils {
         queryWithSolutions.forEach {
             val expectedSolutions = it.second.toList()
             val solutions = solver.probSolve(it.first).filter {
-                    s -> s.solution is Solution.Yes
+                s ->
+                s.solution is Solution.Yes
             }.toList()
 
             var currentActual: ExpectedSolution? = null
@@ -45,7 +46,7 @@ object TestUtils {
                             s.first == solution.first && tolerantDoubleEquals(s.second, solution.second)
                         }
                     },
-                """Failed to assert expected solution: expected=${currentExpected}, actual=${currentActual}"""
+                """Failed to assert expected solution: expected=$currentExpected, actual=$currentActual"""
             )
         }
     }
@@ -56,6 +57,4 @@ object TestUtils {
     ) {
         assertQueryWithSolutions(theory, listOf(queryWithSolutions))
     }
-
-
 }

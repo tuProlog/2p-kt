@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-
 import kotlin.test.Test
 
 class ProblogTossingCoinsExamplesTest {
@@ -46,7 +45,7 @@ class ProblogTossingCoinsExamplesTest {
                 0.6::heads2.
                 someHeads :- heads1.
                 someHeads :- heads2.
-            """ .parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.8))
@@ -68,7 +67,7 @@ class ProblogTossingCoinsExamplesTest {
                 coin(c4).
                 heads(C) :- coin(C), lands_heads(C).
                 someHeads :- heads(_).
-            """ .parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
