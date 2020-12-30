@@ -45,7 +45,16 @@ internal object ClauseMappingUtils {
 
 /** Wraps the given term, making it being part of a higher-level binary predicate.
  * In the result predicate, the first argument is [leftTerm], and the second one is
- * the provided [this]. The wrapping is not applied recursively
+ * the provided [this]. The wrapping is not applied recursively. This is intended to
+ * be used only on head terms inside a rule.
+ * */
+internal fun Term.wrapInBinaryHeadPredicate(leftTerm: Term): Struct {
+    return Struct.of(Prob.FUNCTOR, leftTerm, this)
+}
+
+/** Wraps the given term, making it being part of a higher-level binary predicate.
+ * In the result predicate, the first argument is [leftTerm], and the second one is
+ * the provided [this]. The wrapping is not applied recursively.
  * */
 internal fun Term.wrapInBinaryPredicate(leftTerm: Term): Struct {
     return Struct.of(Prob.FUNCTOR, leftTerm, this)

@@ -28,7 +28,7 @@ internal object PrologClauseMapper : ClauseMapper {
         if (clause.body is Truth) {
             return listOf(
                 Rule.of(
-                    clause.head.wrapInBinaryPredicate(
+                    clause.head.wrapInBinaryHeadPredicate(
                         BinaryDecisionDiagram.Terminal<ProbTerm>(true).toTerm()
                     ),
                     clause.body
