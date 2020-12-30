@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbCalc
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
 
-object ProbQuery : RuleWrapper<ExecutionContext>("${PREDICATE_PREFIX}Query", 2) {
+object ProbQuery : RuleWrapper<ExecutionContext>("${PREDICATE_PREFIX}_query", 2) {
 
     override val Scope.head: KtList<Term>
         get() = ktListOf(varOf("A"), varOf("B"))

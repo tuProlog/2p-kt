@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object ProbBuildNot : BinaryRelation.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}BuildNot"
+    "${ProblogLib.PREDICATE_PREFIX}_dd_not"
 ) {
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {

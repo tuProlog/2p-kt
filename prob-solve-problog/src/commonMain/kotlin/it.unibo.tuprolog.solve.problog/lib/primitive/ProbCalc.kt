@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object ProbCalc : BinaryRelation.NonBacktrackable<ExecutionContext>("${ProblogLib.PREDICATE_PREFIX}Calc") {
+object ProbCalc : BinaryRelation.NonBacktrackable<ExecutionContext>("${ProblogLib.PREDICATE_PREFIX}_calc") {
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term): Solve.Response {
         ensuringArgumentIsInstantiated(1)

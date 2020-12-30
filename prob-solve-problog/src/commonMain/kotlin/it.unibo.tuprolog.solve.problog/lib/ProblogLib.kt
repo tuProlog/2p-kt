@@ -12,9 +12,9 @@ import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.theory.Theory
 
 object ProblogLib : AliasedLibrary by CommonBuiltins {
-    const val DD_VAR_NAME = "BDD"
+    const val DD_VAR_NAME = "_DD"
     const val EVIDENCE_PREDICATE = "evidence"
-    const val PREDICATE_PREFIX = "prob"
+    const val PREDICATE_PREFIX = "_prob"
     const val PROB_FUNCTOR = "::"
 
     override val alias: String

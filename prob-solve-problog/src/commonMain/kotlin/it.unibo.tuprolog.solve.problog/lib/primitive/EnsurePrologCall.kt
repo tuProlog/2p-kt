@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 
 object EnsurePrologCall : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}EnsurePrologCall"
+    "${ProblogLib.PREDICATE_PREFIX}_ensure_call"
 ) {
     private val ignoredPredicates = listOf("\\+", "not")
 

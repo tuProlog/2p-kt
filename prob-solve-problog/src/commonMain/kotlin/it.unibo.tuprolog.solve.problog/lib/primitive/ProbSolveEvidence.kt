@@ -19,7 +19,7 @@ import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${PREDICATE_PREFIX}SolveEvidence"
+    "${PREDICATE_PREFIX}_solve_evidence"
 ) {
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {

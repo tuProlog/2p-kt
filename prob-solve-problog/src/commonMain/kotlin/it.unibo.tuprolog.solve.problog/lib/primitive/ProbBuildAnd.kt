@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object ProbBuildAnd : TernaryRelation.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}BuildAnd"
+    "${ProblogLib.PREDICATE_PREFIX}_dd_and"
 ) {
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term, third: Term): Solve.Response {

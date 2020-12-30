@@ -17,7 +17,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDICATE_PREFIX}Solve") {
+object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDICATE_PREFIX}_solve") {
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,

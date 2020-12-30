@@ -10,8 +10,8 @@ object SpecificPrimitives {
             ProbBuildNot,
             ProbBuildAnd,
             ProbSolve,
-            ProbSolveEvidence,
             ProbCalc,
+            ProbSolveEvidence,
             EnsurePrologCall
         )
 

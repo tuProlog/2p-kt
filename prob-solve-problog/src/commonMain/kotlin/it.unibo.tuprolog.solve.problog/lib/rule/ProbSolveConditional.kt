@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
 
 object ProbSolveConditional : RuleWrapper<ExecutionContext>(
-    "${PREDICATE_PREFIX}SolveConditional",
+    "${PREDICATE_PREFIX}_solve_cond",
     3
 ) {
 
