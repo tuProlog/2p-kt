@@ -4,6 +4,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.applyAnd
 import it.unibo.tuprolog.bdd.applyNot
 import it.unibo.tuprolog.bdd.applyOr
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -25,7 +26,12 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val termVar = Var.of("TermVar")
         val truthVar = Var.of("TruthVar")
-        val result = solve(Struct.of(EVIDENCE_PREDICATE, termVar, truthVar))
+        val result = solve(
+            Struct.of(",",
+                Struct.of(EnsurePrologCall.functor, Atom.of(EVIDENCE_PREDICATE)),
+                Struct.of(EVIDENCE_PREDICATE, termVar, truthVar)
+            )
+        )
             .filterIsInstance<Solution.Yes>()
             .map {
                 val truth = it.substitution[truthVar]

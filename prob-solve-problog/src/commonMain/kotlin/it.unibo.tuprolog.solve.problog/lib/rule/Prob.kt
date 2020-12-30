@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
-import it.unibo.tuprolog.solve.problog.lib.primitive.EnsureBuiltin
+import it.unibo.tuprolog.solve.problog.lib.primitive.EnsurePrologCall
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildNot
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
@@ -87,25 +87,34 @@ sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
             )
     }
 
-    object Negation : Prob() {
-        override val Scope.head: List<Term>
-            get() = ktListOf(
-                varOf(ProblogLib.SOLUTION_VAR_NAME),
-                structOf("\\+", varOf("X"))
-            )
-
+    sealed class Negation : Prob() {
         override val Scope.body: Term
             get() {
                 val xVar = varOf("X")
                 val posBddVar = varOf("${ProblogLib.SOLUTION_VAR_NAME}_POS")
                 return tupleOf(
-                    atomOf("!"),
                     structOf("ground", xVar),
                     structOf(ProbSolve.functor, posBddVar, xVar),
                     atomOf("!"),
                     structOf(ProbBuildNot.functor, varOf(ProblogLib.SOLUTION_VAR_NAME), posBddVar),
                 )
             }
+
+        object Not: Negation() {
+            override val Scope.head: List<Term>
+                get() = ktListOf(
+                    varOf(ProblogLib.SOLUTION_VAR_NAME),
+                    structOf("not", varOf("X"))
+                )
+        }
+
+        object NegationAsFailure: Negation() {
+            override val Scope.head: List<Term>
+                get() = ktListOf(
+                    varOf(ProblogLib.SOLUTION_VAR_NAME),
+                    structOf("\\+", varOf("X"))
+                )
+        }
     }
 
     object Disjunction : Prob() {
@@ -139,9 +148,9 @@ sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
             get() {
                 val xVar = varOf("X")
                 return tupleOf(
-                    structOf(EnsureBuiltin.functor, xVar),
+                    structOf(EnsurePrologCall.functor, xVar),
+                    atomOf("!"),
                     xVar,
-                    atomOf("!")
                 )
             }
     }

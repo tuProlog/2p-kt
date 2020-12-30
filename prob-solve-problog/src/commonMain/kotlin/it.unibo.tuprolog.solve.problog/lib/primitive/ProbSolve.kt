@@ -31,17 +31,26 @@ object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDIC
         if (error != null) {
             return sequenceOf(Substitution.failed())
         }
-        return solutions
-            .filterIsInstance<Solution.Yes>()
-            .groupBy { it.substitution.filter { v, _ -> v != bddVar } }.map {
-                var totalBdd: BinaryDecisionDiagram<ProbTerm> = BinaryDecisionDiagram.Terminal(false)
-                for (solution in it.value) {
-                    val solutionBddVar = solution.substitution[bddVar]
-                    if (solutionBddVar is ProblogObjectRef) {
-                        totalBdd = totalBdd applyOr solutionBddVar.bdd
+        return if(!solutions.asSequence().filterIsInstance<Solution.Yes>().any()) {
+            sequenceOf(
+                Substitution.of( // Add implicit "No" solution
+                first mguWith ProblogObjectRef(BinaryDecisionDiagram.Terminal(false)))
+            )
+        } else {
+            solutions
+                .asSequence()
+                .filterIsInstance<Solution.Yes>()
+                .groupBy { it.substitution.filter { v, _ -> v != bddVar } }.map {
+                    var totalBdd: BinaryDecisionDiagram<ProbTerm> = BinaryDecisionDiagram.Terminal(false)
+                    for (solution in it.value) {
+                        val solutionBddVar = solution.substitution[bddVar]
+                        if (solutionBddVar is ProblogObjectRef) {
+                            totalBdd = totalBdd applyOr solutionBddVar.bdd
+                        }
                     }
+                    Substitution.of(it.key, first mguWith ProblogObjectRef(totalBdd))
                 }
-                Substitution.of(it.key, first mguWith ProblogObjectRef(totalBdd))
-            }.asSequence()
+                .asSequence()
+        }
     }
 }

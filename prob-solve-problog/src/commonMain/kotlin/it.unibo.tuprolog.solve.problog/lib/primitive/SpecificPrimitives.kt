@@ -12,7 +12,7 @@ object SpecificPrimitives {
             ProbSolve,
             ProbSolveEvidence,
             ProbCalc,
-            EnsureBuiltin
+            EnsurePrologCall
         )
 
     val primitives: Map<Signature, Primitive> = wrappers.map { it.descriptionPair }.toMap()

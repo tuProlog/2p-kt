@@ -9,12 +9,20 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 
-object EnsureBuiltin : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}EnsureBuiltin"
+object EnsurePrologCall : UnaryPredicate.NonBacktrackable<ExecutionContext>(
+    "${ProblogLib.PREDICATE_PREFIX}EnsurePrologCall"
 ) {
+    private val ignoredPredicates = listOf("\\+")
+
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsStruct(0)
         val signature = (first as Struct).extractSignature()
-        return replyWith(first is Truth || signature in context.libraries)
+        val shouldCall = signature.name !in ignoredPredicates && (
+                first is Truth ||
+                signature in context.libraries ||
+                signature.toIndicator() in context.staticKb ||
+                signature.toIndicator() in context.dynamicKb
+        )
+        return replyWith(shouldCall)
     }
 }
