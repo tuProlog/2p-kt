@@ -70,6 +70,9 @@ class PrologIDEController : Initializable {
     private lateinit var btnStop: Button
 
     @FXML
+    private lateinit var btnReset: Button
+
+    @FXML
     private lateinit var btnNewFile: MenuItem
 
     @FXML
@@ -414,6 +417,7 @@ class PrologIDEController : Initializable {
             btnNext.isDisable = true
             btnNextAll.isDisable = true
             btnStop.isDisable = true
+            btnReset.isDisable = true
             prbResolution.isVisible = true
             txfQuery.isDisable = true
             lblStatus.text = "Solving..."
@@ -426,6 +430,7 @@ class PrologIDEController : Initializable {
             btnNextAll.isDisable = false
             prbResolution.isVisible = false
             btnStop.isDisable = false
+            btnReset.isDisable = false
             txfQuery.isDisable = false
             lblStatus.text = "Solution ${e.event}"
         }
@@ -464,6 +469,11 @@ class PrologIDEController : Initializable {
     @FXML
     fun onStopButtonPressed(e: ActionEvent) {
         model.stop()
+    }
+
+    @FXML
+    fun onResetButtonPressed(e: ActionEvent) {
+        model.reset()
     }
 
     private fun continueResolution(all: Boolean = false) {
@@ -675,7 +685,7 @@ class PrologIDEController : Initializable {
             |Running on:
             |  - 2P-Kt v${Info.VERSION}
             |  - JVM v${System.getProperty("java.version")}
-            |  - JavaFX v${System.getProperties().get("javafx.runtime.version")}
+            |  - JavaFX v${System.getProperty("javafx.runtime.version")}
             """.trimMargin()
         dialog.showAndWait()
     }

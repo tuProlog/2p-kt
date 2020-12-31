@@ -27,6 +27,13 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private var tempFiles = 0
     private val files = mutableMapOf<File, String>()
+    private var solutions: Iterator<Solution>? = null
+    private var solutionCount = 0
+    private var lastGoal: Struct? = null
+    override var currentFile: File? = null
+    private var stdin: String = ""
+    override var timeout: TimeDuration = 5000
+    override var query: String = ""
 
     override fun newFile(): File =
         File.createTempFile("untitled-${++tempFiles}-", ".pl").also {
@@ -44,8 +51,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun saveFile(file: File) {
         file.writeText(getFile(file))
     }
-
-    override var currentFile: File? = null
 
     override fun selectFile(file: File) {
         currentFile = file
@@ -68,8 +73,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun setCurrentFile(theory: String) {
         setFile(currentFile!!, theory)
     }
-
-    private var stdin: String = ""
 
     override fun setStdin(content: String) {
         stdin = content
@@ -102,14 +105,20 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
         }
     }
 
-    override fun reset() {
-        solver.invalidate()
-        solver.regenerate()
+    override fun closeFile(file: File) {
+        files -= file
+        onFileClosed.push(file)
     }
 
-    private var solutions: Iterator<Solution>? = null
-    private var solutionCount = 0
-    private var lastGoal: Struct? = null
+    override fun reset() {
+        ensuringStateIs(State.IDLE, State.SOLUTION) {
+            if (state == State.SOLUTION) {
+                stop()
+            }
+            solver.invalidate()
+            solver.regenerate()
+        }
+    }
 
     override fun solve() {
         solveImpl {
@@ -149,8 +158,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             return s.solve(lastGoal!!, timeout).iterator()
         }
     }
-
-    override var timeout: TimeDuration = 5000
 
     private fun nextImpl() {
         executor.execute {
@@ -204,13 +211,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             onQueryOver.push(SolverEvent(lastGoal!!, solver.value))
         }
     }
-
-    override fun closeFile(file: File) {
-        files -= file
-        onFileClosed.push(file)
-    }
-
-    override var query: String = ""
 
 //    override var goal: Struct
 //        get() = TODO("Not yet implemented")
