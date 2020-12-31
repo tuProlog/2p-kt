@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.classic.fsm.StateInit
 import it.unibo.tuprolog.solve.classic.fsm.clone
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.directives.partition
+import it.unibo.tuprolog.solve.directives.plus
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.getAllOperators
@@ -119,44 +120,26 @@ internal open class ClassicSolver : Solver {
         }.asSequence()
     }
 
-    protected fun initializeKb(staticKb: Theory?, dynamicKb: Theory?) {
+    protected fun initializeKb(staticKb: Theory?, dynamicKb: Theory?, append: Boolean = true) {
+        if (staticKb.let { it == null || it.size == 0L } && dynamicKb.let { it == null || it.size == 0L }) return
         val staticKbPartitioning = staticKb?.partition()
         val dynamicKbPartitioning = dynamicKb?.partition(staticByDefault = false)
-        val newStaticKb = Theory.indexedOf(
-            sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-                .filterNotNull()
-                .flatMap { it.staticClauses.asSequence() }
-        )
-        val newDynamicKb = MutableTheory.indexedOf(
-            sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-                .filterNotNull()
-                .flatMap { it.dynamicClauses.asSequence() }
-        )
-        val newOperators = sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-            .filterNotNull()
-            .map { it.operators }
-            .reduce(OperatorSet::plus)
-        val newFlags = sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-            .filterNotNull()
-            .map { it.flagStore }
-            .reduce(FlagStore::plus)
-        val includes = sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-            .filterNotNull()
-            .flatMap { it.includes }
-            .map { Struct.of("consult", it) }
-        includes.forEach(this::solveInitialGoal)
+        val merged = staticKbPartitioning + dynamicKbPartitioning
+        merged.initialGoals.forEach(this::solveInitialGoal)
         updateContext {
+            val kbs = if (append) {
+                (this.staticKb + merged.staticClauses) to (this.dynamicKb + merged.dynamicClauses)
+            } else {
+                merged.staticClauses to merged.dynamicClauses
+            }
             copy(
-                staticKb = (this.staticKb + newStaticKb).toImmutableTheory(),
-                dynamicKb = (this.dynamicKb + newDynamicKb).toMutableTheory(),
-                operators = operators + newOperators,
-                flags = flags + newFlags
+                staticKb = kbs.first.toImmutableTheory(),
+                dynamicKb = kbs.second.toMutableTheory(),
+                operators = operators + merged.operators,
+                flags = flags + merged.flagStore
             )
         }
-        val initialGoals = sequenceOf(staticKbPartitioning, dynamicKbPartitioning)
-            .filterNotNull()
-            .flatMap { it.initialGoals }
-        initialGoals.forEach(this::solveInitialGoal)
+        merged.initialGoals.forEach(this::solveInitialGoal)
     }
 
     private fun solveInitialGoal(goal: Struct) {
