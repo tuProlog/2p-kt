@@ -79,6 +79,25 @@ internal data class StreamsExecutionContext(
         stdErr
     )
 
+    override fun createMutableSolver(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ) = StreamsSolverFactory.mutableSolverOf(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr
+    )
+
     override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
         return super.apply(sideEffect) as StreamsExecutionContext
     }
