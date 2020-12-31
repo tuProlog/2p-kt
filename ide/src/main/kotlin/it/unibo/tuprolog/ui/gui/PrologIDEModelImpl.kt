@@ -25,15 +25,31 @@ import kotlin.system.exitProcess
 
 internal class PrologIDEModelImpl(override val executor: ExecutorService) : PrologIDEModel {
 
+    private data class FileContent(var text: String, var changed: Boolean = true) {
+        fun text(text: String) {
+            if (text != this.text) changed = true
+            this.text = text
+        }
+
+        fun text(): String = text.also { changed = false }
+    }
+
     private var tempFiles = 0
-    private val files = mutableMapOf<File, String>()
+    private val files = mutableMapOf<File, FileContent>()
     private var solutions: Iterator<Solution>? = null
     private var solutionCount = 0
     private var lastGoal: Struct? = null
-    override var currentFile: File? = null
     private var stdin: String = ""
     override var timeout: TimeDuration = 5000
     override var query: String = ""
+
+    override var currentFile: File? = null
+        set(value) {
+            if (field != null && field != value) {
+                files[field]?.changed = true
+            }
+            field = value
+        }
 
     override fun newFile(): File =
         File.createTempFile("untitled-${++tempFiles}-", ".pl").also {
@@ -58,11 +74,15 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     }
 
     override fun getFile(file: File): String {
-        return files[file]!!
+        return files[file]!!.text
     }
 
     override fun setFile(file: File, theory: String) {
-        files[file] = theory
+        if (file in files) {
+            files[file]?.text(theory)
+        } else {
+            files[file] = FileContent(theory, true)
+        }
     }
 
     override fun renameFile(file: File, newFile: File) {
@@ -150,10 +170,14 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private fun newResolution(): Iterator<Solution> {
         solver.value.let { s ->
-            val old = s.operators
-            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(old) ?: Theory.empty()
-            s.loadStaticKb(theory)
-            lastGoal = query.parseAsStruct(old)
+            currentFile?.let { files[it] }.let {
+                if (it?.changed != false) {
+                    val theory = it?.text()?.parseAsTheory(s.operators) ?: Theory.empty()
+                    s.resetDynamicKb()
+                    s.loadStaticKb(theory)
+                }
+            }
+            lastGoal = query.parseAsStruct(s.operators)
             onNewStaticKb.push(SolverEvent(Unit, s))
             return s.solve(lastGoal!!, timeout).iterator()
         }
