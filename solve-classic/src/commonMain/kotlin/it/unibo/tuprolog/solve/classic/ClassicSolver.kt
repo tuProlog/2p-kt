@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.classic.fsm.StateInit
 import it.unibo.tuprolog.solve.classic.fsm.clone
 import it.unibo.tuprolog.solve.currentTimeInstant
+import it.unibo.tuprolog.solve.directives.ClausePartition
 import it.unibo.tuprolog.solve.directives.partition
 import it.unibo.tuprolog.solve.directives.plus
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -123,6 +124,26 @@ internal open class ClassicSolver : Solver {
 
     private fun loadGoal(theory: Atom): Struct = Struct.of("consult", theory)
 
+    private fun resetKb(resetStatic: Boolean, resetDynamic: Boolean) {
+        updateContext {
+            copy(
+                staticKb = if (resetStatic) Theory.emptyIndexed() else this.staticKb,
+                dynamicKb = if (resetDynamic) MutableTheory.emptyIndexed() else this.dynamicKb
+            )
+        }
+    }
+
+    private fun updateContextWith(clausePartition: ClausePartition) {
+        updateContext {
+            copy(
+                staticKb = (this.staticKb + clausePartition.staticClauses).toImmutableTheory(),
+                dynamicKb = (this.dynamicKb + clausePartition.dynamicClauses).toMutableTheory(),
+                operators = operators + clausePartition.operators,
+                flags = flags + clausePartition.flagStore
+            )
+        }
+    }
+
     protected fun initializeKb(
         staticKb: Theory? = null,
         dynamicKb: Theory? = null,
@@ -133,17 +154,9 @@ internal open class ClassicSolver : Solver {
         val staticKbPartitioning = staticKb?.partition()
         val dynamicKbPartitioning = dynamicKb?.partition(staticByDefault = false)
         val merged = staticKbPartitioning + dynamicKbPartitioning
+        resetKb(!appendStatic, !appendDynamic)
         merged.includes.map { loadGoal(it) }.forEach(this::solveInitialGoal)
-        updateContext {
-            val newStatic = if (appendStatic) this.staticKb + merged.staticClauses else merged.staticClauses
-            val newDynamic = if (appendDynamic) this.dynamicKb + merged.dynamicClauses else merged.dynamicClauses
-            copy(
-                staticKb = newStatic.toImmutableTheory(),
-                dynamicKb = newDynamic.toMutableTheory(),
-                operators = operators + merged.operators,
-                flags = flags + merged.flagStore
-            )
-        }
+        updateContextWith(merged)
         merged.initialGoals.forEach(this::solveInitialGoal)
     }
 
