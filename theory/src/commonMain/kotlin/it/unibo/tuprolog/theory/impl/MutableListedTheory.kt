@@ -24,9 +24,7 @@ private constructor(
         checkClausesCorrect(clauses)
     }
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
-        return MutableListedTheory(clauses)
-    }
+    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory = MutableListedTheory(clauses)
 
     override fun retract(clause: Clause): RetractResult<MutableListedTheory> {
         val i = clauses.listIterator()
@@ -52,7 +50,11 @@ private constructor(
                 }
             }
         }
-        return if (retracted.isEmpty()) RetractResult.Failure(this) else RetractResult.Success(this, retracted)
+        return if (retracted.isEmpty()) {
+            RetractResult.Failure(this)
+        } else {
+            RetractResult.Success(this, retracted)
+        }
     }
 
     override fun retractAll(clause: Clause): RetractResult<MutableListedTheory> {
@@ -65,50 +67,42 @@ private constructor(
                 i.remove()
             }
         }
-        return if (retracted.isEmpty()) RetractResult.Failure(this) else RetractResult.Success(this, retracted)
-    }
-
-    override fun plus(clause: Clause): MutableListedTheory {
-        return assertZ(clause)
-    }
-
-    override fun plus(theory: Theory): MutableListedTheory {
-        if (theory === this) {
-            return assertZ(theory.toList())
+        return if (retracted.isEmpty()) {
+            RetractResult.Failure(this)
         } else {
-            return assertZ(theory)
+            RetractResult.Success(this, retracted)
         }
     }
 
-    override fun assertA(clause: Clause): MutableListedTheory {
-        return this.also { it.clauses.addFirst(checkClauseCorrect(clause)) }
+    override fun plus(clause: Clause): MutableListedTheory = assertZ(clause)
+
+    override fun plus(theory: Theory): MutableListedTheory {
+        return if (theory === this) {
+            assertZ(theory.toList())
+        } else {
+            assertZ(theory)
+        }
     }
 
-    override fun assertA(clauses: Iterable<Clause>): MutableListedTheory {
-        return this.also { it.clauses.addFirst(checkClausesCorrect(clauses)) }
-    }
+    override fun assertA(clause: Clause): MutableListedTheory =
+        this.also { it.clauses.addFirst(checkClauseCorrect(clause)) }
 
-    override fun assertA(clauses: Sequence<Clause>): MutableListedTheory {
-        return assertA(clauses.asIterable())
-    }
+    override fun assertA(clauses: Iterable<Clause>): MutableListedTheory =
+        this.also { it.clauses.addFirst(checkClausesCorrect(clauses)) }
 
-    override fun assertZ(clause: Clause): MutableListedTheory {
-        return this.also { it.clauses.add(checkClauseCorrect(clause)) }
-    }
+    override fun assertA(clauses: Sequence<Clause>): MutableListedTheory = assertA(clauses.asIterable())
 
-    override fun assertZ(clauses: Iterable<Clause>): MutableListedTheory {
-        return this.also { it.clauses.addAll(checkClausesCorrect(clauses)) }
-    }
+    override fun assertZ(clause: Clause): MutableListedTheory =
+        this.also { it.clauses.add(checkClauseCorrect(clause)) }
 
-    override fun assertZ(clauses: Sequence<Clause>): MutableListedTheory {
-        return assertZ(clauses.asIterable())
-    }
+    override fun assertZ(clauses: Iterable<Clause>): MutableListedTheory =
+        this.also { it.clauses.addAll(checkClausesCorrect(clauses)) }
 
-    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableListedTheory> {
-        return retract(clauses.asIterable())
-    }
+    override fun assertZ(clauses: Sequence<Clause>): MutableListedTheory = assertZ(clauses.asIterable())
 
-    override fun abolish(indicator: Indicator): MutableListedTheory {
-        return super.abolish(indicator) as MutableListedTheory
-    }
+    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableListedTheory> = retract(clauses.asIterable())
+
+    override fun abolish(indicator: Indicator): MutableListedTheory = super.abolish(indicator) as MutableListedTheory
+
+    override fun toImmutableTheory(): Theory = Theory.listedOf(this)
 }
