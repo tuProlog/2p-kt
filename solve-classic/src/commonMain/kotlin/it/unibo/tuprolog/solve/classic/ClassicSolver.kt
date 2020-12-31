@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.classic
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContextAware
@@ -120,21 +121,25 @@ internal open class ClassicSolver : Solver {
         }.asSequence()
     }
 
-    protected fun initializeKb(staticKb: Theory?, dynamicKb: Theory?, append: Boolean = true) {
+    private fun loadGoal(theory: Atom): Struct = Struct.of("consult", theory)
+
+    protected fun initializeKb(
+        staticKb: Theory? = null,
+        dynamicKb: Theory? = null,
+        appendStatic: Boolean = true,
+        appendDynamic: Boolean = true
+    ) {
         if (staticKb.let { it == null || it.size == 0L } && dynamicKb.let { it == null || it.size == 0L }) return
         val staticKbPartitioning = staticKb?.partition()
         val dynamicKbPartitioning = dynamicKb?.partition(staticByDefault = false)
         val merged = staticKbPartitioning + dynamicKbPartitioning
-        merged.initialGoals.forEach(this::solveInitialGoal)
+        merged.includes.map { loadGoal(it) }.forEach(this::solveInitialGoal)
         updateContext {
-            val kbs = if (append) {
-                (this.staticKb + merged.staticClauses) to (this.dynamicKb + merged.dynamicClauses)
-            } else {
-                merged.staticClauses to merged.dynamicClauses
-            }
+            val newStatic = if (appendStatic) this.staticKb + merged.staticClauses else merged.staticClauses
+            val newDynamic = if (appendDynamic) this.dynamicKb + merged.dynamicClauses else merged.dynamicClauses
             copy(
-                staticKb = kbs.first.toImmutableTheory(),
-                dynamicKb = kbs.second.toMutableTheory(),
+                staticKb = newStatic.toImmutableTheory(),
+                dynamicKb = newDynamic.toMutableTheory(),
                 operators = operators + merged.operators,
                 flags = flags + merged.flagStore
             )

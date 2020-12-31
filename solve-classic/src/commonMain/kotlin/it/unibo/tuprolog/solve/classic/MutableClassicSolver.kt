@@ -74,22 +74,14 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     }
 
     override fun loadStaticKb(theory: Theory) {
-        updateContext {
-            copy(
-                staticKb = theory,
-                operators = getAllOperators(libraries, theory, dynamicKb).toOperatorSet()
-            )
-        }
+        initializeKb(
+            staticKb = theory,
+            appendStatic = false
+        )
     }
 
     override fun appendStaticKb(theory: Theory) {
-        updateContext {
-            val newStaticKb = staticKb + theory
-            copy(
-                staticKb = newStaticKb,
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
-        }
+        initializeKb(staticKb = theory)
     }
 
     override fun resetStaticKb() {
@@ -102,21 +94,14 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     }
 
     override fun loadDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
-            )
-        }
+        initializeKb(
+            dynamicKb = theory,
+            appendDynamic = false
+        )
     }
 
     override fun appendDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
-        }
+        initializeKb(dynamicKb = theory)
     }
 
     override fun resetDynamicKb() {
