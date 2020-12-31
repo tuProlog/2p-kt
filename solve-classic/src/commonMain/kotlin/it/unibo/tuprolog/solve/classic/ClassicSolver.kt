@@ -9,11 +9,14 @@ import it.unibo.tuprolog.solve.OutputStore
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.classic.fsm.StateInit
 import it.unibo.tuprolog.solve.classic.fsm.clone
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.directives.partition
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
@@ -21,30 +24,70 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 
-internal open class ClassicSolver(
-    libraries: Libraries = Libraries.empty(),
-    flags: FlagStore = FlagStore.empty(),
-    initialStaticKb: Theory = Theory.empty(),
-    initialDynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
-) : Solver {
+internal open class ClassicSolver : Solver {
 
-    private var state: State = StateInit(
-        ClassicExecutionContext(
-            libraries = libraries,
-            flags = flags,
-            staticKb = Theory.emptyIndexed(),
-            dynamicKb = MutableTheory.emptyIndexed(),
-            operators = getAllOperators(libraries).toOperatorSet(),
-            inputChannels = inputChannels,
-            outputChannels = outputChannels
-        )
-    )
+    private var state: State
 
-    init {
-        initializeKb(initialStaticKb, initialDynamicKb)
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        initialStaticKb: Theory = Theory.empty(),
+        initialDynamicKb: Theory = MutableTheory.empty(),
+        inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+        outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
+        trustKb: Boolean = false
+    ) {
+        if (trustKb) {
+            state = StateInit(
+                ClassicExecutionContext(
+                    libraries = libraries,
+                    flags = flags,
+                    staticKb = initialStaticKb.toImmutableTheory(),
+                    dynamicKb = initialDynamicKb.toMutableTheory(),
+                    operators = getAllOperators(libraries).toOperatorSet(),
+                    inputChannels = inputChannels,
+                    outputChannels = outputChannels
+                )
+            )
+        } else {
+            state = StateInit(
+                ClassicExecutionContext(
+                    libraries = libraries,
+                    flags = flags,
+                    staticKb = Theory.emptyIndexed(),
+                    dynamicKb = MutableTheory.emptyIndexed(),
+                    operators = getAllOperators(libraries).toOperatorSet(),
+                    inputChannels = inputChannels,
+                    outputChannels = outputChannels
+                )
+            )
+            initializeKb(initialStaticKb, initialDynamicKb)
+        }
     }
+
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+        trustKb: Boolean = false
+    ) : this(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        mapOf(ExecutionContextAware.STDIN to stdIn),
+        mapOf(
+            ExecutionContextAware.STDOUT to stdOut,
+            ExecutionContextAware.STDERR to stdErr,
+            ExecutionContextAware.WARNINGS to warnings
+        ),
+        trustKb
+    )
 
     protected fun updateContext(contextMapper: ClassicExecutionContext.() -> ClassicExecutionContext) {
         val ctx = state.context
@@ -59,7 +102,7 @@ internal open class ClassicSolver(
             query = goal,
             libraries = libraries,
             flags = flags,
-            staticKb = staticKb,
+            staticKb = staticKb.toImmutableTheory(),
             dynamicKb = dynamicKb.toMutableTheory(),
             operators = operators,
             inputChannels = inputChannels,
@@ -104,8 +147,8 @@ internal open class ClassicSolver(
         includes.forEach(this::solveInitialGoal)
         updateContext {
             copy(
-                staticKb = this.staticKb + newStaticKb,
-                dynamicKb = this.dynamicKb + newDynamicKb,
+                staticKb = (this.staticKb + newStaticKb).toImmutableTheory(),
+                dynamicKb = (this.dynamicKb + newDynamicKb).toMutableTheory(),
                 operators = operators + newOperators,
                 flags = flags + newFlags
             )

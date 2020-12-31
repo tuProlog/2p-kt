@@ -1,9 +1,5 @@
 package it.unibo.tuprolog.solve.classic
 
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDERR
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDIN
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDOUT
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.WARNINGS
 import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
@@ -30,15 +26,7 @@ object ClassicSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver =
-        ClassicSolver(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            mapOf(STDIN to stdIn),
-            mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
-        )
+    ): Solver = ClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun mutableSolverOf(
         libraries: Libraries,
@@ -49,13 +37,5 @@ object ClassicSolverFactory : SolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableSolver =
-        MutableClassicSolver(
-            libraries,
-            flags,
-            staticKb,
-            dynamicKb,
-            mapOf(STDIN to stdIn),
-            mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
-        )
+    ): MutableSolver = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 }

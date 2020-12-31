@@ -122,7 +122,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
-import kotlin.collections.listOf as ktListOf
 
 internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSolver {
 
@@ -223,7 +222,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 ktListOf(query.no()),
                 solver.solve(query).toList()
             )
-            assertTrue { observedWarnings.size == 1 }
+            assertEquals(1, observedWarnings.size)
             assertTrue { observedWarnings[0] is MissingPredicate }
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 

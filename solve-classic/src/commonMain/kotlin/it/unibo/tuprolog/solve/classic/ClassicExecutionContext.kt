@@ -99,14 +99,15 @@ data class ClassicExecutionContext(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = ClassicSolverFactory.solverOf(
+    ): Solver = ClassicSolver(
         libraries,
         flags,
         staticKb,
         dynamicKb,
         stdIn,
         stdOut,
-        stdErr
+        stdErr,
+        trustKb = true
     )
 
     override fun update(
