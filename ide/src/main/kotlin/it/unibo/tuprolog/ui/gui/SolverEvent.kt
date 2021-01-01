@@ -15,8 +15,8 @@ data class SolverEvent<T>(
     override val flags: FlagStore,
     override val staticKb: Theory,
     override val dynamicKb: Theory,
-    override val inputChannels: InputStore<*>,
-    override val outputChannels: OutputStore<*>
+    override val inputChannels: InputStore,
+    override val outputChannels: OutputStore
 ) : ExecutionContextAware {
     constructor(event: T, other: ExecutionContextAware) :
         this(

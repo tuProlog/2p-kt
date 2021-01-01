@@ -220,19 +220,19 @@ interface SideEffectFactory {
         SideEffect.RemoveOperators(*operators)
 
     @JsName("openInputChannelsMap")
-    fun openInputChannels(inputChannels: Map<String, InputChannel<*>>) =
+    fun openInputChannels(inputChannels: Map<String, InputChannel<String>>) =
         SideEffect.OpenInputChannels(inputChannels)
 
     @JsName("openInputChannels")
-    fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>) =
+    fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
         SideEffect.OpenInputChannels(*inputChannels)
 
     @JsName("openInputChannel")
-    fun openInputChannel(name: String, inputChannel: InputChannel<*>) =
+    fun openInputChannel(name: String, inputChannel: InputChannel<String>) =
         SideEffect.OpenInputChannels(name to inputChannel)
 
     @JsName("resetInputChannels")
-    fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>) =
+    fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
         SideEffect.ResetInputChannels(*inputChannels)
 
     @JsName("closeInputChannelsIterable")
@@ -248,23 +248,23 @@ interface SideEffectFactory {
         SideEffect.CloseInputChannels(*names)
 
     @JsName("openOutputChannelsMap")
-    fun openOutputChannels(outputChannels: Map<String, OutputChannel<*>>) =
+    fun openOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
         SideEffect.OpenOutputChannels(outputChannels)
 
     @JsName("openOutputChannels")
-    fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>) =
+    fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.OpenOutputChannels(*outputChannels)
 
     @JsName("openOutputChannel")
-    fun openOutputChannel(name: String, outputChannel: OutputChannel<*>) =
+    fun openOutputChannel(name: String, outputChannel: OutputChannel<String>) =
         SideEffect.OpenOutputChannels(name to outputChannel)
 
     @JsName("resetOutputChannelsMap")
-    fun resetOutputChannels(outputChannels: Map<String, OutputChannel<*>>) =
+    fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
         SideEffect.ResetOutputChannels(outputChannels)
 
     @JsName("resetOutputChannels")
-    fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>) =
+    fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.ResetOutputChannels(*outputChannels)
 
     @JsName("closeOutputChannelsIterable")

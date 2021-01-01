@@ -3,9 +3,6 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
@@ -32,10 +29,8 @@ interface ExecutionContext : ExecutionContextAware {
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
-        stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
-        stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
-        stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
+        inputChannels: InputStore = this.inputChannels,
+        outputChannels: OutputStore = this.outputChannels
     ): Solver
 
     @JsName("createMutableSolver")
@@ -44,10 +39,8 @@ interface ExecutionContext : ExecutionContextAware {
         flags: FlagStore = this.flags,
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
-        stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
-        stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
-        stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
-        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
+        inputChannels: InputStore = this.inputChannels,
+        outputChannels: OutputStore = this.outputChannels
     ): MutableSolver
 
     @JsName("apply")
@@ -127,22 +120,22 @@ interface ExecutionContext : ExecutionContextAware {
                     operators -= sideEffect.operatorSet
                 }
                 is SideEffect.OpenInputChannels -> {
-                    inputChannels = inputChannels + sideEffect.inputChannels
+                    inputChannels += sideEffect.inputChannels
                 }
                 is SideEffect.ResetInputChannels -> {
-                    inputChannels = sideEffect.inputChannels
+                    inputChannels = InputStore.of(sideEffect.inputChannels)
                 }
                 is SideEffect.CloseInputChannels -> {
-                    inputChannels = inputChannels - sideEffect.names
+                    inputChannels -= sideEffect.names
                 }
                 is SideEffect.OpenOutputChannels -> {
-                    outputChannels = outputChannels + sideEffect.outputChannels
+                    outputChannels += sideEffect.outputChannels
                 }
                 is SideEffect.ResetOutputChannels -> {
-                    outputChannels = sideEffect.outputChannels
+                    outputChannels = OutputStore.of(sideEffect.outputChannels, warnings)
                 }
                 is SideEffect.CloseOutputChannels -> {
-                    outputChannels = outputChannels - sideEffect.names
+                    outputChannels -= sideEffect.names
                 }
             }
         }
@@ -168,7 +161,7 @@ interface ExecutionContext : ExecutionContextAware {
         staticKb: Theory = this.staticKb,
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,
-        inputChannels: InputStore<*> = this.inputChannels,
-        outputChannels: OutputStore<*> = this.outputChannels
+        inputChannels: InputStore = this.inputChannels,
+        outputChannels: OutputStore = this.outputChannels
     ): ExecutionContext
 }

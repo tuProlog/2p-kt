@@ -4,9 +4,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 
@@ -36,10 +33,8 @@ object DummyInstances {
             flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
+            inputChannels: InputStore,
+            outputChannels: OutputStore
         ): Solver {
             throw NotImplementedError()
         }
@@ -49,10 +44,8 @@ object DummyInstances {
             flags: FlagStore,
             staticKb: Theory,
             dynamicKb: Theory,
-            stdIn: InputChannel<String>,
-            stdOut: OutputChannel<String>,
-            stdErr: OutputChannel<String>,
-            warnings: OutputChannel<PrologWarning>
+            inputChannels: InputStore,
+            outputChannels: OutputStore
         ): MutableSolver {
             throw NotImplementedError()
         }
@@ -63,8 +56,8 @@ object DummyInstances {
             staticKb: Theory,
             dynamicKb: Theory,
             operators: OperatorSet,
-            inputChannels: InputStore<*>,
-            outputChannels: OutputStore<*>
+            inputChannels: InputStore,
+            outputChannels: OutputStore
         ): ExecutionContext {
             throw NotImplementedError()
         }

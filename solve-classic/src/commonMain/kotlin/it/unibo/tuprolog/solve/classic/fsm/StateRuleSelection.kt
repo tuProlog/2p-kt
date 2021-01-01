@@ -64,7 +64,7 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                             )
                         )
                         Unknown.WARNING -> failureState.also {
-                            context.warnings?.write(
+                            context.warnings.write(
                                 MissingPredicate(
                                     context = context,
                                     signature = missing

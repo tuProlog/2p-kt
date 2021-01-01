@@ -172,19 +172,19 @@ internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList
         return adding { super.removeOperators(*operators) }
     }
 
-    override fun openInputChannels(inputChannels: Map<String, InputChannel<*>>): SideEffect.OpenInputChannels {
+    override fun openInputChannels(inputChannels: Map<String, InputChannel<String>>): SideEffect.OpenInputChannels {
         return adding { super.openInputChannels(inputChannels) }
     }
 
-    override fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>): SideEffect.OpenInputChannels {
+    override fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>): SideEffect.OpenInputChannels {
         return adding { super.openInputChannels(*inputChannels) }
     }
 
-    override fun openInputChannel(name: String, inputChannel: InputChannel<*>): SideEffect.OpenInputChannels {
+    override fun openInputChannel(name: String, inputChannel: InputChannel<String>): SideEffect.OpenInputChannels {
         return adding { super.openInputChannel(name, inputChannel) }
     }
 
-    override fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>): SideEffect.ResetInputChannels {
+    override fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>): SideEffect.ResetInputChannels {
         return adding { super.resetInputChannels(*inputChannels) }
     }
 
@@ -200,23 +200,23 @@ internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList
         return adding { super.closeInputChannels(*names) }
     }
 
-    override fun openOutputChannels(outputChannels: Map<String, OutputChannel<*>>): SideEffect.OpenOutputChannels {
+    override fun openOutputChannels(outputChannels: Map<String, OutputChannel<String>>): SideEffect.OpenOutputChannels {
         return adding { super.openOutputChannels(outputChannels) }
     }
 
-    override fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>): SideEffect.OpenOutputChannels {
+    override fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>): SideEffect.OpenOutputChannels {
         return adding { super.openOutputChannels(*outputChannels) }
     }
 
-    override fun openOutputChannel(name: String, outputChannel: OutputChannel<*>): SideEffect.OpenOutputChannels {
+    override fun openOutputChannel(name: String, outputChannel: OutputChannel<String>): SideEffect.OpenOutputChannels {
         return adding { super.openOutputChannel(name, outputChannel) }
     }
 
-    override fun resetOutputChannels(outputChannels: Map<String, OutputChannel<*>>): SideEffect.ResetOutputChannels {
+    override fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>): SideEffect.ResetOutputChannels {
         return adding { super.resetOutputChannels(outputChannels) }
     }
 
-    override fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>): SideEffect.ResetOutputChannels {
+    override fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>): SideEffect.ResetOutputChannels {
         return adding { super.resetOutputChannels(*outputChannels) }
     }
 

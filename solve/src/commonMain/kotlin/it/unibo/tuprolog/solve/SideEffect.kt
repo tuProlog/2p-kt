@@ -180,20 +180,20 @@ sealed class SideEffect {
         }
     }
 
-    data class OpenInputChannels(val inputChannels: Map<String, InputChannel<*>>) : SideEffect() {
-        constructor(vararg inputChannels: Pair<String, InputChannel<*>>) : this(listOf(*inputChannels))
+    data class OpenInputChannels(val inputChannels: Map<String, InputChannel<String>>) : SideEffect() {
+        constructor(vararg inputChannels: Pair<String, InputChannel<String>>) : this(listOf(*inputChannels))
 
-        constructor(inputChannels: Iterable<Pair<String, InputChannel<*>>>) : this(inputChannels.toMap())
+        constructor(inputChannels: Iterable<Pair<String, InputChannel<String>>>) : this(inputChannels.toMap())
 
-        constructor(inputChannels: Sequence<Pair<String, InputChannel<*>>>) : this(inputChannels.toMap())
+        constructor(inputChannels: Sequence<Pair<String, InputChannel<String>>>) : this(inputChannels.toMap())
     }
 
-    data class ResetInputChannels(val inputChannels: Map<String, InputChannel<*>>) : SideEffect() {
-        constructor(vararg inputChannels: Pair<String, InputChannel<*>>) : this(listOf(*inputChannels))
+    data class ResetInputChannels(val inputChannels: Map<String, InputChannel<String>>) : SideEffect() {
+        constructor(vararg inputChannels: Pair<String, InputChannel<String>>) : this(listOf(*inputChannels))
 
-        constructor(inputChannels: Iterable<Pair<String, InputChannel<*>>>) : this(inputChannels.toMap())
+        constructor(inputChannels: Iterable<Pair<String, InputChannel<String>>>) : this(inputChannels.toMap())
 
-        constructor(inputChannels: Sequence<Pair<String, InputChannel<*>>>) : this(inputChannels.toMap())
+        constructor(inputChannels: Sequence<Pair<String, InputChannel<String>>>) : this(inputChannels.toMap())
     }
 
     data class CloseInputChannels(val names: Iterable<String>) : SideEffect() {
@@ -202,20 +202,20 @@ sealed class SideEffect {
         constructor(names: Sequence<String>) : this(names.toList())
     }
 
-    data class OpenOutputChannels(val outputChannels: Map<String, OutputChannel<*>>) : SideEffect() {
-        constructor(vararg outputChannels: Pair<String, OutputChannel<*>>) : this(listOf(*outputChannels))
+    data class OpenOutputChannels(val outputChannels: Map<String, OutputChannel<String>>) : SideEffect() {
+        constructor(vararg outputChannels: Pair<String, OutputChannel<String>>) : this(listOf(*outputChannels))
 
-        constructor(outputChannels: Iterable<Pair<String, OutputChannel<*>>>) : this(outputChannels.toMap())
+        constructor(outputChannels: Iterable<Pair<String, OutputChannel<String>>>) : this(outputChannels.toMap())
 
-        constructor(outputChannels: Sequence<Pair<String, OutputChannel<*>>>) : this(outputChannels.toMap())
+        constructor(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) : this(outputChannels.toMap())
     }
 
-    data class ResetOutputChannels(val outputChannels: Map<String, OutputChannel<*>>) : SideEffect() {
-        constructor(vararg outputChannels: Pair<String, OutputChannel<*>>) : this(listOf(*outputChannels))
+    data class ResetOutputChannels(val outputChannels: Map<String, OutputChannel<String>>) : SideEffect() {
+        constructor(vararg outputChannels: Pair<String, OutputChannel<String>>) : this(listOf(*outputChannels))
 
-        constructor(outputChannels: Iterable<Pair<String, OutputChannel<*>>>) : this(outputChannels.toMap())
+        constructor(outputChannels: Iterable<Pair<String, OutputChannel<String>>>) : this(outputChannels.toMap())
 
-        constructor(outputChannels: Sequence<Pair<String, OutputChannel<*>>>) : this(outputChannels.toMap())
+        constructor(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) : this(outputChannels.toMap())
     }
 
     data class CloseOutputChannels(val names: Iterable<String>) : SideEffect() {
