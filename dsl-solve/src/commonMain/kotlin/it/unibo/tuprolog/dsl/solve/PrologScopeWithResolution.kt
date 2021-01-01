@@ -2,7 +2,7 @@ package it.unibo.tuprolog.dsl.solve
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.theory.PrologScopeWithTheories
-import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel

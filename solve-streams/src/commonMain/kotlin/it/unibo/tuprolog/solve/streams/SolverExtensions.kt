@@ -2,7 +2,7 @@
 
 package it.unibo.tuprolog.solve.streams
 
-import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
