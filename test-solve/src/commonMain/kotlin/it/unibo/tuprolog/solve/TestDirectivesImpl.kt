@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import it.unibo.tuprolog.core.Directive
-import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -9,8 +7,11 @@ import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.core.operators.Specifier.YFX
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.DirectiveTestsUtils.dynamicDirective
+import it.unibo.tuprolog.solve.DirectiveTestsUtils.facts
+import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializers
+import it.unibo.tuprolog.solve.DirectiveTestsUtils.solverInitializersWithEventsList
+import it.unibo.tuprolog.solve.DirectiveTestsUtils.staticDirective
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.theory.MutableTheory
@@ -20,32 +21,13 @@ import kotlin.test.assertTrue
 
 class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirectives {
 
-    private fun dynamic(functor: String, arity: Int): Sequence<Directive> =
-        prolog {
-            sequenceOf(
-                directive { "dynamic"(functor / arity) }
-            )
-        }
-
-    private fun static(functor: String, arity: Int): Sequence<Directive> =
-        prolog {
-            sequenceOf(
-                directive { "static"(functor / arity) }
-            )
-        }
-
-    private fun facts(functor: String, iterable: Iterable<Any>): Sequence<Fact> =
-        prolog {
-            iterable.asSequence().map { fact { functor(it) } }
-        }
-
     override fun testDynamic1() {
         prolog {
             val initialStaticKb = theoryOf(
                 facts("f", 1..3),
-                static("g", 1),
+                staticDirective("g", 1),
                 facts("g", 4..6),
-                dynamic("h", 1),
+                dynamicDirective("h", 1),
                 facts("h", 7..9)
             )
 
@@ -73,17 +55,17 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         prolog {
             val initialDynamicKb = theoryOf(
                 facts("f", 1..3),
-                static("g", 1),
+                staticDirective("g", 1),
                 facts("g", 4..6),
-                dynamic("h", 1),
+                dynamicDirective("h", 1),
                 facts("h", 7..9)
             )
 
             val expectedStatic = Theory.of(initialDynamicKb.drop(4).take(3))
             val expectedDynamic = theoryOf(
                 facts("f", 1..3),
-                static("g", 1),
-                dynamic("h", 1),
+                staticDirective("g", 1),
+                dynamicDirective("h", 1),
                 facts("h", 7..9)
             ).toMutableTheory()
 
@@ -114,48 +96,10 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
         )
     }
 
-    private fun solverInitializersWithEventsList(): List<Pair<(Theory) -> Solver, MutableList<Any>>> {
-        fun <R> stdOut(action: (MutableList<Any>, OutputChannel<String>, OutputChannel<PrologWarning>) -> R): R {
-            val events = mutableListOf<Any>()
-            val outputChannel = OutputChannel.of<String> { events.add(it) }
-            val warningChannel = OutputChannel.of<PrologWarning> { events.add(it) }
-            return action(events, outputChannel, warningChannel)
-        }
-        return listOf(
-            stdOut { event, out, warn ->
-                { t: Theory ->
-                    solverFactory.solverWithDefaultBuiltins(staticKb = t, stdOut = out, stdErr = out, warnings = warn)
-                } to event
-            },
-            stdOut { event, out, warn ->
-                { t: Theory ->
-                    solverFactory.solverWithDefaultBuiltins(
-                        dynamicKb = t.toMutableTheory(),
-                        stdOut = out,
-                        stdErr = out,
-                        warnings = warn
-                    )
-                } to event
-            },
-            stdOut { event, out, warn ->
-                { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
-                        .also { it.loadStaticKb(t) }
-                } to event
-            },
-            stdOut { event, out, warn ->
-                { t: Theory ->
-                    solverFactory.mutableSolverWithDefaultBuiltins(stdOut = out, stdErr = out, warnings = warn)
-                        .also { it.loadDynamicKb(t.toMutableTheory()) }
-                } to event
-            }
-        )
-    }
-
     private fun testInit(initGoal: String) =
         prolog {
             val theory = theoryWithInit(initGoal)
-            for ((solverOf, writeEvents) in solverInitializersWithEventsList()) {
+            for ((solverOf, writeEvents) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
 
                 assertEquals(
@@ -180,17 +124,9 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
     override fun testSolve1() = testInit("solve")
 
-    private fun solverInitializers(): List<(Theory) -> Solver> =
-        listOf(
-            { solverFactory.solverOf(staticKb = it) },
-            { solverFactory.solverOf(dynamicKb = it.toMutableTheory()) },
-            { solverFactory.mutableSolverOf().also { s -> s.loadStaticKb(it) } },
-            { solverFactory.mutableSolverOf().also { s -> s.loadDynamicKb(it.toMutableTheory()) } }
-        )
-
     override fun testSetPrologFlag2() {
         prolog {
-            for (solverOf in solverInitializers()) {
+            for (solverOf in solverInitializers(solverFactory)) {
                 val solver = solverOf(
                     theoryOf(
                         directive { set_prolog_flag("a", 1) },
@@ -209,7 +145,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
     override fun testOp3() {
         prolog {
-            for (solverOf in solverInitializers()) {
+            for (solverOf in solverInitializers(solverFactory)) {
                 val solver = solverOf(
                     theoryOf(
                         directive { op(2, XFX, "++") },
@@ -233,7 +169,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
 
     override fun testWrongDirectives() {
         prolog {
-            for ((solverOf, events) in solverInitializersWithEventsList()) {
+            for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val theory = theoryOf(
                     directive { op("a", XFX, "++") },
                     directive { op(3, "b", "+++") },
@@ -265,7 +201,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     private fun testFailingInit(initGoal: String) =
         prolog {
             val theory = theoryWithFailingInit(initGoal)
-            for ((solverOf, events) in solverInitializersWithEventsList()) {
+            for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
 
                 sequenceOf(solver.staticKb, solver.dynamicKb)
@@ -293,7 +229,7 @@ class TestDirectivesImpl(private val solverFactory: SolverFactory) : TestDirecti
     private fun testExceptionalInit(initGoal: String) =
         prolog {
             val theory = theoryWithExceptionalInit(initGoal)
-            for ((solverOf, events) in solverInitializersWithEventsList()) {
+            for ((solverOf, events) in solverInitializersWithEventsList(solverFactory)) {
                 val solver = solverOf(theory)
 
                 sequenceOf(solver.staticKb, solver.dynamicKb)
