@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant

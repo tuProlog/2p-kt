@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException

@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.SideEffectsBuilder
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary

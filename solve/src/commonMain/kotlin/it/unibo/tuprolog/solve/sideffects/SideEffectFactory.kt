@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.sideffects
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term

@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.sideffects
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.Theory
 
 sealed class SideEffect {
