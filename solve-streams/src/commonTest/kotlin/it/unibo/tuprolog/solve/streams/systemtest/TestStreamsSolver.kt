@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.streams.systemtest
 
-import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
@@ -8,6 +7,7 @@ import it.unibo.tuprolog.solve.TestSolver
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins

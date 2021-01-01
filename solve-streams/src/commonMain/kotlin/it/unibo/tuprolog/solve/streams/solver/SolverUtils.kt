@@ -14,10 +14,10 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import kotlin.jvm.JvmName
 import kotlin.collections.List as KtList
 

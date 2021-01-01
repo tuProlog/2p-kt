@@ -1,21 +1,16 @@
 package it.unibo.tuprolog.solve.channel
 
-import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
-import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.channel.impl.OutputStoreImpl
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore> {
     companion object {
-        const val STDOUT = "\$stdin"
+        const val STDOUT = "\$stdout"
 
         const val STDERR = "\$stderr"
-
-        @JsName("empty")
-        @JvmStatic
-        fun empty(): OutputStore = OutputStoreImpl(emptyMap())
 
         @JsName("default")
         @JvmStatic
@@ -24,11 +19,7 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
             stdOut: OutputChannel<String> = OutputChannel.stdOut(),
             stdErr: OutputChannel<String> = OutputChannel.stdErr(),
             warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
-        ): OutputStore =
-            OutputStoreImpl(
-                outputChannels = mapOf(STDOUT to stdOut, CURRENT_ALIAS to stdOut, STDERR to stdErr),
-                warnings = warnings
-            )
+        ): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings)
 
         @JsName("of")
         @JvmStatic
@@ -36,16 +27,18 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
         fun of(
             channels: Map<String, OutputChannel<String>>,
             warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
-        ): OutputStore = OutputStoreImpl(channels, warnings)
+        ): OutputStore {
+            val stdOut = channels[STDOUT] ?: OutputChannel.stdOut()
+            val stdErr = channels[STDERR] ?: OutputChannel.stdErr()
+            return OutputStoreImpl(stdOut, stdErr, warnings, channels)
+        }
     }
 
     @JsName("stdOut")
-    val stdOut: OutputChannel<String>?
-        get() = this[STDOUT]
+    val stdOut: OutputChannel<String>
 
     @JsName("stdErr")
-    val stdErr: OutputChannel<String>?
-        get() = this[STDERR]
+    val stdErr: OutputChannel<String>
 
     @JsName("warnings")
     val warnings: OutputChannel<PrologWarning>

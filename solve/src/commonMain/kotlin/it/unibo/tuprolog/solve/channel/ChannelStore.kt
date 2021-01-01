@@ -4,12 +4,12 @@ import kotlin.js.JsName
 
 interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map<String, C> {
     companion object {
-        const val CURRENT_ALIAS = "\$current"
+        const val CURRENT = "\$current"
     }
 
     @JsName("current")
     val current: C?
-        get() = this[CURRENT_ALIAS]
+        get() = this[CURRENT]
 
     @JsName("setCurrentAlias")
     fun setCurrent(alias: String): Self

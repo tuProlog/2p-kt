@@ -3,13 +3,13 @@ package it.unibo.tuprolog.solve.sideffects.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
-import it.unibo.tuprolog.solve.sideffects.SideEffect
-import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 
 data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>) : SideEffectsBuilder {
     private fun <T : SideEffect> adding(f: () -> T): T {

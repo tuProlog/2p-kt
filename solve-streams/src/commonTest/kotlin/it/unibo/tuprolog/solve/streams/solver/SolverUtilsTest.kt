@@ -10,11 +10,11 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.DummyInstances
-import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.no

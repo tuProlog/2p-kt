@@ -120,7 +120,6 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 
@@ -358,11 +357,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
-
-            with(solver.standardOutput!!) {
-                addListener { outputs += it }
-            }
+            solver.standardOutput.addListener { outputs += it }
 
             val query = write(atomOf("atom")) and
                 write(atomOf("a string")) and
@@ -399,9 +394,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
-
-            with(solver.standardOutput!!) {
+            with(solver.standardOutput) {
                 addListener { outputs += it }
                 write("a")
             }
@@ -415,7 +408,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 solutions
             )
 
-            solver.standardOutput?.write("e")
+            solver.standardOutput.write("e")
 
             assertEquals(
                 ktListOf("a", "b", "c", "d", "\n", "e"),

@@ -7,8 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.sideffects.SideEffect
-import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
@@ -17,6 +15,8 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList

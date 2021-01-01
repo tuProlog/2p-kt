@@ -46,7 +46,7 @@ interface ExecutionContextAware {
      * Returns `null` if the channel is closed
      */
     @JsName("standardInput")
-    val standardInput: InputChannel<String>?
+    val standardInput: InputChannel<String>
         get() = inputChannels.stdIn
 
     /**
@@ -54,14 +54,14 @@ interface ExecutionContextAware {
      * Returns `null` if the channel is closed
      */
     @JsName("standardOutput")
-    val standardOutput: OutputChannel<String>?
+    val standardOutput: OutputChannel<String>
         get() = outputChannels.stdOut
 
     /** Shortcut for the standard error channel defined in [outputChannels].
      * Returns `null` if the channel is closed
      */
     @JsName("standardError")
-    val standardError: OutputChannel<String>?
+    val standardError: OutputChannel<String>
         get() = outputChannels.stdErr
 
     /** Shortcut for the warnings channel defined in [outputChannels].

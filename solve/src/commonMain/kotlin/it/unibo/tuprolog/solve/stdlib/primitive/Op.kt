@@ -6,9 +6,9 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 
 object Op : TernaryRelation.NonBacktrackable<ExecutionContext>("op") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term, third: Term): Solve.Response {

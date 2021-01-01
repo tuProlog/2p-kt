@@ -4,12 +4,12 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.streams.SolverStrategies
 import it.unibo.tuprolog.solve.streams.StreamsSolver
 import it.unibo.tuprolog.solve.toOperatorSet

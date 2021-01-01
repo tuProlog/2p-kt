@@ -8,7 +8,7 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
 object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
-        return context.standardOutput.let {
+        return context.outputChannels.current.let {
             if (it == null) {
                 replyFail()
             } else {
