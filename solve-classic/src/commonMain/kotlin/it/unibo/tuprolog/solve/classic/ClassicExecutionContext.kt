@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.OutputStore
 import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.Solver
@@ -99,14 +100,35 @@ data class ClassicExecutionContext(
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): Solver = ClassicSolverFactory.solverOf(
+    ): Solver = ClassicSolver(
         libraries,
         flags,
         staticKb,
         dynamicKb,
         stdIn,
         stdOut,
-        stdErr
+        stdErr,
+        trustKb = true
+    )
+
+    override fun createMutableSolver(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver = MutableClassicSolver(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr,
+        trustKb = true
     )
 
     override fun update(

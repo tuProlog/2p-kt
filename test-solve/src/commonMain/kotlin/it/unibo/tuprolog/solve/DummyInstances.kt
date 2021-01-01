@@ -44,6 +44,19 @@ object DummyInstances {
             throw NotImplementedError()
         }
 
+        override fun createMutableSolver(
+            libraries: Libraries,
+            flags: FlagStore,
+            staticKb: Theory,
+            dynamicKb: Theory,
+            stdIn: InputChannel<String>,
+            stdOut: OutputChannel<String>,
+            stdErr: OutputChannel<String>,
+            warnings: OutputChannel<PrologWarning>
+        ): MutableSolver {
+            throw NotImplementedError()
+        }
+
         override fun update(
             libraries: Libraries,
             flags: FlagStore,

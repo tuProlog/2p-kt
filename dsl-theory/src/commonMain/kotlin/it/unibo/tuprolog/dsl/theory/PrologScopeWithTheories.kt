@@ -12,6 +12,16 @@ interface PrologScopeWithTheories : PrologScopeWithUnification {
         return Theory.indexedOf(*clause)
     }
 
+    @JsName("theoryOfIterable")
+    fun theoryOf(clauses: Iterable<Clause>, vararg otherClauses: Iterable<Clause>): Theory {
+        return Theory.indexedOf(sequenceOf(clauses, *otherClauses).flatMap { it.asSequence() })
+    }
+
+    @JsName("theoryOfSequence")
+    fun theoryOf(clauses: Sequence<Clause>, vararg otherClauses: Sequence<Clause>): Theory {
+        return Theory.indexedOf(sequenceOf(clauses, *otherClauses).flatten())
+    }
+
     @JsName("theory")
     fun theory(vararg clauseFunctions: PrologScope.() -> Any): Theory = theoryOf(
         *clauseFunctions.map { function ->

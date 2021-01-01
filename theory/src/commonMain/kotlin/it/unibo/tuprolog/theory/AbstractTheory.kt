@@ -10,6 +10,8 @@ import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
 internal abstract class AbstractTheory : Theory {
 
+    override fun toImmutableTheory(): Theory = this
+
     override fun plus(clause: Clause): Theory = super.plus(checkClauseCorrect(clause))
 
     override fun contains(clause: Clause): Boolean =
