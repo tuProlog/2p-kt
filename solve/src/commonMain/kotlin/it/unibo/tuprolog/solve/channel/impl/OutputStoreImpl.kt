@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.impl
+package it.unibo.tuprolog.solve.channel.impl
 
 import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
 import it.unibo.tuprolog.solve.channel.OutputStore

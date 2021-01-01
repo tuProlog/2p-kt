@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.impl
+package it.unibo.tuprolog.solve.sideffects.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
@@ -11,7 +11,7 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 
-internal data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>) : SideEffectsBuilder {
+data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffect>) : SideEffectsBuilder {
     private fun <T : SideEffect> adding(f: () -> T): T {
         return f().also { sideEffects.add(it) }
     }

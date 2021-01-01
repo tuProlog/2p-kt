@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.channel
 
 import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
-import it.unibo.tuprolog.solve.impl.InputStoreImpl
+import it.unibo.tuprolog.solve.channel.impl.InputStoreImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic

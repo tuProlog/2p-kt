@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.sideffects
 
-import it.unibo.tuprolog.solve.impl.SideEffectsBuilderImpl
+import it.unibo.tuprolog.solve.sideffects.impl.SideEffectsBuilderImpl
 import it.unibo.tuprolog.utils.dequeOf
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic

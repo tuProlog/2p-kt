@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.channel
 
 import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
 import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.impl.OutputStoreImpl
+import it.unibo.tuprolog.solve.channel.impl.OutputStoreImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
