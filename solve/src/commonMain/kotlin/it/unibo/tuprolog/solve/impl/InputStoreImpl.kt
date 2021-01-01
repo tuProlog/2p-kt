@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.impl
 
-import it.unibo.tuprolog.solve.ChannelStore.Companion.CURRENT_ALIAS
-import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.InputChannel
 
 data class InputStoreImpl(

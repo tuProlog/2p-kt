@@ -4,9 +4,9 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning

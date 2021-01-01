@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries

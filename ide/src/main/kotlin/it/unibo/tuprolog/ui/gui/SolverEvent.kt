@@ -3,8 +3,8 @@ package it.unibo.tuprolog.ui.gui
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 

@@ -1,6 +1,5 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.channel
 
-import it.unibo.tuprolog.solve.channel.Channel
 import kotlin.js.JsName
 
 interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map<String, C> {

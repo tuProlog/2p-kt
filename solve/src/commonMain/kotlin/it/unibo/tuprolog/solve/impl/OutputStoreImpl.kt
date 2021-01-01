@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.impl
 
-import it.unibo.tuprolog.solve.ChannelStore.Companion.CURRENT_ALIAS
-import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 

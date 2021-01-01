@@ -1,7 +1,6 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.channel
 
-import it.unibo.tuprolog.solve.ChannelStore.Companion.CURRENT_ALIAS
-import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.channel.ChannelStore.Companion.CURRENT_ALIAS
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.impl.OutputStoreImpl
 import kotlin.js.JsName
