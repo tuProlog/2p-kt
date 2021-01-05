@@ -19,7 +19,7 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
             stdOut: OutputChannel<String> = OutputChannel.stdOut(),
             stdErr: OutputChannel<String> = OutputChannel.stdErr(),
             warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
-        ): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings)
+        ): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings, mapOf("user_output" to stdOut))
 
         @JsName("of")
         @JvmStatic
