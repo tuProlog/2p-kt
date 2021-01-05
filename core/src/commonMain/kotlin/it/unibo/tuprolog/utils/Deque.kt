@@ -11,3 +11,5 @@ expect fun <T> MutableList<T>.addFirst(item: T)
 expect fun <T> MutableList<T>.addFirst(items: Iterable<T>)
 
 expect fun <T> MutableList<T>.addFirst(items: Sequence<T>)
+
+expect fun <T> MutableList<T>.takeFirst(): T?
