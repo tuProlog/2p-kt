@@ -61,4 +61,8 @@ interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map
     @JsName("minusMany")
     fun minus(other: String, vararg others: String): Self =
         minus(sequenceOf(other, *others))
+
+    @JsName("close")
+    fun close(channel: C): Self =
+        this - aliasesOf(channel.also { it.close() })
 }
