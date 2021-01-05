@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.channel.Listener
 import kotlin.jvm.Synchronized
 import kotlin.jvm.Volatile
 
-abstract class AbstractChannel<T> : Channel<T> {
+abstract class AbstractChannel<T : Any> : Channel<T> {
 
     companion object {
         @Volatile
@@ -15,26 +15,30 @@ abstract class AbstractChannel<T> : Channel<T> {
         private fun nextId(): String = (instanceCount++).toString(16).padStart(16, '0')
     }
 
-    private val _listeners: MutableList<Listener<T>> = mutableListOf()
+    private val _listeners: MutableList<Listener<T?>> = mutableListOf()
 
     protected val id = nextId()
 
-    override fun addListener(listener: Listener<T>) {
+    @Synchronized
+    override fun addListener(listener: Listener<T?>) {
         _listeners.add(listener)
     }
 
-    override fun removeListener(listener: Listener<T>) {
+    @Synchronized
+    override fun removeListener(listener: Listener<T?>) {
         _listeners.remove(listener)
     }
 
+    @Synchronized
     override fun clearListeners() {
         _listeners.clear()
     }
 
-    protected fun notify(value: T) {
+    protected fun notify(value: T?) {
         _listeners.forEach { it(value) }
     }
 
+    @Synchronized
     override fun close() {
         if (!isClosed) {
             isClosed = true
@@ -44,5 +48,6 @@ abstract class AbstractChannel<T> : Channel<T> {
     }
 
     final override var isClosed: Boolean = false
+        @Synchronized get
         private set
 }

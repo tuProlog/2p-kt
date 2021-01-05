@@ -357,7 +357,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            solver.standardOutput.addListener { outputs += it }
+            solver.standardOutput.addListener { outputs += it!! }
 
             val query = write(atomOf("atom")) and
                 write(atomOf("a string")) and
@@ -395,7 +395,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             with(solver.standardOutput) {
-                addListener { outputs += it }
+                addListener { outputs += it!! }
                 write("a")
             }
 

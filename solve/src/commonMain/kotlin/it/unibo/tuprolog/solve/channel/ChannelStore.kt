@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.channel
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 
-interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map<String, C> {
+interface ChannelStore<T : Any, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map<String, C> {
     companion object {
         const val CURRENT = "\$current"
     }

@@ -10,12 +10,11 @@ import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.setCurrent
 internal class InputStoreImpl(
     override val stdIn: InputChannel<String>,
     channels: Map<String, InputChannel<String>> = emptyMap()
-) : AbstractChannelStore<String, InputChannel<String>, InputStore>(
+) : InputStore, AbstractChannelStore<String, InputChannel<String>, InputStore>(
     channels.toMutableMap()
         .ensureAliasRefersToChannel(STDIN, stdIn)
         .setCurrent(STDIN, stdIn)
-),
-    InputStore {
+) {
 
     override fun setCurrent(alias: String): InputStore =
         when (val newCurrentChannel = get(alias)) {

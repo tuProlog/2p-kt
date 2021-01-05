@@ -3,12 +3,12 @@ package it.unibo.tuprolog.solve.channel
 import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
 
-interface Channel<T> {
+interface Channel<T : Any> {
     @JsName("addListener")
-    fun addListener(listener: Listener<T>)
+    fun addListener(listener: Listener<T?>)
 
     @JsName("removeListener")
-    fun removeListener(listener: Listener<T>)
+    fun removeListener(listener: Listener<T?>)
 
     @JsName("clearListeners")
     fun clearListeners()
