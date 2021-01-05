@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.channel
 
+import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 
 interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map<String, C> {
@@ -11,11 +12,21 @@ interface ChannelStore<T, C : Channel<T>, Self : ChannelStore<T, C, Self>> : Map
     val current: C?
         get() = this[CURRENT]
 
+    @JsName("currentAliases")
+    val currentAliases: Sequence<String>
+        get() = current?.let { aliasesOf(it) } ?: emptySequence()
+
     @JsName("setCurrentAlias")
     fun setCurrent(alias: String): Self
 
     @JsName("setCurrentChannel")
     fun setCurrent(channel: C): Self
+
+    @JsName("findByTerm")
+    fun findByTerm(streamTerm: Term): Sequence<C>
+
+    @JsName("aliasesOf")
+    fun aliasesOf(channel: C): Sequence<String>
 
     @JsName("plusMap")
     operator fun plus(others: Map<String, C>): Self
