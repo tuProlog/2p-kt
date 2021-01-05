@@ -22,6 +22,7 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVAT
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.STATIC_PROCEDURE
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARITY
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
@@ -184,6 +185,14 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> throw TypeError.forArgument(context, signature, PREDICATE_INDICATOR, candidate, index)
             }
         }
+
+        fun <C : ExecutionContext> Solve.Request<C>.notImplemented(
+            message: String = "Primitive for ${signature.name}/${signature.arity} is not implemented, yet"
+        ): Solve.Response = throw SystemError.forUncaughtException(context, NotImplementedError(message))
+
+        fun <C : ExecutionContext> Solve.Request<C>.notSupported(
+            message: String = "Operation ${signature.name}/${signature.arity} is not supported"
+        ): Solve.Response = throw SystemError.forUncaughtException(context, IllegalStateException(message))
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
