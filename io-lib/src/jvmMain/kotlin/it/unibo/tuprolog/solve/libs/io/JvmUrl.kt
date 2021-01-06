@@ -11,7 +11,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import kotlin.streams.asSequence
 
-data class JvmUrl(private val url: URL) : Url {
+data class JvmUrl(val url: URL) : Url {
 
     constructor(string: String) : this(string.toUrl())
 
@@ -56,10 +56,7 @@ data class JvmUrl(private val url: URL) : Url {
             try {
                 URL(this)
             } catch (e: MalformedURLException) {
-                throw InvalidUrlException(
-                    message = "Invalid URL: $this",
-                    cause = e
-                )
+                throw InvalidUrlException(message = "Invalid URL: $this", cause = e)
             }
     }
 }

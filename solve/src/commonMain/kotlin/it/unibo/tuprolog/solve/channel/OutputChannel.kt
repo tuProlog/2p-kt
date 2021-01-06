@@ -26,4 +26,8 @@ interface OutputChannel<T : Any> : Channel<T> {
 
     @JsName("write")
     fun write(value: T)
+
+    @JsName("use")
+    fun <R> use(function: OutputChannel<T>.() -> R): R =
+        this.function().also { close() }
 }
