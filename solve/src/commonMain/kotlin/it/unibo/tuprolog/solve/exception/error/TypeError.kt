@@ -160,7 +160,8 @@ class TypeError(
         PREDICATE_INDICATOR,
         REFERENCE,
         TYPE_REFERENCE,
-        URL;
+        URL,
+        VARIABLE;
 
         /**
          * The type expected string description
