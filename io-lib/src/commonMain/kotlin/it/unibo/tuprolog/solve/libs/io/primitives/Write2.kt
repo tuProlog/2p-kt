@@ -14,7 +14,11 @@ object Write2 : BinaryRelation.NonBacktrackable<ExecutionContext>("write") {
             is Atom -> second.value
             else -> second.toString()
         }
-        channel.write(string)
-        return replySuccess()
+        return try {
+            channel.write(string)
+            replySuccess()
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
     }
 }

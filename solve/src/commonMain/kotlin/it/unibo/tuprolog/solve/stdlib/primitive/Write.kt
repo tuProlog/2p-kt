@@ -16,8 +16,12 @@ object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
                     is Atom -> first.value
                     else -> first.toString()
                 }
-                it.write(string)
-                replySuccess()
+                return try {
+                    it.write(string)
+                    replySuccess()
+                } catch (_: IllegalStateException) {
+                    replyFail()
+                }
             }
         }
     }

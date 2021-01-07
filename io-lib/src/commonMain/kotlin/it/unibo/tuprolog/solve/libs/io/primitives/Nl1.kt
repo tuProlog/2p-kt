@@ -9,7 +9,11 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 object Nl1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("nl") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
-        channel.write("\n")
-        return replySuccess()
+        return try {
+            channel.write("\n")
+            replySuccess()
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
     }
 }

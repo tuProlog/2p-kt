@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -95,7 +96,11 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     }
 
     override fun setStdin(content: String) {
-        stdin = content
+        ensuringStateIs(State.IDLE) {
+            stdin = content
+            solver.invalidate()
+            // solver.regenerate()
+        }
     }
 
     override fun quit() {
@@ -117,6 +122,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     private val solver = Cached.of {
         MutableSolver.classicWithDefaultBuiltins(
             libraries = Libraries.of(OOPLib, IOLib),
+            stdIn = InputChannel.of(stdin),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },

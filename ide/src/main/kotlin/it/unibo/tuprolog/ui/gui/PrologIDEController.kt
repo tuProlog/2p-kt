@@ -402,6 +402,7 @@ class PrologIDEController : Initializable {
         updatingContextSensitiveView(e) {
             cleanUpAfterResolution()
             btnStop.isDisable = false
+            txaStdin.isDisable = true
         }
     }
 
@@ -409,6 +410,7 @@ class PrologIDEController : Initializable {
         updatingContextSensitiveView(e) {
             lblStatus.text = "Idle"
             btnStop.isDisable = true
+            txaStdin.isDisable = false
         }
     }
 
@@ -455,6 +457,11 @@ class PrologIDEController : Initializable {
         } else {
             continueResolution()
         }
+    }
+
+    @FXML
+    fun onStdinChanged(e: KeyEvent) {
+        model.setStdin(txaStdin.text)
     }
 
     @FXML

@@ -153,6 +153,7 @@ class TypeError(
         EVALUABLE,
         FLOAT,
         INTEGER,
+        IN_CHARACTER,
         LIST,
         NUMBER,
         OBJECT_REFERENCE,

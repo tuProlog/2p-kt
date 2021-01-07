@@ -330,9 +330,11 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         private val MIN_CHAR = BigInteger.of(Char.MIN_VALUE.toInt())
         private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.toInt())
 
+        fun Integer.isCharacterCode(): Boolean = intValue !in MIN_CHAR..MAX_CHAR
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsCharCode(term: Term): Solve.Request<C> =
             when {
-                term !is Integer || term.intValue !in MIN_CHAR..MAX_CHAR ->
+                term !is Integer || term.isCharacterCode() ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
             }

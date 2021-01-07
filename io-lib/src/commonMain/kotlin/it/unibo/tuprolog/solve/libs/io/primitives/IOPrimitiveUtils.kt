@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io.primitives
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -13,12 +14,17 @@ import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_OR_AL
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_PROPERTY
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_TYPE
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.CHARACTER_CODE
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
 import it.unibo.tuprolog.solve.libs.io.Url
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsAtom
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInstantiated
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsInteger
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsStruct
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.isCharacterCode
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
@@ -113,6 +119,37 @@ object IOPrimitiveUtils {
             }
         }
         throw DomainError.forArgument(context, signature, STREAM_OR_ALIAS, term, index)
+    }
+
+    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrChar(index: Int): Solve.Request<C> {
+        return when (val arg = arguments[index]) {
+            is Var -> this
+            is Atom -> when {
+                arg.value == "end_of_file" -> {
+                    this
+                }
+                arg.value.length == 1 -> {
+                    this
+                }
+                else -> {
+                    throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
+                }
+            }
+            else -> {
+                throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
+            }
+        }
+    }
+
+    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrCharCode(index: Int): Solve.Request<C> {
+        val term = arguments[index]
+        return when {
+            term is Var -> this
+            term !is Integer -> ensuringArgumentIsInteger(index)
+            term == Integer.MINUS_ONE -> this
+            term.isCharacterCode() -> throw RepresentationError.of(context, signature, CHARACTER_CODE)
+            else -> this
+        }
     }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChannel(index: Int): Channel<String> {
