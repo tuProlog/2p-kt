@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve.libs.io.primitives
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.channel.Channel
@@ -16,6 +18,7 @@ import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_TYPE
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.CHARACTER_CODE
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
 import it.unibo.tuprolog.solve.libs.io.Url
@@ -32,10 +35,15 @@ object IOPrimitiveUtils {
 
     private val INPUT_STREAM_TERM_PATTERN by lazy { InputChannel.streamTerm() }
     private val OUTPUT_STREAM_TERM_PATTERN by lazy { OutputChannel.streamTerm() }
+    private val PROPERTY_TYPE_PATTERN by lazy { Struct.of("type", Var.anonymous()) }
+    private val PROPERTY_REPOSITION_PATTERN by lazy { Struct.of("reposition", Var.anonymous()) }
+    private val PROPERTY_EOF_ACTION_PATTERN by lazy { Struct.of("eof_action", Var.anonymous()) }
+    internal val PROPERTY_ALIAS_PATTERN by lazy { alias() }
     private val PROPERTY_INPUT by lazy { Atom.of("input") }
     private val PROPERTY_OUTPUT by lazy { Atom.of("output") }
-    private val PROPERTY_ALIAS by lazy { alias() }
     private val PROPERTY_TYPE_TEXT by lazy { Struct.of("type", Atom.of("text")) }
+    private val PROPERTY_REPOSITION_FALSE by lazy { Struct.of("reposition", Truth.FALSE) }
+    private val PROPERTY_EOF_ACTION_EOF_CODE by lazy { Struct.of("eof_action", Atom.of("eof_code")) }
 
     private fun alias(alias: String? = null) =
         Struct.of("alias", alias?.let { Atom.of(it) } ?: Var.anonymous())
@@ -72,12 +80,42 @@ object IOPrimitiveUtils {
     val <C : ExecutionContext> Solve.Request<C>.currentOutputChannel: OutputChannel<String>
         get() = context.outputChannels.let { it.current ?: it.stdOut }
 
+    fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
+        if (sequenceOf(
+                PROPERTY_INPUT,
+                PROPERTY_OUTPUT,
+                PROPERTY_ALIAS_PATTERN,
+                PROPERTY_TYPE_PATTERN,
+                PROPERTY_EOF_ACTION_PATTERN,
+                PROPERTY_REPOSITION_PATTERN
+            ).any { it matches term }
+        ) {
+            term
+        } else {
+            throw DomainError.forTerm(context, STREAM_PROPERTY, term)
+        }
+
+    fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
+        if (sequenceOf(
+                PROPERTY_INPUT,
+                PROPERTY_OUTPUT,
+                PROPERTY_ALIAS_PATTERN,
+                PROPERTY_TYPE_TEXT,
+                PROPERTY_EOF_ACTION_EOF_CODE,
+                PROPERTY_REPOSITION_FALSE
+            ).any { it matches term }
+        ) {
+            term
+        } else {
+            throw SystemError.forUncaughtException(context, IllegalStateException("unsupported option $term"))
+        }
+
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStreamProperty(index: Int): Solve.Request<C> {
         val term = arguments[index]
         when (term) {
             is Var -> return this
             is Struct -> {
-                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS).any { it matches term }) {
+                if (sequenceOf(PROPERTY_INPUT, PROPERTY_OUTPUT, PROPERTY_ALIAS_PATTERN).any { it matches term }) {
                     return this
                 }
             }
