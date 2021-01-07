@@ -19,7 +19,10 @@ abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChan
     override val streamTerm: Struct by lazy { OutputChannel.streamTerm(id) }
 
     @Synchronized
-    override fun flush() {
-        // does nothing
+    final override fun flush() {
+        if (isClosed) throw IllegalStateException("Output channel is closed")
+        flushActually()
     }
+
+    protected abstract fun flushActually()
 }

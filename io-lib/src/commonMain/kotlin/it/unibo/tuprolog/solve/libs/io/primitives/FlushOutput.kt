@@ -9,7 +9,11 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 object FlushOutput : UnaryPredicate.NonBacktrackable<ExecutionContext>("flush_output") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         val channel = ensuringArgumentIsOutputChannel(0)
-        channel.flush()
-        return replySuccess()
+        return try {
+            channel.flush()
+            replySuccess()
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
     }
 }

@@ -9,12 +9,7 @@ class WriterChannel(private val writer: Writer) : AbstractOutputChannel<String>(
 
     constructor(outputStream: OutputStream) : this(OutputStreamWriter(outputStream))
 
-    override fun writeActually(value: String) {
-        writer.write(value)
-    }
+    override fun writeActually(value: String) = writer.write(value)
 
-    @Synchronized
-    override fun flush() {
-        writer.flush()
-    }
+    override fun flushActually() = writer.flush()
 }

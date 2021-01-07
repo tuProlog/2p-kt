@@ -4,12 +4,7 @@ import it.unibo.tuprolog.solve.channel.impl.AbstractOutputChannel
 import java.io.PrintStream
 
 class PrintStreamChannel<T : Any>(private val printStream: PrintStream) : AbstractOutputChannel<T>() {
-    override fun writeActually(value: T) {
-        printStream.print(value)
-    }
+    override fun writeActually(value: T) = printStream.print(value)
 
-    @Synchronized
-    override fun flush() {
-        printStream.flush()
-    }
+    override fun flushActually() = printStream.flush()
 }
