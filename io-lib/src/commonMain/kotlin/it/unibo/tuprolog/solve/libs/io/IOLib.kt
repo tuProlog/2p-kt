@@ -3,6 +3,8 @@ package it.unibo.tuprolog.solve.libs.io
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream0
+import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream1
 import it.unibo.tuprolog.solve.libs.io.primitives.CharConversion
 import it.unibo.tuprolog.solve.libs.io.primitives.Close1
 import it.unibo.tuprolog.solve.libs.io.primitives.Close2
@@ -54,6 +56,8 @@ object IOLib : AliasedLibrary by
         theory = Theory.empty(),
         functions = emptyMap(),
         primitives = sequenceOf(
+            AtEndOfStream0,
+            AtEndOfStream1,
             CharConversion,
             Close1,
             Close2,
