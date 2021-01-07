@@ -237,7 +237,38 @@ interface PrologStdLibScope : PrologAwareScope {
     fun setof(template: Any, goal: Any, bag: Any): Struct =
         structOf("setof", template.toTerm(), goal.toTerm(), bag.toTerm())
 
-//    bagof/3
+    @JsName("consult1")
+    fun consult(url: Any): Struct =
+        structOf("consult", url.toTerm())
+
+    @JsName("set_prolog_flag2")
+    fun set_prolog_flag(name: Any, value: Any): Struct =
+        structOf("set_prolog_flag", name.toTerm(), value.toTerm())
+
+    @JsName("dynamic1")
+    fun dynamic(indicator: Any): Struct =
+        structOf("dynamic", indicator.toTerm())
+
+    @JsName("static1")
+    fun static(indicator: Any): Struct =
+        structOf("static", indicator.toTerm())
+
+    @JsName("solve1")
+    fun solve(goal: Any): Struct =
+        structOf("solve", goal.toTerm())
+
+    @JsName("initialization1")
+    fun initialization(goal: Any): Struct =
+        structOf("initialization", goal.toTerm())
+
+    @JsName("load1")
+    fun load(url: Any): Struct =
+        structOf("load", url.toTerm())
+
+    @JsName("include1")
+    fun include(url: Any): Struct =
+        structOf("include", url.toTerm())
+
 //    close/1
 //    close/2
 //    copy_term/2
@@ -276,9 +307,7 @@ interface PrologStdLibScope : PrologAwareScope {
 //    repeat/1
 //    set_input/1
 //    set_output/1
-//    set_prolog_flag/2
 //    set_stream_position/2
-//    setof/3
 //    stream_property/2
 //    unify_with_occurs_check/2
 //    write_canonical/1

@@ -10,7 +10,7 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /** A storage for flags and their values */
-class FlagStore private constructor(private val flags: Map<String, Term>) : Map<String, Term> by flags {
+data class FlagStore constructor(private val flags: Map<String, Term>) : Map<String, Term> by flags {
 
     private constructor(vararg flagValues: Pair<String, Term>) : this(mapOf(*flagValues))
 

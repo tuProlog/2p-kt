@@ -13,11 +13,12 @@
         <path d="M405 179 L1271 179 L1271 598 L405 598 L405 179 Z"/>
       </clipPath>
     </defs>
+    <g fill="white" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="translate(-409,-183)" stroke="white">
+      <rect x="409" width="866" height="419" y="183" clip-path="url(#clipPath2)" stroke="none"/>
+    </g>
     <g fill="rgb(153,204,0)" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke="rgb(153,204,0)">
       <path d="M629.8721 230 L711.1279 230 L711.1279 245 L726.1279 245 L726.1279 258 L629.8721 258 Z" stroke="none" clip-path="url(#clipPath2)"/>
-    </g>
-    <g fill="white" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke="white">
-      <path d="M711.1279 230 L711.1279 245 L726.1279 245 Z" fill-rule="evenodd" clip-path="url(#clipPath2)" stroke="none"/>
+      <path fill="white" d="M711.1279 230 L711.1279 245 L726.1279 245 Z" clip-path="url(#clipPath2)" fill-rule="evenodd" stroke="none"/>
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke-linecap="butt">
       <path fill="none" d="M629.8721 230 L711.1279 230 L711.1279 245 L726.1279 245 L726.1279 258 L629.8721 258 Z" clip-path="url(#clipPath2)"/>
@@ -61,13 +62,13 @@
       <text x="478.0001" font-size="20px" y="510.6" clip-path="url(#clipPath2)" font-family="'Ubuntu Mono'" stroke="none" xml:space="preserve">solve-classic</text>
     </g>
     <g fill="rgb(255,204,0)" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke="rgb(255,204,0)">
-      <path d="M662.6279 490 L826.8838 490 L826.8838 505 L841.8838 505 L841.8838 518 L662.6279 518 Z" stroke="none" clip-path="url(#clipPath2)"/>
-      <path fill="white" d="M826.8838 490 L826.8838 505 L841.8838 505 Z" clip-path="url(#clipPath2)" fill-rule="evenodd" stroke="none"/>
+      <path d="M662.6279 527 L826.8838 527 L826.8838 542 L841.8838 542 L841.8838 555 L662.6279 555 Z" stroke="none" clip-path="url(#clipPath2)"/>
+      <path fill="white" d="M826.8838 527 L826.8838 542 L841.8838 542 Z" clip-path="url(#clipPath2)" fill-rule="evenodd" stroke="none"/>
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke-linecap="butt">
-      <path fill="none" d="M662.6279 490 L826.8838 490 L826.8838 505 L841.8838 505 L841.8838 518 L662.6279 518 Z" clip-path="url(#clipPath2)"/>
-      <path fill="none" d="M826.8838 490 L826.8838 505 L841.8838 505 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
-      <text x="687.256" font-size="20px" y="510.6" clip-path="url(#clipPath2)" font-family="'Ubuntu Mono'" stroke="none" xml:space="preserve">solve-streams</text>
+      <path fill="none" d="M662.6279 527 L826.8838 527 L826.8838 542 L841.8838 542 L841.8838 555 L662.6279 555 Z" clip-path="url(#clipPath2)"/>
+      <path fill="none" d="M826.8838 527 L826.8838 542 L841.8838 542 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
+      <text x="687.256" font-size="20px" y="547.6" clip-path="url(#clipPath2)" font-family="'Ubuntu Mono'" stroke="none" xml:space="preserve">solve-streams</text>
     </g>
     <g fill="rgb(255,204,0)" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke="rgb(255,204,0)">
       <path d="M453.3721 555 L523.6279 555 L523.6279 570 L538.6279 570 L538.6279 583 L453.3721 583 Z" stroke="none" clip-path="url(#clipPath2)"/>
@@ -166,8 +167,8 @@
       <path d="M678 387.9961 L672 399.9961 L684 399.9961 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <path fill="none" d="M572.1028 489.9875 L639.0034 457.7761" clip-path="url(#clipPath2)"/>
       <path d="M648.9144 453.0042 L635.4995 452.8039 L640.7053 463.616 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <path fill="none" d="M736.2662 490.0034 L702.2944 460.2661" clip-path="url(#clipPath2)"/>
-      <path d="M694.0175 453.021 L699.095 465.4395 L706.9988 456.4101 Z" clip-path="url(#clipPath2)" stroke="none"/>
+      <path fill="none" d="M742.0493 526.98 L694.6538 461.8762" clip-path="url(#clipPath2)"/>
+      <path d="M688.1797 452.9832 L690.3917 466.216 L700.0931 459.1533 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <path fill="none" d="M506.1206 555.0034 L526.4164 526.9348" clip-path="url(#clipPath2)"/>
       <path d="M532.8618 518.0209 L520.9683 524.2295 L530.6926 531.2608 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <path fill="none" d="M785.7543 244 L737.1158 244" clip-path="url(#clipPath2)"/>
@@ -272,6 +273,15 @@
       <path fill="none" d="M785.7441 425 L878.744 425 L878.744 440 L893.744 440 L893.744 453 L785.7441 453 Z" clip-path="url(#clipPath2)"/>
       <path fill="none" d="M878.744 425 L878.744 440 L893.744 440 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
       <text x="804.7441" font-size="20px" y="445.6" clip-path="url(#clipPath2)" font-family="'Ubuntu Mono'" stroke="none" xml:space="preserve">oop-lib</text>
+    </g>
+    <g fill="rgb(255,204,0)" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke="rgb(255,204,0)">
+      <path d="M785.7441 476 L878.744 476 L878.744 491 L893.744 491 L893.744 504 L785.7441 504 Z" stroke="none" clip-path="url(#clipPath2)"/>
+      <path fill="white" d="M878.744 476 L878.744 491 L893.744 491 Z" clip-path="url(#clipPath2)" fill-rule="evenodd" stroke="none"/>
+    </g>
+    <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-409,-183)" stroke-linecap="butt">
+      <path fill="none" d="M785.7441 476 L878.744 476 L878.744 491 L893.744 491 L893.744 504 L785.7441 504 Z" clip-path="url(#clipPath2)"/>
+      <path fill="none" d="M878.744 476 L878.744 491 L893.744 491 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
+      <text x="809.7441" font-size="20px" y="496.6" clip-path="url(#clipPath2)" font-family="'Ubuntu Mono'" stroke="none" xml:space="preserve">io-lib</text>
       <path fill="none" d="M1084.3197 533 L1206.9048 533" clip-path="url(#clipPath2)"/>
       <path d="M1217.9048 533 L1205.9048 527 L1205.9048 539 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <text x="1105.6501" xml:space="preserve" y="524.5607" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">depends on</text>
@@ -287,6 +297,8 @@
       <path d="M554.5002 518.021 L557.4713 531.1043 L566.7495 523.4941 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <path fill="none" d="M785.7635 439 L737.12 439" clip-path="url(#clipPath2)"/>
       <path d="M726.12 439 L738.12 445 L738.12 433 Z" clip-path="url(#clipPath2)" stroke="none"/>
+      <path fill="none" d="M795.3198 475.9924 L732.9154 456.3155" clip-path="url(#clipPath2)"/>
+      <path d="M722.4246 453.0076 L732.0648 462.3385 L735.6734 450.894 Z" clip-path="url(#clipPath2)" stroke="none"/>
     </g>
   </g>
 </svg>

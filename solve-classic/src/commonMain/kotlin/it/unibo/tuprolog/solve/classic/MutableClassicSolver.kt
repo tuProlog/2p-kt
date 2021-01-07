@@ -8,6 +8,9 @@ import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.InputStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -17,14 +20,29 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
-internal class MutableClassicSolver(
-    libraries: Libraries = Libraries.empty(),
-    flags: FlagStore = FlagStore.empty(),
-    staticKb: Theory = Theory.empty(),
-    dynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
-) : ClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableSolver {
+internal class MutableClassicSolver : ClassicSolver, MutableSolver {
+
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
+        outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
+        trustKb: Boolean = false
+    ) : super(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
+
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+        trustKb: Boolean = false
+    ) : super(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
     override fun loadLibrary(library: AliasedLibrary) {
         updateContext {
@@ -56,22 +74,14 @@ internal class MutableClassicSolver(
     }
 
     override fun loadStaticKb(theory: Theory) {
-        updateContext {
-            copy(
-                staticKb = theory,
-                operators = getAllOperators(libraries, theory, dynamicKb).toOperatorSet()
-            )
-        }
+        initializeKb(
+            staticKb = theory,
+            appendStatic = false
+        )
     }
 
     override fun appendStaticKb(theory: Theory) {
-        updateContext {
-            val newStaticKb = staticKb + theory
-            copy(
-                staticKb = newStaticKb,
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
-        }
+        initializeKb(staticKb = theory)
     }
 
     override fun resetStaticKb() {
@@ -84,21 +94,14 @@ internal class MutableClassicSolver(
     }
 
     override fun loadDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = getAllOperators(libraries, staticKb, theory).toOperatorSet()
-            )
-        }
+        initializeKb(
+            dynamicKb = theory,
+            appendDynamic = false
+        )
     }
 
     override fun appendDynamicKb(theory: Theory) {
-        updateContext {
-            copy(
-                dynamicKb = theory.toMutableTheory(),
-                operators = operators + theory.getAllOperators().toOperatorSet()
-            )
-        }
+        initializeKb(dynamicKb = theory)
     }
 
     override fun resetDynamicKb() {

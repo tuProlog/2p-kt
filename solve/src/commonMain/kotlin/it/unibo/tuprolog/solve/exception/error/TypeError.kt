@@ -159,7 +159,8 @@ class TypeError(
         PAIR,
         PREDICATE_INDICATOR,
         REFERENCE,
-        TYPE_REFERENCE;
+        TYPE_REFERENCE,
+        URL;
 
         /**
          * The type expected string description

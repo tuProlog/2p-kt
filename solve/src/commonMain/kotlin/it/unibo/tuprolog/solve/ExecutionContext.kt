@@ -38,6 +38,18 @@ interface ExecutionContext : ExecutionContextAware {
         warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
     ): Solver
 
+    @JsName("createMutableSolver")
+    fun createMutableSolver(
+        libraries: Libraries = this.libraries,
+        flags: FlagStore = this.flags,
+        staticKb: Theory = this.staticKb,
+        dynamicKb: Theory = this.dynamicKb,
+        stdIn: InputChannel<String> = this.standardInput ?: InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = this.standardOutput ?: OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = this.standardError ?: OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = this.warnings ?: OutputChannel.warn()
+    ): MutableSolver
+
     @JsName("apply")
     fun apply(sideEffect: SideEffect): ExecutionContext {
         return apply(listOf(sideEffect))

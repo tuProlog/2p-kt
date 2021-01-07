@@ -11,6 +11,7 @@ val javaFxVersion: String by project
 val arguments: String? by project
 
 dependencies {
+    api(project(":io-lib"))
     api(project(":oop-lib"))
     api(project(":parser-theory"))
     api(project(":solve-classic"))

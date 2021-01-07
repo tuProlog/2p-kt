@@ -1,26 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="767.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unibo.tuprolog.ui.gui.PrologIDEController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -136,14 +118,23 @@
                                 <Label text="?-" />
                                 <TextField fx:id="txfQuery" onAction="#onActionPerformedOnQuery" onKeyTyped="#onKeyTypedOnQuery" HBox.hgrow="SOMETIMES">
                                     <HBox.margin>
-                                        <Insets right="10.0" />
+                                        <Insets right="10.0"/>
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="&gt;" />
-                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="&gt;&gt;" />
-                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="X">
+                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false"
+                                        onAction="#onNextButtonPressed" text="&gt;"/>
+                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed"
+                                        text="&gt;&gt;"/>
+                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false"
+                                        onAction="#onStopButtonPressed" text="X">
                                     <HBox.margin>
-                                        <Insets left="10.0" />
+                                        <Insets left="10.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed"
+                                        text="R">
+                                    <HBox.margin>
+                                        <Insets left="10.0"/>
                                     </HBox.margin>
                                 </Button>
                             </children>

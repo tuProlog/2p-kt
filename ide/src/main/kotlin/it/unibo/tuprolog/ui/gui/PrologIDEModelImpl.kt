@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
@@ -24,8 +25,31 @@ import kotlin.system.exitProcess
 
 internal class PrologIDEModelImpl(override val executor: ExecutorService) : PrologIDEModel {
 
+    private data class FileContent(var text: String, var changed: Boolean = true) {
+        fun text(text: String) {
+            if (text != this.text) changed = true
+            this.text = text
+        }
+
+        fun text(): String = text.also { changed = false }
+    }
+
     private var tempFiles = 0
-    private val files = mutableMapOf<File, String>()
+    private val files = mutableMapOf<File, FileContent>()
+    private var solutions: Iterator<Solution>? = null
+    private var solutionCount = 0
+    private var lastGoal: Struct? = null
+    private var stdin: String = ""
+    override var timeout: TimeDuration = 5000
+    override var query: String = ""
+
+    override var currentFile: File? = null
+        set(value) {
+            if (field != null && field != value) {
+                files[field]?.changed = true
+            }
+            field = value
+        }
 
     override fun newFile(): File =
         File.createTempFile("untitled-${++tempFiles}-", ".pl").also {
@@ -44,19 +68,21 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
         file.writeText(getFile(file))
     }
 
-    override var currentFile: File? = null
-
     override fun selectFile(file: File) {
         currentFile = file
         onFileSelected.push(file)
     }
 
     override fun getFile(file: File): String {
-        return files[file]!!
+        return files[file]!!.text
     }
 
     override fun setFile(file: File, theory: String) {
-        files[file] = theory
+        if (file in files) {
+            files[file]?.text(theory)
+        } else {
+            files[file] = FileContent(theory, true)
+        }
     }
 
     override fun renameFile(file: File, newFile: File) {
@@ -67,8 +93,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     override fun setCurrentFile(theory: String) {
         setFile(currentFile!!, theory)
     }
-
-    private var stdin: String = ""
 
     override fun setStdin(content: String) {
         stdin = content
@@ -92,7 +116,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private val solver = Cached.of {
         MutableSolver.classicWithDefaultBuiltins(
-            libraries = Libraries.of(OOPLib),
+            libraries = Libraries.of(OOPLib, IOLib),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },
@@ -101,14 +125,20 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
         }
     }
 
-    override fun reset() {
-        solver.invalidate()
-        solver.regenerate()
+    override fun closeFile(file: File) {
+        files -= file
+        onFileClosed.push(file)
     }
 
-    private var solutions: Iterator<Solution>? = null
-    private var solutionCount = 0
-    private var lastGoal: Struct? = null
+    override fun reset() {
+        ensuringStateIs(State.IDLE, State.SOLUTION) {
+            if (state == State.SOLUTION) {
+                stop()
+            }
+            solver.invalidate()
+            solver.regenerate()
+        }
+    }
 
     override fun solve() {
         solveImpl {
@@ -140,16 +170,18 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
 
     private fun newResolution(): Iterator<Solution> {
         solver.value.let { s ->
-            val old = s.operators
-            val theory = currentFile?.let { getFile(it) }?.parseAsTheory(old) ?: Theory.empty()
-            s.loadStaticKb(theory)
-            lastGoal = query.parseAsStruct(old)
+            currentFile?.let { files[it] }.let {
+                if (it?.changed != false) {
+                    val theory = it?.text()?.parseAsTheory(s.operators) ?: Theory.empty()
+                    s.resetDynamicKb()
+                    s.loadStaticKb(theory)
+                }
+            }
+            lastGoal = query.parseAsStruct(s.operators)
             onNewStaticKb.push(SolverEvent(Unit, s))
             return s.solve(lastGoal!!, timeout).iterator()
         }
     }
-
-    override var timeout: TimeDuration = 5000
 
     private fun nextImpl() {
         executor.execute {
@@ -203,13 +235,6 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
             onQueryOver.push(SolverEvent(lastGoal!!, solver.value))
         }
     }
-
-    override fun closeFile(file: File) {
-        files -= file
-        onFileClosed.push(file)
-    }
-
-    override var query: String = ""
 
 //    override var goal: Struct
 //        get() = TODO("Not yet implemented")

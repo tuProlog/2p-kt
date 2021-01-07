@@ -15,9 +15,15 @@ import kotlin.jvm.JvmStatic
 
 interface Theory : Iterable<Clause> {
 
-    val isMutable: Boolean get() = false
+    @JsName("isMutable")
+    val isMutable: Boolean
+        get() = false
 
+    @JsName("toMutableTheory")
     fun toMutableTheory(): MutableTheory
+
+    @JsName("toImmutableTheory")
+    fun toImmutableTheory(): Theory
 
     /** All [Clause]s in this theory */
     @JsName("clauses")
@@ -133,6 +139,9 @@ interface Theory : Iterable<Clause> {
     /** An enhanced toString that prints the theory in a Prolog program format, if [asPrologText] is `true` */
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String
+
+    @JsName("equalsUsingVarCompleteNames")
+    fun equals(other: Theory, useVarCompleteName: Boolean): Boolean
 
     companion object {
 
