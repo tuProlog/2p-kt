@@ -8,9 +8,9 @@ import kotlin.jvm.JvmStatic
 
 interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore> {
     companion object {
-        const val STDOUT = "\$stdout"
+        const val STDOUT = "stdout"
 
-        const val STDERR = "\$stderr"
+        const val STDERR = "stderr"
 
         @JsName("default")
         @JvmStatic

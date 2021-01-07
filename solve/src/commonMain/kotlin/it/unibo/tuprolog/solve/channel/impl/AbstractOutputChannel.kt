@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.channel.impl
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import kotlin.jvm.Synchronized
@@ -17,6 +16,5 @@ abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChan
 
     override fun toString(): String = "${this::class.simpleName}(id=$id, closed=$isClosed)"
 
-    override val streamTerm: Struct
-        get() = Struct.of("stream", Atom.of("out"), Atom.of(id))
+    override val streamTerm: Struct by lazy { OutputChannel.streamTerm(id) }
 }

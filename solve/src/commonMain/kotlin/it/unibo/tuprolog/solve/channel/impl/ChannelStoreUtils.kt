@@ -5,13 +5,7 @@ import it.unibo.tuprolog.solve.channel.ChannelStore
 
 internal object ChannelStoreUtils {
     fun <T, C : Channel<T>> MutableMap<String, C>.ensureAliasRefersToChannel(key: String, channel: C): MutableMap<String, C> {
-        if (key in this) {
-            require(this[key] == channel) {
-                "Alias $key should refer to $channel, while it refers to ${this[key]}"
-            }
-        } else {
-            this[key] = channel
-        }
+        this[key] = channel
         return this
     }
 

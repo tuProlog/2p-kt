@@ -7,7 +7,7 @@ import kotlin.jvm.JvmStatic
 
 interface InputStore : ChannelStore<String, InputChannel<String>, InputStore> {
     companion object {
-        const val STDIN = "user_input"
+        const val STDIN = "stdin"
 
         @JsName("default")
         @JvmStatic

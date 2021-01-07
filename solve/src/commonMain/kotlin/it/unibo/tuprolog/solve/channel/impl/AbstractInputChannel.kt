@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.channel.impl
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.utils.dequeOf
@@ -46,6 +45,5 @@ abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChanne
 
     override fun toString(): String = "${this::class.simpleName}(id=$id, available=$available, closed=$isClosed)"
 
-    override val streamTerm: Struct
-        get() = Struct.of("\$stream", Atom.of("in"), Atom.of(id))
+    override val streamTerm: Struct by lazy { InputChannel.streamTerm(id) }
 }
