@@ -7,4 +7,9 @@ class PrintStreamChannel<T : Any>(private val printStream: PrintStream) : Abstra
     override fun writeActually(value: T) {
         printStream.print(value)
     }
+
+    @Synchronized
+    override fun flush() {
+        printStream.flush()
+    }
 }

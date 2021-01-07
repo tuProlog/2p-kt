@@ -17,4 +17,9 @@ abstract class AbstractOutputChannel<T : Any> : AbstractChannel<T>(), OutputChan
     override fun toString(): String = "${this::class.simpleName}(id=$id, closed=$isClosed)"
 
     override val streamTerm: Struct by lazy { OutputChannel.streamTerm(id) }
+
+    @Synchronized
+    override fun flush() {
+        // does nothing
+    }
 }

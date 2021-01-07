@@ -38,4 +38,7 @@ interface OutputChannel<T : Any> : Channel<T> {
 
     @JsName("write")
     fun write(value: T)
+
+    @JsName("flush")
+    fun flush()
 }

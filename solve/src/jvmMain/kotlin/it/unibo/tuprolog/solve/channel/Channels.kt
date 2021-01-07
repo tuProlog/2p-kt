@@ -15,5 +15,5 @@ internal actual fun <T : Any> stdout(): OutputChannel<T> {
 }
 
 internal actual fun warning(): OutputChannel<PrologWarning> {
-    return OutputChannel.of { System.err.println(it.message) }
+    return OutputChannel.of { System.err.println(it.message); System.err.flush() }
 }
