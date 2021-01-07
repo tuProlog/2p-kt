@@ -12,10 +12,10 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 object GetCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("get_code") {
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsVarOrCharCode(0)
-        return readAndReply(context.inputChannels.let { it.current ?: it.stdIn }, first)
+        return readCodeAndReply(context.inputChannels.let { it.current ?: it.stdIn }, first)
     }
 
-    internal fun Solve.Request<ExecutionContext>.readAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    internal fun Solve.Request<ExecutionContext>.readCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
             val code = channel.read()?.get(0)?.toInt() ?: -1
             replyWith(arg mguWith Integer.of(code))

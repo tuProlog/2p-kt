@@ -35,6 +35,7 @@ object IOPrimitiveUtils {
     private val PROPERTY_INPUT by lazy { Atom.of("input") }
     private val PROPERTY_OUTPUT by lazy { Atom.of("output") }
     private val PROPERTY_ALIAS by lazy { alias() }
+    private val PROPERTY_TYPE_TEXT by lazy { Struct.of("type", Atom.of("text")) }
 
     private fun alias(alias: String? = null) =
         Struct.of("alias", alias?.let { Atom.of(it) } ?: Var.anonymous())
@@ -62,6 +63,7 @@ object IOPrimitiveUtils {
                     )
                 }
             }
+            yield(PROPERTY_TYPE_TEXT)
         }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStreamProperty(index: Int): Solve.Request<C> {

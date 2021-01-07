@@ -25,6 +25,13 @@ abstract class AbstractInputChannel<T : Any> : AbstractChannel<T>(), InputChanne
         return read
     }
 
+    @Synchronized
+    final override fun peek(): T? {
+        if (isClosed) throw IllegalStateException("Input channel is closed")
+        refillQueueIfNecessary()
+        return queue[0]
+    }
+
     private fun refillQueue() {
         queue.add(readActually())
     }

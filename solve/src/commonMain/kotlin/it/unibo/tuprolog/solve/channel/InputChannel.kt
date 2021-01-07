@@ -43,6 +43,9 @@ interface InputChannel<T : Any> : Channel<T> {
     @JsName("read")
     fun read(): T?
 
+    @JsName("peek")
+    fun peek(): T?
+
     @JsName("use")
     fun <R> use(function: InputChannel<T>.() -> R): R =
         this.function().also { close() }
