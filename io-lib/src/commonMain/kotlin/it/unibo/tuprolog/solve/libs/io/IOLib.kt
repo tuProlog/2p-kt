@@ -17,7 +17,6 @@ import it.unibo.tuprolog.solve.libs.io.primitives.GetChar1
 import it.unibo.tuprolog.solve.libs.io.primitives.GetChar2
 import it.unibo.tuprolog.solve.libs.io.primitives.GetCode1
 import it.unibo.tuprolog.solve.libs.io.primitives.GetCode2
-import it.unibo.tuprolog.solve.libs.io.primitives.Halt1
 import it.unibo.tuprolog.solve.libs.io.primitives.Nl1
 import it.unibo.tuprolog.solve.libs.io.primitives.Open3
 import it.unibo.tuprolog.solve.libs.io.primitives.Open4
@@ -69,7 +68,6 @@ object IOLib : AliasedLibrary by
             GetChar2,
             GetCode1,
             GetCode2,
-            Halt1,
             Nl1,
             Open3,
             Open4,

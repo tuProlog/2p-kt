@@ -45,6 +45,26 @@ object IOPrimitiveUtils {
     private val PROPERTY_REPOSITION_FALSE by lazy { Struct.of("reposition", Truth.FALSE) }
     private val PROPERTY_EOF_ACTION_EOF_CODE by lazy { Struct.of("eof_action", Atom.of("eof_code")) }
 
+    private val validPropertiesPattern: Sequence<Term>
+        get() = sequenceOf(
+            PROPERTY_INPUT,
+            PROPERTY_OUTPUT,
+            PROPERTY_ALIAS_PATTERN,
+            PROPERTY_TYPE_PATTERN,
+            PROPERTY_EOF_ACTION_PATTERN,
+            PROPERTY_REPOSITION_PATTERN
+        )
+
+    private val supportedPropertiesPattern: Sequence<Term>
+        get() = sequenceOf(
+            PROPERTY_INPUT,
+            PROPERTY_OUTPUT,
+            PROPERTY_ALIAS_PATTERN,
+            PROPERTY_TYPE_TEXT,
+            PROPERTY_EOF_ACTION_EOF_CODE,
+            PROPERTY_REPOSITION_FALSE
+        )
+
     private fun alias(alias: String? = null) =
         Struct.of("alias", alias?.let { Atom.of(it) } ?: Var.anonymous())
 
@@ -81,30 +101,14 @@ object IOPrimitiveUtils {
         get() = context.outputChannels.let { it.current ?: it.stdOut }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidProperty(term: Term): Term =
-        if (sequenceOf(
-                PROPERTY_INPUT,
-                PROPERTY_OUTPUT,
-                PROPERTY_ALIAS_PATTERN,
-                PROPERTY_TYPE_PATTERN,
-                PROPERTY_EOF_ACTION_PATTERN,
-                PROPERTY_REPOSITION_PATTERN
-            ).any { it matches term }
-        ) {
+        if (validPropertiesPattern.any { it matches term }) {
             term
         } else {
             throw DomainError.forTerm(context, STREAM_PROPERTY, term)
         }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsSupportedProperty(term: Term): Term =
-        if (sequenceOf(
-                PROPERTY_INPUT,
-                PROPERTY_OUTPUT,
-                PROPERTY_ALIAS_PATTERN,
-                PROPERTY_TYPE_TEXT,
-                PROPERTY_EOF_ACTION_EOF_CODE,
-                PROPERTY_REPOSITION_FALSE
-            ).any { it matches term }
-        ) {
+        if (supportedPropertiesPattern.any { it matches term }) {
             term
         } else {
             throw SystemError.forUncaughtException(context, IllegalStateException("unsupported option $term"))
