@@ -235,6 +235,18 @@ interface SideEffectFactory {
     fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
         SideEffect.ResetInputChannels(*inputChannels)
 
+    @JsName("resetInputChannelsIterable")
+    fun resetInputChannels(inputChannels: Iterable<Pair<String, InputChannel<String>>>) =
+        SideEffect.ResetInputChannels(inputChannels)
+
+    @JsName("resetInputChannelsSequence")
+    fun resetInputChannels(inputChannels: Sequence<Pair<String, InputChannel<String>>>) =
+        SideEffect.ResetInputChannels(inputChannels)
+
+    @JsName("resetInputChannelsMap")
+    fun resetInputChannels(inputChannels: Map<String, InputChannel<String>>) =
+        SideEffect.ResetInputChannels(inputChannels)
+
     @JsName("closeInputChannelsIterable")
     fun closeInputChannels(names: Iterable<String>) =
         SideEffect.CloseInputChannels(names)
@@ -258,6 +270,14 @@ interface SideEffectFactory {
     @JsName("openOutputChannel")
     fun openOutputChannel(name: String, outputChannel: OutputChannel<String>) =
         SideEffect.OpenOutputChannels(name to outputChannel)
+
+    @JsName("resetOutputChannelsIterable")
+    fun resetOutputChannels(outputChannels: Iterable<Pair<String, OutputChannel<String>>>) =
+        SideEffect.ResetOutputChannels(outputChannels)
+
+    @JsName("resetOutputChannelsSequence")
+    fun resetOutputChannels(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) =
+        SideEffect.ResetOutputChannels(outputChannels)
 
     @JsName("resetOutputChannelsMap")
     fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
