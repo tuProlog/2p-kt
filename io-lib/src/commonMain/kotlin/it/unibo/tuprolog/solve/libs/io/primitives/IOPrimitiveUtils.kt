@@ -66,6 +66,12 @@ object IOPrimitiveUtils {
             yield(PROPERTY_TYPE_TEXT)
         }
 
+    val <C : ExecutionContext> Solve.Request<C>.currentInputChannel: InputChannel<String>
+        get() = context.inputChannels.let { it.current ?: it.stdIn }
+
+    val <C : ExecutionContext> Solve.Request<C>.currentOutputChannel: OutputChannel<String>
+        get() = context.outputChannels.let { it.current ?: it.stdOut }
+
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsStreamProperty(index: Int): Solve.Request<C> {
         val term = arguments[index]
         when (term) {
