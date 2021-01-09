@@ -40,6 +40,7 @@ import it.unibo.tuprolog.solve.libs.io.primitives.ReadTerm2
 import it.unibo.tuprolog.solve.libs.io.primitives.ReadTerm3
 import it.unibo.tuprolog.solve.libs.io.primitives.SetInput
 import it.unibo.tuprolog.solve.libs.io.primitives.SetOutput
+import it.unibo.tuprolog.solve.libs.io.primitives.SetTheory
 import it.unibo.tuprolog.solve.libs.io.primitives.StreamProperty
 import it.unibo.tuprolog.solve.libs.io.primitives.Write2
 import it.unibo.tuprolog.solve.libs.io.primitives.WriteCanonical1
@@ -93,6 +94,7 @@ object IOLib : AliasedLibrary by
             ReadTerm3,
             SetInput,
             SetOutput,
+            SetTheory,
             StreamProperty,
             Write2,
             WriteCanonical1,
