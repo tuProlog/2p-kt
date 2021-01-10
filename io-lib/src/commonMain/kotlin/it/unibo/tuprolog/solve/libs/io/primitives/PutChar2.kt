@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgumentIsOutputChannel
-import it.unibo.tuprolog.solve.libs.io.primitives.PutChar1.writeCharAndReply
+import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.writeCharAndReply
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 

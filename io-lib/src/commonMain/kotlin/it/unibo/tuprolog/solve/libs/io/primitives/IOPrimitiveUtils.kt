@@ -30,6 +30,7 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgu
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.isCharacterCode
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 object IOPrimitiveUtils {
 
@@ -240,4 +241,61 @@ object IOPrimitiveUtils {
             is OutputChannel<String> -> channel
             else -> throw DomainError.forArgument(context, signature, STREAM_TYPE, arguments[index], index)
         }
+
+    fun Solve.Request<ExecutionContext>.writeCodeAndReply(
+        channel: OutputChannel<String>,
+        arg: Integer
+    ): Solve.Response {
+        return try {
+            channel.write("${arg.intValue.toChar()}")
+            replySuccess()
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.writeCharAndReply(channel: OutputChannel<String>, arg: Atom): Solve.Response {
+        return try {
+            channel.write(arg.value)
+            replySuccess()
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.peekCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+        return try {
+            val code = channel.peek()?.get(0)?.toInt() ?: -1
+            replyWith(arg mguWith Integer.of(code))
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.peekCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+        return try {
+            val char = channel.peek() ?: "end_of_file"
+            replyWith(arg mguWith Atom.of(char))
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.readCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+        return try {
+            val code = channel.read()?.get(0)?.toInt() ?: -1
+            replyWith(arg mguWith Integer.of(code))
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.readCharAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+        return try {
+            val char = channel.read() ?: "end_of_file"
+            replyWith(arg mguWith Atom.of(char))
+        } catch (_: IllegalStateException) {
+            replyFail()
+        }
+    }
 }
