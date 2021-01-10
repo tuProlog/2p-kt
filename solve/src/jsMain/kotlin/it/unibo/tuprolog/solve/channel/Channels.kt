@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.channel
 
+import it.unibo.tuprolog.solve.channel.impl.InputChannelFromString
 import it.unibo.tuprolog.solve.exception.PrologWarning
 
 internal actual fun stdin(): InputChannel<String> =
@@ -13,3 +14,5 @@ internal actual fun <T : Any> stdout(): OutputChannel<T> =
 
 internal actual fun warning(): OutputChannel<PrologWarning> =
     OutputChannel.of { console.warn(it.message) }
+
+internal actual fun stringInputChannel(string: String): InputChannel<String> = InputChannelFromString(string)

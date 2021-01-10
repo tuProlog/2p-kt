@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.channel
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.impl.InputChannelFromFunction
-import it.unibo.tuprolog.solve.channel.impl.InputChannelFromString
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -25,13 +24,12 @@ interface InputChannel<T : Any> : Channel<T> {
 
         @JvmStatic
         @JsName("ofString")
-        fun of(string: String): InputChannel<String> = InputChannelFromString(string)
+        fun of(string: String): InputChannel<String> = stringInputChannel(string)
 
         @JvmStatic
         @JvmOverloads
         @JsName("streamTerm")
-        fun streamTerm(id: String? = null): Struct =
-            Channel.streamTerm(input = true, id)
+        fun streamTerm(id: String? = null): Struct = Channel.streamTerm(input = true, id)
     }
 
     @JsName("available")

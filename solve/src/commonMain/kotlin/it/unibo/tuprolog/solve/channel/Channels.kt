@@ -9,3 +9,5 @@ internal expect fun <T : Any> stdout(): OutputChannel<T>
 internal expect fun <T : Any> stderr(): OutputChannel<T>
 
 internal expect fun warning(): OutputChannel<PrologWarning>
+
+internal expect fun stringInputChannel(string: String): InputChannel<String>
