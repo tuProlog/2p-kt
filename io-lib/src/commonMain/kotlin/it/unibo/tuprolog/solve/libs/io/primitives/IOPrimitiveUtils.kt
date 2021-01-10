@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.TermFormatter.FuncFormat.LITERAL
@@ -21,6 +22,7 @@ import it.unibo.tuprolog.solve.channel.ChannelStore
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.error.DomainError
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.READ_OPTION
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_OR_ALIAS
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_PROPERTY
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.STREAM_TYPE
@@ -64,6 +66,9 @@ object IOPrimitiveUtils {
     private val OPTION_QUOTED_PATTERN by lazy { quoted() }
     private val OPTION_NUMBER_VARS_PATTERN by lazy { numberVars() }
     private val OPTION_IGNORE_OPS_PATTERN by lazy { ignoreOps() }
+    private val INFO_VARIABLES_PATTERN by lazy { variables() }
+    private val INFO_VARIABLE_NAMES_PATTERN by lazy { variableNames() }
+    private val INFO_SINGLETONS_PATTERN by lazy { singletons() }
 
     private val validPropertiesPattern: Sequence<Term>
         get() = sequenceOf(
@@ -78,6 +83,13 @@ object IOPrimitiveUtils {
     private val validOptionsPattern: Sequence<Term>
         get() = sequenceOf(this::quoted, this::ignoreOps, this::numberVars)
             .flatMap { sequenceOf(true, false).map(it) }
+
+    private val validInfoPattern: Sequence<Term>
+        get() = sequenceOf(
+            INFO_VARIABLES_PATTERN,
+            INFO_VARIABLE_NAMES_PATTERN,
+            INFO_SINGLETONS_PATTERN
+        )
 
     private val supportedPropertiesPattern: Sequence<Term>
         get() = sequenceOf(
@@ -100,6 +112,23 @@ object IOPrimitiveUtils {
 
     private fun numberVars(value: Boolean? = null) =
         Struct.of("numbervars", value?.let { Truth.of(it) } ?: Var.anonymous())
+
+    private fun variables(variables: kotlin.collections.List<Var>? = null) =
+        Struct.of("variables", variables?.let { List.of(it) } ?: Var.anonymous())
+
+    private fun vn(functor: String, vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+        Struct.of(
+            functor,
+            vNames?.map { (a, v) -> Struct.of("=", a, v) }
+                ?.let { List.of(it) }
+                ?: Var.anonymous()
+        )
+
+    private fun variableNames(vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+        vn("variable_names", vNames)
+
+    private fun singletons(vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+        vn("singletons", vNames)
 
     @Suppress("UNCHECKED_CAST")
     fun <C : ExecutionContext, T : Any> Solve.Request<C>.propertiesOf(channel: Channel<T>): Sequence<Struct> =
@@ -158,6 +187,14 @@ object IOPrimitiveUtils {
         }
 
     @Suppress("MemberVisibilityCanBePrivate")
+    fun <C : ExecutionContext> Solve.Request<C>.ensureTermIsValidInfo(term: Term): Term =
+        if (validInfoPattern.any { it matches term }) {
+            term
+        } else {
+            throw DomainError.forTerm(context, READ_OPTION, term)
+        }
+
+    @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidOptionList(index: Int): Solve.Request<C> {
         ensuringArgumentIsList(index)
         val list = arguments[index] as List
@@ -167,6 +204,19 @@ object IOPrimitiveUtils {
         return this
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidInfoList(index: Int): Solve.Request<C> =
+        when (val list = arguments[index]) {
+            is Var -> this
+            else -> {
+                ensuringArgumentIsList(index)
+                for (term in (list as List).toSequence()) {
+                    ensureTermIsValidInfo(term)
+                }
+                this
+            }
+        }
+
     private fun kotlin.collections.List<Term>.getOption(pattern: Term): Boolean =
         asSequence()
             .filterIsInstance<Struct>()
@@ -175,6 +225,11 @@ object IOPrimitiveUtils {
             .filterIsInstance<Truth>()
             .map { it.isTrue }
             .firstOrNull() ?: false
+
+    private fun kotlin.collections.List<Term>.getInfo(pattern: Term, value: Term): Substitution =
+        asSequence().filterIsInstance<Struct>().firstOrNull { it matches pattern }
+            ?.let { it mguWith value }
+            ?: Substitution.empty()
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsFormatter(index: Int): TermFormatter {
@@ -249,19 +304,11 @@ object IOPrimitiveUtils {
         return when (val arg = arguments[index]) {
             is Var -> this
             is Atom -> when {
-                arg.value == "end_of_file" -> {
-                    this
-                }
-                arg.value.length == 1 -> {
-                    this
-                }
-                else -> {
-                    throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
-                }
+                arg.value == "end_of_file" -> this
+                arg.value.length == 1 -> this
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
             }
-            else -> {
-                throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
-            }
+            else -> throw TypeError.forArgument(context, signature, TypeError.Expected.IN_CHARACTER, arg, index)
         }
     }
 
@@ -385,13 +432,48 @@ object IOPrimitiveUtils {
         }
     }
 
-    fun Solve.Request<ExecutionContext>.readTermAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+    private val Term.singletons: Set<Var>
+        get() = variables.groupBy { it }
+            .asSequence()
+            .filter { it.value.size == 1 }
+            .map { it.key }
+            .toSet()
+
+    private fun Iterable<Var>.toAssignments(): kotlin.collections.List<Pair<Atom, Var>> =
+        asSequence().toAssignments()
+
+    private fun Sequence<Var>.toAssignments(): kotlin.collections.List<Pair<Atom, Var>> =
+        groupBy { Atom.of(it.name) }
+            .flatMap { (n, vs) -> vs.asSequence().map { n to it } }
+            .toList()
+
+    fun Solve.Request<ExecutionContext>.readTermAndReply(
+        channel: InputChannel<String>,
+        arg: Term,
+        lastIsInfoList: Boolean = false
+    ): Solve.Response {
         try {
             val termsChannel = channel.asTermChannel(context.operators)
+            val infoList = if (lastIsInfoList) {
+                ensuringArgumentIsValidInfoList(arguments.lastIndex)
+                (arguments.last() as List).toList()
+            } else {
+                emptyList()
+            }
             if (!termsChannel.available) return replyFail()
             return when (val read = termsChannel.read()) {
                 null -> replyFail()
-                else -> replyWith(arg mguWith read)
+                else -> {
+                    val variables = variables(read.variables.toList())
+                    val variableNames = variableNames(read.variables.toAssignments())
+                    val singletons = singletons(read.singletons.toAssignments())
+                    replyWith(
+                        (arg mguWith read) +
+                            infoList.getInfo(INFO_SINGLETONS_PATTERN, singletons) +
+                            infoList.getInfo(INFO_VARIABLES_PATTERN, variables) +
+                            infoList.getInfo(INFO_VARIABLE_NAMES_PATTERN, variableNames)
+                    )
+                }
             }
         } catch (e: IllegalStateException) {
             throw SystemError.forUncaughtException(context, e)
