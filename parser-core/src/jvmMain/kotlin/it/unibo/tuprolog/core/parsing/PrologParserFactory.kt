@@ -131,7 +131,7 @@ object PrologParserFactory {
     private fun createParser(source: String, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    fun createParser(source: Reader, operators: OperatorSet): PrologParser =
+    private fun createParser(source: Reader, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
     private fun createParser(source: InputStream, operators: OperatorSet): PrologParser =
@@ -189,7 +189,8 @@ object PrologParserFactory {
         return try {
             mark = parser.tokenStream.mark()
             index = parser.tokenStream.index().coerceAtLeast(0)
-            parser.rule()
+            val result = parser.rule()
+            result
         } catch (ex: ParseCancellationException) {
             when {
                 parser.interpreter.predictionMode === PredictionMode.SLL -> {
@@ -197,15 +198,14 @@ object PrologParserFactory {
                     parser.interpreter.predictionMode = PredictionMode.LL
                     parser.errorHandler = DefaultErrorStrategy()
                     parser.addErrorListener(newErrorListener(input))
-                    parser.rule()
+                    parseNext(parser, input, rule)
                 }
-                ex.cause is RecognitionException -> {
-                    throw ex.cause as RecognitionException
-                }
-                else -> {
-                    throw ex
-                }
+                ex.cause is RecognitionException -> throw ex.cause as RecognitionException
+                else -> throw ex
             }
+        } catch (e: ParseException) {
+            parser.tokenStream.consume()
+            throw e
         } finally {
             parser.tokenStream.release(mark)
         }
@@ -226,6 +226,7 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
+            .filterNotNull()
     }
 
     private fun parseNextExpression(parser: PrologParser, input: Any): PrologParser.OptExpressionContext {
@@ -243,5 +244,6 @@ object PrologParserFactory {
                 }
             }.takeWhile { !it.isOver }
             .map { it.expression() }
+            .filterNotNull()
     }
 }

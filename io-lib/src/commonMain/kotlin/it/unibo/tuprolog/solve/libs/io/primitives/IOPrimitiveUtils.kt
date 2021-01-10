@@ -14,6 +14,7 @@ import it.unibo.tuprolog.core.TermFormatter.VarFormat.UNDERSCORE
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.format
+import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.channel.Channel
 import it.unibo.tuprolog.solve.channel.ChannelStore
@@ -27,6 +28,7 @@ import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.WRITE_OPTION
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
 import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.CHARACTER_CODE
+import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
@@ -393,6 +395,14 @@ object IOPrimitiveUtils {
             }
         } catch (e: IllegalStateException) {
             throw SystemError.forUncaughtException(context, e)
+        } catch (e: ParseException) {
+            throw SyntaxError.whileParsingTerm(
+                context,
+                channel.streamTerm.toString(),
+                e.line,
+                e.column,
+                e.message ?: "<no details provided>"
+            )
         }
     }
 
