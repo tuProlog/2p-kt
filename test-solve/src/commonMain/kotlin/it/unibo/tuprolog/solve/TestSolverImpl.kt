@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
@@ -359,13 +361,16 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
 
             solver.standardOutput.addListener { outputs += it!! }
 
-            val query = write(atomOf("atom")) and
-                write(atomOf("a string")) and
-                write(varOf("A_Var")) and
-                write(numOf(1)) and
-                write(numOf(2.1)) and
-                write("f"("x")) and
-                nl
+            val terms = ktListOf(
+                atomOf("atom"),
+                atomOf("a string"),
+                varOf("A_Var"),
+                numOf(1),
+                numOf(2.1),
+                "f"("x")
+            )
+
+            val query = tupleOf(terms.map { write(it) }.append(nl))
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -375,15 +380,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             )
 
             assertEquals(
-                ktListOf(
-                    "atom",
-                    "a string",
-                    varOf("A_Var").completeName,
-                    "1",
-                    "2.1",
-                    "f(x)",
-                    "\n"
-                ),
+                terms.map { it.format(TermFormatter.default()) }.append("\n"),
                 outputs
             )
         }

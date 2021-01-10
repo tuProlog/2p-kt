@@ -1,7 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
@@ -12,10 +13,7 @@ object Write : UnaryPredicate.NonBacktrackable<ExecutionContext>("write") {
             if (it == null) {
                 replyFail()
             } else {
-                val string = when (first) {
-                    is Atom -> first.value
-                    else -> first.toString()
-                }
+                val string = first.format(TermFormatter.default(context.operators))
                 return try {
                     it.write(string)
                     replySuccess()
