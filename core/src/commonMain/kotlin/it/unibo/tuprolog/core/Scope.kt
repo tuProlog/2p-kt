@@ -75,7 +75,7 @@ interface Scope {
     @JsName("append")
     fun <T> List<T>.append(item: T, vararg items: T): List<T>
 
-    @JsName("append")
+    @JsName("concat")
     fun <T> List<T>.concat(other: Iterable<T>): List<T>
 
     @JsName("ktEmptyList")
@@ -100,10 +100,10 @@ interface Scope {
     fun setOf(terms: Iterable<Term>): LogicSet
 
     @JsName("ktSetOf")
-    fun <T> ktSetOf(vararg items: T): kotlin.collections.Set<T>
+    fun <T> ktSetOf(vararg items: T): Set<T>
 
     @JsName("ktEmptySet")
-    fun <T> ktEmptySet(): kotlin.collections.Set<T>
+    fun <T> ktEmptySet(): Set<T>
 
     @JsName("factOf")
     fun factOf(head: Struct): Fact
