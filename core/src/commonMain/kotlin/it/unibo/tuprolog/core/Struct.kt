@@ -98,22 +98,60 @@ interface Struct : Term {
 
         /** The pattern of a well-formed functor for a Struct */
         @JvmField
-        val STRUCT_FUNCTOR_REGEX_PATTERN =
+        val WELL_FORMED_FUNCTOR_PATTERN =
             """^[a-z][A-Za-z_0-9]*$""".toRegex()
 
+        @JvmField
+        val NON_PRINTABLE_CHARACTER_PATTERN =
+            """[\t\n\r'"\\]""".toRegex()
+
         @JvmStatic
-        @JsName("escapeFunctor")
-        fun escapeFunctor(string: String): String =
+        @JsName("isWellFormedFunctor")
+        fun isWellFormedFunctor(string: String): Boolean =
+            WELL_FORMED_FUNCTOR_PATTERN.matches(string)
+
+        @JvmStatic
+        @JsName("quoteFunctor")
+        fun enquoteFunctor(string: String): String =
             "'$string'"
 
         @JvmStatic
-        @JsName("escapeFunctorIfNecessary")
-        fun escapeFunctorIfNecessary(string: String): String =
-            if (STRUCT_FUNCTOR_REGEX_PATTERN.matches(string)) {
+        @JsName("quoteFunctorIfNecessary")
+        fun enquoteFunctorIfNecessary(string: String): String =
+            if (isWellFormedFunctor(string)) {
                 string
             } else {
-                escapeFunctor(string)
+                enquoteFunctor(string)
             }
+
+        @JvmStatic
+        @JsName("functorNeedsEscape")
+        fun functorNeedsEscape(string: String): Boolean =
+            NON_PRINTABLE_CHARACTER_PATTERN.containsMatchIn(string)
+
+        @JvmStatic
+        @JsName("escapeFunctor")
+        fun escapeFunctor(
+            string: String,
+            escapeSingleQuotes: Boolean = true,
+            escapeDoubleQuotes: Boolean = !escapeSingleQuotes
+        ): String = string.toCharArray()
+            .asSequence()
+            .map { RegexUtils.escapeChar(it, escapeSingleQuotes, escapeDoubleQuotes) }
+            .reduceOrNull(String::plus)
+            ?: ""
+
+        @JvmStatic
+        @JsName("escapeFunctorIfNeeded")
+        fun escapeFunctorIfNecessary(
+            string: String,
+            escapeSingleQuotes: Boolean = true,
+            escapeDoubleQuotes: Boolean = !escapeSingleQuotes
+        ): String = if (functorNeedsEscape(string)) {
+            escapeFunctor(string, escapeSingleQuotes, escapeDoubleQuotes)
+        } else {
+            string
+        }
 
         @JvmStatic
         @JsName("template")
