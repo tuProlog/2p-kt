@@ -31,6 +31,7 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.io.IOMode
 import it.unibo.tuprolog.solve.libs.io.Url
+import it.unibo.tuprolog.solve.libs.io.asTermChannel
 import it.unibo.tuprolog.solve.libs.io.exceptions.InvalidUrlException
 import it.unibo.tuprolog.solve.libs.io.openInputChannel
 import it.unibo.tuprolog.solve.libs.io.openOutputChannel
@@ -379,6 +380,19 @@ object IOPrimitiveUtils {
             replyWith(arg mguWith Atom.of(char))
         } catch (_: IllegalStateException) {
             replyFail()
+        }
+    }
+
+    fun Solve.Request<ExecutionContext>.readTermAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
+        try {
+            val termsChannel = channel.asTermChannel(context.operators)
+            if (!termsChannel.available) return replyFail()
+            return when (val read = termsChannel.read()) {
+                null -> replyFail()
+                else -> replyWith(arg mguWith read)
+            }
+        } catch (e: IllegalStateException) {
+            throw SystemError.forUncaughtException(context, e)
         }
     }
 
