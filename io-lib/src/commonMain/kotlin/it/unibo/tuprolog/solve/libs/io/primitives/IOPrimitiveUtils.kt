@@ -49,6 +49,7 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.isCharacterC
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import kotlin.collections.List as KtList
 
 object IOPrimitiveUtils {
 
@@ -113,10 +114,10 @@ object IOPrimitiveUtils {
     private fun numberVars(value: Boolean? = null) =
         Struct.of("numbervars", value?.let { Truth.of(it) } ?: Var.anonymous())
 
-    private fun variables(variables: kotlin.collections.List<Var>? = null) =
+    private fun variables(variables: KtList<Var>? = null) =
         Struct.of("variables", variables?.let { List.of(it) } ?: Var.anonymous())
 
-    private fun vn(functor: String, vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+    private fun vn(functor: String, vNames: KtList<Pair<Atom, Var>>? = null) =
         Struct.of(
             functor,
             vNames?.map { (a, v) -> Struct.of("=", a, v) }
@@ -124,10 +125,10 @@ object IOPrimitiveUtils {
                 ?: Var.anonymous()
         )
 
-    private fun variableNames(vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+    private fun variableNames(vNames: KtList<Pair<Atom, Var>>? = null) =
         vn("variable_names", vNames)
 
-    private fun singletons(vNames: kotlin.collections.List<Pair<Atom, Var>>? = null) =
+    private fun singletons(vNames: KtList<Pair<Atom, Var>>? = null) =
         vn("singletons", vNames)
 
     @Suppress("UNCHECKED_CAST")
@@ -205,19 +206,20 @@ object IOPrimitiveUtils {
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidInfoList(index: Int): Solve.Request<C> =
+    fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsValidInfoList(index: Int): KtList<Term>? =
         when (val list = arguments[index]) {
-            is Var -> this
+            is Var -> null
             else -> {
                 ensuringArgumentIsList(index)
-                for (term in (list as List).toSequence()) {
+                val listOfInfo = (list as List).toList()
+                for (term in listOfInfo) {
                     ensureTermIsValidInfo(term)
                 }
-                this
+                listOfInfo
             }
         }
 
-    private fun kotlin.collections.List<Term>.getOption(pattern: Term): Boolean =
+    private fun KtList<Term>.getOption(pattern: Term): Boolean =
         asSequence()
             .filterIsInstance<Struct>()
             .filter { it matches pattern }
@@ -226,7 +228,7 @@ object IOPrimitiveUtils {
             .map { it.isTrue }
             .firstOrNull() ?: false
 
-    private fun kotlin.collections.List<Term>.getInfo(pattern: Term, value: Term): Substitution =
+    private fun KtList<Term>.getInfo(pattern: Term, value: Term): Substitution =
         asSequence().filterIsInstance<Struct>().firstOrNull { it matches pattern }
             ?.let { it mguWith value }
             ?: Substitution.empty()
@@ -439,10 +441,10 @@ object IOPrimitiveUtils {
             .map { it.key }
             .toSet()
 
-    private fun Iterable<Var>.toAssignments(): kotlin.collections.List<Pair<Atom, Var>> =
+    private fun Iterable<Var>.toAssignments(): KtList<Pair<Atom, Var>> =
         asSequence().toAssignments()
 
-    private fun Sequence<Var>.toAssignments(): kotlin.collections.List<Pair<Atom, Var>> =
+    private fun Sequence<Var>.toAssignments(): KtList<Pair<Atom, Var>> =
         groupBy { Atom.of(it.name) }
             .flatMap { (n, vs) -> vs.asSequence().map { n to it } }
             .toList()
@@ -456,7 +458,6 @@ object IOPrimitiveUtils {
             val termsChannel = channel.asTermChannel(context.operators)
             val infoList = if (lastIsInfoList) {
                 ensuringArgumentIsValidInfoList(arguments.lastIndex)
-                (arguments.last() as List).toList()
             } else {
                 emptyList()
             }
@@ -467,12 +468,12 @@ object IOPrimitiveUtils {
                     val variables = variables(read.variables.toList())
                     val variableNames = variableNames(read.variables.toAssignments())
                     val singletons = singletons(read.singletons.toAssignments())
-                    replyWith(
-                        (arg mguWith read) +
-                            infoList.getInfo(INFO_SINGLETONS_PATTERN, singletons) +
-                            infoList.getInfo(INFO_VARIABLES_PATTERN, variables) +
-                            infoList.getInfo(INFO_VARIABLE_NAMES_PATTERN, variableNames)
-                    )
+                    val info = infoList?.let {
+                        it.getInfo(INFO_SINGLETONS_PATTERN, singletons) +
+                            it.getInfo(INFO_VARIABLES_PATTERN, variables) +
+                            it.getInfo(INFO_VARIABLE_NAMES_PATTERN, variableNames)
+                    } ?: (arguments.last() mguWith List.of(variables, variableNames, singletons))
+                    replyWith((arg mguWith read) + info)
                 }
             }
         } catch (e: IllegalStateException) {

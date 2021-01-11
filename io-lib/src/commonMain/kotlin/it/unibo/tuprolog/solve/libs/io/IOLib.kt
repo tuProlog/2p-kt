@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.libs.io
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
+import it.unibo.tuprolog.solve.library.Library.Companion.toMapEnsuringNoDuplicates
 import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream0
 import it.unibo.tuprolog.solve.libs.io.primitives.AtEndOfStream1
 import it.unibo.tuprolog.solve.libs.io.primitives.CharConversion
@@ -103,6 +104,6 @@ object IOLib : AliasedLibrary by
             WriteEq2,
             WriteTerm2,
             WriteTerm3
-        ).map { it.descriptionPair }.toMap(),
+        ).map { it.descriptionPair }.toMapEnsuringNoDuplicates(),
         alias = "prolog.io"
     )
