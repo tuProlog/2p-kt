@@ -204,7 +204,11 @@ object PrologParserFactory {
                 else -> throw ex
             }
         } catch (e: ParseException) {
-            parser.tokenStream.consume()
+            parser.tokenStream.let {
+                if (it[it.index()].type != Token.EOF) {
+                    it.consume()
+                }
+            }
             throw e
         } finally {
             parser.tokenStream.release(mark)
