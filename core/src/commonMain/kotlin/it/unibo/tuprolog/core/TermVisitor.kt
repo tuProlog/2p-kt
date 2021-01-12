@@ -39,10 +39,8 @@ interface TermVisitor<T> {
     @JsName("visitToStruct")
     fun visit(term: Struct): T =
         when (term) {
-            is List -> visit(term)
-            is Set -> visit(term)
+            is Collection -> visit(term)
             is Atom -> visit(term)
-            is Tuple -> visit(term)
             is Clause -> visit(term)
             is Indicator -> visit(term)
             else -> visitStruct(term)
@@ -50,6 +48,18 @@ interface TermVisitor<T> {
 
     @JsName("visitStruct")
     fun visitStruct(term: Struct): T = defaultValue(term)
+
+    @JsName("visitToCollection")
+    fun visit(term: Collection): T =
+        when (term) {
+            is List -> visit(term)
+            is Set -> visit(term)
+            is Tuple -> visit(term)
+            else -> visitCollection(term)
+        }
+
+    @JsName("visitCollection")
+    fun visitCollection(term: Collection): T = defaultValue(term)
 
     @JsName("visitToAtom")
     fun visit(term: Atom): T =

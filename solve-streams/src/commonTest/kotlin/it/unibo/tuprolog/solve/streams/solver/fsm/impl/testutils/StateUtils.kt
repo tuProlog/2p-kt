@@ -2,9 +2,9 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.streams.solver.fsm.State
 import it.unibo.tuprolog.solve.streams.solver.getSideEffectManager
 import kotlin.test.assertEquals

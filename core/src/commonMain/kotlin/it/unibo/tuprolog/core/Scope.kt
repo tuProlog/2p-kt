@@ -70,10 +70,16 @@ interface Scope {
     fun listOf(vararg terms: Term): LogicList
 
     @JsName("ktListOf")
-    fun <T> ktListOf(vararg items: T): kotlin.collections.List<T>
+    fun <T> ktListOf(vararg items: T): List<T>
+
+    @JsName("append")
+    fun <T> List<T>.append(item: T, vararg items: T): List<T>
+
+    @JsName("concat")
+    fun <T> List<T>.concat(other: Iterable<T>): List<T>
 
     @JsName("ktEmptyList")
-    fun <T> ktEmptyList(): kotlin.collections.List<T>
+    fun <T> ktEmptyList(): List<T>
 
     @JsName("listOfIterable")
     fun listOf(terms: Iterable<Term>): LogicList
@@ -94,10 +100,10 @@ interface Scope {
     fun setOf(terms: Iterable<Term>): LogicSet
 
     @JsName("ktSetOf")
-    fun <T> ktSetOf(vararg items: T): kotlin.collections.Set<T>
+    fun <T> ktSetOf(vararg items: T): Set<T>
 
     @JsName("ktEmptySet")
-    fun <T> ktEmptySet(): kotlin.collections.Set<T>
+    fun <T> ktEmptySet(): Set<T>
 
     @JsName("factOf")
     fun factOf(head: Struct): Fact

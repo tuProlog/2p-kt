@@ -2,12 +2,12 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.streams.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState

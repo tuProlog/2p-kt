@@ -153,6 +153,7 @@ class TypeError(
         EVALUABLE,
         FLOAT,
         INTEGER,
+        IN_CHARACTER,
         LIST,
         NUMBER,
         OBJECT_REFERENCE,
@@ -160,7 +161,8 @@ class TypeError(
         PREDICATE_INDICATOR,
         REFERENCE,
         TYPE_REFERENCE,
-        URL;
+        URL,
+        VARIABLE;
 
         /**
          * The type expected string description

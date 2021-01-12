@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.BufferedTokenStream
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.DefaultErrorStrategy
+import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
 import org.antlr.v4.runtime.Token
@@ -54,96 +55,39 @@ object PrologParserFactory {
         }
     }
 
-    fun parseExpression(string: String): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.EMPTY)
-
-    fun parseExpression(string: String, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
+    fun parseSingletonExpr(string: String, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string, withOperators)
-        return parseExpression(parser, string)
+        return parseSingletonExpr(parser, string)
     }
 
-    fun parseExpression(string: Reader): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.EMPTY)
-
-    fun parseExpression(string: Reader, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
+    fun parseSingletonExpr(string: Reader, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string, withOperators)
-        return parseExpression(parser, string)
+        return parseSingletonExpr(parser, string)
     }
 
-    fun parseExpression(string: InputStream): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.EMPTY)
-
-    fun parseExpression(
-        string: InputStream,
-        withOperators: OperatorSet
-    ): PrologParser.SingletonExpressionContext {
+    fun parseSingletonExpr(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonExpressionContext {
         val parser = createParser(string, withOperators)
-        return parseExpression(parser, string)
+        return parseSingletonExpr(parser, string)
     }
 
-    private fun parseExpression(parser: PrologParser, source: Any): PrologParser.SingletonExpressionContext {
-        return try {
-            parser.singletonExpression()
-        } catch (ex: ParseCancellationException) {
-            when {
-                parser.interpreter.predictionMode === PredictionMode.SLL -> {
-                    parser.tokenStream.seek(0)
-                    parser.interpreter.predictionMode = PredictionMode.LL
-                    parser.errorHandler = DefaultErrorStrategy()
-                    parser.addErrorListener(newErrorListener(source))
-                    parseExpression(parser, source)
-                }
-                ex.cause is RecognitionException -> {
-                    throw ex.cause as RecognitionException
-                }
-                else -> {
-                    throw ex
-                }
-            }
-        }
-    }
-
-    fun parseExpressionWithStandardOperators(string: String): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.DEFAULT)
-
-    fun parseExpressionWithStandardOperators(string: Reader): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.DEFAULT)
-
-    fun parseExpressionWithStandardOperators(string: InputStream): PrologParser.SingletonExpressionContext =
-        parseExpression(string, OperatorSet.DEFAULT)
-
-    fun parseTerm(string: String): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.EMPTY)
-
-    fun parseTerm(string: String, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseSingletonTerm(string: String, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
-        return parseTerm(parser, string)
+        return parseSingletonTerm(parser, string)
     }
 
-    fun parseTerm(string: Reader): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.EMPTY)
-
-    fun parseTerm(string: Reader, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseSingletonTerm(string: Reader, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
-        return parseTerm(parser, string)
+        return parseSingletonTerm(parser, string)
     }
 
-    fun parseTerm(string: InputStream): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.EMPTY)
-
-    fun parseTerm(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonTermContext {
+    fun parseSingletonTerm(string: InputStream, withOperators: OperatorSet): PrologParser.SingletonTermContext {
         val parser = createParser(string, withOperators)
-        return parseTerm(parser, string)
+        return parseSingletonTerm(parser, string)
     }
 
-    fun parseTermWithStandardOperators(string: String): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.DEFAULT)
-
-    fun parseTermWithStandardOperators(string: Reader): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.DEFAULT)
-
-    fun parseTermWithStandardOperators(string: InputStream): PrologParser.SingletonTermContext =
-        parseTerm(string, OperatorSet.DEFAULT)
+    private fun parseSingletonExpr(parser: PrologParser, source: Any): PrologParser.SingletonExpressionContext {
+        return parseSingle(parser, source) { singletonExpression() }
+    }
 
     fun parseClauses(source: String, withOperators: OperatorSet): Sequence<PrologParser.ClauseContext> {
         val parser = createParser(source, withOperators)
@@ -160,43 +104,40 @@ object PrologParserFactory {
         return parseClauses(parser, source)
     }
 
-    fun parseClauses(source: String): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.EMPTY)
+    fun parseExpressions(source: String, withOperators: OperatorSet): Sequence<PrologParser.ExpressionContext> {
+        val parser = createParser(source, withOperators)
+        return parseExpressions(parser, source)
+    }
 
-    fun parseClauses(source: Reader): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.EMPTY)
+    fun parseExpressions(source: Reader, withOperators: OperatorSet): Sequence<PrologParser.ExpressionContext> {
+        val parser = createParser(source, withOperators)
+        return parseExpressions(parser, source)
+    }
 
-    fun parseClauses(source: InputStream): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.EMPTY)
+    fun parseExpressions(source: InputStream, withOperators: OperatorSet): Sequence<PrologParser.ExpressionContext> {
+        val parser = createParser(source, withOperators)
+        return parseExpressions(parser, source)
+    }
 
-    fun parseClausesWithStandardOperators(source: String): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.DEFAULT)
-
-    fun parseClausesWithStandardOperators(source: Reader): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.DEFAULT)
-
-    fun parseClausesWithStandardOperators(source: InputStream): Sequence<PrologParser.ClauseContext> =
-        parseClauses(source, OperatorSet.DEFAULT)
-
-    fun createParser(string: String): PrologParser =
+    private fun createParser(string: String): PrologParser =
         createParser(string, CharStreams::fromString)
 
-    fun createParser(source: Reader): PrologParser =
+    private fun createParser(source: Reader): PrologParser =
         createParser(source, CharStreams::fromReader)
 
-    fun createParser(source: InputStream): PrologParser =
+    private fun createParser(source: InputStream): PrologParser =
         createParser(source, CharStreams::fromStream)
 
-    fun createParser(source: String, operators: OperatorSet): PrologParser =
+    private fun createParser(source: String, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    fun createParser(source: Reader, operators: OperatorSet): PrologParser =
+    private fun createParser(source: Reader, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    fun createParser(source: InputStream, operators: OperatorSet): PrologParser =
+    private fun createParser(source: InputStream, operators: OperatorSet): PrologParser =
         addOperators(createParser(source), operators)
 
-    fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
+    private fun addOperators(prologParser: PrologParser, operators: OperatorSet): PrologParser {
         operators.forEach {
             prologParser.addOperator(it.functor, it.specifier.toAssociativity(), it.priority)
         }
@@ -216,9 +157,9 @@ object PrologParserFactory {
         return parser
     }
 
-    private fun parseTerm(parser: PrologParser, source: Any): PrologParser.SingletonTermContext {
+    private fun <T : ParserRuleContext> parseSingle(parser: PrologParser, source: Any, rule: PrologParser.() -> T): T {
         return try {
-            parser.singletonTerm()
+            parser.rule()
         } catch (ex: ParseCancellationException) {
             when {
                 parser.interpreter.predictionMode === PredictionMode.SLL -> {
@@ -226,7 +167,7 @@ object PrologParserFactory {
                     parser.interpreter.predictionMode = PredictionMode.LL
                     parser.errorHandler = DefaultErrorStrategy()
                     parser.addErrorListener(newErrorListener(source))
-                    parseTerm(parser, source)
+                    parseSingle(parser, source, rule)
                 }
                 ex.cause is RecognitionException -> {
                     throw ex.cause as RecognitionException
@@ -238,13 +179,18 @@ object PrologParserFactory {
         }
     }
 
-    private fun parseClause(parser: PrologParser, input: Any): PrologParser.OptClauseContext {
+    private fun parseSingletonTerm(parser: PrologParser, source: Any): PrologParser.SingletonTermContext {
+        return parseSingle(parser, source) { singletonTerm() }
+    }
+
+    private fun <T : ParserRuleContext> parseNext(parser: PrologParser, input: Any, rule: PrologParser.() -> T): T {
         var mark = -1
         var index = -1
         return try {
             mark = parser.tokenStream.mark()
             index = parser.tokenStream.index().coerceAtLeast(0)
-            parser.optClause()
+            val result = parser.rule()
+            result
         } catch (ex: ParseCancellationException) {
             when {
                 parser.interpreter.predictionMode === PredictionMode.SLL -> {
@@ -252,30 +198,56 @@ object PrologParserFactory {
                     parser.interpreter.predictionMode = PredictionMode.LL
                     parser.errorHandler = DefaultErrorStrategy()
                     parser.addErrorListener(newErrorListener(input))
-                    parser.optClause()
+                    parseNext(parser, input, rule)
                 }
-                ex.cause is RecognitionException -> {
-                    throw ex.cause as RecognitionException
-                }
-                else -> {
-                    throw ex
+                ex.cause is RecognitionException -> throw ex.cause as RecognitionException
+                else -> throw ex
+            }
+        } catch (e: ParseException) {
+            parser.tokenStream.let {
+                if (it[it.index()].type != Token.EOF) {
+                    it.consume()
                 }
             }
+            throw e
         } finally {
             parser.tokenStream.release(mark)
         }
+    }
+
+    private fun parseNextClause(parser: PrologParser, input: Any): PrologParser.OptClauseContext {
+        return parseNext(parser, input) { optClause() }
     }
 
     private fun parseClauses(parser: PrologParser, source: Any): Sequence<PrologParser.ClauseContext> {
         return generateSequence(0) { it + 1 }
             .map {
                 try {
-                    parseClause(parser, source)
+                    parseNextClause(parser, source)
                 } catch (e: ParseException) {
                     e.clauseIndex = it
                     throw e
                 }
             }.takeWhile { !it.isOver }
             .map { it.clause() }
+            .filterNotNull()
+    }
+
+    private fun parseNextExpression(parser: PrologParser, input: Any): PrologParser.OptExpressionContext {
+        return parseNext(parser, input) { optExpression() }
+    }
+
+    private fun parseExpressions(parser: PrologParser, source: Any): Sequence<PrologParser.ExpressionContext> {
+        return generateSequence(0) { it + 1 }
+            .map {
+                try {
+                    parseNextExpression(parser, source)
+                } catch (e: ParseException) {
+                    e.clauseIndex = it
+                    throw e
+                }
+            }.takeWhile { !it.isOver }
+            .map { it.expression() }
+            .filterNotNull()
     }
 }

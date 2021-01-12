@@ -13,9 +13,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier
-import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.dequeOf

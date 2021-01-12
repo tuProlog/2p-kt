@@ -89,6 +89,11 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     override fun <T> ktEmptyList(): List<T> = kotlin.collections.emptyList()
 
+    override fun <T> List<T>.append(item: T, vararg items: T): List<T> =
+        concat(ktListOf(item, *items))
+
+    override fun <T> List<T>.concat(other: Iterable<T>): List<T> = plus(other)
+
     override val emptyList: EmptyList
         get() = EmptyList()
 
