@@ -9,7 +9,7 @@ import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.libs.oop.primitives.ArrayItems
 import it.unibo.tuprolog.solve.libs.oop.primitives.Assign
-import it.unibo.tuprolog.solve.libs.oop.primitives.FindType
+import it.unibo.tuprolog.solve.libs.oop.primitives.Cast
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeMethod
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
 import it.unibo.tuprolog.solve.libs.oop.primitives.ListItems
@@ -17,8 +17,11 @@ import it.unibo.tuprolog.solve.libs.oop.primitives.NewObject3
 import it.unibo.tuprolog.solve.libs.oop.primitives.NullRef
 import it.unibo.tuprolog.solve.libs.oop.primitives.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.primitives.Ref
+import it.unibo.tuprolog.solve.libs.oop.primitives.Register
 import it.unibo.tuprolog.solve.libs.oop.primitives.SetItems
+import it.unibo.tuprolog.solve.libs.oop.primitives.Type
 import it.unibo.tuprolog.solve.libs.oop.primitives.TypeRef
+import it.unibo.tuprolog.solve.libs.oop.primitives.Unregister
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals
 import it.unibo.tuprolog.solve.libs.oop.rules.Dot
@@ -75,7 +78,8 @@ object OOPLib : AliasedLibrary by
         primitives = sequenceOf<PrimitiveWrapper<*>>(
             ArrayItems,
             Assign,
-            FindType,
+            Cast,
+            Type,
             InvokeMethod,
             InvokeStrict,
             ListItems,
@@ -83,8 +87,10 @@ object OOPLib : AliasedLibrary by
             NullRef,
             ObjectRef,
             Ref,
+            Register,
             SetItems,
-            TypeRef
+            TypeRef,
+            Unregister
         ).map { it.descriptionPair }.toMap(),
         alias = "prolog.oop"
     )
