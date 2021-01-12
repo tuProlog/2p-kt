@@ -118,13 +118,13 @@ private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>
 }
 
 actual fun KClass<*>.invoke(
+    objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
     instance: Any?
 ): Result {
-    val converter = TermToObjectConverter.default
-    val methodRef = findMethod(methodName, arguments.map { converter.admissibleTypes(it) })
-    return methodRef.callWithPrologArguments(converter, arguments, instance)
+    val methodRef = findMethod(methodName, arguments.map { objectConverter.admissibleTypes(it) })
+    return methodRef.callWithPrologArguments(objectConverter, arguments, instance)
 }
 
 private fun KCallable<*>.callWithPrologArguments(
@@ -145,21 +145,21 @@ private fun KCallable<*>.callWithPrologArguments(
 }
 
 actual fun KClass<*>.assign(
+    objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
     instance: Any?
 ): Result {
-    val converter = TermToObjectConverter.default
-    val setterRef = findProperty(propertyName, converter.admissibleTypes(value)).setter
-    return setterRef.callWithPrologArguments(converter, listOf(value), instance)
+    val setterRef = findProperty(propertyName, objectConverter.admissibleTypes(value)).setter
+    return setterRef.callWithPrologArguments(objectConverter, listOf(value), instance)
 }
 
 actual fun KClass<*>.create(
+    objectConverter: TermToObjectConverter,
     arguments: List<Term>
 ): Result {
-    val converter = TermToObjectConverter.default
-    val constructorRef = findConstructor(arguments.map { converter.admissibleTypes(it) })
-    return constructorRef.callWithPrologArguments(converter, arguments)
+    val constructorRef = findConstructor(arguments.map { objectConverter.admissibleTypes(it) })
+    return constructorRef.callWithPrologArguments(objectConverter, arguments)
 }
 
 actual val Any.identifier: String

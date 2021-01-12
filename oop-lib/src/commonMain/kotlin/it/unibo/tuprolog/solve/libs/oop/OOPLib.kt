@@ -27,6 +27,8 @@ import it.unibo.tuprolog.solve.libs.oop.rules.NewObject2
 import it.unibo.tuprolog.solve.libs.oop.rules.PropertyReduce
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.theory.Theory
+import org.gciatto.kt.math.BigDecimal
+import org.gciatto.kt.math.BigInteger
 
 internal expect val platformSpecificAliases: Array<Alias>
 
@@ -36,7 +38,7 @@ object OOPLib : AliasedLibrary by
             Operator(".", XFY, 800),
             Operator(":=", XFX, 850),
             Operator("as", XFX, 200),
-            Operator("$", FX, 200),
+            Operator("$", FX, 100),
         ),
         theory = Theory.indexedOf(
             sequenceOf(
@@ -53,6 +55,20 @@ object OOPLib : AliasedLibrary by
                 Alias.forType("string", String::class),
                 Alias.forType("array", Array::class),
                 Alias.forType("arraylist", ArrayList::class),
+                Alias.forType("int", Int::class),
+                Alias.forType("integer", Int::class),
+                Alias.forType("double", Double::class),
+                Alias.forType("float", Float::class),
+                Alias.forType("long", Long::class),
+                Alias.forType("short", Short::class),
+                Alias.forType("byte", Byte::class),
+                Alias.forType("char", Char::class),
+                Alias.forType("bool", Boolean::class),
+                Alias.forType("boolean", Boolean::class),
+                Alias.forType("any", Any::class),
+                Alias.forType("nothing", Nothing::class),
+                Alias.forType("big_integer", BigInteger::class),
+                Alias.forType("big_decimal", BigDecimal::class),
                 *platformSpecificAliases
             ).map { it.wrappedImplementation }
         ),

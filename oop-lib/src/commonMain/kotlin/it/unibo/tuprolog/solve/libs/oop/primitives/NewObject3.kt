@@ -43,7 +43,7 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
                 }
             }
 
-            val objectReference = type?.create(*arguments)?.asObjectRef()
+            val objectReference = type?.create(termToObjectConverter, *arguments)?.asObjectRef()
 
             objectReference?.mguWith(third) ?: Substitution.failed()
         }

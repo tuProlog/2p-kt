@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.assign
 import it.unibo.tuprolog.solve.libs.oop.companionObjectRef
@@ -21,14 +22,14 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
         private fun nameOf(type: KClass<*>): String = "<type:${type.fullName}>"
     }
 
-    override fun create(arguments: List<Term>): Result {
-        return type.create(arguments)
+    override fun create(objectConverter: TermToObjectConverter, arguments: List<Term>): Result {
+        return type.create(objectConverter, arguments)
     }
 
-    override fun invoke(methodName: String, arguments: List<Term>): Result =
+    override fun invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
         when (val companionObjectRef = type.companionObjectRef) {
-            is Optional.Some<out Any> -> companionObjectRef.value.invoke(methodName, arguments)
-            else -> type.invoke(methodName, arguments, null)
+            is Optional.Some<out Any> -> companionObjectRef.value.invoke(objectConverter, methodName, arguments)
+            else -> type.invoke(objectConverter, methodName, arguments, null)
         }
 
     override val isConstant: Boolean
@@ -51,10 +52,10 @@ internal class TypeRefImpl(override val type: KClass<*>) : TypeRef, Atom by Atom
     override fun <T> accept(visitor: TermVisitor<T>): T =
         visitor.visit(this)
 
-    override fun assign(propertyName: String, value: Term): Boolean {
+    override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean {
         when (val companionObjectRef = type.companionObjectRef) {
-            is Optional.Some<out Any> -> companionObjectRef.value.assign(propertyName, value)
-            else -> type.assign(propertyName, value, null)
+            is Optional.Some<out Any> -> companionObjectRef.value.assign(objectConverter, propertyName, value)
+            else -> type.assign(objectConverter, propertyName, value, null)
         }
         return true
     }

@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MalformedAliasException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException
@@ -77,3 +78,11 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
         throw e.toPrologError(context, signature)
     }
 }
+
+val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
+    get() = TermToObjectConverter.of {
+        when (val ref = findRefFromAlias(it)) {
+            is TypeRef -> ref
+            else -> null
+        }
+    }

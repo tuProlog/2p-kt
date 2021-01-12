@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.assign
 import it.unibo.tuprolog.solve.libs.oop.fullName
 import it.unibo.tuprolog.solve.libs.oop.identifier
@@ -21,11 +22,11 @@ internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by At
     override val isConstant: Boolean
         get() = true
 
-    override fun invoke(methodName: String, arguments: List<Term>): Result =
-        `object`.invoke(methodName, arguments)
+    override fun invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
+        `object`.invoke(objectConverter, methodName, arguments)
 
-    override fun assign(propertyName: String, value: Term): Boolean {
-        `object`.assign(propertyName, value)
+    override fun assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Boolean {
+        `object`.assign(objectConverter, propertyName, value)
         return true
     }
 
