@@ -17,6 +17,7 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.buffered
 
 internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
@@ -164,11 +165,10 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
                         val rules = ruleSources
                             .flatMap { it[currentGoal] }
                             .map { it.freshCopy() }
+                            .buffered()
                             .ensureRules()
 
-                        StateRuleExecution(
-                            context.createChildAppendingRulesAndChoicePoints(rules)
-                        )
+                        StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
                     }
 
                     else -> missingProcedure(ruleSources, currentGoal.extractSignature())
