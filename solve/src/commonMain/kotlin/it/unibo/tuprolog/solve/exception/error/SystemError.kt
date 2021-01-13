@@ -44,7 +44,7 @@ class SystemError constructor(
 
         @JsName("forUncaughtKtException")
         @JvmStatic
-        fun forUncaughtException(context: ExecutionContext, exception: Exception): SystemError =
+        fun forUncaughtException(context: ExecutionContext, exception: Throwable): SystemError =
             message("Uncaught exception `${exception::class.simpleName}: ${exception.message}`") { m, extra ->
                 SystemError(
                     message = m,

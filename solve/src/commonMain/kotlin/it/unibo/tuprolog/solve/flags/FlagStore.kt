@@ -1,10 +1,6 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.flags
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.flags.DoubleQuotes
-import it.unibo.tuprolog.solve.flags.MaxArity
-import it.unibo.tuprolog.solve.flags.NotableFlag
-import it.unibo.tuprolog.solve.flags.Unknown
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic

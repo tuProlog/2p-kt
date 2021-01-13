@@ -6,7 +6,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 object NewLine : PredicateWithoutArguments.NonBacktrackable<ExecutionContext>("nl") {
     override fun Solve.Request<ExecutionContext>.computeOne(): Solve.Response {
-        return context.standardOutput.let {
+        return context.outputChannels.current.let {
             if (it == null) {
                 replyFail()
             } else {

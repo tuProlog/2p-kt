@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.sideffects
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Term
@@ -220,20 +220,32 @@ interface SideEffectFactory {
         SideEffect.RemoveOperators(*operators)
 
     @JsName("openInputChannelsMap")
-    fun openInputChannels(inputChannels: Map<String, InputChannel<*>>) =
+    fun openInputChannels(inputChannels: Map<String, InputChannel<String>>) =
         SideEffect.OpenInputChannels(inputChannels)
 
     @JsName("openInputChannels")
-    fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>) =
+    fun openInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
         SideEffect.OpenInputChannels(*inputChannels)
 
     @JsName("openInputChannel")
-    fun openInputChannel(name: String, inputChannel: InputChannel<*>) =
+    fun openInputChannel(name: String, inputChannel: InputChannel<String>) =
         SideEffect.OpenInputChannels(name to inputChannel)
 
     @JsName("resetInputChannels")
-    fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<*>>) =
+    fun resetInputChannels(vararg inputChannels: Pair<String, InputChannel<String>>) =
         SideEffect.ResetInputChannels(*inputChannels)
+
+    @JsName("resetInputChannelsIterable")
+    fun resetInputChannels(inputChannels: Iterable<Pair<String, InputChannel<String>>>) =
+        SideEffect.ResetInputChannels(inputChannels)
+
+    @JsName("resetInputChannelsSequence")
+    fun resetInputChannels(inputChannels: Sequence<Pair<String, InputChannel<String>>>) =
+        SideEffect.ResetInputChannels(inputChannels)
+
+    @JsName("resetInputChannelsMap")
+    fun resetInputChannels(inputChannels: Map<String, InputChannel<String>>) =
+        SideEffect.ResetInputChannels(inputChannels)
 
     @JsName("closeInputChannelsIterable")
     fun closeInputChannels(names: Iterable<String>) =
@@ -248,23 +260,31 @@ interface SideEffectFactory {
         SideEffect.CloseInputChannels(*names)
 
     @JsName("openOutputChannelsMap")
-    fun openOutputChannels(outputChannels: Map<String, OutputChannel<*>>) =
+    fun openOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
         SideEffect.OpenOutputChannels(outputChannels)
 
     @JsName("openOutputChannels")
-    fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>) =
+    fun openOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.OpenOutputChannels(*outputChannels)
 
     @JsName("openOutputChannel")
-    fun openOutputChannel(name: String, outputChannel: OutputChannel<*>) =
+    fun openOutputChannel(name: String, outputChannel: OutputChannel<String>) =
         SideEffect.OpenOutputChannels(name to outputChannel)
 
+    @JsName("resetOutputChannelsIterable")
+    fun resetOutputChannels(outputChannels: Iterable<Pair<String, OutputChannel<String>>>) =
+        SideEffect.ResetOutputChannels(outputChannels)
+
+    @JsName("resetOutputChannelsSequence")
+    fun resetOutputChannels(outputChannels: Sequence<Pair<String, OutputChannel<String>>>) =
+        SideEffect.ResetOutputChannels(outputChannels)
+
     @JsName("resetOutputChannelsMap")
-    fun resetOutputChannels(outputChannels: Map<String, OutputChannel<*>>) =
+    fun resetOutputChannels(outputChannels: Map<String, OutputChannel<String>>) =
         SideEffect.ResetOutputChannels(outputChannels)
 
     @JsName("resetOutputChannels")
-    fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<*>>) =
+    fun resetOutputChannels(vararg outputChannels: Pair<String, OutputChannel<String>>) =
         SideEffect.ResetOutputChannels(*outputChannels)
 
     @JsName("closeOutputChannelsIterable")

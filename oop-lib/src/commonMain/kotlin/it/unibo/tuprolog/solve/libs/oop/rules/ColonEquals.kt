@@ -9,11 +9,28 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Var
 
 /**
  * ```prolog
+ * ':='(R, as(X, T)) :- var(R), !, fluent_reduce(M, R).
  * ':='(R, M) :- var(R), !, fluent_reduce(M, R).
  * ':='(C, V) :- property_reduce(C, R, P), assign(R, P, V).
  * ```
  */
 sealed class ColonEquals : RuleWrapper<ExecutionContext>(":=", 2) {
+
+    object Cast : ColonEquals() {
+
+        private val R by variables
+        private val M by variables
+
+        override val Scope.head: List<Term>
+            get() = kotlin.collections.listOf(R, M)
+
+        override val Scope.body: Term
+            get() = tupleOf(
+                structOf(Var.functor, R),
+                atomOf("!"),
+                structOf(FluentReduce.FUNCTOR, M, R)
+            )
+    }
 
     object Invocation : ColonEquals() {
 

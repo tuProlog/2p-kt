@@ -58,8 +58,6 @@ class TestClausesParser {
             assertEquals(2, e.line)
             assertEquals(5, e.column)
             assertEquals(input, e.input)
-        } catch (e: Throwable) {
-            fail("Unexpected exception of type ${e::class}: $e")
         }
     }
 

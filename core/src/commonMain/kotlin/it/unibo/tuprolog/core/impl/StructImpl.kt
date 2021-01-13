@@ -25,7 +25,7 @@ internal open class StructImpl(override val functor: String, override val args: 
             (0 until arity).all { args[it] structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean by lazy {
-        functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
+        Struct.isWellFormedFunctor(functor)
     }
 
     final override fun equals(other: Any?): Boolean {
@@ -62,10 +62,8 @@ internal open class StructImpl(override val functor: String, override val args: 
     }
 
     override fun toString(): String {
-        return (
-            if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
-            ) + (
-            if (arity > 0) "(${args.joinToString(", ")})" else ""
-            )
+        val escaped = Struct.escapeFunctorIfNecessary(functor)
+        val quoted = Struct.enquoteFunctorIfNecessary(escaped)
+        return "$quoted${if (arity > 0) "(${args.joinToString(", ")})" else ""}"
     }
 }

@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
-object FindType : BinaryRelation.Functional<ExecutionContext>("find_type") {
+object Type : BinaryRelation.Functional<ExecutionContext>("type") {
 
     private val typeFactory = TypeFactory.default
 
