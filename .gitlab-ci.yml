@@ -14,6 +14,7 @@ variables:
   DOC_TASK: "dokkaHtml --parallel"
   SIGN_TASK: "signAllPublications --parallel"
   BINTRAY_TASK: "publishAllToBintray --parallel"
+  CENTRAL_TASK_S01: "publishAllPublicationsToMavenRepository"
   CENTRAL_TASK: "publishAllPublicationsToSonatype"
   JS_COMPILE_TASK: "clean jsMain"
   NPM_PUBLISH_TASK: "npmPublish"
@@ -114,6 +115,19 @@ Deploy to Bintray:
     url: "https://bintray.com/pika-lab/tuprolog"
   only:
     - /^(master)|(release)|(develop)$/
+  when: manual
+#  needs:
+#    - job: Sign Artefacts
+
+Deploy to Maven Central (S01):
+  stage: deploy
+  script:
+    - $GCMD $BEFORE_TASK $CENTRAL_TASK_S01 $AFTER_TASK $GOPTS
+  environment:
+    name: Maven Central
+    url: "https://oss.sonatype.org"
+  only:
+    - /^(master)|(release)$/
   when: manual
 #  needs:
 #    - job: Sign Artefacts
