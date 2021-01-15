@@ -45,12 +45,12 @@ object OOPLib : AliasedLibrary by
         ),
         theory = Theory.indexedOf(
             sequenceOf(
+                ColonEquals.Cast,
                 ColonEquals.Invocation,
                 ColonEquals.Assignment,
                 Dot,
                 FluentReduce.Recursive,
                 FluentReduce.Couple,
-                // FluentReduce.Base,
                 FluentReduce.Trivial,
                 NewObject2,
                 PropertyReduce.Recursive,
