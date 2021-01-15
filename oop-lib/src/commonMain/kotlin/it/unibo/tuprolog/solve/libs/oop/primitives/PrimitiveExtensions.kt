@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
@@ -98,6 +99,8 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
         return action()
     } catch (e: OopException) {
         throw e.toPrologError(context, signature)
+    } catch (e: Throwable) {
+        throw SystemError.forUncaughtException(context, e)
     }
 }
 
