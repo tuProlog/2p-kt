@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.libs.oop.impl.TypeRefImpl
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 interface TypeRef : Ref {
@@ -31,6 +32,7 @@ interface TypeRef : Ref {
         create(TermToObjectConverter.default, arguments.toList())
 
     companion object {
+        @JvmStatic
         fun of(type: KClass<*>): TypeRef = TypeRefImpl(type)
     }
 }
