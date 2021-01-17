@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbCalc
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbDebugSolution
 
 object ProbQuery : RuleWrapper<ExecutionContext>("${PREDICATE_PREFIX}_query", 2) {
 
@@ -21,6 +22,7 @@ object ProbQuery : RuleWrapper<ExecutionContext>("${PREDICATE_PREFIX}_query", 2)
             val probE = varOf("PROB_E")
             return tupleOf(
                 structOf(ProbSolveConditional.functor, resultQE, resultE, varOf("B")),
+                structOf(ProbDebugSolution.functor, resultQE),
                 structOf(ProbCalc.functor, probQE, resultQE),
                 structOf(ProbCalc.functor, probE, resultE),
                 structOf(

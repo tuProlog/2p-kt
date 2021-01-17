@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 
 class ProblogObjectRef(
-    val bdd: BinaryDecisionDiagram<ProbTerm>
+    val bdd: BinaryDecisionDiagram<ProbChoice>
 ) : ObjectRef by ObjectRef.of(bdd) {
 
     override val isConstant: Boolean

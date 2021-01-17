@@ -5,7 +5,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.primitive.EnsurePrologCall
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildNot
@@ -15,7 +15,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
 
     companion object {
-        private val TRUE_TERMINAL = BinaryDecisionDiagram.Terminal<ProbTerm>(true)
+        private val TRUE_TERMINAL = BinaryDecisionDiagram.Terminal<ProbChoice>(true)
         const val FUNCTOR: String = ProblogLib.PREDICATE_PREFIX
         const val ARITY: Int = 2
     }

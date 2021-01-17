@@ -11,7 +11,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 
 internal object DisjointAnnotationClauseMapper : ClauseMapper {
@@ -51,7 +51,7 @@ internal object DisjointAnnotationClauseMapper : ClauseMapper {
             )
         }.toList()
 
-        var dd: BinaryDecisionDiagram<ProbTerm> = BinaryDecisionDiagram.Terminal(true)
+        var dd: BinaryDecisionDiagram<ProbChoice> = BinaryDecisionDiagram.Terminal(true)
         return mappedRules.map {
             val thisBdd = BinaryDecisionDiagram.Var(it.second)
             val resBdd = thisBdd and dd

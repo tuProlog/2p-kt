@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.DD_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -42,7 +42,7 @@ object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDIC
                 .asSequence()
                 .filterIsInstance<Solution.Yes>()
                 .groupBy { it.substitution.filter { v, _ -> v != bddVar } }.map {
-                    var totalBdd: BinaryDecisionDiagram<ProbTerm> = BinaryDecisionDiagram.Terminal(false)
+                    var totalBdd: BinaryDecisionDiagram<ProbChoice> = BinaryDecisionDiagram.Terminal(false)
                     for (solution in it.value) {
                         val solutionBddVar = solution.substitution[bddVar]
                         if (solutionBddVar is ProblogObjectRef) {

@@ -6,25 +6,26 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
+import kotlin.math.round
 
-class ProbTerm(
+class ProbChoice(
     val id: Long,
     val probability: Double,
     val term: Term
 ) : Term by Struct.of(ProblogLib.PROB_FUNCTOR, Numeric.of(probability), term) {
 
-    override fun freshCopy(): ProbTerm {
+    override fun freshCopy(): ProbChoice {
         val termCopy = term.freshCopy()
-        return ProbTerm(id, probability, termCopy)
+        return ProbChoice(id, probability, termCopy)
     }
 
-    override fun freshCopy(scope: Scope): ProbTerm {
+    override fun freshCopy(scope: Scope): ProbChoice {
         val termCopy = term.freshCopy(scope)
-        return ProbTerm(id, probability, termCopy)
+        return ProbChoice(id, probability, termCopy)
     }
 
     override fun compareTo(other: Term): Int {
-        if (other is ProbTerm) {
+        if (other is ProbChoice) {
             var res = this.id.compareTo(other.id)
             if (res == 0) {
                 res = term.compareTo(other.term)
@@ -35,22 +36,22 @@ class ProbTerm(
     }
 
     override fun toString(): String {
-        return "[$id] $probability::$term"
+        return "${round(probability * 100) / 100.0}::$term"
     }
 
-    override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbTerm {
+    override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbChoice {
         return this.apply(substitution, *substitutions)
     }
 
-    override fun apply(substitution: Substitution, vararg substitutions: Substitution): ProbTerm {
+    override fun apply(substitution: Substitution, vararg substitutions: Substitution): ProbChoice {
         return this.apply(Substitution.of(substitution, *substitutions))
     }
 
-    override fun apply(substitution: Substitution): ProbTerm {
+    override fun apply(substitution: Substitution): ProbChoice {
         return if (substitution.isEmpty() || this.term.isGround) {
             this
         } else {
-            ProbTerm(id, probability, term.apply(substitution))
+            ProbChoice(id, probability, term.apply(substitution))
         }
     }
 
@@ -58,7 +59,7 @@ class ProbTerm(
         get() = term.isGround
 
     override fun equals(other: Any?): Boolean {
-        return if (other is ProbTerm) compareTo(other) == 0 else false
+        return if (other is ProbChoice) compareTo(other) == 0 else false
     }
 
     override fun hashCode(): Int {

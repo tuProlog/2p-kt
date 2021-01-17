@@ -11,7 +11,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
@@ -159,7 +159,7 @@ internal fun Rule.withoutAnonymousVars(): Rule {
 }
 
 /** Encapsulates a [BinaryDecisionDiagram] object inside a Prolog [Term] */
-internal fun BinaryDecisionDiagram<ProbTerm>.toTerm(): Term {
+internal fun BinaryDecisionDiagram<ProbChoice>.toTerm(): Term {
     return ProblogObjectRef(this)
 }
 

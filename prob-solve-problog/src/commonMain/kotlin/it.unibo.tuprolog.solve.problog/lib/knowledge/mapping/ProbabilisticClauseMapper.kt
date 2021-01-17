@@ -10,7 +10,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
@@ -27,7 +27,7 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
         return listOf(mapRuleWithDecisionDiagram(mapped.first, BinaryDecisionDiagram.Var(mapped.second)))
     }
 
-    fun mapRuleInternal(rule: Rule): Pair<Rule, ProbTerm> {
+    fun mapRuleInternal(rule: Rule): Pair<Rule, ProbChoice> {
         if (rule.head.arity != 2) {
             throw TuPrologException("Invalid probabilistic rule: ${rule.head}")
         }
@@ -65,12 +65,12 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
 
         /* Probabilistic term of this rule */
         val groundHead = Rule.of(headTerm, bodyTerm).groundHead
-        val probTerm = ProbTerm(ClauseMappingUtils.newClauseId(), probability, groundHead)
+        val probTerm = ProbChoice(ClauseMappingUtils.newClauseId(), probability, groundHead)
 
         return Pair(Rule.of(headTerm, bodyTerm), probTerm)
     }
 
-    fun mapRuleWithDecisionDiagram(rule: Rule, dd: BinaryDecisionDiagram<ProbTerm>): Rule {
+    fun mapRuleWithDecisionDiagram(rule: Rule, dd: BinaryDecisionDiagram<ProbChoice>): Rule {
         /* Problog probabilistic facts */
         if (rule.body is Truth) {
             return Rule.of(

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /** [ClauseMapper] implementation that handled classic Prolog clauses, that does not contain
@@ -29,7 +29,7 @@ internal object PrologClauseMapper : ClauseMapper {
             return listOf(
                 Rule.of(
                     clause.head.wrapInBinaryHeadPredicate(
-                        BinaryDecisionDiagram.Terminal<ProbTerm>(true).toTerm()
+                        BinaryDecisionDiagram.Terminal<ProbChoice>(true).toTerm()
                     ),
                     clause.body
                 )
