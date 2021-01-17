@@ -20,6 +20,8 @@ interface MutableProblogTheory : ProblogTheory, MutableTheory {
 
     override fun toMutableTheory(): MutableProblogTheory = this
 
+    override fun toImmutableTheory(): ProblogTheory = ProblogTheory.of(this)
+
     override operator fun plus(theory: ProblogTheory): MutableProblogTheory
 
     override operator fun plus(theory: Theory): MutableProblogTheory

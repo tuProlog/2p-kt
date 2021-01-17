@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.ExecutionContextAware
 import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.OutputStore
 import it.unibo.tuprolog.solve.ProblogClassicSolverFactory
 import it.unibo.tuprolog.solve.SideEffect
@@ -106,6 +107,25 @@ data class ProblogClassicExecutionContext(
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
     ): Solver = ProblogClassicSolverFactory.solverOf(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        stdIn,
+        stdOut,
+        stdErr
+    )
+
+    override fun createMutableSolver(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver = ProblogClassicSolverFactory.mutableSolverOf(
         libraries,
         flags,
         staticKb,

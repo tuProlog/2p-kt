@@ -143,6 +143,10 @@ internal class MappedProblogTheory(
         return delegate.toString(asPrologText)
     }
 
+    override fun equals(other: Theory, useVarCompleteName: Boolean): Boolean {
+        return delegate.equals(other, useVarCompleteName)
+    }
+
     override fun iterator(): Iterator<Clause> {
         return delegate.iterator()
     }
