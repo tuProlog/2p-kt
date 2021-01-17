@@ -25,6 +25,34 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toTreeString(): String {
 }
 
 /**
+ * Formats a [BinaryDecisionDiagram] using Graphviz notation (https://graphviz.org/).
+ * This provides a fast and widely supported solution to visualize the contents of a BDD.
+ */
+@JsName("toGraphvizString")
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
+    val checkSet = mutableSetOf<Int>()
+    val labelBuilder = StringBuilder()
+    val graphBuilder = StringBuilder()
+
+    val falseValue = Int.MIN_VALUE
+    val trueValue = Int.MAX_VALUE
+    labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
+    labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
+    this.expansion(falseValue, trueValue) { node, low, high ->
+        val nodeValue = node.hashCode() * 31 + low * 31 + high * 31
+        if (nodeValue !in checkSet) {
+            labelBuilder.append("$nodeValue [shape=record, label=\"$node\"]\n")
+            graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
+            graphBuilder.append("$nodeValue -> $high\n")
+            checkSet.add(nodeValue)
+        }
+        nodeValue
+    }
+
+    return "digraph  {\n$labelBuilder$graphBuilder}"
+}
+
+/**
  * Applies a given operation over a [BinaryDecisionDiagram] using the Shannon Expansion.
  * The result if a reduction determined by the operation.
  */
@@ -72,39 +100,9 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
 }
 
 /**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "Not" unary boolean operation.
- */
-@JsName("applyNot")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyNot(): BinaryDecisionDiagram<T> {
-    return this.apply { a -> !a }
-}
-
-/**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "And" binary boolean operation over
- * [this] BDD and another one, returning a newly constructed BDD as result.
- */
-@JsName("applyAnd")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyAnd(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a && b }
-    }
-
-/**
- * Uses the "Apply" [BinaryDecisionDiagram] construction algorithm to perform the "Or" binary boolean operation over
- * [this] BDD and another one, returning a newly constructed BDD as result.
- */
-@JsName("applyOr")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.applyOr(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a || b }
-    }
-
-/**
- * Meant for internal use only.
  * Applies the "Apply" construction algorithm over [BinaryDecisionDiagram]s using
- * a given boolean operator.
- * */
-internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
+ * a given boolean operator. The result is a Reduced Ordered Binary Decision Diagram (ROBDD). */
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     unaryOp: (Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
     val visitor = ApplyBinaryDecisionDiagramVisitor.Unary<T>(unaryOp)
@@ -116,11 +114,10 @@ internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
 }
 
 /**
- * Meant for internal use only.
- * Applies the "Apply" construction algorithm over [BinaryDecisionDiagram]s using
- * a given boolean operator.
+ * Applies the "Apply" construction algorithm over two [BinaryDecisionDiagram]s using a given boolean operator.
+ * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
  * */
-internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     that: BinaryDecisionDiagram<T>,
     binaryOp: (Boolean, Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
@@ -131,3 +128,32 @@ internal fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     }
     throw DataStructureOperationException("Null result on BDD apply binary operation")
 }
+
+/**
+ * Performs the "Not" unary boolean operation over a [BinaryDecisionDiagram].
+ * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
+ */
+@JsName("not")
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> {
+    return this.apply { a -> !a }
+}
+
+/**
+ * Performs the "And" unary boolean operation over two [BinaryDecisionDiagram]s.
+ * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
+ */
+@JsName("and")
+infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionDiagram<T>):
+    BinaryDecisionDiagram<T> {
+        return this.apply(that) { a, b -> a && b }
+    }
+
+/**
+ * Performs the "Or" unary boolean operation over two [BinaryDecisionDiagram]s.
+ * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
+ */
+@JsName("or")
+infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.or(that: BinaryDecisionDiagram<T>):
+    BinaryDecisionDiagram<T> {
+        return this.apply(that) { a, b -> a || b }
+    }

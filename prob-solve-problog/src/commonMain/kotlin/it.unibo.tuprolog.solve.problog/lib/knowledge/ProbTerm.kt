@@ -56,4 +56,15 @@ class ProbTerm(
 
     override val isGround: Boolean
         get() = term.isGround
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is ProbTerm) compareTo(other) == 0 else false
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + probability.hashCode()
+        result = 31 * result + term.hashCode()
+        return result
+    }
 }

@@ -56,10 +56,10 @@ class TestBinaryDecisionDiagram {
     @Test
     fun testApplyWithProbSomeHeads() {
         val bdd = (
-            BinaryDecisionDiagram.Var(ComparablePair(0, "someHeads", 0.2)) applyAnd
+            BinaryDecisionDiagram.Var(ComparablePair(0, "someHeads", 0.2)) and
                 BinaryDecisionDiagram.Var(ComparablePair(1, "heads1", 0.5))
-            ) applyOr (
-            BinaryDecisionDiagram.Var(ComparablePair(2, "someHeads", 0.5)) applyAnd
+            ) or (
+            BinaryDecisionDiagram.Var(ComparablePair(2, "someHeads", 0.5)) and
                 BinaryDecisionDiagram.Var(ComparablePair(3, "heads2", 0.6))
             )
         val visitor = ProbBinaryDecisionDiagramVisitor()
@@ -76,13 +76,13 @@ class TestBinaryDecisionDiagram {
         val earthquake = BinaryDecisionDiagram.Var(ComparablePair(1, "earthquake", 0.2))
         val solution = (
             BinaryDecisionDiagram.Var(ComparablePair(2, "alarm", 0.9))
-                applyAnd burglary applyAnd earthquake
-            ) applyOr (
+                and burglary and earthquake
+            ) or (
             BinaryDecisionDiagram.Var(ComparablePair(3, "alarm", 0.8))
-                applyAnd burglary applyAnd earthquake.applyNot()
-            ) applyOr (
+                and burglary and earthquake.not()
+            ) or (
             BinaryDecisionDiagram.Var(ComparablePair(4, "alarm", 0.1))
-                applyAnd burglary.applyNot() applyAnd earthquake
+                and burglary.not() and earthquake
             )
         val visitor = ProbBinaryDecisionDiagramVisitor()
         solution.accept(visitor)

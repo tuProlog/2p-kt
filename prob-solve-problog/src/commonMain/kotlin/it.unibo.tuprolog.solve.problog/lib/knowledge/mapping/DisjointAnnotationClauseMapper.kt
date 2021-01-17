@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
-import it.unibo.tuprolog.bdd.applyAnd
-import it.unibo.tuprolog.bdd.applyNot
+import it.unibo.tuprolog.bdd.and
+import it.unibo.tuprolog.bdd.not
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Rule
@@ -54,8 +54,8 @@ internal object DisjointAnnotationClauseMapper : ClauseMapper {
         var dd: BinaryDecisionDiagram<ProbTerm> = BinaryDecisionDiagram.Terminal(true)
         return mappedRules.map {
             val thisBdd = BinaryDecisionDiagram.Var(it.second)
-            val resBdd = thisBdd applyAnd dd
-            dd = dd applyAnd thisBdd.applyNot()
+            val resBdd = thisBdd and dd
+            dd = dd and thisBdd.not()
             ProbabilisticClauseMapper.mapRuleWithDecisionDiagram(it.first, resBdd)
         }
     }

@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
-import it.unibo.tuprolog.bdd.applyAnd
-import it.unibo.tuprolog.bdd.applyNot
-import it.unibo.tuprolog.bdd.applyOr
+import it.unibo.tuprolog.bdd.and
+import it.unibo.tuprolog.bdd.not
+import it.unibo.tuprolog.bdd.or
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -48,12 +48,12 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
                 val solutionBdd = if (solutionsBdd.isEmpty()) {
                     BinaryDecisionDiagram.Terminal(false)
                 } else {
-                    solutionsBdd.reduce { acc, t -> t applyOr acc }
+                    solutionsBdd.reduce { acc, t -> t or acc }
                 }
                 if (truth!!.isTrue) {
                     solutionBdd
                 } else {
-                    solutionBdd.applyNot()
+                    solutionBdd.not()
                 }
             }
             .toList()
@@ -62,7 +62,7 @@ object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionContext>(
             if (result.isEmpty()) {
                 BinaryDecisionDiagram.Terminal(true)
             } else {
-                result.reduce { acc, t -> t applyAnd acc }
+                result.reduce { acc, t -> t and acc }
             }
         )
         return replyWith(first mguWith objectRef)

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
-import it.unibo.tuprolog.bdd.applyOr
+import it.unibo.tuprolog.bdd.or
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -46,7 +46,7 @@ object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>("${PREDIC
                     for (solution in it.value) {
                         val solutionBddVar = solution.substitution[bddVar]
                         if (solutionBddVar is ProblogObjectRef) {
-                            totalBdd = totalBdd applyOr solutionBddVar.bdd
+                            totalBdd = totalBdd or solutionBddVar.bdd
                         }
                     }
                     Substitution.of(it.key, first mguWith ProblogObjectRef(totalBdd))

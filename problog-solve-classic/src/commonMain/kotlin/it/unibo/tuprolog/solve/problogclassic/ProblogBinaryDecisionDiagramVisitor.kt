@@ -2,9 +2,9 @@ package it.unibo.tuprolog.solve.problogclassic
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.bdd.applyAnd
-import it.unibo.tuprolog.bdd.applyNot
-import it.unibo.tuprolog.bdd.applyOr
+import it.unibo.tuprolog.bdd.and
+import it.unibo.tuprolog.bdd.not
+import it.unibo.tuprolog.bdd.or
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
 import kotlin.js.JsName
 
@@ -51,7 +51,7 @@ internal fun BinaryDecisionDiagram<ProblogSolutionTerm>.probability(): Double {
  */
 @JsName("problogNot")
 internal fun BinaryDecisionDiagram<ProblogSolutionTerm>.problogNot(): BinaryDecisionDiagram<ProblogSolutionTerm> {
-    return this.applyNot()
+    return this.not()
 }
 
 /**
@@ -63,7 +63,7 @@ internal fun BinaryDecisionDiagram<ProblogSolutionTerm>.problogNot(): BinaryDeci
 @JsName("problogAnd")
 internal infix fun BinaryDecisionDiagram<ProblogSolutionTerm>.problogAnd(that: BinaryDecisionDiagram<ProblogSolutionTerm>):
     BinaryDecisionDiagram<ProblogSolutionTerm> {
-        return this.applyAnd(that)
+        return this.and(that)
     }
 
 /**
@@ -75,5 +75,5 @@ internal infix fun BinaryDecisionDiagram<ProblogSolutionTerm>.problogAnd(that: B
 @JsName("problogOr")
 internal infix fun BinaryDecisionDiagram<ProblogSolutionTerm>.problogOr(that: BinaryDecisionDiagram<ProblogSolutionTerm>):
     BinaryDecisionDiagram<ProblogSolutionTerm> {
-        return this.applyOr(that)
+        return this.or(that)
     }

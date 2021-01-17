@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
-import it.unibo.tuprolog.bdd.applyAnd
+import it.unibo.tuprolog.bdd.and
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -19,7 +19,7 @@ object ProbBuildAnd : TernaryRelation.NonBacktrackable<ExecutionContext>(
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
         return if (first is Var && second is ProblogObjectRef && third is ProblogObjectRef) {
-            replyWith(first mguWith ProblogObjectRef(second.bdd applyAnd third.bdd))
+            replyWith(first mguWith ProblogObjectRef(second.bdd and third.bdd))
         } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))
     }
 }

@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
-import it.unibo.tuprolog.bdd.applyNot
+import it.unibo.tuprolog.bdd.not
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -19,7 +19,7 @@ object ProbBuildNot : BinaryRelation.NonBacktrackable<ExecutionContext>(
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
         return if (first is Var && second is ProblogObjectRef) {
-            replyWith(first mguWith ProblogObjectRef(second.bdd.applyNot()))
+            replyWith(first mguWith ProblogObjectRef(second.bdd.not()))
         } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))
     }
 }

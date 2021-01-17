@@ -5,6 +5,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
 
 /**
  * Checks weather at least one node in a [BinaryDecisionDiagram] makes a certain predicate succeed.
+ *
  * @author Jason Dellaluce
  */
 internal class AnyBinaryDecisionDiagramVisitor<T : Comparable<T>>(
