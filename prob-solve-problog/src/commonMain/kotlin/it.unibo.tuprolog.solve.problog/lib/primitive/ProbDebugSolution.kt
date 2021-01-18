@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.formatToGraphviz
 
 internal object ProbDebugSolution : UnaryPredicate.NonBacktrackable<ExecutionContext>(
     "${ProblogLib.PREDICATE_PREFIX}_debug_sol"
@@ -22,7 +23,7 @@ internal object ProbDebugSolution : UnaryPredicate.NonBacktrackable<ExecutionCon
             if (it == null) {
                 replyFail()
             } else {
-                //it.write(first.bdd.toGraphvizString() + "\n")
+                it.write(first.explanation.formatToGraphviz() + "\n")
                 replySuccess()
             }
         }

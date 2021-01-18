@@ -13,7 +13,6 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
-import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /**
  * Collection of general-purpose functions and values useful for internal clause mapping.
@@ -107,19 +106,17 @@ internal fun Term.wrapInPredicateRecursive(functor: String, explanation: Term, d
     }
 }
 
-/** Given a generic [Rule], computes a [Struct] representing a ground version of the rule's head.
- * In Prolog, it's legit to have rules with a body containing more variables than the head.
+/** In Prolog, it's legit to have rules with a body containing more variables than the head.
  * This function computes a difference between the set of variables from the body and from the head,
- * and appends it to the original head as predicate arguments. */
-internal val Rule.groundHead: Struct
+ * and returns a [Set] containing that difference. */
+internal val Rule.extraVariables: Set<Var>
     get() {
         return if (!this.isGround) {
             val headVars = this.head.variables.toSet()
             val bodyVars = this.body.variables.toSet()
-            val diffVars = bodyVars.subtract(headVars)
-            Struct.of(this.head.functor, *(this.head.args + diffVars.toTypedArray()))
+            bodyVars.subtract(headVars)
         } else {
-            this.head
+            emptySet()
         }
     }
 

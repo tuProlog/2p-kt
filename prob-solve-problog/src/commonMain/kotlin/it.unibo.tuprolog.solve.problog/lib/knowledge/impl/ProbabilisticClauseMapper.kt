@@ -71,8 +71,8 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
         bodyTerm = anonVariablesFix.body
 
         /* Probabilistic term of this rule */
-        val groundHead = Rule.of(headTerm, bodyTerm).groundHead
-        val probTerm = ProbTerm(ClauseMappingUtils.newClauseId(), probability, groundHead)
+        val extraVariables = Rule.of(headTerm, bodyTerm).extraVariables
+        val probTerm = ProbTerm(ClauseMappingUtils.newClauseId(), probability, headTerm, extraVariables)
 
         return Pair(Rule.of(headTerm, bodyTerm), probTerm)
     }
