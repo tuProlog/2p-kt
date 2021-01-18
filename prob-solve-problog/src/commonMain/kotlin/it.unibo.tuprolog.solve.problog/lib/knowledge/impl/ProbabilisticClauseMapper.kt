@@ -1,6 +1,5 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
+package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Rule
@@ -10,10 +9,18 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
+/**
+ * A [ClauseMapper] that handles the case of probabilistic clauses and facts.
+ * In rule bodies, associative predicates such as ',', ';', and '->' are unrolled and mapped too in order
+ * to reduce the work done during query resolution.
+ *
+ * @author Jason Dellaluce
+ */
 internal object ProbabilisticClauseMapper : ClauseMapper {
     override fun isCompatible(clause: Clause): Boolean {
         return clause is Rule && clause.head.functor == ProblogLib.PROB_FUNCTOR
@@ -24,10 +31,10 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
             throw ClauseMappingException("Clause is not an instance of Rule: $clause")
         }
         val mapped = mapRuleInternal(clause)
-        return listOf(mapRuleWithDecisionDiagram(mapped.first, BinaryDecisionDiagram.Var(mapped.second)))
+        return listOf(mapRuleWithExplanation(mapped.first, ProbExplanation.of(mapped.second)))
     }
 
-    fun mapRuleInternal(rule: Rule): Pair<Rule, ProbChoice> {
+    fun mapRuleInternal(rule: Rule): Pair<Rule, ProbTerm> {
         if (rule.head.arity != 2) {
             throw TuPrologException("Invalid probabilistic rule: ${rule.head}")
         }
@@ -65,30 +72,30 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
 
         /* Probabilistic term of this rule */
         val groundHead = Rule.of(headTerm, bodyTerm).groundHead
-        val probTerm = ProbChoice(ClauseMappingUtils.newClauseId(), probability, groundHead)
+        val probTerm = ProbTerm(ClauseMappingUtils.newClauseId(), probability, groundHead)
 
         return Pair(Rule.of(headTerm, bodyTerm), probTerm)
     }
 
-    fun mapRuleWithDecisionDiagram(rule: Rule, dd: BinaryDecisionDiagram<ProbChoice>): Rule {
+    fun mapRuleWithExplanation(rule: Rule, explanation: ProbExplanation): Rule {
         /* Problog probabilistic facts */
         if (rule.body is Truth) {
             return Rule.of(
-                Struct.of(Prob.FUNCTOR, dd.toTerm(), rule.head),
+                Struct.of(Prob.FUNCTOR, explanation.toTerm(), rule.head),
                 rule.body
             )
         }
 
         /* Problog probabilistic rules */
-        val bddVar = Var.of("${ProblogLib.DD_VAR_NAME}_Res")
-        val bddBodyVar = Var.of("${ProblogLib.DD_VAR_NAME}_Body")
-        val newBody = rule.body.wrapInBinaryPredicateRecursive(bddBodyVar)
+        val explanationVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Res")
+        val explanationBodyVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Body")
+        val newBody = rule.body.wrapInPredicateRecursive(Prob.FUNCTOR, explanationBodyVar)
         return Rule.of(
-            Struct.of(Prob.FUNCTOR, bddVar, rule.head),
+            Struct.of(Prob.FUNCTOR, explanationVar, rule.head),
             Struct.of(
                 ",",
                 newBody,
-                Struct.of(ProbBuildAnd.functor, bddVar, bddBodyVar, dd.toTerm()),
+                Struct.of(ProbExplAnd.functor, explanationVar, explanationBodyVar, explanation.toTerm()),
             ),
         )
     }

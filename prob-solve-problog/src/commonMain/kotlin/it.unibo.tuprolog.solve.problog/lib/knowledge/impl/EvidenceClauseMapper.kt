@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
+package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
@@ -9,7 +9,19 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
+import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
+/**
+ * This implements a [ClauseMapper] that handle "evidence" predicates.
+ * Those predicates define probabilistic evidences, which in our case are defined as logic
+ * terms that we have certainty of being true.
+ *
+ * Those are different from probabilistic facts with probability of 1.0. The difference is that
+ * evidence predicates are not part of the logical theory itself, but are instead used to compute
+ * the "conditional probability" of probabilistic queries.
+ *
+ * @author Jason Dellaluce
+ */
 internal object EvidenceClauseMapper : ClauseMapper {
     override fun isCompatible(clause: Clause): Boolean {
         return clause is Rule && clause.head.functor == ProblogLib.EVIDENCE_PREDICATE
@@ -38,7 +50,7 @@ internal object EvidenceClauseMapper : ClauseMapper {
             } else {
                 Rule.of(
                     headTerm,
-                    clause.body.wrapInBinaryPredicateRecursive(Var.anonymous())
+                    clause.body.wrapInPredicateRecursive(Prob.FUNCTOR, Var.anonymous())
                 )
             }
         )

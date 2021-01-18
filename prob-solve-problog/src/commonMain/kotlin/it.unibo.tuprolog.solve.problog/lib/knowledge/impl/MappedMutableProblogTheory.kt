@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
+package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Indicator
@@ -10,6 +10,14 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
+/**
+ * An implementation of [MutableProblogTheory] that makes use of our internal
+ * probabilistic knowledge mapping strategy. The core idea is to convert the Problog theory
+ * in a Prolog compliant theory, so that we can leverage a simple Prolog solver to compute
+ * probabilistic query solutions.
+ *
+ * @author Jason Dellaluce
+ */
 internal class MappedMutableProblogTheory(
     inputClauses: Iterable<Clause>
 ) : MutableProblogTheory {

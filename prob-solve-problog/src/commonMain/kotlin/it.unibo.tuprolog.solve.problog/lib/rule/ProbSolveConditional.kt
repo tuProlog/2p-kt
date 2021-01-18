@@ -4,13 +4,13 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolveEvidence
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
 
-object ProbSolveConditional : RuleWrapper<ExecutionContext>(
+internal object ProbSolveConditional : RuleWrapper<ExecutionContext>(
     "${PREDICATE_PREFIX}_solve_cond",
     3
 ) {
@@ -26,7 +26,7 @@ object ProbSolveConditional : RuleWrapper<ExecutionContext>(
                 structOf(ProbSolveEvidence.functor, resultE),
                 atomOf("!"),
                 structOf(ProbSolve.functor, resultQ, varOf("Q")),
-                structOf(ProbBuildAnd.functor, varOf("QE"), resultE, resultQ)
+                structOf(ProbExplAnd.functor, varOf("QE"), resultE, resultQ)
             )
         }
 }

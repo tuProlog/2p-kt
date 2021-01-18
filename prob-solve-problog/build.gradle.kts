@@ -4,7 +4,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":bdd"))
-                api(project(":oop-lib"))
                 api(project(":solve-classic"))
                 api(project(":prob-solve"))
             }

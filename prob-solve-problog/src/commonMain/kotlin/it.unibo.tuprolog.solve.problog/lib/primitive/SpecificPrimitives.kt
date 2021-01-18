@@ -4,11 +4,11 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 
-object SpecificPrimitives {
+internal object SpecificPrimitives {
     private val wrappers: Sequence<PrimitiveWrapper<*>> =
         sequenceOf(
-            ProbBuildNot,
-            ProbBuildAnd,
+            ProbExplNot,
+            ProbExplAnd,
             ProbSolve,
             ProbCalc,
             ProbSolveEvidence,

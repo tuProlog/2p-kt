@@ -1,6 +1,5 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
+package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Rule
@@ -11,13 +10,15 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbChoice
-import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbBuildAnd
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
 import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /**
  * Collection of general-purpose functions and values useful for internal clause mapping.
+ *
+ * @author Jason Dellaluce
  */
 internal object ClauseMappingUtils {
 
@@ -43,66 +44,65 @@ internal object ClauseMappingUtils {
     }
 }
 
-/** Wraps the given term, making it being part of a higher-level binary predicate.
- * In the result predicate, the first argument is [leftTerm], and the second one is
- * the provided [this]. The wrapping is not applied recursively. This is intended to
- * be used only on head terms inside a rule.
+/** Wraps the [this] term with the provided in a new predicate that has [functor] as its
+ * functor, and [this] and [explanation] as argument terms. In this use case, [explanation]
+ * refers to a term representing the probabilistic logic explanation of [this] term that
+ * will be used during queries resolution to compute the overall [ProbExplanation] of
+ * solutions. [explanation] can either be a known and definite [Term], or a [Var].
+ *
+ * The wrapping is not applied recursively.
  * */
-internal fun Term.wrapInBinaryHeadPredicate(leftTerm: Term): Struct {
-    return Struct.of(Prob.FUNCTOR, leftTerm, this)
+internal fun Term.wrapInPredicate(functor: String, explanation: Term): Struct {
+    return Struct.of(functor, explanation, this)
 }
 
-/** Wraps the given term, making it being part of a higher-level binary predicate.
- * In the result predicate, the first argument is [leftTerm], and the second one is
- * the provided [this]. The wrapping is not applied recursively.
- * */
-internal fun Term.wrapInBinaryPredicate(leftTerm: Term): Struct {
-    return Struct.of(Prob.FUNCTOR, leftTerm, this)
-}
-
-/** Wraps the given term, making it being part of a higher-level binary predicate.
- * In the result predicate, the first argument is [leftTerm], and the second one is
- * the provided [this]. The mapping is applied recursively if [this] is an instance
- * of [Struct] and its functor belongs to the following set of predicates:
+/** Wraps the [this] term with the provided in a new predicate that has [functor] as its
+ * functor, and [this] and [explanation] as argument terms. In this use case, [explanation]
+ * refers to a term representing the probabilistic logic explanation of [this] term that
+ * will be used during queries resolution to compute the overall [ProbExplanation] of
+ * solutions. [explanation] can either be a known and definite [Term], or a [Var].
+ *
+ * The wrapping is applied recursively if [this] is an instance of [Struct] and its functor
+ * belongs to the following set of predicates:
  *  (",", ";", "->")
  * In all those cases, the wrapping will not be applied in order to leverage the
  * semantics provided by Prolog for those predicates. Most of them represent, in fact,
  * an operator.
  * */
-internal fun Term.wrapInBinaryPredicateRecursive(leftTerm: Term, depth: Int = 1): Struct {
+internal fun Term.wrapInPredicateRecursive(functor: String, explanation: Term, depth: Int = 1): Struct {
     return when (this) {
         is Struct -> {
             when (this.functor) {
                 "," -> {
-                    val leftVar = Var.of("${ProblogLib.DD_VAR_NAME}_A_$depth")
-                    val rightVar = Var.of("${ProblogLib.DD_VAR_NAME}_B_$depth")
+                    val leftVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_A_$depth")
+                    val rightVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_B_$depth")
                     Tuple.of(
-                        this[0].wrapInBinaryPredicateRecursive(leftVar, depth + 1),
-                        this[1].wrapInBinaryPredicateRecursive(rightVar, depth + 1),
-                        Struct.of(ProbBuildAnd.functor, leftTerm, leftVar, rightVar),
+                        this[0].wrapInPredicateRecursive(functor, leftVar, depth + 1),
+                        this[1].wrapInPredicateRecursive(functor, rightVar, depth + 1),
+                        Struct.of(ProbExplAnd.functor, explanation, leftVar, rightVar),
                     )
                 }
                 ";" -> {
                     Struct.of(
                         ";",
-                        this[0].wrapInBinaryPredicateRecursive(leftTerm, depth + 1),
-                        this[1].wrapInBinaryPredicateRecursive(leftTerm, depth + 1),
+                        this[0].wrapInPredicateRecursive(functor, explanation, depth + 1),
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
                     )
                 }
                 "->" -> {
                     Struct.of(
                         "->",
-                        this[0].wrapInBinaryPredicateRecursive(Var.anonymous(), depth + 1),
-                        this[1].wrapInBinaryPredicateRecursive(leftTerm, depth + 1),
+                        this[0].wrapInPredicateRecursive(functor, Var.anonymous(), depth + 1),
+                        this[1].wrapInPredicateRecursive(functor, explanation, depth + 1),
                     )
                 }
                 else -> {
-                    this.wrapInBinaryPredicate(leftTerm)
+                    this.wrapInPredicate(functor, explanation)
                 }
             }
         }
         else -> {
-            this.wrapInBinaryPredicate(leftTerm)
+            this.wrapInPredicate(functor, explanation)
         }
     }
 }
@@ -158,9 +158,9 @@ internal fun Rule.withoutAnonymousVars(): Rule {
     }
 }
 
-/** Encapsulates a [BinaryDecisionDiagram] object inside a Prolog [Term] */
-internal fun BinaryDecisionDiagram<ProbChoice>.toTerm(): Term {
-    return ProblogObjectRef(this)
+/** Encapsulates a [ProbExplanation] object inside a Prolog [Term] */
+internal fun ProbExplanation.toTerm(): Term {
+    return ProbExplanationTerm(this)
 }
 
 /** If the given term represents an arithmetic expression, this function returns

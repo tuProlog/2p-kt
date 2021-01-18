@@ -1,10 +1,12 @@
-package it.unibo.tuprolog.solve.problog.lib.knowledge.mapping
+package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
 
 /**
  * ClauseMapper represents a mapping function used for internal Theory representation.
  * The idea is that a given [Clause] can be elaborated and mapped to one or more [Clause]s.
+ *
+ * @author Jason Dellaluce
  */
 internal interface ClauseMapper {
 
