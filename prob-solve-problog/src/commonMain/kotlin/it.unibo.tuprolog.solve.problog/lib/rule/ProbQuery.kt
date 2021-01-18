@@ -5,9 +5,9 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbCalc
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbDebugSolution
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbDebugSolution
 
 object ProbQuery : RuleWrapper<ExecutionContext>("${PREDICATE_PREFIX}_query", 2) {
 

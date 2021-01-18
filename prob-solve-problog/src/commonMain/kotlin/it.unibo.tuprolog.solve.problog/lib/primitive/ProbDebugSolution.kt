@@ -9,7 +9,8 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogObjectRef
 
 object ProbDebugSolution : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}_debug_sol") {
+    "${ProblogLib.PREDICATE_PREFIX}_debug_sol"
+) {
     private const val debugEnabled = true
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
