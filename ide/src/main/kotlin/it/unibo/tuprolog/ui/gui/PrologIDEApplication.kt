@@ -4,7 +4,6 @@ import javafx.application.Application
 import javafx.stage.Stage
 import kotlin.system.exitProcess
 
-
 class PrologIDEApplication : Application() {
     override fun start(stage: Stage) {
         try {

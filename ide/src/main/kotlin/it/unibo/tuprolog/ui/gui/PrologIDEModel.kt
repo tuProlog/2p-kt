@@ -5,18 +5,11 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
-import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.libs.io.IOLib
-import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import org.reactfx.EventStream
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
-
 
 interface PrologIDEModel {
 
@@ -34,7 +27,7 @@ interface PrologIDEModel {
 
     val executor: ExecutorService
 
-    fun customizeSolver(customizer : (MutableSolver) -> Unit)
+    fun customizeSolver(customizer: (MutableSolver) -> Unit)
 
     fun newFile(): File
 

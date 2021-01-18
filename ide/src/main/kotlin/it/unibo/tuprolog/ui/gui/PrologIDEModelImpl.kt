@@ -24,7 +24,7 @@ import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 import kotlin.system.exitProcess
 
-internal class PrologIDEModelImpl(override val executor: ExecutorService, var customizer : ((MutableSolver) -> Unit)?) : PrologIDEModel {
+internal class PrologIDEModelImpl(override val executor: ExecutorService, var customizer: ((MutableSolver) -> Unit)?) : PrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
