@@ -48,6 +48,10 @@ class PrologIDEController : Initializable {
 
     private val model = PrologIDEModel.of()
 
+    private var onClose = {}
+
+    private var onAbout = {}
+
     @FXML
     private lateinit var root: Parent
 
@@ -505,15 +509,7 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onQuitRequested(e: ActionEvent) {
-        val alert = Alert(Alert.AlertType.CONFIRMATION)
-        alert.title = "Close tuProlog IDE"
-        alert.headerText = "Confirmation"
-        alert.contentText = "Are you absolutely sure you wanna close the IDE?"
-        alert.showAndWait().ifPresent {
-            if (it == ButtonType.OK) {
-                stage.close()
-            }
-        }
+        this.onClose()
     }
 
     private fun onCaretMovedIn(area: CodeArea) {
@@ -680,20 +676,20 @@ class PrologIDEController : Initializable {
 
     @FXML
     fun onAbout(e: ActionEvent) {
-        val dialog = Alert(Alert.AlertType.INFORMATION)
-        dialog.title = "About"
-        dialog.headerText = "tuProlog IDE v${Info.VERSION}"
-        dialog.dialogPane.graphic = ImageView(TUPROLOG_LOGO).also {
-            it.fitWidth = TUPROLOG_LOGO.width * 0.3
-            it.fitHeight = TUPROLOG_LOGO.height * 0.3
-        }
-        dialog.contentText =
-            """
-            |Running on:
-            |  - 2P-Kt v${Info.VERSION}
-            |  - JVM v${System.getProperty("java.version")}
-            |  - JavaFX v${System.getProperty("javafx.runtime.version")}
-            """.trimMargin()
-        dialog.showAndWait()
+        this.onAbout()
+    }
+
+    fun customizeModel(setup: (PrologIDEModel) -> Unit) = setup(model)
+
+    fun addTab(tab: Tab) {
+        this.tabsStreams.tabs.add(tab)
+    }
+
+    fun setOnClose(onClose: () -> Unit) {
+        this.onClose = onClose
+    }
+
+    fun setOnAbout(onAbout: () -> Unit) {
+        this.onAbout = onAbout
     }
 }
