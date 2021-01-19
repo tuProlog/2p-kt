@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 
@@ -320,13 +321,8 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @return a [Term] where variables in [substitution] are replaced by their values
      */
     @JsName("applySubstitution")
-    // TODO what if the substitution is failed
-    fun apply(substitution: Substitution): Term = when {
-        substitution.isEmpty() || this.isGround -> this
-        this is Var -> substitution[this] ?: this
-        this is Struct && !this.isGround -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
-        else -> this
-    }
+    fun apply(substitution: Substitution): Term =
+        substitution.applyTo(this) ?: throw SubstitutionApplicationException(this, substitution)
 
     /**
      * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
@@ -379,8 +375,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @return an object of type [T], produced by [visitor] through its visit
      */
     @JsName("accept")
-    fun <T> accept(visitor: TermVisitor<T>): T =
-        visitor.visit(this)
+    fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
 
     override fun toString(): String
 
