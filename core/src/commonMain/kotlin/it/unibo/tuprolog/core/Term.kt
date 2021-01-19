@@ -319,6 +319,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      *
      * @param substitution is the [Substitution] to be applied to the current term
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
      */
     @JsName("applySubstitution")
     fun apply(substitution: Substitution): Term =
@@ -334,6 +335,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @param substitution is the first [Substitution] to be applied to the current term
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
      * @see Substitution.of
@@ -355,6 +357,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @param substitution is the first [Substitution] to be applied to the current term
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
      * @see Substitution.of
