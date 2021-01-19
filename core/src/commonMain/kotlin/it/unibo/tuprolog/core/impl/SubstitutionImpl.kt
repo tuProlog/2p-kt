@@ -9,9 +9,11 @@ import kotlin.collections.Collection as KtCollection
 
 internal sealed class SubstitutionImpl : Substitution {
 
-    override val isSuccess: Boolean = false
+    override val isSuccess: Boolean
+        get() = false
 
-    override val isFailed: Boolean = false
+    override val isFailed: Boolean
+        get() = false
 
     abstract override fun getOriginal(variable: Var): Var?
 
@@ -63,7 +65,8 @@ internal sealed class SubstitutionImpl : Substitution {
                 }
             }.lastOrNull()
 
-        override val isSuccess: Boolean = true
+        override val isSuccess: Boolean
+            get() = true
 
         override fun minus(keys: Iterable<Var>): UnifierImpl = super.minus(keys) as UnifierImpl
 
@@ -113,7 +116,8 @@ internal sealed class SubstitutionImpl : Substitution {
 
     /** The Failed Substitution instance */
     object FailImpl : SubstitutionImpl(), Substitution.Fail, Map<Var, Term> by emptyMap() {
-        override val isFailed: Boolean = true
+        override val isFailed: Boolean
+            get() = true
 
         override fun getOriginal(variable: Var): Nothing? = null
 
