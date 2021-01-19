@@ -20,7 +20,7 @@ internal class SubstitutionTest {
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
 
-    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::of) }
+    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::of) }
 
     @Test
     fun failedShouldReturnTheFailedSubstitutionInstance() {

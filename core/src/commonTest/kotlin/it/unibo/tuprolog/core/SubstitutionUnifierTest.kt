@@ -24,7 +24,7 @@ internal class SubstitutionUnifierTest {
     private val bVarToXAtomSubstitution = Substitution.unifier(mapOf(bVar to xAtom))
 
     private val substitutions by lazy {
-        SubstitutionUtils.mixedSubstitutions.map(Substitution::unifier) +
+        SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifier) +
             listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
