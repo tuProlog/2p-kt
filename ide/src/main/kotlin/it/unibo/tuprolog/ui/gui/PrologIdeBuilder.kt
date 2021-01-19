@@ -75,7 +75,7 @@ data class PrologIdeBuilder(
 
     fun stylesheets(stylesheets: Iterable<String>) = apply { this.stylesheets = stylesheets.toList() }
 
-    fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheets }
+    fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheet }
 
     fun customLibraries(customLibraries: Iterable<AliasedLibrary>) =
         apply { this.customLibraries = customLibraries.toList() }
