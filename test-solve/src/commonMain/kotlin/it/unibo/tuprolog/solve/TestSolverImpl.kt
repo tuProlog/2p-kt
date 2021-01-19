@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
@@ -59,6 +61,7 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.flags.Unknown.ERROR
 import it.unibo.tuprolog.solve.flags.Unknown.FAIL
@@ -119,10 +122,8 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
-import kotlin.collections.listOf as ktListOf
 
 internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSolver {
 
@@ -223,7 +224,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 ktListOf(query.no()),
                 solver.solve(query).toList()
             )
-            assertTrue { observedWarnings.size == 1 }
+            assertEquals(1, observedWarnings.size)
             assertTrue { observedWarnings[0] is MissingPredicate }
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 
@@ -358,19 +359,18 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
+            solver.standardOutput.addListener { outputs += it!! }
 
-            with(solver.standardOutput!!) {
-                addListener { outputs += it }
-            }
+            val terms = ktListOf(
+                atomOf("atom"),
+                atomOf("a string"),
+                varOf("A_Var"),
+                numOf(1),
+                numOf(2.1),
+                "f"("x")
+            )
 
-            val query = write(atomOf("atom")) and
-                write(atomOf("a string")) and
-                write(varOf("A_Var")) and
-                write(numOf(1)) and
-                write(numOf(2.1)) and
-                write("f"("x")) and
-                nl
+            val query = tupleOf(terms.map { write(it) }.append(nl))
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -380,15 +380,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             )
 
             assertEquals(
-                ktListOf(
-                    "atom",
-                    "a string",
-                    varOf("A_Var").completeName,
-                    "1",
-                    "2.1",
-                    "f(x)",
-                    "\n"
-                ),
+                terms.map { it.format(TermFormatter.default()) }.append("\n"),
                 outputs
             )
         }
@@ -399,10 +391,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
-
-            with(solver.standardOutput!!) {
-                addListener { outputs += it }
+            with(solver.standardOutput) {
+                addListener { outputs += it!! }
                 write("a")
             }
 
@@ -415,7 +405,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 solutions
             )
 
-            solver.standardOutput?.write("e")
+            solver.standardOutput.write("e")
 
             assertEquals(
                 ktListOf("a", "b", "c", "d", "\n", "e"),

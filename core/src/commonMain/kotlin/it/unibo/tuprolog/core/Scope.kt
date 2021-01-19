@@ -73,10 +73,16 @@ interface Scope {
     fun listOf(vararg terms: Term): LogicList
 
     @JsName("ktListOf")
-    fun <T> ktListOf(vararg items: T): kotlin.collections.List<T>
+    fun <T> ktListOf(vararg items: T): List<T>
+
+    @JsName("append")
+    fun <T> List<T>.append(item: T, vararg items: T): List<T>
+
+    @JsName("concat")
+    fun <T> List<T>.concat(other: Iterable<T>): List<T>
 
     @JsName("ktEmptyList")
-    fun <T> ktEmptyList(): kotlin.collections.List<T>
+    fun <T> ktEmptyList(): List<T>
 
     @JsName("listOfIterable")
     fun listOf(terms: Iterable<Term>): LogicList

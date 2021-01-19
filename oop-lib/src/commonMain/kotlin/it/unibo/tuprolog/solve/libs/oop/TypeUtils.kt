@@ -35,25 +35,28 @@ expect fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KCl
 
 expect fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*>
 
-fun Any.invoke(methodName: String, arguments: List<Term>): Result =
-    this::class.invoke(methodName, arguments, this)
+fun Any.invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
+    this::class.invoke(objectConverter, methodName, arguments, this)
 
 expect fun KClass<*>.invoke(
+    objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
     instance: Any? = null
 ): Result
 
-fun Any.assign(propertyName: String, value: Term): Result =
-    this::class.assign(propertyName, value, this)
+fun Any.assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Result =
+    this::class.assign(objectConverter, propertyName, value, this)
 
 expect fun KClass<*>.assign(
+    objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
     instance: Any? = null
 ): Result
 
 expect fun KClass<*>.create(
+    objectConverter: TermToObjectConverter,
     arguments: List<Term>
 ): Result
 

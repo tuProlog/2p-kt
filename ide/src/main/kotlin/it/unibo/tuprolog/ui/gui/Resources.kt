@@ -1,3 +1,5 @@
+@file:JvmName("Resources")
+
 package it.unibo.tuprolog.ui.gui
 
 import javafx.scene.image.Image

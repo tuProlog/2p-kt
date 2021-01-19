@@ -71,6 +71,24 @@ class DomainError(
             )
         }
 
+        @JsName("forTerm")
+        @JvmStatic
+        fun forTerm(
+            context: ExecutionContext,
+            expectedDomain: Expected,
+            actualValue: Term
+        ): DomainError = message(
+            "Term `${actualValue.pretty()}` is not a valid $expectedDomain"
+        ) { m, extra ->
+            DomainError(
+                message = m,
+                context = context,
+                expectedDomain = expectedDomain,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
+
         @JsName("forGoal")
         @JvmStatic
         fun forGoal(

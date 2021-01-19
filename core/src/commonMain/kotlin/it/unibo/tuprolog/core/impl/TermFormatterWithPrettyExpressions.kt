@@ -15,12 +15,15 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.core.operators.toOperatorsIndex
 import kotlin.collections.Set
 
-internal class TermFormatterWithPrettyExpressions(
+internal class TermFormatterWithPrettyExpressions private constructor (
     private val priority: Int,
     private val delegate: TermFormatter,
     private val operators: OperatorsIndex,
-    private val forceParentheses: Set<String>
-) : AbstractTermFormatter() {
+    private val forceParentheses: Set<String>,
+    quoted: Boolean = true,
+    numberVars: Boolean = false,
+    ignoreOps: Boolean = false
+) : AbstractTermFormatter(quoted, numberVars, ignoreOps) {
 
     companion object {
         private data class OperatorDecorations(val prefix: String, val suffix: String)
@@ -43,8 +46,13 @@ internal class TermFormatterWithPrettyExpressions(
             get() = decorations.suffix
     }
 
-    constructor(delegate: TermFormatter, operators: OperatorSet) :
-        this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet())
+    constructor(
+        delegate: TermFormatter,
+        operators: OperatorSet,
+        quoted: Boolean = true,
+        numberVars: Boolean = false,
+        ignoreOps: Boolean = false
+    ) : this(Int.MAX_VALUE, delegate, operators.toOperatorsIndex(), emptySet(), quoted, numberVars, ignoreOps)
 
     override fun visitVar(term: Var): String =
         term.accept(delegate)
@@ -64,13 +72,12 @@ internal class TermFormatterWithPrettyExpressions(
     override fun visitEmptyList(term: EmptyList): String =
         term.accept(delegate)
 
-    override fun visitStruct(term: Struct): String {
-        return if (term.functor.isOperator()) {
+    override fun visitStruct(term: Struct): String =
+        if (term.functor.isOperator()) {
             visitExpression(term)
         } else {
             super.visitStruct(term)
         }
-    }
 
     private fun String.wrapWithinParentheses(): String = "($this)"
 
@@ -119,16 +126,12 @@ internal class TermFormatterWithPrettyExpressions(
         return super.visitStruct(struct)
     }
 
-    override fun itemFormatter(): TermFormatter {
-        return childFormatter(Int.MAX_VALUE, setOf(",", "|"))
-    }
+    override fun itemFormatter(): TermFormatter = childFormatter(Int.MAX_VALUE, setOf(",", "|"))
 
-    override fun childFormatter(): TermFormatter {
-        return childFormatter(Int.MAX_VALUE, setOf(","))
-    }
+    override fun childFormatter(): TermFormatter = childFormatter(Int.MAX_VALUE, setOf(","))
 
     private fun childFormatter(priority: Int, forceParentheses: Set<String> = emptySet()): TermFormatter =
-        TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses)
+        TermFormatterWithPrettyExpressions(priority, delegate, operators, forceParentheses, quoted, numberVars, ignoreOps)
 
     private fun String.isOperator() = operators.containsKey(this)
 
@@ -136,29 +139,23 @@ internal class TermFormatterWithPrettyExpressions(
         functor: String,
         priorityPredicate: (Int) -> Boolean,
         specifierPredicate: Specifier.() -> Boolean
-    ): Pair<Specifier, Int>? {
-        return this[functor]?.asSequence()
-            ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
-            ?.filter { it.key.name !in forceParentheses }
-            ?.map { it.toPair() }
-            ?.firstOrNull()
-    }
+    ): Pair<Specifier, Int>? = this[functor]?.asSequence()
+        ?.filter { it.key.specifierPredicate() && priorityPredicate(it.value) }
+        ?.filter { it.key.name !in forceParentheses }
+        ?.map { it.toPair() }
+        ?.firstOrNull()
 
     private fun OperatorsIndex.getSpecifierAndIndexWithNonGreaterPriority(
         functor: String,
         priority: Int,
         specifierPredicate: Specifier.() -> Boolean
-    ): Pair<Specifier, Int>? {
-        return getSpecifierAndIndex(functor, { it <= priority }, specifierPredicate)
-    }
+    ): Pair<Specifier, Int>? = getSpecifierAndIndex(functor, { it <= priority }, specifierPredicate)
 
     private fun OperatorsIndex.getSpecifierAndIndexWithGreaterPriority(
         functor: String,
         priority: Int,
         specifierPredicate: Specifier.() -> Boolean
-    ): Pair<Specifier, Int>? {
-        return getSpecifierAndIndex(functor, { it > priority }, specifierPredicate)
-    }
+    ): Pair<Specifier, Int>? = getSpecifierAndIndex(functor, { it > priority }, specifierPredicate)
 
     private fun Struct.isPrefix(): Pair<Specifier, Int>? =
         if (arity == 1) {

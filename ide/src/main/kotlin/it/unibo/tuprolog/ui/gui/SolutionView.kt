@@ -88,6 +88,7 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
                 query.isVisible = false
             } else {
                 led.fill = COLOR_HALT
+                status.text = "halt:"
                 query.text = solution.exception.message
                 with(children) {
                     solution.exception.prologStackTrace.map { it.format(formatter) }.forEach {

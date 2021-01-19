@@ -40,7 +40,7 @@ internal open class StructImpl(
             arity == other.arity &&
             (0 until arity).all { args[it] structurallyEquals other[it] }
 
-    override val isFunctorWellFormed: Boolean by lazy { functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN }
+    override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -74,8 +74,8 @@ internal open class StructImpl(
     protected open fun argsHashCode(): Int = args.contentHashCode()
 
     override fun toString(): String {
-        val functor = if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
-        val args = if (arity > 0) "(${args.joinToString(", ")})" else ""
-        return functor + args
+        val escaped = Struct.escapeFunctorIfNecessary(functor)
+        val quoted = Struct.enquoteFunctorIfNecessary(escaped)
+        return "$quoted${if (arity > 0) "(${args.joinToString(", ")})" else ""}"
     }
 }

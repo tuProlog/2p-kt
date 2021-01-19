@@ -47,7 +47,7 @@ object TuPrologUtils {
             }
             is HaltException -> {
                 TermUi.echo("goodbye.")
-                throw ProgramResult(0)
+                throw ProgramResult(ex.exitStatus)
             }
             else -> {
                 if (ex.message == null) {

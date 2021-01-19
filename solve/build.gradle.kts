@@ -8,5 +8,11 @@ kotlin {
                 api(project(":theory"))
             }
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(project(":dsl-theory"))
+            }
+        }
     }
 }

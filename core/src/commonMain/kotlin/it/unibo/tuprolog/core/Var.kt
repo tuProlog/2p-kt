@@ -19,6 +19,9 @@ interface Var : Term {
     @JsName("name")
     val name: String
 
+    @JsName("id")
+    val id: String
+
     @JsName("completeName")
     val completeName: String
 

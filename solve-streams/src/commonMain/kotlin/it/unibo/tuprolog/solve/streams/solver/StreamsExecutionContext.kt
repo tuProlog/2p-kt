@@ -4,19 +4,14 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.ExecutionContextAware
-import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.streams.SolverStrategies
 import it.unibo.tuprolog.solve.streams.StreamsSolver
-import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.Theory
 
@@ -31,8 +26,8 @@ internal data class StreamsExecutionContext(
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: Theory = Theory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
-    override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
-    override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
+    override val inputChannels: InputStore = InputStore.default(),
+    override val outputChannels: OutputStore = OutputStore.default(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
@@ -65,19 +60,25 @@ internal data class StreamsExecutionContext(
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
-        stdIn: InputChannel<String>,
-        stdOut: OutputChannel<String>,
-        stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
-    ) = StreamsSolverFactory.solverOf(
+        inputChannels: InputStore,
+        outputChannels: OutputStore
+    ) = StreamsSolver(
         libraries,
         flags,
         staticKb,
         dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr
+        inputChannels,
+        outputChannels
     )
+
+    override fun createMutableSolver(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        inputChannels: InputStore,
+        outputChannels: OutputStore
+    ) = TODO("Not yet implemented")
 
     override fun apply(sideEffect: SideEffect): StreamsExecutionContext {
         return super.apply(sideEffect) as StreamsExecutionContext
@@ -97,8 +98,8 @@ internal data class StreamsExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: InputStore<*>,
-        outputChannels: OutputStore<*>
+        inputChannels: InputStore,
+        outputChannels: OutputStore
     ): StreamsExecutionContext {
         return copy(
             libraries = libraries,
