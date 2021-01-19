@@ -676,7 +676,7 @@ class PrologIDEController : Initializable {
         this.onAbout()
     }
 
-    fun customizeModel(setup: (PrologIDEModel) -> Unit) = setup(model)
+    fun customizeModel(setup: ModelConfigurator) = setup(model)
 
     fun addTab(tab: Tab) {
         this.tabsStreams.tabs.add(tab)

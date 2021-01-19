@@ -17,45 +17,82 @@ data class PrologIdeBuilder(
     val stage: Stage,
     var title: String = "tuProlog IDE",
     var icon: Image = TUPROLOG_LOGO,
-    var onClose: () -> Boolean = {
-        val alert = Alert(Alert.AlertType.CONFIRMATION)
-        alert.title = "Close tuProlog IDE"
-        alert.headerText = "Confirmation"
-        alert.contentText = "Are you absolutely sure you wanna close the IDE?"
-        alert.showAndWait().map {
-            it == ButtonType.OK
-        }.get()
-    },
-    var onAbout: () -> Unit = {
-        val dialog = Alert(Alert.AlertType.INFORMATION)
-        dialog.title = "About"
-        dialog.headerText = "tuProlog IDE v${Info.VERSION}"
-        dialog.dialogPane.graphic = ImageView(TUPROLOG_LOGO).also {
-            it.fitWidth = TUPROLOG_LOGO.width * 0.3
-            it.fitHeight = TUPROLOG_LOGO.height * 0.3
-        }
-        dialog.contentText =
-            """
-            |Running on:
-            |  - 2P-Kt v${Info.VERSION}
-            |  - JVM v${System.getProperty("java.version")}
-            |  - JavaFX v${System.getProperty("javafx.runtime.version")}
-            """.trimMargin()
-        dialog.showAndWait()
-    },
-    var stylesheets: Collection<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
-    var customLibraries: Collection<AliasedLibrary> = emptyList(),
-    var customTabs: Collection<Pair<Tab, (PrologIDEModel) -> Unit>> = emptyList()
+    var onClose: () -> Boolean = { showExitConfirmationDialog(title) },
+    var onAbout: () -> Unit = { showAboutDialog(title, Info.VERSION) },
+    var stylesheets: List<String> = listOf(JAVA_KEYWORDS_LIGHT, LIGHT_CODE_AREA),
+    var customLibraries: List<AliasedLibrary> = emptyList(),
+    var customTabs: List<CustomTab> = emptyList()
 ) {
 
+    companion object {
+        @JvmStatic
+        fun showConfirmationDialog(title: String, header: String, content: String): Boolean =
+            Alert(Alert.AlertType.CONFIRMATION).also {
+                it.title = title
+                it.headerText = header
+                it.contentText = content
+            }.showAndWait().map { it == ButtonType.OK }.get()
+
+        @JvmStatic
+        fun showExitConfirmationDialog(what: String): Boolean =
+            showConfirmationDialog(
+                "Close $what",
+                "Confirmation",
+                "Do you really want close the $what?"
+            )
+
+        @JvmStatic
+        fun showAboutDialog(
+            what: String,
+            version: String = Info.VERSION,
+            image: Image = TUPROLOG_LOGO,
+            width: Double = TUPROLOG_LOGO.width * 0.3,
+            height: Double = TUPROLOG_LOGO.height * 0.3
+        ) = Alert(Alert.AlertType.INFORMATION).also {
+            it.title = "About"
+            it.headerText = "$what v$version"
+            it.dialogPane.graphic = ImageView(image).also { img ->
+                img.fitWidth = width
+                img.fitHeight = height
+            }
+            it.contentText =
+                """
+                |Running on:
+                |  - 2P-Kt v${Info.VERSION}
+                |  - JVM v${System.getProperty("java.version")}
+                |  - JavaFX v${System.getProperty("javafx.runtime.version")}
+                """.trimMargin()
+        }.showAndWait()
+    }
+
     fun title(title: String) = apply { this.title = title }
+
     fun icon(icon: Image) = apply { this.icon = icon }
+
     fun onClose(onClose: () -> Boolean) = apply { this.onClose = onClose }
+
     fun onAbout(onAbout: () -> Unit) = apply { this.onAbout = onAbout }
-    fun stylesheets(stylesheets: Collection<String>) = apply { this.stylesheets = stylesheets }
-    fun customLibraries(customLibraries: Collection<AliasedLibrary>) = apply { this.customLibraries = customLibraries }
-    fun customTabs(customTabs: Collection<Pair<Tab, (PrologIDEModel) -> Unit>>) =
-        apply { this.customTabs = customTabs }
+
+    fun stylesheets(stylesheets: Iterable<String>) = apply { this.stylesheets = stylesheets.toList() }
+
+    fun stylesheet(stylesheet: String) = apply { this.stylesheets += stylesheets }
+
+    fun customLibraries(customLibraries: Iterable<AliasedLibrary>) =
+        apply { this.customLibraries = customLibraries.toList() }
+
+    fun customLibrary(customLibrary: AliasedLibrary) =
+        apply { this.customLibraries += customLibrary }
+
+    fun customTabs(customTabs: Iterable<CustomTab>) =
+        apply { this.customTabs = customTabs.toList() }
+
+    fun customTab(customTab: CustomTab) =
+        apply { this.customTabs += customTab }
+
+    fun customTab(tab: Tab, modelConfigurator: ModelConfigurator) =
+        customTab(CustomTab(tab, modelConfigurator))
+
+    fun customTab(tab: Tab) = customTab(tab) { /* do nothing */ }
 
     fun show() {
         val loader = FXMLLoader(javaClass.getResource("PrologIDEView.fxml"))
@@ -70,14 +107,14 @@ data class PrologIdeBuilder(
         controller.setOnAbout(this.onAbout)
         controller.setOnClose { if (this.onClose()) this.stage.close() }
         customTabs.forEach {
-            controller.addTab(it.first)
+            controller.addTab(it.tab)
         }
 
-        controller.customizeModel {
-            it.customizeSolver {
-                customLibraries.forEach { lib -> it.loadLibrary(lib) }
+        controller.customizeModel { model ->
+            model.customizeSolver { solver ->
+                customLibraries.forEach { solver.loadLibrary(it) }
             }
-            customTabs.forEach { tab -> tab.second(it) }
+            customTabs.forEach { it.modelConfigurator(model) }
         }
 
         this.stage.show()
