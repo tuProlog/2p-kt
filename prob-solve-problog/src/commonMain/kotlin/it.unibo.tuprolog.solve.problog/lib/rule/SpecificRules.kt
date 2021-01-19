@@ -6,8 +6,6 @@ internal object SpecificRules {
     private val wrappers = sequenceOf(
         Prob.Negation.Not,
         Prob.Negation.NegationAsFailure,
-        ProbSolveConditional,
-        ProbQuery,
         Prob.Prolog,
     )
 

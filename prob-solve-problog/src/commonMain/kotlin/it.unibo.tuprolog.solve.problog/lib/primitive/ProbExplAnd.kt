@@ -10,6 +10,11 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
+/**
+ * This applies an "And" logical operation between two explanations represented by [ProbExplanationTerm].
+ *
+ * @author Jason Dellaluce
+ */
 internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>(
     "${ProblogLib.PREDICATE_PREFIX}_expl_and"
 ) {
@@ -17,6 +22,7 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term, second: Term, third: Term): Solve.Response {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
+
         return if (first is Var && second is ProbExplanationTerm && third is ProbExplanationTerm) {
             replyWith(first mguWith ProbExplanationTerm(second.explanation and third.explanation))
         } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))

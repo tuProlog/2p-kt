@@ -6,11 +6,15 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.primitive.EnsurePrologCall
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplNot
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSolve
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbEnsurePrologCall
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbNegationAsFailure
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
+/** [Prob] is the base-level predicate in which every predicate is wrapped in our Problog knowledge representation.
+ * Base-level rules of [Prob] handle edge cases such as negation or backwards compatibility with Prolog goals.
+ *
+ * @author Jason Dellaluce
+ * */
 internal sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY) {
 
     companion object {
@@ -26,13 +30,10 @@ internal sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY
     sealed class Negation : Prob() {
         override val Scope.body: Term
             get() {
-                val xVar = varOf("X")
-                val positiveExplanationVar = varOf("${ProblogLib.EXPLANATION_VAR_NAME}_POS")
-                return tupleOf(
-                    structOf("ground", xVar),
-                    structOf(ProbSolve.functor, positiveExplanationVar, xVar),
-                    atomOf("!"),
-                    structOf(ProbExplNot.functor, varOf(ProblogLib.EXPLANATION_VAR_NAME), positiveExplanationVar),
+                return structOf(
+                    ProbNegationAsFailure.functor,
+                    varOf(ProblogLib.EXPLANATION_VAR_NAME),
+                    varOf("X")
                 )
             }
 
@@ -64,7 +65,7 @@ internal sealed class Prob : RuleWrapper<ClassicExecutionContext>(FUNCTOR, ARITY
             get() {
                 val xVar = varOf("X")
                 return tupleOf(
-                    structOf(EnsurePrologCall.functor, xVar),
+                    structOf(ProbEnsurePrologCall.functor, xVar),
                     atomOf("!"),
                     xVar,
                 )

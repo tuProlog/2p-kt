@@ -7,13 +7,16 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 internal object SpecificPrimitives {
     private val wrappers: Sequence<PrimitiveWrapper<*>> =
         sequenceOf(
+            ProbEnsurePrologCall,
             ProbExplNot,
             ProbExplAnd,
             ProbSolve,
             ProbCalc,
+            ProbQuery,
             ProbSolveEvidence,
-            EnsurePrologCall,
-            ProbDebugSolution
+            ProbSolveWithEvidence,
+            ProbNegationAsFailure,
+            ProbExplDebug
         )
 
     val primitives: Map<Signature, Primitive> = wrappers.map { it.descriptionPair }.toMap()

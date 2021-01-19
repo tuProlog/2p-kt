@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.theory.Theory
 import kotlin.math.abs
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 typealias ExpectedSolution = Pair<Struct, Double>
 typealias QueryWithSolutions = Pair<Struct, Iterable<ExpectedSolution>>
@@ -33,6 +34,10 @@ object TestUtils {
 
             var currentActual: ExpectedSolution? = null
             var currentExpected: ExpectedSolution? = null
+            assertTrue(
+                expectedSolutions.size <= solutions.size,
+                "Actual solutions size should be larger or equal than the expected one"
+            )
             assertFalse(
                 expectedSolutions
                     .any { s ->

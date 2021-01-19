@@ -13,7 +13,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.library.Libraries
-import it.unibo.tuprolog.solve.problog.lib.rule.ProbQuery
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbQuery
 import it.unibo.tuprolog.theory.Theory
 
 internal open class ProblogProbSolver(

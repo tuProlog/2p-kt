@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
+import it.unibo.tuprolog.bdd.toGraphvizString
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import kotlin.js.JsName
 
@@ -23,6 +24,8 @@ import kotlin.js.JsName
  * @author Jason Dellaluce
  */
 internal interface ProbExplanation {
+
+    override fun toString(): String
 
     /**
      * Performs the "Not" unary boolean operation over this explanation.
@@ -60,7 +63,7 @@ internal interface ProbExplanation {
         get() {
             return try {
                 probability
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 null
             }
         }
@@ -79,7 +82,18 @@ internal interface ProbExplanation {
     @JsName("applyTransformation")
     fun apply(transformation: (ProbTerm) -> ProbTerm): ProbExplanation
 
-    override fun toString(): String
+    /**
+     * Formats a the underlying data structure using Graphviz notation (https://graphviz.org/).
+     * This provides a fast and widely supported solution to visualize the contents of a graph-like data structures.
+     *
+     * Non-graph data structure implementations of [ProbExplanation] will cause an exception to be thrown.
+     */
+    fun formatToGraphviz(): String {
+        if (this is BinaryDecisionDiagramExplanation) {
+            return diagram.toGraphvizString()
+        }
+        throw UnsupportedOperationException("Graphviz formatting is only supported for graph-like data structures.")
+    }
 
     companion object {
         /** A [ProbExplanation] representing a logic truth. */

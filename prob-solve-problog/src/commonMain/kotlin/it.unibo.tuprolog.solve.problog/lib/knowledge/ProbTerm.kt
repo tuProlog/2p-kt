@@ -17,19 +17,19 @@ import kotlin.math.round
  * compilation data structures to have a fastly-comparable unique label for optimization purposes and
  * to distinguish one clause from the others.
  *
- * [probability] is a [Term] representing the probability value annotated on a clause. This is
- * supposed to be either an instance of [Numeric] or [Var].
+ * [probability] is a [Double] representing the probability value annotated on a clause.
  *
  * [term] is the bare Prolog [Term] contained in an explanation for a given query solution.
  *
  * [extraVariables] is a collection of [Var]s that are unused inside the original clause from which
- * [term] has been extracted, but that are however relevant for probabilistic computation.
+ * [term] has been extracted, but that are however relevant for probabilistic computation. This set
+ * is also meant to contain [Term]s resulting from the substitution of the initial variables.
  */
 internal class ProbTerm (
     val id: Long,
     val probability: Double,
     val term: Term,
-    val extraVariables: Set<Var> = emptySet(),
+    val extraVariables: Set<Term> = emptySet(),
 ) : Term by Struct.of(ProblogLib.PROB_FUNCTOR, Numeric.of(probability), term) {
 
     override fun freshCopy(): ProbTerm {
@@ -54,19 +54,18 @@ internal class ProbTerm (
         return if (substitution.isEmpty() || this.isGround) {
             this
         } else {
-            val newExtraVars = if (extraVariables.isEmpty())
+            val newExtraVars = if (!extraVariables.any { it.isVariable })
                 extraVariables
             else
                 extraVariables
                     .map { substitution.applyTo(it) }
-                    .filterIsInstance<Var>()
                     .toSet()
             ProbTerm(id, probability, term.apply(substitution), newExtraVars)
         }
     }
 
     override val isGround: Boolean by lazy {
-        term.isGround && extraVariables.isEmpty()
+        term.isGround && !extraVariables.any { it.isVariable }
     }
 
     private val cachedHashCode: Int by lazy {

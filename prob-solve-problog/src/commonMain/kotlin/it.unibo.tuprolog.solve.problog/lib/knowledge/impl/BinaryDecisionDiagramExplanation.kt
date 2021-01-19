@@ -61,15 +61,4 @@ internal class BinaryDecisionDiagramExplanation (
     }
 }
 
-/**
- * Formats a the underlying data structure using Graphviz notation (https://graphviz.org/).
- * This provides a fast and widely supported solution to visualize the contents of a graph-like data structures.
- *
- * Non-graph data structure implementations of [ProbExplanation] will cause an exception to be thrown.
- */
-internal fun ProbExplanation.formatToGraphviz(): String {
-    if (this is BinaryDecisionDiagramExplanation) {
-        return this.diagram.toGraphvizString()
-    }
-    throw UnsupportedOperationException("Graphviz formatting is only supported for graph-like data structures.")
-}
+
