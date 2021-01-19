@@ -9,8 +9,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
-import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EVIDENCE_PREDICATE
+import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm

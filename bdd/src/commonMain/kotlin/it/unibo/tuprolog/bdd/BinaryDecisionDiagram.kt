@@ -28,8 +28,28 @@ sealed class BinaryDecisionDiagram<T : Comparable<T>> {
      * a non-variable known Boolean value (either True or False).
      * */
     data class Terminal<T : Comparable<T>>(val value: Boolean) : BinaryDecisionDiagram<T>() {
+
+        private val cachedHashCode: Int by lazy {
+            value.hashCode()
+        }
+
         override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
             visitor.visit(this)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Terminal<*>
+
+            if (value != other.value) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return cachedHashCode
         }
     }
 
@@ -41,8 +61,33 @@ sealed class BinaryDecisionDiagram<T : Comparable<T>> {
         val low: BinaryDecisionDiagram<T> = Terminal(false),
         val high: BinaryDecisionDiagram<T> = Terminal(true)
     ) : BinaryDecisionDiagram<T>() {
+
+        private val cachedHashCode: Int by lazy {
+            var result = value.hashCode()
+            result = 31 * result + low.hashCode()
+            result = 31 * result + high.hashCode()
+            result
+        }
+
         override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
             visitor.visit(this)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Var<*>
+
+            if (value != other.value) return false
+            if (low != other.low) return false
+            if (high != other.high) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return cachedHashCode
         }
     }
 }

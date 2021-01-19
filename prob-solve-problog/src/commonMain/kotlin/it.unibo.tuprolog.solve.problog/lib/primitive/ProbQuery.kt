@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
@@ -14,7 +15,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
  * This primitive is the main entrypoint for probabilistic logic queries. The first argument
- * represents the [Numeric] probability of the query being true, and the second argument is the
+ * represents the [Numeric] probability of the query being true, the and the second argument is the
  * query goal.
  *
  * @author Jason Dellaluce
@@ -33,7 +34,10 @@ internal object ProbQuery : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         val queryWithEvidenceExplanation = Var.of("QueryWithEvidenceExplanation")
         val evidenceExplanation = Var.of("EvidenceExplanation")
         val solutions = solve(
-            Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second)
+            Tuple.of(
+                Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second),
+                Struct.of(ProbExplDebug.functor, queryWithEvidenceExplanation),
+            )
         )
 
         return sequence {
@@ -41,10 +45,10 @@ internal object ProbQuery : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                 val queryWithEvidenceExplanationTerm = solution.substitution[queryWithEvidenceExplanation]
                 val evidenceExplanationTerm = solution.substitution[evidenceExplanation]
 
-                if (queryWithEvidenceExplanationTerm == null
-                    || queryWithEvidenceExplanationTerm !is ProbExplanationTerm
-                    || evidenceExplanationTerm == null
-                    || evidenceExplanationTerm !is ProbExplanationTerm
+                if (queryWithEvidenceExplanationTerm == null ||
+                    queryWithEvidenceExplanationTerm !is ProbExplanationTerm ||
+                    evidenceExplanationTerm == null ||
+                    evidenceExplanationTerm !is ProbExplanationTerm
                 ) {
                     yield(Substitution.failed())
                 } else {
@@ -54,13 +58,16 @@ internal object ProbQuery : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                         yield(Substitution.failed())
                     } else {
                         val solutionSubstitution = solution.substitution.filter {
-                                v, _ -> v != evidenceExplanation && v != queryWithEvidenceExplanation
+                            v, _ ->
+                            v != evidenceExplanation && v != queryWithEvidenceExplanation
                         }
                         val probabilityTerm = Numeric.of(queryWithEvidenceProbability / evidenceProbability)
-                        yield(Substitution.of(
-                            solutionSubstitution,
-                            first mguWith probabilityTerm
-                        ))
+                        yield(
+                            Substitution.of(
+                                solutionSubstitution,
+                                first mguWith probabilityTerm
+                            )
+                        )
                     }
                 }
             }

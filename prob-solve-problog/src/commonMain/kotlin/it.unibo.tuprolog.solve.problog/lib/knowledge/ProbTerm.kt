@@ -25,7 +25,7 @@ import kotlin.math.round
  * [term] has been extracted, but that are however relevant for probabilistic computation. This set
  * is also meant to contain [Term]s resulting from the substitution of the initial variables.
  */
-internal class ProbTerm (
+internal class ProbTerm(
     val id: Long,
     val probability: Double,
     val term: Term,
@@ -39,7 +39,7 @@ internal class ProbTerm (
 
     override fun freshCopy(scope: Scope): ProbTerm {
         val termCopy = term.freshCopy(scope)
-        return ProbTerm(id, probability, termCopy,  extraVariables.map { it.freshCopy(scope) }.toSet())
+        return ProbTerm(id, probability, termCopy, extraVariables.map { it.freshCopy(scope) }.toSet())
     }
 
     override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbTerm {
@@ -54,12 +54,13 @@ internal class ProbTerm (
         return if (substitution.isEmpty() || this.isGround) {
             this
         } else {
-            val newExtraVars = if (!extraVariables.any { it.isVariable })
+            val newExtraVars = if (!extraVariables.any { it.isVariable }) {
                 extraVariables
-            else
+            } else {
                 extraVariables
                     .map { substitution.applyTo(it) }
                     .toSet()
+            }
             ProbTerm(id, probability, term.apply(substitution), newExtraVars)
         }
     }
@@ -104,5 +105,4 @@ internal class ProbTerm (
     override fun toString(): String {
         return "${round(probability * 100) / 100.0}::$term"
     }
-
 }

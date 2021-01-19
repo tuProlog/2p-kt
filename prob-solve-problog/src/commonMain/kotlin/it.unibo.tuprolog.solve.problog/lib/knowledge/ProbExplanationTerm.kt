@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge
 
-import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 
 /**
@@ -13,7 +13,7 @@ import it.unibo.tuprolog.core.Substitution
  */
 internal class ProbExplanationTerm(
     val explanation: ProbExplanation
-) : Atom by Atom.of("<expl:${explanation}>") {
+) : Atom by Atom.of("<expl:$explanation>") {
 
     override val isConstant: Boolean
         get() = false
@@ -44,5 +44,4 @@ internal class ProbExplanationTerm(
 
     override val isGround: Boolean
         get() = !this.explanation.containsNonGroundTerm
-
 }

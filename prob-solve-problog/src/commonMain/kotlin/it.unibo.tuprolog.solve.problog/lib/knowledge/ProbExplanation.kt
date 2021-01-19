@@ -107,5 +107,4 @@ internal interface ProbExplanation {
             return BinaryDecisionDiagramExplanation(BinaryDecisionDiagram.Var(term))
         }
     }
-
 }

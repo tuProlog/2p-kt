@@ -52,7 +52,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         }
 
         return if (!solutions.any { s -> s is Solution.Yes }) {
-            sequenceOf(Substitution.of( first mguWith ProbExplanationTerm(ProbExplanation.FALSE)))
+            sequenceOf(Substitution.of(first mguWith ProbExplanationTerm(ProbExplanation.FALSE)))
         } else {
             val solutionGroups = solutions
                 .filterIsInstance<Solution.Yes>()
@@ -61,16 +61,17 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
             sequence {
                 for (solutionGroup in solutionGroups) {
                     val explanation: ProbExplanation = solutionGroup.value
-                        .map { v -> v.substitution[explanationVar]}
+                        .map { v -> v.substitution[explanationVar] }
                         .filterIsInstance<ProbExplanationTerm>()
                         .map { e -> e.explanation }
                         .reduce { acc, expl ->
                             acc or expl
                         }
                     val substitution = Substitution.of(
-                        solutionGroup.key, first mguWith ProbExplanationTerm(explanation))
+                        solutionGroup.key,
+                        first mguWith ProbExplanationTerm(explanation)
+                    )
                     yield(substitution)
-
                 }
             }
         }

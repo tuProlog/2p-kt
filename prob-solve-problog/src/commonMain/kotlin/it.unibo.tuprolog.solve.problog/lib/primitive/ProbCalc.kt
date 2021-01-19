@@ -33,7 +33,8 @@ object ProbCalc : BinaryRelation.NonBacktrackable<ExecutionContext>("${ProblogLi
                         "Error during probability computation",
                         context = context,
                         cause = e
-                ))
+                    )
+                )
             }
         } else {
             replyException(

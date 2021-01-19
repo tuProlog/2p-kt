@@ -29,10 +29,12 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
         ensuringArgumentIsCallable(1)
 
         return if (!second.isGround) {
-            replyException(TuPrologRuntimeException(
-                "Probabilistic negation does not support non-ground goals: $second",
-                context = context
-            ))
+            replyException(
+                TuPrologRuntimeException(
+                    "Probabilistic negation does not support non-ground goals: $second",
+                    context = context
+                )
+            )
         } else {
             val explanationTermVar = Var.of("Explanation")
             val solution = solve(second.wrapInPredicate(ProbSolve.functor, explanationTermVar)).firstOrNull()
@@ -41,14 +43,18 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
             } else {
                 val explanationTerm = solution.substitution[explanationTermVar]
                 if (explanationTerm == null || explanationTerm !is ProbExplanationTerm) {
-                    replyException(TuPrologRuntimeException(
-                        "No valid explanation has been solved for goal: $second",
-                        context = context
-                    ))
+                    replyException(
+                        TuPrologRuntimeException(
+                            "No valid explanation has been solved for goal: $second",
+                            context = context
+                        )
+                    )
                 } else {
-                    replyWith(Substitution.of(
-                        first mguWith ProbExplanationTerm(explanationTerm.explanation.not())
-                    ))
+                    replyWith(
+                        Substitution.of(
+                            first mguWith ProbExplanationTerm(explanationTerm.explanation.not())
+                        )
+                    )
                 }
             }
         }

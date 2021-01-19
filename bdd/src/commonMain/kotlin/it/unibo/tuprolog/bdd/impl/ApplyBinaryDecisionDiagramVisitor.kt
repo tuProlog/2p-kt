@@ -20,12 +20,15 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
 internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : BinaryDecisionDiagramVisitor<T> {
     var result: BinaryDecisionDiagram<T>? = null
 
-    /* Reduction: This avoids duplicated nodes, both variables and terminals */
+    /* Reduction: This avoids duplicated nodes, both variables and terminals.
+    * NOTE: This also calls hashCode(), which initializes the lazy value that
+    * will then be cached for fast later access. This is fundamental for reaching
+    * O(1) on hashCode function even though this data structure is recursive. */
     protected fun getResultUsingTable(
-        key: Int,
         value: BinaryDecisionDiagram<T>,
         table: MutableMap<Int, BinaryDecisionDiagram<T>>,
     ): BinaryDecisionDiagram<T> {
+        val key = value.hashCode()
         val tableValue = table[key]
         return if (tableValue != null) {
             tableValue
@@ -56,9 +59,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
         private val table: MutableMap<Int, BinaryDecisionDiagram<T>> = mutableMapOf()
     ) : ApplyBinaryDecisionDiagramVisitor<T>() {
         override fun visit(node: BinaryDecisionDiagram.Terminal<T>) {
-            val nodeValue = operator(node.value)
-            val nodeKey = if (nodeValue) Int.MAX_VALUE else Int.MIN_VALUE
-            result = getResultUsingTable(nodeKey, BinaryDecisionDiagram.Terminal(nodeValue), table)
+            result = getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value)), table)
         }
 
         override fun visit(node: BinaryDecisionDiagram.Var<T>) {
@@ -67,11 +68,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
             node.low.accept(lowVisitor)
             node.high.accept(highVisitor)
 
-            val nodeKey = 31 * node.value.hashCode() +
-                31 * lowVisitor.result!!.hashCode() +
-                31 * highVisitor.result!!.hashCode()
             result = getResultUsingTable(
-                nodeKey,
                 createVarNode(node.value, lowVisitor.result!!, highVisitor.result!!),
                 table
             )
@@ -86,9 +83,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
         override fun visit(node: BinaryDecisionDiagram.Terminal<T>) {
             result = when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
-                    val nodeValue = operator(node.value, thatNode.value)
-                    val nodeKey = if (nodeValue) Int.MAX_VALUE else Int.MIN_VALUE
-                    getResultUsingTable(nodeKey, BinaryDecisionDiagram.Terminal(nodeValue), table)
+                    getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value, thatNode.value)), table)
                 }
                 is BinaryDecisionDiagram.Var -> {
                     val lowVisitor = Binary(thatNode.low, operator, table)
@@ -96,11 +91,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
                     node.accept(lowVisitor)
                     node.accept(highVisitor)
 
-                    val nodeKey = 31 * thatNode.hashCode() +
-                        31 * lowVisitor.result!!.hashCode() +
-                        31 * highVisitor.result!!.hashCode()
                     getResultUsingTable(
-                        nodeKey,
                         createVarNode(
                             thatNode.value,
                             lowVisitor.result!!,
@@ -148,11 +139,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
                     firstLow.accept(lowVisitor)
                     firstHigh.accept(highVisitor)
 
-                    val nodeKey = 31 * newValue.hashCode() +
-                        31 * lowVisitor.result!!.hashCode() +
-                        31 * highVisitor.result!!.hashCode()
                     getResultUsingTable(
-                        nodeKey,
                         createVarNode(
                             newValue,
                             lowVisitor.result!!,

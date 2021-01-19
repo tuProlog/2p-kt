@@ -42,18 +42,22 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
             for (solution in solutions) {
                 val goalExplanationTerm = solution.substitution[goalExplanationVar]
                 if (evidenceExplanationTerm == null ||
-                        evidenceExplanationTerm !is ProbExplanationTerm ||
-                        goalExplanationTerm == null ||
-                        goalExplanationTerm !is ProbExplanationTerm) {
+                    evidenceExplanationTerm !is ProbExplanationTerm ||
+                    goalExplanationTerm == null ||
+                    goalExplanationTerm !is ProbExplanationTerm
+                ) {
                     yield(Substitution.failed())
                 } else {
                     val explanationWithEvidenceTerm = ProbExplanationTerm(
-                        goalExplanationTerm.explanation and evidenceExplanationTerm.explanation)
-                    yield(Substitution.Companion.of(
-                        first mguWith explanationWithEvidenceTerm,
-                        second mguWith evidenceExplanationTerm,
-                        solution.substitution.filter { v, _ -> v != goalExplanationVar}
-                    ))
+                        goalExplanationTerm.explanation and evidenceExplanationTerm.explanation
+                    )
+                    yield(
+                        Substitution.Companion.of(
+                            first mguWith explanationWithEvidenceTerm,
+                            second mguWith evidenceExplanationTerm,
+                            solution.substitution.filter { v, _ -> v != goalExplanationVar }
+                        )
+                    )
                 }
             }
         }

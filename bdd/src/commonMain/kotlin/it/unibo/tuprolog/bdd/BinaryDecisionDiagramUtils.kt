@@ -34,8 +34,8 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
     val labelBuilder = StringBuilder()
     val graphBuilder = StringBuilder()
 
-    val falseValue = Int.MIN_VALUE
-    val trueValue = Int.MAX_VALUE
+    val falseValue = false.hashCode()
+    val trueValue = true.hashCode()
     labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
     labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
     this.expansion(falseValue, trueValue) { node, low, high ->

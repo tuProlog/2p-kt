@@ -7,7 +7,6 @@ import it.unibo.tuprolog.bdd.expansion
 import it.unibo.tuprolog.bdd.map
 import it.unibo.tuprolog.bdd.not
 import it.unibo.tuprolog.bdd.or
-import it.unibo.tuprolog.bdd.toGraphvizString
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
 
@@ -16,9 +15,9 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
  *
  * @author Jason Dellaluce
  * */
-internal class BinaryDecisionDiagramExplanation (
+internal class BinaryDecisionDiagramExplanation(
     val diagram: BinaryDecisionDiagram<ProbTerm>
-): ProbExplanation {
+) : ProbExplanation {
 
     private fun getAsInternal(that: ProbExplanation): BinaryDecisionDiagramExplanation {
         if (that !is BinaryDecisionDiagramExplanation) {
@@ -41,7 +40,7 @@ internal class BinaryDecisionDiagramExplanation (
 
     override val probability: Double by lazy {
         diagram.expansion(0.0, 1.0) {
-                node, low, high ->
+            node, low, high ->
             node.probability * high + (1.0 - node.probability) * low
         }
     }
@@ -55,10 +54,10 @@ internal class BinaryDecisionDiagramExplanation (
     }
 
     override fun apply(transformation: (ProbTerm) -> ProbTerm): ProbExplanation {
-        return BinaryDecisionDiagramExplanation(diagram.map {
-            transformation(it)
-        })
+        return BinaryDecisionDiagramExplanation(
+            diagram.map {
+                transformation(it)
+            }
+        )
     }
 }
-
-

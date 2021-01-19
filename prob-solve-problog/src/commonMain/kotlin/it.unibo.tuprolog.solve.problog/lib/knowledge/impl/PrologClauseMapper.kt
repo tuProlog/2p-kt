@@ -16,7 +16,7 @@ import it.unibo.tuprolog.solve.problog.lib.rule.Prob
  * probability of 1.0.
  *
  * @author Jason Dellaluce */
-internal object PrologClauseMapper: ClauseMapper {
+internal object PrologClauseMapper : ClauseMapper {
 
     override fun isCompatible(clause: Clause): Boolean {
         return clause is Rule
