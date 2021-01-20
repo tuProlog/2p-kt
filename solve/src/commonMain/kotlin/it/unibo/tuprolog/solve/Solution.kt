@@ -33,6 +33,14 @@ interface Solution : Taggable<Solution> {
     @JsName("isHalt")
     val isHalt: Boolean
 
+    @JsName("whenIs")
+    fun <T> whenIs(
+        yes: ((Yes) -> T)? = null,
+        no: ((No) -> T)? = null,
+        halt: ((Halt) -> T)? = null,
+        otherwise: ((Solution) -> T) = { throw IllegalStateException("Cannot handle solution $it") }
+    ): T
+
     /** A type representing the successful solution */
     interface Yes : Solution {
         override val substitution: Substitution.Unifier
@@ -40,6 +48,9 @@ interface Solution : Taggable<Solution> {
         override val solvedQuery: Struct
 
         override fun replaceTags(tags: Map<String, Any>): Yes
+
+        @JsName("copy")
+        fun copy(query: Struct = this.query, substitution: Substitution.Unifier = this.substitution): Yes
     }
 
     /** A type representing a failed solution */
@@ -49,6 +60,9 @@ interface Solution : Taggable<Solution> {
         override val solvedQuery: Nothing?
 
         override fun replaceTags(tags: Map<String, Any>): No
+
+        @JsName("copy")
+        fun copy(query: Struct = this.query): No
     }
 
     /** A type representing a failed (halted) solution because of an exception */
@@ -57,6 +71,9 @@ interface Solution : Taggable<Solution> {
         val exception: TuPrologRuntimeException
 
         override fun replaceTags(tags: Map<String, Any>): Halt
+
+        @JsName("copy")
+        fun copy(query: Struct = this.query, exception: TuPrologRuntimeException = this.exception): Halt
     }
 
     companion object {

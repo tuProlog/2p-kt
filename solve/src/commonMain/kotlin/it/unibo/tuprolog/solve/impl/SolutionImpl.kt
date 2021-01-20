@@ -24,6 +24,24 @@ internal sealed class SolutionImpl(
     override val isHalt: Boolean
         get() = false
 
+    override fun <T> whenIs(
+        yes: ((Solution.Yes) -> T)?,
+        no: ((Solution.No) -> T)?,
+        halt: ((Solution.Halt) -> T)?,
+        otherwise: ((Solution) -> T)
+    ): T {
+        if (this is Solution.Yes && yes != null) {
+            return yes(this)
+        }
+        if (this is Solution.No && no != null) {
+            return no(this)
+        }
+        if (this is Solution.Halt && halt != null) {
+            return halt(this)
+        }
+        return otherwise(this)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
@@ -68,6 +86,8 @@ internal sealed class SolutionImpl(
 
         override val isYes: Boolean
             get() = true
+
+        override fun copy(query: Struct, substitution: Substitution.Unifier) = YesImpl(query, substitution, tags)
     }
 
     /** A class representing a failed solution */
@@ -95,6 +115,8 @@ internal sealed class SolutionImpl(
 
         override val isNo: Boolean
             get() = true
+
+        override fun copy(query: Struct) = NoImpl(query, tags)
     }
 
     /** A class representing a failed (halted) solution because of an exception */
@@ -141,6 +163,8 @@ internal sealed class SolutionImpl(
 
         override val isHalt: Boolean
             get() = true
+
+        override fun copy(query: Struct, exception: TuPrologRuntimeException) = HaltImpl(query, exception, tags)
     }
 
     protected companion object {

@@ -60,7 +60,7 @@ internal object SolveUtils {
     internal val solutionException = TuPrologRuntimeException(context = DummyInstances.executionContext)
 
     // Response parameters
-    internal val aSolution = Solution.No(Truth.FAIL)
+    internal val aSolution = Solution.no(Truth.FAIL)
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
     }
@@ -69,7 +69,7 @@ internal object SolveUtils {
     /** The success response to default values request */
     internal val defaultRequestSuccessResponse by lazy {
         Solve.Response(
-            Solution.Yes(aSignature, anArgumentList, solutionSubstitution),
+            Solution.yes(aSignature, anArgumentList, solutionSubstitution),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -81,7 +81,7 @@ internal object SolveUtils {
     /** The failed response to default values request */
     internal val defaultRequestFailedResponse by lazy {
         Solve.Response(
-            Solution.No(aSignature, anArgumentList),
+            Solution.no(aSignature, anArgumentList),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -93,7 +93,7 @@ internal object SolveUtils {
     /** The halt response to default values request */
     internal val defaultRequestHaltedResponse by lazy {
         Solve.Response(
-            Solution.Halt(aSignature, anArgumentList, solutionException),
+            Solution.halt(aSignature, anArgumentList, solutionException),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),

@@ -29,11 +29,11 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
         val COLOR_TIMEOUT = Paint.valueOf("GOLD")
 
         fun of(solution: Solution): SolutionView<*, *> =
-            when (solution) {
-                is Solution.Yes -> YesView(solution)
-                is Solution.No -> NoView(solution)
-                is Solution.Halt -> HaltView(solution)
-            }
+            solution.whenIs(
+                yes = { YesView(it) },
+                no = { NoView(it) },
+                halt = { HaltView(it) }
+        )
     }
 
     protected val formatter = TermFormatter.prettyExpressions()
