@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionException
 import it.unibo.tuprolog.core.impl.SubstitutionImpl
+import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.Collection as KtCollection
@@ -12,7 +13,7 @@ import kotlin.collections.Collection as KtCollection
  * @author Enrico
  * @author Giovanni
  */
-interface Substitution : Map<Var, Term> {
+interface Substitution : Map<Var, Term>, Taggable<Substitution> {
 
     /** Whether this [Substitution] is a successful one (i.e., a [Unifier]) */
     @JsName("isSuccess")
@@ -97,6 +98,8 @@ interface Substitution : Map<Var, Term> {
         override fun filter(variables: KtCollection<Var>): Unifier
 
         override fun applyTo(term: Term): Term
+
+        override fun replaceTags(tags: Map<String, Any>): Unifier
     }
 
     /** The Failed Substitution instance */
@@ -114,6 +117,8 @@ interface Substitution : Map<Var, Term> {
         override fun filter(variables: KtCollection<Var>): Fail
 
         override fun applyTo(term: Term): Nothing?
+
+        override fun replaceTags(tags: Map<String, Any>): Fail
     }
 
     /** Substitution companion with factory functionality */
@@ -122,15 +127,19 @@ interface Substitution : Map<Var, Term> {
         private inline fun <T> castToUnifierOrThrowException(arg: T, ctor: (T) -> Substitution): Unifier =
             ctor(arg).let { it as? Unifier ?: throw SubstitutionException(it) }
 
+        private val FAILED: Fail = SubstitutionImpl.FailImpl()
+
+        private val EMPTY: Unifier = SubstitutionImpl.UnifierImpl.of(emptyMap())
+
         /** Returns a failed substitution, i.e. an instance of type [Substitution.Fail] */
         @JvmStatic
         @JsName("failed")
-        fun failed(): Fail = SubstitutionImpl.FailImpl
+        fun failed(): Fail = FAILED
 
         /** Returns an empty unifier, i.e. an instance of type [Substitution.Fail] */
         @JvmStatic
         @JsName("empty")
-        fun empty(): Unifier = SubstitutionImpl.UnifierImpl(emptyMap())
+        fun empty(): Unifier = EMPTY
 
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
@@ -140,7 +149,7 @@ interface Substitution : Map<Var, Term> {
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
         @JsName("unifier")
-        fun unifier(map: Map<Var, Term>): Unifier = SubstitutionImpl.UnifierImpl(map)
+        fun unifier(map: Map<Var, Term>): Unifier = SubstitutionImpl.UnifierImpl.of(map)
 
         /** Creates a singleton [Unifier] containing a single [Var]-[Term] assignment */
         @JvmStatic

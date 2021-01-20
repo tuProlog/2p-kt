@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
  */
 internal class SubstitutionFailTest {
 
-    private val failedSubstitution = SubstitutionImpl.FailImpl
+    private val failedSubstitution = Substitution.failed()
 
     @Test
     fun failedSubstitutionIsEmpty() {

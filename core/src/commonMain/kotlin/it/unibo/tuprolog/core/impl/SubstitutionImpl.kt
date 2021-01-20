@@ -18,20 +18,20 @@ internal sealed class SubstitutionImpl : Substitution {
     abstract override fun getOriginal(variable: Var): Var?
 
     override operator fun plus(other: Substitution): SubstitutionImpl = when {
-        anyFailed(this, other) || anyContradiction(this, other) -> FailImpl
-        else -> UnifierImpl(this.mapValues { (_, value) -> value.apply(other) } + other)
+        anyFailed(this, other) || anyContradiction(this, other) -> FailImpl()
+        else -> UnifierImpl.of(this.mapValues { (_, value) -> value.apply(other) } + other)
     }
 
     override operator fun minus(keys: Iterable<Var>): SubstitutionImpl = when (this) {
-        is FailImpl -> FailImpl
-        else -> UnifierImpl(this as Map<Var, Term> - keys)
+        is Substitution.Fail -> FailImpl()
+        else -> UnifierImpl.of(this as Map<Var, Term> - keys, tags)
     }
 
     override operator fun minus(other: Substitution): SubstitutionImpl = this - other.keys
 
     override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl = when (this) {
-        is FailImpl -> FailImpl
-        else -> UnifierImpl((this as Map<Var, Term>).filter(predicate))
+        is FailImpl -> this
+        else -> UnifierImpl.of((this as Map<Var, Term>).filter(predicate))
     }
 
     override fun filter(variables: KtCollection<Var>): SubstitutionImpl = filter { k, _ -> k in variables }
@@ -40,10 +40,15 @@ internal sealed class SubstitutionImpl : Substitution {
         filter { (key, value) -> predicate(key, value) }
 
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
-    class UnifierImpl(mappings: Map<Var, Term>) :
-        SubstitutionImpl(),
-        Substitution.Unifier,
-        Map<Var, Term> by (mappings.trimVariableChains().withoutIdentityMappings()) {
+    class UnifierImpl private constructor(
+        private val assignments: Map<Var, Term>,
+        override val tags: Map<String, Any>
+    ) : SubstitutionImpl(), Substitution.Unifier, Map<Var, Term> by (assignments) {
+
+        companion object {
+            fun of(mappings: Map<Var, Term>, tags: Map<String, Any> = emptyMap()) =
+                UnifierImpl(mappings.trimVariableChains().withoutIdentityMappings(), tags)
+        }
 
         // NOTE: no check for contradictions is made upon object construction
         // because a map cannot have a mapping from same key to more than one
@@ -80,30 +85,21 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun filter(variables: KtCollection<Var>): UnifierImpl = super.filter(variables) as UnifierImpl
 
-        /** The mappings used to implement [equals], [hashCode] and [toString] */
-        // this should be kept in sync with class "by" right expression
-        // for now (27/10/2019) there's no more concise way to do this, because accessing directly the delegated object is not possible
-        private val delegatedMappings by lazy { mappings.trimVariableChains().withoutIdentityMappings() }
-
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other == null || this::class != other::class) return false
 
             other as UnifierImpl
 
-            if (delegatedMappings != other.delegatedMappings) return false
             if (isSuccess != other.isSuccess) return false
+            if (assignments != other.assignments) return false
 
             return true
         }
 
-        override fun hashCode(): Int {
-            var result = delegatedMappings.hashCode()
-            result = 31 * result + isSuccess.hashCode()
-            return result
-        }
+        override fun hashCode(): Int = assignments.hashCode()
 
-        override fun toString(): String = delegatedMappings.toString()
+        override fun toString(): String = assignments.toString()
 
         override fun applyTo(term: Term): Term =
             when {
@@ -112,28 +108,48 @@ internal sealed class SubstitutionImpl : Substitution {
                 term is Struct -> Struct.of(term.functor, term.argsList.map { applyTo(it) }).setTags(term.tags)
                 else -> term
             }
+
+        override fun replaceTags(tags: Map<String, Any>): UnifierImpl =
+            if (tags == this.tags) this else UnifierImpl(assignments, tags)
     }
 
     /** The Failed Substitution instance */
-    object FailImpl : SubstitutionImpl(), Substitution.Fail, Map<Var, Term> by emptyMap() {
+    class FailImpl constructor(
+        override val tags: Map<String, Any> = emptyMap()
+    ) : SubstitutionImpl(), Substitution.Fail, Map<Var, Term> by emptyMap() {
+
         override val isFailed: Boolean
             get() = true
 
         override fun getOriginal(variable: Var): Nothing? = null
 
-        override fun minus(other: Substitution): FailImpl = FailImpl
+        override fun minus(other: Substitution): FailImpl = this
 
-        override fun minus(keys: Iterable<Var>): FailImpl = FailImpl
+        override fun minus(keys: Iterable<Var>): FailImpl = this
 
-        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): FailImpl = FailImpl
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): FailImpl = this
 
-        override fun filter(predicate: (key: Var, value: Term) -> Boolean): FailImpl = FailImpl
+        override fun filter(predicate: (key: Var, value: Term) -> Boolean): FailImpl = this
 
-        override fun filter(variables: KtCollection<Var>): FailImpl = FailImpl
+        override fun filter(variables: KtCollection<Var>): FailImpl = this
 
         override fun toString(): String = "{Failed Substitution}"
 
         override fun applyTo(term: Term): Nothing? = null
+
+        override fun replaceTags(tags: Map<String, Any>): FailImpl =
+            if (tags == this.tags) this else FailImpl(tags)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as FailImpl
+
+            return isFailed == other.isFailed
+        }
+
+        override fun hashCode(): Int = emptyMap<Var, Term>().hashCode()
     }
 
     /** Substitution companion with factory functionality */
@@ -141,8 +157,8 @@ internal sealed class SubstitutionImpl : Substitution {
 
         /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
         fun of(substitutionPairs: Sequence<Pair<Var, Term>>): Substitution = when {
-            anyContradiction(substitutionPairs) -> FailImpl
-            else -> UnifierImpl(substitutionPairs.toMap())
+            anyContradiction(substitutionPairs) -> FailImpl()
+            else -> UnifierImpl.of(substitutionPairs.toMap())
         }
 
         /** Utility function to check if any of provided Substitution is failed */
