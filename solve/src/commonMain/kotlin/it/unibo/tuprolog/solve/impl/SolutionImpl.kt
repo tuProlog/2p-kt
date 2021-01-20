@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
-import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /** A class representing a solution to a goal */
@@ -123,7 +122,7 @@ internal sealed class SolutionImpl(
     class HaltImpl(
         query: Struct,
         /** The exception that made the resolution to halt */
-        @JsName("exception") override val exception: TuPrologRuntimeException,
+        override val exception: TuPrologRuntimeException,
         tags: Map<String, Any> = emptyMap()
     ) : SolutionImpl(query, tags), Solution.Halt {
 
