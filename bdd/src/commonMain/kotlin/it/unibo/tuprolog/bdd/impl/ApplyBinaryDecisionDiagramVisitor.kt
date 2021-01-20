@@ -17,9 +17,8 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  *
  * @author Jason Dellaluce
  */
-internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>>
-    : BinaryDecisionDiagramVisitor<T, BinaryDecisionDiagram<T>>
-{
+internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
+    BinaryDecisionDiagramVisitor<T, BinaryDecisionDiagram<T>> {
     /* Reduction: This avoids duplicated nodes, both variables and terminals.
     * NOTE: This also calls hashCode(), which initializes the lazy value that
     * will then be cached for fast later access. This is fundamental for reaching
@@ -63,7 +62,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>>
         }
 
         override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
-            val lowNode =  node.low.accept(this)
+            val lowNode = node.low.accept(this)
             val highNode = node.high.accept(this)
             return getResultUsingTable(createVarNode(node.value, lowNode, highNode), table)
         }
@@ -97,7 +96,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>>
         }
 
         override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
-             return when (thatNode) {
+            return when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
                     val curThatNode = thatNode
                     thatNode = node

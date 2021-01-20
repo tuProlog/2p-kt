@@ -31,23 +31,16 @@ class TestBinaryDecisionDiagram {
         }
     }
 
-    /** Internal visitor to calculate a probability over a probabilistic boolean formula
-     * (a.k.a. a boolean formula in which each variable represents a probability value).
-     * This helps simulating our specific use case for BDDs right away. */
-    private class ProbBinaryDecisionDiagramVisitor : BinaryDecisionDiagramVisitor<ComparablePair> {
-        var prob = 0.0
-
-        override fun visit(node: BinaryDecisionDiagram.Terminal<ComparablePair>) {
-            prob = if (node.value) 1.0 else 0.0
-        }
-
-        override fun visit(node: BinaryDecisionDiagram.Var<ComparablePair>) {
-            val subVisitor = ProbBinaryDecisionDiagramVisitor()
-            node.low.accept(subVisitor)
-            val probLow = subVisitor.prob
-            node.high.accept(subVisitor)
-            val probHigh = subVisitor.prob
-            prob = node.value.second * probHigh + (1.0 - node.value.second) * probLow
+    /** Internal function to calculate a probability over a probabilistic boolean formula
+     * (a.k.a. a boolean formula in which each variable represents a probability value) through
+     * Weighted Model Counting. This simulates our specific use case for BDDs, which
+     * is what we are really interested in. On the other hand, this also effectively verifies
+     * the correctness of the data structure itself, as the probability computation would
+     * give bad results on badly constructed BDDs. */
+    private fun BinaryDecisionDiagram<ComparablePair>.probability(): Double {
+        return this.expansion(0.0, 1.0) {
+            node, low, high ->
+            node.second * high + (1.0 - node.second) * low
         }
     }
 
@@ -55,17 +48,16 @@ class TestBinaryDecisionDiagram {
      * Probabilities to base-level "someHeads" predicates have been added to simulate "Probabilistic Clauses". */
     @Test
     fun testApplyWithProbSomeHeads() {
-        val bdd = (
+        val solution = (
             BinaryDecisionDiagram.Var(ComparablePair(0, "someHeads", 0.2)) and
                 BinaryDecisionDiagram.Var(ComparablePair(1, "heads1", 0.5))
             ) or (
             BinaryDecisionDiagram.Var(ComparablePair(2, "someHeads", 0.5)) and
                 BinaryDecisionDiagram.Var(ComparablePair(3, "heads2", 0.6))
             )
-        val visitor = ProbBinaryDecisionDiagramVisitor()
-        bdd.accept(visitor)
-        assertTrue(visitor.prob >= 0.37 - doubleEpsilon)
-        assertTrue(visitor.prob <= 0.37 + doubleEpsilon)
+        val prob = solution.probability()
+        assertTrue(prob >= 0.37 - doubleEpsilon)
+        assertTrue(prob <= 0.37 + doubleEpsilon)
     }
 
     /** Test adapted from: https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-clauses
@@ -84,9 +76,8 @@ class TestBinaryDecisionDiagram {
             BinaryDecisionDiagram.Var(ComparablePair(4, "alarm", 0.1))
                 and burglary.not() and earthquake
             )
-        val visitor = ProbBinaryDecisionDiagramVisitor()
-        solution.accept(visitor)
-        assertTrue(visitor.prob >= 0.58 - doubleEpsilon)
-        assertTrue(visitor.prob <= 0.58 + doubleEpsilon)
+        val prob = solution.probability()
+        assertTrue(prob >= 0.58 - doubleEpsilon)
+        assertTrue(prob <= 0.58 + doubleEpsilon)
     }
 }
