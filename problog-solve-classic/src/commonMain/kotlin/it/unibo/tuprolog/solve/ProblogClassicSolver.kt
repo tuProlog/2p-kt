@@ -3,6 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.problogclassic.ProblogClassicExecutionContext
 import it.unibo.tuprolog.solve.problogclassic.fsm.State
@@ -19,8 +22,8 @@ internal open class ProblogClassicSolver(
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore = InputStore.default(),
+    outputChannels: OutputStore = OutputStore.default()
 ) : ProbSolver {
 
     private fun probMapSolutionGroup(
@@ -99,10 +102,10 @@ internal open class ProblogClassicSolver(
     override val dynamicKb: Theory
         get() = state.context.dynamicKb
 
-    override val inputChannels: InputStore<*>
+    override val inputChannels: InputStore
         get() = state.context.inputChannels
 
-    override val outputChannels: OutputStore<*>
+    override val outputChannels: OutputStore
         get() = state.context.outputChannels
 
     override val operators: OperatorSet

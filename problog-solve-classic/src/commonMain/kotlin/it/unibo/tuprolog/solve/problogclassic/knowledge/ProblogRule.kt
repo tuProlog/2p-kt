@@ -14,18 +14,19 @@ import it.unibo.tuprolog.core.Term
 open class ProblogRule(
     open val id: Long,
     open val probability: Double,
-    override val head: Struct,
-    private vararg val b: Term
-) : Rule by Rule.of(head, *b) {
-    override fun freshCopy(): ProblogRule {
-        val ruleCopy = super.freshCopy()
-        return ProblogRule(id, probability, ruleCopy.head, ruleCopy.body)
-    }
+    private val rule: Rule
+) : Rule by rule {
 
-    override fun freshCopy(scope: Scope): ProblogRule {
-        val ruleCopy = super.freshCopy(scope)
-        return ProblogRule(id, probability, ruleCopy.head, ruleCopy.body)
-    }
+    constructor(
+        id: Long,
+        probability: Double,
+        head: Struct,
+        vararg body: Term
+    ) : this(id, probability, Rule.of(head, *body))
+
+    override fun freshCopy(): ProblogRule = ProblogRule(id, probability, rule.freshCopy())
+
+    override fun freshCopy(scope: Scope): ProblogRule = ProblogRule(id, probability, rule.freshCopy(scope))
 
     override fun compareTo(other: Term): Int {
         if (other is ProblogRule) {

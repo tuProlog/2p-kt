@@ -24,7 +24,7 @@ internal object ProbExplDebug : UnaryPredicate.NonBacktrackable<ExecutionContext
         } else if (first !is ProbExplanationTerm) {
             return replyFail()
         }
-        return context.standardOutput.let {
+        return context.outputChannels.current.let {
             if (it == null) {
                 replyFail()
             } else {

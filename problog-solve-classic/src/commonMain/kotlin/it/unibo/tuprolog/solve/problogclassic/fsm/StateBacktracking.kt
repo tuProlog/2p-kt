@@ -8,7 +8,7 @@ internal data class StateBacktracking(override val context: ProblogClassicExecut
         val choicePoints = context.choicePoints
         return if (choicePoints.let { it === null || !it.hasOpenAlternatives }) {
             StateEnd(
-                solution = Solution.No(context.query),
+                solution = Solution.no(context.query),
                 context = context.copy(step = nextStep())
             )
         } else {

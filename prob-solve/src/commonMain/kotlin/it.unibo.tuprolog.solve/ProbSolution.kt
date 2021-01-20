@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
+import it.unibo.tuprolog.core.asUnifier
 import kotlin.js.JsName
 
 /**
@@ -29,6 +29,6 @@ data class ProbSolution(
         if (probability != null) {
             unifier = unifier.plus(Substitution.of("Probability", Numeric.of(probability))).asUnifier()
         }
-        return Solution.Yes(solution.query, unifier)
+        return Solution.yes(solution.query, unifier)
     }
 }

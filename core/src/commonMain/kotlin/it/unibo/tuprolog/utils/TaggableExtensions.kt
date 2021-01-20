@@ -14,7 +14,7 @@ fun <T : U, U : Taggable<U>> T.addTag(tag: Pair<String, Any>): T = addTags(mapOf
 operator fun <T : U, U : Taggable<U>> T.plus(tag: Pair<String, Any>): T = addTag(tag)
 
 @JsName("addTags")
-fun <T : U, U : Taggable<U>> T.addTags(tags: Map<String, Any>): T = setTags(this.tags + tags) as T
+fun <T : U, U : Taggable<U>> T.addTags(tags: Map<String, Any>): T = setTags(this.tags + tags)
 
 @JsName("plusTags")
 operator fun <T : U, U : Taggable<U>> T.plus(tags: Map<String, Any>): T = addTags(tags)

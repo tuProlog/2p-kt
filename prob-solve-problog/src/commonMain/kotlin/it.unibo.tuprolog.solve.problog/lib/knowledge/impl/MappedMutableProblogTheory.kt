@@ -137,4 +137,18 @@ internal class MappedMutableProblogTheory(
     override fun iterator(): Iterator<Clause> {
         return delegate.iterator()
     }
+
+    override val tags: Map<String, Any> by lazy {
+        TODO(
+            "I don't know how to implement this property... " +
+                "consider using delegation instead of inheritance for this class"
+        )
+    }
+
+    override fun replaceTags(tags: Map<String, Any>): MutableTheory {
+        TODO(
+            "I don't know how to implement this property... " +
+                "consider using delegation instead of inheritance for this class"
+        )
+    }
 }

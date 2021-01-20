@@ -9,24 +9,21 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.ExecutionContextAware
-import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
+import it.unibo.tuprolog.solve.MutableProblogClassicSolver
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.OutputStore
-import it.unibo.tuprolog.solve.ProblogClassicSolverFactory
-import it.unibo.tuprolog.solve.SideEffect
+import it.unibo.tuprolog.solve.ProblogClassicSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
-import it.unibo.tuprolog.solve.channel.InputChannel
-import it.unibo.tuprolog.solve.channel.OutputChannel
-import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogRule
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogSolutionTerm
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -41,8 +38,8 @@ data class ProblogClassicExecutionContext(
     override val staticKb: Theory = Theory.empty(),
     override val dynamicKb: MutableTheory = MutableTheory.empty(),
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
-    override val inputChannels: Map<String, InputChannel<*>> = ExecutionContextAware.defaultInputChannels(),
-    override val outputChannels: Map<String, OutputChannel<*>> = ExecutionContextAware.defaultOutputChannels(),
+    override val inputChannels: InputStore = InputStore.default(),
+    override val outputChannels: OutputStore = OutputStore.default(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
@@ -102,18 +99,15 @@ data class ProblogClassicExecutionContext(
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
-        stdIn: InputChannel<String>,
-        stdOut: OutputChannel<String>,
-        stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
-    ): Solver = ProblogClassicSolverFactory.solverOf(
+        inputChannels: InputStore,
+        outputChannels: OutputStore
+    ): Solver = ProblogClassicSolver(
         libraries,
         flags,
         staticKb,
         dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr
+        inputChannels,
+        outputChannels
     )
 
     override fun createMutableSolver(
@@ -121,18 +115,15 @@ data class ProblogClassicExecutionContext(
         flags: FlagStore,
         staticKb: Theory,
         dynamicKb: Theory,
-        stdIn: InputChannel<String>,
-        stdOut: OutputChannel<String>,
-        stdErr: OutputChannel<String>,
-        warnings: OutputChannel<PrologWarning>
-    ): MutableSolver = ProblogClassicSolverFactory.mutableSolverOf(
+        inputChannels: InputStore,
+        outputChannels: OutputStore
+    ): MutableSolver = MutableProblogClassicSolver(
         libraries,
         flags,
         staticKb,
         dynamicKb,
-        stdIn,
-        stdOut,
-        stdErr
+        inputChannels,
+        outputChannels
     )
 
     override fun update(
@@ -141,8 +132,8 @@ data class ProblogClassicExecutionContext(
         staticKb: Theory,
         dynamicKb: Theory,
         operators: OperatorSet,
-        inputChannels: InputStore<*>,
-        outputChannels: OutputStore<*>
+        inputChannels: InputStore,
+        outputChannels: OutputStore
     ): ProblogClassicExecutionContext {
         return copy(
             libraries = libraries,

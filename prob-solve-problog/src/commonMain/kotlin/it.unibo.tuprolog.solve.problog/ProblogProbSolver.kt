@@ -4,14 +4,14 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
 import it.unibo.tuprolog.solve.ProbSolution
 import it.unibo.tuprolog.solve.ProbSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbQuery
 import it.unibo.tuprolog.theory.Theory
@@ -23,8 +23,8 @@ internal open class ProblogProbSolver(
     private fun innerSolve(probabilityVar: Var, goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
         return solver.solve(Struct.of(ProbQuery.functor, probabilityVar, goal), maxDuration).map {
             when (it) {
-                is Solution.Yes -> Solution.Yes(it.solvedQuery[1] as Struct, it.substitution)
-                else -> Solution.No(it.query)
+                is Solution.Yes -> Solution.yes(it.solvedQuery[1] as Struct, it.substitution)
+                else -> Solution.no(it.query)
             }
         }
     }
@@ -58,9 +58,9 @@ internal open class ProblogProbSolver(
     override val operators: OperatorSet
         get() = solver.operators
 
-    override val inputChannels: InputStore<*>
+    override val inputChannels: InputStore
         get() = solver.inputChannels
 
-    override val outputChannels: OutputStore<*>
+    override val outputChannels: OutputStore
         get() = solver.outputChannels
 }
