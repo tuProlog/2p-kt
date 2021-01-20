@@ -3,15 +3,16 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.exception.SubstitutionException
 import it.unibo.tuprolog.core.impl.SubstitutionImpl
 import it.unibo.tuprolog.utils.Taggable
+import it.unibo.tuprolog.utils.TagsOperator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.Collection as KtCollection
 
 /**
- * An interface representing a mapping between Variables and their Term substitutions
- *
- * @author Enrico
- * @author Giovanni
+ * General type for logic substitutions (i.e. variables assignments).
+ * There are two sorts of substitutions:
+ * - [Substitution.Unifier], which represent one possible assignment for a possibly empty set of [Var]s
+ * - [Substitution.Fail], which represent the lack of possible assignments for any set of [Var]s
  */
 interface Substitution : Map<Var, Term>, Taggable<Substitution> {
 
@@ -29,7 +30,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
 
     /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
      *
-     * Consider for instance the substitution { X -> Y, Y -> Z },
+     * Consider for instance the substitution `{ X -> Y, Y -> Z }`,
      * then the invocation of `getOriginal(Z)` should retrieve `X`
      * */
     // TODO test this method
@@ -37,14 +38,33 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
     fun getOriginal(variable: Var): Var?
 
     /**
-     * Creates a new substitution that's the *composition* of this and [other]
+     * Creates a new [Substitution] that is the *composition* (a.k.a. union) of `this` and [other].
+     * The composition is not guaranteed to be a [Substitution.Unifier], even if both arguments are.
+     * In fact, the composition algorithm performs the following checks:
+     * - If one of arguments is of type [Substitution.Fail], the result is of type [Substitution.Fail]
+     * - If the set of assignments attained by composing the two substitutions is contradictory -- i.e.,
+     * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
+     * - Otherwise, the result is an instance of [Substitution.Unifier]
      *
-     * However additional checks are performed:
-     * - If one of operands is [Substitution.Fail], the result is [Substitution.Fail]
-     * - If the set of substitutions resulting from this union is contradicting, the result is [Substitution.Fail]
+     * Regardless of its type, the merged [Substitution] will contain the tags of both input [Substitution]s.
      */
     @JsName("plus")
     operator fun plus(other: Substitution): Substitution
+
+    /**
+     * Creates a new [Substitution] that is the *composition* (a.k.a. union) of `this` and [other].
+     * The composition is not guaranteed to be a [Substitution.Unifier], even if both arguments are.
+     * In fact, the composition algorithm performs the following checks:
+     * - If one of arguments is of type [Substitution.Fail], the result is of type [Substitution.Fail]
+     * - If the set of assignments attained by composing the two substitutions is contradictory -- i.e.,
+     * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
+     * - Otherwise, the result is an instance of [Substitution.Unifier]
+     *
+     * Regardless of its type, the merged [Substitution] will contain the tags attained by merging the input
+     * [Substitution]s tags via [tagsMerger].
+     */
+    @JsName("plusMergingTags")
+    fun plus(other: Substitution, tagsMerger: TagsOperator): Substitution
 
     /**
      * Returns a new substitution containing all entries of the original substitution except those
@@ -84,7 +104,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
     @JsName("filter")
     fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution
 
-    /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
+    /** A type for successful [Substitution]s (a.k.a. unifiers) actually assigning [Var]s to [Term]s */
     interface Unifier : Substitution {
 
         override fun minus(keys: Iterable<Var>): Unifier
@@ -102,7 +122,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
         override fun replaceTags(tags: Map<String, Any>): Unifier
     }
 
-    /** The Failed Substitution instance */
+    /** A type for __failed__ [Substitution]s, assigning no [Var] */
     interface Fail : Substitution {
         override fun getOriginal(variable: Var): Nothing? = null
 

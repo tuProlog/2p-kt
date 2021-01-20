@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.TagsOperator
 import it.unibo.tuprolog.utils.setTags
 import kotlin.collections.Collection as KtCollection
 
@@ -17,21 +18,30 @@ internal sealed class SubstitutionImpl : Substitution {
 
     abstract override fun getOriginal(variable: Var): Var?
 
-    override operator fun plus(other: Substitution): SubstitutionImpl = when {
-        anyFailed(this, other) || anyContradiction(this, other) -> FailImpl()
-        else -> UnifierImpl.of(this.mapValues { (_, value) -> value.apply(other) } + other)
+    override fun plus(other: Substitution): Substitution = plus(other) { x, y -> x + y }
+
+    override fun plus(other: Substitution, tagsMerger: TagsOperator): SubstitutionImpl = when {
+        anyFailed(this, other) || anyContradiction(this, other) -> {
+            FailImpl(tagsMerger(tags, other.tags))
+        }
+        else -> {
+            UnifierImpl.of(
+                this.mapValues { (_, value) -> value.apply(other) } + other,
+                tagsMerger(tags, other.tags)
+            )
+        }
     }
 
     override operator fun minus(keys: Iterable<Var>): SubstitutionImpl = when (this) {
-        is Substitution.Fail -> FailImpl()
+        is Substitution.Fail -> FailImpl(tags)
         else -> UnifierImpl.of(this as Map<Var, Term> - keys, tags)
     }
 
     override operator fun minus(other: Substitution): SubstitutionImpl = this - other.keys
 
     override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl = when (this) {
-        is FailImpl -> this
-        else -> UnifierImpl.of((this as Map<Var, Term>).filter(predicate))
+        is Substitution.Fail -> FailImpl(tags)
+        else -> UnifierImpl.of((this as Map<Var, Term>).filter(predicate), tags)
     }
 
     override fun filter(variables: KtCollection<Var>): SubstitutionImpl = filter { k, _ -> k in variables }

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.impl.SubstitutionImpl
 import it.unibo.tuprolog.core.testutils.StructUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
