@@ -33,7 +33,7 @@ sealed class SolutionView<T, S : Solution>(protected val solution: S) : VBox() {
                 yes = { YesView(it) },
                 no = { NoView(it) },
                 halt = { HaltView(it) }
-        )
+            )
     }
 
     protected val formatter = TermFormatter.prettyExpressions()

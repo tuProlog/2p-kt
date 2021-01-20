@@ -117,7 +117,7 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     sideEffectManager: SideEffectManager? = null,
     vararg sideEffects: SideEffect
-): StateEnd = solution.whenIs (
+): StateEnd = solution.whenIs(
     yes = { sol ->
         stateEndTrue(
             sol.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
