@@ -17,9 +17,9 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  *
  * @author Jason Dellaluce
  */
-internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : BinaryDecisionDiagramVisitor<T> {
-    var result: BinaryDecisionDiagram<T>? = null
-
+internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>>
+    : BinaryDecisionDiagramVisitor<T, BinaryDecisionDiagram<T>>
+{
     /* Reduction: This avoids duplicated nodes, both variables and terminals.
     * NOTE: This also calls hashCode(), which initializes the lazy value that
     * will then be cached for fast later access. This is fundamental for reaching
@@ -58,95 +58,81 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> : Bin
         private val operator: (first: Boolean) -> Boolean,
         private val table: MutableMap<Int, BinaryDecisionDiagram<T>> = mutableMapOf()
     ) : ApplyBinaryDecisionDiagramVisitor<T>() {
-        override fun visit(node: BinaryDecisionDiagram.Terminal<T>) {
-            result = getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value)), table)
+        override fun visit(node: BinaryDecisionDiagram.Terminal<T>): BinaryDecisionDiagram<T> {
+            return getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value)), table)
         }
 
-        override fun visit(node: BinaryDecisionDiagram.Var<T>) {
-            val lowVisitor = Unary(operator, table)
-            val highVisitor = Unary(operator, table)
-            node.low.accept(lowVisitor)
-            node.high.accept(highVisitor)
-
-            result = getResultUsingTable(
-                createVarNode(node.value, lowVisitor.result!!, highVisitor.result!!),
-                table
-            )
+        override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
+            val lowNode =  node.low.accept(this)
+            val highNode = node.high.accept(this)
+            return getResultUsingTable(createVarNode(node.value, lowNode, highNode), table)
         }
     }
 
+    /* NOTE: This implementation of the Binary visitor does not require the creation of other sub-visitors,
+    however it is NOT thread-safe due to its operand parameters being configurable. If we ever decide to move
+    to a parallelized optimization, this has to be changed accordingly. However, in case of a parallel algorithm,
+    it may be worth to pay the cost of creating more visitor objects. */
     data class Binary<T : Comparable<T>>(
-        private val thatNode: BinaryDecisionDiagram<T>,
+        private var thatNode: BinaryDecisionDiagram<T>,
         private val operator: (first: Boolean, second: Boolean) -> Boolean,
         private val table: MutableMap<Int, BinaryDecisionDiagram<T>> = mutableMapOf()
     ) : ApplyBinaryDecisionDiagramVisitor<T>() {
-        override fun visit(node: BinaryDecisionDiagram.Terminal<T>) {
-            result = when (thatNode) {
+        override fun visit(node: BinaryDecisionDiagram.Terminal<T>): BinaryDecisionDiagram<T> {
+            return when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
-                    getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value, thatNode.value)), table)
+                    val thatNodeValue = (thatNode as BinaryDecisionDiagram.Terminal).value
+                    getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value, thatNodeValue)), table)
                 }
                 is BinaryDecisionDiagram.Var -> {
-                    val lowVisitor = Binary(thatNode.low, operator, table)
-                    val highVisitor = Binary(thatNode.high, operator, table)
-                    node.accept(lowVisitor)
-                    node.accept(highVisitor)
-
-                    getResultUsingTable(
-                        createVarNode(
-                            thatNode.value,
-                            lowVisitor.result!!,
-                            highVisitor.result!!,
-                        ),
-                        table
-                    )
+                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Var)
+                    val thatNodeValue = thatNodeAsVar.value
+                    thatNode = thatNodeAsVar.low
+                    val lowNode = node.accept(this)
+                    thatNode = thatNodeAsVar.high
+                    val highNode = node.accept(this)
+                    getResultUsingTable(createVarNode(thatNodeValue, lowNode, highNode), table)
                 }
             }
         }
 
-        override fun visit(node: BinaryDecisionDiagram.Var<T>) {
-            result = when (thatNode) {
+        override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
+             return when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
-                    val visitor = Binary(node, operator, table)
-                    thatNode.accept(visitor)
-                    visitor.result!!
+                    val curThatNode = thatNode
+                    thatNode = node
+                    curThatNode.accept(this)
                 }
                 is BinaryDecisionDiagram.Var -> {
+                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Var)
                     val newValue: T
                     val firstLow: BinaryDecisionDiagram<T>
                     val firstHigh: BinaryDecisionDiagram<T>
                     val secondLow: BinaryDecisionDiagram<T>
                     val secondHigh: BinaryDecisionDiagram<T>
 
-                    if (node.value <= thatNode.value) {
+                    if (node.value <= thatNodeAsVar.value) {
                         newValue = node.value
                         firstHigh = node.high
                         firstLow = node.low
                     } else {
-                        newValue = thatNode.value
+                        newValue = thatNodeAsVar.value
                         firstLow = node
                         firstHigh = node
                     }
-                    if (thatNode.value <= node.value) {
-                        secondHigh = thatNode.high
-                        secondLow = thatNode.low
+                    if (thatNodeAsVar.value <= node.value) {
+                        secondHigh = thatNodeAsVar.high
+                        secondLow = thatNodeAsVar.low
                     } else {
                         secondLow = thatNode
                         secondHigh = thatNode
                     }
 
-                    val lowVisitor = Binary(secondLow, operator, table)
-                    val highVisitor = Binary(secondHigh, operator, table)
-                    firstLow.accept(lowVisitor)
-                    firstHigh.accept(highVisitor)
-
-                    getResultUsingTable(
-                        createVarNode(
-                            newValue,
-                            lowVisitor.result!!,
-                            highVisitor.result!!
-                        ),
-                        table
-                    )
+                    thatNode = secondLow
+                    val lowNode = firstLow.accept(this)
+                    thatNode = secondHigh
+                    val highNode = firstHigh.accept(this)
+                    getResultUsingTable(createVarNode(newValue, lowNode, highNode), table)
                 }
             }
         }

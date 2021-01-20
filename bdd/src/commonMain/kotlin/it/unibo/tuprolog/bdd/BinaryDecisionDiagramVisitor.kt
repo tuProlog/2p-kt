@@ -9,13 +9,13 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-interface BinaryDecisionDiagramVisitor<T : Comparable<T>> {
+interface BinaryDecisionDiagramVisitor<T : Comparable<T>, E> {
 
     companion object
 
     @JsName("visitTerminal")
-    fun visit(node: BinaryDecisionDiagram.Terminal<T>)
+    fun visit(node: BinaryDecisionDiagram.Terminal<T>): E
 
     @JsName("visitVar")
-    fun visit(node: BinaryDecisionDiagram.Var<T>)
+    fun visit(node: BinaryDecisionDiagram.Var<T>): E
 }

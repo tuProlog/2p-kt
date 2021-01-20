@@ -6,23 +6,11 @@
 
 package it.unibo.tuprolog.bdd
 
-import it.unibo.tuprolog.bdd.exception.DataStructureOperationException
 import it.unibo.tuprolog.bdd.impl.AnyBinaryDecisionDiagramVisitor
 import it.unibo.tuprolog.bdd.impl.ApplyBinaryDecisionDiagramVisitor
 import it.unibo.tuprolog.bdd.impl.ExpansionBinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.bdd.impl.TreeStringBinaryDecisionDiagramVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
-
-/**
- * Formats a [BinaryDecisionDiagram] as a tree-like string.
- */
-@JsName("toTreeString")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toTreeString(): String {
-    val visitor = TreeStringBinaryDecisionDiagramVisitor<T>()
-    this.accept(visitor)
-    return visitor.stringBuilder.toString()
-}
 
 /**
  * Formats a [BinaryDecisionDiagram] using Graphviz notation (https://graphviz.org/).
@@ -62,9 +50,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     trueTerminal: E,
     operator: (node: T, low: E, high: E) -> E,
 ): E {
-    val visitor = ExpansionBinaryDecisionDiagramVisitor(operator, falseTerminal, trueTerminal)
-    this.accept(visitor)
-    return visitor.result!!
+    return this.accept(ExpansionBinaryDecisionDiagramVisitor(operator, falseTerminal, trueTerminal))
 }
 
 /**
@@ -72,9 +58,7 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
  */
 @JsName("anyWhere")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean {
-    val visitor = AnyBinaryDecisionDiagramVisitor(predicate)
-    this.accept(visitor)
-    return visitor.result
+    return this.accept(AnyBinaryDecisionDiagramVisitor(predicate))
 }
 
 /**
@@ -102,31 +86,23 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
 /**
  * Applies the "Apply" construction algorithm over [BinaryDecisionDiagram]s using
  * a given boolean operator. The result is a Reduced Ordered Binary Decision Diagram (ROBDD). */
+@JsName("applyUnary")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     unaryOp: (Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
-    val visitor = ApplyBinaryDecisionDiagramVisitor.Unary<T>(unaryOp)
-    this.accept(visitor)
-    if (visitor.result != null) {
-        return visitor.result!!
-    }
-    throw DataStructureOperationException("Null result on BDD apply unary operation")
+    return this.accept(ApplyBinaryDecisionDiagramVisitor.Unary(unaryOp))
 }
 
 /**
  * Applies the "Apply" construction algorithm over two [BinaryDecisionDiagram]s using a given boolean operator.
  * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
  * */
+@JsName("applyBinary")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     that: BinaryDecisionDiagram<T>,
     binaryOp: (Boolean, Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
-    val visitor = ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp)
-    this.accept(visitor)
-    if (visitor.result != null) {
-        return visitor.result!!
-    }
-    throw DataStructureOperationException("Null result on BDD apply binary operation")
+    return this.accept(ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp))
 }
 
 /**

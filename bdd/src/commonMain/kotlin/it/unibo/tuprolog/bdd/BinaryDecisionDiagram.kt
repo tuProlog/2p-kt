@@ -21,7 +21,7 @@ import kotlin.js.JsName
 sealed class BinaryDecisionDiagram<T : Comparable<T>> {
 
     @JsName("accept")
-    abstract fun accept(visitor: BinaryDecisionDiagramVisitor<T>)
+    abstract fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E
 
     /**
      * A [Terminal] is a BDD mode that has no edges to other BDDs, and represent
@@ -33,9 +33,7 @@ sealed class BinaryDecisionDiagram<T : Comparable<T>> {
             value.hashCode()
         }
 
-        override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
-            visitor.visit(this)
-        }
+        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -69,9 +67,7 @@ sealed class BinaryDecisionDiagram<T : Comparable<T>> {
             result
         }
 
-        override fun accept(visitor: BinaryDecisionDiagramVisitor<T>) {
-            visitor.visit(this)
-        }
+        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
