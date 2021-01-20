@@ -2,12 +2,12 @@ package it.unibo.tuprolog.solve.streams.solver.fsm.impl
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext
 import it.unibo.tuprolog.solve.streams.solver.fsm.AbstractState
 import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState
@@ -117,16 +117,17 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     sideEffectManager: SideEffectManager? = null,
     vararg sideEffects: SideEffect
-): StateEnd = when (solution) {
-    is Solution.Yes ->
+): StateEnd = solution.whenIs(
+    yes = { sol ->
         stateEndTrue(
-            solution.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
+            sol.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
             sideEffectManager,
             *sideEffects
         )
-    is Solution.No -> stateEndFalse(sideEffectManager, *sideEffects)
-    is Solution.Halt -> stateEndHalt(solution.exception, sideEffectManager, *sideEffects)
-}
+    },
+    no = { stateEndFalse(sideEffectManager, *sideEffects) },
+    halt = { stateEndHalt(it.exception, sideEffectManager, *sideEffects) }
+)
 
 /** Transition from this intermediate state to a [StateEnd] containing provided [response] data */
 internal fun IntermediateState.stateEnd(response: Solve.Response) = with(response) {

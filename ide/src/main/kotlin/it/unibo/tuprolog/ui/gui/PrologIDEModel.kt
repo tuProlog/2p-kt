@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.exception.TuPrologException
+import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -13,7 +14,7 @@ import java.util.concurrent.ForkJoinPool
 interface PrologIDEModel {
 
     companion object {
-        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor)
+        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor) {}
     }
 
     enum class State {
@@ -25,6 +26,8 @@ interface PrologIDEModel {
     val state: State
 
     val executor: ExecutorService
+
+    fun customizeSolver(customizer: (MutableSolver) -> Unit)
 
     fun newFile(): File
 

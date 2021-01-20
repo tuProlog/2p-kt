@@ -2,9 +2,9 @@ package it.unibo.tuprolog.ui.gui
 
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContextAware
-import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
 
@@ -15,8 +15,8 @@ data class SolverEvent<T>(
     override val flags: FlagStore,
     override val staticKb: Theory,
     override val dynamicKb: Theory,
-    override val inputChannels: InputStore<*>,
-    override val outputChannels: OutputStore<*>
+    override val inputChannels: InputStore,
+    override val outputChannels: OutputStore
 ) : ExecutionContextAware {
     constructor(event: T, other: ExecutionContextAware) :
         this(

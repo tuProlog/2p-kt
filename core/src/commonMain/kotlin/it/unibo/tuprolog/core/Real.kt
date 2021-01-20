@@ -23,9 +23,9 @@ interface Real : Numeric {
     override val intValue: BigInteger
         get() = value.toBigInteger()
 
-    override fun freshCopy(): Real = this
+    override fun freshCopy(): Real
 
-    override fun freshCopy(scope: Scope): Real = this
+    override fun freshCopy(scope: Scope): Real
 
     companion object {
 

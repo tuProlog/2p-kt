@@ -4,9 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.SideEffectManager
-import it.unibo.tuprolog.solve.SideEffectsBuilder
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
@@ -14,6 +11,9 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
+import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 import kotlin.js.JsName
 
 /** A base class for Solve requests and responses */
@@ -82,11 +82,11 @@ sealed class Solve {
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
-        ) = when (solution) {
-            is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, *sideEffects)
-            is Solution.No -> replyFail(sideEffectManager, *sideEffects)
-            is Solution.Halt -> replyException(solution.exception, sideEffectManager, *sideEffects)
-        }
+        ) = solution.whenIs(
+            yes = { replySuccess(it.substitution, sideEffectManager, *sideEffects) },
+            no = { replyFail(sideEffectManager, *sideEffects) },
+            halt = { replyException(it.exception, sideEffectManager, *sideEffects) },
+        )
 
         /** Creates a new [Response] to this Request */
         @JsName("replyWithSolutionBuildingSideEffects")
@@ -94,11 +94,11 @@ sealed class Solve {
             solution: Solution,
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
-        ) = when (solution) {
-            is Solution.Yes -> replySuccess(solution.substitution, sideEffectManager, buildSideEffects)
-            is Solution.No -> replyFail(sideEffectManager, buildSideEffects)
-            is Solution.Halt -> replyException(solution.exception, sideEffectManager, buildSideEffects)
-        }
+        ) = solution.whenIs(
+            yes = { replySuccess(it.substitution, sideEffectManager, buildSideEffects) },
+            no = { replyFail(sideEffectManager, buildSideEffects) },
+            halt = { replyException(it.exception, sideEffectManager, buildSideEffects) }
+        )
 
         /** Creates a new successful or failed [Response] depending on [condition]; to be used when the substitution doesn't change */
         @JsName("replyWithCondition")
@@ -131,7 +131,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
-            Solution.Yes(query, substitution),
+            Solution.yes(query, substitution),
             sideEffectManager,
             *sideEffects
         )
@@ -143,7 +143,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
         ) = Response(
-            Solution.Yes(query, substitution),
+            Solution.yes(query, substitution),
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
         )
@@ -154,7 +154,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
-            Solution.No(query),
+            Solution.no(query),
             sideEffectManager,
             *sideEffects
         )
@@ -165,7 +165,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
         ) = Response(
-            Solution.No(query),
+            Solution.no(query),
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
         )
@@ -177,7 +177,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect
         ) = Response(
-            Solution.Halt(query, exception),
+            Solution.halt(query, exception),
             sideEffectManager,
             *sideEffects
         )
@@ -189,7 +189,7 @@ sealed class Solve {
             sideEffectManager: SideEffectManager? = null,
             buildSideEffects: SideEffectsBuilder.() -> Unit
         ) = Response(
-            Solution.Halt(query, exception),
+            Solution.halt(query, exception),
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build()
         )

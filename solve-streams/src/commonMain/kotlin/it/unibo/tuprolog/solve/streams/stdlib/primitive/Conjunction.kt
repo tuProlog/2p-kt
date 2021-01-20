@@ -4,11 +4,11 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.forEachWithLookahead
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.streams.StreamsSolver
 import it.unibo.tuprolog.solve.streams.solver.SideEffectManagerImpl
 import it.unibo.tuprolog.solve.streams.solver.StreamsExecutionContext

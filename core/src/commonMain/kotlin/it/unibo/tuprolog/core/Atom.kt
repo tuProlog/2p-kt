@@ -37,24 +37,24 @@ interface Atom : Struct, Constant {
     override val variables: Sequence<Var>
         get() = emptySequence()
 
-    override fun freshCopy(): Atom = this
+    override fun freshCopy(): Atom
 
-    override fun freshCopy(scope: Scope): Atom = this
+    override fun freshCopy(scope: Scope): Atom
 
     companion object {
 
         @JvmStatic
         @JsName("escapeValue")
         fun escapeValue(string: String): String =
-            Struct.escapeFunctor(string)
+            Struct.enquoteFunctor(string)
 
         @JvmStatic
         @JsName("escapeValueIfNecessary")
         fun escapeValueIfNecessary(string: String): String =
-            Struct.escapeFunctorIfNecessary(string)
+            Struct.enquoteFunctorIfNecessary(string)
 
         @JvmField
-        val ATOM_REGEX_PATTERN = Struct.STRUCT_FUNCTOR_REGEX_PATTERN
+        val ATOM_REGEX_PATTERN = Struct.WELL_FORMED_FUNCTOR_PATTERN
 
         @JvmStatic
         @JsName("of")

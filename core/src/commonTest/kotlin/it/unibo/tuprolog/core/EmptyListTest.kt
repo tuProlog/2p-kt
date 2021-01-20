@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.EmptyListImpl
 import kotlin.test.Test
-import kotlin.test.assertSame
+import kotlin.test.assertEquals
 
 /**
  * Test class for [EmptyList] companion object
@@ -13,6 +13,6 @@ internal class EmptyListTest {
 
     @Test
     fun emptyListCompanionReturnsEmptyListImpl() {
-        assertSame(EmptyListImpl, EmptyList())
+        assertEquals(EmptyListImpl(), EmptyList())
     }
 }

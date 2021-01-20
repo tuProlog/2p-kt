@@ -66,17 +66,29 @@ interface Scope {
     @JsName("tupleOfIterable")
     fun tupleOf(terms: Iterable<Term>): Tuple
 
+    @JsName("tupleOfSequence")
+    fun tupleOf(terms: Sequence<Term>): Tuple
+
     @JsName("listOf")
     fun listOf(vararg terms: Term): LogicList
 
     @JsName("ktListOf")
-    fun <T> ktListOf(vararg items: T): kotlin.collections.List<T>
+    fun <T> ktListOf(vararg items: T): List<T>
+
+    @JsName("append")
+    fun <T> List<T>.append(item: T, vararg items: T): List<T>
+
+    @JsName("concat")
+    fun <T> List<T>.concat(other: Iterable<T>): List<T>
 
     @JsName("ktEmptyList")
-    fun <T> ktEmptyList(): kotlin.collections.List<T>
+    fun <T> ktEmptyList(): List<T>
 
     @JsName("listOfIterable")
     fun listOf(terms: Iterable<Term>): LogicList
+
+    @JsName("listOfSequence")
+    fun listOf(terms: Sequence<Term>): LogicList
 
     @JsName("listFrom")
     fun listFrom(vararg terms: Term, last: Term? = null): LogicList
@@ -93,11 +105,14 @@ interface Scope {
     @JsName("setOfIterable")
     fun setOf(terms: Iterable<Term>): LogicSet
 
+    @JsName("setOfSequence")
+    fun setOf(terms: Sequence<Term>): LogicSet
+
     @JsName("ktSetOf")
-    fun <T> ktSetOf(vararg items: T): kotlin.collections.Set<T>
+    fun <T> ktSetOf(vararg items: T): Set<T>
 
     @JsName("ktEmptySet")
-    fun <T> ktEmptySet(): kotlin.collections.Set<T>
+    fun <T> ktEmptySet(): Set<T>
 
     @JsName("factOf")
     fun factOf(head: Struct): Fact

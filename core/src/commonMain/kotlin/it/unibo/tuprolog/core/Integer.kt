@@ -20,9 +20,9 @@ interface Integer : Numeric {
     override val intValue: BigInteger
         get() = value
 
-    override fun freshCopy(): Integer = this
+    override fun freshCopy(): Integer
 
-    override fun freshCopy(scope: Scope): Integer = this
+    override fun freshCopy(scope: Scope): Integer
 
     companion object {
 

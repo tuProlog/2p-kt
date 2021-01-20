@@ -1,16 +1,14 @@
 package it.unibo.tuprolog.solve.streams
 
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDERR
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDIN
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.STDOUT
-import it.unibo.tuprolog.solve.ExecutionContextAware.Companion.WARNINGS
-import it.unibo.tuprolog.solve.FlagStore
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins
@@ -35,8 +33,8 @@ object StreamsSolverFactory : SolverFactory {
             flags,
             staticKb,
             dynamicKb,
-            mapOf(STDIN to stdIn),
-            mapOf(STDOUT to stdOut, STDERR to stdErr, WARNINGS to warnings)
+            InputStore.default(stdIn),
+            OutputStore.default(stdOut, stdErr, warnings)
         )
 
     override fun mutableSolverOf(

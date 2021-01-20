@@ -3,15 +3,13 @@ package it.unibo.tuprolog.solve.classic
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.ExecutionContextAware
-import it.unibo.tuprolog.solve.FlagStore
-import it.unibo.tuprolog.solve.InputStore
-import it.unibo.tuprolog.solve.OutputStore
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.classic.fsm.State
 import it.unibo.tuprolog.solve.classic.fsm.StateInit
 import it.unibo.tuprolog.solve.classic.fsm.clone
@@ -21,6 +19,7 @@ import it.unibo.tuprolog.solve.directives.partition
 import it.unibo.tuprolog.solve.directives.plus
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -36,8 +35,8 @@ internal open class ClassicSolver : Solver {
         flags: FlagStore = FlagStore.empty(),
         initialStaticKb: Theory = Theory.empty(),
         initialDynamicKb: Theory = MutableTheory.empty(),
-        inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
-        outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels(),
+        inputChannels: InputStore = InputStore.default(),
+        outputChannels: OutputStore = OutputStore.default(),
         trustKb: Boolean = false
     ) {
         if (trustKb) {
@@ -83,12 +82,8 @@ internal open class ClassicSolver : Solver {
         flags,
         staticKb,
         dynamicKb,
-        mapOf(ExecutionContextAware.STDIN to stdIn),
-        mapOf(
-            ExecutionContextAware.STDOUT to stdOut,
-            ExecutionContextAware.STDERR to stdErr,
-            ExecutionContextAware.WARNINGS to warnings
-        ),
+        InputStore.default(stdIn),
+        OutputStore.default(stdOut, stdErr, warnings),
         trustKb
     )
 
@@ -164,10 +159,10 @@ internal open class ClassicSolver : Solver {
         for (solution in solve(goal)) {
             when (solution) {
                 is Solution.No -> {
-                    warnings?.write(InitializationIssue(goal, null, state.context))
+                    warnings.write(InitializationIssue(goal, null, state.context))
                 }
                 is Solution.Halt -> {
-                    warnings?.write(InitializationIssue(goal, solution.exception, solution.exception.contexts))
+                    warnings.write(InitializationIssue(goal, solution.exception, solution.exception.contexts))
                 }
             }
         }
@@ -185,10 +180,10 @@ internal open class ClassicSolver : Solver {
     override val dynamicKb: Theory
         get() = state.context.dynamicKb
 
-    override val inputChannels: InputStore<*>
+    override val inputChannels: InputStore
         get() = state.context.inputChannels
 
-    override val outputChannels: OutputStore<*>
+    override val outputChannels: OutputStore
         get() = state.context.outputChannels
 
     override val operators: OperatorSet

@@ -9,21 +9,27 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.dequeOf
 import kotlin.collections.List as KtList
 
-internal class ListedTheory
-private constructor(
-    clauses: KtList<Clause>
-) : AbstractListedTheory(clauses) {
+internal class ListedTheory private constructor(
+    clauses: KtList<Clause>,
+    tags: Map<String, Any>
+) : AbstractListedTheory(clauses, tags) {
 
-    constructor(clauses: Iterable<Clause>) : this(clauses.toList()) {
+    constructor(
+        clauses: Iterable<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.toList(), tags) {
         checkClausesCorrect(clauses)
     }
 
-    constructor(clauses: Sequence<Clause>) : this(clauses.toList()) {
+    constructor(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.toList(), tags) {
         checkClausesCorrect(clauses)
     }
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
-        return ListedTheory(clauses)
+    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory {
+        return ListedTheory(clauses, tags)
     }
 
     override fun retract(clause: Clause): RetractResult<ListedTheory> {
@@ -34,9 +40,7 @@ private constructor(
                 val toBeActuallyRetracted = retractability.first()
                 val newTheory = clauses.filter { it != toBeActuallyRetracted }
                 RetractResult.Success(
-                    ListedTheory(
-                        newTheory
-                    ),
+                    ListedTheory(newTheory, tags),
                     listOf(toBeActuallyRetracted)
                 )
             }
@@ -61,7 +65,7 @@ private constructor(
         return if (removed.isEmpty()) {
             RetractResult.Failure(this)
         } else {
-            RetractResult.Success(ListedTheory(residual), removed)
+            RetractResult.Success(ListedTheory(residual, tags), removed)
         }
     }
 
@@ -74,9 +78,7 @@ private constructor(
                 val newTheory = partitionedClauses.second
                 val toBeActuallyRetracted = partitionedClauses.first
                 RetractResult.Success(
-                    ListedTheory(
-                        newTheory
-                    ),
+                    ListedTheory(newTheory, tags),
                     toBeActuallyRetracted
                 )
             }
@@ -97,4 +99,7 @@ private constructor(
 
     override val size: Long
         get() = sizeCache
+
+    override fun replaceTags(tags: Map<String, Any>): ListedTheory =
+        if (tags === this.tags) this else ListedTheory(clauses, tags)
 }

@@ -54,6 +54,24 @@ interface Library {
 
     companion object {
 
+        @JvmStatic
+        @JsName("sequenceToMapEnsuringNoDuplicates")
+        fun <T> Sequence<Pair<Signature, T>>.toMapEnsuringNoDuplicates(): Map<Signature, T> {
+            val result = mutableMapOf<Signature, T>()
+            for ((signature, value) in this) {
+                if (result.containsKey(signature)) {
+                    throw IllegalArgumentException("Repeated entry: $signature")
+                }
+                result[signature] = value
+            }
+            return result
+        }
+
+        @JvmStatic
+        @JsName("iterableToMapEnsuringNoDuplicates")
+        fun <T> Iterable<Pair<Signature, T>>.toMapEnsuringNoDuplicates(): Map<Signature, T> =
+            asSequence().toMapEnsuringNoDuplicates()
+
         /** Creates an instance of [Library] with given parameters */
         @JvmStatic
         @JsName("unaliased")

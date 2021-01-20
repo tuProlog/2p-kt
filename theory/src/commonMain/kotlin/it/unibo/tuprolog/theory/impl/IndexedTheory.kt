@@ -10,19 +10,27 @@ import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.utils.dequeOf
 
-internal class IndexedTheory private constructor(queue: ClauseQueue) : AbstractIndexedTheory(queue) {
+internal class IndexedTheory private constructor(
+    queue: ClauseQueue,
+    tags: Map<String, Any>
+) : AbstractIndexedTheory(queue, tags) {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(ClauseQueue.of(clauses)) {
+    constructor(
+        clauses: Iterable<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(ClauseQueue.of(clauses), tags) {
         checkClausesCorrect(clauses)
     }
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
+    constructor(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.asIterable(), tags)
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
-        return IndexedTheory(clauses)
-    }
+    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
+        IndexedTheory(clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<IndexedTheory> {
         val newTheory = ClauseQueue.of(clauses)
@@ -30,15 +38,13 @@ internal class IndexedTheory private constructor(queue: ClauseQueue) : AbstractI
             is RetrieveResult.Failure ->
                 RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedTheory(retracted.collection),
+                IndexedTheory(retracted.collection, tags),
                 (retracted as RetrieveResult.Success).clauses
             )
         }
     }
 
-    override fun toMutableTheory(): MutableTheory {
-        return MutableTheory.indexedOf(this)
-    }
+    override fun toMutableTheory(): MutableTheory = MutableTheory.indexedOf(this)
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<IndexedTheory> {
         val newTheory = MutableClauseQueue.of(this.clauses)
@@ -53,7 +59,7 @@ internal class IndexedTheory private constructor(queue: ClauseQueue) : AbstractI
             RetractResult.Failure(this)
         } else {
             RetractResult.Success(
-                IndexedTheory(newTheory),
+                IndexedTheory(newTheory, tags),
                 removed
             )
         }
@@ -64,24 +70,21 @@ internal class IndexedTheory private constructor(queue: ClauseQueue) : AbstractI
         return when (val retracted = newTheory.retrieveAll(clause)) {
             is RetrieveResult.Failure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
-                IndexedTheory(retracted.collection),
+                IndexedTheory(retracted.collection, tags),
                 (retracted as RetrieveResult.Success).clauses
             )
         }
     }
 
-    private val hashCodeCache: Int by lazy {
-        super.hashCode()
-    }
+    private val hashCodeCache: Int by lazy { super.hashCode() }
 
-    override fun hashCode(): Int {
-        return hashCodeCache
-    }
+    override fun hashCode(): Int { return hashCodeCache }
 
-    private val sizeCache: Long by lazy {
-        super.size
-    }
+    private val sizeCache: Long by lazy { super.size }
 
     override val size: Long
         get() = sizeCache
+
+    override fun replaceTags(tags: Map<String, Any>): IndexedTheory =
+        if (tags === this.tags) this else IndexedTheory(queue, tags)
 }

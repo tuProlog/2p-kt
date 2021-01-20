@@ -80,16 +80,16 @@ class ExistenceError(
             )
         }
 
-        @JsName("forStream")
+        @JsName("forSourceSink")
         @JvmStatic
-        fun forStream(
+        fun forSourceSink(
             context: ExecutionContext,
             alias: Atom
-        ) = forStream(context, alias.value)
+        ) = forSourceSink(context, alias.value)
 
-        @JsName("forStreamWithAlias")
+        @JsName("forSourceSinkWithAlias")
         @JvmStatic
-        fun forStream(
+        fun forSourceSink(
             context: ExecutionContext,
             alias: String
         ) = message(
@@ -98,8 +98,25 @@ class ExistenceError(
             ExistenceError(
                 message = m,
                 context = context,
-                expectedObject = ObjectType.STREAM,
+                expectedObject = ObjectType.SOURCE_SINK,
                 actualValue = Atom.of(alias),
+                extraData = extra
+            )
+        }
+
+        @JsName("forStream")
+        @JvmStatic
+        fun forStream(
+            context: ExecutionContext,
+            steamTerm: Struct
+        ) = message(
+            "No such a stream exists: $steamTerm"
+        ) { m, extra ->
+            ExistenceError(
+                message = m,
+                context = context,
+                expectedObject = ObjectType.STREAM,
+                actualValue = steamTerm,
                 extraData = extra
             )
         }

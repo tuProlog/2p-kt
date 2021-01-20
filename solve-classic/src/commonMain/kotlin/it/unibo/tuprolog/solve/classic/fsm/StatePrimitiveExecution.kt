@@ -47,6 +47,7 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
             null -> {
                 StateBacktracking(context.copyFromCurrentPrimitive())
             }
+            else -> throw IllegalStateException("This should never happen")
         }
     } catch (exception: TuPrologRuntimeException) {
         StateException(

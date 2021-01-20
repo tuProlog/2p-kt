@@ -1,4 +1,4 @@
-package it.unibo.tuprolog.solve
+package it.unibo.tuprolog.solve.sideffects
 
 import kotlin.js.JsName
 

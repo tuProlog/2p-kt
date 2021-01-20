@@ -36,3 +36,14 @@ actual fun <T> MutableList<T>.addFirst(items: Iterable<T>) {
 actual fun <T> MutableList<T>.addFirst(items: Sequence<T>) {
     addFirst(items.asIterable())
 }
+
+actual fun <T> MutableList<T>.takeFirst(): T? {
+    if (isEmpty()) return null
+    return if (this is LinkedList) {
+        this.pop()
+    } else {
+        val first = get(0)
+        removeAt(0)
+        first
+    }
+}

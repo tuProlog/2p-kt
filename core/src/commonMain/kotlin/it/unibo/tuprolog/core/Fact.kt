@@ -12,9 +12,9 @@ interface Fact : Rule {
     override val isFact: Boolean
         get() = true
 
-    override fun freshCopy(): Fact = super.freshCopy() as Fact
+    override fun freshCopy(): Fact
 
-    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
+    override fun freshCopy(scope: Scope): Fact
 
     companion object {
         @JvmStatic
