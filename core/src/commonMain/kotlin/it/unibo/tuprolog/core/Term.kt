@@ -322,8 +322,13 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
      */
     @JsName("applySubstitution")
-    fun apply(substitution: Substitution): Term =
-        substitution.applyTo(this) ?: throw SubstitutionApplicationException(this, substitution)
+    fun apply(substitution: Substitution): Term = when {
+        substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
+        substitution.isEmpty() || this.isGround -> this
+        this is Var -> substitution[this] ?: this
+        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
+        else -> this
+    }
 
     /**
      * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current

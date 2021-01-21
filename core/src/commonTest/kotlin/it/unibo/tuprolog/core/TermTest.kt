@@ -1,0 +1,150 @@
+package it.unibo.tuprolog.core
+
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
+
+class TermTest {
+
+    private data class MyStruct(override val functor: String, override val args: Array<Term>) : Struct {
+
+        override fun freshCopy(): Struct {
+            return freshCopy(Scope.empty())
+        }
+
+        override fun freshCopy(scope: Scope): Struct {
+            return MyStruct(functor, args.map { it.freshCopy(scope) }.toTypedArray())
+        }
+
+        override val isFunctorWellFormed: Boolean
+            get() = Struct.isWellFormedFunctor(functor)
+
+        override fun equals(other: Any?): Boolean {
+            return if (other is Term) equals(other, true) else false
+        }
+
+        override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
+            return other is MyStruct && other.arity == arity && other.functor == functor &&
+                other.args.mapIndexed { i, term -> term.equals(args[i], useVarCompleteName) }.all { it }
+        }
+
+        override fun structurallyEquals(other: Term): Boolean {
+            return other is MyStruct && other.arity == arity && other.functor == functor &&
+                other.args.mapIndexed { i, term -> term.structurallyEquals(args[i]) }.all { it }
+        }
+
+        override val tags: Map<String, Any>
+            get() = emptyMap()
+
+        override fun replaceTags(tags: Map<String, Any>): Term {
+            return this
+        }
+
+        override fun apply(substitution: Substitution): Term {
+            return if (substitution.isFailed) {
+                throw SubstitutionApplicationException(this, substitution)
+            } else {
+                MyStruct(functor, args.map { it[substitution] }.toTypedArray())
+            }
+        }
+    }
+
+    private val X = Var.of("X")
+
+    private val sub = Substitution.unifier(X, Integer.ONE)
+
+    private val compounds = listOf(
+        MyStruct("f", arrayOf(X)),
+        Struct.of("g", X),
+        List.of(X),
+        Set.of(X),
+        Tuple.of(X, X),
+        Fact.of(MyStruct("f", arrayOf(X))),
+        Fact.of(Struct.of("g", X)),
+        Fact.of(List.of(X)),
+        Fact.of(Set.of(X)),
+        Fact.of(Tuple.of(X, X))
+    )
+
+    private val expected = listOf(
+        MyStruct("f", arrayOf(Integer.ONE)),
+        Struct.of("g", Integer.ONE),
+        List.of(Integer.ONE),
+        Set.of(Integer.ONE),
+        Tuple.of(Integer.ONE, Integer.ONE),
+        Fact.of(MyStruct("f", arrayOf(Integer.ONE))),
+        Fact.of(Struct.of("g", Integer.ONE)),
+        Fact.of(List.of(Integer.ONE)),
+        Fact.of(Set.of(Integer.ONE)),
+        Fact.of(Tuple.of(Integer.ONE, Integer.ONE))
+    )
+
+    @Test
+    fun substitutionApplyToPreservesReturnsNullWithFailedSubstitution() {
+        for (i in compounds.indices) {
+            assertNull(Substitution.failed().applyTo(compounds[i]))
+        }
+    }
+
+    @Test
+    fun termApplyThrowExceptionWithFailedSubstitution() {
+        for (i in compounds.indices) {
+            try {
+                compounds[i].apply(Substitution.failed())
+            } catch (e: SubstitutionApplicationException) {
+                assertSame(compounds[i], e.term)
+                assertEquals(Substitution.failed(), e.substitution)
+            }
+        }
+    }
+
+    @Test
+    fun termGetThrowExceptionWithFailedSubstitution() {
+        for (i in compounds.indices) {
+            try {
+                compounds[i][Substitution.failed()]
+            } catch (e: SubstitutionApplicationException) {
+                assertSame(compounds[i], e.term)
+                assertEquals(Substitution.failed(), e.substitution)
+            }
+        }
+    }
+
+    @Test
+    fun substitutionApplyToPreservesType() {
+        for (i in compounds.indices) {
+            assertEquals(expected[i], sub.applyTo(compounds[i]))
+        }
+    }
+
+    @Test
+    fun termApplyPreservesType() {
+        for (i in compounds.indices) {
+            assertEquals(expected[i], compounds[i].apply(sub))
+        }
+    }
+
+    @Test
+    fun termGetPreservesType() {
+        for (i in compounds.indices) {
+            assertEquals(expected[i], compounds[i][sub])
+        }
+    }
+
+    @Test
+    fun termFreshCopyPreservesType() {
+        for (i in compounds.indices) {
+            assertTrue { compounds[i].freshCopy().equals(compounds[i], useVarCompleteName = false) }
+        }
+    }
+
+    @Test
+    fun termFreshCopyWithScopePreservesType() {
+        for (i in compounds.indices) {
+            assertTrue { compounds[i].freshCopy(Scope.of("Y")).equals(compounds[i], useVarCompleteName = false) }
+        }
+    }
+}
