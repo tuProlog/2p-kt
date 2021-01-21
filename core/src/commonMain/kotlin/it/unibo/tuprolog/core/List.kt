@@ -30,16 +30,9 @@ interface List : Collection {
             }
         }
 
-    override fun freshCopy(): List = super.freshCopy() as List
+    override fun freshCopy(): List
 
-    override fun freshCopy(scope: Scope): List =
-        when {
-            isGround -> this
-            else -> {
-                val cloned = unfoldedList.map { it.freshCopy(scope) }
-                scope.listFrom(cloned.subList(0, cloned.lastIndex), cloned.last())
-            }
-        }
+    override fun freshCopy(scope: Scope): List
 
     companion object {
 

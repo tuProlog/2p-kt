@@ -18,9 +18,9 @@ interface Directive : Clause {
     override val isDirective: Boolean
         get() = true
 
-    override fun freshCopy(): Directive = super.freshCopy() as Directive
+    override fun freshCopy(): Directive
 
-    override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
+    override fun freshCopy(scope: Scope): Directive
 
     companion object {
         @JvmStatic

@@ -11,20 +11,27 @@ import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.addFirst
 
-internal class MutableListedTheory
-private constructor(
-    override val clauses: MutableList<Clause>
-) : AbstractListedTheory(clauses), MutableTheory {
+internal class MutableListedTheory private constructor(
+    override val clauses: MutableList<Clause>,
+    tags: Map<String, Any>
+) : AbstractListedTheory(clauses, tags), MutableTheory {
 
-    constructor(clauses: Iterable<Clause>) : this(clauses.toMutableList()) {
+    constructor(
+        clauses: Iterable<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.toMutableList(), tags) {
         checkClausesCorrect(clauses)
     }
 
-    constructor(clauses: Sequence<Clause>) : this(clauses.toMutableList()) {
+    constructor(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.toMutableList(), tags) {
         checkClausesCorrect(clauses)
     }
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory = MutableListedTheory(clauses)
+    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
+        MutableListedTheory(clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableListedTheory> {
         val i = clauses.listIterator()
@@ -105,4 +112,7 @@ private constructor(
     override fun abolish(indicator: Indicator): MutableListedTheory = super.abolish(indicator) as MutableListedTheory
 
     override fun toImmutableTheory(): Theory = Theory.listedOf(this)
+
+    override fun replaceTags(tags: Map<String, Any>): MutableListedTheory =
+        if (tags === this.tags) this else MutableListedTheory(clauses, tags)
 }

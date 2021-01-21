@@ -1,12 +1,18 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
-internal open class StructImpl(override val functor: String, override val args: Array<Term>) : TermImpl(), Struct {
+internal open class StructImpl(
+    override val functor: String,
+    override val args: Array<Term>,
+    tags: Map<String, Any> = emptyMap()
+) : TermImpl(tags), Struct {
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
 
@@ -18,15 +24,23 @@ internal open class StructImpl(override val functor: String, override val args: 
 
     override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
 
+    override fun freshCopy(): Struct = freshCopy(Scope.empty())
+
+    override fun freshCopy(scope: Scope): Struct = when {
+        isGround -> this
+        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
+    }
+
+    override fun copyWithTags(tags: Map<String, Any>): Struct =
+        StructImpl(functor, args, tags)
+
     override fun structurallyEquals(other: Term): Boolean =
         other is StructImpl &&
             functor == other.functor &&
             arity == other.arity &&
             (0 until arity).all { args[it] structurallyEquals other[it] }
 
-    override val isFunctorWellFormed: Boolean by lazy {
-        functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN
-    }
+    override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -57,15 +71,11 @@ internal open class StructImpl(override val functor: String, override val args: 
         result
     }
 
-    protected open fun argsHashCode(): Int {
-        return args.contentHashCode()
-    }
+    protected open fun argsHashCode(): Int = args.contentHashCode()
 
     override fun toString(): String {
-        return (
-            if (isFunctorWellFormed) functor else Struct.escapeFunctor(functor)
-            ) + (
-            if (arity > 0) "(${args.joinToString(", ")})" else ""
-            )
+        val escaped = Struct.escapeFunctorIfNecessary(functor)
+        val quoted = Struct.enquoteFunctorIfNecessary(escaped)
+        return "$quoted${if (arity > 0) "(${args.joinToString(", ")})" else ""}"
     }
 }

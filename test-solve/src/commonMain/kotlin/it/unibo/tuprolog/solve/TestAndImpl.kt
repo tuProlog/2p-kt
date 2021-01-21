@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
-import kotlin.collections.listOf as ktListOf
 
 internal class TestAndImpl(private val solverFactory: SolverFactory) : TestAnd {
 

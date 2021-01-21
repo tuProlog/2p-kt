@@ -3,6 +3,9 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -16,8 +19,8 @@ internal class MutableProblogClassicSolver(
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = MutableTheory.empty(),
-    inputChannels: InputStore<*> = ExecutionContextAware.defaultInputChannels(),
-    outputChannels: OutputStore<*> = ExecutionContextAware.defaultOutputChannels()
+    inputChannels: InputStore = InputStore.default(),
+    outputChannels: OutputStore = OutputStore.default()
 ) : ProblogClassicSolver(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels), MutableProbSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {

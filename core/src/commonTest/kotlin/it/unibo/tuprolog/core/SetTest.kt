@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SetUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 /**
  * Test class for [Set] companion object
@@ -20,7 +19,7 @@ internal class SetTest {
     @Test
     fun emptyReturnsEmptySet() {
         assertEqualities(Empty.set(), Set.empty())
-        assertSame(Empty.set(), Set.empty())
+        assertEquals(Empty.set(), Set.empty())
     }
 
     @Test

@@ -58,7 +58,7 @@ internal class ProbTerm(
                 extraVariables
             } else {
                 extraVariables
-                    .map { substitution.applyTo(it) }
+                    .mapNotNull { substitution.applyTo(it) }
                     .toSet()
             }
             ProbTerm(id, probability, term.apply(substitution), newExtraVars)

@@ -28,3 +28,10 @@ actual fun <T> MutableList<T>.addFirst(items: Iterable<T>) {
 actual fun <T> MutableList<T>.addFirst(items: Sequence<T>) {
     addFirst(items.asIterable())
 }
+
+actual fun <T> MutableList<T>.takeFirst(): T? {
+    if (isEmpty()) return null
+    val first = get(0)
+    this.removeAt(0)
+    return first
+}

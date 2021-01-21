@@ -11,7 +11,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
- * Test class for [Substitution.Unifier] and [Substitution]
+ * Test class for [Substitution.unifier] and [Substitution]
  *
  * @author Enrico
  */
@@ -20,28 +20,28 @@ internal class SubstitutionUnifierTest {
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
     private val xAtom = Atom.of("x")
-    private val aVarToXAtomSubstitution = Substitution.Unifier(mapOf(aVar to xAtom))
-    private val bVarToXAtomSubstitution = Substitution.Unifier(mapOf(bVar to xAtom))
+    private val aVarToXAtomSubstitution = Substitution.unifier(mapOf(aVar to xAtom))
+    private val bVarToXAtomSubstitution = Substitution.unifier(mapOf(bVar to xAtom))
 
     private val substitutions by lazy {
-        SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) +
+        SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifier) +
             listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
 
     @Test
     fun unifierConstructorReturnsEmptyUnifierIfIdentityMappingsDetected() {
-        assertEquals(Substitution.Unifier(emptyMap()), Substitution.Unifier(mapOf(aVar to aVar)))
+        assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to aVar)))
     }
 
     @Test
     fun unifierConstructorReturnsEmptyUnifierIfCircularIdentityMappingsDetected() {
-        assertEquals(Substitution.Unifier(emptyMap()), Substitution.Unifier(mapOf(aVar to bVar, bVar to aVar)))
+        assertEquals(Substitution.unifier(emptyMap()), Substitution.unifier(mapOf(aVar to bVar, bVar to aVar)))
     }
 
     @Test
     fun unifierConstructorReturnsTrimmedVariableChain() {
-        val correct = Substitution.Unifier(mapOf(aVar to xAtom, bVar to xAtom))
-        val toBeTested = Substitution.Unifier(mapOf(aVar to bVar, bVar to xAtom))
+        val correct = Substitution.unifier(mapOf(aVar to xAtom, bVar to xAtom))
+        val toBeTested = Substitution.unifier(mapOf(aVar to bVar, bVar to xAtom))
         assertEquals(correct, toBeTested)
     }
 
@@ -84,10 +84,10 @@ internal class SubstitutionUnifierTest {
 
     @Test
     fun equalsWorksAsExpected() {
-        assertEquals(Substitution.Unifier(mapOf(aVar to xAtom)), Substitution.Unifier(mapOf(aVar to xAtom)))
+        assertEquals(Substitution.unifier(mapOf(aVar to xAtom)), Substitution.unifier(mapOf(aVar to xAtom)))
         assertNotEquals(
-            Substitution.Unifier(mapOf(Var.of("A") to xAtom)),
-            Substitution.Unifier(mapOf(Var.of("A") to xAtom))
+            Substitution.unifier(mapOf(Var.of("A") to xAtom)),
+            Substitution.unifier(mapOf(Var.of("A") to xAtom))
         )
         assertNotEquals(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
     }
@@ -125,30 +125,30 @@ internal class SubstitutionUnifierTest {
             bVarToXAtomSubstitution + Substitution.of(bVar to Truth.TRUE)
         )
 
-        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
+        toBeTested.forEach { assertEquals(Substitution.failed(), it) }
     }
 
     @Test
     fun plusFailedSubstitutionReturnFailedSubstitution() {
         substitutions.forEach {
-            assertEquals(Substitution.Fail, it + Substitution.Fail)
-            assertEquals(Substitution.Fail, Substitution.Fail + it)
+            assertEquals(Substitution.failed(), it + Substitution.failed())
+            assertEquals(Substitution.failed(), Substitution.failed() + it)
         }
     }
 
     @Test
     fun plusComplianceWithCompositionDefinedInStandardProlog() {
-        val first = Substitution.Unifier(mapOf(bVar to Struct.of("f", aVar)))
-        val second = Substitution.Unifier(mapOf(aVar to xAtom))
+        val first = Substitution.unifier(mapOf(bVar to Struct.of("f", aVar)))
+        val second = Substitution.unifier(mapOf(aVar to xAtom))
 
-        val firstComposedSecondExpected = Substitution.Unifier(
+        val firstComposedSecondExpected = Substitution.unifier(
             mapOf(
                 bVar to Struct.of("f", xAtom),
                 aVar to xAtom
             )
         )
 
-        val secondComposedFirstExpected = Substitution.Unifier(
+        val secondComposedFirstExpected = Substitution.unifier(
             mapOf(
                 aVar to xAtom,
                 bVar to Struct.of("f", aVar)

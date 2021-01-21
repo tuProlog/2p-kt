@@ -43,19 +43,19 @@ object TermFormatterUtils {
     )
 
     val expectedFormatsWithPrettyVariables: Map<Term, String> = common + mapOf(
-        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "','(A, ','(A1, A2))",
-        Var.of("A").let { Tuple.of(it, it, it) } to "','(A, ','(A, A))",
+        Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")) to "(A, A1, A2)",
+        Var.of("A").let { Tuple.of(it, it, it) } to "(A, A, A)",
         Indicator.of(Var.of("A"), Var.of("B")) to "'/'(A, B)",
         Rule.of(
             Tuple.of(Var.of("A"), Var.of("B")),
             Tuple.of(Var.of("C"), Var.of("D"))
-        ) to "':-'(','(A, B), ','(C, D))",
+        ) to "':-'((A, B), (C, D))",
         Fact.of(
             Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
-        ) to "':-'(','(A, ','(B, ','(A1, B1))), true)",
+        ) to "':-'((A, B, A1, B1), true)",
         Directive.of(
             Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B"))
-        ) to "':-'(','(A, ','(B, ','(A1, B1))))"
+        ) to "':-'((A, B, A1, B1))"
     )
 
     val expectedFormatsWithPrettyExpressions: Map<Term, String> = common + mapOf(

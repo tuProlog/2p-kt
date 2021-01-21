@@ -6,14 +6,18 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
+import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MalformedAliasException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.NoSuchAnAliasException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
+import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsStruct
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
@@ -52,6 +56,26 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int
         else -> this
     }
 
+fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): TypeRef? {
+    ensuringArgumentIsStruct(index)
+    val arg = arguments[index]
+    return when {
+        arg is TypeRef -> {
+            arg
+        }
+        arg is Atom -> {
+            TypeFactory.default.typeRefFromName(arg.value)
+        }
+        arg is Struct && arg.isDealiasingExpression -> {
+            findRefFromAlias(arg) as? TypeRef
+        }
+        else -> {
+            ensuringArgumentIsTypeRef(1)
+            null
+        }
+    }
+}
+
 fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref {
     val actualAlias = if (alias.isDealiasingExpression) {
         alias[0] as Struct
@@ -75,5 +99,15 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
         return action()
     } catch (e: OopException) {
         throw e.toPrologError(context, signature)
+    } catch (e: Throwable) {
+        throw SystemError.forUncaughtException(context, e)
     }
 }
+
+val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
+    get() = TermToObjectConverter.of {
+        when (val ref = findRefFromAlias(it)) {
+            is TypeRef -> ref
+            else -> null
+        }
+    }

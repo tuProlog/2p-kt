@@ -2,11 +2,16 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
-internal class ConsImpl(override val head: Term, override val tail: Term) :
-    CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail)), Cons {
+internal class ConsImpl(
+    override val head: Term,
+    override val tail: Term,
+    tags: Map<String, Any> = emptyMap()
+) : CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail), tags), Cons {
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { LogicListIterator.All(this) }.asSequence()
@@ -15,9 +20,7 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
 
     override val args: Array<Term> get() = super<CollectionImpl>.args
 
-    override val isWellFormed: Boolean by lazy {
-        last is EmptyList
-    }
+    override val isWellFormed: Boolean by lazy { last is EmptyList }
 
     override fun toArray(): Array<Term> =
         when {
@@ -33,12 +36,9 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
 
     override fun toSequence(): Sequence<Term> = LogicListIterator.SkippingLast(this).asSequence()
 
-    override val last: Term by lazy {
-        unfoldedSequence.last()
-    }
+    override val last: Term by lazy { unfoldedSequence.last() }
 
-    override fun unfold(): Sequence<Term> =
-        Iterable { ListUnfolder(this) }.asSequence()
+    override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 
     override fun toString(): String {
         val (ending, take) = if (isWellFormed) {
@@ -47,5 +47,18 @@ internal class ConsImpl(override val head: Term, override val tail: Term) :
             " | $last]" to size - 1
         }
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
+    }
+
+    override fun copyWithTags(tags: Map<String, Any>): Cons = ConsImpl(head, tail, tags)
+
+    override fun freshCopy(): Cons = super.freshCopy() as Cons
+
+    override fun freshCopy(scope: Scope): Cons = when {
+        isGround -> this
+        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags) as Cons
+        else -> scope.listFrom(
+            unfoldedList.subList(0, unfoldedList.lastIndex).map { it.freshCopy(scope) },
+            last = unfoldedList.last().freshCopy(scope)
+        ).setTags(tags) as Cons
     }
 }

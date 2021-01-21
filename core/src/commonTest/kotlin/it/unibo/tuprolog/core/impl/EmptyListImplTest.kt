@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
  */
 internal class EmptyListImplTest {
 
-    private val testedObj = EmptyListImpl
+    private val testedObj = EmptyListImpl()
 
     @Test
     fun emptyListFunctor() {
@@ -24,17 +24,17 @@ internal class EmptyListImplTest {
 
     @Test
     fun unfoldedListContainsEmptyList() {
-        assertEquals(listOf(EmptyListImpl), testedObj.unfoldedList)
+        assertEquals(listOf(EmptyListImpl()), testedObj.unfoldedList)
     }
 
     @Test
     fun unfoldedSequenceContainsEmptyList() {
-        assertEquals(sequenceOf(EmptyListImpl).toList(), testedObj.unfoldedSequence.toList())
+        assertEquals(sequenceOf(EmptyListImpl()).toList(), testedObj.unfoldedSequence.toList())
     }
 
     @Test
     fun unfoldedArrayContainsEmptyList() {
-        assertTrue(arrayOf(EmptyListImpl).contentDeepEquals(testedObj.unfoldedArray))
+        assertTrue(arrayOf(EmptyListImpl()).contentDeepEquals(testedObj.unfoldedArray))
     }
 
     @Test

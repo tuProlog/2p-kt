@@ -5,9 +5,9 @@ import kotlin.jvm.JvmStatic
 
 interface Empty : Atom {
 
-    override fun freshCopy(): Empty = this
+    override fun freshCopy(): Empty
 
-    override fun freshCopy(scope: Scope): Empty = this
+    override fun freshCopy(scope: Scope): Empty
 
     companion object {
 

@@ -10,7 +10,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.operators.Specifier.FX
 import it.unibo.tuprolog.core.operators.Specifier.FY
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.FlagStore
+import it.unibo.tuprolog.solve.flags.FlagStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

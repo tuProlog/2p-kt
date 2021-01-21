@@ -19,9 +19,9 @@ interface Numeric : Constant {
     @JsName("intValue")
     val intValue: BigInteger
 
-    override fun freshCopy(): Numeric = this
+    override fun freshCopy(): Numeric
 
-    override fun freshCopy(scope: Scope): Numeric = this
+    override fun freshCopy(scope: Scope): Numeric
 
     @JsName("compareValueTo")
     fun compareValueTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)

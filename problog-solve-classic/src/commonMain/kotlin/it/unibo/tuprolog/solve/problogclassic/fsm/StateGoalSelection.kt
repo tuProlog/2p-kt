@@ -9,7 +9,7 @@ internal data class StateGoalSelection(override val context: ProblogClassicExecu
         return if (context.goals.isOver) {
             if (context.isRoot) {
                 StateEnd(
-                    Solution.Yes(context.query, context.substitution),
+                    Solution.yes(context.query, context.substitution),
                     context.copy(step = nextStep())
                 )
             } else {

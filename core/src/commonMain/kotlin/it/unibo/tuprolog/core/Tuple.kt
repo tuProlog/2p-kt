@@ -31,13 +31,9 @@ interface Tuple : Collection {
 
     override fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
+    override fun freshCopy(): Tuple
 
-    override fun freshCopy(scope: Scope): Tuple =
-        when {
-            isGround -> this
-            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
-        }
+    override fun freshCopy(scope: Scope): Tuple
 
     companion object {
 

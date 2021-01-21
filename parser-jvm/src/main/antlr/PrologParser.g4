@@ -55,6 +55,12 @@ clause
     : expression[P0, WITH_COMMA] FULL_STOP
     ;
 
+optExpression
+locals[boolean isOver]
+    : expression[P0, WITH_COMMA]
+    | EOF { $isOver = true; }
+    ;
+
 expression[int priority, String[] disabled]
 locals[boolean isTerm, Associativity associativity, int bottom]
     : ( left=term { $isTerm = true; }

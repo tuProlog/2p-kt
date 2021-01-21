@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.classicWithDefaultBuiltins
 import it.unibo.tuprolog.solve.exception.PrologWarning
@@ -23,7 +24,7 @@ import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 import kotlin.system.exitProcess
 
-internal class PrologIDEModelImpl(override val executor: ExecutorService) : PrologIDEModel {
+internal class PrologIDEModelImpl(override val executor: ExecutorService, var customizer: ((MutableSolver) -> Unit)?) : PrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
@@ -95,7 +96,11 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     }
 
     override fun setStdin(content: String) {
-        stdin = content
+        ensuringStateIs(State.IDLE) {
+            stdin = content
+            solver.invalidate()
+            // solver.regenerate()
+        }
     }
 
     override fun quit() {
@@ -105,6 +110,12 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     @Volatile
     override var state: State = State.IDLE
         private set
+
+    override fun customizeSolver(customizer: (MutableSolver) -> Unit) {
+        this.customizer = customizer
+        this.solver.invalidate()
+        this.solver.regenerate()
+    }
 
     private inline fun <T> ensuringStateIs(state: State, vararg states: State, action: () -> T): T {
         if (EnumSet.of(state, *states).contains(this.state)) {
@@ -117,11 +128,13 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService) : Prol
     private val solver = Cached.of {
         MutableSolver.classicWithDefaultBuiltins(
             libraries = Libraries.of(OOPLib, IOLib),
+            stdIn = InputChannel.of(stdin),
             stdOut = OutputChannel.of { onStdoutPrinted.push(it) },
             stdErr = OutputChannel.of { onStderrPrinted.push(it) },
             warnings = OutputChannel.of { onWarning.push(it) },
-        ).also {
-            onNewSolver.push(SolverEvent(Unit, it))
+        ).also { solver ->
+            this.customizer?.let { it(solver) }
+            onNewSolver.push(SolverEvent(Unit, solver))
         }
     }
 

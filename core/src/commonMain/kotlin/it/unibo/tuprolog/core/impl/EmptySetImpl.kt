@@ -1,10 +1,13 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.EmptySet
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
-internal object EmptySetImpl : SetImpl(null), EmptySet {
+internal class EmptySetImpl(
+    tags: Map<String, Any> = emptyMap()
+) : SetImpl(null, tags), EmptySet {
 
     override val args: Array<Term> by lazy { super<EmptySet>.args }
 
@@ -17,4 +20,10 @@ internal object EmptySetImpl : SetImpl(null), EmptySet {
     override val size: Int get() = 0
 
     override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
+
+    override fun copyWithTags(tags: Map<String, Any>): EmptySet = EmptySetImpl(tags)
+
+    override fun freshCopy(): EmptySet = this
+
+    override fun freshCopy(scope: Scope): EmptySet = this
 }

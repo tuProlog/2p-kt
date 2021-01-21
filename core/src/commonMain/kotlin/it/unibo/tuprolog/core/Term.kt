@@ -1,12 +1,14 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
+import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 
 /**
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
  */
-interface Term : Comparable<Term> {
+interface Term : Comparable<Term>, Taggable<Term> {
 
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
@@ -295,7 +297,7 @@ interface Term : Comparable<Term> {
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
     @JsName("freshCopy")
-    fun freshCopy(): Term = freshCopy(Scope.empty())
+    fun freshCopy(): Term
 
     /**
      * Returns a fresh copy of this Term, similarly to `freshCopy`, possibly reusing variables from the provided scope,
@@ -306,7 +308,7 @@ interface Term : Comparable<Term> {
      * @return a fresh copy of the current term which is different because variables are consistently renamed
      */
     @JsName("freshCopyFromScope")
-    fun freshCopy(scope: Scope): Term = this
+    fun freshCopy(scope: Scope): Term
 
     /**
      * Applies a [Substitution] to the current term, producing a new [Term] which differs from the current
@@ -317,15 +319,11 @@ interface Term : Comparable<Term> {
      *
      * @param substitution is the [Substitution] to be applied to the current term
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
      */
     @JsName("applySubstitution")
-    // TODO what if the substitution is failed
-    fun apply(substitution: Substitution): Term = when {
-        substitution.isEmpty() || this.isGround -> this
-        this is Var -> substitution[this] ?: this
-        this is Struct && !this.isGround -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
-        else -> this
-    }
+    fun apply(substitution: Substitution): Term =
+        substitution.applyTo(this) ?: throw SubstitutionApplicationException(this, substitution)
 
     /**
      * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
@@ -337,6 +335,7 @@ interface Term : Comparable<Term> {
      * @param substitution is the first [Substitution] to be applied to the current term
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
      * @see Substitution.of
@@ -358,6 +357,7 @@ interface Term : Comparable<Term> {
      * @param substitution is the first [Substitution] to be applied to the current term
      * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
      * @return a [Term] where variables in [substitution] are replaced by their values
+     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
      *
      * @see apply
      * @see Substitution.of
@@ -378,8 +378,7 @@ interface Term : Comparable<Term> {
      * @return an object of type [T], produced by [visitor] through its visit
      */
     @JsName("accept")
-    fun <T> accept(visitor: TermVisitor<T>): T =
-        visitor.visit(this)
+    fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
 
     override fun toString(): String
 

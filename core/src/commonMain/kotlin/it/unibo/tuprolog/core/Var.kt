@@ -19,16 +19,15 @@ interface Var : Term {
     @JsName("name")
     val name: String
 
+    @JsName("id")
+    val id: String
+
     @JsName("completeName")
     val completeName: String
 
-    override fun freshCopy(): Var = super.freshCopy() as Var
+    override fun freshCopy(): Var
 
-    override fun freshCopy(scope: Scope): Var =
-        when {
-            isAnonymous -> scope.anonymous()
-            else -> scope.varOf(name)
-        }
+    override fun freshCopy(scope: Scope): Var
 
     @JsName("isNameWellFormed")
     val isNameWellFormed: Boolean

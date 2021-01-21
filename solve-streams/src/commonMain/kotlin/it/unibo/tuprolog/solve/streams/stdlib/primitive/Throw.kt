@@ -25,18 +25,6 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                 val ancestorCatch = request.context.sideEffectManager.retrieveAncestorCatchRequest(throwArgument)
 
                 when (val catcherUnifyingSubstitution = ancestorCatch?.arguments?.get(1)?.mguWith(throwArgument)) {
-                    // no catch found that can handle thrown exception
-                    null, is Substitution.Fail -> {
-                        val errorCause = throwArgument.extractErrorCauseChain(request.context)
-                        when {
-                            // if unhandled error is a PrologError, rethrow outside
-                            errorCause != null -> throw errorCause
-
-                            // if current unhandled exception is some other error, launch it as message
-                            else -> throw SystemError.forUncaughtException(request.context, throwArgument)
-                        }
-                    }
-
                     // matching catch found, it will handle exception
                     is Substitution.Unifier -> sequenceOf(
                         with(request) {
@@ -49,6 +37,18 @@ internal object Throw : PrimitiveWrapper<StreamsExecutionContext>("throw", 1) {
                             )
                         }
                     )
+
+                    // no catch found that can handle thrown exception
+                    else -> {
+                        val errorCause = throwArgument.extractErrorCauseChain(request.context)
+                        when {
+                            // if unhandled error is a PrologError, rethrow outside
+                            errorCause != null -> throw errorCause
+
+                            // if current unhandled exception is some other error, launch it as message
+                            else -> throw SystemError.forUncaughtException(request.context, throwArgument)
+                        }
+                    }
                 }
             }
         } catch (prologError: PrologError) {

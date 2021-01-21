@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.streams.solver
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.streams.StreamsSolver
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Call
 import it.unibo.tuprolog.solve.streams.stdlib.primitive.Catch

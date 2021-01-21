@@ -45,7 +45,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
     private fun theoryWithRemoteInclude(loadGoal: String) =
         prolog {
             theoryOf(
-                directive { include(ExampleUrls.PARENTS) },
+                directive { loadGoal(ExampleUrls.PARENTS) },
                 fact { "someFact" }
             )
         }
@@ -76,7 +76,7 @@ class TestIncludeImpl(private val solverFactory: SolverFactory) : TestInclude {
     private fun theoryWithMissingInclude(loadGoal: String) =
         prolog {
             theoryOf(
-                directive { include("/path/to/missing.pl") },
+                directive { loadGoal("/path/to/missing.pl") },
                 fact { "someFact" }
             )
         }

@@ -1,6 +1,15 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.TermFormatter.FuncFormat.LITERAL
+import it.unibo.tuprolog.core.TermFormatter.FuncFormat.QUOTED_IF_NECESSARY
+import it.unibo.tuprolog.core.TermFormatter.OpFormat.COLLECTIONS
+import it.unibo.tuprolog.core.TermFormatter.OpFormat.EXPRESSIONS
+import it.unibo.tuprolog.core.TermFormatter.OpFormat.IGNORE_OPERATORS
+import it.unibo.tuprolog.core.TermFormatter.VarFormat.COMPLETE_NAME
+import it.unibo.tuprolog.core.TermFormatter.VarFormat.PRETTY
+import it.unibo.tuprolog.core.TermFormatter.VarFormat.UNDERSCORE
 import it.unibo.tuprolog.core.impl.SimpleTermFormatter
+import it.unibo.tuprolog.core.impl.TermFormatterWithAnonymousVariables
 import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyExpressions
 import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyVariables
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -12,16 +21,68 @@ import kotlin.jvm.JvmStatic
  */
 interface TermFormatter : Formatter<Term>, TermVisitor<String> {
 
+    enum class VarFormat {
+        COMPLETE_NAME,
+        UNDERSCORE,
+        PRETTY
+    }
+
+    enum class OpFormat {
+        IGNORE_OPERATORS,
+        COLLECTIONS,
+        EXPRESSIONS
+    }
+
+    enum class FuncFormat {
+        QUOTED_IF_NECESSARY,
+        LITERAL
+    }
+
     /**
      * Converts a [Term] into a [String]
      * @param value is the [Term] to be converted in [String]
      * @return a [String] representing the [Term] provided as argument
      */
-    override fun format(value: Term): String {
-        return value.accept(this)
-    }
+    override fun format(value: Term): String = value.accept(this)
 
     companion object {
+
+        @JvmStatic
+        @JsName("of")
+        fun of(
+            varFormat: VarFormat,
+            opFormat: OpFormat,
+            funcFormat: FuncFormat = QUOTED_IF_NECESSARY,
+            numberVars: Boolean = false,
+            operators: OperatorSet = OperatorSet.DEFAULT
+        ): TermFormatter {
+            val quoted = funcFormat == QUOTED_IF_NECESSARY
+            val ignoreOps = opFormat == IGNORE_OPERATORS
+            val inner = when (varFormat) {
+                COMPLETE_NAME -> SimpleTermFormatter(quoted, numberVars, ignoreOps)
+                UNDERSCORE -> TermFormatterWithAnonymousVariables(quoted, numberVars, ignoreOps)
+                PRETTY -> TermFormatterWithPrettyVariables(quoted, numberVars, ignoreOps)
+            }
+            return when (opFormat) {
+                EXPRESSIONS -> TermFormatterWithPrettyExpressions(inner, operators, quoted, numberVars, ignoreOps)
+                else -> inner
+            }
+        }
+
+        @JvmStatic
+        @JsName("default")
+        fun default(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
+            of(UNDERSCORE, EXPRESSIONS, LITERAL, true, operators)
+
+        @JvmStatic
+        @JsName("canonical")
+        fun canonical(): TermFormatter = of(UNDERSCORE, IGNORE_OPERATORS, QUOTED_IF_NECESSARY, numberVars = false)
+
+        @JvmStatic
+        @JsName("readable")
+        fun readable(operators: OperatorSet = OperatorSet.DEFAULT): TermFormatter =
+            of(PRETTY, EXPRESSIONS, QUOTED_IF_NECESSARY, numberVars = true, operators)
+
         /**
          * A [TermFormatter] representing terms in _canonical_ form, except for [Var]iables which are represented
          * using their simple name only, if possible.
@@ -32,8 +93,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyVariables")
-        fun prettyVariables(): TermFormatter =
-            TermFormatterWithPrettyVariables()
+        fun prettyVariables(): TermFormatter = of(PRETTY, COLLECTIONS)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -45,13 +105,8 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressions")
-        fun prettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter {
-            return if (prettyVariables) {
-                TermFormatterWithPrettyExpressions(TermFormatterWithPrettyVariables(), operatorSet)
-            } else {
-                TermFormatterWithPrettyExpressions(SimpleTermFormatter, operatorSet)
-            }
-        }
+        fun prettyExpressions(prettyVariables: Boolean, operatorSet: OperatorSet): TermFormatter =
+            of(if (prettyVariables) PRETTY else COMPLETE_NAME, EXPRESSIONS, operators = operatorSet)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -63,9 +118,7 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressionsPrettyVariables")
-        fun prettyExpressions(operatorSet: OperatorSet): TermFormatter {
-            return prettyExpressions(true, operatorSet)
-        }
+        fun prettyExpressions(operatorSet: OperatorSet): TermFormatter = prettyExpressions(true, operatorSet)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -77,9 +130,8 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressionsDefaultOperators")
-        fun prettyExpressions(prettyVariables: Boolean): TermFormatter {
-            return prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
-        }
+        fun prettyExpressions(prettyVariables: Boolean): TermFormatter =
+            prettyExpressions(prettyVariables, OperatorSet.DEFAULT)
 
         /**
          * A [TermFormatter] representing terms in a pretty way, i.e. by representing prefix, postfix, or infix expressions
@@ -90,8 +142,6 @@ interface TermFormatter : Formatter<Term>, TermVisitor<String> {
          */
         @JvmStatic
         @JsName("prettyExpressionsPrettyVariablesDefaultOperators")
-        fun prettyExpressions(): TermFormatter {
-            return prettyExpressions(true, OperatorSet.DEFAULT)
-        }
+        fun prettyExpressions(): TermFormatter = prettyExpressions(true, OperatorSet.DEFAULT)
     }
 }

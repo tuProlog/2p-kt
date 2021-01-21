@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.problogclassic.knowledge.ProblogTheory
@@ -29,12 +32,8 @@ object ProblogClassicSolverFactory : ProbSolverFactory {
             flags,
             ProblogTheory(staticKb),
             ProblogTheory(dynamicKb),
-            mapOf(ExecutionContextAware.STDIN to stdIn),
-            mapOf(
-                ExecutionContextAware.STDOUT to stdOut,
-                ExecutionContextAware.STDERR to stdErr,
-                ExecutionContextAware.WARNINGS to warnings
-            )
+            InputStore.default(stdIn),
+            OutputStore.default(stdOut, stdErr, warnings)
         )
 
     override fun mutableSolverOf(
@@ -52,11 +51,7 @@ object ProblogClassicSolverFactory : ProbSolverFactory {
             flags,
             ProblogTheory(staticKb),
             ProblogTheory(dynamicKb),
-            mapOf(ExecutionContextAware.STDIN to stdIn),
-            mapOf(
-                ExecutionContextAware.STDOUT to stdOut,
-                ExecutionContextAware.STDERR to stdErr,
-                ExecutionContextAware.WARNINGS to warnings
-            )
+            InputStore.default(stdIn),
+            OutputStore.default(stdOut, stdErr, warnings)
         )
 }
