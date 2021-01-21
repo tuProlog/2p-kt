@@ -1,11 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.TagsOperator
-import it.unibo.tuprolog.utils.setTags
 import kotlin.collections.Collection as KtCollection
 
 internal sealed class SubstitutionImpl : Substitution {
@@ -111,13 +109,7 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun toString(): String = assignments.toString()
 
-        override fun applyTo(term: Term): Term =
-            when {
-                isEmpty() || term.isGround -> term
-                term is Var -> this[term] ?: term
-                term is Struct -> Struct.of(term.functor, term.argsList.map { applyTo(it) }).setTags(term.tags)
-                else -> term
-            }
+        override fun applyTo(term: Term): Term = term.apply(this)
 
         override fun replaceTags(tags: Map<String, Any>): UnifierImpl =
             if (tags == this.tags) this else UnifierImpl(assignments, tags)
