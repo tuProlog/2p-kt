@@ -17,11 +17,15 @@ import kotlin.test.assertTrue
 
 class TestTheoryMetadata {
 
-    private val theories = listOf<Theory>(
+    private val theories get() = listOf<Theory>(
         Theory.emptyIndexed(),
         Theory.emptyListed(),
         Theory.indexedOf(TheoryUtils.wellFormedClauses),
-        Theory.listedOf(TheoryUtils.wellFormedClauses)
+        Theory.listedOf(TheoryUtils.wellFormedClauses),
+        MutableTheory.emptyIndexed(),
+        MutableTheory.emptyListed(),
+        MutableTheory.indexedOf(TheoryUtils.wellFormedClauses),
+        MutableTheory.listedOf(TheoryUtils.wellFormedClauses),
     )
 
     private data class Metadata<T>(val value: T)
@@ -33,14 +37,18 @@ class TestTheoryMetadata {
     private val someValue2 = Metadata<Boolean?>(false)
     private val someOtherValue = Metadata<Boolean?>(null)
 
-    private val taggedTheories = TheoryUtils.wellFormedClauses
+    private val taggedTheories get() = TheoryUtils.wellFormedClauses
         .map { it.setTags(someKey to someValue1, someOtherKey to someOtherValue) }
         .let {
             listOf(
                 Theory.emptyIndexed().setTag(yetAnotherKey, someValue2),
                 Theory.emptyListed().setTag(yetAnotherKey, someValue2),
                 Theory.indexedOf(it).setTag(yetAnotherKey, someValue2),
-                Theory.listedOf(it).setTag(yetAnotherKey, someValue2)
+                Theory.listedOf(it).setTag(yetAnotherKey, someValue2),
+                MutableTheory.emptyIndexed().setTag(yetAnotherKey, someValue2),
+                MutableTheory.emptyListed().setTag(yetAnotherKey, someValue2),
+                MutableTheory.indexedOf(it).setTag(yetAnotherKey, someValue2),
+                MutableTheory.listedOf(it).setTag(yetAnotherKey, someValue2)
             )
         }
 
@@ -62,6 +70,19 @@ class TestTheoryMetadata {
             assertEquals(someValue1, tagged.getTag<Metadata<Boolean?>>(someKey))
             assertEquals(emptyMap(), theory.tags)
             assertEquals(mapOf(someKey to someValue1), tagged.tags)
+        }
+    }
+
+    @Test
+    fun cloningTheoriesPreservesTags() {
+        for (taggedTheory in taggedTheories) {
+            val clone = taggedTheory.clone()
+            assertEquals(taggedTheory, clone)
+            assertEquals(taggedTheory.tags, clone.tags)
+            for ((clause, clonedClause) in taggedTheory.zip(clone)) {
+                assertEquals(clause, clonedClause)
+                assertEquals(clause.tags, clonedClause.tags)
+            }
         }
     }
 
@@ -150,8 +171,8 @@ class TestTheoryMetadata {
             assertEquals(0, untaggedTheory.tags.size)
             assertEquals(1, taggedTheory.tags.size)
             for (untaggedClause in untaggedTheory) {
-                val untaggedClauses = untaggedTheory.access(untaggedClause).toList()
-                val taggedClauses = taggedTheory.access(untaggedClause).toList()
+                val untaggedClauses = untaggedTheory.clone().access(untaggedClause).toList()
+                val taggedClauses = taggedTheory.clone().access(untaggedClause).toList()
                 assertEquals(untaggedClauses, taggedClauses)
                 for ((untagged, tagged) in untaggedClauses.zip(taggedClauses)) {
                     assertEquals(untagged, tagged)
@@ -174,8 +195,8 @@ class TestTheoryMetadata {
             assertEquals(0, untaggedTheory.tags.size)
             assertEquals(1, taggedTheory.tags.size)
             for (clause in clausesSource) {
-                val untaggedEdited = untaggedTheory.edit(clause)
-                val taggedEdited = taggedTheory.edit(clause)
+                val untaggedEdited = untaggedTheory.clone().edit(clause)
+                val taggedEdited = taggedTheory.clone().edit(clause)
                 assertEquals(untaggedEdited, taggedEdited)
                 assertNotEquals(untaggedEdited.tags, taggedEdited.tags)
                 assertEquals(0, untaggedEdited.tags.size)
