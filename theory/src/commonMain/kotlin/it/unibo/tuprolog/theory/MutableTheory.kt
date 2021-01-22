@@ -56,6 +56,9 @@ interface MutableTheory : Theory {
 
     override fun replaceTags(tags: Map<String, Any>): MutableTheory
 
+    @JsName("clone")
+    override fun clone(): MutableTheory
+
     companion object {
 
         /** Creates an empty [MutableTheory] */
