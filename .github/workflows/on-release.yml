@@ -28,7 +28,7 @@ jobs:
           jdk: ${{ env.jdk-version }}
 
       - name: Show Env
-        run: ./gradlew --version
+        run: gradle --version
 
   build:
     runs-on: ubuntu-latest
