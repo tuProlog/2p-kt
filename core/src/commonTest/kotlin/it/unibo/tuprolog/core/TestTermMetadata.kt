@@ -135,4 +135,30 @@ class TestTermMetadata {
             assertEquals(someValue2, replaced.getTag<Metadata<Int>>(someKey))
         }
     }
+
+    private fun alterationPreservesTags(alter: Term.() -> Term) {
+        for (term in terms) {
+            assertEquals(term.tags, term.alter().tags)
+        }
+    }
+
+    @Test
+    fun freshCopyPreservesTags() {
+        alterationPreservesTags { freshCopy() }
+    }
+
+    @Test
+    fun freshCopyWithScopePreservesTags() {
+        alterationPreservesTags { freshCopy(Scope.Companion.of("Y")) }
+    }
+
+    @Test
+    fun applyPreservesTags() {
+        alterationPreservesTags { apply(Substitution.unifier(X, Integer.ONE)) }
+    }
+
+    @Test
+    fun getPreservesTags() {
+        alterationPreservesTags { apply(Substitution.unifier(X, Real.ONE)) }
+    }
 }
