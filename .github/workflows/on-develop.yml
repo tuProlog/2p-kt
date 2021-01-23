@@ -28,7 +28,7 @@ jobs:
           jdk: ${{ env.jdk-version }}
 
       - name: Show Env
-        run: gradle --version
+        run: ./gradlew --version
 
   build:
     runs-on: ubuntu-latest
@@ -66,6 +66,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -74,10 +77,10 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
 
       - name: Setup Gradle
-        run: gradle ${{ env.gradle-options }}
+        run: ./gradlew ${{ env.gradle-options }}
 
       - name: Check Code Style
-        run: gradle ${{ env.gradle-options }} ktlintCheck --parallel
+        run: ./gradlew ${{ env.gradle-options }} ktlintCheck --parallel
 
       - name: Archive KtLint Reports
         uses: actions/upload-artifact@v2
@@ -87,10 +90,10 @@ jobs:
           path: '**/build/reports/ktlint'
 
       - name: Clean
-        run: gradle ${{ env.gradle-options }} clean
+        run: ./gradlew ${{ env.gradle-options }} clean
 
       - name: Compile
-        run: gradle ${{ env.gradle-options }} assemble --parallel
+        run: ./gradlew ${{ env.gradle-options }} assemble --parallel
 
   test:
     runs-on: ubuntu-latest
@@ -128,6 +131,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -136,7 +142,7 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-build
 
       - name: Test JVM
-        run: gradle ${{ env.gradle-options }} jvmTest
+        run: ./gradlew ${{ env.gradle-options }} jvmTest
 
       - name: Archive JVM Test Reports
         uses: actions/upload-artifact@v2
@@ -146,7 +152,7 @@ jobs:
           path: '**/build/reports/tests/jvmTest'
 
       - name: Test JS
-        run: gradle ${{ env.gradle-options }} jsTest || gradle ${{ env.gradle-options }} clean jsTest
+        run: ./gradlew ${{ env.gradle-options }} jsTest || ./gradlew ${{ env.gradle-options }} clean jsTest
 
       - name: Archive JS Test Reports
         if: failure() || success()
@@ -191,6 +197,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -199,13 +208,13 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-test
 
       - name: Generate Doc
-        run: gradle ${{ env.gradle-options }} dokkaHtml --parallel
+        run: ./gradlew ${{ env.gradle-options }} dokkaHtml --parallel
 
       - name: Generate Multi-Module Doc
-        run: gradle ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
+        run: ./gradlew ${{ env.gradle-options }} dokkaHtmlMultiModule --parallel
 
       - name: Sign Archives
-        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+        run: ./gradlew ${{ env.gradle-options }} signAllPublications --parallel
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
@@ -249,6 +258,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -258,10 +270,10 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
 #      - name: Sign Archives
-#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+      #        run: ./gradlew ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on GitHub Maven Repo
-        run: gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel || gradle ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
+        run: ./gradlew ${{ env.gradle-options }} publishAllPublicationsToMavenRepository --parallel
         env:
           ORG_GRADLE_PROJECT_mavenRepo: https://maven.pkg.github.com/${{ github.repository }}
           ORG_GRADLE_PROJECT_mavenUsername: ${{ github.actor }}
@@ -306,6 +318,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -315,10 +330,10 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-maven-
 
 #      - name: Sign Archives
-#        run: gradle ${{ env.gradle-options }} signAllPublications --parallel
+      #        run: ./gradlew ${{ env.gradle-options }} signAllPublications --parallel
 
       - name: Publish on Bintray Maven Repo
-        run: gradle ${{ env.gradle-options }} publishAllToBintray --parallel || gradle ${{ env.gradle-options }} publishAllToBintray --parallel
+        run: ./gradlew ${{ env.gradle-options }} publishAllToBintray --parallel
         env:
           ORG_GRADLE_PROJECT_bintrayUser: ${{ secrets.BINTRAY_USER }}
           ORG_GRADLE_PROJECT_bintrayKey: ${{ secrets.BINTRAY_KEY }}
@@ -359,6 +374,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -369,7 +387,7 @@ jobs:
 
       - name: Publish on NPM
         run: |
-          gradle ${{ env.gradle-options }} jsMain npmPublish || gradle ${{ env.gradle-options }} clean jsMain npmPublish
+          ./gradlew ${{ env.gradle-options }} jsMain npmPublish || ./gradlew ${{ env.gradle-options }} clean jsMain npmPublish
         env:
           ORG_GRADLE_PROJECT_npmToken: ${{ secrets.NPM_TOKEN }}
 
@@ -409,6 +427,9 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/nodejs
+            ~/.gradle/yarn
             ~/gradle/wrapper
             **/build
             **/.gradle
@@ -418,6 +439,6 @@ jobs:
             ${{ runner.os }}-${{ env.workflow }}-gradle-${{ github.sha }}-github
 
       - name: Publish GitHub Release
-        run: gradle ${{ env.gradle-options }} githubRelease || gradle ${{ env.gradle-options }} githubRelease
+        run: ./gradlew ${{ env.gradle-options }} githubRelease || ./gradlew ${{ env.gradle-options }} githubRelease
         env:
           ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUB_TOKEN }}
