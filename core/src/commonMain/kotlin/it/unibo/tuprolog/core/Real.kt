@@ -23,9 +23,9 @@ interface Real : Numeric {
     override val intValue: BigInteger
         get() = value.toBigInteger()
 
-    override fun freshCopy(): Real = this
+    override fun freshCopy(): Real
 
-    override fun freshCopy(scope: Scope): Real = this
+    override fun freshCopy(scope: Scope): Real
 
     companion object {
 
@@ -54,5 +54,20 @@ interface Real : Numeric {
         @JvmStatic
         @JsName("parse")
         fun of(real: String): Real = of(BigDecimal.of(real))
+
+        @JvmField
+        val ZERO = Real.of(BigDecimal.ZERO)
+
+        @JvmField
+        val ONE = Real.of(BigDecimal.ONE)
+
+        @JvmField
+        val MINUS_ONE = Real.of(-BigDecimal.ONE)
+
+        @JvmField
+        val ONE_HALF = Real.of(BigDecimal.ONE_HALF)
+
+        @JvmField
+        val ONE_TENTH = Real.of(BigDecimal.ONE_TENTH)
     }
 }

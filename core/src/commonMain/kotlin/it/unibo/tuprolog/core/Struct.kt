@@ -56,12 +56,24 @@ interface Struct : Term {
     override val variables: Sequence<Var>
         get() = argsSequence.flatMap { it.variables }
 
-    override fun freshCopy(): Struct = super.freshCopy() as Struct
+    override fun freshCopy(): Struct
 
-    override fun freshCopy(scope: Scope): Struct = when {
-        isGround -> this
-        else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) })
-    }
+    override fun freshCopy(scope: Scope): Struct
+
+    @JsName("append")
+    fun append(argument: Term): Struct = addLast(argument)
+
+    @JsName("addLast")
+    fun addLast(argument: Term): Struct
+
+    @JsName("addFirst")
+    fun addFirst(argument: Term): Struct
+
+    @JsName("insertAt")
+    fun insertAt(index: Int, argument: Term): Struct
+
+    @JsName("setFunctor")
+    fun setFunctor(functor: String): Struct
 
     @JsName("functor")
     val functor: String
@@ -171,7 +183,7 @@ interface Struct : Term {
                 args.size == 1 && Set.FUNCTOR == functor -> Set.of(args)
                 args.size == 1 && Clause.FUNCTOR == functor -> Directive.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
-                else -> StructImpl(functor, args.toTypedArray())
+                else -> StructImpl(functor, args.toTypedArray(), emptyMap())
             }
 
         @JvmStatic

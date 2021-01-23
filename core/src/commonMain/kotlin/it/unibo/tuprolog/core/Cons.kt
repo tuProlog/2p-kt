@@ -28,9 +28,9 @@ interface Cons : LogicList {
     override val arity: Int
         get() = 2
 
-    override fun freshCopy(): Cons = super.freshCopy() as Cons
+    override fun freshCopy(): Cons
 
-    override fun freshCopy(scope: Scope): Cons = super.freshCopy(scope) as Cons
+    override fun freshCopy(scope: Scope): Cons
 
     companion object {
 

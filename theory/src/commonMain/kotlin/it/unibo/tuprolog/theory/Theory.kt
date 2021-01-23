@@ -10,10 +10,11 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.IndexedTheory
 import it.unibo.tuprolog.theory.impl.ListedTheory
+import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Theory : Iterable<Clause> {
+interface Theory : Iterable<Clause>, Taggable<Theory> {
 
     @JsName("isMutable")
     val isMutable: Boolean
@@ -142,6 +143,9 @@ interface Theory : Iterable<Clause> {
 
     @JsName("equalsUsingVarCompleteNames")
     fun equals(other: Theory, useVarCompleteName: Boolean): Boolean
+
+    @JsName("clone")
+    fun clone(): Theory
 
     companion object {
 

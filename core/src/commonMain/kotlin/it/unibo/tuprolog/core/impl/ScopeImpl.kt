@@ -24,6 +24,7 @@ import kotlin.jvm.Synchronized
 import it.unibo.tuprolog.core.List as LogicList
 import it.unibo.tuprolog.core.Set as LogicSet
 
+@Suppress("RemoveRedundantQualifierName")
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
 
     override fun contains(variable: Var): Boolean = variable.name in _variables
@@ -75,6 +76,9 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
     override fun setOf(terms: Iterable<Term>): LogicSet =
         LogicSet.of(terms)
 
+    override fun setOf(terms: Sequence<Term>): LogicSet =
+        LogicSet.of(terms)
+
     override fun <T> ktSetOf(vararg items: T): Set<T> = kotlin.collections.setOf(*items)
 
     override fun <T> ktEmptySet(): Set<T> = kotlin.collections.emptySet()
@@ -83,6 +87,9 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         LogicSet.of(*terms)
 
     override fun listOf(terms: Iterable<Term>): LogicList =
+        LogicList.of(terms)
+
+    override fun listOf(terms: Sequence<Term>): LogicList =
         LogicList.of(terms)
 
     override fun <T> ktListOf(vararg items: T): List<T> = kotlin.collections.listOf(*items)
@@ -113,6 +120,9 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
         LogicList.from(terms, last)
 
     override fun tupleOf(terms: Iterable<Term>): Tuple =
+        Tuple.of(terms.toList())
+
+    override fun tupleOf(terms: Sequence<Term>): Tuple =
         Tuple.of(terms.toList())
 
     override fun tupleOf(vararg terms: Term): Tuple =

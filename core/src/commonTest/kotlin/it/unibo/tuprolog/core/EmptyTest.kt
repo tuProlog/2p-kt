@@ -3,7 +3,7 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.impl.EmptyListImpl
 import it.unibo.tuprolog.core.impl.EmptySetImpl
 import kotlin.test.Test
-import kotlin.test.assertSame
+import kotlin.test.assertEquals
 
 /**
  * Test class for [Empty] and its companion object
@@ -14,11 +14,11 @@ class EmptyTest {
 
     @Test
     fun listMethodShouldReturnEmptyList() {
-        assertSame(EmptyListImpl, Empty.list())
+        assertEquals(EmptyListImpl(), Empty.list())
     }
 
     @Test
     fun setMethodShouldReturnEmptySet() {
-        assertSame(EmptySetImpl, Empty.set())
+        assertEquals(EmptySetImpl(), Empty.set())
     }
 }

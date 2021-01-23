@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
-internal abstract class AbstractTheory : Theory {
+internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Theory {
 
     override fun toImmutableTheory(): Theory = this
 
@@ -111,10 +111,15 @@ internal abstract class AbstractTheory : Theory {
     override fun assertZ(clauses: Sequence<Clause>): Theory =
         createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
 
-    protected abstract fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory
+    protected abstract fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = this.tags
+    ): AbstractTheory
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
         retract(clauses.asIterable())
 
     abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
+
+    override fun clone(): Theory = createNewTheory(clauses.asSequence())
 }

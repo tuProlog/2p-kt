@@ -2,16 +2,18 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
 @Suppress("EqualsOrHashCode")
-internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Integer {
+internal class IntegerImpl(
+    override val value: BigInteger,
+    tags: Map<String, Any> = emptyMap()
+) : NumericImpl(tags), Integer {
 
-    override val decimalValue: BigDecimal by lazy {
-        BigDecimal.of(intValue)
-    }
+    override val decimalValue: BigDecimal by lazy { BigDecimal.of(intValue) }
 
     override val intValue: BigInteger = value
 
@@ -28,9 +30,7 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
     private inline fun equalsToInteger(other: Integer) =
         value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        return other is Integer && equalsToInteger(other)
-    }
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean = other is Integer && equalsToInteger(other)
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 
@@ -39,4 +39,10 @@ internal class IntegerImpl(override val value: BigInteger) : NumericImpl(), Inte
             is Integer -> value.compareTo(other.value)
             else -> super<NumericImpl>.compareValueTo(other)
         }
+
+    override fun copyWithTags(tags: Map<String, Any>): Integer = IntegerImpl(value, tags)
+
+    override fun freshCopy(): Integer = this
+
+    override fun freshCopy(scope: Scope): Integer = this
 }

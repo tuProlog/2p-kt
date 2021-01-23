@@ -117,16 +117,17 @@ internal fun IntermediateState.stateEnd(
     solution: Solution,
     sideEffectManager: SideEffectManager? = null,
     vararg sideEffects: SideEffect
-): StateEnd = when (solution) {
-    is Solution.Yes ->
+): StateEnd = solution.whenIs(
+    yes = { sol ->
         stateEndTrue(
-            solution.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
+            sol.substitution.takeUnless { it.isEmpty() } ?: solve.context.substitution,
             sideEffectManager,
             *sideEffects
         )
-    is Solution.No -> stateEndFalse(sideEffectManager, *sideEffects)
-    is Solution.Halt -> stateEndHalt(solution.exception, sideEffectManager, *sideEffects)
-}
+    },
+    no = { stateEndFalse(sideEffectManager, *sideEffects) },
+    halt = { stateEndHalt(it.exception, sideEffectManager, *sideEffects) }
+)
 
 /** Transition from this intermediate state to a [StateEnd] containing provided [response] data */
 internal fun IntermediateState.stateEnd(response: Solve.Response) = with(response) {

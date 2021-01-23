@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
  */
 internal class EmptySetImplTest {
 
-    private val testedObj = EmptySetImpl
+    private val testedObj = EmptySetImpl()
 
     @Test
     fun emptySetFunctor() {

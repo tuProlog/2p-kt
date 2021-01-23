@@ -12,22 +12,31 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
-internal class MutableIndexedTheory private constructor(override val queue: MutableClauseQueue) :
-    AbstractIndexedTheory(queue), MutableTheory {
+internal class MutableIndexedTheory private constructor(
+    override val queue: MutableClauseQueue,
+    tags: Map<String, Any>
+) : AbstractIndexedTheory(queue, tags), MutableTheory {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(MutableClauseQueue.of(clauses)) {
+    constructor(
+        clauses: Iterable<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(MutableClauseQueue.of(clauses), tags) {
         checkClausesCorrect(clauses)
     }
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
+    constructor(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.asIterable(), tags)
 
     override val clauses: List<Clause> get() = queue.toList()
 
     override fun iterator(): Iterator<Clause> = queue.iterator()
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory = MutableIndexedTheory(clauses)
+    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
+        MutableIndexedTheory(clauses, tags)
 
     override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> =
         queue.retrieve(clause).toRetractResult()
@@ -89,4 +98,9 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
     override fun abolish(indicator: Indicator): MutableIndexedTheory = super.abolish(indicator) as MutableIndexedTheory
 
     override fun toImmutableTheory(): Theory = Theory.indexedOf(this)
+
+    override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
+        if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
+
+    override fun clone(): MutableTheory = super.clone() as MutableTheory
 }

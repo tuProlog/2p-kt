@@ -22,7 +22,7 @@ internal class SolutionTest {
 
     @Test
     fun yesSolutionContainsInsertedData() {
-        val toBeTested = Solution.Yes(aQuery, aSubstitution)
+        val toBeTested = Solution.yes(aQuery, aSubstitution)
 
         assertEquals(aQuery, toBeTested.query)
         assertEquals(aSubstitution, toBeTested.substitution)
@@ -30,21 +30,21 @@ internal class SolutionTest {
 
     @Test
     fun yesSolutionSubstitutionDefaultsToEmptyIfNotSpecified() {
-        val toBeTested = Solution.Yes(aQuery)
+        val toBeTested = Solution.yes(aQuery)
 
         assertEquals(Substitution.empty(), toBeTested.substitution)
     }
 
     @Test
     fun yesSolutionComputesSolvedQueryApplyingSubstitutionToQuery() {
-        val toBeTested = Solution.Yes(aQuery, aSubstitution)
+        val toBeTested = Solution.yes(aQuery, aSubstitution)
 
         assertEquals(theQuerySolved, toBeTested.solvedQuery)
     }
 
     @Test
     fun yesSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.Yes(querySignature, queryArgList, aSubstitution)
+        val toBeTested = Solution.yes(querySignature, queryArgList, aSubstitution)
 
         assertEquals(aQuery, toBeTested.query)
         assertEquals(aSubstitution, toBeTested.substitution)
@@ -53,59 +53,59 @@ internal class SolutionTest {
 
     @Test
     fun yesSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
-        assertFailsWith<IllegalArgumentException> { Solution.Yes(querySignature, emptyList(), Substitution.empty()) }
+        assertFailsWith<IllegalArgumentException> { Solution.yes(querySignature, emptyList(), Substitution.empty()) }
         assertFailsWith<IllegalArgumentException> {
-            Solution.Yes(querySignature, listOf(Truth.TRUE, Truth.TRUE), Substitution.empty())
+            Solution.yes(querySignature, listOf(Truth.TRUE, Truth.TRUE), Substitution.empty())
         }
     }
 
     @Test
     fun yesSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.Yes(querySignature.copy(vararg = true), queryArgList, Substitution.empty())
+            Solution.yes(querySignature.copy(vararg = true), queryArgList, Substitution.empty())
         }
     }
 
     @Test
     fun noSolutionContainsInsertedData() {
-        assertEquals(aQuery, Solution.No(aQuery).query)
+        assertEquals(aQuery, Solution.no(aQuery).query)
     }
 
     @Test
     fun noSolutionSolutionAlwaysNull() {
-        assertNull(Solution.No(aQuery).solvedQuery)
+        assertNull(Solution.no(aQuery).solvedQuery)
     }
 
     @Test
     fun noSolutionSubstitutionAlwaysFailed() {
-        assertEquals(Substitution.failed(), Solution.No(aQuery).substitution)
+        assertEquals(Substitution.failed(), Solution.no(aQuery).substitution)
     }
 
     @Test
     fun noSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.No(querySignature, queryArgList)
+        val toBeTested = Solution.no(querySignature, queryArgList)
 
         assertEquals(aQuery, toBeTested.query)
     }
 
     @Test
     fun noSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
-        assertFailsWith<IllegalArgumentException> { Solution.No(querySignature, emptyList()) }
+        assertFailsWith<IllegalArgumentException> { Solution.no(querySignature, emptyList()) }
         assertFailsWith<IllegalArgumentException> {
-            Solution.No(querySignature, listOf(Truth.TRUE, Truth.TRUE))
+            Solution.no(querySignature, listOf(Truth.TRUE, Truth.TRUE))
         }
     }
 
     @Test
     fun noSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.No(querySignature.copy(vararg = true), queryArgList)
+            Solution.no(querySignature.copy(vararg = true), queryArgList)
         }
     }
 
     @Test
     fun haltSolutionContainsInsertedData() {
-        val toBeTested = Solution.Halt(aQuery, anException)
+        val toBeTested = Solution.halt(aQuery, anException)
 
         assertEquals(aQuery, toBeTested.query)
         assertEquals(anException, toBeTested.exception)
@@ -113,33 +113,33 @@ internal class SolutionTest {
 
     @Test
     fun haltSolutionSolutionAlwaysNull() {
-        assertNull(Solution.Halt(aQuery, anException).solvedQuery)
+        assertNull(Solution.halt(aQuery, anException).solvedQuery)
     }
 
     @Test
     fun haltSolutionSubstitutionAlwaysFailed() {
-        assertEquals(Substitution.failed(), Solution.Halt(aQuery, anException).substitution)
+        assertEquals(Substitution.failed(), Solution.halt(aQuery, anException).substitution)
     }
 
     @Test
     fun haltSolutionSecondaryConstructorWorksAsExpected() {
-        val toBeTested = Solution.Halt(querySignature, queryArgList, anException)
+        val toBeTested = Solution.halt(querySignature, queryArgList, anException)
 
         assertEquals(aQuery, toBeTested.query)
     }
 
     @Test
     fun haltSolutionSecondaryConstructorComplainsIfArityDoesntMatchArgumentsCount() {
-        assertFailsWith<IllegalArgumentException> { Solution.Halt(querySignature, emptyList(), anException) }
+        assertFailsWith<IllegalArgumentException> { Solution.halt(querySignature, emptyList(), anException) }
         assertFailsWith<IllegalArgumentException> {
-            Solution.Halt(querySignature, listOf(Truth.TRUE, Truth.TRUE), anException)
+            Solution.halt(querySignature, listOf(Truth.TRUE, Truth.TRUE), anException)
         }
     }
 
     @Test
     fun haltSolutionSecondaryConstructorComplainsIfSignatureVararg() {
         assertFailsWith<IllegalArgumentException> {
-            Solution.Halt(querySignature.copy(vararg = true), queryArgList, anException)
+            Solution.halt(querySignature.copy(vararg = true), queryArgList, anException)
         }
     }
 }

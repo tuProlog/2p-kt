@@ -12,10 +12,11 @@ interface Truth : Atom {
     override val isFail: Boolean
         get() = !isTrue
 
-    override fun freshCopy(): Truth = this
+    override fun freshCopy(): Truth
 
-    override fun freshCopy(scope: Scope): Truth = this
+    override fun freshCopy(scope: Scope): Truth
 
+    @Suppress("MayBeConstant")
     companion object {
 
         @JvmField
