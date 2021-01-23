@@ -75,9 +75,6 @@ interface Struct : Term {
     @JsName("setFunctor")
     fun setFunctor(functor: String): Struct
 
-    @JsName("plus")
-    operator fun plus(argument: Term): Struct = addLast(argument)
-
     @JsName("functor")
     val functor: String
 
