@@ -298,4 +298,52 @@ interface SideEffectFactory {
     @JsName("closeOutputChannels")
     fun closeOutputChannels(vararg names: String) =
         SideEffect.CloseOutputChannels(*names)
+
+    @JsName("addEphemeralData")
+    fun addEphemeralData(key: String, value: Any) =
+        SideEffect.SetEphemeralData(key, value, reset = false)
+
+    @JsName("addEphemeralDataMap")
+    fun <X> addEphemeralData(data: Map<String, X>) =
+        SideEffect.SetEphemeralData(data.mapValues { it }, reset = false)
+
+    @JsName("addEphemeralDataPairs")
+    fun <X> addEphemeralData(vararg data: Pair<String, X>) =
+        SideEffect.SetEphemeralData(data.map { (a, b) -> a to (b as Any) }, reset = false)
+
+    @JsName("setEphemeralData")
+    fun setEphemeralData(key: String, value: Any) =
+        SideEffect.SetEphemeralData(key, value, reset = false)
+
+    @JsName("setEphemeralDataMap")
+    fun <X> setEphemeralData(data: Map<String, X>) =
+        SideEffect.SetEphemeralData(data.mapValues { it }, reset = false)
+
+    @JsName("setEphemeralDataPairs")
+    fun <X> setEphemeralData(vararg data: Pair<String, X>) =
+        SideEffect.SetEphemeralData(data.map { (a, b) -> a to (b as Any) }, reset = false)
+
+    @JsName("addDurableData")
+    fun addDurableData(key: String, value: Any) =
+        SideEffect.SetDurableData(key, value, reset = false)
+
+    @JsName("addDurableDataMap")
+    fun <X> addDurableData(data: Map<String, X>) =
+        SideEffect.SetDurableData(data.mapValues { it }, reset = false)
+
+    @JsName("addDurableDataPairs")
+    fun <X> addDurableData(vararg data: Pair<String, X>) =
+        SideEffect.SetDurableData(data.map { (a, b) -> a to (b as Any) }, reset = false)
+
+    @JsName("setDurableData")
+    fun setDurableData(key: String, value: Any) =
+        SideEffect.SetDurableData(key, value, reset = false)
+
+    @JsName("setDurableDataMap")
+    fun <X> setDurableData(data: Map<String, X>) =
+        SideEffect.SetDurableData(data.mapValues { it }, reset = false)
+
+    @JsName("setDurableDataPairs")
+    fun <X> setDurableData(vararg data: Pair<String, X>) =
+        SideEffect.SetDurableData(data.map { (a, b) -> a to (b as Any) }, reset = false)
 }

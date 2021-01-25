@@ -27,6 +27,12 @@ interface ExecutionContext : ExecutionContextAware {
     @JsName("prologStackTrace")
     val prologStackTrace: List<Struct>
 
+    @JsName("durableData")
+    val durableData: Map<String, Any>
+
+    @JsName("ephemeralData")
+    val ephemeralData: Map<String, Any>
+
     @JsName("createSolver")
     fun createSolver(
         libraries: Libraries = this.libraries,
@@ -61,6 +67,8 @@ interface ExecutionContext : ExecutionContextAware {
         var operators = operators
         var inputChannels = inputChannels
         var outputChannels = outputChannels
+        var durableData = durableData
+        var ephemeralData = ephemeralData
 
         for (sideEffect in sideEffects) {
             when (sideEffect) {
@@ -141,6 +149,20 @@ interface ExecutionContext : ExecutionContextAware {
                 is SideEffect.CloseOutputChannels -> {
                     outputChannels -= sideEffect.names
                 }
+                is SideEffect.SetDurableData -> {
+                    durableData = if (sideEffect.reset) {
+                        sideEffect.data
+                    } else {
+                        durableData + sideEffect.data
+                    }
+                }
+                is SideEffect.SetEphemeralData -> {
+                    ephemeralData = if (sideEffect.reset) {
+                        sideEffect.data
+                    } else {
+                        ephemeralData + sideEffect.data
+                    }
+                }
             }
         }
         return update(
@@ -150,13 +172,14 @@ interface ExecutionContext : ExecutionContextAware {
             libraries = libraries,
             operators = operators,
             inputChannels = inputChannels,
-            outputChannels = outputChannels
+            outputChannels = outputChannels,
+            durableData = durableData,
+            ephemeralData = ephemeralData
         )
     }
 
     @JsName("applySequence")
-    fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext =
-        apply(sideEffects.asIterable())
+    fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext = apply(sideEffects.asIterable())
 
     @JsName("update")
     fun update(
@@ -166,6 +189,8 @@ interface ExecutionContext : ExecutionContextAware {
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,
         inputChannels: InputStore = this.inputChannels,
-        outputChannels: OutputStore = this.outputChannels
+        outputChannels: OutputStore = this.outputChannels,
+        durableData: Map<String, Any> = this.durableData,
+        ephemeralData: Map<String, Any> = this.ephemeralData
     ): ExecutionContext
 }

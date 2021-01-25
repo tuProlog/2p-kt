@@ -84,7 +84,9 @@ sealed class ChoicePointContext(
                 operators = context.operators,
                 inputChannels = context.inputChannels,
                 outputChannels = context.outputChannels,
-                libraries = context.libraries
+                libraries = context.libraries,
+                durableData = context.durableData,
+                ephemeralData = emptyMap()
             )
 
             val nextChoicePointContext = copy(
@@ -121,7 +123,9 @@ sealed class ChoicePointContext(
                 operators = context.operators,
                 inputChannels = context.inputChannels,
                 outputChannels = context.outputChannels,
-                libraries = context.libraries
+                libraries = context.libraries,
+                durableData = context.durableData,
+                ephemeralData = emptyMap()
             )
 
             val nextChoicePointContext = copy(

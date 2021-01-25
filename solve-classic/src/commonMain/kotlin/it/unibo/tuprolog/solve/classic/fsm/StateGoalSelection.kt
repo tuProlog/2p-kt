@@ -13,21 +13,23 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                 )
             } else {
                 StateGoalSelection(
-                    with(context.parent!!) {
-                        copy(
+                    context.parent!!.let {
+                        it.copy(
                             choicePoints = context.choicePoints,
                             flags = context.flags,
                             dynamicKb = context.dynamicKb,
                             staticKb = context.staticKb,
-                            substitution = context.substitution.filter(interestingVariables),
-                            goals = goals.next, // go on with parent's goals
-                            procedure = procedure,
+                            substitution = context.substitution.filter(it.interestingVariables),
+                            goals = it.goals.next, // go on with parent's goals
+                            procedure = it.procedure,
                             step = nextStep(),
                             startTime = context.startTime,
                             operators = context.operators,
                             inputChannels = context.inputChannels,
                             outputChannels = context.outputChannels,
-                            libraries = context.libraries
+                            libraries = context.libraries,
+                            durableData = context.durableData,
+                            ephemeralData = context.ephemeralData
                         )
                     }
                 )

@@ -224,4 +224,28 @@ sealed class SideEffect {
 
         constructor(names: Sequence<String>) : this(names.toList())
     }
+
+    abstract class SetCustomData(open val data: Map<String, Any>, open val reset: Boolean = false) : SideEffect()
+
+    data class SetDurableData(
+        override val data: Map<String, Any>,
+        override val reset: Boolean = false
+    ) : SetCustomData(data, reset) {
+        constructor(key: String, value: Any, reset: Boolean = false) : this(listOf(key to value), reset)
+
+        constructor(vararg data: Pair<String, Any>, reset: Boolean = false) : this(listOf(*data), reset)
+
+        constructor(data: Iterable<Pair<String, Any>>, reset: Boolean = false) : this(data.toMap(), reset)
+    }
+
+    data class SetEphemeralData(
+        override val data: Map<String, Any>,
+        override val reset: Boolean = false
+    ) : SetCustomData(data, reset) {
+        constructor(key: String, value: Any, reset: Boolean = false) : this(listOf(key to value), reset)
+
+        constructor(vararg data: Pair<String, Any>, reset: Boolean = false) : this(listOf(*data), reset)
+
+        constructor(data: Iterable<Pair<String, Any>>, reset: Boolean = false) : this(data.toMap(), reset)
+    }
 }

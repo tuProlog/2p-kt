@@ -36,6 +36,8 @@ data class ClassicExecutionContext(
     override val inputChannels: InputStore = InputStore.default(),
     override val outputChannels: OutputStore = OutputStore.default(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
+    override val ephemeralData: Map<String, Any> = emptyMap(),
+    override val durableData: Map<String, Any> = emptyMap(),
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
@@ -112,7 +114,9 @@ data class ClassicExecutionContext(
         dynamicKb: Theory,
         operators: OperatorSet,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
+        durableData: Map<String, Any>,
+        ephemeralData: Map<String, Any>
     ): ClassicExecutionContext {
         return copy(
             libraries = libraries,
@@ -121,7 +125,9 @@ data class ClassicExecutionContext(
             dynamicKb = dynamicKb.toMutableTheory(),
             operators = operators,
             inputChannels = inputChannels,
-            outputChannels = outputChannels
+            outputChannels = outputChannels,
+            durableData = durableData,
+            ephemeralData = ephemeralData
         )
     }
 
