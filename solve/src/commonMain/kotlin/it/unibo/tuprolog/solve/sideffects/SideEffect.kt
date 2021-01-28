@@ -89,9 +89,11 @@ abstract class SideEffect {
         constructor(clauses: Sequence<Clause>, onTop: Boolean = false) : this(clauses.asIterable(), onTop)
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(dynamicKb = context.dynamicKb.let {
-                if (onTop) it.assertA(clauses) else it.assertZ(clauses)
-            }.toMutableTheory())
+            context.update(
+                dynamicKb = context.dynamicKb.let {
+                    if (onTop) it.assertA(clauses) else it.assertZ(clauses)
+                }.toMutableTheory()
+            )
     }
 
     data class RemoveDynamicClauses(override val clauses: Iterable<Clause>) : RemoveClausesFromKb(clauses) {
@@ -250,7 +252,7 @@ abstract class SideEffect {
 
     abstract class AlterChannelsByName(open val names: Iterable<String>) : AlterChannels()
 
-    abstract class AlterInputChannels(open val inputChannels: Map<String, InputChannel<String>>)  : AlterChannels()
+    abstract class AlterInputChannels(open val inputChannels: Map<String, InputChannel<String>>) : AlterChannels()
 
     abstract class AlterOutputChannels(open val outputChannels: Map<String, OutputChannel<String>>) : AlterChannels()
 
