@@ -28,6 +28,8 @@ internal data class StreamsExecutionContext(
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.default(),
     override val outputChannels: OutputStore = OutputStore.default(),
+    override val durableData: Map<String, Any> = emptyMap(),
+    override val ephemeralData: Map<String, Any> = emptyMap(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
@@ -43,6 +45,8 @@ internal data class StreamsExecutionContext(
         context.operators,
         context.inputChannels,
         context.outputChannels,
+        context.durableData,
+        context.ephemeralData,
         newCurrentSubstitution,
         (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
         (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
@@ -99,7 +103,9 @@ internal data class StreamsExecutionContext(
         dynamicKb: Theory,
         operators: OperatorSet,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
+        durableData: Map<String, Any>,
+        ephemeralData: Map<String, Any>
     ): StreamsExecutionContext {
         return copy(
             libraries = libraries,
@@ -108,7 +114,9 @@ internal data class StreamsExecutionContext(
             dynamicKb = dynamicKb,
             operators = operators,
             inputChannels = inputChannels,
-            outputChannels = outputChannels
+            outputChannels = outputChannels,
+            durableData = durableData,
+            ephemeralData = ephemeralData
         )
     }
 }

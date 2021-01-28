@@ -19,6 +19,10 @@ object Dummy {
 
         override val prologStackTrace: List<Struct> = emptyList()
 
+        override val durableData: Map<String, Any> = emptyMap()
+
+        override val ephemeralData: Map<String, Any> = emptyMap()
+
         override fun createSolver(
             libraries: Libraries,
             flags: FlagStore,
@@ -48,7 +52,9 @@ object Dummy {
             dynamicKb: Theory,
             operators: OperatorSet,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
+            durableData: Map<String, Any>,
+            ephemeralData: Map<String, Any>
         ): ExecutionContext {
             TODO("Not yet implemented")
         }
