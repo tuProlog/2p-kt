@@ -30,6 +30,8 @@ object DummyInstances {
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
         override val prologStackTrace: Nothing by lazy { throw NotImplementedError() }
+        override val durableData: Nothing by lazy { throw NotImplementedError() }
+        override val ephemeralData: Nothing by lazy { throw NotImplementedError() }
 
         override fun createSolver(
             libraries: Libraries,
@@ -60,7 +62,9 @@ object DummyInstances {
             dynamicKb: Theory,
             operators: OperatorSet,
             inputChannels: InputStore,
-            outputChannels: OutputStore
+            outputChannels: OutputStore,
+            durableData: Map<String, Any>,
+            ephemeralData: Map<String, Any>
         ): ExecutionContext {
             throw NotImplementedError()
         }
