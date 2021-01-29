@@ -28,7 +28,7 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
                             inputChannels = context.inputChannels,
                             outputChannels = context.outputChannels,
                             libraries = context.libraries,
-                            customData = context.customData.discardEphemeral()
+                            customData = context.customData
                         )
                     }
                 )
