@@ -106,7 +106,8 @@ internal open class ClassicSolver : Solver {
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             maxDuration = maxDuration,
-            startTime = currentTimeInstant()
+            startTime = currentTimeInstant(),
+            durableData = state.context.durableData
         )
 
         state = StateInit(initialContext)

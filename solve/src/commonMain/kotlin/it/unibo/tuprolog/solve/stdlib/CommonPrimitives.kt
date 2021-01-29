@@ -33,6 +33,8 @@ import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.solve.stdlib.primitive.FindAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Float
 import it.unibo.tuprolog.solve.stdlib.primitive.Functor
+import it.unibo.tuprolog.solve.stdlib.primitive.GetDurable
+import it.unibo.tuprolog.solve.stdlib.primitive.GetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt1
@@ -49,6 +51,8 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
 import it.unibo.tuprolog.solve.stdlib.primitive.Retract
 import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
+import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
+import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
@@ -98,6 +102,8 @@ object CommonPrimitives {
             FindAll,
             Float,
             Functor,
+            GetDurable,
+            GetEphemeral,
             Ground,
             Halt,
             Halt1,
@@ -114,6 +120,8 @@ object CommonPrimitives {
             Repeat,
             Retract,
             RetractAll,
+            SetDurable,
+            SetEphemeral,
             SetOf,
             Sleep,
             SubAtom,
