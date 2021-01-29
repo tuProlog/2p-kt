@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
@@ -19,9 +20,7 @@ object Dummy {
 
         override val prologStackTrace: List<Struct> = emptyList()
 
-        override val durableData: Map<String, Any> = emptyMap()
-
-        override val ephemeralData: Map<String, Any> = emptyMap()
+        override val customData: CustomDataStore = CustomDataStore.empty()
 
         override fun createSolver(
             libraries: Libraries,
@@ -53,8 +52,7 @@ object Dummy {
             operators: OperatorSet,
             inputChannels: InputStore,
             outputChannels: OutputStore,
-            durableData: Map<String, Any>,
-            ephemeralData: Map<String, Any>
+            customData: CustomDataStore
         ): ExecutionContext {
             TODO("Not yet implemented")
         }

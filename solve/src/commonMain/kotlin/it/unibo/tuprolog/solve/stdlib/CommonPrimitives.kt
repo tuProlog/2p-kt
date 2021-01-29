@@ -35,6 +35,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.Float
 import it.unibo.tuprolog.solve.stdlib.primitive.Functor
 import it.unibo.tuprolog.solve.stdlib.primitive.GetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.GetEphemeral
+import it.unibo.tuprolog.solve.stdlib.primitive.GetPersistent
 import it.unibo.tuprolog.solve.stdlib.primitive.Ground
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt
 import it.unibo.tuprolog.solve.stdlib.primitive.Halt1
@@ -54,6 +55,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
 import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
+import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
@@ -104,6 +106,7 @@ object CommonPrimitives {
             Functor,
             GetDurable,
             GetEphemeral,
+            GetPersistent,
             Ground,
             Halt,
             Halt1,
@@ -123,6 +126,7 @@ object CommonPrimitives {
             SetDurable,
             SetEphemeral,
             SetOf,
+            SetPersistent,
             Sleep,
             SubAtom,
             TermGreaterThan,

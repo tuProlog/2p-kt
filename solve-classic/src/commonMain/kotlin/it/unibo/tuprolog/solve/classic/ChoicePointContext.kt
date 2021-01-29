@@ -85,8 +85,7 @@ sealed class ChoicePointContext(
                 inputChannels = context.inputChannels,
                 outputChannels = context.outputChannels,
                 libraries = context.libraries,
-                durableData = context.durableData,
-                ephemeralData = emptyMap()
+                customData = context.customData.discardEphemeral()
             )
 
             val nextChoicePointContext = copy(
@@ -124,8 +123,7 @@ sealed class ChoicePointContext(
                 inputChannels = context.inputChannels,
                 outputChannels = context.outputChannels,
                 libraries = context.libraries,
-                durableData = context.durableData,
-                ephemeralData = emptyMap()
+                customData = context.customData.discardEphemeral()
             )
 
             val nextChoicePointContext = copy(
@@ -143,9 +141,9 @@ fun ChoicePointContext?.nextDepth(): Int = if (this == null) 0 else this.depth +
 fun ChoicePointContext?.appendPrimitives(
     alternatives: Cursor<out Solve.Response>,
     executionContext: ClassicExecutionContext? = null
-): ChoicePointContext? = ChoicePointContext.Primitives(alternatives, executionContext, this, nextDepth())
+): ChoicePointContext = ChoicePointContext.Primitives(alternatives, executionContext, this, nextDepth())
 
 fun ChoicePointContext?.appendRules(
     alternatives: Cursor<out Rule>,
     executionContext: ClassicExecutionContext? = null
-): ChoicePointContext? = ChoicePointContext.Rules(alternatives, executionContext, this, nextDepth())
+): ChoicePointContext = ChoicePointContext.Rules(alternatives, executionContext, this, nextDepth())

@@ -251,4 +251,22 @@ data class SideEffectsBuilderImpl(override val sideEffects: MutableList<SideEffe
 
     override fun <X> setDurableData(vararg data: Pair<String, X>): SideEffect.SetDurableData =
         adding { super.setDurableData(*data) }
+
+    override fun addPersistentData(key: String, value: Any): SideEffect.SetPersistentData =
+        adding { super.addPersistentData(key, value) }
+
+    override fun <X> addPersistentData(data: Map<String, X>): SideEffect.SetPersistentData =
+        adding { super.addPersistentData(data) }
+
+    override fun <X> addPersistentData(vararg data: Pair<String, X>): SideEffect.SetPersistentData =
+        adding { super.addPersistentData(*data) }
+
+    override fun setPersistentData(key: String, value: Any): SideEffect.SetPersistentData =
+        adding { super.setPersistentData(key, value) }
+
+    override fun <X> setPersistentData(data: Map<String, X>): SideEffect.SetPersistentData =
+        adding { super.setPersistentData(data) }
+
+    override fun <X> setPersistentData(vararg data: Pair<String, X>): SideEffect.SetPersistentData =
+        adding { super.setPersistentData(*data) }
 }

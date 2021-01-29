@@ -17,7 +17,7 @@ internal data class StateInit(override val context: ClassicExecutionContext) : A
                 choicePoints = null,
                 depth = 0,
                 step = 1,
-                ephemeralData = emptyMap()
+                customData = context.customData.preservePersistent()
             ).appendRulesAndChoicePoints(Cursor.empty())
         )
     }

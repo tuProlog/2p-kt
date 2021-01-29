@@ -24,7 +24,11 @@ abstract class SideEffect {
     abstract class SetClausesOfKb(open val clauses: Iterable<Clause>) : SideEffect() {
         val theory: Theory by lazy {
             clauses.let {
-                if (it is Theory) { it } else { Theory.indexedOf(it) }
+                if (it is Theory) {
+                    it
+                } else {
+                    Theory.indexedOf(it)
+                }
             }
         }
 
@@ -110,7 +114,11 @@ abstract class SideEffect {
     abstract class AlterFlagsByEntries(open val flags: Map<String, Term>) : AlterFlags() {
         val flagStore: FlagStore by lazy {
             flags.let {
-                if (it is FlagStore) { it } else { FlagStore.of(it) }
+                if (it is FlagStore) {
+                    it
+                } else {
+                    FlagStore.of(it)
+                }
             }
         }
     }
@@ -163,7 +171,11 @@ abstract class SideEffect {
 
         val aliasedLibrary: AliasedLibrary by lazy {
             library.let {
-                if (it is AliasedLibrary) { it } else { Library.of(it, alias) }
+                if (it is AliasedLibrary) {
+                    it
+                } else {
+                    Library.of(it, alias)
+                }
             }
         }
 
@@ -217,7 +229,13 @@ abstract class SideEffect {
 
     abstract class AlterOperators(open val operators: Iterable<Operator>) : SideEffect() {
         val operatorSet: OperatorSet by lazy {
-            operators.let { if (it is OperatorSet) { it } else { OperatorSet(it) } }
+            operators.let {
+                if (it is OperatorSet) {
+                    it
+                } else {
+                    OperatorSet(it)
+                }
+            }
         }
     }
 
@@ -328,6 +346,28 @@ abstract class SideEffect {
 
     abstract class AlterCustomData(open val data: Map<String, Any>, open val reset: Boolean = false) : SideEffect()
 
+    data class SetPersistentData(
+        override val data: Map<String, Any>,
+        override val reset: Boolean = false
+    ) : AlterCustomData(data, reset) {
+        constructor(key: String, value: Any, reset: Boolean = false) : this(listOf(key to value), reset)
+
+        constructor(vararg data: Pair<String, Any>, reset: Boolean = false) : this(listOf(*data), reset)
+
+        constructor(data: Iterable<Pair<String, Any>>, reset: Boolean = false) : this(data.toMap(), reset)
+
+        override fun applyTo(context: ExecutionContext): ExecutionContext =
+            context.update(
+                customData = context.customData.copy(
+                    persistent = if (reset) {
+                        data
+                    } else {
+                        context.customData.persistent + data
+                    }
+                )
+            )
+    }
+
     data class SetDurableData(
         override val data: Map<String, Any>,
         override val reset: Boolean = false
@@ -339,7 +379,15 @@ abstract class SideEffect {
         constructor(data: Iterable<Pair<String, Any>>, reset: Boolean = false) : this(data.toMap(), reset)
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(durableData = if (reset) { data } else { context.durableData + data })
+            context.update(
+                customData = context.customData.copy(
+                    durable = if (reset) {
+                        data
+                    } else {
+                        context.customData.durable + data
+                    }
+                )
+            )
     }
 
     data class SetEphemeralData(
@@ -353,6 +401,14 @@ abstract class SideEffect {
         constructor(data: Iterable<Pair<String, Any>>, reset: Boolean = false) : this(data.toMap(), reset)
 
         override fun applyTo(context: ExecutionContext): ExecutionContext =
-            context.update(ephemeralData = if (reset) { data } else { context.ephemeralData + data })
+            context.update(
+                customData = context.customData.copy(
+                    ephemeral = if (reset) {
+                        data
+                    } else {
+                        context.customData.ephemeral + data
+                    }
+                )
+            )
     }
 }

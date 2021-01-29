@@ -5,5 +5,5 @@ import it.unibo.tuprolog.solve.primitive.Solve
 
 object GetDurable : AbstractGetData("durable") {
     override val Solve.Request<ExecutionContext>.data: Map<String, Any>
-        get() = context.durableData
+        get() = context.customData.durable
 }

@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
@@ -28,8 +29,7 @@ internal data class StreamsExecutionContext(
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.default(),
     override val outputChannels: OutputStore = OutputStore.default(),
-    override val durableData: Map<String, Any> = emptyMap(),
-    override val ephemeralData: Map<String, Any> = emptyMap(),
+    override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     /** The key strategies that a solver should use during resolution process */
     val solverStrategies: SolverStrategies = SolverStrategies.prologStandard,
@@ -45,8 +45,7 @@ internal data class StreamsExecutionContext(
         context.operators,
         context.inputChannels,
         context.outputChannels,
-        context.durableData,
-        context.ephemeralData,
+        context.customData,
         newCurrentSubstitution,
         (context as? StreamsExecutionContext)?.solverStrategies ?: SolverStrategies.prologStandard,
         (context as? StreamsExecutionContext)?.sideEffectManager ?: SideEffectManagerImpl()
@@ -104,8 +103,7 @@ internal data class StreamsExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        durableData: Map<String, Any>,
-        ephemeralData: Map<String, Any>
+        customData: CustomDataStore
     ): StreamsExecutionContext {
         return copy(
             libraries = libraries,
@@ -115,8 +113,7 @@ internal data class StreamsExecutionContext(
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            durableData = durableData,
-            ephemeralData = ephemeralData
+            customData = customData
         )
     }
 }

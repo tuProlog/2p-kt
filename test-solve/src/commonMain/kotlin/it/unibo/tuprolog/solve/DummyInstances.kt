@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.Theory
@@ -30,8 +31,7 @@ object DummyInstances {
         override val outputChannels: Nothing by lazy { throw NotImplementedError() }
         override val substitution: Substitution.Unifier = Substitution.empty()
         override val prologStackTrace: Nothing by lazy { throw NotImplementedError() }
-        override val durableData: Nothing by lazy { throw NotImplementedError() }
-        override val ephemeralData: Nothing by lazy { throw NotImplementedError() }
+        override val customData: Nothing by lazy { throw NotImplementedError() }
 
         override fun createSolver(
             libraries: Libraries,
@@ -63,8 +63,7 @@ object DummyInstances {
             operators: OperatorSet,
             inputChannels: InputStore,
             outputChannels: OutputStore,
-            durableData: Map<String, Any>,
-            ephemeralData: Map<String, Any>
+            customData: CustomDataStore
         ): ExecutionContext {
             throw NotImplementedError()
         }

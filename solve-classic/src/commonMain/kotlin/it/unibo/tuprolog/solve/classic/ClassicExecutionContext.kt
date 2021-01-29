@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
@@ -35,9 +36,8 @@ data class ClassicExecutionContext(
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.default(),
     override val outputChannels: OutputStore = OutputStore.default(),
+    override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
-    override val ephemeralData: Map<String, Any> = emptyMap(),
-    override val durableData: Map<String, Any> = emptyMap(),
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
@@ -115,8 +115,7 @@ data class ClassicExecutionContext(
         operators: OperatorSet,
         inputChannels: InputStore,
         outputChannels: OutputStore,
-        durableData: Map<String, Any>,
-        ephemeralData: Map<String, Any>
+        customData: CustomDataStore
     ): ClassicExecutionContext {
         return copy(
             libraries = libraries,
@@ -126,8 +125,7 @@ data class ClassicExecutionContext(
             operators = operators,
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            durableData = durableData,
-            ephemeralData = ephemeralData
+            customData = customData
         )
     }
 

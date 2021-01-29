@@ -346,4 +346,28 @@ interface SideEffectFactory {
     @JsName("setDurableDataPairs")
     fun <X> setDurableData(vararg data: Pair<String, X>) =
         SideEffect.SetDurableData(data.map { (a, b) -> a to (b as Any) }, reset = false)
+
+    @JsName("addPersistentData")
+    fun addPersistentData(key: String, value: Any) =
+        SideEffect.SetPersistentData(key, value, reset = false)
+
+    @JsName("addPersistentDataMap")
+    fun <X> addPersistentData(data: Map<String, X>) =
+        SideEffect.SetPersistentData(data.mapValues { it }, reset = false)
+
+    @JsName("addPersistentDataPairs")
+    fun <X> addPersistentData(vararg data: Pair<String, X>) =
+        SideEffect.SetPersistentData(data.map { (a, b) -> a to (b as Any) }, reset = false)
+
+    @JsName("setPersistentData")
+    fun setPersistentData(key: String, value: Any) =
+        SideEffect.SetPersistentData(key, value, reset = false)
+
+    @JsName("setPersistentDataMap")
+    fun <X> setPersistentData(data: Map<String, X>) =
+        SideEffect.SetPersistentData(data.mapValues { it }, reset = false)
+
+    @JsName("setPersistentDataPairs")
+    fun <X> setPersistentData(vararg data: Pair<String, X>) =
+        SideEffect.SetPersistentData(data.map { (a, b) -> a to (b as Any) }, reset = false)
 }

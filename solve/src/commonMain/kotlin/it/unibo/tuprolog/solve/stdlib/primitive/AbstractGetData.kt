@@ -12,12 +12,13 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 abstract class AbstractGetData(suffix: String) : BinaryRelation<ExecutionContext>("get_$suffix") {
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term, second: Term): Sequence<Solve.Response> {
         return when (first) {
-            is Var -> data.entries.asSequence()
-                .filter { (_, v) -> v is Term }
-                .map { (k, v) -> Atom.of(k) to (v as Term) }
-                .map { (k, v) -> (first mguWith k) + (second mguWith v) }
-                .filterIsInstance<Substitution.Unifier>()
-                .map { replyWith(it) } + replyFail()
+            is Var ->
+                data.entries.asSequence()
+                    .filter { (_, v) -> v is Term }
+                    .map { (k, v) -> Atom.of(k) to (v as Term) }
+                    .map { (k, v) -> (first mguWith k) + (second mguWith v) }
+                    .filterIsInstance<Substitution.Unifier>()
+                    .map { replyWith(it) } + replyFail()
             is Atom -> when (val value = data[first.value]) {
                 is Term -> sequenceOf(replyWith(second mguWith value))
                 else -> sequenceOf(replyFail())
