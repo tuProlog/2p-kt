@@ -16,7 +16,8 @@ internal data class StateInit(override val context: ClassicExecutionContext) : A
                 parent = null,
                 choicePoints = null,
                 depth = 0,
-                step = 1
+                step = 1,
+                customData = context.customData.preservePersistent()
             ).appendRulesAndChoicePoints(Cursor.empty())
         )
     }

@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Libraries
@@ -35,6 +36,7 @@ data class ClassicExecutionContext(
     override val operators: OperatorSet = getAllOperators(libraries, staticKb, dynamicKb).toOperatorSet(),
     override val inputChannels: InputStore = InputStore.default(),
     override val outputChannels: OutputStore = OutputStore.default(),
+    override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
     val query: Struct = Truth.TRUE,
     val goals: Cursor<out Term> = Cursor.empty(),
@@ -112,7 +114,8 @@ data class ClassicExecutionContext(
         dynamicKb: Theory,
         operators: OperatorSet,
         inputChannels: InputStore,
-        outputChannels: OutputStore
+        outputChannels: OutputStore,
+        customData: CustomDataStore
     ): ClassicExecutionContext {
         return copy(
             libraries = libraries,
@@ -121,7 +124,8 @@ data class ClassicExecutionContext(
             dynamicKb = dynamicKb.toMutableTheory(),
             operators = operators,
             inputChannels = inputChannels,
-            outputChannels = outputChannels
+            outputChannels = outputChannels,
+            customData = customData
         )
     }
 
