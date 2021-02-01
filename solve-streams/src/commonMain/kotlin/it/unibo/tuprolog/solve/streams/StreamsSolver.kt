@@ -5,8 +5,8 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.extractSignature
@@ -20,6 +20,7 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.StateMachineExecutor
 import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.buffered
 
 /**
  * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree in a purely functional way
@@ -45,7 +46,7 @@ internal class StreamsSolver constructor(
         outputChannels
     )
 
-    override fun solve(goal: Struct, timeout: TimeDuration): Sequence<Solution> {
+    override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         executionContext = StreamsExecutionContext(
             libraries = libraries,
             flags = flags,
@@ -55,17 +56,24 @@ internal class StreamsSolver constructor(
             outputChannels = outputChannels
         )
 
-        return solveToFinalStates(
+        var solutionSequence = solveToFinalStates(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
                 executionContext as StreamsExecutionContext,
-                executionMaxDuration = timeout
+                executionMaxDuration = options.timeout
             )
         ).map {
             executionContext = it.context.apply(it.solve.sideEffects)
             it.solve.solution.cleanUp()
         }
+        if (options.limit > 0) {
+            solutionSequence = solutionSequence.take(options.limit)
+        }
+        if (options.isEager) {
+            solutionSequence = solutionSequence.buffered()
+        }
+        return solutionSequence
     }
 
     override val libraries: Libraries
