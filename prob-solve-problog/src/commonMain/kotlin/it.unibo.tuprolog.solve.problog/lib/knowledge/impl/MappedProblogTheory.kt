@@ -1,9 +1,11 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.MutableProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
@@ -18,76 +20,79 @@ import it.unibo.tuprolog.theory.Theory
  * @author Jason Dellaluce
  */
 internal class MappedProblogTheory(
-    inputClauses: Iterable<Clause>
-) : ProblogTheory {
+    clauses: Iterable<Clause>?,
+    val theory: Theory = Theory.indexedOf(clauses?.flatMap { ClauseMappingUtils.map(it) } ?: emptyList())
+) : Theory by theory, ProblogTheory {
 
-    /* NOTE: Delegation has been implemented manually due to the occurrence
-    * of type conflicts of return values in many methods. */
-    private var delegate: Theory = Theory.indexedOf(
-        when (inputClauses) {
-            is ProblogTheory -> inputClauses
-            else -> inputClauses.flatMap { ClauseMappingUtils.map(it) }
-        }
-    )
+    override val isMutable: Boolean
+        get() = false
 
-    private constructor(theory: Theory) : this(listOf()) {
-        this.delegate = when (theory) {
-            is MappedProblogTheory -> theory.delegate
-            else -> theory
+    override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(this)
+
+    override fun toImmutableTheory(): ProblogTheory = this
+
+    override fun plus(theory: ProblogTheory): ProblogTheory {
+        return MappedProblogTheory(null, this.theory.plus(theory))
+    }
+
+    override fun plus(theory: Theory): ProblogTheory {
+        return when (theory) {
+            is ProblogTheory -> plus(theory)
+            else -> plus(MappedProblogTheory(theory))
         }
+    }
+
+    override fun plus(clause: Clause): ProblogTheory {
+        val mapped = ClauseMappingUtils.map(clause)
+        return MappedProblogTheory(null, this.theory.plus(Theory.listedOf(mapped)))
     }
 
     override fun assertA(clauses: Iterable<Clause>): ProblogTheory {
-        val newDelegate = delegate.assertA(clauses.flatMap { ClauseMappingUtils.map(it) })
-        return MappedProblogTheory(newDelegate)
+        val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
+        return MappedProblogTheory(null, this.theory.assertA(mapped))
     }
 
     override fun assertZ(clauses: Iterable<Clause>): ProblogTheory {
-        val newDelegate = delegate.assertZ(clauses.flatMap { ClauseMappingUtils.map(it) })
-        return MappedProblogTheory(newDelegate)
+        val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
+        return MappedProblogTheory(null, this.theory.assertZ(mapped))
     }
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<ProblogTheory> {
-        val result = delegate.retract(clauses.flatMap { ClauseMappingUtils.map(it) })
-        val newDelegate = result.theory
-        return when (result) {
-            is RetractResult.Success -> RetractResult.Success(MappedProblogTheory(newDelegate), result.clauses)
-            else -> RetractResult.Failure(MappedProblogTheory(newDelegate))
+        val mapped = clauses.flatMap { ClauseMappingUtils.map(it) }
+        return when (val result = theory.retract(mapped)) {
+            is RetractResult.Success -> RetractResult.Success(
+                MappedProblogTheory(null, result.theory),
+                result.clauses
+            )
+            else -> RetractResult.Failure(MappedProblogTheory(null, result.theory))
         }
     }
 
-    override fun plus(theory: ProblogTheory): ProblogTheory {
-        val newDelegate = delegate.plus(theory)
-        return MappedProblogTheory(newDelegate)
-    }
-
-    /* NOTE: Double-check this, i'm not 100% sure this is gonna work */
     override fun retractAll(clause: Clause): RetractResult<ProblogTheory> {
         val mappedClauses = ClauseMappingUtils.map(clause)
         var result: RetractResult<Theory>? = null
         for (c in mappedClauses) {
             if (result == null || result !is RetractResult.Failure) {
-                result = delegate.retractAll(c)
+                result = theory.retractAll(c)
             }
         }
-        val newDelegate = result?.theory!!
+
         return when (result) {
-            is RetractResult.Success -> RetractResult.Success(MappedProblogTheory(newDelegate), result.clauses)
-            else -> RetractResult.Failure(MappedProblogTheory(delegate))
+            is RetractResult.Success -> RetractResult.Success(
+                MappedProblogTheory(null, result.theory),
+                result.clauses
+            )
+            else -> RetractResult.Failure(this)
         }
     }
 
     override fun abolish(indicator: Indicator): ProblogTheory {
-        val newDelegate = delegate.abolish(indicator)
-        return MappedProblogTheory(newDelegate)
+        return MappedProblogTheory(null, this.theory.abolish(ClauseMappingUtils.map(indicator)))
     }
 
-    override fun plus(theory: Theory): ProblogTheory {
-        return when (theory) {
-            is MappedProblogTheory -> plus(theory)
-            else -> plus(MappedProblogTheory(theory))
-        }
-    }
+    override fun assertA(struct: Struct): ProblogTheory = assertA(Fact.of(struct))
+
+    override fun assertZ(struct: Struct): ProblogTheory = assertZ(Fact.of(struct))
 
     override fun assertA(clause: Clause): ProblogTheory {
         return assertA(listOf(clause))
@@ -105,6 +110,9 @@ internal class MappedProblogTheory(
         return assertZ(clauses.asIterable())
     }
 
+    override fun retract(head: Struct): RetractResult<ProblogTheory> =
+        retract(Rule.of(head, Var.anonymous()))
+
     override fun retract(clause: Clause): RetractResult<ProblogTheory> {
         return retract(listOf(clause))
     }
@@ -113,63 +121,6 @@ internal class MappedProblogTheory(
         return retract(clauses.asIterable())
     }
 
-    override fun toMutableTheory(): MutableProblogTheory {
-        return MappedMutableProblogTheory(this)
-    }
-
-    override val clauses: Iterable<Clause>
-        get() = delegate.clauses
-
-    override val size: Long
-        get() = delegate.size
-
-    override fun contains(clause: Clause): Boolean {
-        return delegate.contains(clause)
-    }
-
-    override fun contains(head: Struct): Boolean {
-        return delegate.contains(head)
-    }
-
-    override fun contains(indicator: Indicator): Boolean {
-        return delegate.contains(indicator)
-    }
-
-    override fun get(clause: Clause): Sequence<Clause> {
-        return delegate[clause]
-    }
-
-    override fun get(head: Struct): Sequence<Rule> {
-        return delegate[head]
-    }
-
-    override fun get(indicator: Indicator): Sequence<Rule> {
-        return delegate[indicator]
-    }
-
-    override fun toString(asPrologText: Boolean): String {
-        return delegate.toString(asPrologText)
-    }
-
-    override fun equals(other: Theory, useVarCompleteName: Boolean): Boolean {
-        return delegate.equals(other, useVarCompleteName)
-    }
-
-    override fun iterator(): Iterator<Clause> {
-        return delegate.iterator()
-    }
-
-    override val tags: Map<String, Any> by lazy {
-        TODO(
-            "I don't know how to implement this property... " +
-                "consider using delegation instead of inheritance for this class"
-        )
-    }
-
-    override fun replaceTags(tags: Map<String, Any>): Theory {
-        TODO(
-            "I don't know how to implement this property... " +
-                "consider using delegation instead of inheritance for this class"
-        )
-    }
+    override fun retractAll(head: Struct): RetractResult<ProblogTheory> =
+        retractAll(Rule.of(head, Var.anonymous()))
 }

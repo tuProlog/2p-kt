@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Indicator
+import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -14,6 +16,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.Prob
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
+import it.unibo.tuprolog.utils.setTag
 
 /**
  * Collection of general-purpose functions and values useful for internal clause mapping.
@@ -40,9 +43,32 @@ internal object ClauseMappingUtils {
 
     /** Entrypoint function for internal theory mapping of single [Clause]s */
     fun map(clause: Clause): List<Clause> {
-        return cascadeMappers.first { it.isCompatible(clause) }.apply(clause)
+        return if (clause.isMappedAsProblog) {
+            listOf(clause)
+        } else {
+            cascadeMappers.first { it.isCompatible(clause) }.apply(clause).map { it.setMappedAsProblog(true) }
+        }
+    }
+
+    /** Entrypoint function for internal mapping of an [Indicator] */
+    fun map(indicator: Indicator): Indicator {
+        val arityTerm = indicator.arityTerm
+        return Indicator.of(
+            indicator.nameTerm,
+            when (arityTerm) {
+                is Numeric -> Numeric.of(arityTerm.intValue.toInt() + 1)
+                else -> arityTerm
+            }
+        )
     }
 }
+
+private const val PROBLOG_MAPPED_TAG = "it.unibo.tuprolog.problog.mapped"
+
+internal val Clause.isMappedAsProblog: Boolean
+    get() = getTag(PROBLOG_MAPPED_TAG) ?: false
+
+internal fun Clause.setMappedAsProblog(value: Boolean): Clause = setTag(PROBLOG_MAPPED_TAG, value)
 
 /** This has to be used on head terms of [Clause]s and with goal [Term]s.
  * Adds [explanation] to [this] term by making it the last argument of the predicate.
