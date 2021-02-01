@@ -1,11 +1,21 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.MutableTheory
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * Represents a Prolog Goal solver
+ * General type for logic solvers, i.e. any entity capable of solving some logic query -- provided as a [Struct] --
+ * according to some logic, implementing one or more inference rule, via some resolution strategy.
+ *
+ * __Solvers are not immutable entities__. Their state may mutate as an effect of solving queries.
  */
 interface Solver : ExecutionContextAware {
 
@@ -38,8 +48,22 @@ interface Solver : ExecutionContextAware {
     @JsName("solveOnceWithOptions")
     fun solveOnce(goal: Struct, options: SolveOptions): Solution = solve(goal, options.setLimit(1)).first()
 
-    companion object {
+    @JsName("copy")
+    fun copy(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
+    ): Solver
 
+    @JsName("clone")
+    fun clone(): Solver = copy()
+
+    companion object {
         @JvmStatic
         @JsName("classic")
         val classic: SolverFactory by lazy {
