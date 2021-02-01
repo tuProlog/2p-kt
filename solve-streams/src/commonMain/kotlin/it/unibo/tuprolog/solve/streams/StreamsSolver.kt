@@ -7,8 +7,11 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -19,6 +22,7 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.streams.solver.fsm.StateMachineExecutor
 import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.solve.toOperatorSet
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 
@@ -35,6 +39,24 @@ internal class StreamsSolver constructor(
     inputChannels: InputStore = InputStore.default(),
     outputChannels: OutputStore = OutputStore.default()
 ) : Solver {
+
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+    ) : this(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        InputStore.default(stdIn),
+        OutputStore.default(stdOut, stdErr, warnings),
+    )
 
     private var executionContext: ExecutionContext = StreamsExecutionContext(
         libraries,
@@ -75,6 +97,17 @@ internal class StreamsSolver constructor(
         }
         return solutionSequence
     }
+
+    override fun copy(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ) = StreamsSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override val libraries: Libraries
         get() = executionContext.libraries
