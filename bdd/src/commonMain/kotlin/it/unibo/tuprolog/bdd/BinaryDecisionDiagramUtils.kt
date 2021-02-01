@@ -6,11 +6,21 @@
 
 package it.unibo.tuprolog.bdd
 
+import it.unibo.tuprolog.bdd.exception.BinaryDecisionDiagramOperationException
 import it.unibo.tuprolog.bdd.impl.AnyBinaryDecisionDiagramVisitor
 import it.unibo.tuprolog.bdd.impl.ApplyBinaryDecisionDiagramVisitor
 import it.unibo.tuprolog.bdd.impl.ExpansionBinaryDecisionDiagramVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
+
+/** Helper function to wrap all exceptions in BBD-specific ones. */
+private fun <T> runOperationAndCatchErrors(action: () -> T): T {
+    try {
+        return action()
+    } catch (e: Throwable) {
+        throw BinaryDecisionDiagramOperationException("BinaryDecisionDiagram operation failure", e)
+    }
+}
 
 /**
  * Formats a [BinaryDecisionDiagram] using Graphviz notation (https://graphviz.org/).
@@ -18,26 +28,27 @@ import kotlin.jvm.JvmName
  */
 @JsName("toGraphvizString")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
-    val checkSet = mutableSetOf<Int>()
-    val labelBuilder = StringBuilder()
-    val graphBuilder = StringBuilder()
+    return runOperationAndCatchErrors {
+        val checkSet = mutableSetOf<Int>()
+        val labelBuilder = StringBuilder()
+        val graphBuilder = StringBuilder()
 
-    val falseValue = false.hashCode()
-    val trueValue = true.hashCode()
-    labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
-    labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
-    this.expansion(falseValue, trueValue) { node, low, high ->
-        val nodeValue = node.hashCode() * 31 + low * 31 + high * 31
-        if (nodeValue !in checkSet) {
-            labelBuilder.append("$nodeValue [shape=record, label=\"$node\"]\n")
-            graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
-            graphBuilder.append("$nodeValue -> $high\n")
-            checkSet.add(nodeValue)
+        val falseValue = false.hashCode()
+        val trueValue = true.hashCode()
+        labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
+        labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
+        this.expansion(falseValue, trueValue) { node, low, high ->
+            val nodeValue = node.hashCode() * 31 + low * 31 + high * 31
+            if (nodeValue !in checkSet) {
+                labelBuilder.append("$nodeValue [shape=record, label=\"$node\"]\n")
+                graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
+                graphBuilder.append("$nodeValue -> $high\n")
+                checkSet.add(nodeValue)
+            }
+            nodeValue
         }
-        nodeValue
+        "digraph  {\n$labelBuilder$graphBuilder}"
     }
-
-    return "digraph  {\n$labelBuilder$graphBuilder}"
 }
 
 /**
@@ -50,7 +61,9 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     trueTerminal: E,
     operator: (node: T, low: E, high: E) -> E,
 ): E {
-    return this.accept(ExpansionBinaryDecisionDiagramVisitor(operator, falseTerminal, trueTerminal))
+    return runOperationAndCatchErrors {
+        this.accept(ExpansionBinaryDecisionDiagramVisitor(operator, falseTerminal, trueTerminal))
+    }
 }
 
 /**
@@ -58,7 +71,9 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
  */
 @JsName("anyWhere")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean {
-    return this.accept(AnyBinaryDecisionDiagramVisitor(predicate))
+    return runOperationAndCatchErrors {
+        this.accept(AnyBinaryDecisionDiagramVisitor(predicate))
+    }
 }
 
 /**
@@ -66,7 +81,9 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean):
  */
 @JsName("any")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
-    return this.any { true }
+    return runOperationAndCatchErrors {
+        this.any { true }
+    }
 }
 
 /**
@@ -77,10 +94,12 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
 fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
     mapper: (T) -> E
 ): BinaryDecisionDiagram<E> {
-    return this.expansion(
-        BinaryDecisionDiagram.Terminal<E>(false) as BinaryDecisionDiagram<E>,
-        BinaryDecisionDiagram.Terminal(true)
-    ) { node, low, high -> BinaryDecisionDiagram.Var(mapper(node), low, high) }
+    return runOperationAndCatchErrors {
+        this.expansion(
+            BinaryDecisionDiagram.Terminal<E>(false) as BinaryDecisionDiagram<E>,
+            BinaryDecisionDiagram.Terminal(true)
+        ) { node, low, high -> BinaryDecisionDiagram.Var(mapper(node), low, high) }
+    }
 }
 
 /**
@@ -90,7 +109,9 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     unaryOp: (Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
-    return this.accept(ApplyBinaryDecisionDiagramVisitor.Unary(unaryOp))
+    return runOperationAndCatchErrors {
+        this.accept(ApplyBinaryDecisionDiagramVisitor.Unary(unaryOp))
+    }
 }
 
 /**
@@ -102,7 +123,9 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
     that: BinaryDecisionDiagram<T>,
     binaryOp: (Boolean, Boolean) -> Boolean
 ): BinaryDecisionDiagram<T> {
-    return this.accept(ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp))
+    return runOperationAndCatchErrors {
+        this.accept(ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp))
+    }
 }
 
 /**
@@ -111,7 +134,9 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
  */
 @JsName("not")
 fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> {
-    return this.apply { a -> !a }
+    return runOperationAndCatchErrors {
+        this.apply { a -> !a }
+    }
 }
 
 /**
@@ -121,7 +146,9 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T>
 @JsName("and")
 infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionDiagram<T>):
     BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a && b }
+        return runOperationAndCatchErrors {
+            this.apply(that) { a, b -> a && b }
+        }
     }
 
 /**
@@ -131,5 +158,7 @@ infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionD
 @JsName("or")
 infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.or(that: BinaryDecisionDiagram<T>):
     BinaryDecisionDiagram<T> {
-        return this.apply(that) { a, b -> a || b }
+        return runOperationAndCatchErrors {
+            this.apply(that) { a, b -> a || b }
+        }
     }
