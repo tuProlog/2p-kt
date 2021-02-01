@@ -15,8 +15,8 @@ interface ProbSolver : Solver {
     }
 
     @JsName("probSolve")
-    fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<ProbSolution>
+    fun probSolve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution>
 
     @JsName("probSolveMaxDuration")
-    fun probSolve(goal: Struct): Sequence<ProbSolution> = probSolve(goal, TimeDuration.MAX_VALUE)
+    fun probSolve(goal: Struct): Sequence<Solution> = probSolve(goal, TimeDuration.MAX_VALUE)
 }

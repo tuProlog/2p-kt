@@ -86,14 +86,14 @@ internal class MutableProblogProbSolver(
     }
 
     override fun setFlag(name: String, value: Term) {
-        setFlag(name, value)
+        solver.setFlag(name, value)
     }
 
     override fun setFlag(flag: Pair<String, Term>) {
-        setFlag(flag)
+        solver.setFlag(flag)
     }
 
     override fun setFlag(flag: NotableFlag) {
-        setFlag(flag)
+        solver.setFlag(flag)
     }
 }

@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.theory.Theory
 import kotlin.math.abs
 import kotlin.test.assertFalse
@@ -27,10 +28,7 @@ object TestUtils {
 
         queryWithSolutions.forEach {
             val expectedSolutions = it.second.toList()
-            val solutions = solver.probSolve(it.first).filter {
-                s ->
-                s.solution is Solution.Yes
-            }.toList()
+            val solutions = solver.probSolve(it.first).filterIsInstance<Solution.Yes>().toList()
 
             var currentActual: ExpectedSolution? = null
             var currentExpected: ExpectedSolution? = null
@@ -42,10 +40,7 @@ object TestUtils {
                 expectedSolutions
                     .any { s ->
                         !solutions.any { sol ->
-                            val solution = ExpectedSolution(
-                                sol.solution.solvedQuery!!,
-                                sol.probability!!
-                            )
+                            val solution = ExpectedSolution(sol.solvedQuery, sol.probability)
                             currentActual = solution
                             currentExpected = s
                             s.first == solution.first && tolerantDoubleEquals(s.second, solution.second)
