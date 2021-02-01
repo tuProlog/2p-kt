@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
@@ -14,6 +15,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.safeToStruct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withExplanation
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -48,8 +50,15 @@ internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDI
             /* Support to probabilistic negation as failure */
             if (termAsStruct.functor in negationAsFailureFunctors) {
                 yieldAll(
-                    solve(Struct.of(ProbNegationAsFailure.functor, first, termAsStruct[0])).map {
-                        it.substitution
+                    /* Optimize Prolog-only queries */
+                    if (context.isPrologMode()) {
+                        solve(Struct.of("\\+", Struct.of(Prob.functor, Var.anonymous(), termAsStruct[0]))).map {
+                            it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
+                        }
+                    } else {
+                        solve(Struct.of(ProbNegationAsFailure.functor, first, termAsStruct[0])).map {
+                            it.substitution
+                        }
                     }
                 )
             } else {

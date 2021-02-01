@@ -8,7 +8,10 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -31,9 +34,14 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
         ensuringArgumentIsCallable(2)
 
         val evidenceExplanationVar = Var.of("EvidenceExplanation")
-        val evidenceExplanationTerm = context.createSolver()
-            .solve(Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar))
-            .first().substitution[evidenceExplanationVar]
+        val evidenceExplanationTerm = if(context.isPrologMode()) {
+            /* No need to compute evidence for Prolog-only queries */
+            ProbExplanation.TRUE.toTerm()
+        } else {
+            context.createSolver()
+                .solve(Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar))
+                .first().substitution[evidenceExplanationVar]
+        }
 
         val goalExplanationVar = Var.of("GoalExplanation")
         val solutions = solve(Struct.of(ProbSolve.functor, goalExplanationVar, third))

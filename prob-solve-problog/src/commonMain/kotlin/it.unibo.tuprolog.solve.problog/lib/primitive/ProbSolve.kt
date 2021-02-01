@@ -12,6 +12,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -42,6 +43,11 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
+
+        /* Optimize Prolog-only queries */
+        if (context.isPrologMode()) {
+            return solve(Struct.of(Prob.functor, first, second)).map { it.substitution }
+        }
 
         val explanationVar = Var.of(EXPLANATION_VAR_NAME)
         val solutions = solve(Struct.of(Prob.functor, explanationVar, second)).toList()

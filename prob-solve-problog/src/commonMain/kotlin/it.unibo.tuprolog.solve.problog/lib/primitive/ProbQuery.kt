@@ -7,8 +7,8 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -20,21 +20,24 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
  *
  * @author Jason Dellaluce
  */
-internal object ProbQuery : BinaryRelation.WithoutSideEffects<ExecutionContext>(
+internal object ProbQuery : TernaryRelation.WithoutSideEffects<ExecutionContext>(
     "${PREDICATE_PREFIX}_query"
 ) {
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
+        third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
         ensuringArgumentIsStruct(1)
+        ensuringArgumentIsInstantiated(2)
 
         val queryWithEvidenceExplanation = Var.of("QueryWithEvidenceExplanation")
         val evidenceExplanation = Var.of("EvidenceExplanation")
         val solutions = solve(
             Tuple.of(
+                Struct.of(ProbSetMode.functor, third),
                 Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second),
                 Struct.of(ProbExplDebug.functor, queryWithEvidenceExplanation),
             )

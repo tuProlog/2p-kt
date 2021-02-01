@@ -16,7 +16,8 @@ internal object SpecificPrimitives {
             ProbSolveEvidence,
             ProbSolveWithEvidence,
             ProbNegationAsFailure,
-            ProbExplDebug
+            ProbExplDebug,
+            ProbSetMode,
         )
 
     val primitives: Map<Signature, Primitive> = wrappers.map { it.descriptionPair }.toMap()
