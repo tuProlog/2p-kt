@@ -10,7 +10,7 @@ import kotlin.math.min
 
 private const val PROBABILITY_TAG = "it.unibo.tuprolog.probability"
 
-const val DEFAULT_PROBABILITY = 0.0
+const val DEFAULT_PROBABILITY = 1.0
 
 private fun normalize(probability: Double): Double =
     max(min(1.0, probability), 0.0)
