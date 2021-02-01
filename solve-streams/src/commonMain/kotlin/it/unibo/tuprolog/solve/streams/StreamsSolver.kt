@@ -45,7 +45,7 @@ internal class StreamsSolver constructor(
         outputChannels
     )
 
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
+    override fun solve(goal: Struct, timeout: TimeDuration): Sequence<Solution> {
         executionContext = StreamsExecutionContext(
             libraries = libraries,
             flags = flags,
@@ -60,7 +60,7 @@ internal class StreamsSolver constructor(
                 goal.extractSignature(),
                 goal.argsList,
                 executionContext as StreamsExecutionContext,
-                executionMaxDuration = maxDuration
+                executionMaxDuration = timeout
             )
         ).map {
             executionContext = it.context.apply(it.solve.sideEffects)

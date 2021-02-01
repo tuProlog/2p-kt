@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -25,6 +26,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.buffered
 
 internal open class ClassicSolver : Solver {
 
@@ -95,7 +97,7 @@ internal open class ClassicSolver : Solver {
         }
     }
 
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
+    override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         val initialContext = ClassicExecutionContext(
             query = goal,
             libraries = libraries,
@@ -106,16 +108,23 @@ internal open class ClassicSolver : Solver {
             inputChannels = inputChannels,
             outputChannels = outputChannels,
             customData = state.context.customData,
-            maxDuration = maxDuration,
+            maxDuration = options.timeout,
             startTime = currentTimeInstant()
         )
 
         state = StateInit(initialContext)
 
-        return SolutionIterator(state) { newState, newStep ->
+        var solutionSequence = SolutionIterator(state) { newState, newStep ->
             require(newState.context.step == newStep)
             state = newState
         }.asSequence()
+        if (options.limit > 0) {
+            solutionSequence = solutionSequence.take(options.limit)
+        }
+        if (options.isEager) {
+            solutionSequence = solutionSequence.buffered()
+        }
+        return solutionSequence
     }
 
     private fun loadGoal(theory: Atom): Struct = Struct.of("consult", theory)
