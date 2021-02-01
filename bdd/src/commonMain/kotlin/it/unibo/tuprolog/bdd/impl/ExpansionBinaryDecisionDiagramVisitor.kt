@@ -19,7 +19,7 @@ internal class ExpansionBinaryDecisionDiagramVisitor<T : Comparable<T>, E>(
         return if (node.value) trueTerminal else falseTerminal
     }
 
-    override fun visit(node: BinaryDecisionDiagram.Var<T>): E {
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): E {
         val lowValue = node.low.accept(this)
         val highValue = node.high.accept(this)
         return varOp(node.value, lowValue, highValue)

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.bdd
 
+import it.unibo.tuprolog.bdd.impl.BinaryDecisionDiagramTerminalImpl
+import it.unibo.tuprolog.bdd.impl.BinaryDecisionDiagramVariableImpl
 import kotlin.js.JsName
 
 /**
@@ -18,72 +20,52 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  * */
-sealed class BinaryDecisionDiagram<T : Comparable<T>> {
+interface BinaryDecisionDiagram<T : Comparable<T>> {
 
     @JsName("accept")
-    abstract fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E
+    fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E
 
     /**
      * A [Terminal] is a BDD mode that has no edges to other BDDs, and represent
-     * a non-variable known Boolean value (either True or False).
+     * a non-variable known Boolean value (either True or False)
      * */
-    data class Terminal<T : Comparable<T>>(val value: Boolean) : BinaryDecisionDiagram<T>() {
-
-        private val cachedHashCode: Int by lazy {
-            value.hashCode()
-        }
-
-        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other == null || this::class != other::class) return false
-
-            other as Terminal<*>
-
-            if (value != other.value) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return cachedHashCode
-        }
+    interface Terminal<T : Comparable<T>> : BinaryDecisionDiagram<T> {
+        /** Boolean value of the terminal*/
+        val value: Boolean
     }
 
     /**
-     * A [Var] is a BDD node representing a Boolean variable.
+     * A [Variable] is a BDD node representing a Boolean variable.
      * */
-    data class Var<T : Comparable<T>>(
-        val value: T,
-        val low: BinaryDecisionDiagram<T> = Terminal(false),
-        val high: BinaryDecisionDiagram<T> = Terminal(true)
-    ) : BinaryDecisionDiagram<T>() {
+    interface Variable<T : Comparable<T>> : BinaryDecisionDiagram<T> {
+        /** [value] represents the boolean variable */
+        val value: T
 
-        private val cachedHashCode: Int by lazy {
-            var result = value.hashCode()
-            result = 31 * result + low.hashCode()
-            result = 31 * result + high.hashCode()
-            result
+        /** [low] the a [BinaryDecisionDiagram] that leads to a 0-terminal (a false terminal) */
+        val low: BinaryDecisionDiagram<T>
+
+        /** [high] the a [BinaryDecisionDiagram] that leads to a 1-terminal (a true terminal) */
+        val high: BinaryDecisionDiagram<T>
+    }
+
+    companion object {
+        /** Creates a new [BinaryDecisionDiagram] [Variable] from the given value */
+        @JsName("ofVariable")
+        fun <E : Comparable<E>> ofVariable(value: E): BinaryDecisionDiagram<E> {
+            return ofVariable(value, ofTerminal(false), ofTerminal(true))
         }
 
-        override fun <E> accept(visitor: BinaryDecisionDiagramVisitor<T, E>): E = visitor.visit(this)
+        /** Creates a new [BinaryDecisionDiagram] [Variable] from the given value and low-high nodes. */
+        @JsName("ofVariableWithNodes")
+        fun <E : Comparable<E>> ofVariable(value: E, low: BinaryDecisionDiagram<E>, high: BinaryDecisionDiagram<E>):
+            BinaryDecisionDiagram<E> {
+                return BinaryDecisionDiagramVariableImpl(value, low, high)
+            }
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other == null || this::class != other::class) return false
-
-            other as Var<*>
-
-            if (value != other.value) return false
-            if (low != other.low) return false
-            if (high != other.high) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return cachedHashCode
+        /** Creates a new [BinaryDecisionDiagram] [Terminal] from the given boolean value */
+        @JsName("terminalOf")
+        fun <E : Comparable<E>> ofTerminal(value: Boolean): BinaryDecisionDiagram<E> {
+            return BinaryDecisionDiagramTerminalImpl(value)
         }
     }
 }

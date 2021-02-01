@@ -13,7 +13,20 @@ import it.unibo.tuprolog.bdd.impl.ExpansionBinaryDecisionDiagramVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
-/** Helper function to wrap all exceptions in BBD-specific ones. */
+/**
+ * Shortcut for the [BinaryDecisionDiagram.ofVariable] method.
+ */
+@JsName("bddOf")
+fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.ofVariable(value)
+
+/**
+ * Shortcut for the [BinaryDecisionDiagram.ofTerminal] method.
+ */
+@JsName("bddTerminalOf")
+fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> =
+    BinaryDecisionDiagram.ofTerminal(value)
+
+/** Internal helper function to catch all exceptions and wrap them into BBD-specific ones. */
 private fun <T> runOperationAndCatchErrors(action: () -> T): T {
     try {
         return action()
@@ -96,9 +109,9 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
 ): BinaryDecisionDiagram<E> {
     return runOperationAndCatchErrors {
         this.expansion(
-            BinaryDecisionDiagram.Terminal<E>(false) as BinaryDecisionDiagram<E>,
-            BinaryDecisionDiagram.Terminal(true)
-        ) { node, low, high -> BinaryDecisionDiagram.Var(mapper(node), low, high) }
+            BinaryDecisionDiagram.ofTerminal(false),
+            BinaryDecisionDiagram.ofTerminal(true)
+        ) { node, low, high -> BinaryDecisionDiagram.ofVariable(mapper(node), low, high) }
     }
 }
 

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge
 
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
+import it.unibo.tuprolog.bdd.bddOf
+import it.unibo.tuprolog.bdd.bddTerminalOf
 import it.unibo.tuprolog.bdd.toGraphvizString
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import kotlin.js.JsName
@@ -97,14 +98,14 @@ internal interface ProbExplanation {
 
     companion object {
         /** A [ProbExplanation] representing a logic truth. */
-        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(BinaryDecisionDiagram.Terminal(true))
+        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(true))
 
         /** A [ProbExplanation] representing a logic falsity. */
-        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(BinaryDecisionDiagram.Terminal(false))
+        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(false))
 
         /** Creates a new [ProbExplanation] representing the single probabilistic logic term [term]. */
         fun of(term: ProbTerm): ProbExplanation {
-            return BinaryDecisionDiagramExplanation(BinaryDecisionDiagram.Var(term))
+            return BinaryDecisionDiagramExplanation(bddOf(term))
         }
     }
 }

@@ -14,7 +14,7 @@ internal class AnyBinaryDecisionDiagramVisitor<T : Comparable<T>>(
 
     override fun visit(node: BinaryDecisionDiagram.Terminal<T>): Boolean = false
 
-    override fun visit(node: BinaryDecisionDiagram.Var<T>): Boolean {
+    override fun visit(node: BinaryDecisionDiagram.Variable<T>): Boolean {
         var result = predicate(node.value)
         if (!result) {
             result = node.low.accept(this)

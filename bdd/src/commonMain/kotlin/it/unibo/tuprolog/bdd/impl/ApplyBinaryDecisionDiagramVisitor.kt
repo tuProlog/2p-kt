@@ -12,7 +12,7 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  * each diagram node. The following reductions are performed:
  * - Removal of duplicate variable nodes
  * - Removal of duplicate terminal nodes
- * - Removal of redundant variable nodes, which are [BinaryDecisionDiagram.Var] nodes where low and high point
+ * - Removal of redundant variable nodes, which are [BinaryDecisionDiagram.Variable] nodes where low and high point
  * to the same node
  *
  * @author Jason Dellaluce
@@ -40,8 +40,8 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
     /* Reduction: This avoids redundant nodes */
     protected fun createVarNode(
         value: T,
-        low: BinaryDecisionDiagram<T> = BinaryDecisionDiagram.Terminal(false),
-        high: BinaryDecisionDiagram<T> = BinaryDecisionDiagram.Terminal(true)
+        low: BinaryDecisionDiagram<T> = BinaryDecisionDiagram.ofTerminal(false),
+        high: BinaryDecisionDiagram<T> = BinaryDecisionDiagram.ofTerminal(true)
     ): BinaryDecisionDiagram<T> {
         /* NOTE: This check is faster than invoking equals, but it makes sense only
            because of the getResultUsingTable function, which guarantees nodes to
@@ -49,7 +49,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
         return if (low === high) {
             low
         } else {
-            BinaryDecisionDiagram.Var(value, low, high)
+            BinaryDecisionDiagram.ofVariable(value, low, high)
         }
     }
 
@@ -58,10 +58,10 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
         private val table: MutableMap<Int, BinaryDecisionDiagram<T>> = mutableMapOf()
     ) : ApplyBinaryDecisionDiagramVisitor<T>() {
         override fun visit(node: BinaryDecisionDiagram.Terminal<T>): BinaryDecisionDiagram<T> {
-            return getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value)), table)
+            return getResultUsingTable(BinaryDecisionDiagram.ofTerminal(operator(node.value)), table)
         }
 
-        override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
+        override fun visit(node: BinaryDecisionDiagram.Variable<T>): BinaryDecisionDiagram<T> {
             val lowNode = node.low.accept(this)
             val highNode = node.high.accept(this)
             return getResultUsingTable(createVarNode(node.value, lowNode, highNode), table)
@@ -81,10 +81,10 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
             return when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
                     val thatNodeValue = (thatNode as BinaryDecisionDiagram.Terminal).value
-                    getResultUsingTable(BinaryDecisionDiagram.Terminal(operator(node.value, thatNodeValue)), table)
+                    getResultUsingTable(BinaryDecisionDiagram.ofTerminal(operator(node.value, thatNodeValue)), table)
                 }
-                is BinaryDecisionDiagram.Var -> {
-                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Var)
+                is BinaryDecisionDiagram.Variable -> {
+                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Variable)
                     val thatNodeValue = thatNodeAsVar.value
                     thatNode = thatNodeAsVar.low
                     val lowNode = node.accept(this)
@@ -92,18 +92,19 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
                     val highNode = node.accept(this)
                     getResultUsingTable(createVarNode(thatNodeValue, lowNode, highNode), table)
                 }
+                else -> throw UnsupportedOperationException("Unknown BinaryDecisionDiagram instance")
             }
         }
 
-        override fun visit(node: BinaryDecisionDiagram.Var<T>): BinaryDecisionDiagram<T> {
+        override fun visit(node: BinaryDecisionDiagram.Variable<T>): BinaryDecisionDiagram<T> {
             return when (thatNode) {
                 is BinaryDecisionDiagram.Terminal -> {
                     val curThatNode = thatNode
                     thatNode = node
                     curThatNode.accept(this)
                 }
-                is BinaryDecisionDiagram.Var -> {
-                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Var)
+                is BinaryDecisionDiagram.Variable -> {
+                    val thatNodeAsVar = (thatNode as BinaryDecisionDiagram.Variable)
                     val newValue: T
                     val firstLow: BinaryDecisionDiagram<T>
                     val firstHigh: BinaryDecisionDiagram<T>
@@ -133,6 +134,7 @@ internal sealed class ApplyBinaryDecisionDiagramVisitor<T : Comparable<T>> :
                     val highNode = firstHigh.accept(this)
                     getResultUsingTable(createVarNode(newValue, lowNode, highNode), table)
                 }
+                else -> throw UnsupportedOperationException("Unknown BinaryDecisionDiagram instance")
             }
         }
     }
