@@ -168,21 +168,34 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
 
         /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
         @JvmStatic
-        @JsName("unifier")
+        @JsName("unifierMap")
         fun unifier(map: Map<Var, Term>): Unifier = SubstitutionImpl.UnifierImpl.of(map)
 
         /** Creates a singleton [Unifier] containing a single [Var]-[Term] assignment */
         @JvmStatic
-        @JsName("ofVar")
-        fun of(variable: Var, withTerm: Term): Unifier = of(variable to withTerm) as Unifier
+        @JsName("of")
+        fun of(variable: Var, term: Term): Unifier = of(mapOf(variable to term))
+
+        /** Creates a [Unifier] of given a map assigning [Var]s to [Term]s */
+        @JvmStatic
+        @JsName("unifier")
+        fun unifier(variable: Var, term: Term): Unifier = of(mapOf(variable to term))
 
         /**
          * Creates a singleton [Unifier] containing a single [Var]-[Term] assignment.
          * The variable is created on the fly by name, via [Var.of]
          */
         @JvmStatic
-        @JsName("of")
-        fun of(variable: String, withTerm: Term): Unifier = of(Var.of(variable) to withTerm) as Unifier
+        @JsName("ofString")
+        fun of(variable: String, term: Term): Unifier = of(mapOf(Var.of(variable) to term))
+
+        /**
+         * Creates a singleton [Unifier] containing a single [Var]-[Term] assignment.
+         * The variable is created on the fly by name, via [Var.of]
+         */
+        @JvmStatic
+        @JsName("unifierString")
+        fun unifier(variable: String, term: Term): Unifier = of(mapOf(Var.of(variable) to term))
 
         /**
          * Crates a [Substitution] from the given [Var]-[Term] [Pair]s.
