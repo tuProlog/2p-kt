@@ -2,13 +2,11 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
-import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /** [ClauseMapper] implementation that handled classic Prolog clauses, that does not contain
  * any probabilistic information and is represented as a pure-logic clause.
@@ -31,7 +29,7 @@ internal object PrologClauseMapper : ClauseMapper {
         if (clause.body is Truth) {
             return listOf(
                 Rule.of(
-                    clause.head.wrapInPredicate(Prob.FUNCTOR, ProbExplanation.TRUE.toTerm()),
+                    clause.head.withExplanation(ProbExplanation.TRUE.toTerm()),
                     clause.body
                 )
             )
@@ -40,8 +38,8 @@ internal object PrologClauseMapper : ClauseMapper {
         val explanationVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Res")
         return listOf(
             Rule.of(
-                Struct.of(Prob.FUNCTOR, explanationVar, clause.head),
-                clause.body.wrapInPredicateRecursive(Prob.FUNCTOR, explanationVar)
+                clause.head.withExplanation(explanationVar),
+                clause.body.withBodyExplanation(explanationVar)
             )
         )
     }

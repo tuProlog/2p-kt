@@ -9,7 +9,6 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.wrapInPredicate
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -37,7 +36,7 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
             .first().substitution[evidenceExplanationVar]
 
         val goalExplanationVar = Var.of("GoalExplanation")
-        val solutions = solve(third.wrapInPredicate(ProbSolve.functor, goalExplanationVar))
+        val solutions = solve(Struct.of(ProbSolve.functor, goalExplanationVar, third))
         return sequence {
             for (solution in solutions) {
                 val goalExplanationTerm = solution.substitution[goalExplanationVar]

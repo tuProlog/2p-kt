@@ -9,7 +9,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
-import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /**
  * This implements a [ClauseMapper] that handle "evidence" predicates.
@@ -50,7 +49,7 @@ internal object EvidenceClauseMapper : ClauseMapper {
             } else {
                 Rule.of(
                     headTerm,
-                    clause.body.wrapInPredicateRecursive(Prob.FUNCTOR, Var.anonymous())
+                    clause.body.withBodyExplanation(Var.anonymous())
                 )
             }
         )

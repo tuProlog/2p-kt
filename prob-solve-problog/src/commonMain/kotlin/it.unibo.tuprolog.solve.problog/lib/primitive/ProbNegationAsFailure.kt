@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -9,7 +10,6 @@ import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.wrapInPredicate
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -37,7 +37,7 @@ internal object ProbNegationAsFailure : BinaryRelation.NonBacktrackable<Executio
             )
         } else {
             val explanationTermVar = Var.of("Explanation")
-            val solution = solve(second.wrapInPredicate(ProbSolve.functor, explanationTermVar)).firstOrNull()
+            val solution = solve(Struct.of(ProbSolve.functor, explanationTermVar, second)).firstOrNull()
             if (solution == null) {
                 replyFail()
             } else {

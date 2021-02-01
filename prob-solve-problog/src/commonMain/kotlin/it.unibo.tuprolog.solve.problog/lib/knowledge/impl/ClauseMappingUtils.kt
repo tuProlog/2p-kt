@@ -12,6 +12,7 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.Prob
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
 
 /**
@@ -41,6 +42,24 @@ internal object ClauseMappingUtils {
     fun map(clause: Clause): List<Clause> {
         return cascadeMappers.first { it.isCompatible(clause) }.apply(clause)
     }
+}
+
+/** This has to be used on head terms of [Clause]s and with goal [Term]s.
+ * Adds [explanation] to [this] term by making it the last argument of the predicate.
+ * Implicitly, the arity is increased by 1.
+ * */
+internal fun Term.withExplanation(explanation: Term): Struct {
+    return when (this) {
+        is Struct -> Struct.of(this.functor, *(this.args + explanation))
+        else -> Struct.of(this.toString(), explanation)
+    }
+}
+
+/** This has to be used on body terms of [Clause]s. Adds [explanation] to [this]
+ * term by wrapping it in an higher-level meta-predicate.
+ * */
+internal fun Term.withBodyExplanation(explanation: Term): Struct {
+    return wrapInPredicateRecursive(Prob.functor, explanation)
 }
 
 /** Wraps the [this] term with the provided in a new predicate that has [functor] as its

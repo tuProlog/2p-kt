@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
-import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 
 /**
  * A [ClauseMapper] that handles the case of probabilistic clauses and facts.
@@ -81,7 +80,7 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
         /* Problog probabilistic facts */
         if (rule.body is Truth) {
             return Rule.of(
-                Struct.of(Prob.FUNCTOR, explanation.toTerm(), rule.head),
+                rule.head.withExplanation(explanation.toTerm()),
                 rule.body
             )
         }
@@ -89,9 +88,9 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
         /* Problog probabilistic rules */
         val explanationVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Res")
         val explanationBodyVar = Var.of("${ProblogLib.EXPLANATION_VAR_NAME}_Body")
-        val newBody = rule.body.wrapInPredicateRecursive(Prob.FUNCTOR, explanationBodyVar)
+        val newBody = rule.body.withBodyExplanation(explanationBodyVar)
         return Rule.of(
-            Struct.of(Prob.FUNCTOR, explanationVar, rule.head),
+            rule.head.withExplanation(explanationVar),
             Struct.of(
                 ",",
                 newBody,

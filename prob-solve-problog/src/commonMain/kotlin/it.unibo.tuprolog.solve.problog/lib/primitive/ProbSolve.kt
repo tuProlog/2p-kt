@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -11,8 +12,6 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.wrapInPredicate
-import it.unibo.tuprolog.solve.problog.lib.rule.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -45,7 +44,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         ensuringArgumentIsCallable(1)
 
         val explanationVar = Var.of(EXPLANATION_VAR_NAME)
-        val solutions = solve(second.wrapInPredicate(Prob.FUNCTOR, explanationVar)).toList()
+        val solutions = solve(Struct.of(Prob.functor, explanationVar, second)).toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
         if (error != null) {
             return sequenceOf(Substitution.failed())

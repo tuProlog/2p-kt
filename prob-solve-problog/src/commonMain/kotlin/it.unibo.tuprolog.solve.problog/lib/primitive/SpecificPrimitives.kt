@@ -7,10 +7,10 @@ import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper
 internal object SpecificPrimitives {
     private val wrappers: Sequence<PrimitiveWrapper<*>> =
         sequenceOf(
-            ProbEnsurePrologCall,
+            Prob,
+            ProbSolve,
             ProbExplNot,
             ProbExplAnd,
-            ProbSolve,
             ProbCalc,
             ProbQuery,
             ProbSolveEvidence,

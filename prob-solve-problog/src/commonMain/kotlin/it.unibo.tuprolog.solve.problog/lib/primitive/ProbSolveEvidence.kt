@@ -14,7 +14,6 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.wrapInPredicate
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -58,7 +57,7 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
                     ProbExplanation.FALSE
                 } else {
                     val explanationVar = Var.of(EXPLANATION_VAR_NAME)
-                    val totalExplanation = solve(term.wrapInPredicate(ProbSolve.functor, explanationVar))
+                    val totalExplanation = solve(Struct.of(ProbSolve.functor, explanationVar, term))
                         .map { s -> s.substitution[explanationVar] }
                         .filterIsInstance<ProbExplanationTerm>()
                         .map { t -> t.explanation }
