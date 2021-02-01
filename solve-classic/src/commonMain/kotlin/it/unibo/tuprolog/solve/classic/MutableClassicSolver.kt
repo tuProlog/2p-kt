@@ -197,4 +197,17 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
             copy(flags = flags + flag)
         }
     }
+
+    override fun copy(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ) = MutableClassicSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+
+    override fun clone(): MutableClassicSolver = copy()
 }
