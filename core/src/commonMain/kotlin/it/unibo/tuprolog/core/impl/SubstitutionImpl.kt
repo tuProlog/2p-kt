@@ -35,6 +35,11 @@ internal sealed class SubstitutionImpl : Substitution {
         else -> UnifierImpl.of(this as Map<Var, Term> - keys, tags)
     }
 
+    override fun minus(variable: Var): Substitution = minus(listOf(variable))
+
+    override fun minus(variable: Var, vararg otherVariables: Var): Substitution =
+        minus(listOf(variable, *otherVariables))
+
     override operator fun minus(other: Substitution): SubstitutionImpl = this - other.keys
 
     override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl = when (this) {
@@ -85,6 +90,11 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun minus(other: Substitution): UnifierImpl = super.minus(other) as UnifierImpl
 
+        override fun minus(variable: Var): UnifierImpl = super.minus(variable) as UnifierImpl
+
+        override fun minus(variable: Var, vararg otherVariables: Var): UnifierImpl =
+            super.minus(variable, *otherVariables) as UnifierImpl
+
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): UnifierImpl =
             super.filter(predicate) as UnifierImpl
 
@@ -128,6 +138,10 @@ internal sealed class SubstitutionImpl : Substitution {
         override fun minus(other: Substitution): FailImpl = this
 
         override fun minus(keys: Iterable<Var>): FailImpl = this
+
+        override fun minus(variable: Var): FailImpl = this
+
+        override fun minus(variable: Var, vararg otherVariables: Var): FailImpl = this
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): FailImpl = this
 

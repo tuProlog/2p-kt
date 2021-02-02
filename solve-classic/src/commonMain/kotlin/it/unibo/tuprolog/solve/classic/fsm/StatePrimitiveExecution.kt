@@ -55,4 +55,6 @@ internal data class StatePrimitiveExecution(override val context: ClassicExecuti
             context.copy(step = nextStep())
         )
     }
+
+    override fun clone(context: ClassicExecutionContext): StatePrimitiveExecution = copy(context = context)
 }

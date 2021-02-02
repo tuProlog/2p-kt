@@ -186,4 +186,6 @@ internal data class StateRuleSelection(override val context: ClassicExecutionCon
             }
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateRuleSelection = copy(context = context)
 }

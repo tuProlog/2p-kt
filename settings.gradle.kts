@@ -16,7 +16,7 @@ buildscript {
 bootstrapRefreshVersionsAndDependencies()
 
 include("documentation")
-
+include("utils")
 include("core")
 include("unify")
 include("theory")

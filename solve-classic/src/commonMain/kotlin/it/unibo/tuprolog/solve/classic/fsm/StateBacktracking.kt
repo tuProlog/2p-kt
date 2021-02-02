@@ -21,4 +21,6 @@ internal data class StateBacktracking(override val context: ClassicExecutionCont
             }
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateBacktracking = copy(context = context)
 }

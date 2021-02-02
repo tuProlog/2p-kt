@@ -1,46 +1,31 @@
 package it.unibo.tuprolog.solve.classic
 
-import it.unibo.tuprolog.core.Substitution
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.classic.fsm.EndState
 import it.unibo.tuprolog.solve.classic.fsm.State
+import it.unibo.tuprolog.solve.classic.impl.SimpleSolutionIterator
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
-internal class SolutionIterator(
-    state: State,
-    private val onStateTransition: (State, Long) -> Unit = { _, _ -> Unit }
-) : Iterator<Solution> {
+interface SolutionIterator : Iterator<Solution> {
+    @JsName("state")
+    val state: State
 
-    var state: State = state
-        private set
+    @JsName("step")
+    val step: Long
 
-    var step: Long = 0
-        private set
+    override fun hasNext(): Boolean
 
-    override fun hasNext(): Boolean {
-        return state.let { it !is EndState || it.hasOpenAlternatives }
-    }
+    override fun next(): Solution
 
-    override fun next(): Solution {
-        do {
-            state = state.next()
-            step += 1
-            onStateTransition(state, step)
-        } while (state !is EndState)
-        return (state as EndState).solution.cleanUp()
-    }
+    @JsName("onStateTransition")
+    fun onStateTransition(source: State, destination: State, index: Long)
 
-    private fun Solution.cleanUp(): Solution =
-        when (this) {
-            is Solution.Yes -> cleanUp()
-            else -> this
-        }
-
-    private fun Solution.Yes.cleanUp(): Solution.Yes {
-        return copy(substitution = substitution.cleanUp(query.variables.toSet()))
-    }
-
-    private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
-        return filter { _, term -> (term !is Var) || (term in toRetain) }
+    companion object {
+        @JsName("of")
+        @JvmStatic
+        fun of(
+            initialState: State,
+            onStateTransition: (State, State, Long) -> Unit = { _, _, _ -> }
+        ): SolutionIterator = SimpleSolutionIterator(initialState, onStateTransition)
     }
 }

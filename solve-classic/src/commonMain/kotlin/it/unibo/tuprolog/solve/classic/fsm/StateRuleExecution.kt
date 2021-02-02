@@ -30,4 +30,6 @@ internal data class StateRuleExecution(override val context: ClassicExecutionCon
             else -> failureState
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateRuleExecution = copy(context = context)
 }

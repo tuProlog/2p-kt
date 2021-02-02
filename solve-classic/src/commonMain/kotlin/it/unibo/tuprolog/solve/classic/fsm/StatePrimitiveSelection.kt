@@ -56,10 +56,7 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
                     exceptionalState(
                         TypeError.forGoal(
                             context = context,
-                            procedure = context.procedure?.extractSignature() ?: Signature(
-                                "?-",
-                                1
-                            ),
+                            procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
                             expectedType = TypeError.Expected.CALLABLE,
                             culprit = goal
                         )
@@ -68,4 +65,6 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
             }
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StatePrimitiveSelection = copy(context = context)
 }

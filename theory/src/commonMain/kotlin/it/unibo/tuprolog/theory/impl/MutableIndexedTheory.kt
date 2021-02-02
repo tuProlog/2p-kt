@@ -101,4 +101,6 @@ internal class MutableIndexedTheory private constructor(
 
     override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
         if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
+
+    override fun clone(): MutableTheory = super.clone() as MutableTheory
 }

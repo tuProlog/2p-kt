@@ -260,6 +260,16 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 else -> this
             }
 
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsGround(index: Int): Solve.Request<C> =
+            arguments[index].let {
+                when {
+                    !it.isGround -> {
+                        throw InstantiationError.forArgument(context, signature, it.variables.first(), index)
+                    }
+                    else -> this
+                }
+            }
+
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsChar(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 is Atom -> {

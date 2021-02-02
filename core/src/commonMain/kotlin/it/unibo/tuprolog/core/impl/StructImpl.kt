@@ -78,4 +78,22 @@ internal open class StructImpl(
         val quoted = Struct.enquoteFunctorIfNecessary(escaped)
         return "$quoted${if (arity > 0) "(${args.joinToString(", ")})" else ""}"
     }
+
+    override fun addLast(argument: Term): Struct = Struct.of(functor, *args, argument)
+
+    override fun addFirst(argument: Term): Struct = Struct.of(functor, argument, *args)
+
+    override fun insertAt(index: Int, argument: Term): Struct =
+        if (index in args.indices) {
+            Struct.of(
+                functor,
+                *args.sliceArray(0 until index),
+                argument,
+                *args.sliceArray(index..args.lastIndex)
+            )
+        } else {
+            throw IndexOutOfBoundsException("Index $index is out of bounds ${args.indices}")
+        }
+
+    override fun setFunctor(functor: String): Struct = Struct.of(functor, *args)
 }

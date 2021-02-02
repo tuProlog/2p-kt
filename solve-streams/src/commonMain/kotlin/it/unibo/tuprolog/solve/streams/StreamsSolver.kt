@@ -5,10 +5,13 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -19,7 +22,9 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.FinalState
 import it.unibo.tuprolog.solve.streams.solver.fsm.StateMachineExecutor
 import it.unibo.tuprolog.solve.streams.solver.fsm.impl.StateInit
 import it.unibo.tuprolog.solve.toOperatorSet
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.buffered
 
 /**
  * Default implementation of SLD (*Selective Linear Definite*) solver, exploring the search tree in a purely functional way
@@ -35,6 +40,24 @@ internal class StreamsSolver constructor(
     outputChannels: OutputStore = OutputStore.default()
 ) : Solver {
 
+    constructor(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
+    ) : this(
+        libraries,
+        flags,
+        staticKb,
+        dynamicKb,
+        InputStore.default(stdIn),
+        OutputStore.default(stdOut, stdErr, warnings),
+    )
+
     private var executionContext: ExecutionContext = StreamsExecutionContext(
         libraries,
         flags,
@@ -45,7 +68,7 @@ internal class StreamsSolver constructor(
         outputChannels
     )
 
-    override fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution> {
+    override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         executionContext = StreamsExecutionContext(
             libraries = libraries,
             flags = flags,
@@ -55,18 +78,36 @@ internal class StreamsSolver constructor(
             outputChannels = outputChannels
         )
 
-        return solveToFinalStates(
+        var solutionSequence = solveToFinalStates(
             Solve.Request(
                 goal.extractSignature(),
                 goal.argsList,
                 executionContext as StreamsExecutionContext,
-                executionMaxDuration = maxDuration
+                executionMaxDuration = options.timeout
             )
         ).map {
             executionContext = it.context.apply(it.solve.sideEffects)
             it.solve.solution.cleanUp()
         }
+        if (options.limit > 0) {
+            solutionSequence = solutionSequence.take(options.limit)
+        }
+        if (options.isEager) {
+            solutionSequence = solutionSequence.buffered()
+        }
+        return solutionSequence
     }
+
+    override fun copy(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ) = StreamsSolver(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override val libraries: Libraries
         get() = executionContext.libraries

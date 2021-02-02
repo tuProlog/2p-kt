@@ -19,6 +19,14 @@ class TermTest {
             return MyStruct(functor, args.map { it.freshCopy(scope) }.toTypedArray())
         }
 
+        override fun addLast(argument: Term): Struct = throw NotImplementedError()
+
+        override fun addFirst(argument: Term): Struct = throw NotImplementedError()
+
+        override fun insertAt(index: Int, argument: Term): Struct = throw NotImplementedError()
+
+        override fun setFunctor(functor: String): Struct = throw NotImplementedError()
+
         override val isFunctorWellFormed: Boolean
             get() = Struct.isWellFormedFunctor(functor)
 

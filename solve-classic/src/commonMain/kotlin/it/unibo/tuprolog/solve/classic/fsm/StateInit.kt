@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
 internal data class StateInit(override val context: ClassicExecutionContext) : AbstractState(context) {
-
     override fun computeNext(): State {
         return StateGoalSelection(
             context.copy(
@@ -16,8 +15,11 @@ internal data class StateInit(override val context: ClassicExecutionContext) : A
                 parent = null,
                 choicePoints = null,
                 depth = 0,
-                step = 1
+                step = 1,
+                customData = context.customData.preservePersistent()
             ).appendRulesAndChoicePoints(Cursor.empty())
         )
     }
+
+    override fun clone(context: ClassicExecutionContext): StateInit = copy(context = context)
 }
