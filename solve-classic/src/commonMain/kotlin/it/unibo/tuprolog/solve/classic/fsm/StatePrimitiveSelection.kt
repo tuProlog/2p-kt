@@ -65,4 +65,6 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
             }
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StatePrimitiveSelection = copy(context = context)
 }
