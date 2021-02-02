@@ -92,7 +92,7 @@ internal open class ClassicSolver(
             maxDuration = options.timeout,
             startTime = currentTimeInstant()
         )
-        return SolutionIterator(StateInit(currentContext)) { newState, newStep ->
+        return SolutionIterator.of(StateInit(currentContext)) { _, newState, newStep ->
             require(newState.context.step == newStep)
             currentContext = newState.context
         }.asSequence()
