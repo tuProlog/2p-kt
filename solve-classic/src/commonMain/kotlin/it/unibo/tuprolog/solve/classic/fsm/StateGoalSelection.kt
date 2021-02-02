@@ -44,4 +44,6 @@ internal data class StateGoalSelection(override val context: ClassicExecutionCon
             )
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateGoalSelection = copy(context = context)
 }
