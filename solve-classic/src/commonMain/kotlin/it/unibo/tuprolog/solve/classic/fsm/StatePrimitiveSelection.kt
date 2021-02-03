@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
-internal data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
         return StateException(

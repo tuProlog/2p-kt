@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.utils.Cursor
 
-internal data class StateInit(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateInit(override val context: ClassicExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
         return StateGoalSelection(
             context.copy(

@@ -19,7 +19,7 @@ import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.utils.buffered
 
-internal data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     companion object {
         val transparentToCut = setOf(

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.TimeOutException
 
-internal abstract class AbstractState(override val context: ClassicExecutionContext) : State {
+abstract class AbstractState(override val context: ClassicExecutionContext) : State {
 
     protected val executionTime: TimeInstant by lazy {
         currentTime()
