@@ -35,7 +35,7 @@ fun Term.toGoals(): Cursor<out Term> =
         }
     }.cursor()
 
-private fun ClassicExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
+fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
     val currentGoal = this.currentGoal as Struct
 
     return copy(
@@ -54,10 +54,7 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
         choicePoints.appendRules(Cursor.empty(), this)
     }
 
-    return copy(
-        rules = rules,
-        choicePoints = newChoicePointContext
-    )
+    return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
 fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
@@ -67,17 +64,14 @@ fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions:
         choicePoints.appendPrimitives(Cursor.empty(), this)
     }
 
-    return copy(
-        primitives = primitiveExecutions,
-        choicePoints = newChoicePointContext
-    )
+    return copy(primitives = primitiveExecutions, choicePoints = newChoicePointContext)
 }
 
 fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
-    val tempExecutionContext = createTempChild(inferProcedureFromGoals)
+    val tempExecutionContext = createChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
@@ -86,7 +80,7 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
-    val tempExecutionContext = createTempChild(inferProcedureFromGoals)
+    val tempExecutionContext = createChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }

@@ -66,8 +66,7 @@ data class ClassicExecutionContext(
     val pathToRoot: Sequence<ClassicExecutionContext> = sequence {
         var current: ClassicExecutionContext? = this@ClassicExecutionContext
         while (current != null) {
-            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-            yield(current!!)
+            yield(current)
             current = current.parent
         }
     }

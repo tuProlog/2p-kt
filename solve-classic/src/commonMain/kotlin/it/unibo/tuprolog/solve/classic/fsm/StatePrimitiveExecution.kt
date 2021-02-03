@@ -11,13 +11,13 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
 
     private fun ClassicExecutionContext.copyFromCurrentPrimitive(
         goals: Cursor<out Term>? = null,
-        parentProcedure: Boolean = false,
+        procedureFromAncestor: Int = 0,
         substitution: Substitution? = null
     ): ClassicExecutionContext {
         val ctx = primitives.current?.let { apply(it.sideEffects) } ?: this
         return ctx.copy(
             goals = goals ?: this.goals,
-            procedure = if (parentProcedure) parent?.procedure else procedure,
+            procedure = pathToRoot.drop(procedureFromAncestor).map { it.procedure }.first(),
             primitives = Cursor.empty(),
             substitution = (substitution ?: this.substitution) as Substitution.Unifier,
             step = nextStep()
@@ -30,30 +30,26 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
                 StateGoalSelection(
                     context.copyFromCurrentPrimitive(
                         goals = context.goals.next,
-                        parentProcedure = true,
+                        procedureFromAncestor = 1,
                         substitution = (context.substitution + sol.substitution)
                     )
                 )
             }
             is Solution.No -> {
-                StateBacktracking(context.copyFromCurrentPrimitive())
+                StateBacktracking(context.parent!!.copyFromCurrentPrimitive())
             }
             is Solution.Halt -> {
-                StateException(
-                    sol.exception.updateContext(context),
-                    context.copyFromCurrentPrimitive()
-                )
+                StateException(sol.exception.updateContext(context), context.copyFromCurrentPrimitive())
             }
             null -> {
                 StateBacktracking(context.copyFromCurrentPrimitive())
             }
-            else -> throw IllegalStateException("This should never happen")
+            else -> {
+                throw IllegalStateException("This should never happen")
+            }
         }
     } catch (exception: TuPrologRuntimeException) {
-        StateException(
-            exception.updateContext(context),
-            context.copy(step = nextStep())
-        )
+        StateException(exception.updateContext(context), context.copy(step = nextStep()))
     }
 
     override fun clone(context: ClassicExecutionContext): StatePrimitiveExecution = copy(context = context)

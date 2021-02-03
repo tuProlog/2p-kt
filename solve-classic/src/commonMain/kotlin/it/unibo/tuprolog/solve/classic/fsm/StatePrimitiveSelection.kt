@@ -35,18 +35,15 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                     val signature = goal.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
-                        val req = toRequest(goal, signature)
+                        val childContext = createChild()
+                        val request = childContext.toRequest(goal, signature)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
-
                         try {
-                            val primitiveExecutions = primitive(req).cursor()
-
-                            StatePrimitiveExecution(
-                                context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions)
-                            )
+                            val primitiveExecutions = primitive(request).cursor()
+                            StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
                         } catch (exception: TuPrologRuntimeException) {
-                            exceptionalState(exception.updateContext(context))
+                            exceptionalState(exception.updateContext(childContext))
                         }
                     } else {
                         StateRuleSelection(context.copy(step = nextStep()))
