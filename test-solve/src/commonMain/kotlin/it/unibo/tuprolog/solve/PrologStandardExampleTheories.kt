@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.TestingClauseTheories.systemError
 import it.unibo.tuprolog.solve.TestingClauseTheories.timeOutException
 import it.unibo.tuprolog.solve.TestingClauseTheories.typeError
 import it.unibo.tuprolog.theory.Theory
-import kotlin.collections.listOf as ktListOf
 
 /**
  * An object containing the collection of Prolog Standard databases and requests, testing ISO functionality
@@ -170,7 +169,7 @@ object PrologStandardExampleTheories {
      * ?- call(true, fail, 1).
      * ```
      */
-    val callStandardExampleTheoryGoalsToSolution by lazy {
+    fun callStandardExampleTheoryGoalsToSolution(errorSignature: Signature) =
         prolog {
             ktListOf(
                 ("call"("!") or true).hasSolutions({ yes() }, { yes() }),
@@ -182,11 +181,10 @@ object PrologStandardExampleTheories {
                     { yes("X" to 2, "Z" to "!") }
                 ),
                 "call"(false).hasSolutions({ no() }),
-                "call"(true and "X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
-                "call"(true and (false and 1)).hasSolutions({ halt(typeError("call", 1, true and (false and 1))) })
+                "call"(true and "X").hasSolutions({ halt(instantiationError(errorSignature, varOf("X"))) }),
+                "call"(true and (false and 1)).hasSolutions({ halt(typeError(errorSignature, true and (false and 1))) })
             )
         }
-    }
 
     /**
      * The database used in Prolog standard while writing examples for Catch
@@ -294,7 +292,7 @@ object PrologStandardExampleTheories {
      * ?- p2.
      * ```
      */
-    val notStandardExampleTheoryNotableGoalToSolution by lazy {
+    fun notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature: Signature, notErrorSignature: Signature) =
         prolog {
             ktListOf(
                 (("X" equalsTo 3) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ yes("X" to 3) }),
@@ -302,7 +300,7 @@ object PrologStandardExampleTheories {
                 ("\\+"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("\\+"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "\\+"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "\\+"(fail and 1).hasSolutions({ halt(typeError("\\+", 1, fail and 1)) }),
+                "\\+"(fail and 1).hasSolutions({ halt(typeError(nafErrorSignature, fail and 1)) }),
 
                 "shave"("barber", "'Donald'").hasSolutions({ yes() }),
                 "shave"("barber", "barber").hasSolutions({ halt(timeOutException) }),
@@ -319,10 +317,9 @@ object PrologStandardExampleTheories {
                 ("not"("!") or ("X" equalsTo 1)).hasSolutions({ yes("X" to 1) }),
                 ("not"(("X" equalsTo 1) or ("X" equalsTo 2)) and ("X" equalsTo 3)).hasSolutions({ no() }),
                 (("X" equalsTo 1) and "not"(("X" equalsTo 1) or ("X" equalsTo 2))).hasSolutions({ no() }),
-                "not"(fail and 1).hasSolutions({ halt(typeError("not", 1, fail and 1)) }),
+                "not"(fail and 1).hasSolutions({ halt(typeError(notErrorSignature, fail and 1)) }),
             )
         }
-    }
 
     /**
      * The database used in Prolog standard while writing examples for If-Then
@@ -379,7 +376,10 @@ object PrologStandardExampleTheories {
             ktListOf(
                 ("->"("X" equalsTo 0, true) or false).hasSolutions({ yes("X" to 0) }),
                 ("X" equalsTo 1 and ("->"("X" equalsTo 0, false) or true)).hasSolutions({ yes("X" to 1) }),
-                (("->"("!" and ("X" equalsTo 1) and false, true) or false) or ("X" equalsTo 2)).hasSolutions({ yes("X" to 2) }),
+                (("->"(
+                    "!" and ("X" equalsTo 1) and false,
+                    true
+                ) or false) or ("X" equalsTo 2)).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),
                 ("->"("!" and ("X" equalsTo 1) and false, true) or false).hasSolutions({ no() })
             )
@@ -387,16 +387,18 @@ object PrologStandardExampleTheories {
     }
 
     /** Collection of all Prolog Standard example databases and their respective callable goals with expected solutions */
-    val allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions by lazy {
-        mapOf(
-            prologStandardExampleTheory to prologStandardExampleTheoryNotableGoalToSolution,
-            prologStandardExampleWithCutTheory to prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            conjunctionStandardExampleTheory to conjunctionStandardExampleTheoryNotableGoalToSolution,
-            callStandardExampleTheory to callStandardExampleTheoryGoalsToSolution,
-            catchAndThrowTheoryExample to catchAndThrowTheoryExampleNotableGoalToSolution,
-            notStandardExampleTheory to notStandardExampleTheoryNotableGoalToSolution,
-            ifThenStandardExampleTheory to ifThenStandardExampleTheoryNotableGoalToSolution,
-            Theory.empty() to ifThenElseStandardExampleNotableGoalToSolution
-        )
-    }
+    fun allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions(
+        callErrorSignature: Signature,
+        nafErrorSignature: Signature,
+        notErrorSignature: Signature
+    ) = mapOf(
+        prologStandardExampleTheory to prologStandardExampleTheoryNotableGoalToSolution,
+        prologStandardExampleWithCutTheory to prologStandardExampleWithCutTheoryNotableGoalToSolution,
+        conjunctionStandardExampleTheory to conjunctionStandardExampleTheoryNotableGoalToSolution,
+        callStandardExampleTheory to callStandardExampleTheoryGoalsToSolution(callErrorSignature),
+        catchAndThrowTheoryExample to catchAndThrowTheoryExampleNotableGoalToSolution,
+        notStandardExampleTheory to notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
+        ifThenStandardExampleTheory to ifThenStandardExampleTheoryNotableGoalToSolution,
+        Theory.empty() to ifThenElseStandardExampleNotableGoalToSolution
+    )
 }

@@ -1,12 +1,24 @@
 package it.unibo.tuprolog.solve.classic
 
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSolver
 import kotlin.test.Test
 
 class TestClassicSolver : TestSolver, SolverFactory by ClassicSolverFactory {
 
-    private val prototype = TestSolver.prototype(this)
+    private val prototype = Signature("ensure_executable", 1).let {
+        TestSolver.prototype(this, it, it, it)
+    }
+
+    override val callErrorSignature: Signature
+        get() = prototype.callErrorSignature
+
+    override val nafErrorSignature: Signature
+        get() = prototype.nafErrorSignature
+
+    override val notErrorSignature: Signature
+        get() = prototype.notErrorSignature
 
     @Test
     override fun testUnknownFlag2() {
