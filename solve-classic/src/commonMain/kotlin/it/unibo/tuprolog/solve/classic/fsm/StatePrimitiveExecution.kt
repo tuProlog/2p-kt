@@ -39,7 +39,7 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
                 StateBacktracking(context.parent!!.copyFromCurrentPrimitive())
             }
             is Solution.Halt -> {
-                StateException(sol.exception.updateContext(context), context.copyFromCurrentPrimitive())
+                StateException(sol.exception.updateLastContext(context), context.copyFromCurrentPrimitive())
             }
             null -> {
                 StateBacktracking(context.copyFromCurrentPrimitive())
@@ -49,7 +49,7 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
             }
         }
     } catch (exception: TuPrologRuntimeException) {
-        StateException(exception.updateContext(context), context.copy(step = nextStep()))
+        StateException(exception.updateLastContext(context), context.copy(step = nextStep()))
     }
 
     override fun clone(context: ClassicExecutionContext): StatePrimitiveExecution = copy(context = context)

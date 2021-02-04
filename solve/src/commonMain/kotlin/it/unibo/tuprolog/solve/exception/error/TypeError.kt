@@ -112,8 +112,8 @@ class TypeError(
                 expectedType = expectedType,
                 culprit = culprit,
                 extraData = extra
-                )
-            }
+            )
+        }
 
         @JsName("forGoal")
         @JvmStatic
