@@ -43,7 +43,7 @@ data class StatePrimitiveSelection(override val context: ClassicExecutionContext
                             val primitiveExecutions = primitive(request).cursor()
                             StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
                         } catch (exception: TuPrologRuntimeException) {
-                            exceptionalState(exception.updateLastContext(childContext))
+                            exceptionalState(exception.updateLastContext(childContext.skipThrow()))
                         }
                     } else {
                         StateRuleSelection(context.copy(step = nextStep()))
