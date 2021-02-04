@@ -79,6 +79,5 @@ class SystemError constructor(
             message("Uncaught exception `${exception.pretty()}`") { m, extra ->
                 SystemError(m, exception, exception.contexts, extra)
             }
-
     }
 }

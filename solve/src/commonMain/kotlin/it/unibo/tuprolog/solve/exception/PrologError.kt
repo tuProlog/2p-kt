@@ -108,42 +108,28 @@ abstract class PrologError(
         ): PrologError = with(type) {
             when {
                 functor == InstantiationError.typeFunctor ->
-                    InstantiationError(message, cause, contexts, Var.anonymous(), extraData)
+                    InstantiationError(message ?: type.pretty(), cause, contexts, Var.anonymous(), extraData)
                 functor == SystemError.typeFunctor ->
-                    SystemError(message, cause, contexts, extraData)
+                    SystemError(message ?: type.pretty(), cause, contexts, extraData)
                 functor == SyntaxError.typeFunctor ->
-                    SyntaxError(message, cause, contexts, extraData)
+                    SyntaxError(message ?: type.pretty(), cause, contexts, extraData)
                 functor == MessageError.typeFunctor ->
-                    MessageError(message, cause, contexts, extraData)
+                    MessageError(message ?: type.pretty(), cause, contexts, extraData)
                 functor == RepresentationError.typeFunctor && type.arity == 1 ->
-                    RepresentationError(message, cause, contexts, Limit.fromTerm(type[0])!!, extraData)
+                    RepresentationError(message ?: type.pretty(), cause, contexts, Limit.fromTerm(type[0])!!, extraData)
                 functor == ExistenceError.typeFunctor && type.arity == 2 ->
-                    ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
+                    ExistenceError(message ?: type.pretty(), cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
                 functor == DomainError.typeFunctor && arity == 2 ->
-                    DomainError(message, cause, contexts, DomainError.Expected.fromTerm(args[0])!!, args[1], extraData)
+                    DomainError(message ?: type.pretty(), cause, contexts, DomainError.Expected.fromTerm(args[0])!!, args[1], extraData)
                 functor == TypeError.typeFunctor && arity == 2 ->
-                    TypeError(message, cause, contexts, TypeError.Expected.fromTerm(args[0])!!, args[1], extraData)
+                    TypeError(message ?: type.pretty(), cause, contexts, TypeError.Expected.fromTerm(args[0])!!, args[1], extraData)
                 functor == EvaluationError.typeFunctor && arity == 1 ->
-                    EvaluationError(message, cause, contexts, EvaluationError.Type.fromTerm(args[0])!!, extraData)
+                    EvaluationError(message ?: type.pretty(), cause, contexts, EvaluationError.Type.fromTerm(args[0])!!, extraData)
                 functor == PermissionError.typeFunctor && arity == 3 ->
-                    PermissionError(
-                        message,
-                        cause,
-                        contexts,
-                        Operation.fromTerm(args[0])!!,
-                        Permission.fromTerm(args[1])!!,
-                        args[2],
-                        extraData
-                    )
-                else -> object : PrologError(message, cause, contexts, type, extraData) {
+                    PermissionError(message ?: type.pretty(), cause, contexts, Operation.fromTerm(args[0])!!, Permission.fromTerm(args[1])!!, args[2], extraData)
+                else -> object : PrologError(message ?: type.pretty(), cause, contexts, type, extraData) {
                     override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
-                        of(
-                            this.message,
-                            this.cause,
-                            this.contexts.setItem(index, newContext),
-                            this.type,
-                            this.extraData
-                        )
+                        of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
 
                     override fun updateLastContext(newContext: ExecutionContext): PrologError =
                         updateContext(newContext, this.contexts.lastIndex)
