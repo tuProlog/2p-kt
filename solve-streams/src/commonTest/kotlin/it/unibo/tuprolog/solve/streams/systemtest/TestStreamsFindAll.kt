@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.streams.systemtest
 
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestFindAll
 import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
@@ -9,6 +10,9 @@ import kotlin.test.Test
 class TestStreamsFindAll : TestFindAll, SolverFactory by StreamsSolverFactory {
 
     private val prototype = TestFindAll.prototype(this)
+
+    override val errorSignature: Signature
+        get() = prototype.errorSignature
 
     @Test
     override fun testFindXInDiffValues() {

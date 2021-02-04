@@ -376,10 +376,14 @@ object PrologStandardExampleTheories {
             ktListOf(
                 ("->"("X" equalsTo 0, true) or false).hasSolutions({ yes("X" to 0) }),
                 ("X" equalsTo 1 and ("->"("X" equalsTo 0, false) or true)).hasSolutions({ yes("X" to 1) }),
-                (("->"(
-                    "!" and ("X" equalsTo 1) and false,
-                    true
-                ) or false) or ("X" equalsTo 2)).hasSolutions({ yes("X" to 2) }),
+                (
+                    (
+                        "->"(
+                            "!" and ("X" equalsTo 1) and false,
+                            true
+                        ) or false
+                        ) or ("X" equalsTo 2)
+                    ).hasSolutions({ yes("X" to 2) }),
                 ("->"(false, true) or true).hasSolutions({ yes() }),
                 ("->"("!" and ("X" equalsTo 1) and false, true) or false).hasSolutions({ no() })
             )

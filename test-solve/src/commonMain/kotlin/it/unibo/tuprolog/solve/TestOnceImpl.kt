@@ -4,7 +4,10 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce {
+internal class TestOnceImpl(
+    private val solverFactory: SolverFactory,
+    override val errorSignature: Signature
+) : TestOnce {
     override fun testOnceCut() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -78,7 +81,7 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("once", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             numOf(3)
 
@@ -102,7 +105,7 @@ internal class TestOnceImpl(private val solverFactory: SolverFactory) : TestOnce
                     query.halt(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("once", 1),
+                            errorSignature,
                             varOf("X")
                         )
                     )

@@ -5,7 +5,10 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.collections.listOf as ktListOf
 
-internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestFindAll {
+internal class TestFindAllImpl(
+    private val solverFactory: SolverFactory,
+    override val errorSignature: Signature
+) : TestFindAll {
 
     override fun testFindXInDiffValues() {
         prolog {
@@ -150,7 +153,7 @@ internal class TestFindAllImpl(private val solverFactory: SolverFactory) : TestF
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             numOf(1)
                         )
