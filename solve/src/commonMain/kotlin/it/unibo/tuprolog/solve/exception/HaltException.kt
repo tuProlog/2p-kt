@@ -31,7 +31,10 @@ class HaltException(
         this(cause?.toString(), cause, context, exitStatus)
 
     override fun updateContext(newContext: ExecutionContext, index: Int): HaltException =
-        HaltException(message, cause, contexts.setFirst(newContext), exitStatus)
+        HaltException(message, cause, contexts.setItem(index, newContext), exitStatus)
+
+    override fun updateLastContext(newContext: ExecutionContext): HaltException =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): HaltException =
         HaltException(message, cause, contexts.addLast(newContext), exitStatus)

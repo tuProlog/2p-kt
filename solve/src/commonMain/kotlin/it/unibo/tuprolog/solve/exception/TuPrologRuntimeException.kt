@@ -58,9 +58,6 @@ open class TuPrologRuntimeException(
     open fun pushContext(newContext: ExecutionContext): TuPrologRuntimeException =
         TuPrologRuntimeException(message, cause, contexts.addLast(newContext))
 
-    protected fun Array<ExecutionContext>.setFirst(item: ExecutionContext): Array<ExecutionContext> =
-        arrayOf(item, *copyOfRange(1, size))
-
     protected fun Array<ExecutionContext>.setItem(index: Int, item: ExecutionContext): Array<ExecutionContext> =
         copyOf().also { it[index] = item }
 
