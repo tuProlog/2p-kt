@@ -39,7 +39,20 @@ open class TuPrologRuntimeException(
     /** The exception stacktrace; shorthand for `context.prologStackTrace` */
     @JsName("prologStackTrace")
     val prologStackTrace: List<Struct>
-        get() = sequenceOf(*contexts).flatMap { it.prologStackTrace.asSequence() }.toList()
+        get() = when (contexts.size) {
+            1 -> context.prologStackTrace
+            else ->
+                (
+                    sequenceOf(*contexts).take(contexts.size - 1).flatMap { it.fullStackTraceButLast } +
+                        contexts.last().fullStackTrace
+                    ).toList()
+        }
+
+    private val ExecutionContext.fullStackTrace: Sequence<Struct>
+        get() = prologStackTrace.asSequence()
+
+    private val ExecutionContext.fullStackTraceButLast: Sequence<Struct>
+        get() = prologStackTrace.run { slice(0 until lastIndex) }.asSequence()
 
     /**
      * Creates a new exception instance with the context with in position [index] updated to [newContext].
