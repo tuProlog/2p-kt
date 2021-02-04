@@ -63,7 +63,9 @@ abstract class PrologError(
     private fun generateErrorStruct() =
         extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
-    abstract override fun updateContext(newContext: ExecutionContext): PrologError
+    abstract override fun updateContext(newContext: ExecutionContext, index: Int): PrologError
+
+    abstract override fun updateLastContext(newContext: ExecutionContext): PrologError
 
     abstract override fun pushContext(newContext: ExecutionContext): PrologError
 
@@ -134,9 +136,17 @@ abstract class PrologError(
                         extraData
                     )
                 else -> object : PrologError(message, cause, contexts, type, extraData) {
+                    override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+                        of(
+                            this.message,
+                            this.cause,
+                            this.contexts.setItem(index, newContext),
+                            this.type,
+                            this.extraData
+                        )
 
-                    override fun updateContext(newContext: ExecutionContext): PrologError =
-                        of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+                    override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                        updateContext(newContext, this.contexts.lastIndex)
 
                     override fun pushContext(newContext: ExecutionContext): PrologError =
                         of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
