@@ -67,12 +67,18 @@ class SystemError constructor(
                 )
             }
 
+        private fun PrologError.pretty(): String =
+            when (this) {
+                is MessageError -> content.pretty()
+                else -> errorStruct.pretty()
+            }
+
         @JsName("forUncaughtError")
         @JvmStatic
-        fun forUncaughtError(context: ExecutionContext, exception: PrologError): SystemError =
-            when (exception) {
-                is MessageError -> forUncaughtException(context, exception.content)
-                else -> forUncaughtException(context, exception.errorStruct)
+        fun forUncaughtError(exception: PrologError): SystemError =
+            message("Uncaught exception `${exception.pretty()}`") { m, extra ->
+                SystemError(m, exception, exception.contexts, extra)
             }
+
     }
 }
