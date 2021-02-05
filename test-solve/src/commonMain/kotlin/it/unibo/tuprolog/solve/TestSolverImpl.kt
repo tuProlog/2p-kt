@@ -771,9 +771,7 @@ internal class TestSolverImpl(
         prolog {
             fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
                 "halt" -> true
-                else ->
-                    argsSequence.filterIsInstance<Struct>()
-                        .any { it.containsHaltPrimitive() }
+                else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
             }
 
             allPrologTestingTheoriesToRespectiveGoalsAndSolutions(

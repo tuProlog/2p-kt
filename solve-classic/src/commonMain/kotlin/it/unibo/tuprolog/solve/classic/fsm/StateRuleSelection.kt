@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.classic.ChoicePointContext
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
+import it.unibo.tuprolog.solve.classic.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
@@ -22,7 +23,9 @@ import it.unibo.tuprolog.utils.buffered
 data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     companion object {
-        val transparentToCut = setOf(
+        private val catchSignature = Catch.signature
+
+        private val transparentToCut = setOf(
             Signature(",", 2),
             Signature(";", 2),
             Signature("->", 2)
@@ -120,8 +123,10 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
-        get() = goals.next.isOver && goals.current!!.let {
-            it is Struct && it.extractSignature() == procedure?.extractSignature()
+        get() = goals.next.isOver && goals.current!!.let { currentGoal ->
+            (currentGoal as? Struct)?.extractSignature()?.let {
+                it == procedure?.extractSignature() && it != catchSignature
+            } ?: false
         }
 
     override fun computeNext(): State {
