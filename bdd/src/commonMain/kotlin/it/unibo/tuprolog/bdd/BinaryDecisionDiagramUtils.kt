@@ -8,7 +8,6 @@ package it.unibo.tuprolog.bdd
 
 import it.unibo.tuprolog.bdd.exception.BinaryDecisionDiagramOperationException
 import it.unibo.tuprolog.bdd.impl.AnyBinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.bdd.impl.ApplyBinaryDecisionDiagramVisitor
 import it.unibo.tuprolog.bdd.impl.ExpansionBinaryDecisionDiagramVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
@@ -27,7 +26,7 @@ fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> 
     BinaryDecisionDiagram.ofTerminal(value)
 
 /** Internal helper function to catch all exceptions and wrap them into BBD-specific ones. */
-private fun <T> runOperationAndCatchErrors(action: () -> T): T {
+internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
     try {
         return action()
     } catch (e: Throwable) {
@@ -114,64 +113,3 @@ fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
         ) { node, low, high -> BinaryDecisionDiagram.ofVariable(mapper(node), low, high) }
     }
 }
-
-/**
- * Applies the "Apply" construction algorithm over [BinaryDecisionDiagram]s using
- * a given boolean operator. The result is a Reduced Ordered Binary Decision Diagram (ROBDD). */
-@JsName("applyUnary")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
-    unaryOp: (Boolean) -> Boolean
-): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
-        this.accept(ApplyBinaryDecisionDiagramVisitor.Unary(unaryOp))
-    }
-}
-
-/**
- * Applies the "Apply" construction algorithm over two [BinaryDecisionDiagram]s using a given boolean operator.
- * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
- * */
-@JsName("applyBinary")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.apply(
-    that: BinaryDecisionDiagram<T>,
-    binaryOp: (Boolean, Boolean) -> Boolean
-): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
-        this.accept(ApplyBinaryDecisionDiagramVisitor.Binary(that, binaryOp))
-    }
-}
-
-/**
- * Performs the "Not" unary boolean operation over a [BinaryDecisionDiagram].
- * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
- */
-@JsName("not")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.not(): BinaryDecisionDiagram<T> {
-    return runOperationAndCatchErrors {
-        this.apply { a -> !a }
-    }
-}
-
-/**
- * Performs the "And" unary boolean operation over two [BinaryDecisionDiagram]s.
- * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
- */
-@JsName("and")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.and(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return runOperationAndCatchErrors {
-            this.apply(that) { a, b -> a && b }
-        }
-    }
-
-/**
- * Performs the "Or" unary boolean operation over two [BinaryDecisionDiagram]s.
- * The result is a Reduced Ordered Binary Decision Diagram (ROBDD).
- */
-@JsName("or")
-infix fun <T : Comparable<T>> BinaryDecisionDiagram<T>.or(that: BinaryDecisionDiagram<T>):
-    BinaryDecisionDiagram<T> {
-        return runOperationAndCatchErrors {
-            this.apply(that) { a, b -> a || b }
-        }
-    }

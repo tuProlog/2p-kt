@@ -19,11 +19,11 @@ internal class ProbExplanationTerm(
         get() = false
 
     override fun freshCopy(): ProbExplanationTerm {
-        return ProbExplanationTerm(this.explanation.apply { it.freshCopy() })
+        return ProbExplanationTerm(explanation.apply { it.freshCopy() })
     }
 
     override fun freshCopy(scope: Scope): ProbExplanationTerm {
-        return ProbExplanationTerm(this.explanation.apply { it.freshCopy(scope) })
+        return ProbExplanationTerm(explanation.apply { it.freshCopy(scope) })
     }
 
     override fun get(substitution: Substitution, vararg substitutions: Substitution): ProbExplanationTerm {
@@ -35,13 +35,13 @@ internal class ProbExplanationTerm(
     }
 
     override fun apply(substitution: Substitution): ProbExplanationTerm {
-        return if (substitution.isEmpty() || isGround) {
+        return if (substitution.isEmpty() || isGround || !explanation.containsAnyVariable(substitution.keys)) {
             this
         } else {
-            ProbExplanationTerm(this.explanation.apply { it.apply(substitution) })
+            ProbExplanationTerm(explanation.apply { it.apply(substitution) })
         }
     }
 
     override val isGround: Boolean
-        get() = !this.explanation.containsNonGroundTerm
+        get() = !explanation.containsAnyNotGroundTerm
 }

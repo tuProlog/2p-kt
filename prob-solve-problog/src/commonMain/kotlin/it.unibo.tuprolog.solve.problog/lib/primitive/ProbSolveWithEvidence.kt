@@ -34,7 +34,7 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
         ensuringArgumentIsCallable(2)
 
         val evidenceExplanationVar = Var.of("EvidenceExplanation")
-        val evidenceExplanationTerm = if(context.isPrologMode()) {
+        val evidenceExplanationTerm = if (context.isPrologMode()) {
             /* No need to compute evidence for Prolog-only queries */
             ProbExplanation.TRUE.toTerm()
         } else {

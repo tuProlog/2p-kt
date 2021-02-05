@@ -10,7 +10,8 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 
 internal object ProbSetMode : UnaryPredicate.NonBacktrackable<ExecutionContext>(
-    "${ProblogLib.PREDICATE_PREFIX}_set_mode") {
+    "${ProblogLib.PREDICATE_PREFIX}_set_mode"
+) {
 
     private val MODE_FLAG = "${this.functor}_flag"
     val PrologMode = Atom.of("prolog")

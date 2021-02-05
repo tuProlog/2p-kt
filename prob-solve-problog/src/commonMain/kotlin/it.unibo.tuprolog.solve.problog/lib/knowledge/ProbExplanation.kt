@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge
 import it.unibo.tuprolog.bdd.bddOf
 import it.unibo.tuprolog.bdd.bddTerminalOf
 import it.unibo.tuprolog.bdd.toGraphvizString
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import kotlin.js.JsName
 
@@ -74,7 +75,13 @@ internal interface ProbExplanation {
      * during explanation construction where a solution and all substitutions are yet to be discovered.
      */
     @JsName("containsNonGroundTerm")
-    val containsNonGroundTerm: Boolean
+    val containsAnyNotGroundTerm: Boolean
+
+    /**
+     * Returns true if at least one term contained in this explanation contains at least one variable within [variables].
+     */
+    @JsName("containsAnyVariable")
+    fun containsAnyVariable(variables: Set<Var>): Boolean
 
     /**
      * This applies the [transformation] to all the terms contained in this explanation and returns
@@ -98,14 +105,14 @@ internal interface ProbExplanation {
 
     companion object {
         /** A [ProbExplanation] representing a logic truth. */
-        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(true))
+        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(true), 1.0)
 
         /** A [ProbExplanation] representing a logic falsity. */
-        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(false))
+        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(false), 0.0)
 
         /** Creates a new [ProbExplanation] representing the single probabilistic logic term [term]. */
         fun of(term: ProbTerm): ProbExplanation {
-            return BinaryDecisionDiagramExplanation(bddOf(term))
+            return BinaryDecisionDiagramExplanation(bddOf(term), term.probability)
         }
     }
 }
