@@ -47,6 +47,17 @@ fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true)
     )
 }
 
+fun ClassicExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
+    val currentGoal = this.currentGoal as Struct
+
+    return copy(
+        goals = currentGoal.toGoals(),
+        procedure = if (inferProcedureFromGoals) currentGoal else procedure,
+        depth = depth + 1,
+        step = step + 1
+    )
+}
+
 fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): ClassicExecutionContext {
     val newChoicePointContext = if (rules.hasNext) {
         choicePoints.appendRules(rules.next, this)
@@ -57,7 +68,9 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
     return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
-fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
+fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(
+    primitiveExecutions: Cursor<out Solve.Response>
+): ClassicExecutionContext {
     val newChoicePointContext = if (primitiveExecutions.hasNext) {
         choicePoints.appendPrimitives(primitiveExecutions.next, this)
     } else {
@@ -72,7 +85,14 @@ fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
+    return tempExecutionContext.appendRulesAndChoicePoints(rules)
+}
 
+fun ClassicExecutionContext.replaceWithChildAppendingRulesAndChoicePoints(
+    rules: Cursor<out Rule>,
+    inferProcedureFromGoals: Boolean = true
+): ClassicExecutionContext {
+    val tempExecutionContext = replaceWithChild(inferProcedureFromGoals)
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
 
@@ -81,7 +101,6 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
     val tempExecutionContext = createChild(inferProcedureFromGoals)
-
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
