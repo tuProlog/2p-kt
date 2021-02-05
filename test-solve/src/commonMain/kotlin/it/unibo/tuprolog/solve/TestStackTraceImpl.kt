@@ -27,7 +27,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             val query = "foo"(X)
             val solution = solver.solveOnce(query)
-            assertEquals(
+            assertSolutionEquals(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
@@ -53,7 +53,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             val query = findall(X, "foo"(X), L)
             val solution = solver.solveOnce(query)
-            assertEquals(
+            assertSolutionEquals(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
@@ -79,7 +79,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             val query = findall(X, bagof(Z, "foo"(Z), X), L)
             val solution = solver.solveOnce(query)
-            assertEquals(
+            assertSolutionEquals(
                 query.halt(
                     InstantiationError.forArgument(
                         DummyInstances.executionContext,
@@ -104,7 +104,7 @@ class TestStackTraceImpl(private val solverFactory: SolverFactory) : TestStackTr
 
             val query = findall(X, bagof(Z, "foo"(Z), X), L)
             val solution = solver.solveOnce(query)
-            assertEquals(
+            assertSolutionEquals(
                 query.halt(
                     SystemError.forUncaughtError(
                         MessageError(
