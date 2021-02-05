@@ -10,6 +10,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("io.github.gciatto:kt-math:_")
+                api(project(":utils"))
             }
 
             val infoKtFile = kotlin.srcDirs.first().absoluteFile.resolve("$tuPrologPackageDir/Info.kt")

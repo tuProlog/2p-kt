@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.Taggable
+import it.unibo.tuprolog.utils.setTags
 import kotlin.js.JsName
 
 /**
@@ -326,7 +327,7 @@ interface Term : Comparable<Term>, Taggable<Term> {
         substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
         substitution.isEmpty() || this.isGround -> this
         this is Var -> substitution[this] ?: this
-        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) })
+        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) }).setTags(tags)
         else -> this
     }
 

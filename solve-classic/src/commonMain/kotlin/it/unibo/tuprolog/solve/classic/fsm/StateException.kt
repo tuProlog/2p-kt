@@ -83,4 +83,7 @@ internal data class StateException(
             else -> finalState
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateException =
+        copy(exception = exception, context = context)
 }

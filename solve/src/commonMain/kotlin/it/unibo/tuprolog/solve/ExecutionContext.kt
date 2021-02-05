@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
+import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.sideffects.SideEffect
@@ -26,6 +27,9 @@ interface ExecutionContext : ExecutionContextAware {
     /** The Prolog call stacktrace till this ExecutionContext */
     @JsName("prologStackTrace")
     val prologStackTrace: List<Struct>
+
+    @JsName("customData")
+    val customData: CustomDataStore
 
     @JsName("createSolver")
     fun createSolver(
@@ -54,109 +58,15 @@ interface ExecutionContext : ExecutionContextAware {
 
     @JsName("applyIterable")
     fun apply(sideEffects: Iterable<SideEffect>): ExecutionContext {
-        var dynamicKb = dynamicKb
-        var staticKb = staticKb
-        var flags = flags
-        var libraries = libraries
-        var operators = operators
-        var inputChannels = inputChannels
-        var outputChannels = outputChannels
-
+        var current = this
         for (sideEffect in sideEffects) {
-            when (sideEffect) {
-                is SideEffect.AddStaticClauses -> {
-                    staticKb = if (sideEffect.onTop) {
-                        staticKb.assertA(sideEffect.clauses)
-                    } else {
-                        staticKb.assertZ(sideEffect.clauses)
-                    }
-                }
-                is SideEffect.AddDynamicClauses -> {
-                    dynamicKb = if (sideEffect.onTop) {
-                        dynamicKb.assertA(sideEffect.clauses)
-                    } else {
-                        dynamicKb.assertZ(sideEffect.clauses)
-                    }
-                }
-                is SideEffect.ResetStaticKb -> {
-                    staticKb = sideEffect.theory
-                }
-                is SideEffect.ResetDynamicKb -> {
-                    dynamicKb = sideEffect.theory
-                }
-                is SideEffect.RemoveStaticClauses -> {
-                    staticKb = staticKb.retract(sideEffect.clauses).theory
-                }
-                is SideEffect.RemoveDynamicClauses -> {
-                    dynamicKb = dynamicKb.retract(sideEffect.clauses).theory
-                }
-                is SideEffect.SetFlags -> {
-                    flags += sideEffect.flags
-                }
-                is SideEffect.ResetFlags -> {
-                    flags = FlagStore.of(sideEffect.flags)
-                }
-                is SideEffect.ClearFlags -> {
-                    flags -= sideEffect.names
-                }
-                is SideEffect.LoadLibrary -> {
-                    libraries += sideEffect.aliasedLibrary
-                }
-                is SideEffect.UpdateLibrary -> {
-                    libraries = libraries.update(sideEffect.aliasedLibrary)
-                }
-                is SideEffect.UnloadLibraries -> {
-                    libraries -= sideEffect.aliases
-                }
-                is SideEffect.AddLibraries -> {
-                    libraries += sideEffect.libraries
-                }
-                is SideEffect.ResetLibraries -> {
-                    libraries = sideEffect.libraries
-                }
-                is SideEffect.SetOperators -> {
-                    operators += sideEffect.operatorSet
-                }
-                is SideEffect.ResetOperators -> {
-                    operators = sideEffect.operatorSet
-                }
-                is SideEffect.RemoveOperators -> {
-                    operators -= sideEffect.operatorSet
-                }
-                is SideEffect.OpenInputChannels -> {
-                    inputChannels += sideEffect.inputChannels
-                }
-                is SideEffect.ResetInputChannels -> {
-                    inputChannels = InputStore.of(sideEffect.inputChannels)
-                }
-                is SideEffect.CloseInputChannels -> {
-                    inputChannels -= sideEffect.names
-                }
-                is SideEffect.OpenOutputChannels -> {
-                    outputChannels += sideEffect.outputChannels
-                }
-                is SideEffect.ResetOutputChannels -> {
-                    outputChannels = OutputStore.of(sideEffect.outputChannels, warnings)
-                }
-                is SideEffect.CloseOutputChannels -> {
-                    outputChannels -= sideEffect.names
-                }
-            }
+            current = sideEffect.applyTo(current)
         }
-        return update(
-            dynamicKb = dynamicKb,
-            staticKb = staticKb,
-            flags = flags,
-            libraries = libraries,
-            operators = operators,
-            inputChannels = inputChannels,
-            outputChannels = outputChannels
-        )
+        return current
     }
 
     @JsName("applySequence")
-    fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext =
-        apply(sideEffects.asIterable())
+    fun apply(sideEffects: Sequence<SideEffect>): ExecutionContext = apply(sideEffects.asIterable())
 
     @JsName("update")
     fun update(
@@ -166,6 +76,7 @@ interface ExecutionContext : ExecutionContextAware {
         dynamicKb: Theory = this.dynamicKb,
         operators: OperatorSet = this.operators,
         inputChannels: InputStore = this.inputChannels,
-        outputChannels: OutputStore = this.outputChannels
+        outputChannels: OutputStore = this.outputChannels,
+        customData: CustomDataStore = this.customData
     ): ExecutionContext
 }

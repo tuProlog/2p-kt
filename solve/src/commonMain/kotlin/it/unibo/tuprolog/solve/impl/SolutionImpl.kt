@@ -87,6 +87,8 @@ internal sealed class SolutionImpl(
             get() = true
 
         override fun copy(query: Struct, substitution: Substitution.Unifier) = YesImpl(query, substitution, tags)
+
+        override fun toString(): String = "Yes(query=$query, substitution=$substitution)"
     }
 
     /** A class representing a failed solution */
@@ -116,6 +118,8 @@ internal sealed class SolutionImpl(
             get() = true
 
         override fun copy(query: Struct) = NoImpl(query, tags)
+
+        override fun toString(): String = "No(query=$query)"
     }
 
     /** A class representing a failed (halted) solution because of an exception */
@@ -164,6 +168,8 @@ internal sealed class SolutionImpl(
             get() = true
 
         override fun copy(query: Struct, exception: TuPrologRuntimeException) = HaltImpl(query, exception, tags)
+
+        override fun toString(): String = "Halt(query=$query, exception=$exception)"
     }
 
     protected companion object {

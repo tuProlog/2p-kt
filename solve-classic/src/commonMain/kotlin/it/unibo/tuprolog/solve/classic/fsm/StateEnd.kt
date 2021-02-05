@@ -18,4 +18,6 @@ internal data class StateEnd(
             super.computeNext()
         }
     }
+
+    override fun clone(context: ClassicExecutionContext): StateEnd = copy(solution = solution, context = context)
 }

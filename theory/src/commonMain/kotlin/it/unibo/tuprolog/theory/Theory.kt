@@ -144,6 +144,9 @@ interface Theory : Iterable<Clause>, Taggable<Theory> {
     @JsName("equalsUsingVarCompleteNames")
     fun equals(other: Theory, useVarCompleteName: Boolean): Boolean
 
+    @JsName("clone")
+    fun clone(): Theory
+
     companion object {
 
         private val EMPTY: Theory =

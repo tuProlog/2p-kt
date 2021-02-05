@@ -60,6 +60,21 @@ interface Struct : Term {
 
     override fun freshCopy(scope: Scope): Struct
 
+    @JsName("append")
+    fun append(argument: Term): Struct = addLast(argument)
+
+    @JsName("addLast")
+    fun addLast(argument: Term): Struct
+
+    @JsName("addFirst")
+    fun addFirst(argument: Term): Struct
+
+    @JsName("insertAt")
+    fun insertAt(index: Int, argument: Term): Struct
+
+    @JsName("setFunctor")
+    fun setFunctor(functor: String): Struct
+
     @JsName("functor")
     val functor: String
 

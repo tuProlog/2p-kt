@@ -3,15 +3,22 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
- * A mutable Prolog solver
+ * General type for mutable logic [Solver]s.
+ * [MutableSolver]s differ from [Solver]s in that they expose public methods for letting clients affect the state
+ * of the solver -- e.g.  affecting the KB -- while no resolution process is ongoing.
  */
 interface MutableSolver : Solver {
 
@@ -99,7 +106,30 @@ interface MutableSolver : Solver {
     @JsName("setFlagNotable")
     fun setFlag(flag: NotableFlag)
 
+    override fun copy(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver
+
+    override fun clone(): MutableSolver
+
     companion object {
-        // To be extended through extension methods
+        @JvmStatic
+        @JsName("classic")
+        val classic: SolverFactory by lazy {
+            classicSolverFactory()
+        }
+
+        @JvmStatic
+        @JsName("streams")
+        val streams: SolverFactory by lazy {
+            streamsSolverFactory()
+        }
     }
 }

@@ -115,4 +115,6 @@ internal class MutableListedTheory private constructor(
 
     override fun replaceTags(tags: Map<String, Any>): MutableListedTheory =
         if (tags === this.tags) this else MutableListedTheory(clauses, tags)
+
+    override fun clone(): MutableTheory = super.clone() as MutableTheory
 }

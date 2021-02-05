@@ -46,7 +46,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
      * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
      * - Otherwise, the result is an instance of [Substitution.Unifier]
      *
-     * Regardless of its type, the merged [Substitution] will contain the tags of both input [Substitution]s.
+     * Regardless of its type, the resulting [Substitution] will contain the tags of both input [Substitution]s.
      */
     @JsName("plus")
     operator fun plus(other: Substitution): Substitution
@@ -60,8 +60,8 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
      * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
      * - Otherwise, the result is an instance of [Substitution.Unifier]
      *
-     * Regardless of its type, the merged [Substitution] will contain the tags attained by merging the input
-     * [Substitution]s tags via [tagsMerger].
+     * Regardless of its type, the resulting [Substitution] will contain the tags attained by merging the input
+     * [Substitution]s' tags via [tagsMerger].
      */
     @JsName("plusMergingTags")
     fun plus(other: Substitution, tagsMerger: TagsOperator): Substitution
@@ -69,13 +69,23 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
     /**
      * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [keys] iterable.
+     *
+     * Regardless of its type, the resulting [Substitution] will contain the same tags of the original one
      */
     @JsName("minusIterable")
     operator fun minus(keys: Iterable<Var>): Substitution
 
+    @JsName("minusVar")
+    operator fun minus(variable: Var): Substitution
+
+    @JsName("minusVars")
+    fun minus(variable: Var, vararg otherVariables: Var): Substitution
+
     /**
      * Returns a new substitution containing all entries of the original substitution except those
      * entries which variable keys are contained in the given [other] substitution.
+     *
+     * Regardless of its type, the resulting [Substitution] will contain the same tags of the original one
      */
     @JsName("minus")
     operator fun minus(other: Substitution): Substitution
@@ -84,6 +94,8 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
      * Returns a new substitution containing all key-value pairs matching the given [predicate].
      *
      * The returned map preserves the entry iteration order of the original map.
+     *
+     * Regardless of its type, the resulting [Substitution] will contain the same tags of the original one
      */
     @JsName("filterEntry")
     fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution
@@ -92,6 +104,8 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
      * Returns a new substitution containing all key-value pairs whose key is in [variables].
      *
      * The returned map preserves the entry iteration order of the original map.
+     *
+     * Regardless of its type, the resulting [Substitution] will contain the same tags of the original one
      */
     @JsName("filterCollection")
     fun filter(variables: KtCollection<Var>): Substitution // TODO: 16/01/2020 add tests for this specific method
@@ -111,6 +125,10 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
 
         override fun minus(other: Substitution): Unifier
 
+        override fun minus(variable: Var): Unifier
+
+        override fun minus(variable: Var, vararg otherVariables: Var): Unifier
+
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier
 
         override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier
@@ -129,6 +147,10 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
         override fun minus(other: Substitution): Fail
 
         override fun minus(keys: Iterable<Var>): Fail
+
+        override fun minus(variable: Var): Fail
+
+        override fun minus(variable: Var, vararg otherVariables: Var): Fail
 
         override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Fail
 

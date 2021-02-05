@@ -113,11 +113,13 @@ internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Th
 
     protected abstract fun createNewTheory(
         clauses: Sequence<Clause>,
-        tags: Map<String, Any> = emptyMap()
+        tags: Map<String, Any> = this.tags
     ): AbstractTheory
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
         retract(clauses.asIterable())
 
     abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
+
+    override fun clone(): Theory = createNewTheory(clauses.asSequence())
 }
