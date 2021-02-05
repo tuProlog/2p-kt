@@ -61,7 +61,13 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
                         .map { s -> s.substitution[explanationVar] }
                         .filterIsInstance<ProbExplanationTerm>()
                         .map { t -> t.explanation }
-                        .reduce { acc, t -> t or acc }
+                        .reduce { acc, t ->
+                            when {
+                                t.probability == 1.0 -> acc
+                                acc.probability == 1.0 -> t
+                                else ->  t or acc
+                            }
+                        }
                     if (truth.isTrue) totalExplanation else totalExplanation.not()
                 }
             }

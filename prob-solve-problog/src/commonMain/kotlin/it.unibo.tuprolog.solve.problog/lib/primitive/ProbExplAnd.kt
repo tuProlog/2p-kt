@@ -32,7 +32,18 @@ internal object ProbExplAnd : TernaryRelation.NonBacktrackable<ExecutionContext>
         }
 
         return if (first is Var && second is ProbExplanationTerm && third is ProbExplanationTerm) {
-            replyWith(first mguWith ProbExplanationTerm(second.explanation and third.explanation))
+            val explanation = when {
+                second.explanation.probability == 0.0 || third.explanation.probability == 0.0 -> ProbExplanation.FALSE
+                second.explanation.probability == 1.0 && third.explanation.probability == 1.0 -> ProbExplanation.TRUE
+                second.explanation.probability == 1.0 -> third.explanation
+                third.explanation.probability == 1.0 -> second.explanation
+                else -> second.explanation and third.explanation
+            }
+            if (explanation.probability == 0.0) {
+                replyWith(false)
+            } else {
+                replyWith(first mguWith ProbExplanationTerm(explanation))
+            }
         } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))
     }
 }

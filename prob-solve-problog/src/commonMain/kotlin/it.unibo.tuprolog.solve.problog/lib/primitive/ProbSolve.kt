@@ -70,7 +70,11 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                         .filterIsInstance<ProbExplanationTerm>()
                         .map { e -> e.explanation }
                         .reduce { acc, expl ->
-                            acc or expl
+                            when {
+                                expl.probability == 1.0 -> acc
+                                acc.probability == 1.0 -> expl
+                                else ->  acc or expl
+                            }
                         }
                     val substitution = Substitution.of(
                         solutionGroup.key,

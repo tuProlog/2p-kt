@@ -32,7 +32,12 @@ internal object ProbExplNot : BinaryRelation.NonBacktrackable<ExecutionContext>(
         }
 
         return if (first is Var && second is ProbExplanationTerm) {
-            replyWith(first mguWith ProbExplanationTerm(second.explanation.not()))
+            val explanation = when(second.explanation.probability) {
+                1.0 -> ProbExplanation.FALSE
+                0.0 -> ProbExplanation.TRUE
+                else -> second.explanation.not()
+            }
+            replyWith(first mguWith ProbExplanationTerm(explanation))
         } else replyException(TuPrologRuntimeException("Can't compute $functor", context = context))
     }
 }
