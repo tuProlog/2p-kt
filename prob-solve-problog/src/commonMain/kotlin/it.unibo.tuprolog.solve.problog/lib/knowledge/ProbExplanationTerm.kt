@@ -35,7 +35,7 @@ internal class ProbExplanationTerm(
     }
 
     override fun apply(substitution: Substitution): ProbExplanationTerm {
-        return if (substitution.isEmpty() || isGround || !explanation.containsAnyVariable(substitution.keys)) {
+        return if (substitution.isEmpty() || isGround) {
             this
         } else {
             ProbExplanationTerm(explanation.apply { it.apply(substitution) })

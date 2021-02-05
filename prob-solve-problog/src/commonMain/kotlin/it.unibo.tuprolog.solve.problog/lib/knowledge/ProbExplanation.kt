@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge
 import it.unibo.tuprolog.bdd.bddOf
 import it.unibo.tuprolog.bdd.bddTerminalOf
 import it.unibo.tuprolog.bdd.toGraphvizString
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import kotlin.js.JsName
 
@@ -78,12 +77,6 @@ internal interface ProbExplanation {
     val containsAnyNotGroundTerm: Boolean
 
     /**
-     * Returns true if at least one term contained in this explanation contains at least one variable within [variables].
-     */
-    @JsName("containsAnyVariable")
-    fun containsAnyVariable(variables: Set<Var>): Boolean
-
-    /**
      * This applies the [transformation] to all the terms contained in this explanation and returns
      * a new [ProbExplanation] containing the results.
      */
@@ -104,15 +97,26 @@ internal interface ProbExplanation {
     }
 
     companion object {
-        /** A [ProbExplanation] representing a logic truth. */
-        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(true), 1.0)
-
         /** A [ProbExplanation] representing a logic falsity. */
-        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(bddTerminalOf(false), 0.0)
+        val FALSE: ProbExplanation = BinaryDecisionDiagramExplanation(
+            bddTerminalOf(false),
+            BinaryDecisionDiagramExplanation.FALSE_COMPUTED_VALUE
+        )
+
+        /** A [ProbExplanation] representing a logic truth. */
+        val TRUE: ProbExplanation = BinaryDecisionDiagramExplanation(
+            bddTerminalOf(true),
+            BinaryDecisionDiagramExplanation.TRUE_COMPUTED_VALUE
+        )
 
         /** Creates a new [ProbExplanation] representing the single probabilistic logic term [term]. */
         fun of(term: ProbTerm): ProbExplanation {
-            return BinaryDecisionDiagramExplanation(bddOf(term), term.probability)
+            return BinaryDecisionDiagramExplanation(
+                bddOf(term),
+                BinaryDecisionDiagramExplanation.ComputedValue(
+                    term.probability,
+                )
+            )
         }
     }
 }
