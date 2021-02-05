@@ -40,8 +40,11 @@ class ExistenceError(
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedObject.toTerm(), culprit) }
 
-    override fun updateContext(newContext: ExecutionContext): ExistenceError =
-        ExistenceError(message, cause, contexts.setFirst(newContext), expectedObject, culprit, extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): ExistenceError =
+        ExistenceError(message, cause, contexts.setItem(index, newContext), expectedObject, culprit, extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): ExistenceError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): ExistenceError =
         ExistenceError(message, cause, contexts.addLast(newContext), expectedObject, culprit, extraData)

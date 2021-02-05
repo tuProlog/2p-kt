@@ -18,9 +18,12 @@ class InitializationIssue(
         context: ExecutionContext
     ) : this(goal, cause, arrayOf(context))
 
-    override fun updateContext(newContext: ExecutionContext): PrologWarning =
-        InitializationIssue(goal, cause, contexts.setFirst(newContext))
+    override fun updateContext(newContext: ExecutionContext, index: Int): InitializationIssue =
+        InitializationIssue(goal, cause, contexts.setItem(index, newContext))
 
-    override fun pushContext(newContext: ExecutionContext): PrologWarning =
+    override fun updateLastContext(newContext: ExecutionContext): InitializationIssue =
+        updateContext(newContext, contexts.lastIndex)
+
+    override fun pushContext(newContext: ExecutionContext): InitializationIssue =
         InitializationIssue(goal, cause, contexts.addLast(newContext))
 }

@@ -2,9 +2,13 @@ package it.unibo.tuprolog.solve
 
 interface TestNotProvable : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestNotProvable =
-            TestNotProvableImpl(solverFactory)
+        fun prototype(
+            solverFactory: SolverFactory,
+            errorSignature: Signature = Signature("not", 1)
+        ): TestNotProvable = TestNotProvableImpl(solverFactory, errorSignature)
     }
+
+    val errorSignature: Signature
 
     /**
      * Tests the queries

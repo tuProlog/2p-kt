@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.classic.fsm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 
-internal data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateGoalSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
     override fun computeNext(): State {
         return if (context.goals.isOver) {
             if (context.isRoot) {

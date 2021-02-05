@@ -1,3 +1,5 @@
+@file:JvmName("Utils")
+
 package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.core.Clause
@@ -13,6 +15,7 @@ import it.unibo.tuprolog.solve.classic.appendRules
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
+import kotlin.jvm.JvmName
 
 fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
     @Suppress("USELESS_CAST")
@@ -32,7 +35,7 @@ fun Term.toGoals(): Cursor<out Term> =
         }
     }.cursor()
 
-fun ClassicExecutionContext.createTempChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
+fun ClassicExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ClassicExecutionContext {
     val currentGoal = this.currentGoal as Struct
 
     return copy(
@@ -51,10 +54,7 @@ fun ClassicExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>):
         choicePoints.appendRules(Cursor.empty(), this)
     }
 
-    return copy(
-        rules = rules,
-        choicePoints = newChoicePointContext
-    )
+    return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
 fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions: Cursor<out Solve.Response>): ClassicExecutionContext {
@@ -64,17 +64,14 @@ fun ClassicExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions:
         choicePoints.appendPrimitives(Cursor.empty(), this)
     }
 
-    return copy(
-        primitives = primitiveExecutions,
-        choicePoints = newChoicePointContext
-    )
+    return copy(primitives = primitiveExecutions, choicePoints = newChoicePointContext)
 }
 
 fun ClassicExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
-    val tempExecutionContext = createTempChild(inferProcedureFromGoals)
+    val tempExecutionContext = createChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
@@ -83,7 +80,7 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
     inferProcedureFromGoals: Boolean = true
 ): ClassicExecutionContext {
-    val tempExecutionContext = createTempChild(inferProcedureFromGoals)
+    val tempExecutionContext = createChild(inferProcedureFromGoals)
 
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
@@ -91,18 +88,4 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 fun ClassicExecutionContext.toRequest(
     goal: Struct,
     signature: Signature
-): Solve.Request<ClassicExecutionContext> =
-    Solve.Request(
-        signature,
-        goal.argsList,
-        copy(
-            libraries = libraries,
-            flags = flags,
-            staticKb = staticKb,
-            dynamicKb = dynamicKb,
-            inputChannels = inputChannels,
-            outputChannels = outputChannels,
-            substitution = substitution
-        ),
-        executionMaxDuration = maxDuration
-    )
+) = Solve.Request(signature, goal.argsList, this, executionMaxDuration = maxDuration)

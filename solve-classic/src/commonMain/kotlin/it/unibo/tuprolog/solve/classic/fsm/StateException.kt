@@ -13,7 +13,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.plus
 
-internal data class StateException(
+data class StateException(
     override val exception: TuPrologRuntimeException,
     override val context: ClassicExecutionContext
 ) : ExceptionalState, AbstractState(context) {
@@ -30,7 +30,7 @@ internal data class StateException(
 
     private fun TuPrologRuntimeException.toPublicException(): TuPrologRuntimeException =
         when (this) {
-            is MessageError -> SystemError.forUncaughtError(this@StateException.context, this)
+            is MessageError -> SystemError.forUncaughtError(this)
             else -> this
         }
 

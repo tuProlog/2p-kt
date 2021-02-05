@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.streams.systemtest
 
 import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestSolver
@@ -21,6 +22,15 @@ class TestStreamsSolver : SolverFactory, TestSolver {
     private val prototype = TestSolver.prototype(this)
 
     override val defaultBuiltins: AliasedLibrary = DefaultBuiltins
+
+    override val callErrorSignature: Signature
+        get() = prototype.callErrorSignature
+
+    override val nafErrorSignature: Signature
+        get() = prototype.nafErrorSignature
+
+    override val notErrorSignature: Signature
+        get() = prototype.notErrorSignature
 
     override fun solverOf(
         libraries: Libraries,

@@ -23,8 +23,11 @@ internal class PrologErrorTest {
 
     /** A non specific PrologError instance */
     private val underTestPrologError = object : PrologError(aMessage, aCause, aContext, aType, someExtraData) {
-        override fun updateContext(newContext: ExecutionContext): PrologError =
-            of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+        override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+            of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+
+        override fun updateLastContext(newContext: ExecutionContext): PrologError =
+            updateContext(newContext, contexts.lastIndex)
 
         override fun pushContext(newContext: ExecutionContext): PrologError =
             of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -43,8 +46,11 @@ internal class PrologErrorTest {
     @Test
     fun defaultsAreNull() {
         val toBeTested = object : PrologError(context = aContext, type = aType) {
-            override fun updateContext(newContext: ExecutionContext): PrologError =
-                of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+
+            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                updateContext(newContext, contexts.lastIndex)
 
             override fun pushContext(newContext: ExecutionContext): PrologError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -57,8 +63,11 @@ internal class PrologErrorTest {
     @Test
     fun constructorInsertsMessageIfOnlyCauseSpecified() {
         val prologError = object : PrologError(aCause, aContext, aType, someExtraData) {
-            override fun updateContext(newContext: ExecutionContext): PrologError =
-                of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+
+            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                updateContext(newContext, contexts.lastIndex)
 
             override fun pushContext(newContext: ExecutionContext): PrologError =
                 of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
@@ -72,8 +81,11 @@ internal class PrologErrorTest {
         assertErrorStructCorrect(underTestPrologError)
         assertErrorStructCorrect(
             object : PrologError(context = aContext, type = aType) {
-                override fun updateContext(newContext: ExecutionContext): PrologError =
-                    of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
+                override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+                    of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+
+                override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                    updateContext(newContext, contexts.lastIndex)
 
                 override fun pushContext(newContext: ExecutionContext): PrologError =
                     of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)

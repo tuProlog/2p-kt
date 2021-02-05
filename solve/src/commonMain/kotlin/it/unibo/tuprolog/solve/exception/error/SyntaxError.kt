@@ -21,8 +21,11 @@ class SyntaxError constructor(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), extraData)
 
-    override fun updateContext(newContext: ExecutionContext): SyntaxError =
-        SyntaxError(message, cause, contexts.setFirst(newContext), extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): SyntaxError =
+        SyntaxError(message, cause, contexts.setItem(index, newContext), extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): SyntaxError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): SyntaxError =
         SyntaxError(message, cause, contexts.addLast(newContext), extraData)
