@@ -65,7 +65,7 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
                             when {
                                 t.probability == 1.0 -> acc
                                 acc.probability == 1.0 -> t
-                                else ->  t or acc
+                                else -> t or acc
                             }
                         }
                     if (truth.isTrue) totalExplanation else totalExplanation.not()

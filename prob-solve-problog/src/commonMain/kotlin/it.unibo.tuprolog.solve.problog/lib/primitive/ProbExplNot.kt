@@ -32,7 +32,7 @@ internal object ProbExplNot : BinaryRelation.NonBacktrackable<ExecutionContext>(
         }
 
         return if (first is Var && second is ProbExplanationTerm) {
-            val explanation = when(second.explanation.probability) {
+            val explanation = when (second.explanation.probability) {
                 1.0 -> ProbExplanation.FALSE
                 0.0 -> ProbExplanation.TRUE
                 else -> second.explanation.not()

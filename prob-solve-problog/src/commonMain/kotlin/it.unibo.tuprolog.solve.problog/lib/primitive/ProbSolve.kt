@@ -73,7 +73,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
                             when {
                                 expl.probability == 1.0 -> acc
                                 acc.probability == 1.0 -> expl
-                                else ->  acc or expl
+                                else -> acc or expl
                             }
                         }
                     val substitution = Substitution.of(
