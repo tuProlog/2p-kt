@@ -91,13 +91,13 @@ class FileTabView(
 
     @FXML
     fun onKeyTypedOnCodeArea(e: KeyEvent) {
-        model.setFile(file, codeArea.text)
+        model.setFile(file, wholeText)
         ideController.onKeyTypedOnCurrentFile(e)
     }
 
     @FXML
     fun onKeyPressedOnCodeArea(e: KeyEvent) {
-        model.setFile(file, codeArea.text)
+        model.setFile(file, wholeText)
         ideController.onKeyPressedOnCurrentFile(e)
     }
 }
