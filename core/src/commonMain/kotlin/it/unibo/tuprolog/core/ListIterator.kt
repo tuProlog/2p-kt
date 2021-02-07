@@ -2,7 +2,7 @@ package it.unibo.tuprolog.core
 
 sealed class ListIterator(list: List) : Iterator<Term> {
 
-    protected var current: Term? = list
+    protected open var current: Term? = list
 
     override fun hasNext(): Boolean = current != null
 
@@ -21,7 +21,21 @@ sealed class ListIterator(list: List) : Iterator<Term> {
         }
     }
 
-    abstract fun onEmptyList(item: EmptyList): Term
+    open fun onEmptyList(item: EmptyList): Term {
+        current = null
+        return item
+    }
+
+    class Substituting(list: List, private val unifier: Substitution.Unifier) : ListIterator(list) {
+        override var current: Term?
+            get() = when (val it = super.current) {
+                is Var -> unifier[it] ?: it
+                else -> it
+            }
+            set(value) {
+                super.current = value
+            }
+    }
 
     class SkippingLast(list: List) : ListIterator(list) {
         override fun hasNext(): Boolean =
@@ -31,10 +45,5 @@ sealed class ListIterator(list: List) : Iterator<Term> {
             throw NoSuchElementException()
     }
 
-    class All(list: List) : ListIterator(list) {
-        override fun onEmptyList(item: EmptyList): Term {
-            current = null
-            return item
-        }
-    }
+    class All(list: List) : ListIterator(list)
 }
