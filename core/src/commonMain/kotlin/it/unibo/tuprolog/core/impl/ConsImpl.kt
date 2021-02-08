@@ -38,8 +38,6 @@ internal class ConsImpl(
 
     override val last: Term by lazy { unfoldedSequence.last() }
 
-    override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
-
     override fun toString(): String {
         val (ending, take) = if (isWellFormed) {
             "]" to size

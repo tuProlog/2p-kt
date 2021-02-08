@@ -17,8 +17,6 @@ internal class TupleImpl(
 
     override val size: Int get() = unfoldedList.size
 
-    override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
-
     override val functor: String = Tuple.FUNCTOR
 
     override val args: Array<Term> get() = super<CollectionImpl>.args

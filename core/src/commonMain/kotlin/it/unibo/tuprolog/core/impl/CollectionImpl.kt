@@ -15,7 +15,8 @@ internal abstract class CollectionImpl(
 
     override val unfoldedList: List<Term> by lazy { dequeOf(unfoldedSequence) }
 
-    override val unfoldedArray: Array<Term> by lazy { unfoldedList.toTypedArray() }
+    override val unfoldedArray: Array<Term>
+        get() = unfoldedList.toTypedArray()
 
     override val isGround: Boolean by lazy { unfoldedSequence.all { it.isGround } }
 
