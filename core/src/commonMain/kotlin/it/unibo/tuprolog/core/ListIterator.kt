@@ -26,24 +26,38 @@ sealed class ListIterator(list: List) : Iterator<Term> {
         return item
     }
 
-    class Substituting(list: List, private val unifier: Substitution.Unifier) : ListIterator(list) {
-        override var current: Term?
-            get() = when (val it = super.current) {
-                is Var -> unifier[it] ?: it
-                else -> it
-            }
+    sealed class Substituting(list: List, protected val unifier: Substitution.Unifier) : ListIterator(list) {
+        final override var current: Term?
+            get() = super.current.applyIfVar(unifier)
             set(value) {
                 super.current = value
             }
+
+        class All(list: List, unifier: Substitution.Unifier) : Substituting(list, unifier)
+
+        class SkippingLast(list: List, unifier: Substitution.Unifier) : Substituting(list, unifier) {
+            override fun hasNext(): Boolean = hasNextSkippingLast()
+            override fun onEmptyList(item: EmptyList): Term = onEmptyListSkippingLast(item)
+        }
     }
 
     class SkippingLast(list: List) : ListIterator(list) {
-        override fun hasNext(): Boolean =
-            current != null && current !is EmptyList
-
-        override fun onEmptyList(item: EmptyList): Term =
-            throw NoSuchElementException()
+        override fun hasNext(): Boolean = hasNextSkippingLast()
+        override fun onEmptyList(item: EmptyList): Term = onEmptyListSkippingLast(item)
     }
 
     class All(list: List) : ListIterator(list)
+
+    companion object {
+        private fun ListIterator.hasNextSkippingLast(): Boolean = current != null && current !is EmptyList
+
+        private fun ListIterator.onEmptyListSkippingLast(item: EmptyList): Term = throw NoSuchElementException()
+
+        internal fun Term?.applyIfVar(unifier: Substitution.Unifier): Term? {
+            return when (this) {
+                is Var -> unifier[this] ?: this
+                else -> this
+            }
+        }
+    }
 }
