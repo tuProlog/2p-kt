@@ -1,107 +1,45 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.ListIterator
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.utils.setTags
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 
-class ConsSubstitutionDecorator(
-    private val cons: Cons,
+internal class ConsSubstitutionDecorator(
+    head: Term,
+    tail: Term,
+    tags: Map<String, Any>,
     private val unifier: Substitution.Unifier
-) : Cons {
-    override val head: Term
-        get() = cons.head
+) : ConsImpl(head, tail, tags) {
 
-    override val tail: Term
-        get() = cons.tail
+    constructor(delegate: Cons, unifier: Substitution.Unifier) :
+        this(delegate.head, delegate.tail, delegate.tags, unifier)
 
-    override fun freshCopy(): Cons = freshCopy(Scope.empty())
+    override val head: Term by lazy { head.apply(unifier) }
 
-    override fun freshCopy(scope: Scope): Cons = when {
-        isGround -> this
-        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags) as Cons
-        else -> scope.listFrom(
-            unfoldedList.subList(0, unfoldedList.lastIndex).map { it.freshCopy(scope) },
-            last = unfoldedList.last().freshCopy(scope)
-        ).setTags(tags) as Cons
+    override val isGround: Boolean by lazy {
+        unfoldedList.all { it.isGround }
     }
 
-    override val isWellFormed: Boolean
-        get() = TODO("Not yet implemented")
-
-    override val last: Term
-        get() = TODO("Not yet implemented")
-
-    override val unfoldedSequence: Sequence<Term>
-        get() = TODO("Not yet implemented")
+    override fun apply(substitution: Substitution): Term {
+        return when (val result = substitution + unifier) {
+            is Substitution.Unifier -> ConsSubstitutionDecorator(super.head, super.tail, tags, result)
+            else -> throw SubstitutionApplicationException(this, substitution)
+        }
+    }
 
     override val unfoldedList: List<Term>
-        get() = TODO("Not yet implemented")
+        get() = super.unfoldedList
 
     override val unfoldedArray: Array<Term>
-        get() = TODO("Not yet implemented")
+        get() = super.unfoldedArray
 
-    override fun toArray(): Array<Term> {
-        TODO("Not yet implemented")
-    }
+    override val tail: Term by lazy { super.tail.apply(unifier) }
 
-    override fun toList(): List<Term> {
-        TODO("Not yet implemented")
-    }
+    override val unfoldedSequence: Sequence<Term>
+        get() = Iterable { ListIterator.Substituting.All(this, unifier) }.asSequence()
 
-    override fun toSequence(): Sequence<Term> {
-        TODO("Not yet implemented")
-    }
-
-    override fun unfold(): Sequence<Term> {
-        TODO("Not yet implemented")
-    }
-
-    override fun addLast(argument: Term): Struct {
-        TODO("Not yet implemented")
-    }
-
-    override fun addFirst(argument: Term): Struct {
-        TODO("Not yet implemented")
-    }
-
-    override fun insertAt(index: Int, argument: Term): Struct {
-        TODO("Not yet implemented")
-    }
-
-    override fun setFunctor(functor: String): Struct {
-        TODO("Not yet implemented")
-    }
-
-    override val isFunctorWellFormed: Boolean
-        get() = TODO("Not yet implemented")
-
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun equals(other: Any?): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun structurallyEquals(other: Term): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun toString(): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun hashCode(): Int {
-        TODO("Not yet implemented")
-    }
-
-    override val tags: Map<String, Any>
-        get() = TODO("Not yet implemented")
-
-    override fun replaceTags(tags: Map<String, Any>): Term {
-        TODO("Not yet implemented")
-    }
+    override fun copyWithTags(tags: Map<String, Any>): Cons =
+        if (tags != this.tags) ConsSubstitutionDecorator(super.head, super.tail, tags, unifier) else this
 }

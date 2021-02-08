@@ -28,7 +28,7 @@ sealed class ListIterator(list: List) : Iterator<Term> {
 
     sealed class Substituting(list: List, protected val unifier: Substitution.Unifier) : ListIterator(list) {
         final override var current: Term?
-            get() = super.current.applyIfVar(unifier)
+            get() = super.current.let { it?.apply(unifier) ?: it }
             set(value) {
                 super.current = value
             }
@@ -52,12 +52,5 @@ sealed class ListIterator(list: List) : Iterator<Term> {
         private fun ListIterator.hasNextSkippingLast(): Boolean = current != null && current !is EmptyList
 
         private fun ListIterator.onEmptyListSkippingLast(item: EmptyList): Term = throw NoSuchElementException()
-
-        internal fun Term?.applyIfVar(unifier: Substitution.Unifier): Term? {
-            return when (this) {
-                is Var -> unifier[this] ?: this
-                else -> this
-            }
-        }
     }
 }

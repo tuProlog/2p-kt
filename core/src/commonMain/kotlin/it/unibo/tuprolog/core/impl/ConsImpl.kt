@@ -3,11 +3,13 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
-internal class ConsImpl(
+internal open class ConsImpl(
     override val head: Term,
     override val tail: Term,
     tags: Map<String, Any> = emptyMap()
@@ -45,6 +47,14 @@ internal class ConsImpl(
             " | $last]" to size - 1
         }
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
+    }
+
+    override fun apply(substitution: Substitution): Term {
+        return when {
+            substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
+            substitution.isEmpty() -> this
+            else -> ConsSubstitutionDecorator(this, substitution as Substitution.Unifier)
+        }
     }
 
     override fun copyWithTags(tags: Map<String, Any>): Cons = ConsImpl(head, tail, tags)
