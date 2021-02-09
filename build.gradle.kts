@@ -74,3 +74,9 @@ kotlin {
         clientTimeout.set(Duration.ofMinutes(10))
     }
 }
+
+(ktProjects + jsProjects + rootProject).forEach {
+    it.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
+        it.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "14.15.4"
+    }
+}

@@ -8,14 +8,13 @@ import kotlin.test.assertTrue
 class TestPrologLexer {
     @Test
     fun testInitialisation() {
-        val lexer = PrologLexer(null)
-        assertEquals("PrologLexer.g4", lexer.grammarFileName)
+        assertEquals("PrologLexer.g4", PrologLexer.grammarFileName)
         val modeNames = arrayOf("DEFAULT_MODE")
-        lexer.modeNames.forEachIndexed { index, mode ->
+        PrologLexer.modeNames.forEachIndexed { index, mode ->
             assertEquals(modeNames[index], mode)
         }
         val channelNames = arrayOf("DEFAULT_TOKEN_CHANNEL", "HIDDEN")
-        lexer.channelNames.forEachIndexed { index, channel ->
+        PrologLexer.channelNames.forEachIndexed { index, channel ->
             assertEquals(channelNames[index], channel)
         }
         val ruleNames = arrayOf(
@@ -31,7 +30,7 @@ class TestPrologLexer {
             "Atom", "Ws", "OctDigit", "BinDigit",
             "HexDigit", "Digit", "Zero"
         )
-        lexer.ruleNames.forEachIndexed { index, rule ->
+        PrologLexer.ruleNames.forEachIndexed { index, rule ->
             assertEquals(ruleNames[index], rule)
         }
     }
