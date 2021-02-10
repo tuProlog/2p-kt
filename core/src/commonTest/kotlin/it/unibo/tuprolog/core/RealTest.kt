@@ -49,8 +49,8 @@ internal class RealTest {
 
     @Test
     fun realRespectItsRegexPattern() {
-        RealUtils.stringNumbers.forEach { it matches Real.REAL_REGEX_PATTERN }
-        RealUtils.stringNumbers.map { Real.of(it) }.forEach { it.toString() matches Real.REAL_REGEX_PATTERN }
+        RealUtils.stringNumbers.forEach { it matches Real.PATTERN }
+        RealUtils.stringNumbers.map { Real.of(it) }.forEach { it.toString() matches Real.PATTERN }
     }
 
     @Test

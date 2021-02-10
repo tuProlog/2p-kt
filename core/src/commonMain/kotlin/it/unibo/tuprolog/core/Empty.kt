@@ -11,9 +11,9 @@ interface Empty : Atom {
 
     companion object {
 
-        const val EMPTY_LIST_FUNCTOR = "[]"
+        const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
 
-        const val EMPTY_SET_FUNCTOR = Set.FUNCTOR
+        const val EMPTY_SET_FUNCTOR = Terms.EMPTY_SET_FUNCTOR
 
         @JvmStatic
         @JsName("list")

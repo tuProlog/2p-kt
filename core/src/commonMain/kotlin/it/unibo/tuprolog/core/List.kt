@@ -36,6 +36,10 @@ interface List : Collection {
 
     companion object {
 
+        const val CONS_FUNCTOR = Terms.CONS_FUNCTOR
+
+        const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
+
         @JvmStatic
         @JsName("empty")
         fun empty(): List = Empty.list()

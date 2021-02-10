@@ -113,8 +113,8 @@ internal class ConversionsTest {
 
     @Test
     fun stringToTerm() {
-        val correctAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.VAR_REGEX_PATTERN }.map { Atom.of(it) }
-        val toBeTestedAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.VAR_REGEX_PATTERN }.map { it.toTerm() }
+        val correctAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { Atom.of(it) }
+        val toBeTestedAtoms = AtomUtils.mixedAtoms.filterNot { it matches Var.NAME_PATTERN }.map { it.toTerm() }
 
         onCorrespondingItems(correctAtoms, toBeTestedAtoms, ::assertEqualities)
 

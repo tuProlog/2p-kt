@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
 import kotlin.jvm.Synchronized
@@ -28,7 +29,7 @@ internal class VarImpl(
 
     override val isAnonymous: Boolean = super.isAnonymous
 
-    override val isNameWellFormed: Boolean by lazy { Var.VAR_REGEX_PATTERN.matches(name) }
+    override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
 
     override fun structurallyEquals(other: Term): Boolean = other is VarImpl
 

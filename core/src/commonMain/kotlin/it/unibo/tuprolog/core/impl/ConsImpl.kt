@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
@@ -13,12 +14,12 @@ internal open class ConsImpl(
     override val head: Term,
     override val tail: Term,
     tags: Map<String, Any> = emptyMap()
-) : CollectionImpl(Cons.FUNCTOR, arrayOf(head, tail), tags), Cons {
+) : CollectionImpl(CONS_FUNCTOR, arrayOf(head, tail), tags), Cons {
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { LogicListIterator.All(this) }.asSequence()
 
-    override val functor: String = Cons.FUNCTOR
+    override val functor: String = CONS_FUNCTOR
 
     override val args: Array<Term> get() = super<CollectionImpl>.args
 

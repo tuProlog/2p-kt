@@ -114,7 +114,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyVariable(value: dynamic): Term {
         val name = value["var"] as? String ?: throw DeobjectificationException(value)
-        return if (name == Var.ANONYMOUS_VAR_NAME) {
+        return if (name == Var.ANONYMOUS_NAME) {
             scope.anonymous()
         } else {
             scope.varOf(name)

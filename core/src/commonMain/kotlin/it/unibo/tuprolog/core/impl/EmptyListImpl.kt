@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 
 internal class EmptyListImpl(
     tags: Map<String, Any> = emptyMap()
-) : AtomImpl(Empty.EMPTY_LIST_FUNCTOR, tags), EmptyList {
+) : AtomImpl(EMPTY_LIST_FUNCTOR, tags), EmptyList {
 
     override val unfoldedList: List<Term> = listOf(this)
 

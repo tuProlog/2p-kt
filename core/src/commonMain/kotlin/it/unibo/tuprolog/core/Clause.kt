@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface Clause : Struct {
 
     override val functor: String
-        get() = FUNCTOR
+        get() = CLAUSE_FUNCTOR
 
     @JsName("head")
     val head: Struct?
@@ -48,7 +49,7 @@ interface Clause : Struct {
 
     companion object {
 
-        const val FUNCTOR = ":-"
+        const val FUNCTOR = CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")

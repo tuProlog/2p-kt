@@ -23,8 +23,8 @@ internal class VarTest {
 
     @Test
     fun varRegexCorrect() {
-        assertTrue(VarUtils.correctlyNamedVars.all { it matches Var.VAR_REGEX_PATTERN })
-        assertFalse(VarUtils.incorrectlyNamedVars.any { it matches Var.VAR_REGEX_PATTERN })
+        assertTrue(VarUtils.correctlyNamedVars.all { it matches Var.NAME_PATTERN })
+        assertFalse(VarUtils.incorrectlyNamedVars.any { it matches Var.NAME_PATTERN })
     }
 
     @Test

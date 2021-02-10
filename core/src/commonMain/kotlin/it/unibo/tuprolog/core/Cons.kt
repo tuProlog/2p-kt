@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
 import it.unibo.tuprolog.core.impl.ConsImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -20,7 +21,7 @@ interface Cons : LogicList {
     val tail: Term
 
     override val functor: String
-        get() = FUNCTOR
+        get() = CONS_FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(head, tail)
@@ -34,7 +35,7 @@ interface Cons : LogicList {
 
     companion object {
 
-        const val FUNCTOR = "."
+        const val FUNCTOR = CONS_FUNCTOR
 
         @JvmStatic
         @JsName("of")

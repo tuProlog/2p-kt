@@ -26,7 +26,7 @@ object TermFormatterUtils {
         Integer.of(1) to "1",
         Real.of("3.2") to "3.2",
         Var.of("A") to "A",
-        Var.anonymous() to Var.ANONYMOUS_VAR_NAME,
+        Var.anonymous() to Var.ANONYMOUS_NAME,
         Var.of("A b") to Var.escapeName("A b"),
         Struct.of("f", Var.of("A"), Atom.of("b")) to "f(A, b)",
         Struct.of("f", Var.of("A"), Var.of("B"), Var.of("A")) to "f(A, B, A1)",
