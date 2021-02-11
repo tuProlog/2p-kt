@@ -14,7 +14,7 @@ internal open class StructImpl(
     tags: Map<String, Any> = emptyMap()
 ) : TermImpl(tags), Struct {
 
-    override val isGround: Boolean = args.all { it.isGround }
+    override val isGround: Boolean by lazy { super<Struct>.isGround }
 
     override val variables: Sequence<Var> by lazy { super.variables }
 
