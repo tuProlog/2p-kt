@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.BailErrorStrategy
 import it.unibo.tuprolog.parser.ClauseContext
 import it.unibo.tuprolog.parser.CommonTokenStream
-import it.unibo.tuprolog.parser.ErrorListener
 import it.unibo.tuprolog.parser.ErrorStrategy
 import it.unibo.tuprolog.parser.InputStream
 import it.unibo.tuprolog.parser.OptClauseContext
