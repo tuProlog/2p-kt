@@ -1,4 +1,4 @@
-@file:JsModule("antlr4/error")
+@file:JsModule("antlr4/src/antlr4/error")
 @file:JsNonModule
 
 package it.unibo.tuprolog.parser
