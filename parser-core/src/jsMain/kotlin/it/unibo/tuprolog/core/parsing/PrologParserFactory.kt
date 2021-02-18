@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.parser.BailErrorStrategy
 import it.unibo.tuprolog.parser.ClauseContext
 import it.unibo.tuprolog.parser.CommonTokenStream
-import it.unibo.tuprolog.parser.ErrorListener
 import it.unibo.tuprolog.parser.ErrorStrategy
 import it.unibo.tuprolog.parser.InputStream
 import it.unibo.tuprolog.parser.OptClauseContext
@@ -19,8 +18,8 @@ import it.unibo.tuprolog.parser.isRecognitionException
 
 object PrologParserFactory {
 
-    private fun newErrorListener(whileParsing: Any): ErrorListener {
-        return object : ErrorListener() {
+    private fun newErrorListener(whileParsing: Any): dynamic {
+        return object {
             private fun symbolToString(obj: dynamic): String {
                 return if (obj is Token) {
                     obj.text
@@ -29,7 +28,8 @@ object PrologParserFactory {
                 }
             }
 
-            override fun syntaxError(
+            @JsName("syntaxError")
+            fun syntaxError(
                 recognizer: dynamic,
                 offendingSymbol: dynamic,
                 line: Int,
