@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.utils
 
-import it.unibo.tuprolog.utils.impl.ConjunctionCursor
 import it.unibo.tuprolog.utils.impl.EmptyCursor
 import it.unibo.tuprolog.utils.impl.MapperCursor
 import kotlin.js.JsName
@@ -19,15 +18,30 @@ interface Cursor<T> {
     @JsName("isOver")
     val isOver: Boolean
 
-    @JsName("append")
-    fun append(other: Cursor<T>): Cursor<out T> {
-        return ConjunctionCursor(this, other)
-    }
-
     @JsName("map")
     fun <R> map(mapper: (T) -> R): Cursor<out R> {
         return MapperCursor(this, mapper)
     }
+
+    @JsName("iterator")
+    fun iterator(): Iterator<T> =
+        object : Iterator<T> {
+            private var current: Cursor<out T> = this@Cursor
+
+            override fun hasNext(): Boolean = !current.isOver
+
+            override fun next(): T {
+                val result = current.current
+                current = current.next
+                return result!!
+            }
+        }
+
+    @JsName("asIterable")
+    fun asIterable(): Iterable<T> = Iterable { iterator() }
+
+    @JsName("asSequence")
+    fun asSequence(): Sequence<T> = Sequence { iterator() }
 
     companion object {
 
