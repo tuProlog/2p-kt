@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.LazyConsWithExplicitLast
+import it.unibo.tuprolog.core.impl.LazyConsWithImplicitLast
+import it.unibo.tuprolog.utils.Cursor
+import it.unibo.tuprolog.utils.cursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
@@ -59,17 +63,17 @@ interface List : Collection {
         @JvmStatic
         @JsName("from")
         fun from(vararg items: Term, last: Term?): List =
-            from(items.toList(), last)
+            from(items.cursor(), last)
 
         @JvmStatic
         @JsName("fromNullTerminated")
         fun from(vararg items: Term): List =
-            from(items.toList(), null)
+            from(items.cursor(), null)
 
         @JvmStatic
         @JsName("fromIterable")
         fun from(items: Iterable<Term>, last: Term?): List =
-            from(items.toList(), last)
+            from(items.cursor(), last)
 
         @JvmStatic
         @JsName("fromIterableNullTerminated")
@@ -79,27 +83,38 @@ interface List : Collection {
         @JvmStatic
         @JsName("fromSequence")
         fun from(items: Sequence<Term>, last: Term?): List =
-            from(items.toList(), last)
+            from(items.cursor(), last)
 
         @JvmStatic
         @JsName("fromSequenceNullTerminated")
         fun from(items: Sequence<Term>): List =
-            from(items.toList(), null)
+            from(items.cursor(), null)
 
         @JvmStatic
         @JsName("fromList")
-        fun from(items: KtList<Term>, last: Term?): List {
-            require(items.isNotEmpty() || last is EmptyList || last === null) {
-                "Input list for method List.from(kotlin.collection.List, Term?) cannot be empty if the last item is `$last`"
-            }
-
-            val finalItem = last ?: empty()
-            return items.foldRight(finalItem) { head, tail -> Cons.of(head, tail) } as List
-        }
+        fun from(items: KtList<Term>, last: Term?): List =
+            from(items.cursor(), last)
 
         @JvmStatic
         @JsName("fromListNullTerminated")
         fun from(items: KtList<Term>): List =
+            from(items, null)
+
+        @JvmStatic
+        @JsName("fromCursor")
+        fun from(items: Cursor<out Term>, last: Term?): List {
+            return when {
+                items.isOver ->
+                    (last ?: empty()) as? List
+                        ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                last == null -> LazyConsWithImplicitLast(items)
+                else -> LazyConsWithExplicitLast(items, last)
+            }
+        }
+
+        @JvmStatic
+        @JsName("fromCursorNullTerminated")
+        fun from(items: Cursor<out Term>): List =
             from(items, null)
     }
 }
