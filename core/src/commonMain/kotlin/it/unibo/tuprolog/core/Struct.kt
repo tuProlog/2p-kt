@@ -214,7 +214,7 @@ interface Struct : Term {
             when {
                 operator == CONS_FUNCTOR && terminal == EmptyList() -> List.of(terms)
                 operator == CONS_FUNCTOR && terminal == null ->
-                    List.from(terms.slice(0 until terms.lastIndex), terms.last())
+                    List.from(terms)
                 operator == TUPLE_FUNCTOR -> Tuple.of(terms + listOfNotNull(terminal))
                 terminal == null -> {
                     require(terms.size >= 2) { "Struct requires at least two terms to fold" }

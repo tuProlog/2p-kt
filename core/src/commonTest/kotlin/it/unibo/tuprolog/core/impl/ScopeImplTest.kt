@@ -14,7 +14,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
@@ -206,10 +205,8 @@ internal class ScopeImplTest {
 
     @Test
     fun listFrom() {
-        val correctInstances =
-            ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it.dropLast(), it.last()) }
-        val toBeTested =
-            ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.listFrom(it.dropLast(), it.last()) }
+        val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { LogicList.from(it) }
+        val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { emptyScopeInstance.listFrom(it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)
     }
