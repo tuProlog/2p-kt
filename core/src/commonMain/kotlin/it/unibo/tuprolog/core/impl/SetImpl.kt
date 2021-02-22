@@ -19,6 +19,8 @@ internal open class SetImpl(
 
     override val size: Int get() = unfoldedList.size
 
+    override fun unfold(): Sequence<Term> = Iterable { SetUnfolder(this) }.asSequence()
+
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
 
     override fun copyWithTags(tags: Map<String, Any>): LogicSet = SetImpl(item, tags)

@@ -24,6 +24,8 @@ internal abstract class AbstractCons(
 
     override val isWellFormed: Boolean by lazy { last is EmptyList }
 
+    override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
+
     override fun toArray(): Array<Term> =
         when {
             isWellFormed -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
