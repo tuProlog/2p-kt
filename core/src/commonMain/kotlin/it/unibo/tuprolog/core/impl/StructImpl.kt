@@ -34,33 +34,31 @@ internal open class StructImpl(
     override fun copyWithTags(tags: Map<String, Any>): Struct =
         StructImpl(functor, args, tags)
 
-    override fun structurallyEquals(other: Term): Boolean =
-        other is StructImpl &&
+    final override fun structurallyEquals(other: Term): Boolean =
+        other is Struct &&
             functor == other.functor &&
             arity == other.arity &&
-            (0 until arity).all { args[it] structurallyEquals other[it] }
+            itemsAreStructurallyEqual(other)
+
+    protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
+        (0 until arity).all { this[it] structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
 
-    final override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean =
+        (other as? Struct)?.let { equals(it, true) } ?: false
+
+    protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
+        (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
+
+    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
+        (other as? Struct)?.let { equals(it, useVarCompleteName) } ?: false
+
+    private fun equals(other: Struct, useVarCompleteName: Boolean): Boolean {
         if (this === other) return true
-        if (other == null || other !is Struct) return false
-
-        if (functor != other.functor) return false
-        if (!args.contentEquals(other.args)) return false
-
-        return true
-    }
-
-    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        if (other !is Struct) return false
         if (functor != other.functor) return false
         if (arity != other.arity) return false
-        for (i in args.indices) {
-            if (!args[i].equals(other.args[i], useVarCompleteName)) {
-                return false
-            }
-        }
+        if (!itemsAreEqual(other, useVarCompleteName)) return false
         return true
     }
 

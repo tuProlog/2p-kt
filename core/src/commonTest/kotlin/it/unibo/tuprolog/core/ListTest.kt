@@ -123,17 +123,4 @@ internal class ListTest {
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
-
-    @Test
-    fun bigListsDoNotProvokeStackOverflow() {
-        val nums = (0..100_000).toList()
-        val list = LogicList.of(nums.map { Integer.of(it) })
-
-        assertEquals(nums.joinToString(", ", "[", "]"), list.toString())
-
-        val otherList = list.freshCopy()
-
-        assertEquals(list.hashCode(), otherList.hashCode())
-        assertEquals(list, otherList)
-    }
 }

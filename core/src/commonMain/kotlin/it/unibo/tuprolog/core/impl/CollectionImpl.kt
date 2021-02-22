@@ -2,9 +2,11 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
+import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
 
 internal abstract class CollectionImpl(
@@ -29,4 +31,18 @@ internal abstract class CollectionImpl(
     override fun freshCopy(): Collection = super.freshCopy() as Collection
 
     override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope) as Collection
+
+    override fun itemsAreStructurallyEqual(other: Struct): Boolean =
+        (other as? Collection)?.let {
+            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
+                a.structurallyEquals(b)
+            }
+        } ?: false
+
+    override fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
+        (other as? Collection)?.let {
+            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
+                a.equals(b, useVarCompleteName)
+            }
+        } ?: false
 }
