@@ -46,15 +46,15 @@ internal open class StructImpl(
     override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
 
     final override fun equals(other: Any?): Boolean =
-        (other as? Struct)?.let { equals(it, true) } ?: false
+        (other as? Struct)?.let { equalsImpl(it, true) } ?: false
 
     protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
         (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        (other as? Struct)?.let { equals(it, useVarCompleteName) } ?: false
+        (other as? Struct)?.let { equalsImpl(it, useVarCompleteName) } ?: false
 
-    private fun equals(other: Struct, useVarCompleteName: Boolean): Boolean {
+    private fun equalsImpl(other: Struct, useVarCompleteName: Boolean): Boolean {
         if (this === other) return true
         if (functor != other.functor) return false
         if (arity != other.arity) return false
