@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.prolog
-import it.unibo.tuprolog.solve.exception.error.PermissionError
 
 internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestBigList {
 
@@ -10,7 +9,7 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
         get() = 2000
 
     companion object {
-        private const val MAX = 20
+        private const val MAX = 1000
     }
 
     override fun testBigListGeneration() {
@@ -35,7 +34,8 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
                 kotlin.collections.listOf(
                     query.yes(
                         L to listOf((0..MAX).reversed().map { Integer.of(it) })
-                    )
+                    ),
+                    query.no()
                 ),
                 solutions
             )
