@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
@@ -15,14 +13,6 @@ internal open class StructImpl(
 ) : TermImpl(tags), Struct {
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
-
-    override val variables: Sequence<Var> by lazy { super.variables }
-
-    override val indicator: Indicator by lazy { super.indicator }
-
-    override val argsList: List<Term> by lazy { super.argsList }
-
-    override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
 
     override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
@@ -43,7 +33,8 @@ internal open class StructImpl(
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
         (0 until arity).all { this[it] structurallyEquals other[it] }
 
-    override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
+    override val isFunctorWellFormed: Boolean
+        get() = Struct.isWellFormedFunctor(functor)
 
     final override fun equals(other: Any?): Boolean =
         (other as? Struct)?.let { equalsImpl(it, true) } ?: false

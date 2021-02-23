@@ -8,10 +8,6 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
     override val shortDuration: TimeDuration
         get() = 2000
 
-    companion object {
-        private const val MAX = 1000
-    }
-
     override fun testBigListGeneration() {
         prolog {
             val theory = theoryOf(
@@ -27,13 +23,13 @@ internal class TestBigListImpl(private val solverFactory: SolverFactory) : TestB
 
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory)
 
-            val query = "biglist"(MAX, L)
+            val query = "biglist"(BigListOptions.SIZE, L)
             val solutions = solver.solve(query, longDuration).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(
                     query.yes(
-                        L to listOf((0..MAX).reversed().map { Integer.of(it) })
+                        L to listOf((0..BigListOptions.SIZE).reversed().map { Integer.of(it) })
                     ),
                     query.no()
                 ),
