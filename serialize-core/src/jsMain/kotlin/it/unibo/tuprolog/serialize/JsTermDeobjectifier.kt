@@ -79,7 +79,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = if (last != null) deobjectify(last) else null
+            last = if (last != null) deobjectify(last) else scope.emptyList
         )
     }
 

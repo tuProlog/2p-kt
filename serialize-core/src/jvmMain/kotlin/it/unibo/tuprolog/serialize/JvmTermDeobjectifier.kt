@@ -79,7 +79,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = last?.let { deobjectify(it) }
+            last = last?.let { deobjectify(it) } ?: scope.emptyList
         )
     }
 
