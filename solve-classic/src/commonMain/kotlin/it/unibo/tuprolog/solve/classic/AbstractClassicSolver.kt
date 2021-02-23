@@ -101,6 +101,7 @@ abstract class AbstractClassicSolver(
         onStateTransition: (State, State, Long) -> Unit
     ): SolutionIterator
 
+    @Suppress("UNUSED_PARAMETER")
     private fun updateCurrentContextAfterStateTransition(source: State, destination: State, index: Long) {
         require(destination.context.step == index)
         currentContext = destination.context

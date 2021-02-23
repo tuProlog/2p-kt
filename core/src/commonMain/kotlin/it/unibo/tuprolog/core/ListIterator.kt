@@ -51,6 +51,7 @@ sealed class ListIterator(list: List) : Iterator<Term> {
     companion object {
         private fun ListIterator.hasNextSkippingLast(): Boolean = current != null && current !is EmptyList
 
+        @Suppress("UNUSED_PARAMETER")
         private fun ListIterator.onEmptyListSkippingLast(item: EmptyList): Term = throw NoSuchElementException()
     }
 }
