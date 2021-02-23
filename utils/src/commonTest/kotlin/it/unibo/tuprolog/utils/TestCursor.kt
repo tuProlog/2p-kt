@@ -17,7 +17,6 @@ class TestCursor {
             assertFalse { current.isOver }
             assertNotNull(current.current)
             assertSame(current.current, current.current)
-            assertSame(current.next, current.next)
             assertTrue {
                 @Suppress("USELESS_IS_CHECK")
                 current.next is Cursor<out T>
