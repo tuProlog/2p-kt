@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.flags
 
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
@@ -20,9 +21,17 @@ data class FlagStore constructor(private val flags: Map<String, Term>) : Map<Str
     fun set(name: String, value: Term): FlagStore =
         plus(name, value)
 
-    @JsName("setNotable")
+    @JsName("setNotableToDefault")
     fun set(notableFlag: NotableFlag): FlagStore =
         set(notableFlag.name, notableFlag.defaultValue)
+
+    @JsName("setNotable")
+    fun set(notableFlag: NotableFlag, value: Atom): FlagStore =
+        if (value in notableFlag.admissibleValues) {
+            set(notableFlag.name, value)
+        } else {
+            throw IllegalArgumentException("Value $value is not admissible for flag $notableFlag")
+        }
 
     @JsName("plus")
     fun plus(name: String, value: Term): FlagStore =
@@ -30,11 +39,11 @@ data class FlagStore constructor(private val flags: Map<String, Term>) : Map<Str
 
     @JsName("plusPair")
     operator fun plus(flagValue: Pair<String, Term>): FlagStore =
-        FlagStore(mapOf(flagValue) + this)
+        FlagStore(this.flags + mapOf(flagValue))
 
     @JsName("plusNotable")
     operator fun plus(notableFlagValue: NotableFlag): FlagStore =
-        FlagStore(mapOf(notableFlagValue.toPair()) + this)
+        FlagStore(this.flags + mapOf(notableFlagValue.toPair()))
 
     @JsName("plusMap")
     operator fun plus(flags: Map<String, Term>): FlagStore =
@@ -56,7 +65,8 @@ data class FlagStore constructor(private val flags: Map<String, Term>) : Map<Str
         val DEFAULT = FlagStore(
             Unknown,
             MaxArity,
-            DoubleQuotes
+            DoubleQuotes,
+            LastCallOptimization
         )
 
         @JsName("empty")
