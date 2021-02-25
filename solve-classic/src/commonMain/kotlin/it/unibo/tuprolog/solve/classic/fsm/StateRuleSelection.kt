@@ -15,6 +15,8 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.solve.flags.LastCallOptimization
+import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
@@ -123,7 +125,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
 
     private val ClassicExecutionContext.isTailRecursive: Boolean
-        get() = goals.next.isOver && goals.current!!.let { currentGoal ->
+        get() = goals.next.isOver && flags[LastCallOptimization] == ON && goals.current!!.let { currentGoal ->
             (currentGoal as? Struct)?.extractSignature()?.let {
                 it == procedure?.extractSignature() && it != catchSignature
             } ?: false
