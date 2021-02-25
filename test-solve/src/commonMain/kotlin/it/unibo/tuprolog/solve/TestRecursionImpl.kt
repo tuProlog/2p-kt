@@ -12,6 +12,9 @@ import kotlin.test.assertTrue
 
 internal class TestRecursionImpl(private val solverFactory: SolverFactory) : TestRecursion {
 
+    override val shortDuration: TimeDuration
+        get() = 1000
+
     private fun thermostat(initialTemp: Int, goodRange: IntRange) = prolog {
         theoryOf(
             directive { dynamic("temp" / 1) },
