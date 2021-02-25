@@ -2,6 +2,11 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.LastCallOptimization
+import it.unibo.tuprolog.solve.flags.LastCallOptimization.OFF
+import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -54,7 +59,7 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
     private fun testRecursion(init: Int, range: IntRange) {
         prolog {
             val prints = mutableListOf<String>()
-            val solver = solverFactory.mutableSolverWithDefaultBuiltins(
+            val solver = solverFactory.solverWithDefaultBuiltins(
                 staticKb = thermostat(init, range),
                 stdOut = OutputChannel.of { prints.add(it) }
             )
@@ -83,5 +88,58 @@ internal class TestRecursionImpl(private val solverFactory: SolverFactory) : Tes
 
     override fun testRecursion2() {
         testRecursion(30, 18..22)
+    }
+
+    private fun canary(message: String) = prolog {
+        theoryOf(
+            rule { "recursive"(0) impliedBy `throw`(message) },
+            rule {
+                "recursive"(N).impliedBy(
+                    N greaterThan 0,
+                    M `is` (N - 1),
+                    "recursive"(M)
+                )
+            }
+        )
+    }
+
+    private fun testTailRecursion(lastCallOptimization: Boolean, n: Int = 200) {
+        prolog {
+            val prints = mutableListOf<String>()
+            val solver = solverFactory.solverWithDefaultBuiltins(
+                staticKb = canary("ball"),
+                flags = FlagStore.DEFAULT.set(LastCallOptimization, if (lastCallOptimization) ON else OFF),
+                stdOut = OutputChannel.of { prints.add(it) }
+            )
+
+            assertEquals(if (lastCallOptimization) ON else OFF, solver.flags[LastCallOptimization])
+
+            val query = "recursive"(n)
+
+            val sol = solver.solveOnce(query, mediumDuration)
+
+            assertSolutionEquals(
+                query.halt(
+                    SystemError.forUncaughtException(
+                        DummyInstances.executionContext,
+                        atomOf("ball")
+                    )
+                ),
+                sol
+            )
+            if (lastCallOptimization) {
+                assertEquals(2, (sol as Solution.Halt).exception.prologStackTrace.size)
+            } else {
+                assertEquals(n + 2, (sol as Solution.Halt).exception.prologStackTrace.size)
+            }
+        }
+    }
+
+    override fun testTailRecursion() {
+        testTailRecursion(true)
+    }
+
+    override fun testNonTailRecursion() {
+        testTailRecursion(false)
     }
 }

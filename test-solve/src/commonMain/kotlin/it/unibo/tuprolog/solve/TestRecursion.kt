@@ -10,4 +10,8 @@ interface TestRecursion : SolverTest {
     fun testRecursion1()
 
     fun testRecursion2()
+
+    fun testTailRecursion()
+
+    fun testNonTailRecursion()
 }

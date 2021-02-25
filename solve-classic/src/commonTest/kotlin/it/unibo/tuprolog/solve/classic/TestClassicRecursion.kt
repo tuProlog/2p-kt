@@ -16,4 +16,14 @@ class TestClassicRecursion : TestRecursion, SolverFactory by ClassicSolverFactor
     override fun testRecursion2() {
         prototype.testRecursion2()
     }
+
+    @Test
+    override fun testTailRecursion() {
+        prototype.testTailRecursion()
+    }
+
+    @Test
+    override fun testNonTailRecursion() {
+        prototype.testNonTailRecursion()
+    }
 }
