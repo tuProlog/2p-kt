@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.impl
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
@@ -22,6 +23,9 @@ internal sealed class SolutionImpl(
 
     override val isHalt: Boolean
         get() = false
+
+    override val exception: TuPrologRuntimeException?
+        get() = null
 
     override fun <T> whenIs(
         yes: ((Solution.Yes) -> T)?,
@@ -59,6 +63,12 @@ internal sealed class SolutionImpl(
         return result
     }
 
+    override fun valueOf(variable: Var): Term? =
+        (substitution as? Substitution.Unifier)?.get(variable)
+
+    override fun valueOf(variable: String): Term? =
+        (substitution as? Substitution.Unifier)?.getByName(variable)
+
     /** A class representing the successful solution */
     class YesImpl(
         query: Struct,
@@ -89,6 +99,13 @@ internal sealed class SolutionImpl(
         override fun copy(query: Struct, substitution: Substitution.Unifier) = YesImpl(query, substitution, tags)
 
         override fun toString(): String = "Yes(query=$query, substitution=$substitution)"
+
+        override fun cleanUp(): Solution.Yes =
+            copy(substitution = substitution.cleanUp(query.variables.filterNot { it.isAnonymous }.toSet()))
+
+        private fun Substitution.Unifier.cleanUp(toRetain: Set<Var>): Substitution.Unifier {
+            return filter { v, t -> (v in toRetain) || (t !is Var) || (t in toRetain) }
+        }
     }
 
     /** A class representing a failed solution */
@@ -120,6 +137,8 @@ internal sealed class SolutionImpl(
         override fun copy(query: Struct) = NoImpl(query, tags)
 
         override fun toString(): String = "No(query=$query)"
+
+        override fun cleanUp(): Solution.No = this
     }
 
     /** A class representing a failed (halted) solution because of an exception */
@@ -170,6 +189,8 @@ internal sealed class SolutionImpl(
         override fun copy(query: Struct, exception: TuPrologRuntimeException) = HaltImpl(query, exception, tags)
 
         override fun toString(): String = "Halt(query=$query, exception=$exception)"
+
+        override fun cleanUp(): Solution.Halt = this
     }
 
     protected companion object {

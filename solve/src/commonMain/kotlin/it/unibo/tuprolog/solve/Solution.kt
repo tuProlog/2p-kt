@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.impl.SolutionImpl
 import it.unibo.tuprolog.utils.Taggable
@@ -19,6 +20,9 @@ interface Solution : Taggable<Solution> {
     /** The substitution that has been applied to find the solution, or a failed substitution */
     @JsName("substitution")
     val substitution: Substitution
+
+    @JsName("exception")
+    val exception: TuPrologRuntimeException?
 
     /** The [Struct] representing the solution, or `null` in case of a non-successful solution */
     @JsName("solvedQuery")
@@ -41,6 +45,15 @@ interface Solution : Taggable<Solution> {
         otherwise: ((Solution) -> T) = { throw IllegalStateException("Cannot handle solution $it") }
     ): T
 
+    @JsName("cleanUp")
+    fun cleanUp(): Solution
+
+    @JsName("valueOf")
+    fun valueOf(variable: Var): Term?
+
+    @JsName("valueOfByName")
+    fun valueOf(variable: String): Term?
+
     /** A type representing the successful solution */
     interface Yes : Solution {
         override val substitution: Substitution.Unifier
@@ -51,6 +64,8 @@ interface Solution : Taggable<Solution> {
 
         @JsName("copy")
         fun copy(query: Struct = this.query, substitution: Substitution.Unifier = this.substitution): Yes
+
+        override fun cleanUp(): Yes
     }
 
     /** A type representing a failed solution */
@@ -63,17 +78,20 @@ interface Solution : Taggable<Solution> {
 
         @JsName("copy")
         fun copy(query: Struct = this.query): No
+
+        override fun cleanUp(): No
     }
 
     /** A type representing a failed (halted) solution because of an exception */
     interface Halt : Solution {
-        @JsName("exception")
-        val exception: TuPrologRuntimeException
+        override val exception: TuPrologRuntimeException
 
         override fun replaceTags(tags: Map<String, Any>): Halt
 
         @JsName("copy")
         fun copy(query: Struct = this.query, exception: TuPrologRuntimeException = this.exception): Halt
+
+        override fun cleanUp(): Halt
     }
 
     companion object {
