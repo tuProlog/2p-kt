@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.Substitution.Companion.asUnifier
 import it.unibo.tuprolog.core.testutils.AssertionUtils.dropFirst
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.SubstitutionUtils
@@ -10,7 +9,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
-import kotlin.collections.listOf as ktListOf
 
 /**
  * Test class for [Substitution] companion object
@@ -22,12 +20,12 @@ internal class SubstitutionTest {
     private val aVar = Var.of("A")
     private val bVar = Var.of("B")
 
-    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution::Unifier) }
+    private val correctInstances by lazy { SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::of) }
 
     @Test
     fun failedShouldReturnTheFailedSubstitutionInstance() {
-        assertEquals(Substitution.Fail, Substitution.failed())
-        assertSame(Substitution.Fail, Substitution.failed())
+        assertEquals(Substitution.failed(), Substitution.failed())
+        assertSame(Substitution.failed(), Substitution.failed())
     }
 
     @Test
@@ -108,7 +106,7 @@ internal class SubstitutionTest {
             Substitution.of(it.first(), *it.dropFirst().toTypedArray())
         }
 
-        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.Unifier(it.toMap()) }
+        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it.toMap()) }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
@@ -119,7 +117,7 @@ internal class SubstitutionTest {
             Substitution.of(it.first(), *it.dropFirst().toTypedArray())
         }
 
-        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
+        toBeTested.forEach { assertEquals(Substitution.failed(), it) }
     }
 
     @Test
@@ -133,7 +131,7 @@ internal class SubstitutionTest {
     fun ofIterableVariableTermPairsDoesntComplainIfExactDuplicates() {
         val toBeTested = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.of(it) }
 
-        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.Unifier(it.toMap()) }
+        val correctInstances = SubstitutionUtils.duplicatedPairSubstitution.map { Substitution.unifier(it.toMap()) }
 
         onCorrespondingItems(correctInstances, toBeTested) { expected, actual -> assertEquals(expected, actual) }
     }
@@ -142,7 +140,7 @@ internal class SubstitutionTest {
     fun ofIterableVariableTermPairsResultInFailedSubstitutionIfContradicting() {
         val toBeTested = SubstitutionUtils.contradictingSubstitutions.map { Substitution.of(it) }
 
-        toBeTested.forEach { assertEquals(Substitution.Fail, it) }
+        toBeTested.forEach { assertEquals(Substitution.failed(), it) }
     }
 
     @Test
@@ -152,7 +150,7 @@ internal class SubstitutionTest {
 
     @Test
     fun ofSubstitutions() {
-        val correct = Substitution.Unifier(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
+        val correct = Substitution.unifier(SubstitutionUtils.mixedSubstitutions.reduce { map1, map2 -> map1 + map2 })
         val toBeTested = Substitution.of(correctInstances.first(), *correctInstances.dropFirst().toTypedArray())
 
         assertEquals(correct, toBeTested)
@@ -161,7 +159,7 @@ internal class SubstitutionTest {
     @Test
     fun ofSubstitutionsWithAlwaysSameSubstitutionsReturnsThemNotDuplicated() {
         Scope.of("A", "B") {
-            val correct = Substitution.Unifier(
+            val correct = Substitution.unifier(
                 mapOf(
                     varOf("A") to atomOf("a"),
                     varOf("B") to atomOf("b")
@@ -169,11 +167,11 @@ internal class SubstitutionTest {
             )
 
             val toBeTested = Substitution.of(
-                Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
-                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.Unifier(mapOf(varOf("B") to atomOf("b"))),
-                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
+                Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.unifier(mapOf(varOf("B") to atomOf("b"))),
+                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.unifier(mapOf(varOf("B") to atomOf("b")))
             )
 
             assertEquals(correct, toBeTested)
@@ -184,14 +182,14 @@ internal class SubstitutionTest {
     fun ofSubstitutionsWithContradictingOnesReturnsFailed() {
         Scope.of("A", "B") {
             val toBeTested = Substitution.of(
-                Substitution.Unifier(mapOf(varOf("B") to atomOf("f"))),
-                Substitution.Unifier(mapOf(varOf("B") to varOf("A"))),
-                Substitution.Unifier(mapOf(varOf("A") to atomOf("b"))),
-                Substitution.Unifier(mapOf(varOf("A") to atomOf("a"))),
-                Substitution.Unifier(mapOf(varOf("B") to atomOf("b")))
+                Substitution.unifier(mapOf(varOf("B") to atomOf("f"))),
+                Substitution.unifier(mapOf(varOf("B") to varOf("A"))),
+                Substitution.unifier(mapOf(varOf("A") to atomOf("b"))),
+                Substitution.unifier(mapOf(varOf("A") to atomOf("a"))),
+                Substitution.unifier(mapOf(varOf("B") to atomOf("b")))
             )
 
-            assertEquals(Substitution.Fail, toBeTested)
+            assertEquals(Substitution.failed(), toBeTested)
         }
     }
 
@@ -199,17 +197,17 @@ internal class SubstitutionTest {
     fun ofSubstitutionsCompliesWithCompositionDefinedInPrologStandard() {
         val xAtom = Atom.of("x")
 
-        val first = Substitution.Unifier(mapOf(bVar to Struct.of("f", aVar)))
-        val second = Substitution.Unifier(mapOf(aVar to xAtom))
+        val first = Substitution.unifier(mapOf(bVar to Struct.of("f", aVar)))
+        val second = Substitution.unifier(mapOf(aVar to xAtom))
 
-        val firstComposedSecondExpected = Substitution.Unifier(
+        val firstComposedSecondExpected = Substitution.unifier(
             mapOf(
                 bVar to Struct.of("f", xAtom),
                 aVar to xAtom
             )
         )
 
-        val secondComposedFirstExpected = Substitution.Unifier(
+        val secondComposedFirstExpected = Substitution.unifier(
             mapOf(
                 aVar to xAtom,
                 bVar to Struct.of("f", aVar)

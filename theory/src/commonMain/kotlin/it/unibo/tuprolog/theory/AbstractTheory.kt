@@ -8,7 +8,9 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
-internal abstract class AbstractTheory : Theory {
+internal abstract class AbstractTheory(override val tags: Map<String, Any>) : Theory {
+
+    override fun toImmutableTheory(): Theory = this
 
     override fun plus(clause: Clause): Theory = super.plus(checkClauseCorrect(clause))
 
@@ -40,7 +42,7 @@ internal abstract class AbstractTheory : Theory {
         return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
     }
 
-    override fun toString(): String = "${Theory::class.simpleName}(clauses=$clauses)"
+    override fun toString(): String = "${this::class.simpleName}{ ${clauses.joinToString(". ")} }"
 
     override fun toString(asPrologText: Boolean): String = when (asPrologText) {
         true -> clauses.joinToString(".\n", "", ".\n")
@@ -50,15 +52,20 @@ internal abstract class AbstractTheory : Theory {
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
     final override fun equals(other: Any?): Boolean {
-        if (this === other) return true
         if (other == null) return false
         if (other !is Theory) return false
+
+        return equals(other, true)
+    }
+
+    final override fun equals(other: Theory, useVarCompleteName: Boolean): Boolean {
+        if (this === other) return true
 
         val i = clauses.iterator()
         val j = other.clauses.iterator()
 
         while (i.hasNext() && j.hasNext()) {
-            if (i.next() != j.next()) {
+            if (i.next().equals(j.next(), useVarCompleteName).not()) {
                 return false
             }
         }
@@ -104,10 +111,15 @@ internal abstract class AbstractTheory : Theory {
     override fun assertZ(clauses: Sequence<Clause>): Theory =
         createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses))
 
-    protected abstract fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory
+    protected abstract fun createNewTheory(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = this.tags
+    ): AbstractTheory
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<AbstractTheory> =
         retract(clauses.asIterable())
 
     abstract override fun retract(clauses: Iterable<Clause>): RetractResult<AbstractTheory>
+
+    override fun clone(): Theory = createNewTheory(clauses.asSequence())
 }

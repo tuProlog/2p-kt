@@ -6,11 +6,11 @@ val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
 
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api("io.github.gciatto:kt-math:_")
+                api(project(":utils"))
             }
 
             val infoKtFile = kotlin.srcDirs.first().absoluteFile.resolve("$tuPrologPackageDir/Info.kt")
@@ -23,6 +23,7 @@ kotlin {
                         |
                         |object Info {
                         |    const val VERSION = "${rootProject.version}"
+                        |    val PLATFORM: Platform by lazy { currentPlatform() }
                         |}
                         |""".trimMargin()
                     )

@@ -1,13 +1,18 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.EmptyList
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 
-internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
+internal class EmptyListImpl(
+    tags: Map<String, Any> = emptyMap()
+) : AtomImpl(EMPTY_LIST_FUNCTOR, tags), EmptyList {
 
     override val unfoldedList: List<Term> = listOf(this)
+
     override val unfoldedSequence: Sequence<Term> = sequenceOf(this)
+
     override val unfoldedArray: Array<Term> = arrayOf(this)
 
     override fun unfold(): Sequence<Term> = sequenceOf(this)
@@ -16,4 +21,10 @@ internal object EmptyListImpl : AtomImpl(Empty.EMPTY_LIST_FUNCTOR), EmptyList {
 
     override val last: Term
         get() = this
+
+    override fun copyWithTags(tags: Map<String, Any>): EmptyList = EmptyListImpl(tags)
+
+    override fun freshCopy(): EmptyList = this
+
+    override fun freshCopy(scope: Scope): EmptyList = this
 }

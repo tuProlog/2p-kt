@@ -25,20 +25,20 @@ interface EmptyList : Empty, LogicList {
 
     override fun toSequence(): Sequence<Term> = emptySequence()
 
-    override fun freshCopy(): EmptyList = this
+    override fun freshCopy(): EmptyList
 
-    override fun freshCopy(scope: Scope): EmptyList = this
+    override fun freshCopy(scope: Scope): EmptyList
 
     companion object {
 
-        const val FUNCTOR: String = Empty.EMPTY_LIST_FUNCTOR
+        const val FUNCTOR: String = Terms.EMPTY_LIST_FUNCTOR
 
         @JvmStatic
         @JsName("invoke")
-        operator fun invoke(): EmptyList = EmptyListImpl
+        operator fun invoke(): EmptyList = EmptyListImpl()
 
         @JvmStatic
         @JsName("instance")
-        val instance: EmptyList = EmptyListImpl
+        val instance: EmptyList = EmptyListImpl()
     }
 }

@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.CustomTheories.ifThen1ToSolution
 import it.unibo.tuprolog.solve.CustomTheories.ifThen2ToSolution
@@ -23,11 +25,6 @@ import it.unibo.tuprolog.solve.PrologStandardExampleTheories.notStandardExampleT
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheory
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleTheoryNotableGoalToSolution
 import it.unibo.tuprolog.solve.PrologStandardExampleTheories.prologStandardExampleWithCutTheoryNotableGoalToSolution
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCharsTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomCodesTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomConcatTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.atomLengthTesting
-import it.unibo.tuprolog.solve.TestingAtomBuiltIn.charCodeTesting
 import it.unibo.tuprolog.solve.TestingClauseTheories.allPrologTestingTheoriesToRespectiveGoalsAndSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.callTestingGoalsToSolutions
 import it.unibo.tuprolog.solve.TestingClauseTheories.catchTestingGoalsToSolutions
@@ -64,6 +61,7 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.warning.MissingPredicate
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.flags.Unknown.ERROR
 import it.unibo.tuprolog.solve.flags.Unknown.FAIL
@@ -124,12 +122,15 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
-import kotlin.collections.listOf as ktListOf
 
-internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSolver {
+internal class TestSolverImpl(
+    private val solverFactory: SolverFactory,
+    override val callErrorSignature: Signature,
+    override val nafErrorSignature: Signature,
+    override val notErrorSignature: Signature
+) : TestSolver {
 
     override fun testUnknownFlag2() {
         prolog {
@@ -228,7 +229,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 ktListOf(query.no()),
                 solver.solve(query).toList()
             )
-            assertTrue { observedWarnings.size == 1 }
+            assertEquals(1, observedWarnings.size)
             assertTrue { observedWarnings[0] is MissingPredicate }
             assertEquals(query.extractSignature(), (observedWarnings[0] as MissingPredicate).signature)
 
@@ -303,6 +304,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 assertHasPredicateInAPI(Retract)
                 assertHasPredicateInAPI(RetractAll)
                 assertHasPredicateInAPI(Sleep)
+                assertHasPredicateInAPI(Signature("sub_atom", 5))
                 assertHasPredicateInAPI(TermGreaterThan)
                 assertHasPredicateInAPI(TermGreaterThanOrEqualTo)
                 assertHasPredicateInAPI(TermIdentical)
@@ -362,19 +364,18 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
+            solver.standardOutput.addListener { outputs += it!! }
 
-            with(solver.standardOutput!!) {
-                addListener { outputs += it }
-            }
+            val terms = ktListOf(
+                atomOf("atom"),
+                atomOf("a string"),
+                varOf("A_Var"),
+                numOf(1),
+                numOf(2.1),
+                "f"("x")
+            )
 
-            val query = write(atomOf("atom")) and
-                write(atomOf("a string")) and
-                write(varOf("A_Var")) and
-                write(numOf(1)) and
-                write(numOf(2.1)) and
-                write("f"("x")) and
-                nl
+            val query = tupleOf(terms.map { write(it) }.append(nl))
 
             val solutions = solver.solve(query, mediumDuration).toList()
 
@@ -384,15 +385,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
             )
 
             assertEquals(
-                ktListOf(
-                    "atom",
-                    "a string",
-                    varOf("A_Var").completeName,
-                    "1",
-                    "2.1",
-                    "f(x)",
-                    "\n"
-                ),
+                terms.map { it.format(TermFormatter.default()) }.append("\n"),
                 outputs
             )
         }
@@ -403,10 +396,8 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertNotNull(solver.standardOutput)
-
-            with(solver.standardOutput!!) {
-                addListener { outputs += it }
+            with(solver.standardOutput) {
+                addListener { outputs += it!! }
                 write("a")
             }
 
@@ -419,7 +410,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
                 solutions
             )
 
-            solver.standardOutput?.write("e")
+            solver.standardOutput.write("e")
 
             assertEquals(
                 ktListOf("a", "b", "c", "d", "\n", "e"),
@@ -688,24 +679,29 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     override fun testConjunctionProperties() {
         prolog {
             val allDatabasesWithGoalsAndSolutions by lazy {
-                allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
-                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                        ktListOf(
-                            (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
-                            (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
+                allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                    callErrorSignature,
+                    nafErrorSignature,
+                    notErrorSignature
+                )
+                    .mapValues { (_, listOfGoalToSolutions) ->
+                        listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                            ktListOf(
+                                (goal and true).run { to(expectedSolutions.changeQueriesTo(this)) },
+                                (true and goal).run { to(expectedSolutions.changeQueriesTo(this)) },
 
-                            (goal and false).run {
-                                when {
-                                    expectedSolutions.any { it is Solution.Halt } ->
-                                        to(expectedSolutions.changeQueriesTo(this))
-                                    else -> hasSolutions({ no() })
-                                }
-                            },
+                                (goal and false).run {
+                                    when {
+                                        expectedSolutions.any { it is Solution.Halt } ->
+                                            to(expectedSolutions.changeQueriesTo(this))
+                                        else -> hasSolutions({ no() })
+                                    }
+                                },
 
-                            (false and goal).hasSolutions({ no() })
-                        )
+                                (false and goal).hasSolutions({ no() })
+                            )
+                        }
                     }
-                }
             }
 
             allDatabasesWithGoalsAndSolutions.forEach { (database, goalToSolutions) ->
@@ -722,13 +718,13 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     override fun testCallPrimitive() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleTheory),
-            callStandardExampleTheoryGoalsToSolution,
+            callStandardExampleTheoryGoalsToSolution(callErrorSignature),
             mediumDuration
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
-            callTestingGoalsToSolutions,
+            callTestingGoalsToSolutions(callErrorSignature),
             mediumDuration
         )
     }
@@ -736,17 +732,22 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     /** A test in which all testing goals are called through the Call primitive */
     override fun testCallPrimitiveTransparency() {
         prolog {
-            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
-                listOfGoalToSolutions.map { (goal, expectedSolutions) ->
-                    call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                callErrorSignature,
+                nafErrorSignature,
+                notErrorSignature
+            )
+                .mapValues { (_, listOfGoalToSolutions) ->
+                    listOfGoalToSolutions.map { (goal, expectedSolutions) ->
+                        call(goal).run { to(expectedSolutions.changeQueriesTo(this)) }
+                    }
+                }.forEach { (database, goalToSolutions) ->
+                    assertSolverSolutionsCorrect(
+                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                        goalToSolutions,
+                        mediumDuration
+                    )
                 }
-            }.forEach { (database, goalToSolutions) ->
-                assertSolverSolutionsCorrect(
-                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                    goalToSolutions,
-                    mediumDuration
-                )
-            }
         }
     }
 
@@ -770,34 +771,39 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         prolog {
             fun Struct.containsHaltPrimitive(): Boolean = when (functor) {
                 "halt" -> true
-                else ->
-                    argsSequence.filterIsInstance<Struct>()
-                        .any { it.containsHaltPrimitive() }
+                else -> argsSequence.filterIsInstance<Struct>().any { it.containsHaltPrimitive() }
             }
 
-            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
-                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                    ktListOf(
-                        `catch`(goal, `_`, false).run {
-                            when {
-                                expectedSolutions.any { it is Solution.Halt && !it.query.containsHaltPrimitive() && it.exception !is TimeOutException } ->
-                                    hasSolutions({ no() })
-                                else ->
-                                    to(expectedSolutions.changeQueriesTo(this))
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                callErrorSignature,
+                nafErrorSignature,
+                notErrorSignature
+            )
+                .mapValues { (_, listOfGoalToSolutions) ->
+                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                        ktListOf(
+                            `catch`(goal, `_`, false).run {
+                                when {
+                                    expectedSolutions.any {
+                                        it is Solution.Halt &&
+                                            !it.query.containsHaltPrimitive() &&
+                                            it.exception !is TimeOutException
+                                    } -> hasSolutions({ no() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
+                            },
+                            `catch`(goal, "notUnifyingCatcher", false).run {
+                                to(expectedSolutions.changeQueriesTo(this))
                             }
-                        },
-                        `catch`(goal, "notUnifyingCatcher", false).run {
-                            to(expectedSolutions.changeQueriesTo(this))
-                        }
+                        )
+                    }
+                }.forEach { (database, goalToSolutions) ->
+                    assertSolverSolutionsCorrect(
+                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                        goalToSolutions,
+                        mediumDuration
                     )
                 }
-            }.forEach { (database, goalToSolutions) ->
-                assertSolverSolutionsCorrect(
-                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                    goalToSolutions,
-                    mediumDuration
-                )
-            }
         }
     }
 
@@ -814,7 +820,7 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     override fun testNotPrimitive() {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleTheory),
-            notStandardExampleTheoryNotableGoalToSolution,
+            notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
             mediumDuration
         )
     }
@@ -822,46 +828,51 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
     /** A test in which all testing goals are called through the Not rule */
     override fun testNotModularity() {
         prolog {
-            allPrologTestingTheoriesToRespectiveGoalsAndSolutions.mapValues { (_, listOfGoalToSolutions) ->
-                listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
-                    ktListOf(
-                        naf(goal).run {
-                            when {
-                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
-                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
-                                else -> to(expectedSolutions.changeQueriesTo(this))
+            allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+                callErrorSignature,
+                nafErrorSignature,
+                notErrorSignature
+            )
+                .mapValues { (_, listOfGoalToSolutions) ->
+                    listOfGoalToSolutions.flatMap { (goal, expectedSolutions) ->
+                        ktListOf(
+                            naf(goal).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
+                            },
+                            not(goal).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
+                            },
+                            naf(naf(goal)).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
+                            },
+                            not(not(goal)).run {
+                                when {
+                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+                                    else -> to(expectedSolutions.changeQueriesTo(this))
+                                }
                             }
-                        },
-                        not(goal).run {
-                            when {
-                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
-                                expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
-                                else -> to(expectedSolutions.changeQueriesTo(this))
-                            }
-                        },
-                        naf(naf(goal)).run {
-                            when {
-                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
-                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
-                                else -> to(expectedSolutions.changeQueriesTo(this))
-                            }
-                        },
-                        not(not(goal)).run {
-                            when {
-                                expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
-                                expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
-                                else -> to(expectedSolutions.changeQueriesTo(this))
-                            }
-                        }
+                        )
+                    }
+                }.forEach { (database, goalToSolutions) ->
+                    assertSolverSolutionsCorrect(
+                        solverFactory.solverWithDefaultBuiltins(staticKb = database),
+                        goalToSolutions,
+                        mediumDuration
                     )
                 }
-            }.forEach { (database, goalToSolutions) ->
-                assertSolverSolutionsCorrect(
-                    solverFactory.solverWithDefaultBuiltins(staticKb = database),
-                    goalToSolutions,
-                    mediumDuration
-                )
-            }
         }
     }
 
@@ -1440,46 +1451,6 @@ internal class TestSolverImpl(private val solverFactory: SolverFactory) : TestSo
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomChars() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomCharsTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomLength() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomLengthTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testCharCode() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            charCodeTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomCodes() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomCodesTesting,
-            mediumDuration
-        )
-    }
-
-    override fun testAtomConcat() {
-        assertSolverSolutionsCorrect(
-            solverFactory.solverWithDefaultBuiltins(),
-            atomConcatTesting,
             mediumDuration
         )
     }

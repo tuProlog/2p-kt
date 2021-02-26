@@ -57,7 +57,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem fx:id="btnAbout" mnemonicParsing="false" onAction="#onAbout" text="About 2P" />
+                        <MenuItem fx:id="btnAbout" mnemonicParsing="false" onAction="#onAbout" text="About" />
                     </items>
                 </Menu>
             </menus>
@@ -74,9 +74,9 @@
                                         <ListView fx:id="lsvSolutions" prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                 </Tab>
-                                <Tab fx:id="tabStdin" closable="false" disable="true" onSelectionChanged="#onTabSelectionChanged" text="Stdin">
+                                <Tab fx:id="tabStdin" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stdin">
                                     <content>
-                                        <TextArea fx:id="txaStdin" prefHeight="200.0" prefWidth="200.0" />
+                                        <TextArea fx:id="txaStdin" onKeyTyped="#onStdinChanged" prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                 </Tab>
                                 <Tab fx:id="tabStdout" closable="false" onSelectionChanged="#onTabSelectionChanged" text="Stdout">
@@ -142,6 +142,11 @@
                                 <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="&gt;" />
                                 <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="&gt;&gt;" />
                                 <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="X">
+                                    <HBox.margin>
+                                        <Insets left="10.0" />
+                                    </HBox.margin>
+                                </Button>
+                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="R">
                                     <HBox.margin>
                                         <Insets left="10.0" />
                                     </HBox.margin>

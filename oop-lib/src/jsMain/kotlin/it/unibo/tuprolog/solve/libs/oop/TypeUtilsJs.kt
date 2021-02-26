@@ -62,6 +62,7 @@ actual val KClass<*>.name: String
     get() = throw TODO_EXCEPTION
 
 actual fun KClass<*>.invoke(
+    objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
     instance: Any?
@@ -70,12 +71,14 @@ actual fun KClass<*>.invoke(
 }
 
 actual fun KClass<*>.create(
+    objectConverter: TermToObjectConverter,
     arguments: List<Term>
 ): Result {
     throw TODO_EXCEPTION
 }
 
 actual fun KClass<*>.assign(
+    objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
     instance: Any?

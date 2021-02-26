@@ -20,15 +20,14 @@ interface Integer : Numeric {
     override val intValue: BigInteger
         get() = value
 
-    override fun freshCopy(): Integer = this
+    override fun freshCopy(): Integer
 
-    override fun freshCopy(scope: Scope): Integer = this
+    override fun freshCopy(scope: Scope): Integer
 
     companion object {
 
         @JvmField
-        val INTEGER_REGEX_PATTERN =
-            """^[+\-]?(0[xXbBoO])?[0-9A-Fa-f]+$""".toRegex()
+        val PATTERN = Terms.INTEGER_PATTERN
 
         @JvmStatic
         @JsName("ofBigInteger")
@@ -57,5 +56,14 @@ interface Integer : Numeric {
         @JvmStatic
         @JsName("parseRadix")
         fun of(integer: String, radix: Int): Integer = of(BigInteger.of(integer, radix))
+
+        @JvmField
+        val ZERO = Integer.of(BigInteger.ZERO)
+
+        @JvmField
+        val ONE = Integer.of(BigInteger.ONE)
+
+        @JvmField
+        val MINUS_ONE = Integer.of(BigInteger.of(-1))
     }
 }

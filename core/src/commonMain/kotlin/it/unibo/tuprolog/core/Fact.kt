@@ -12,11 +12,14 @@ interface Fact : Rule {
     override val isFact: Boolean
         get() = true
 
-    override fun freshCopy(): Fact = super.freshCopy() as Fact
+    override fun freshCopy(): Fact
 
-    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
+    override fun freshCopy(scope: Scope): Fact
 
     companion object {
+
+        const val FUNCTOR = Terms.CLAUSE_FUNCTOR
+
         @JvmStatic
         @JsName("of")
         fun of(head: Struct): Fact = FactImpl(head)

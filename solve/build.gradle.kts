@@ -1,8 +1,8 @@
 kotlin {
-
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(kotlin("reflect"))
                 api(project(":core"))
                 api(project(":unify"))
                 api(project(":theory"))
@@ -10,31 +10,8 @@ kotlin {
         }
 
         val commonTest by getting {
-            dependsOn(commonMain)
-        }
-
-        jvm {
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(main.defaultSourceSet)
-            }
-        }
-
-        js {
-
-            val main = compilations["main"]
-            val test = compilations["test"]
-
-            main.defaultSourceSet {
-                dependsOn(commonMain)
-            }
-            test.defaultSourceSet {
-                dependsOn(main.defaultSourceSet)
+            dependencies {
+                implementation(project(":dsl-theory"))
             }
         }
     }

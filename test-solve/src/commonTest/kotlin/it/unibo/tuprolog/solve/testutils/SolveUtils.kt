@@ -7,8 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.SideEffect
-import it.unibo.tuprolog.solve.SideEffectManager
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.TimeDuration
@@ -17,6 +15,8 @@ import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.sideffects.SideEffect
+import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.theory.Theory
 import kotlin.test.assertNotEquals
 import kotlin.collections.List as KtList
@@ -60,7 +60,7 @@ internal object SolveUtils {
     internal val solutionException = TuPrologRuntimeException(context = DummyInstances.executionContext)
 
     // Response parameters
-    internal val aSolution = Solution.No(Truth.FAIL)
+    internal val aSolution = Solution.no(Truth.FAIL)
     internal val aSideEffectManager = object : SideEffectManager {
         override fun cut() = throw NotImplementedError()
     }
@@ -69,7 +69,7 @@ internal object SolveUtils {
     /** The success response to default values request */
     internal val defaultRequestSuccessResponse by lazy {
         Solve.Response(
-            Solution.Yes(aSignature, anArgumentList, solutionSubstitution),
+            Solution.yes(aSignature, anArgumentList, solutionSubstitution),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -81,7 +81,7 @@ internal object SolveUtils {
     /** The failed response to default values request */
     internal val defaultRequestFailedResponse by lazy {
         Solve.Response(
-            Solution.No(aSignature, anArgumentList),
+            Solution.no(aSignature, anArgumentList),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -93,7 +93,7 @@ internal object SolveUtils {
     /** The halt response to default values request */
     internal val defaultRequestHaltedResponse by lazy {
         Solve.Response(
-            Solution.Halt(aSignature, anArgumentList, solutionException),
+            Solution.halt(aSignature, anArgumentList, solutionException),
             aSideEffectManager,
             SideEffect.ResetLibraries(differentLibraries),
             SideEffect.ResetFlags(differentFlags),

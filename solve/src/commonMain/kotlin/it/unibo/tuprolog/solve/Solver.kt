@@ -1,23 +1,79 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.theory.MutableTheory
+import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 /**
- * Represents a Prolog Goal solver
+ * General type for logic solvers, i.e. any entity capable of solving some logic query -- provided as a [Struct] --
+ * according to some logic, implementing one or more inference rule, via some resolution strategy.
  *
- * @author Enrico
+ * __Solvers are not immutable entities__. Their state may mutate as an effect of solving queries.
  */
 interface Solver : ExecutionContextAware {
 
-    /** Solves the provided goal, returning lazily initialized sequence of solutions, optionally limiting computation [maxDuration] */
-    @JsName("solve")
-    fun solve(goal: Struct, maxDuration: TimeDuration): Sequence<Solution>
+    @JsName("solveWithTimeout")
+    fun solve(goal: Struct, timeout: TimeDuration): Sequence<Solution> =
+        solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
-    @JsName("solveMaxDuration")
-    fun solve(goal: Struct): Sequence<Solution> = solve(goal, TimeDuration.MAX_VALUE)
+    @JsName("solve")
+    fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
+
+    @JsName("solveWithOptions")
+    fun solve(goal: Struct, options: SolveOptions): Sequence<Solution>
+
+    @JsName("solveListWithTimeout")
+    fun solveList(goal: Struct, timeout: TimeDuration): List<Solution> = solve(goal, timeout).toList()
+
+    @JsName("solveList")
+    fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
+
+    @JsName("solveListWithOptions")
+    fun solveList(goal: Struct, options: SolveOptions): List<Solution> = solve(goal, options).toList()
+
+    @JsName("solveOnceWithTimeout")
+    fun solveOnce(goal: Struct, timeout: TimeDuration): Solution =
+        solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
+
+    @JsName("solveOnce")
+    fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
+
+    @JsName("solveOnceWithOptions")
+    fun solveOnce(goal: Struct, options: SolveOptions): Solution = solve(goal, options.setLimit(1)).first()
+
+    @JsName("copy")
+    fun copy(
+        libraries: Libraries = Libraries.empty(),
+        flags: FlagStore = FlagStore.empty(),
+        staticKb: Theory = Theory.empty(),
+        dynamicKb: Theory = MutableTheory.empty(),
+        stdIn: InputChannel<String> = InputChannel.stdIn(),
+        stdOut: OutputChannel<String> = OutputChannel.stdOut(),
+        stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
+    ): Solver
+
+    @JsName("clone")
+    fun clone(): Solver = copy()
 
     companion object {
-        // To be extended through extension methods
+        @JvmStatic
+        @JsName("classic")
+        val classic: SolverFactory by lazy {
+            classicSolverFactory()
+        }
+
+        @JvmStatic
+        @JsName("streams")
+        val streams: SolverFactory by lazy {
+            streamsSolverFactory()
+        }
     }
 }

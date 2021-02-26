@@ -5,8 +5,6 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
 
 /**
  * Utils singleton to test [Var]
@@ -31,7 +29,6 @@ internal object VarUtils {
 
         assertStructurallyEquals(expected, actual)
         assertNotEquals(expected, actual)
-        assertNotSame(expected, actual)
     }
 
     /** Asserts that the variables are tied with each other, so are the same */
@@ -40,6 +37,6 @@ internal object VarUtils {
         assertEquals(expected.completeName, actual.completeName)
 
         assertEqualities(expected, actual)
-        assertSame(expected, actual)
+        assertEquals(expected, actual)
     }
 }

@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
-import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -28,9 +27,8 @@ abstract class AbstractIterableItems<T : Any>(iterable: String, private val targ
             first is Var && second is Var ->
                 ensuringAllArgumentsAreInstantiated().let { Substitution.failed() }
             second is List -> {
-                val items = second.toSequence().map {
-                    TermToObjectConverter.default.convert(it)
-                }.toIterable()
+                val converter = termToObjectConverter
+                val items = second.toSequence().map { converter.convert(it) }.toIterable()
                 val objectRef = ObjectRef.of(items)
                 first mguWith objectRef
             }

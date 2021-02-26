@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.VarImpl
 import kotlin.js.JsName
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Var : Term {
@@ -14,30 +15,32 @@ interface Var : Term {
 
     @JsName("isAnonymous")
     val isAnonymous: Boolean
-        get() = ANONYMOUS_VAR_NAME == name
+        get() = Terms.ANONYMOUS_VAR_NAME == name
 
     @JsName("name")
     val name: String
 
+    @JsName("id")
+    val id: String
+
     @JsName("completeName")
     val completeName: String
 
-    override fun freshCopy(): Var = super.freshCopy() as Var
+    override fun freshCopy(): Var
 
-    override fun freshCopy(scope: Scope): Var =
-        when {
-            isAnonymous -> scope.anonymous()
-            else -> scope.varOf(name)
-        }
+    override fun freshCopy(scope: Scope): Var
 
     @JsName("isNameWellFormed")
     val isNameWellFormed: Boolean
 
+    @Suppress("MayBeConstant")
     companion object {
 
-        const val ANONYMOUS_VAR_NAME = "_"
+        @JvmField
+        val ANONYMOUS_NAME = Terms.ANONYMOUS_VAR_NAME
 
-        val VAR_REGEX_PATTERN = "[A-Z_][A-Za-z_0-9]*".toRegex()
+        @JvmField
+        val NAME_PATTERN = Terms.VAR_NAME_PATTERN
 
         @JvmStatic
         @JsName("of")
@@ -45,7 +48,7 @@ interface Var : Term {
 
         @JvmStatic
         @JsName("anonymous")
-        fun anonymous(): Var = VarImpl(ANONYMOUS_VAR_NAME)
+        fun anonymous(): Var = VarImpl(Terms.ANONYMOUS_VAR_NAME)
 
         @JvmStatic
         @JsName("escapeName")
@@ -55,7 +58,7 @@ interface Var : Term {
         @JvmStatic
         @JsName("escapeNameIfNecessary")
         fun escapeNameIfNecessary(string: String): String =
-            if (VAR_REGEX_PATTERN.matches(string)) {
+            if (Terms.VAR_NAME_PATTERN.matches(string)) {
                 string
             } else {
                 escapeName(string)

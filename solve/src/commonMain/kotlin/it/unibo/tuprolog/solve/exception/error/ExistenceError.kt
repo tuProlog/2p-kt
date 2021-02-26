@@ -40,8 +40,11 @@ class ExistenceError(
 
     override val type: Struct by lazy { Struct.of(super.type.functor, expectedObject.toTerm(), culprit) }
 
-    override fun updateContext(newContext: ExecutionContext): ExistenceError =
-        ExistenceError(message, cause, contexts.setFirst(newContext), expectedObject, culprit, extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): ExistenceError =
+        ExistenceError(message, cause, contexts.setItem(index, newContext), expectedObject, culprit, extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): ExistenceError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): ExistenceError =
         ExistenceError(message, cause, contexts.addLast(newContext), expectedObject, culprit, extraData)
@@ -80,16 +83,16 @@ class ExistenceError(
             )
         }
 
-        @JsName("forStream")
+        @JsName("forSourceSink")
         @JvmStatic
-        fun forStream(
+        fun forSourceSink(
             context: ExecutionContext,
             alias: Atom
-        ) = forStream(context, alias.value)
+        ) = forSourceSink(context, alias.value)
 
-        @JsName("forStreamWithAlias")
+        @JsName("forSourceSinkWithAlias")
         @JvmStatic
-        fun forStream(
+        fun forSourceSink(
             context: ExecutionContext,
             alias: String
         ) = message(
@@ -98,8 +101,42 @@ class ExistenceError(
             ExistenceError(
                 message = m,
                 context = context,
-                expectedObject = ObjectType.STREAM,
+                expectedObject = ObjectType.SOURCE_SINK,
                 actualValue = Atom.of(alias),
+                extraData = extra
+            )
+        }
+
+        @JsName("forStream")
+        @JvmStatic
+        fun forStream(
+            context: ExecutionContext,
+            steamTerm: Struct
+        ) = message(
+            "No such a stream exists: $steamTerm"
+        ) { m, extra ->
+            ExistenceError(
+                message = m,
+                context = context,
+                expectedObject = ObjectType.STREAM,
+                actualValue = steamTerm,
+                extraData = extra
+            )
+        }
+
+        @JsName("forResource")
+        @JvmStatic
+        fun forResource(
+            context: ExecutionContext,
+            name: String
+        ) = message(
+            "There exists no such a resource `$name`"
+        ) { m, extra ->
+            ExistenceError(
+                message = m,
+                context = context,
+                expectedObject = ObjectType.RESOURCE,
+                actualValue = Atom.of(name),
                 extraData = extra
             )
         }
@@ -115,6 +152,7 @@ class ExistenceError(
 
         PROCEDURE,
         SOURCE_SINK,
+        RESOURCE,
         STREAM,
         OOP_ALIAS,
         OOP_METHOD,

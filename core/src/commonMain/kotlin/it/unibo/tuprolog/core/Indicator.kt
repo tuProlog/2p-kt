@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 import it.unibo.tuprolog.core.impl.IndicatorImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -20,7 +21,7 @@ interface Indicator : Struct {
         get() = true
 
     override val functor: String
-        get() = FUNCTOR
+        get() = INDICATOR_FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(nameTerm, arityTerm)
@@ -59,13 +60,9 @@ interface Indicator : Struct {
     val indicatedArity: Int?
         get() = (arityTerm as? Integer)?.intValue?.toInt()?.takeIf { it >= 0 }
 
-    override fun freshCopy(): Indicator = super.freshCopy() as Indicator
+    override fun freshCopy(): Indicator
 
-    override fun freshCopy(scope: Scope): Indicator =
-        when {
-            isGround -> this
-            else -> scope.indicatorOf(nameTerm.freshCopy(scope), arityTerm.freshCopy(scope))
-        }
+    override fun freshCopy(scope: Scope): Indicator
 
     operator fun component1(): Term = nameTerm
 
@@ -74,7 +71,7 @@ interface Indicator : Struct {
     companion object {
 
         /** The canonical indicator functor: `/` */
-        const val FUNCTOR = "/"
+        const val FUNCTOR = INDICATOR_FUNCTOR
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         @JvmStatic

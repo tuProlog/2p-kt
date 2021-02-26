@@ -9,6 +9,10 @@ interface Constant : Term {
     @JsName("value")
     val value: Any
 
+    override fun freshCopy(): Constant
+
+    override fun freshCopy(scope: Scope): Constant
+
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
      */

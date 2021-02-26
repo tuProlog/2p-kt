@@ -27,23 +27,23 @@ fun <S : Solution> Struct.hasSolutions(vararg solution: Struct.() -> S) =
     this to solution.map { it() }
 
 /** Utility function to help writing tests; it creates a [Solution.Yes] with receiver query and provided substitution */
-fun Struct.yes(vararg withSubstitution: Substitution) = Solution.Yes(
+fun Struct.yes(vararg withSubstitution: Substitution) = Solution.yes(
     this,
     Substitution.of(withSubstitution.flatMap { s -> s.map { it.toPair() } }) as Substitution.Unifier
 )
 
 /** Utility function to help writing tests; it creates a [Solution.No] with receiver query */
-fun Struct.no() = Solution.No(this)
+fun Struct.no() = Solution.no(this)
 
 /** Utility function to help writing tests; it creates a [Solution.Halt] with receiver query and provided exception */
-fun Struct.halt(withException: TuPrologRuntimeException) = Solution.Halt(this, withException)
+fun Struct.halt(withException: TuPrologRuntimeException) = Solution.halt(this, withException)
 
 /** Utility function to help writing tests; it forwards the `copy` method call to subclasses changing only the `query` field */
-fun Solution.changeQueryTo(query: Struct) = when (this) {
-    is Solution.Yes -> copy(query)
-    is Solution.No -> copy(query)
-    is Solution.Halt -> copy(query)
-}
+fun Solution.changeQueryTo(query: Struct) = whenIs(
+    yes = { it.copy(query) },
+    no = { it.copy(query) },
+    halt = { it.copy(query) },
+)
 
 /** Utility function to help writing tests; applies [changeQueryTo] to all [Solution]s in receiver iterable */
 fun Iterable<Solution>.changeQueriesTo(query: Struct) = map { it.changeQueryTo(query) }
@@ -61,7 +61,7 @@ inline fun <reified E : Throwable> assertOverFailure(throwExpression: () -> Unit
 /**
  * Utility method to assert that two [Solution]s are equals, with some exceptions.
  *
- * 1) In case of a [Solution.Halt], the contained exception is checked only to be of the correct expected class
+ * 1) In case of a [Solution.halt], the contained exception is checked only to be of the correct expected class
  *
  * 2) In case a substitution points to a variable or a term containing variables (i.e. `X/Y` or `X/a(Y)` ),
  * **these variables are compared only by name**, because instances will differ

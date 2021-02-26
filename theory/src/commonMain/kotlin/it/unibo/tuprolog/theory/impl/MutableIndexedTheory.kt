@@ -12,28 +12,34 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
 import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 
-internal class MutableIndexedTheory private constructor(override val queue: MutableClauseQueue) :
-    AbstractIndexedTheory(queue), MutableTheory {
+internal class MutableIndexedTheory private constructor(
+    override val queue: MutableClauseQueue,
+    tags: Map<String, Any>
+) : AbstractIndexedTheory(queue, tags), MutableTheory {
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Iterable<Clause>) : this(MutableClauseQueue.of(clauses)) {
+    constructor(
+        clauses: Iterable<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(MutableClauseQueue.of(clauses), tags) {
         checkClausesCorrect(clauses)
     }
 
     /** Construct a Clause database from given clauses */
-    constructor(clauses: Sequence<Clause>) : this(clauses.asIterable())
+    constructor(
+        clauses: Sequence<Clause>,
+        tags: Map<String, Any> = emptyMap()
+    ) : this(clauses.asIterable(), tags)
 
     override val clauses: List<Clause> get() = queue.toList()
 
     override fun iterator(): Iterator<Clause> = queue.iterator()
 
-    override fun createNewTheory(clauses: Sequence<Clause>): AbstractTheory {
-        return MutableIndexedTheory(clauses)
-    }
+    override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
+        MutableIndexedTheory(clauses, tags)
 
-    override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> {
-        return queue.retrieve(clause).toRetractResult()
-    }
+    override fun retract(clause: Clause): RetractResult<MutableIndexedTheory> =
+        queue.retrieve(clause).toRetractResult()
 
     private fun <C : ClauseCollection> RetrieveResult<C>.toRetractResult(): RetractResult<MutableIndexedTheory> =
         when (this) {
@@ -51,13 +57,10 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
         else RetractResult.Success(this, retracted)
     }
 
-    override fun retractAll(clause: Clause): RetractResult<MutableIndexedTheory> {
-        return queue.retrieveAll(clause).toRetractResult()
-    }
+    override fun retractAll(clause: Clause): RetractResult<MutableIndexedTheory> =
+        queue.retrieveAll(clause).toRetractResult()
 
-    override fun plus(clause: Clause): MutableIndexedTheory {
-        return assertZ(checkClauseCorrect(clause))
-    }
+    override fun plus(clause: Clause): MutableIndexedTheory = assertZ(checkClauseCorrect(clause))
 
     override fun plus(theory: Theory): MutableIndexedTheory {
         return if (theory === this) {
@@ -67,9 +70,8 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
         }
     }
 
-    override fun assertA(clause: Clause): MutableIndexedTheory {
-        return this.also { it.queue.addFirst(checkClauseCorrect(clause)) }
-    }
+    override fun assertA(clause: Clause): MutableIndexedTheory =
+        this.also { it.queue.addFirst(checkClauseCorrect(clause)) }
 
     override fun assertA(clauses: Iterable<Clause>): MutableIndexedTheory {
         return this.also {
@@ -79,27 +81,26 @@ internal class MutableIndexedTheory private constructor(override val queue: Muta
         }
     }
 
-    override fun assertA(clauses: Sequence<Clause>): MutableIndexedTheory {
-        return assertA(clauses.asIterable())
-    }
+    override fun assertA(clauses: Sequence<Clause>): MutableIndexedTheory = assertA(clauses.asIterable())
 
-    override fun assertZ(clause: Clause): MutableIndexedTheory {
-        return this.also { it.queue.addLast(checkClauseCorrect(clause)) }
-    }
+    override fun assertZ(clause: Clause): MutableIndexedTheory =
+        this.also { it.queue.addLast(checkClauseCorrect(clause)) }
 
-    override fun assertZ(clauses: Iterable<Clause>): MutableIndexedTheory {
-        return this.also { it.queue.addAll(checkClausesCorrect(clauses)) }
-    }
+    override fun assertZ(clauses: Iterable<Clause>): MutableIndexedTheory =
+        this.also { it.queue.addAll(checkClausesCorrect(clauses)) }
 
-    override fun assertZ(clauses: Sequence<Clause>): MutableIndexedTheory {
-        return assertZ(checkClausesCorrect(clauses.asIterable()))
-    }
+    override fun assertZ(clauses: Sequence<Clause>): MutableIndexedTheory =
+        assertZ(checkClausesCorrect(clauses.asIterable()))
 
-    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableIndexedTheory> {
-        return retract(clauses.asIterable())
-    }
+    override fun retract(clauses: Sequence<Clause>): RetractResult<MutableIndexedTheory> =
+        retract(clauses.asIterable())
 
-    override fun abolish(indicator: Indicator): MutableIndexedTheory {
-        return super.abolish(indicator) as MutableIndexedTheory
-    }
+    override fun abolish(indicator: Indicator): MutableIndexedTheory = super.abolish(indicator) as MutableIndexedTheory
+
+    override fun toImmutableTheory(): Theory = Theory.indexedOf(this)
+
+    override fun replaceTags(tags: Map<String, Any>): MutableIndexedTheory =
+        if (tags === this.tags) this else MutableIndexedTheory(queue, tags)
+
+    override fun clone(): MutableTheory = super.clone() as MutableTheory
 }

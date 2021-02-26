@@ -4,7 +4,10 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotProvable {
+class TestNotProvableImpl(
+    private val solverFactory: SolverFactory,
+    override val errorSignature: Signature
+) : TestNotProvable {
     override fun testNPTrue() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -100,7 +103,7 @@ class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotPro
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("not", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             numOf(3)
 
@@ -124,7 +127,7 @@ class TestNotProvableImpl(private val solverFactory: SolverFactory) : TestNotPro
                     query.halt(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("not", 1),
+                            errorSignature,
                             varOf("X")
                         )
                     )

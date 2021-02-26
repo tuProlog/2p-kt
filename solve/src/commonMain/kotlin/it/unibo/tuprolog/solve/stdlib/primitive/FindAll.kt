@@ -21,6 +21,6 @@ object FindAll : TernaryRelation.NonBacktrackable<ExecutionContext>("findall") {
         val mapped = solutions.asSequence()
             .filterIsInstance<Solution.Yes>()
             .map { first[it.substitution].freshCopy() }
-        return replyWith(third mguWith LogicList.from(mapped))
+        return replyWith(third mguWith LogicList.of(mapped))
     }
 }

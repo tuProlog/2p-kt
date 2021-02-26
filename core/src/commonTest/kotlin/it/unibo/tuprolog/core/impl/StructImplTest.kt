@@ -105,7 +105,7 @@ internal class StructImplTest {
 
     @Test
     fun isFunctorWellFormed() {
-        mixedStructInstances.filter { it.functor matches Struct.STRUCT_FUNCTOR_REGEX_PATTERN }
+        mixedStructInstances.filter { it.functor matches Struct.WELL_FORMED_FUNCTOR_PATTERN }
             .forEach { assertTrue { it.isFunctorWellFormed } }
     }
 

@@ -10,14 +10,21 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.IndexedTheory
 import it.unibo.tuprolog.theory.impl.ListedTheory
+import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-interface Theory : Iterable<Clause> {
+interface Theory : Iterable<Clause>, Taggable<Theory> {
 
-    val isMutable: Boolean get() = false
+    @JsName("isMutable")
+    val isMutable: Boolean
+        get() = false
 
+    @JsName("toMutableTheory")
     fun toMutableTheory(): MutableTheory
+
+    @JsName("toImmutableTheory")
+    fun toImmutableTheory(): Theory
 
     /** All [Clause]s in this theory */
     @JsName("clauses")
@@ -133,6 +140,12 @@ interface Theory : Iterable<Clause> {
     /** An enhanced toString that prints the theory in a Prolog program format, if [asPrologText] is `true` */
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String
+
+    @JsName("equalsUsingVarCompleteNames")
+    fun equals(other: Theory, useVarCompleteName: Boolean): Boolean
+
+    @JsName("clone")
+    fun clone(): Theory
 
     companion object {
 

@@ -5,7 +5,6 @@ import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import kotlin.collections.listOf as ktListOf
 
 internal class TestAssertAImpl(private val solverFactory: SolverFactory) : TestAssertA {
 

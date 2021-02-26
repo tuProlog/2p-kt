@@ -5,15 +5,15 @@ import kotlin.jvm.JvmStatic
 
 interface Empty : Atom {
 
-    override fun freshCopy(): Empty = this
+    override fun freshCopy(): Empty
 
-    override fun freshCopy(scope: Scope): Empty = this
+    override fun freshCopy(scope: Scope): Empty
 
     companion object {
 
-        const val EMPTY_LIST_FUNCTOR = "[]"
+        const val EMPTY_LIST_FUNCTOR = Terms.EMPTY_LIST_FUNCTOR
 
-        const val EMPTY_SET_FUNCTOR = Set.FUNCTOR
+        const val EMPTY_SET_FUNCTOR = Terms.EMPTY_SET_FUNCTOR
 
         @JvmStatic
         @JsName("list")

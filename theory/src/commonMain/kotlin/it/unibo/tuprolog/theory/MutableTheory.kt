@@ -54,6 +54,10 @@ interface MutableTheory : Theory {
 
     override fun abolish(indicator: Indicator): MutableTheory
 
+    override fun replaceTags(tags: Map<String, Any>): MutableTheory
+
+    override fun clone(): MutableTheory
+
     companion object {
 
         /** Creates an empty [MutableTheory] */

@@ -15,7 +15,11 @@ import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Operation
+import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission
 import it.unibo.tuprolog.solve.exception.error.RepresentationError
+import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit
+import it.unibo.tuprolog.solve.exception.error.SyntaxError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import kotlin.js.JsName
@@ -59,7 +63,9 @@ abstract class PrologError(
     private fun generateErrorStruct() =
         extraData?.let { errorStructOf(type, it) } ?: errorStructOf(type)
 
-    abstract override fun updateContext(newContext: ExecutionContext): PrologError
+    abstract override fun updateContext(newContext: ExecutionContext, index: Int): PrologError
+
+    abstract override fun updateLastContext(newContext: ExecutionContext): PrologError
 
     abstract override fun pushContext(newContext: ExecutionContext): PrologError
 
@@ -91,6 +97,23 @@ abstract class PrologError(
             extraData: Term? = null
         ): PrologError = of(message, cause, arrayOf(context), type, extraData)
 
+        private fun customError(
+            message: String? = null,
+            cause: Throwable? = null,
+            contexts: Array<ExecutionContext>,
+            type: Struct,
+            extraData: Term? = null
+        ): PrologError = object : PrologError(message ?: type.pretty(), cause, contexts, type, extraData) {
+            override fun updateContext(newContext: ExecutionContext, index: Int): PrologError =
+                of(this.message, this.cause, this.contexts.setItem(index, newContext), this.type, this.extraData)
+
+            override fun updateLastContext(newContext: ExecutionContext): PrologError =
+                updateContext(newContext, this.contexts.lastIndex)
+
+            override fun pushContext(newContext: ExecutionContext): PrologError =
+                of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+        }
+
         @JvmStatic
         @JsName("ofManyContexts")
         fun of(
@@ -100,47 +123,67 @@ abstract class PrologError(
             type: Struct,
             extraData: Term? = null
         ): PrologError = with(type) {
-            when {
-                functor == InstantiationError.typeFunctor ->
-                    InstantiationError(message, cause, contexts, Var.anonymous(), extraData)
-                functor == SystemError.typeFunctor ->
-                    SystemError(message, cause, contexts, extraData)
-                functor == MessageError.typeFunctor ->
-                    MessageError(message, cause, contexts, extraData)
-                functor == RepresentationError.typeFunctor && type.arity == 1 ->
-                    RepresentationError(
-                        message,
-                        cause,
-                        contexts,
-                        RepresentationError.Limit.fromTerm(type[0])!!,
-                        extraData
-                    )
-                functor == ExistenceError.typeFunctor && type.arity == 2 ->
-                    ExistenceError(message, cause, contexts, ExistenceError.ObjectType.fromTerm(type[0])!!, type[1])
-                functor == DomainError.typeFunctor && arity == 2 ->
-                    DomainError(message, cause, contexts, DomainError.Expected.fromTerm(args[0])!!, args[1], extraData)
-                functor == TypeError.typeFunctor && arity == 2 ->
-                    TypeError(message, cause, contexts, TypeError.Expected.fromTerm(args[0])!!, args[1], extraData)
-                functor == EvaluationError.typeFunctor && arity == 1 ->
-                    EvaluationError(message, cause, contexts, EvaluationError.Type.fromTerm(args[0])!!, extraData)
-                functor == PermissionError.typeFunctor && arity == 3 ->
-                    PermissionError(
-                        message,
-                        cause,
-                        contexts,
-                        PermissionError.Operation.fromTerm(args[0])!!,
-                        PermissionError.Permission.fromTerm(args[1])!!,
-                        args[2],
-                        extraData
-                    )
-                else -> object : PrologError(message, cause, contexts, type, extraData) {
-
-                    override fun updateContext(newContext: ExecutionContext): PrologError =
-                        of(this.message, this.cause, this.contexts.setFirst(newContext), this.type, this.extraData)
-
-                    override fun pushContext(newContext: ExecutionContext): PrologError =
-                        of(this.message, this.cause, this.contexts.addLast(newContext), this.type, this.extraData)
+            val actualMessage = message ?: type.pretty()
+            try {
+                when {
+                    functor == InstantiationError.typeFunctor ->
+                        InstantiationError(actualMessage, cause, contexts, Var.anonymous(), extraData)
+                    functor == SystemError.typeFunctor ->
+                        SystemError(actualMessage, cause, contexts, extraData)
+                    functor == SyntaxError.typeFunctor ->
+                        SyntaxError(actualMessage, cause, contexts, extraData)
+                    functor == MessageError.typeFunctor ->
+                        MessageError(actualMessage, cause, contexts, extraData)
+                    functor == RepresentationError.typeFunctor && arity == 1 ->
+                        RepresentationError(actualMessage, cause, contexts, Limit.fromTerm(type[0])!!, extraData)
+                    functor == ExistenceError.typeFunctor && arity == 2 ->
+                        ExistenceError(
+                            actualMessage,
+                            cause,
+                            contexts,
+                            ExistenceError.ObjectType.fromTerm(type[0])!!,
+                            type[1]
+                        )
+                    functor == DomainError.typeFunctor && arity == 2 ->
+                        DomainError(
+                            actualMessage,
+                            cause,
+                            contexts,
+                            DomainError.Expected.fromTerm(args[0])!!,
+                            args[1],
+                            extraData
+                        )
+                    functor == TypeError.typeFunctor && arity == 2 ->
+                        TypeError(
+                            actualMessage,
+                            cause,
+                            contexts,
+                            TypeError.Expected.fromTerm(args[0])!!,
+                            args[1],
+                            extraData
+                        )
+                    functor == EvaluationError.typeFunctor && arity == 1 ->
+                        EvaluationError(
+                            actualMessage,
+                            cause,
+                            contexts,
+                            EvaluationError.Type.fromTerm(args[0])!!,
+                            extraData
+                        )
+                    functor == PermissionError.typeFunctor && arity == 3 ->
+                        PermissionError(
+                            actualMessage,
+                            cause,
+                            contexts,
+                            Operation.fromTerm(args[0])!!,
+                            Permission.fromTerm(args[1])!!,
+                            args[2],
+                            extraData
+                        )
+                    else -> customError(message, cause, contexts, type, extraData)
                 }
+            } catch (_: NullPointerException) {
+                customError(message, cause, contexts, type, extraData)
             }
         }
     }

@@ -3,19 +3,28 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.NullRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
+import it.unibo.tuprolog.solve.libs.oop.TypeFactory
+import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
+import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_TEMPLATE
+import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
+import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
 
-internal class TermToObjectConverterImpl : TermToObjectConverter {
+internal class TermToObjectConverterImpl(
+    private val typeFactory: TypeFactory,
+    private val dealiaser: (Struct) -> TypeRef?
+) : TermToObjectConverter {
     override fun convertInto(type: KClass<*>, term: Term): Any? {
         return when (term) {
             is NullRef, is Var -> null
@@ -48,11 +57,42 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
                 Int::class isSubtypeOf type -> term.intValue.toIntExact()
                 Short::class isSubtypeOf type -> term.intValue.toShortExact()
                 Byte::class isSubtypeOf type -> term.intValue.toByteExact()
+                BigDecimal::class isSubtypeOf type -> term.decimalValue
+                Double::class isSubtypeOf type -> term.decimalValue.toDouble()
+                Float::class isSubtypeOf type -> term.decimalValue.toFloat()
                 else -> throw TermToObjectConversionException(term, type)
             }
+            is Struct ->
+                when {
+                    term matches CAST_TEMPLATE -> explicitConversion(term, term[0], term[1])
+                    else -> throw TermToObjectConversionException(term)
+                }.also {
+                    if (it != null && !(it::class isSubtypeOf type)) {
+                        throw TermToObjectConversionException(term)
+                    }
+                }
             else -> throw TermToObjectConversionException(term)
         }
     }
+
+    private fun explicitConversion(castExpression: Struct, term: Term, type: Term): Any? {
+        return convertInto(getType(castExpression, type), term)
+    }
+
+    private fun getType(castExpression: Struct, typeTerm: Term): KClass<*> =
+        when (typeTerm) {
+            is TypeRef -> typeTerm.type
+            is Atom -> {
+                typeFactory.typeFromName(typeTerm.value) ?: throw TermToObjectConversionException(castExpression)
+            }
+            is Struct -> when {
+                typeTerm matches DEALIASING_TEMPLATE -> {
+                    dealiaser(typeTerm)?.type ?: throw TermToObjectConversionException(castExpression)
+                }
+                else -> throw TermToObjectConversionException(castExpression)
+            }
+            else -> throw TermToObjectConversionException(castExpression)
+        }
 
     override fun possibleConversions(term: Term): Sequence<Any?> {
         return admissibleTypes(term).asSequence().map { convertInto(it, term) }
@@ -66,6 +106,10 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
             is Atom -> String::class
             is Real -> BigDecimal::class
             is Integer -> BigInteger::class
+            is Struct -> when {
+                term matches CAST_TEMPLATE -> getType(term, term[1])
+                else -> throw TermToObjectConversionException(term)
+            }
             else -> throw TermToObjectConversionException(term)
         }
     }
@@ -85,7 +129,7 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
                 BigDecimal::class,
                 Float::class
             )
-            is Integer -> mutableSetOf<KClass<*>>(BigInteger::class).also {
+            is Integer -> mutableSetOf<KClass<*>>(BigInteger::class, BigDecimal::class).also {
                 if (term.intValue in BigInteger.of(Long.MIN_VALUE)..BigInteger.of(Long.MAX_VALUE)) {
                     it += Long::class
                 }
@@ -98,6 +142,16 @@ internal class TermToObjectConverterImpl : TermToObjectConverter {
                 if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt())..BigInteger.of(Byte.MAX_VALUE.toInt())) {
                     it += Byte::class
                 }
+                if (term.decimalValue in BigDecimal.of(Double.MIN_VALUE)..BigDecimal.of(Double.MAX_VALUE)) {
+                    it += Double::class
+                }
+                if (term.decimalValue in BigDecimal.of(Float.MIN_VALUE)..BigDecimal.of(Float.MAX_VALUE)) {
+                    it += Float::class
+                }
+            }
+            is Struct -> when {
+                term matches CAST_TEMPLATE -> setOf(getType(term, term[1]))
+                else -> throw TermToObjectConversionException(term)
             }
             else -> throw TermToObjectConversionException(term)
         }

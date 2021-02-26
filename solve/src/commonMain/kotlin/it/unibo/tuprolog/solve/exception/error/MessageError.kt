@@ -32,11 +32,14 @@ class MessageError internal constructor( // TODO: 16/01/2020 test this class
     /** The content of this message error */
     val content: Term by lazy { extraData ?: errorStruct }
 
+    override fun updateContext(newContext: ExecutionContext, index: Int): MessageError =
+        MessageError(message, cause, contexts.setItem(index, newContext), extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): MessageError =
+        updateContext(newContext, contexts.lastIndex)
+
     override fun pushContext(newContext: ExecutionContext): MessageError =
         MessageError(message, cause, contexts.addLast(newContext), extraData)
-
-    override fun updateContext(newContext: ExecutionContext): PrologError =
-        MessageError(message, cause, contexts.setFirst(newContext), extraData)
 
     companion object {
 

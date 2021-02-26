@@ -39,8 +39,11 @@ class DomainError(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), expectedDomain, actualValue, extraData)
 
-    override fun updateContext(newContext: ExecutionContext): DomainError =
-        DomainError(message, cause, contexts.setFirst(newContext), expectedDomain, culprit, extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): DomainError =
+        DomainError(message, cause, contexts.setItem(index, newContext), expectedDomain, culprit, extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): DomainError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): DomainError =
         DomainError(message, cause, contexts.addLast(newContext), expectedDomain, culprit, extraData)
@@ -61,6 +64,24 @@ class DomainError(
             (index?.let { "The $it-th argument" } ?: "An argument") +
                 "of `${procedure.pretty()}` should be `$expectedDomain`, " +
                 "but `${actualValue.pretty()}` has been provided instead"
+        ) { m, extra ->
+            DomainError(
+                message = m,
+                context = context,
+                expectedDomain = expectedDomain,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
+
+        @JsName("forTerm")
+        @JvmStatic
+        fun forTerm(
+            context: ExecutionContext,
+            expectedDomain: Expected,
+            actualValue: Term
+        ): DomainError = message(
+            "Term `${actualValue.pretty()}` is not a valid $expectedDomain"
         ) { m, extra ->
             DomainError(
                 message = m,

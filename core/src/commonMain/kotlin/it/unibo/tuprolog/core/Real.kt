@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.RegexUtils.DEC
-import it.unibo.tuprolog.core.RegexUtils.EXP
-import it.unibo.tuprolog.core.RegexUtils.INT
 import it.unibo.tuprolog.core.impl.RealImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
@@ -23,14 +20,14 @@ interface Real : Numeric {
     override val intValue: BigInteger
         get() = value.toBigInteger()
 
-    override fun freshCopy(): Real = this
+    override fun freshCopy(): Real
 
-    override fun freshCopy(scope: Scope): Real = this
+    override fun freshCopy(scope: Scope): Real
 
     companion object {
 
         @JvmField
-        val REAL_REGEX_PATTERN = "^[+\\-]?(($INT$DEC$EXP?)|($INT$EXP)|($DEC$EXP?))$".toRegex()
+        val PATTERN = Terms.REAL_PATTERN
 
         @JvmStatic
         @JsName("toStringEnsuringDecimal")
@@ -54,5 +51,20 @@ interface Real : Numeric {
         @JvmStatic
         @JsName("parse")
         fun of(real: String): Real = of(BigDecimal.of(real))
+
+        @JvmField
+        val ZERO = Real.of(BigDecimal.ZERO)
+
+        @JvmField
+        val ONE = Real.of(BigDecimal.ONE)
+
+        @JvmField
+        val MINUS_ONE = Real.of(-BigDecimal.ONE)
+
+        @JvmField
+        val ONE_HALF = Real.of(BigDecimal.ONE_HALF)
+
+        @JvmField
+        val ONE_TENTH = Real.of(BigDecimal.ONE_TENTH)
     }
 }

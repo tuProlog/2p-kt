@@ -31,9 +31,19 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 interface TestSolver : SolverTest {
 
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestSolver =
-            TestSolverImpl(solverFactory)
+        fun prototype(
+            solverFactory: SolverFactory,
+            callErrorSignature: Signature = Signature("call", 1),
+            nafErrorSignature: Signature = Signature("\\+", 1),
+            notErrorSignature: Signature = Signature("not", 1)
+        ): TestSolver = TestSolverImpl(solverFactory, callErrorSignature, nafErrorSignature, notErrorSignature)
     }
+
+    val callErrorSignature: Signature
+
+    val nafErrorSignature: Signature
+
+    val notErrorSignature: Signature
 
     fun testUnknownFlag1()
 
@@ -167,19 +177,4 @@ interface TestSolver : SolverTest {
     fun testTermNotSame()
     fun testTermLowerThan()
     fun testTermLowerThanOrEqual()
-
-    /** atom_chars/2 test */
-    fun testAtomChars()
-
-    /** atom_length test */
-    fun testAtomLength()
-
-    /** char_code/2 test */
-    fun testCharCode()
-
-    /** atom_codes/2 test */
-    fun testAtomCodes()
-
-    /** atom_concat/3 test */
-    fun testAtomConcat()
 }

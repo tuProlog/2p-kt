@@ -2,35 +2,18 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Var
 
-internal class TermFormatterWithPrettyVariables : AbstractTermFormatter() {
+internal class TermFormatterWithPrettyVariables(
+    quoted: Boolean = true,
+    numberVars: Boolean = false,
+    ignoreOps: Boolean = false
+) : AbstractTermFormatterForVariables(quoted, numberVars, ignoreOps) {
 
-    private val variables: MutableMap<String, MutableMap<Var, String>> = mutableMapOf()
-
-    private fun formatVar(variable: Var, suffix: String): String {
+    override fun formatVar(variable: Var, suffix: String): String {
         val baseName = variable.name + suffix
         return if (variable.isNameWellFormed) {
             baseName
         } else {
             Var.escapeName(baseName)
-        }
-    }
-
-    override fun visitVar(term: Var): String {
-        return if (term.isAnonymous) {
-            return Var.ANONYMOUS_VAR_NAME
-        } else if (term.name in variables) {
-            val homonymous = variables[term.name]!!
-            if (term in homonymous) {
-                formatVar(term, homonymous[term]!!)
-            } else {
-                val homonymousCount = homonymous.size
-                val suffix = homonymousCount.toString()
-                homonymous[term] = suffix
-                formatVar(term, suffix)
-            }
-        } else {
-            variables[term.name] = mutableMapOf(term to "")
-            return formatVar(term, "")
         }
     }
 }

@@ -31,8 +31,11 @@ class SystemError constructor(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), extraData)
 
-    override fun updateContext(newContext: ExecutionContext): SystemError =
-        SystemError(message, cause, contexts.setFirst(newContext), extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): SystemError =
+        SystemError(message, cause, contexts.setItem(index, newContext), extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): SystemError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): SystemError =
         SystemError(message, cause, contexts.addLast(newContext), extraData)
@@ -41,6 +44,17 @@ class SystemError constructor(
 
         /** The system error Struct functor */
         const val typeFunctor = "system_error"
+
+        @JsName("forUncaughtKtException")
+        @JvmStatic
+        fun forUncaughtException(context: ExecutionContext, exception: Throwable): SystemError =
+            message("Uncaught exception `${exception::class.simpleName}: ${exception.message}`") { m, extra ->
+                SystemError(
+                    message = m,
+                    context = context,
+                    extraData = extra
+                )
+            }
 
         @JsName("forUncaughtException")
         @JvmStatic
@@ -53,12 +67,17 @@ class SystemError constructor(
                 )
             }
 
+        private fun PrologError.pretty(): String =
+            when (this) {
+                is MessageError -> content.pretty()
+                else -> errorStruct.pretty()
+            }
+
         @JsName("forUncaughtError")
         @JvmStatic
-        fun forUncaughtError(context: ExecutionContext, exception: PrologError): SystemError =
-            when (exception) {
-                is MessageError -> forUncaughtException(context, exception.content)
-                else -> forUncaughtException(context, exception.errorStruct)
+        fun forUncaughtError(exception: PrologError): SystemError =
+            message("Uncaught exception `${exception.pretty()}`") { m, extra ->
+                SystemError(m, exception, exception.contexts, extra)
             }
     }
 }

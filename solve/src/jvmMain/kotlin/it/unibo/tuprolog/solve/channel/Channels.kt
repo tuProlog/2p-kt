@@ -1,19 +1,16 @@
 package it.unibo.tuprolog.solve.channel
 
 import it.unibo.tuprolog.solve.exception.PrologWarning
+import java.io.StringReader
 
-internal actual fun stdin(): InputChannel<String> {
-    return InputStreamChannel(System.`in`)
-}
+internal actual fun stdin(): InputChannel<String> = ReaderChannel(System.`in`)
 
-internal actual fun <T> stderr(): OutputChannel<T> {
-    return OutputChannel.of { System.err.print(it) }
-}
+internal actual fun <T : Any> stderr(): OutputChannel<T> = PrintStreamChannel(System.err)
 
-internal actual fun <T> stdout(): OutputChannel<T> {
-    return OutputChannel.of { print(it) }
-}
+internal actual fun <T : Any> stdout(): OutputChannel<T> = PrintStreamChannel(System.out)
 
-internal actual fun warning(): OutputChannel<PrologWarning> {
-    return OutputChannel.of { System.err.println(it.message) }
-}
+internal actual fun warning(): OutputChannel<PrologWarning> =
+    OutputChannel.of { System.err.println(it.message); System.err.flush() }
+
+internal actual fun stringInputChannel(string: String): InputChannel<String> =
+    ReaderChannel(StringReader(string))

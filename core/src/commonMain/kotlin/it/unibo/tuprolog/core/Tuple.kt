@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.impl.TupleImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -11,7 +12,7 @@ interface Tuple : Collection {
         get() = true
 
     override val functor: String
-        get() = FUNCTOR
+        get() = TUPLE_FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(left, right)
@@ -31,17 +32,13 @@ interface Tuple : Collection {
 
     override fun toSequence(): Sequence<Term> = unfoldedSequence
 
-    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
+    override fun freshCopy(): Tuple
 
-    override fun freshCopy(scope: Scope): Tuple =
-        when {
-            isGround -> this
-            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }.asIterable())
-        }
+    override fun freshCopy(scope: Scope): Tuple
 
     companion object {
 
-        const val FUNCTOR = ","
+        const val FUNCTOR = TUPLE_FUNCTOR
 
         @JvmStatic
         @JsName("wrapIfNeededTrueDefault")

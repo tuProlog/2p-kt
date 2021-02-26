@@ -1,5 +1,10 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
+import it.unibo.tuprolog.core.Terms.EMPTY_SET_FUNCTOR
+import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
+import it.unibo.tuprolog.core.Terms.FALSE_FUNCTOR
+import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
 import it.unibo.tuprolog.core.impl.AtomImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
@@ -17,16 +22,16 @@ interface Atom : Struct, Constant {
         get() = true
 
     override val isEmptySet: Boolean
-        get() = Empty.EMPTY_SET_FUNCTOR == value
+        get() = EMPTY_SET_FUNCTOR == value
 
     override val isEmptyList: Boolean
-        get() = Empty.EMPTY_LIST_FUNCTOR == value
+        get() = EMPTY_LIST_FUNCTOR == value
 
     override val isTrue: Boolean
-        get() = Truth.TRUE_FUNCTOR == value
+        get() = TRUE_FUNCTOR == value
 
     override val isFail: Boolean
-        get() = Truth.FAIL_FUNCTOR == value
+        get() = FAIL_FUNCTOR == value
 
     override val value: String
         get() = functor
@@ -37,34 +42,34 @@ interface Atom : Struct, Constant {
     override val variables: Sequence<Var>
         get() = emptySequence()
 
-    override fun freshCopy(): Atom = this
+    override fun freshCopy(): Atom
 
-    override fun freshCopy(scope: Scope): Atom = this
+    override fun freshCopy(scope: Scope): Atom
 
     companion object {
 
         @JvmStatic
         @JsName("escapeValue")
         fun escapeValue(string: String): String =
-            Struct.escapeFunctor(string)
+            Struct.enquoteFunctor(string)
 
         @JvmStatic
         @JsName("escapeValueIfNecessary")
         fun escapeValueIfNecessary(string: String): String =
-            Struct.escapeFunctorIfNecessary(string)
+            Struct.enquoteFunctorIfNecessary(string)
 
         @JvmField
-        val ATOM_REGEX_PATTERN = Struct.STRUCT_FUNCTOR_REGEX_PATTERN
+        val ATOM_PATTERN = Terms.ATOM_PATTERN
 
         @JvmStatic
         @JsName("of")
         fun of(value: String): Atom =
             when (value) {
-                Empty.EMPTY_LIST_FUNCTOR -> Empty.list()
-                Empty.EMPTY_SET_FUNCTOR -> Empty.set()
-                Truth.TRUE_FUNCTOR -> Truth.TRUE
-                Truth.FAIL_FUNCTOR -> Truth.FAIL
-                Truth.FALSE_FUNCTOR -> Truth.FALSE
+                EMPTY_LIST_FUNCTOR -> Empty.list()
+                EMPTY_SET_FUNCTOR -> Empty.set()
+                TRUE_FUNCTOR -> Truth.TRUE
+                FAIL_FUNCTOR -> Truth.FAIL
+                FALSE_FUNCTOR -> Truth.FALSE
                 else -> AtomImpl(value)
             }
     }

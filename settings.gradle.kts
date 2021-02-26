@@ -16,7 +16,7 @@ buildscript {
 bootstrapRefreshVersionsAndDependencies()
 
 include("documentation")
-
+include("utils")
 include("core")
 include("unify")
 include("theory")
@@ -36,5 +36,6 @@ include("serialize-core")
 include("serialize-theory")
 include("repl")
 include("oop-lib")
+include("io-lib")
 include("ide")
 include("examples")

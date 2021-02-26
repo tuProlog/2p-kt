@@ -157,6 +157,15 @@ interface PrologStdLibScope : PrologAwareScope {
     infix fun Any.`=!=`(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
 
+    @Suppress("DANGEROUS_CHARACTERS")
+    @JsName("power")
+    infix fun Any.`**`(right: Any): Struct =
+        structOf("**", this.toTerm(), right.toTerm())
+
+    @JsName("pow")
+    infix fun Any.`^`(right: Any): Struct =
+        structOf("^", this.toTerm(), right.toTerm())
+
     @JsName("member2")
     fun member(item: Any, list: Any): Struct =
         structOf("member", item.toTerm(), list.toTerm())
@@ -209,8 +218,58 @@ interface PrologStdLibScope : PrologAwareScope {
     fun current_prolog_flag(name: Any, value: Any): Struct =
         structOf("current_prolog_flag", name.toTerm(), value.toTerm())
 
-//    bagof/3
-//    char_code/2
+    @JsName("sub_atom5")
+    fun sub_atom(atom: Any, before: Any, length: Any, after: Any, sub_atom: Any): Struct =
+        structOf("sub_atom", atom.toTerm(), before.toTerm(), length.toTerm(), after.toTerm(), sub_atom.toTerm())
+
+    @JsName("number_chars2")
+    fun number_chars(first: Any, second: Any): Struct =
+        structOf("number_chars", first.toTerm(), second.toTerm())
+
+    @JsName("number_codes2")
+    fun number_codes(first: Any, second: Any): Struct =
+        structOf("number_codes", first.toTerm(), second.toTerm())
+
+    @JsName("bagof3")
+    fun bagof(template: Any, goal: Any, bag: Any): Struct =
+        structOf("bagof", template.toTerm(), goal.toTerm(), bag.toTerm())
+
+    @JsName("setof3")
+    fun setof(template: Any, goal: Any, bag: Any): Struct =
+        structOf("setof", template.toTerm(), goal.toTerm(), bag.toTerm())
+
+    @JsName("consult1")
+    fun consult(url: Any): Struct =
+        structOf("consult", url.toTerm())
+
+    @JsName("set_prolog_flag2")
+    fun set_prolog_flag(name: Any, value: Any): Struct =
+        structOf("set_prolog_flag", name.toTerm(), value.toTerm())
+
+    @JsName("dynamic1")
+    fun dynamic(indicator: Any): Struct =
+        structOf("dynamic", indicator.toTerm())
+
+    @JsName("static1")
+    fun static(indicator: Any): Struct =
+        structOf("static", indicator.toTerm())
+
+    @JsName("solve1")
+    fun solve(goal: Any): Struct =
+        structOf("solve", goal.toTerm())
+
+    @JsName("initialization1")
+    fun initialization(goal: Any): Struct =
+        structOf("initialization", goal.toTerm())
+
+    @JsName("load1")
+    fun load(url: Any): Struct =
+        structOf("load", url.toTerm())
+
+    @JsName("include1")
+    fun include(url: Any): Struct =
+        structOf("include", url.toTerm())
+
 //    close/1
 //    close/2
 //    copy_term/2
@@ -249,11 +308,8 @@ interface PrologStdLibScope : PrologAwareScope {
 //    repeat/1
 //    set_input/1
 //    set_output/1
-//    set_prolog_flag/2
 //    set_stream_position/2
-//    setof/3
 //    stream_property/2
-//    sub_atom/5
 //    unify_with_occurs_check/2
 //    write_canonical/1
 //    write_canonical/2

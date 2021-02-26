@@ -2,9 +2,13 @@ package it.unibo.tuprolog.solve
 
 interface TestCall : SolverTest {
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestCall =
-            TestCallImpl(solverFactory)
+        fun prototype(
+            solverFactory: SolverFactory,
+            errorSignature: Signature = Signature("call", 1)
+        ): TestCall = TestCallImpl(solverFactory, errorSignature)
     }
+
+    val errorSignature: Signature
 
     /**
      * Tests the queries

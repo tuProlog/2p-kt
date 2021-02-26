@@ -17,13 +17,13 @@ interface Rule : Clause {
     override val isDirective: Boolean
         get() = false
 
-    override fun freshCopy(): Rule = super.freshCopy() as Rule
+    override fun freshCopy(): Rule
 
-    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
+    override fun freshCopy(scope: Scope): Rule
 
     companion object {
 
-        const val FUNCTOR = ":-"
+        const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")

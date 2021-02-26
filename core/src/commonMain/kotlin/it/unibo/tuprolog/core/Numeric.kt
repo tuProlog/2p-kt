@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 interface Numeric : Constant {
@@ -19,14 +20,20 @@ interface Numeric : Constant {
     @JsName("intValue")
     val intValue: BigInteger
 
-    override fun freshCopy(): Numeric = this
+    override fun freshCopy(): Numeric
 
-    override fun freshCopy(scope: Scope): Numeric = this
+    override fun freshCopy(scope: Scope): Numeric
 
     @JsName("compareValueTo")
     fun compareValueTo(other: Numeric): Int = decimalValue.compareTo(other.decimalValue)
 
     companion object {
+
+        @JvmField
+        val INTEGER_PATTERN = Terms.INTEGER_PATTERN
+
+        @JvmField
+        val REAL_PATTERN = Terms.REAL_PATTERN
 
         @JvmStatic
         @JsName("ofBigDecimal")

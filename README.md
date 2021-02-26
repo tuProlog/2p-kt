@@ -1,10 +1,12 @@
-# 2P in Kotlin
+# 2P-Kt
 
 Some quick links:
-* [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (the one used by developers)
-* [GitHub Repository](https://github.com/tuProlog/2p-kt) (where JVM releases are hosted)
+* [Home Page](http://tuprolog.unibo.it)
+* [GitLab Repository](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin) (used by developers)
+* [GitHub Repository](https://github.com/tuProlog/2p-kt) (public mirrored repository where JVM binaries are hosted)
 * [NPM Repository](https://www.npmjs.com/org/tuprolog) (where JS releases are hosted)
-* [Maven Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted)
+* [Maven Central Repository](https://search.maven.org/search?q=g:it.unibo.tuprolog) (where all stable releases are hosted)
+* [Bintray Repository](https://bintray.com/pika-lab/tuprolog) (where all releases are hosted, there including dev releases)
 * [Documentation](http://pika-lab.gitlab.io/tuprolog/2p-in-kotlin/)
 
 ## Intro
@@ -149,6 +151,11 @@ A normal output should be as follows:
 ?- <write your dot-terminated Prolog query here>.
 ```
 
+For instance:
+
+![A screenshot of the 2P-Kt CLI](https://gitlab.com/pika-lab/tuprolog/2p-in-kotlin/raw/master/.img/2p-kt-repl.png)
+
+
 Other options or modes of execution are supported.
 One can explore them via the program help, which can be displayed by running:
 ```bash
@@ -164,6 +171,7 @@ Options:
   -T, --theory TEXT  Path of theory file to be loaded
   -t, --timeout INT  Maximum amount of time for computing a solution (default:
                      1000 ms)
+  --oop              Loads the OOP library
   -h, --help         Show this message and exit
 
 Commands:
@@ -254,9 +262,9 @@ Notice that the JS dependencies of `2P_MODULE` should be automatically imported.
 ## Developers
 
 Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
-- JDK 12+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.3.72+
-- Gradle 6.4+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
+- JDK 11+ (please ensure the `JAVA_HOME` environment variable is properly) configured
+- Kotlin 1.4.20+
+- Gradle 6.8+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 
 ### Develop 2P-Kt with IntelliJ Idea

@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.libs.oop.impl.TermToObjectConverterImpl
+import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
 
 interface TermToObjectConverter {
@@ -17,6 +19,13 @@ interface TermToObjectConverter {
         convertInto(mostAdequateType(term), term)
 
     companion object {
-        val default: TermToObjectConverter = TermToObjectConverterImpl()
+        @JvmStatic
+        fun of(
+            typeFactory: TypeFactory = TypeFactory.default,
+            dealiaser: (Struct) -> TypeRef? = { null }
+        ): TermToObjectConverter = TermToObjectConverterImpl(typeFactory, dealiaser)
+
+        @JvmStatic
+        val default: TermToObjectConverter = of()
     }
 }
