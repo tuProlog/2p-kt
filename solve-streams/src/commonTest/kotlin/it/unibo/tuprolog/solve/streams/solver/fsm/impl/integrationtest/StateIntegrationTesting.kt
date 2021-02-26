@@ -36,6 +36,7 @@ import it.unibo.tuprolog.solve.streams.solver.fsm.impl.testutils.StateUtils.asse
 import it.unibo.tuprolog.solve.streams.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.streams.testutils.SolverTestUtils.createSolveRequest
 import it.unibo.tuprolog.theory.Theory
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -139,6 +140,7 @@ internal class StateIntegrationTesting {
     }
 
     @Test
+    @Ignore
     fun prologStandardSearchTreeExample() {
         assertSolutionsCorrect(prologStandardExampleTheoryNotableGoalToSolution, prologStandardExampleTheory)
     }

@@ -56,7 +56,7 @@ object PrologStandardExampleTheories {
                 "p"("U", "V").hasSolutions(
                     { yes("U" to "b", "V" to "b1") },
                     { yes("U" to "c", "V" to "c1") },
-                    { yes("U" to "d") }
+                    { yes("U" to "d", "V" to "Y") }
                 )
             )
         }
@@ -223,7 +223,7 @@ object PrologStandardExampleTheories {
         prolog {
             ktListOf(
                 "catch"("p", "X", true).hasSolutions(
-                    { yes() },
+                    { yes("X" to "E") },
                     { yes("X" to "b") }
                 ),
                 "catch"("q", "C", true).hasSolutions({ yes("C" to "c") }),
