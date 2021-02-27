@@ -28,10 +28,10 @@ Solver options are used to configure the solving process. A `SolveOptions` objec
 
 A `Solver` can be created by using one of the factory methods accessible through its companion object. At the time being, such methods are:
 
-- `classic()` creates a classic `Solver`;
-- `classicWithDefaultBuiltins()` creates a classic solver with some predefined builtins already injected into it.
+- `classic(): SolverFactory` creates a classic `Solver`;
+- `streams(): SolverFactory` creates a `Solver` which employs a more minimalistic, side-effect-free solving approach.
 
-Each of these take quite a few optional parameters, which will be better described [later](#mutable-aspects-of-solvers) in this page. Also, the same methods come in a [mutable version](#mutable-solvers).
+Each of these methods return a `SolverFactory` instance, which allows clients to configure different  [solving aspects](#mutable-aspects-of-solvers).
 
 ### Performing a query
 
