@@ -173,3 +173,14 @@ These functions are conceived as platform-specific APIs, meaning that their actu
 
 ## Mutable solvers
 
+Mutable solvers allow the client code to affect the state of the `Solver`, provided that no execution is ongoing.
+
+The `MutableSolver` interface provides a number of methods that enable the external manipulation of some of the solvers' "mutable features", such as:
+
+- loading/unloading `Library`s;
+- loading/resetting entire `Theory`s;
+- loading/resetting only static/dynamic knowledge bases;
+- `assert`-ing / `retract`-ing single clauses;
+- setting flags.
+
+Creating a mutable solver -- similarly to "immutable" solvers -- is done by using the factory methods defined in `MutableSolver`'s companion object.
