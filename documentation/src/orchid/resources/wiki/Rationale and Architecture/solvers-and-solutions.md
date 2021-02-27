@@ -5,12 +5,24 @@
 
 In logic programming, resolution is the process of trying to find a solution to some goal by producing a suitable substitution, given a logic theory.
 
-In 2P-Kt, this is provided by the `Solver` interface, which exposes a single method, `solve`. This method takes two arguments:
+In 2P-Kt, this is provided by the `Solver` interface, which exposes a couple of different methods to perform goal solving:
 
-- `goal: Struct`, the goal we are trying to solve;
-- `maxDuration: TimeDuration` (optional) which specifies the amount of time that is allowed to the `Solver` to complete its work. By default, it is set to be the highest possible value.
+- `solve(goal: Struct, options: SolveOptions): Sequence<Solution>` returns a `Sequence` of solutions. This can be done lazily or not, depending on the `options`;
+- `solveList(goal: Struct, options: SolveOptions): List<Solution>` returns a `List` of solutions. This is done eagerly, regardless of the value of `options.isLazy`, so care must be taken when dealing with possibly infinite solutions;
+- `solveOnce(goal: Struct, options: SolveOptions): Solution` which returns a single solution eagerly, regardless of the value of `option.isLazy`.
 
-The `solve` method returns a `Sequence<Solution>`, which can be iterated upon to retrieve the execution outcomes, along with their possible variable bindings.
+These methods may also take a `timeout: TimeDuration` argument instead of `options` if so desired.
+
+### Solver options
+
+Solver options are used to configure the solving process. A `SolveOptions` object contains information regarding:
+
+- laziness (`isLazy` / `isEager`)
+- execution timeout (`timeout`)
+- limiting the output solutions (`limit`)
+- other custom options (`customOptions`)
+
+`SolveOptions` instances can be created via the provided companion object by calling one of the `SolveOptions.of(...)` factory methods.
 
 ### Instantiating a Solver
 
