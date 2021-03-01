@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.flags
 
 import it.unibo.tuprolog.core.Term
 import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 
 interface NotableFlag {
 
@@ -29,4 +30,16 @@ interface NotableFlag {
                 "$value is not an admissible value for flag $name"
             }
         }
+
+    companion object {
+        @JsName("fromName")
+        @JvmStatic
+        fun fromName(name: String): NotableFlag? =
+            sequenceOf(
+                DoubleQuotes,
+                LastCallOptimization,
+                MaxArity,
+                Unknown
+            ).firstOrNull { it.name == name }
+    }
 }
