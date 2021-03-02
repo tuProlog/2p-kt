@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.safeToStruct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
+import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withBodyExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withExplanation
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
@@ -36,6 +37,8 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
  */
 internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDICATE_PREFIX) {
     private val negationAsFailureFunctors = setOf("\\+", "not")
+
+    private val recursiveGoalFunctors = setOf(",", ";", "->")
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
@@ -62,7 +65,23 @@ internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDI
                         }
                     }
                 )
-                /* Edge case: call/1 */
+                /* Edge case: The current goal is a conjunction/disjunction or any sort of recursive predicate.
+                * NOTE: This is not supposed to trigger regularly because we map the theory prior to query execution,
+                * however this happens when the current goal is the initial query itself. As such, we want recursive
+                * predicates in queries to be supported. */
+                in recursiveGoalFunctors -> yieldAll(
+                    /* Optimize Prolog-only queries */
+                    if (context.isPrologMode()) {
+                        solve(goal.withBodyExplanation(Var.anonymous())).map {
+                            it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
+                        }
+                    } else {
+                        solve(goal.withBodyExplanation(first)).map {
+                            it.substitution
+                        }
+                    }
+                )
+                /* Edge case: call/1 predicate*/
                 "call" -> yieldAll(
                     solve(Struct.of(goal.functor, goal[0].withExplanation(first))).map {
                         it.substitution
