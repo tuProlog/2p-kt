@@ -43,43 +43,73 @@ internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDI
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
-        val termAsStruct = second.safeToStruct()
-        val termSignature = termAsStruct.extractSignature()
+        val goal = second.safeToStruct()
+        val goalSignature = goal.extractSignature()
 
         return sequence {
-            /* Support to probabilistic negation as failure */
-            if (termAsStruct.functor in negationAsFailureFunctors) {
-                yieldAll(
+            /* Apply selective behavior based on goal's functor */
+            when(goal.functor) {
+                /* Edge case: Negation as failure */
+                in negationAsFailureFunctors -> yieldAll(
                     /* Optimize Prolog-only queries */
                     if (context.isPrologMode()) {
-                        solve(Struct.of("\\+", Struct.of(Prob.functor, Var.anonymous(), termAsStruct[0]))).map {
+                        solve(Struct.of("\\+", Struct.of(functor, Var.anonymous(), goal[0]))).map {
                             it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
                         }
                     } else {
-                        solve(Struct.of(ProbNegationAsFailure.functor, first, termAsStruct[0])).map {
+                        solve(Struct.of(ProbNegationAsFailure.functor, first, goal[0])).map {
                             it.substitution
                         }
                     }
                 )
-            } else {
-                /* Support for Prolog libraries backwards compatibility */
-                val isPrologOnly = first is Truth || termSignature in context.libraries
-                if (isPrologOnly ||
-                    termSignature.toIndicator() in context.staticKb ||
-                    termSignature.toIndicator() in context.dynamicKb
-                ) {
+                /* Edge case: call/1 */
+                "call" -> yieldAll(
+                    solve(Struct.of(goal.functor, goal[0].withExplanation(first))).map {
+                        it.substitution
+                    }
+                )
+                /* Edge case: findall/3 and findall/4 */
+                "findall" -> {
+                    val goalArgs = goal.args.copyOf()
+                    goalArgs[1] = goalArgs[1].withExplanation(Var.anonymous())
                     yieldAll(
-                        solve(termAsStruct).map {
+                        solve(Struct.of(goal.functor, *goalArgs)).map {
                             it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
                         }
                     )
                 }
+                /* Edge case: bagof/3 and bagof/4 */
+                "bagof" -> {
+                    val goalArgs = goal.args.copyOf()
+                    goalArgs[1] = goalArgs[1].withExplanation(Var.anonymous())
+                    yieldAll(
+                        solve(Struct.of(goal.functor, *goalArgs)).map {
+                            it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
+                        }
+                    )
+                }
+                /* Bottom-line general case */
+                else -> {
+                    /* Support for Prolog libraries backwards compatibility */
+                    val isPrologOnly = first is Truth || goalSignature in context.libraries
+                    if (isPrologOnly ||
+                        goalSignature.toIndicator() in context.staticKb ||
+                        goalSignature.toIndicator() in context.dynamicKb
+                    ) {
+                        yieldAll(
+                            solve(goal).map {
+                                it.substitution + (first mguWith ProbExplanation.TRUE.toTerm())
+                            }
+                        )
+                    }
 
-                /* Solve probabilistic goal */
-                if (!isPrologOnly) {
-                    yieldAll(solve(termAsStruct.withExplanation(first)).map { it.substitution })
+                    /* Solve probabilistic goal */
+                    if (!isPrologOnly) {
+                        yieldAll(solve(goal.withExplanation(first)).map { it.substitution })
+                    }
                 }
             }
+
         }
     }
 }
