@@ -22,7 +22,7 @@ class ProblogBayesianNetworksExamplesTest {
                 alarm :- burglary, \+earthquake, p_alarm2.
                 alarm :- \+burglary, earthquake, p_alarm3.
                 evidence(alarm,true).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
@@ -49,7 +49,7 @@ class ProblogBayesianNetworksExamplesTest {
                 0.8::alarm :- burglary, \+earthquake.
                 0.1::alarm :- \+burglary, earthquake.        
                 evidence(alarm,true).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
@@ -81,7 +81,7 @@ class ProblogBayesianNetworksExamplesTest {
                 0.1::calls(X) :- \+alarm, person(X).
                 evidence(calls(john),true).
                 evidence(calls(mary),true).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),
@@ -115,7 +115,7 @@ class ProblogBayesianNetworksExamplesTest {
                 0.1::calls(X) :- \+alarm, person(X).       
                 evidence(calls(john),true).
                 evidence(calls(mary),true).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "burglary".parseAsStruct(),

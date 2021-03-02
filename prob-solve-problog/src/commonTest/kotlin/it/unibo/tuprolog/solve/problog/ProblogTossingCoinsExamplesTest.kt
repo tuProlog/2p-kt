@@ -16,7 +16,7 @@ class ProblogTossingCoinsExamplesTest {
                 0.5::heads1.
                 0.6::heads2.
                 twoHeads :- heads1, heads2.
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "heads1".parseAsStruct(),
@@ -45,7 +45,7 @@ class ProblogTossingCoinsExamplesTest {
                 0.6::heads2.
                 someHeads :- heads1.
                 someHeads :- heads2.
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.8))
@@ -67,7 +67,7 @@ class ProblogTossingCoinsExamplesTest {
                 coin(c4).
                 heads(C) :- coin(C), lands_heads(C).
                 someHeads :- heads(_).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))
@@ -88,7 +88,7 @@ class ProblogTossingCoinsExamplesTest {
                 coin(c3).
                 coin(c4).
                 someHeads :- heads(_).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "someHeads".parseAsStruct(),
                 listOf(ExpectedSolution("someHeads".parseAsStruct(), 0.9744))

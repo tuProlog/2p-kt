@@ -4,8 +4,11 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.MutableProbSolver
 import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
+import it.unibo.tuprolog.solve.exception.PrologWarning
+import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.NotableFlag
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
@@ -13,9 +16,9 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 
-internal class MutableProblogProbSolver(
+internal class MutableProblogSolver(
     private val solver: MutableSolver
-) : ProblogProbSolver(solver), MutableProbSolver {
+) : ProblogSolver(solver), MutableSolver {
 
     override fun loadLibrary(library: AliasedLibrary) {
         solver.loadLibrary(library)
@@ -95,5 +98,24 @@ internal class MutableProblogProbSolver(
 
     override fun setFlag(flag: NotableFlag) {
         solver.setFlag(flag)
+    }
+
+    override fun copy(
+        libraries: Libraries,
+        flags: FlagStore,
+        staticKb: Theory,
+        dynamicKb: Theory,
+        stdIn: InputChannel<String>,
+        stdOut: OutputChannel<String>,
+        stdErr: OutputChannel<String>,
+        warnings: OutputChannel<PrologWarning>
+    ): MutableSolver {
+        return MutableProblogSolver(
+            solver.copy(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+        )
+    }
+
+    override fun clone(): MutableSolver {
+        return MutableProblogSolver(solver.clone())
     }
 }

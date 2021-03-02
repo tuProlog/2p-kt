@@ -1,12 +1,10 @@
 package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.operators.OperatorSet
-import it.unibo.tuprolog.solve.MutableProbSolver
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.ProbSolver
-import it.unibo.tuprolog.solve.ProbSolverFactory
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
@@ -20,7 +18,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.Theory
 
-object ProblogProbSolverFactory : ProbSolverFactory {
+object ProblogSolverFactory : SolverFactory {
 
     private object DefaultBuiltins : AliasedLibrary by ProblogLib {
 
@@ -49,8 +47,8 @@ object ProblogProbSolverFactory : ProbSolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): ProbSolver =
-        ProblogProbSolver(
+    ): Solver =
+        ProblogSolver(
             Solver.classic(
                 libraries,
                 flags,
@@ -72,8 +70,8 @@ object ProblogProbSolverFactory : ProbSolverFactory {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
-    ): MutableProbSolver =
-        MutableProblogProbSolver(
+    ): MutableSolver =
+        MutableProblogSolver(
             MutableSolver.classic(
                 libraries,
                 flags,

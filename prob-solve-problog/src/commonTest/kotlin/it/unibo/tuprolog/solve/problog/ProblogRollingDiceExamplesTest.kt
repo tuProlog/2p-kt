@@ -18,7 +18,7 @@ class ProblogRollingDiceExamplesTest {
                 twoSix :- six1, six2.
                 someSix :- six1.
                 someSix :- six2.
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "six1".parseAsStruct(),
@@ -53,7 +53,7 @@ class ProblogRollingDiceExamplesTest {
                 odd(X) :- three(X).
                 odd(X) :- five(X).
                 even(X) :- \+ odd(X).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "odd(1)".parseAsStruct(),
@@ -88,7 +88,7 @@ class ProblogRollingDiceExamplesTest {
                 odd(X) :- three(X).
                 odd(X) :- five(X).
                 even(X) :- \+ odd(X).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             listOf(
                 QueryWithSolutions(
                     "odd(_)".parseAsStruct(),
@@ -122,7 +122,7 @@ class ProblogRollingDiceExamplesTest {
                 even(D) :- \+ odd(D).     
                 evidence(even(1)).
                 evidence(odd(2)).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "sum(_)".parseAsStruct(),
                 listOf(
@@ -151,7 +151,7 @@ class ProblogRollingDiceExamplesTest {
                 increasing :- outcome(A,B,C), A<B, B<C.
                 sum(S) :- outcome(A,B,C), S is A+B+C.
                 evidence(increasing).
-            """.parseAsTheory(ProblogProbSolverFactory.defaultBuiltins.operators),
+            """.parseAsTheory(ProblogSolverFactory.defaultBuiltins.operators),
             QueryWithSolutions(
                 "sum(_)".parseAsStruct(),
                 listOf(

@@ -23,12 +23,12 @@ object TestUtils {
         theory: Theory,
         queryWithSolutions: Iterable<QueryWithSolutions>
     ) {
-        val solver = ProblogProbSolverFactory.mutableSolverWithDefaultBuiltins()
+        val solver = ProblogSolverFactory.mutableSolverWithDefaultBuiltins()
         solver.loadStaticKb(theory)
 
         queryWithSolutions.forEach {
             val expectedSolutions = it.second.toList()
-            val solutions = solver.probSolve(it.first).filterIsInstance<Solution.Yes>().toList()
+            val solutions = solver.solve(it.first).filterIsInstance<Solution.Yes>().toList()
 
             var currentActual: ExpectedSolution? = null
             var currentExpected: ExpectedSolution? = null
