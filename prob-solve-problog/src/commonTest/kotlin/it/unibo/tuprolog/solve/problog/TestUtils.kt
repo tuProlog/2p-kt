@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.probability
+import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.Theory
 import kotlin.math.abs
 import kotlin.test.assertFalse
@@ -28,7 +30,8 @@ object TestUtils {
 
         queryWithSolutions.forEach {
             val expectedSolutions = it.second.toList()
-            val solutions = solver.solve(it.first).filterIsInstance<Solution.Yes>().toList()
+            val solutions = solver.solve(it.first, SolveOptions.DEFAULT.setProbabilistic(true))
+                .filterIsInstance<Solution.Yes>().toList()
 
             var currentActual: ExpectedSolution? = null
             var currentExpected: ExpectedSolution? = null

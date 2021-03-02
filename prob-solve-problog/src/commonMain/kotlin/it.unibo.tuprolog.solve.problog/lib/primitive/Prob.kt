@@ -48,7 +48,7 @@ internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDI
 
         return sequence {
             /* Apply selective behavior based on goal's functor */
-            when(goal.functor) {
+            when (goal.functor) {
                 /* Edge case: Negation as failure */
                 in negationAsFailureFunctors -> yieldAll(
                     /* Optimize Prolog-only queries */
@@ -109,7 +109,6 @@ internal object Prob : BinaryRelation.WithoutSideEffects<ExecutionContext>(PREDI
                     }
                 }
             }
-
         }
     }
 }
