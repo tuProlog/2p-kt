@@ -3,7 +3,7 @@ package it.unibo.tuprolog.solve.classic.fsm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 
-internal data class StateEnd(
+data class StateEnd(
     override val solution: Solution,
     override val context: ClassicExecutionContext
 ) : AbstractEndState(solution, context) {

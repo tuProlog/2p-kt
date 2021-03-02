@@ -1,3 +1,8 @@
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+
+val jvmStackSize: String by project
+val jvmMaxHeapSize: String by project
+
 kotlin {
     sourceSets {
         val commonMain by getting {
@@ -13,4 +18,9 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<KotlinJvmTest> {
+    maxHeapSize = jvmMaxHeapSize
+    jvmArgs("-Xss$jvmStackSize")
 }

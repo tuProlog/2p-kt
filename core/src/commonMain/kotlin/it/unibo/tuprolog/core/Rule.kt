@@ -23,7 +23,7 @@ interface Rule : Clause {
 
     companion object {
 
-        const val FUNCTOR = ":-"
+        const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")

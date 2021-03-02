@@ -4,12 +4,7 @@
 package it.unibo.tuprolog.parser
 
 external class PrologLexer(input: dynamic) {
-    val grammarFileName: String
-    val ruleNames: Array<String>
-    val symbolicNames: Array<String>
-    val literalNames: Array<String>
-    val channelNames: Array<String>
-    val modeNames: Array<String>
+
     fun addOperators(vararg operators: String)
     fun getOperators(): Array<String>
     fun isOperator(string: String): Boolean
@@ -21,6 +16,13 @@ external class PrologLexer(input: dynamic) {
     fun removeErrorListeners()
 
     companion object {
+        val grammarFileName: String
+        val ruleNames: Array<String>
+        val symbolicNames: Array<String>
+        val literalNames: Array<String>
+        val channelNames: Array<String>
+        val modeNames: Array<String>
+
         val EOF: Int
         val VARIABLE: Int
         val INTEGER: Int

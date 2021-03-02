@@ -42,7 +42,7 @@ internal interface AnyToTermConverter {
     val Number.isInteger: Boolean
 
     val String.isVariable: Boolean
-        get() = this matches Var.VAR_REGEX_PATTERN
+        get() = this matches Var.NAME_PATTERN
 
     @JsName("numberToInteger")
     fun Number.toInteger(): Integer

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Terms.ANONYMOUS_VAR_NAME
 import it.unibo.tuprolog.core.Var
 
 internal abstract class AbstractTermFormatterForVariables(
@@ -14,7 +15,7 @@ internal abstract class AbstractTermFormatterForVariables(
 
     override fun visitVar(term: Var): String {
         return if (term.isAnonymous) {
-            return Var.ANONYMOUS_VAR_NAME
+            ANONYMOUS_VAR_NAME
         } else if (term.name in variables) {
             val homonymous = variables[term.name]!!
             if (term in homonymous) {
@@ -27,7 +28,7 @@ internal abstract class AbstractTermFormatterForVariables(
             }
         } else {
             variables[term.name] = mutableMapOf(term to "")
-            return formatVar(term, "")
+            formatVar(term, "")
         }
     }
 }

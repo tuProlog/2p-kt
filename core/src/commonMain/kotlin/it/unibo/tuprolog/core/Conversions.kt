@@ -2,6 +2,7 @@
 
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
@@ -37,7 +38,7 @@ fun Number.toTerm(): Numeric = Numeric.of(this)
 @JsName("stringToTerm")
 fun String.toTerm(): Term =
     when {
-        this matches Var.VAR_REGEX_PATTERN -> this.toVar()
+        this matches VAR_NAME_PATTERN -> this.toVar()
         else -> this.toAtom()
     }
 

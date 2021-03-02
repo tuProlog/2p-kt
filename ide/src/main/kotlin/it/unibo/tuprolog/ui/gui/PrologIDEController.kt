@@ -482,6 +482,9 @@ class PrologIDEController : Initializable {
     @FXML
     fun onResetButtonPressed(e: ActionEvent) {
         model.reset()
+        currentFileTab?.let { model.setCurrentFile(it.wholeText) }
+        txaStdout.clear()
+        txaStderr.clear()
     }
 
     private fun continueResolution(all: Boolean = false) {

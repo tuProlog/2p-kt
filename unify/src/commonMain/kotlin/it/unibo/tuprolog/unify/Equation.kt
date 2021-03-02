@@ -141,8 +141,7 @@ sealed class Equation<out A : Term, out B : Term>(
                 when {
                     l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
                     l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
-                    else ->
-                        allOf(l, r, equalityChecker)
+                    else -> allOf(l, r, equalityChecker)
                 }
             }
         }

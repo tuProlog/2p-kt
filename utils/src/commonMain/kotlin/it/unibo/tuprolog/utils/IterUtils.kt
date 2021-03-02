@@ -144,7 +144,9 @@ fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>, comparato
     val i = iterable1.iterator()
     val j = iterable2.iterator()
     while (i.hasNext() && j.hasNext()) {
-        if (!comparator(i.next(), j.next())) {
+        val a = i.next()
+        val b = j.next()
+        if (!comparator(a, b)) {
             return false
         }
     }
@@ -152,7 +154,9 @@ fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>, comparato
 }
 
 fun <T> itemWiseEquals(iterable1: Iterable<T>, iterable2: Iterable<T>): Boolean =
-    itemWiseEquals(iterable1, iterable2) { a, b -> a == b }
+    itemWiseEquals(iterable1, iterable2) { a, b ->
+        a == b
+    }
 
 fun <T> itemWiseEquals(sequence1: Sequence<T>, sequence2: Sequence<T>, comparator: (T, T) -> Boolean): Boolean {
     return itemWiseEquals(sequence1.asIterable(), sequence2.asIterable(), comparator)

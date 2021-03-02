@@ -31,9 +31,19 @@ import it.unibo.tuprolog.solve.TimeRelatedTheories.slightlyMoreThan700MsGoalToSo
 interface TestSolver : SolverTest {
 
     companion object {
-        fun prototype(solverFactory: SolverFactory): TestSolver =
-            TestSolverImpl(solverFactory)
+        fun prototype(
+            solverFactory: SolverFactory,
+            callErrorSignature: Signature = Signature("call", 1),
+            nafErrorSignature: Signature = Signature("\\+", 1),
+            notErrorSignature: Signature = Signature("not", 1)
+        ): TestSolver = TestSolverImpl(solverFactory, callErrorSignature, nafErrorSignature, notErrorSignature)
     }
+
+    val callErrorSignature: Signature
+
+    val nafErrorSignature: Signature
+
+    val notErrorSignature: Signature
 
     fun testUnknownFlag1()
 

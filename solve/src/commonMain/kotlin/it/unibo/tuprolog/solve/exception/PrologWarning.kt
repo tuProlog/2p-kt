@@ -22,7 +22,9 @@ abstract class PrologWarning(
         context: ExecutionContext
     ) : this(message, cause, arrayOf(context))
 
-    abstract override fun updateContext(newContext: ExecutionContext): PrologWarning
+    abstract override fun updateContext(newContext: ExecutionContext, index: Int): PrologWarning
+
+    abstract override fun updateLastContext(newContext: ExecutionContext): PrologWarning
 
     abstract override fun pushContext(newContext: ExecutionContext): PrologWarning
 }

@@ -157,6 +157,7 @@ interface PrologStdLibScope : PrologAwareScope {
     infix fun Any.`=!=`(right: Any): Struct =
         structOf("=\\=", this.toTerm(), right.toTerm())
 
+    @Suppress("DANGEROUS_CHARACTERS")
     @JsName("power")
     infix fun Any.`**`(right: Any): Struct =
         structOf("**", this.toTerm(), right.toTerm())

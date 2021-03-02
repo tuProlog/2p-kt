@@ -28,7 +28,9 @@ interface Set : Collection {
 
     companion object {
 
-        const val FUNCTOR = "{}"
+        const val FUNCTOR = Terms.SET_FUNCTOR
+
+        const val EMPTY_FUNCTOR = Terms.EMPTY_SET_FUNCTOR
 
         @JvmStatic
         @JsName("empty")

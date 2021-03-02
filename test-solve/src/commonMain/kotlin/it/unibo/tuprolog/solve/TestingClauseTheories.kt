@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.theory.Theory
-import kotlin.collections.listOf as ktListOf
 
 /**
  * An object containing a collection of notable databases to be used when testing Solver functionality
@@ -26,17 +25,23 @@ object TestingClauseTheories {
     internal val haltException = HaltException(context = aContext)
 
     internal fun instantiationError(functor: String, arity: Int, culprit: Var, index: Int? = null) =
+        instantiationError(Signature(functor, arity), culprit, index)
+
+    internal fun instantiationError(signature: Signature, culprit: Var, index: Int? = null) =
         if (index != null) {
-            InstantiationError.forArgument(aContext, Signature(functor, arity), culprit, index)
+            InstantiationError.forArgument(aContext, signature, culprit, index)
         } else {
-            InstantiationError.forGoal(aContext, Signature(functor, arity), culprit)
+            InstantiationError.forGoal(aContext, signature, culprit)
         }
 
     internal fun typeError(functor: String, arity: Int, actualValue: Term, index: Int? = null) =
+        typeError(Signature(functor, arity), actualValue, index)
+
+    internal fun typeError(signature: Signature, actualValue: Term, index: Int? = null) =
         if (index != null) {
-            TypeError.forArgument(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue, index)
+            TypeError.forArgument(aContext, signature, TypeError.Expected.CALLABLE, actualValue, index)
         } else {
-            TypeError.forGoal(aContext, Signature(functor, arity), TypeError.Expected.CALLABLE, actualValue)
+            TypeError.forGoal(aContext, signature, TypeError.Expected.CALLABLE, actualValue)
         }
 
     internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
@@ -397,19 +402,18 @@ object TestingClauseTheories {
      * ?- call((true, 1)).
      * ```
      */
-    val callTestingGoalsToSolutions by lazy {
+    fun callTestingGoalsToSolutions(errorSignature: Signature) =
         prolog {
             ktListOf(
                 call(true).hasSolutions({ yes() }),
                 call(false).hasSolutions({ no() }),
                 call(halt).hasSolutions({ halt(haltException) }),
                 call("true" and "true").hasSolutions({ yes() }),
-                call(`cut`).hasSolutions({ yes() }),
-                call("X").hasSolutions({ halt(instantiationError("call", 1, varOf("X"))) }),
-                call("true" and 1).hasSolutions({ halt(typeError("call", 1, ("true" and 1))) })
+                call(cut).hasSolutions({ yes() }),
+                call("X").hasSolutions({ halt(instantiationError(errorSignature, varOf("X"))) }),
+                call("true" and 1).hasSolutions({ halt(typeError(errorSignature, ("true" and 1))) })
             )
         }
-    }
 
     /**
      * Catch primitive request goals and respective expected [Solution]s
@@ -461,16 +465,22 @@ object TestingClauseTheories {
     }
 
     /** Collection of all Prolog example (custom created and from Prolog Standard) databases and their respective callable goals with expected solutions */
-    val allPrologTestingTheoriesToRespectiveGoalsAndSolutions by lazy {
-        mapOf(
-            simpleFactTheory to simpleFactTheoryNotableGoalToSolutions,
-            simpleCutTheory to simpleCutTheoryNotableGoalToSolutions,
-            simpleCutAndConjunctionTheory to simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-            cutConjunctionAndBacktrackingTheory to cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            customReverseListTheory to customReverseListTheoryNotableGoalToSolution,
-            Theory.empty() to callTestingGoalsToSolutions,
-            Theory.empty() to catchTestingGoalsToSolutions,
-            Theory.empty() to haltTestingGoalsToSolutions
-        ) + allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions
-    }
+    fun allPrologTestingTheoriesToRespectiveGoalsAndSolutions(
+        callErrorSignature: Signature,
+        nafErrorSignature: Signature,
+        notErrorSignature: Signature
+    ) = mapOf(
+        simpleFactTheory to simpleFactTheoryNotableGoalToSolutions,
+        simpleCutTheory to simpleCutTheoryNotableGoalToSolutions,
+        simpleCutAndConjunctionTheory to simpleCutAndConjunctionTheoryNotableGoalToSolutions,
+        cutConjunctionAndBacktrackingTheory to cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
+        customReverseListTheory to customReverseListTheoryNotableGoalToSolution,
+        Theory.empty() to callTestingGoalsToSolutions(callErrorSignature),
+        Theory.empty() to catchTestingGoalsToSolutions,
+        Theory.empty() to haltTestingGoalsToSolutions
+    ) + allPrologStandardTestingTheoryToRespectiveGoalsAndSolutions(
+        callErrorSignature,
+        nafErrorSignature,
+        notErrorSignature
+    )
 }

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.streams.systemtest
 
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestOnce
 import it.unibo.tuprolog.solve.streams.StreamsSolverFactory
@@ -8,6 +9,9 @@ import kotlin.test.Test
 
 class TestStreamsOnce : TestOnce, SolverFactory by StreamsSolverFactory {
     private val prototype = TestOnce.prototype(this)
+
+    override val errorSignature: Signature
+        get() = prototype.errorSignature
 
     @Test
     override fun testOnceCut() {

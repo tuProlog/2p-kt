@@ -6,11 +6,13 @@ internal data class ConjunctionCursor<T>(val first: Cursor<out T>, val second: C
     override val isOver: Boolean
         get() = first.isOver && second.isOver
 
-    override val next: Cursor<out T>
-        get() = if (first.hasNext) ConjunctionCursor(
-            first.next,
-            second
-        ) else second
+    override val next: Cursor<out T> by lazy {
+        when {
+            first.hasNext -> ConjunctionCursor(first.next, second)
+            second is LazyCursor -> second.next
+            else -> second
+        }
+    }
 
     override val current: T?
         get() = if (first.hasNext) first.current else second.current

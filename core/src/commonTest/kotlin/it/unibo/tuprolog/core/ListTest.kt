@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.AssertionUtils.dropLast
 import it.unibo.tuprolog.core.testutils.AssertionUtils.onCorrespondingItems
 import it.unibo.tuprolog.core.testutils.ConsUtils
 import kotlin.test.Test
@@ -77,15 +76,15 @@ internal class ListTest {
     }
 
     @Test
-    fun fromIterableWithoutLastSpecifiedBehavesLikeOfMethod() {
-        val toBeTested = emptyTerminatedElementLists.map { LogicList.from(it.asIterable()) }
+    fun fromIterableWithoutLastSpecifiedDoesNotBehaveLikeOfMethod() {
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.asIterable()) }
 
-        onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
+        onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
     fun fromIterableSpecifyingLast() {
-        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast(), it.last()) }
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it) }
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
@@ -112,29 +111,16 @@ internal class ListTest {
     }
 
     @Test
-    fun fromSequenceWithoutLastSpecifiedBehavesLikeOfMethod() {
-        val toBeTested = emptyTerminatedElementLists.map { LogicList.from(it.asSequence()) }
-
-        onCorrespondingItems(emptyTerminatedInstances, toBeTested, ::assertEqualities)
-    }
-
-    @Test
-    fun fromSequenceSpecifyingLast() {
-        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.dropLast().asSequence(), it.last()) }
+    fun fromSequenceWithoutLastSpecifiedDoesNotBehaveLikeOfMethod() {
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it.asSequence()) }
 
         onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
 
     @Test
-    fun bigListsDoNotProvokeStackOverflow() {
-        val nums = (0..100_000).toList()
-        val list = LogicList.of(nums.map { Integer.of(it) })
+    fun fromSequenceSpecifyingLast() {
+        val toBeTested = pipeTerminatedElementLists.map { LogicList.from(it) }
 
-        assertEquals(nums.joinToString(", ", "[", "]"), list.toString())
-
-        val otherList = list.freshCopy()
-
-        assertEquals(list.hashCode(), otherList.hashCode())
-        assertEquals(list, otherList)
+        onCorrespondingItems(pipedListInstances, toBeTested, ::assertEqualities)
     }
 }

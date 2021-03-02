@@ -1,8 +1,5 @@
 package it.unibo.tuprolog.core
 
-import it.unibo.tuprolog.core.RegexUtils.DEC
-import it.unibo.tuprolog.core.RegexUtils.EXP
-import it.unibo.tuprolog.core.RegexUtils.INT
 import it.unibo.tuprolog.core.impl.RealImpl
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
@@ -30,7 +27,7 @@ interface Real : Numeric {
     companion object {
 
         @JvmField
-        val REAL_REGEX_PATTERN = "^[+\\-]?(($INT$DEC$EXP?)|($INT$EXP)|($DEC$EXP?))$".toRegex()
+        val PATTERN = Terms.REAL_PATTERN
 
         @JvmStatic
         @JsName("toStringEnsuringDecimal")

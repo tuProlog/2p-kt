@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
@@ -16,14 +14,6 @@ internal open class StructImpl(
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
 
-    override val variables: Sequence<Var> by lazy { super.variables }
-
-    override val indicator: Indicator by lazy { super.indicator }
-
-    override val argsList: List<Term> by lazy { super.argsList }
-
-    override val argsSequence: Sequence<Term> by lazy { super.argsSequence }
-
     override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
     override fun freshCopy(scope: Scope): Struct = when {
@@ -34,33 +24,32 @@ internal open class StructImpl(
     override fun copyWithTags(tags: Map<String, Any>): Struct =
         StructImpl(functor, args, tags)
 
-    override fun structurallyEquals(other: Term): Boolean =
-        other is StructImpl &&
+    final override fun structurallyEquals(other: Term): Boolean =
+        other is Struct &&
             functor == other.functor &&
             arity == other.arity &&
-            (0 until arity).all { args[it] structurallyEquals other[it] }
+            itemsAreStructurallyEqual(other)
 
-    override val isFunctorWellFormed: Boolean by lazy { Struct.isWellFormedFunctor(functor) }
+    protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
+        (0 until arity).all { this[it] structurallyEquals other[it] }
 
-    final override fun equals(other: Any?): Boolean {
+    override val isFunctorWellFormed: Boolean
+        get() = Struct.isWellFormedFunctor(functor)
+
+    final override fun equals(other: Any?): Boolean =
+        (other as? Struct)?.let { equalsImpl(it, true) } ?: false
+
+    protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
+        (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
+
+    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
+        (other as? Struct)?.let { equalsImpl(it, useVarCompleteName) } ?: false
+
+    private fun equalsImpl(other: Struct, useVarCompleteName: Boolean): Boolean {
         if (this === other) return true
-        if (other == null || other !is Struct) return false
-
-        if (functor != other.functor) return false
-        if (!args.contentEquals(other.args)) return false
-
-        return true
-    }
-
-    final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean {
-        if (other !is Struct) return false
         if (functor != other.functor) return false
         if (arity != other.arity) return false
-        for (i in args.indices) {
-            if (!args[i].equals(other.args[i], useVarCompleteName)) {
-                return false
-            }
-        }
+        if (!itemsAreEqual(other, useVarCompleteName)) return false
         return true
     }
 

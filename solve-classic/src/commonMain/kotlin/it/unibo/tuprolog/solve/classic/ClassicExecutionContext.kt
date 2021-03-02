@@ -61,13 +61,12 @@ data class ClassicExecutionContext(
 
     @Suppress("MemberVisibilityCanBePrivate")
     val isActivationRecord: Boolean
-        get() = parent == null || parent.depth == depth - 1
+        get() = parent == null || depth - parent.depth >= 1
 
     val pathToRoot: Sequence<ClassicExecutionContext> = sequence {
         var current: ClassicExecutionContext? = this@ClassicExecutionContext
         while (current != null) {
-            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-            yield(current!!)
+            yield(current)
             current = current.parent
         }
     }

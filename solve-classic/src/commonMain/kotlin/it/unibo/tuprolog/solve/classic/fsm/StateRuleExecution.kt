@@ -6,11 +6,9 @@ import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 import it.unibo.tuprolog.utils.Cursor
 
-internal data class StateRuleExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StateRuleExecution(override val context: ClassicExecutionContext) : AbstractState(context) {
     private val failureState: StateBacktracking
-        get() = StateBacktracking(
-            context.copy(rules = Cursor.empty(), step = nextStep())
-        )
+        get() = StateBacktracking(context.copy(rules = Cursor.empty(), step = nextStep()))
 
     override fun computeNext(): State {
         return when (val unifier = context.goals.current!! mguWith context.rules.current!!.head) {

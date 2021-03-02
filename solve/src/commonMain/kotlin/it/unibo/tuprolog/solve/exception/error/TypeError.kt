@@ -41,8 +41,11 @@ class TypeError(
         extraData: Term? = null
     ) : this(message, cause, arrayOf(context), expectedType, culprit, extraData)
 
-    override fun updateContext(newContext: ExecutionContext): TypeError =
-        TypeError(message, cause, contexts.setFirst(newContext), expectedType, culprit, extraData)
+    override fun updateContext(newContext: ExecutionContext, index: Int): TypeError =
+        TypeError(message, cause, contexts.setItem(index, newContext), expectedType, culprit, extraData)
+
+    override fun updateLastContext(newContext: ExecutionContext): TypeError =
+        updateContext(newContext, contexts.lastIndex)
 
     override fun pushContext(newContext: ExecutionContext): TypeError =
         TypeError(message, cause, contexts.addLast(newContext), expectedType, culprit, extraData)
@@ -98,20 +101,19 @@ class TypeError(
             expectedType: Expected,
             culprit: Term,
             index: Int? = null
-        ) =
-            message(
-                (index?.let { "The $it-th argument" } ?: "An argument") +
-                    " of `${procedure.pretty()}` should be a `$expectedType`, " +
-                    "but `${culprit.pretty()}` has been provided instead"
-            ) { m, extra ->
-                TypeError(
-                    message = m,
-                    context = context,
-                    expectedType = expectedType,
-                    culprit = culprit,
-                    extraData = extra
-                )
-            }
+        ) = message(
+            (index?.let { "The $it-th argument" } ?: "An argument") +
+                " of `${procedure.pretty()}` should be a `$expectedType`, " +
+                "but `${culprit.pretty()}` has been provided instead"
+        ) { m, extra ->
+            TypeError(
+                message = m,
+                context = context,
+                expectedType = expectedType,
+                culprit = culprit,
+                extraData = extra
+            )
+        }
 
         @JsName("forGoal")
         @JvmStatic

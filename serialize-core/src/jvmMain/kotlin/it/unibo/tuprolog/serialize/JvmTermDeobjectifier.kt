@@ -79,7 +79,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
             items.map {
                 deobjectify(it ?: throw DeobjectificationException(value))
             },
-            last = last?.let { deobjectify(it) }
+            last = last?.let { deobjectify(it) } ?: scope.emptyList
         )
     }
 
@@ -114,7 +114,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     private fun deobjectifyVariable(value: Map<*, *>): Term {
         val name = value["var"] as? String ?: throw DeobjectificationException(value)
-        return if (name == Var.ANONYMOUS_VAR_NAME) {
+        return if (name == Var.ANONYMOUS_NAME) {
             scope.anonymous()
         } else {
             scope.varOf(name)

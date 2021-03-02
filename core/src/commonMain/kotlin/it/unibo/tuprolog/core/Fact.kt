@@ -17,6 +17,9 @@ interface Fact : Rule {
     override fun freshCopy(scope: Scope): Fact
 
     companion object {
+
+        const val FUNCTOR = Terms.CLAUSE_FUNCTOR
+
         @JvmStatic
         @JsName("of")
         fun of(head: Struct): Fact = FactImpl(head)

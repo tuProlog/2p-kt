@@ -37,6 +37,10 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
     @JsName("getOriginal")
     fun getOriginal(variable: Var): Var?
 
+    @JsName("getByName")
+    fun getByName(name: String): Term? =
+        keys.find { it.name == name }?.let { get(it) }
+
     /**
      * Creates a new [Substitution] that is the *composition* (a.k.a. union) of `this` and [other].
      * The composition is not guaranteed to be a [Substitution.Unifier], even if both arguments are.

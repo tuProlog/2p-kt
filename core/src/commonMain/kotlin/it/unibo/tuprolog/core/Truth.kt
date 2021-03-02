@@ -20,22 +20,22 @@ interface Truth : Atom {
     companion object {
 
         @JvmField
-        val TRUE_FUNCTOR = "true"
+        val TRUE_FUNCTOR = Terms.TRUE_FUNCTOR
 
         @JvmField
-        val FALSE_FUNCTOR = "false"
+        val FALSE_FUNCTOR = Terms.FALSE_FUNCTOR
 
         @JvmField
-        val FAIL_FUNCTOR = "fail"
+        val FAIL_FUNCTOR = Terms.FAIL_FUNCTOR
 
         @JvmField
-        val TRUE: Truth = TruthImpl(TRUE_FUNCTOR, true)
+        val TRUE: Truth = TruthImpl(Terms.TRUE_FUNCTOR, true)
 
         @JvmField
-        val FAIL: Truth = TruthImpl(FAIL_FUNCTOR, false)
+        val FAIL: Truth = TruthImpl(Terms.FAIL_FUNCTOR, false)
 
         @JvmField
-        val FALSE: Truth = TruthImpl(FALSE_FUNCTOR, false)
+        val FALSE: Truth = TruthImpl(Terms.FALSE_FUNCTOR, false)
 
         @JvmStatic
         @JsName("of")
@@ -46,9 +46,9 @@ interface Truth : Atom {
         @JsName("ofString")
         fun of(string: String): Truth =
             when (string) {
-                TRUE_FUNCTOR -> TRUE
-                FALSE_FUNCTOR -> FALSE
-                FAIL_FUNCTOR -> FAIL
+                Terms.TRUE_FUNCTOR -> TRUE
+                Terms.FALSE_FUNCTOR -> FALSE
+                Terms.FAIL_FUNCTOR -> FAIL
                 else -> throw IllegalArgumentException("Cannot parse $string as a Truth value")
             }
     }

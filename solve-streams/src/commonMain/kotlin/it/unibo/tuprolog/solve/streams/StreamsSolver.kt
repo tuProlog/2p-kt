@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.streams
 
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
@@ -141,11 +140,5 @@ internal class StreamsSolver constructor(
         /** Internal version of other [solve] method, that accepts raw requests and returns raw responses */
         internal fun solveToResponses(goalRequest: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
             solveToFinalStates(goalRequest).map { it.solve }
-
-        /** Utility function to clean up unassigned variables from final result */
-        private fun Solution.cleanUp(): Solution = when (this) {
-            is Solution.Yes -> copy(substitution = substitution.filter { _, term -> term !is Var })
-            else -> this
-        }
     }
 }

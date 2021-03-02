@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 import it.unibo.tuprolog.core.impl.IndicatorImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -20,7 +21,7 @@ interface Indicator : Struct {
         get() = true
 
     override val functor: String
-        get() = FUNCTOR
+        get() = INDICATOR_FUNCTOR
 
     override val args: Array<Term>
         get() = arrayOf(nameTerm, arityTerm)
@@ -70,7 +71,7 @@ interface Indicator : Struct {
     companion object {
 
         /** The canonical indicator functor: `/` */
-        const val FUNCTOR = "/"
+        const val FUNCTOR = INDICATOR_FUNCTOR
 
         /** Creates an indicator denoting functor named [name] with [arity] */
         @JvmStatic

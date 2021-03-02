@@ -4,7 +4,10 @@ import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
-internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall {
+internal class TestCallImpl(
+    private val solverFactory: SolverFactory,
+    override val errorSignature: Signature
+) : TestCall {
     override fun testCallCut() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -13,7 +16,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.yes()),
+                ktListOf(query.yes()),
                 solutions
             )
         }
@@ -27,7 +30,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                ktListOf(query.no()),
                 solutions
             )
         }
@@ -41,7 +44,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                ktListOf(query.no()),
                 solutions
             )
         }
@@ -55,7 +58,7 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(query.no()),
+                ktListOf(query.no()),
                 solutions
             )
         }
@@ -69,11 +72,11 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             varOf("X")
                         )
                     )
@@ -91,14 +94,13 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             numOf(1)
-
                         )
                     )
                 ),
@@ -115,11 +117,11 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         InstantiationError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             varOf("X")
                         )
                     )
@@ -137,14 +139,13 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             numOf(1)
-
                         )
                     )
                 ),
@@ -161,14 +162,13 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             fail and 1 // solver returns 1
-
                         )
                     )
                 ),
@@ -185,14 +185,13 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             write(3) and 1 // solver returns 1
-
                         )
                     )
                 ),
@@ -209,14 +208,13 @@ internal class TestCallImpl(private val solverFactory: SolverFactory) : TestCall
             val solutions = solver.solve(query, mediumDuration).toList()
 
             assertSolutionEquals(
-                kotlin.collections.listOf(
+                ktListOf(
                     query.halt(
                         TypeError.forGoal(
                             DummyInstances.executionContext,
-                            Signature("call", 1),
+                            errorSignature,
                             TypeError.Expected.CALLABLE,
                             (1 or true) // solver returns 1
-
                         )
                     )
                 ),

@@ -27,11 +27,14 @@ internal object AssertionUtils {
         assertTrue("Element at index ${boolean.indexOf(true)} expected to be `false`") { boolean.none { it } }
 
     /** Asserts mutual structural equality for two [Term]s */
-    fun assertStructurallyEquals(expected: Term, actual: Term) =
-        assertTrue(
-            expected structurallyEquals actual,
+    fun assertStructurallyEquals(expected: Term, actual: Term) {
+        assertTrue("$actual should be structurally equal to $expected, while it is not") {
+            expected structurallyEquals actual
+        }
+        assertTrue("$actual  should be structurally equal to $expected, while it is not") {
             actual structurallyEquals expected
-        )
+        }
+    }
 
     /** Asserts mutual equality for two [Term]s, using simple names for [Var]iables */
     fun assertEqualsUsingVariablesSimpleNames(expected: Term, actual: Term) =

@@ -12,9 +12,9 @@ import kotlin.test.assertSame
  */
 internal class TruthTest {
 
-    private val TRUE = TruthImpl(Truth.TRUE_FUNCTOR, true)
-    private val FAIL = TruthImpl(Truth.FAIL_FUNCTOR, false)
-    private val FALSE = TruthImpl(Truth.FALSE_FUNCTOR, false)
+    private val TRUE = TruthImpl(Terms.TRUE_FUNCTOR, true)
+    private val FAIL = TruthImpl(Terms.FAIL_FUNCTOR, false)
+    private val FALSE = TruthImpl(Terms.FALSE_FUNCTOR, false)
 
     @Test
     fun trueTruthCreation() {

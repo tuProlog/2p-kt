@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.utils.cursor
 
-internal data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
+data class StatePrimitiveSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
     private fun exceptionalState(exception: TuPrologRuntimeException): StateException {
         return StateException(
@@ -35,18 +35,15 @@ internal data class StatePrimitiveSelection(override val context: ClassicExecuti
                     val signature = goal.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
-                        val req = toRequest(goal, signature)
+                        val childContext = createChild()
+                        val request = childContext.toRequest(goal, signature)
                         val primitive = libraries.primitives[signature]
                             ?: error("Inconsistent behaviour of Library.contains and Library.get")
-
                         try {
-                            val primitiveExecutions = primitive(req).cursor()
-
-                            StatePrimitiveExecution(
-                                context.createChildAppendingPrimitivesAndChoicePoints(primitiveExecutions)
-                            )
+                            val primitiveExecutions = primitive(request).cursor()
+                            StatePrimitiveExecution(childContext.appendPrimitivesAndChoicePoints(primitiveExecutions))
                         } catch (exception: TuPrologRuntimeException) {
-                            exceptionalState(exception.updateContext(context))
+                            exceptionalState(exception.updateLastContext(childContext.skipThrow()))
                         }
                     } else {
                         StateRuleSelection(context.copy(step = nextStep()))

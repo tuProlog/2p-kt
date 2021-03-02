@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -26,6 +27,19 @@ internal class SubstitutionUnifierTest {
     private val substitutions by lazy {
         SubstitutionUtils.mixedSubstitutions.map(Substitution.Companion::unifier) +
             listOf(aVarToXAtomSubstitution, bVarToXAtomSubstitution)
+    }
+
+    @Test
+    fun unifierGetByNameRetrievesSomeMatchingVariable() {
+        val anotherVar = Var.of("A")
+        val unifier = Substitution.unifier(
+            aVar to Integer.of(1),
+            anotherVar to Integer.of(2),
+            bVar to xAtom
+        )
+        assertTrue { unifier.getByName("A") is Integer }
+        assertTrue { unifier.getByName("B") is Atom }
+        assertNull(unifier.getByName("C"))
     }
 
     @Test

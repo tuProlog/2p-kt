@@ -133,7 +133,7 @@ internal class StructTest {
 
     @Test
     fun structFoldCanCreateFoldedConsInstancesPipeTerminated() {
-        val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { List.from(it.dropLast(), it.last()) }
+        val correctInstances = ConsUtils.onlyConsPipeTerminatedElementLists.map { List.from(it) }
         val toBeTested = ConsUtils.onlyConsPipeTerminatedElementLists.map { Struct.fold(Cons.FUNCTOR, it) }
 
         onCorrespondingItems(correctInstances, toBeTested, ::assertEqualities)

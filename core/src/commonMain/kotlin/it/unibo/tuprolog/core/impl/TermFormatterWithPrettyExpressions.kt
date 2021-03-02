@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.TermFormatter
+import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -90,7 +91,7 @@ internal class TermFormatterWithPrettyExpressions private constructor (
     }
 
     override fun visitTuple(term: Tuple): String {
-        val op = Tuple.FUNCTOR
+        val op = TUPLE_FUNCTOR
         val string = term.unfoldedSequence
             .map { it.accept(itemFormatter()) }
             .joinToString("${op.prefix}$op${op.suffix}")

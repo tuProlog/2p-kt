@@ -31,7 +31,7 @@ interface EmptyList : Empty, LogicList {
 
     companion object {
 
-        const val FUNCTOR: String = Empty.EMPTY_LIST_FUNCTOR
+        const val FUNCTOR: String = Terms.EMPTY_LIST_FUNCTOR
 
         @JvmStatic
         @JsName("invoke")
