@@ -25,15 +25,16 @@ internal open class ProblogSolver(
     override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         val probabilityVar = Var.of("Prob")
         val mode = if (options.isProbabilistic) ProbSetMode.ProblogMode else ProbSetMode.PrologMode
-        return solver.solve(Struct.of(ProbQuery.functor, probabilityVar, goal, mode), options)
+        return solver.solve(Struct.of(ProbQuery.functor, probabilityVar, goal, mode), options.setTimeout(TimeDuration.MAX_VALUE))
             .map {
                 val probabilityTerm = it.substitution[probabilityVar]
                 val newSolution = when (it) {
                     is Solution.Yes -> Solution.yes(
-                        it.solvedQuery[1] as Struct,
+                        goal,
                         it.substitution.filter { key, _ -> key != probabilityVar }
                     )
-                    else -> Solution.no(it.query)
+                    is Solution.Halt -> Solution.halt(goal, it.exception)
+                    else -> Solution.no(goal)
                 }
                 if (!options.isProbabilistic) {
                     newSolution
