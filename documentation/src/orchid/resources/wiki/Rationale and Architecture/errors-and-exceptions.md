@@ -27,6 +27,8 @@ This type defines two properties:
 
 ## Run-time exceptions
 
+Run-time exceptions happen during `Solver` executions. They are defined by `TuPrologException`'s subclass `TuPrologRuntimeException` which adds the `contexts: Array<ExecutionContext>` property, describing the stack of contexts that localize the exception in the execution flow.
+
 ## Prolog-level errors
 
 These kind of errors occur when something goes wrong at Prolog language level. Their definitions and properties are described by an [ISO standard](http://www.gprolog.org/manual/html_node/gprolog020.html), which explains their meaning and when they should be raised. Each Prolog implementation is expected to support them, and 2P-Kt strives to do so.
