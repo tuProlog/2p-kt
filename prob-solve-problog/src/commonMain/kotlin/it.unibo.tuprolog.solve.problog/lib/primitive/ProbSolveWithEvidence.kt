@@ -47,6 +47,8 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
         val solutions = solve(Struct.of(ProbSolve.functor, goalExplanationVar, third))
         return sequence {
             for (solution in solutions) {
+                if (solution.isHalt) throw solution.exception!!
+
                 val goalExplanationTerm = solution.substitution[goalExplanationVar]
                 if (evidenceExplanationTerm == null ||
                     evidenceExplanationTerm !is ProbExplanationTerm ||

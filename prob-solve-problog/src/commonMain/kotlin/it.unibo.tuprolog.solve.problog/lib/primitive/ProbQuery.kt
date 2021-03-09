@@ -45,6 +45,8 @@ internal object ProbQuery : TernaryRelation.WithoutSideEffects<ExecutionContext>
 
         return sequence {
             for (solution in solutions) {
+                if (solution.isHalt) throw solution.exception!!
+
                 val queryWithEvidenceExplanationTerm = solution.substitution[queryWithEvidenceExplanation]
                 val evidenceExplanationTerm = solution.substitution[evidenceExplanation]
 

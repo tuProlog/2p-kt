@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
+import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -52,9 +53,7 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
         val explanationVar = Var.of(EXPLANATION_VAR_NAME)
         val solutions = solve(Struct.of(Prob.functor, explanationVar, second)).toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
-        if (error != null) {
-            return sequenceOf(Substitution.failed())
-        }
+        if (error != null) throw error.exception
 
         return if (!solutions.any { s -> s is Solution.Yes }) {
             sequenceOf(Substitution.of(first mguWith ProbExplanationTerm(ProbExplanation.FALSE)))

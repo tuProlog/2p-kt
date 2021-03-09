@@ -14,8 +14,8 @@ import it.unibo.tuprolog.core.exception.TuPrologException
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.primitive.Prob
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbExplAnd
+import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.utils.setTag
 
 /**
@@ -97,8 +97,15 @@ internal fun Term.withBodyExplanation(explanation: Term): Struct {
  * The wrapping is not applied recursively.
  * */
 internal fun Term.wrapInPredicate(functor: String, explanation: Term): Struct {
-    return Struct.of(functor, explanation, this)
+    return if (this is Struct && this.functor in nonWrappableFunctors) {
+        Tuple.of(
+            this,
+            Struct.of("=", explanation, ProbExplanation.TRUE.toTerm())
+        )
+    } else Struct.of(functor, explanation, this)
 }
+
+private val nonWrappableFunctors = setOf("!")
 
 /** Wraps the [this] term with the provided in a new predicate that has [functor] as its
  * functor, and [this] and [explanation] as argument terms. In this use case, [explanation]

@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.problog.lib.primitive.SpecificPrimitives
+import it.unibo.tuprolog.solve.problog.lib.rules.SpecificRules
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
 import it.unibo.tuprolog.theory.Theory
 
@@ -25,7 +26,9 @@ object ProblogLib : AliasedLibrary by CommonBuiltins {
         )
     }
 
-    override val theory: Theory = Theory.empty()
+    override val theory: Theory by lazy {
+        SpecificRules.theory
+    }
 
     override val primitives: Map<Signature, Primitive> by lazy {
         SpecificPrimitives.primitives
