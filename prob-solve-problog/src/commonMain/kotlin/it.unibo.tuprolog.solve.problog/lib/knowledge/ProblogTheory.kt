@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.MappedProblogTheory
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import kotlin.js.JsName
@@ -96,6 +97,10 @@ interface ProblogTheory : Theory {
         @JvmStatic
         @JsName("ofIterable")
         fun of(clauses: Iterable<Clause>): ProblogTheory =
-            MappedProblogTheory(clauses)
+            if (clauses is MutableTheory) {
+                MutableProblogTheory.of(clauses)
+            } else {
+                MappedProblogTheory(clauses)
+            }
     }
 }

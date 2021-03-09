@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toSolveOptions
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -35,12 +36,13 @@ internal object ProbQuery : TernaryRelation.WithoutSideEffects<ExecutionContext>
 
         val queryWithEvidenceExplanation = Var.of("QueryWithEvidenceExplanation")
         val evidenceExplanation = Var.of("EvidenceExplanation")
-        val solutions = solve(
+        val solutions = subSolver().solve(
             Tuple.of(
-                Struct.of(ProbSetMode.functor, third),
+                Struct.of(ProbSetConfig.functor, third),
                 Struct.of(ProbSolveWithEvidence.functor, queryWithEvidenceExplanation, evidenceExplanation, second),
                 Struct.of(ProbExplDebug.functor, queryWithEvidenceExplanation),
-            )
+            ),
+            third.toSolveOptions()
         )
 
         return sequence {

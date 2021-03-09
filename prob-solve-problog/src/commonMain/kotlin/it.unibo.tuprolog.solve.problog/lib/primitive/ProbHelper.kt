@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.extractSignature
@@ -15,7 +16,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.safeToStruct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withBodyExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withExplanation
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
@@ -32,9 +33,6 @@ import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
  * @author Jason Dellaluce
  */
 internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext>("${PREDICATE_PREFIX}_helper") {
-    private val negationAsFailureFunctors = setOf("\\+", "not")
-
-    private val recursiveGoalFunctors = setOf(",", ";", "->")
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
@@ -50,11 +48,15 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
             /* Apply selective behavior based on goal's functor */
             when (goal.functor) {
                 /* Edge case: Negation as failure */
-                in negationAsFailureFunctors -> yield(
+                "\\+", "not" -> yield(
                     /* Optimize Prolog-only queries */
                     if (context.isPrologMode()) {
-                        (third mguWith Struct.of("\\+", Struct.of(functor, Var.anonymous(), goal[0]))) +
-                            (first mguWith ProbExplanation.TRUE.toTerm())
+                        (
+                            third mguWith Struct.of(
+                                goal.functor,
+                                Struct.of(Prob.functor, Var.anonymous(), goal[0])
+                            )
+                            ) + (first mguWith ProbExplanation.TRUE.toTerm())
                     } else {
                         third mguWith Struct.of(ProbNegationAsFailure.functor, first, goal[0])
                     }
@@ -63,7 +65,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                 * NOTE: This is not supposed to trigger regularly because we map the theory prior to query execution,
                 * however this happens when the current goal is the initial query itself. As such, we want recursive
                 * predicates in queries to be supported. */
-                in recursiveGoalFunctors -> yield(
+                ",", ";", "->" -> yield(
                     /* Optimize Prolog-only queries */
                     if (context.isPrologMode()) {
                         (third mguWith goal.withBodyExplanation(Var.anonymous())) +
@@ -73,29 +75,57 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                     }
                 )
                 /* Edge case: call/1 predicate*/
-                "call" -> yield(third mguWith Struct.of(goal.functor, goal[0].withExplanation(first)))
-                /* Edge case: findall/3 and findall/4 */
-                "findall" -> {
+                "call" -> {
+                    val newGoal = goal[0]
+                    yield(
+                        third mguWith Tuple.of(
+                            Struct.of("ensure_executable", newGoal),
+                            Struct.of(goal.functor, newGoal.withBodyExplanation(first))
+                        )
+                    )
+                }
+                /* Edge case: catch/3 predicate*/
+                "catch" -> {
+                    yield(
+                        third mguWith Struct.of(
+                            goal.functor,
+                            goal[0].withBodyExplanation(first),
+                            goal[1],
+                            goal[2].withBodyExplanation(first)
+                        )
+                    )
+                }
+                /* Edge case: findall/3, findall/4, bagof/3 and bagof/4 */
+                "findall", "bagof" -> {
                     val goalArgs = goal.args.copyOf()
-                    goalArgs[1] = goalArgs[1].withExplanation(Var.anonymous())
+                    goalArgs[1] = goalArgs[1].withBodyExplanation(Var.anonymous())
                     yield(
                         (third mguWith Struct.of(goal.functor, *goalArgs)) +
                             (first mguWith ProbExplanation.TRUE.toTerm())
                     )
                 }
-                /* Edge case: bagof/3 and bagof/4 */
-                "bagof" -> {
-                    val goalArgs = goal.args.copyOf()
-                    goalArgs[1] = goalArgs[1].withExplanation(Var.anonymous())
+                "assert", "asserta", "assertz" -> {
                     yield(
-                        (third mguWith Struct.of(goal.functor, *goalArgs)) +
-                            (first mguWith ProbExplanation.TRUE.toTerm())
+                        third mguWith Struct.of(
+                            goal.functor,
+                            goal[0].withExplanation(first)
+                        )
+                    )
+                }
+                "retract", "retractall" -> {
+                    yield(
+                        third mguWith Struct.of(
+                            goal.functor,
+                            if (goal[0].isClause || goal[0].safeToStruct().extractSignature() in context.libraries) {
+                                goal[0]
+                            } else goal[0].withExplanation(first)
+                        )
                     )
                 }
                 /* Bottom-line general case */
                 else -> {
                     /* Support for Prolog libraries backwards compatibility */
-                    val isPrologOnly = first is Truth || goalSignature in context.libraries
+                    val isPrologOnly = second is Truth || goalSignature in context.libraries
                     if (isPrologOnly ||
                         goalSignature.toIndicator() in context.staticKb ||
                         goalSignature.toIndicator() in context.dynamicKb

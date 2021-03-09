@@ -4,7 +4,7 @@ import it.unibo.tuprolog.theory.Theory
 
 internal object SpecificRules {
     private val wrappers = sequenceOf(
-        Prob
+        Prob,
     )
 
     val theory: Theory = Theory.indexedOf(

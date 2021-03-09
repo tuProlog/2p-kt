@@ -11,6 +11,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 api(project(":parser-theory"))
+                api(project(":test-solve"))
             }
         }
     }

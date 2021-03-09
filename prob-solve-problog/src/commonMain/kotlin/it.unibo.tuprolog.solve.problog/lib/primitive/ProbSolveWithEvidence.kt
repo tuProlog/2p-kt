@@ -11,7 +11,8 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -38,13 +39,19 @@ internal object ProbSolveWithEvidence : TernaryRelation.WithoutSideEffects<Execu
             /* No need to compute evidence for Prolog-only queries */
             ProbExplanation.TRUE.toTerm()
         } else {
-            context.createSolver()
-                .solve(Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar))
+            subSolver()
+                .solve(
+                    Struct.of(ProbSolveEvidence.functor, evidenceExplanationVar),
+                    context.getSolverOptions()
+                )
                 .first().substitution[evidenceExplanationVar]
         }
 
         val goalExplanationVar = Var.of("GoalExplanation")
-        val solutions = solve(Struct.of(ProbSolve.functor, goalExplanationVar, third))
+        val solutions = subSolver().solve(
+            Struct.of(ProbSolve.functor, goalExplanationVar, third),
+            context.getSolverOptions()
+        )
         return sequence {
             for (solution in solutions) {
                 if (solution.isHalt) throw solution.exception!!

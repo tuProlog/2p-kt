@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.problog
 
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
@@ -13,8 +14,11 @@ import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.isProbabilistic
 import it.unibo.tuprolog.solve.library.Libraries
+import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbQuery
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toProbConfigTerm
+import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.solve.setProbability
 import it.unibo.tuprolog.theory.Theory
 
@@ -24,8 +28,24 @@ internal open class ProblogSolver(
 
     override fun solve(goal: Struct, options: SolveOptions): Sequence<Solution> {
         val probabilityVar = Var.of("Prob")
-        val mode = if (options.isProbabilistic) ProbSetMode.ProblogMode else ProbSetMode.PrologMode
-        return solver.solve(Struct.of(ProbQuery.functor, probabilityVar, goal, mode), options.setTimeout(TimeDuration.MAX_VALUE))
+        // Solve in Prolog mode
+        if (!options.isProbabilistic) {
+            val anonVar = Var.anonymous()
+            return solver.solve(
+                Tuple.of(
+                    Struct.of(ProbSetConfig.functor, options.toProbConfigTerm()),
+                    Struct.of(Prob.functor, anonVar, goal),
+                ),
+                options
+            ).map {
+                when (it) {
+                    is Solution.Yes -> Solution.yes(goal, it.substitution.filter { key, _ -> key != anonVar })
+                    is Solution.Halt -> Solution.halt(goal, it.exception)
+                    else -> Solution.no(goal)
+                }
+            }
+        }
+        return solver.solve(Struct.of(ProbQuery.functor, probabilityVar, goal, options.toProbConfigTerm()), options)
             .map {
                 val probabilityTerm = it.substitution[probabilityVar]
                 val newSolution = when (it) {
@@ -73,7 +93,18 @@ internal open class ProblogSolver(
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<PrologWarning>
     ): Solver {
-        return ProblogSolver(solver.copy(libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings))
+        return ProblogSolver(
+            solver.copy(
+                libraries,
+                flags,
+                ProblogTheory.of(staticKb),
+                ProblogTheory.of(dynamicKb),
+                stdIn,
+                stdOut,
+                stdErr,
+                warnings
+            )
+        )
     }
 
     override fun clone(): Solver {

@@ -10,7 +10,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**

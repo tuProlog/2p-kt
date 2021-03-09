@@ -12,7 +12,8 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
-import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetMode.isPrologMode
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.isPrologMode
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
@@ -47,11 +48,16 @@ internal object ProbSolve : BinaryRelation.WithoutSideEffects<ExecutionContext>(
 
         /* Optimize Prolog-only queries */
         if (context.isPrologMode()) {
-            return solve(Struct.of(Prob.functor, first, second)).map { it.substitution }
+            return subSolver().solve(Struct.of(Prob.functor, first, second), context.getSolverOptions()).map {
+                if (it.isHalt) throw it.exception!!
+                it.substitution
+            }
         }
 
         val explanationVar = Var.of(EXPLANATION_VAR_NAME)
-        val solutions = solve(Struct.of(Prob.functor, explanationVar, second)).toList()
+        val solutions = subSolver()
+            .solve(Struct.of(Prob.functor, explanationVar, second), context.getSolverOptions())
+            .toList()
         val error = solutions.asSequence().filterIsInstance<Solution.Halt>().firstOrNull()
         if (error != null) throw error.exception
 

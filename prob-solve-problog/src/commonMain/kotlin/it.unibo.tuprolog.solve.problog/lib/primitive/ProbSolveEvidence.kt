@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EVIDENCE_PREDICATE
@@ -14,6 +15,7 @@ import it.unibo.tuprolog.solve.problog.lib.ProblogLib.EXPLANATION_VAR_NAME
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
+import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.getSolverOptions
 import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
 
 /**
@@ -46,7 +48,11 @@ internal object ProbSolveEvidence : UnaryPredicate.NonBacktrackable<ExecutionCon
 
         val evidenceTermVar = Var.of("TermVar")
         val evidenceTruthVar = Var.of("TruthVar")
-        val result = solve(Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar))
+        val result = subSolver()
+            .solve(
+                Struct.of(EVIDENCE_PREDICATE, evidenceTermVar, evidenceTruthVar),
+                context.getSolverOptions().setLimit(SolveOptions.ALL_SOLUTIONS).setLazy(false)
+            )
             .filterIsInstance<Solution.Yes>()
             .toList()
             .map {

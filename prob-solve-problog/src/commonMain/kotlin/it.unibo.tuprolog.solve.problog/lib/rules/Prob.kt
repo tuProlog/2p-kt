@@ -34,10 +34,13 @@ internal object Prob : RuleWrapper<ClassicExecutionContext>(ProblogLib.PREDICATE
 
     override val Scope.body: Term
         get() {
+            val expl = varOf("EXPL")
+            val goal = varOf("GOAL")
             val newGoal = varOf("NEW_GOAL")
             return tupleOf(
                 atomOf("!"),
-                structOf(ProbHelper.functor, varOf("EXPL"), varOf("GOAL"), newGoal),
+                structOf("ensure_executable", goal),
+                structOf(ProbHelper.functor, expl, goal, newGoal),
                 newGoal
             )
         }
