@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.primitive
 
+import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -12,6 +14,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib.PREDICATE_PREFIX
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
+import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.ClauseMappingUtils
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.safeToStruct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.toTerm
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.withBodyExplanation
@@ -104,9 +107,31 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             (first mguWith ProbExplanation.TRUE.toTerm())
                     )
                 }
-                "assert", "asserta", "assertz" -> yield(
-                    (third mguWith goal) + (first mguWith ProbExplanation.TRUE.toTerm())
-                )
+                /* Edge case: assert family */
+                "assert", "asserta", "assertz" -> {
+                    val subGoal = goal[0]
+                    val subGoalSignature = when (subGoal) {
+                        is Clause -> subGoal.head!!.extractSignature()
+                        else -> subGoal.safeToStruct().extractSignature()
+                    }
+                    if (subGoalSignature in context.libraries || (subGoal is Clause && !subGoal.isWellFormed)) {
+                        yield((third mguWith goal) + (first mguWith ProbExplanation.TRUE.toTerm()))
+                    } else {
+                        val newGoals = when (subGoal) {
+                            is Clause -> ClauseMappingUtils.map(subGoal)
+                            is Struct -> ClauseMappingUtils.map(Fact.of(subGoal)).map {
+                                it.head!!
+                            }
+                            else -> listOf(subGoal)
+                        }
+                        yieldAll(
+                            newGoals.map {
+                                (third mguWith Struct.of(goal.functor, it)) + (first mguWith ProbExplanation.TRUE.toTerm())
+                            }
+                        )
+                    }
+                }
+                /* Edge case: retract family */
                 "retract", "retractall" -> {
                     yield(
                         third mguWith Struct.of(
@@ -116,6 +141,21 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             } else goal[0].withExplanation(first)
                         )
                     )
+                }
+                /* Edge case: clause */
+                "clause" -> {
+                    val subGoal = goal[0]
+                    if (subGoal !is Struct || context.libraries.hasProtected(subGoal.extractSignature())) {
+                        yield((third mguWith goal) + (first mguWith ProbExplanation.TRUE.toTerm()))
+                    } else {
+                        yield(
+                            third mguWith Struct.of(
+                                goal.functor,
+                                goal[0].withExplanation(first),
+                                goal[1]
+                            )
+                        )
+                    }
                 }
                 /* Bottom-line general case */
                 else -> {

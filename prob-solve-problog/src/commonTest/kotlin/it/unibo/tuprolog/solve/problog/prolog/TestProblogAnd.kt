@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.problog.prolog
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestAnd
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogAnd : TestAnd, SolverFactory by ProblogSolverFactory {
@@ -24,10 +25,11 @@ class TestProblogAnd : TestAnd, SolverFactory by ProblogSolverFactory {
         prototype.testFailIsCallable()
     }
 
+    /* NOTE: Ignored because it relies on the internal representation of the knowledge base, not significant here */
+    @Ignore
     @Test
     override fun testNoFooIsCallable() {
-        // NOTE: This fails but is not significant
-        // prototype.testNoFooIsCallable()
+        prototype.testNoFooIsCallable()
     }
 
     @Test

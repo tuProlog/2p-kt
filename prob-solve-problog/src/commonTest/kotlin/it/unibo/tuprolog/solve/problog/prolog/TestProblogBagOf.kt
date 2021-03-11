@@ -35,13 +35,11 @@ class TestProblogBagOf : TestBagOf, SolverFactory by ProblogSolverFactory {
 
     @Test
     override fun testBagOfInstanceError() {
-        // NOTE: This fails but is not significant
-        // prototype.testBagOfInstanceError()
+        prototype.testBagOfInstanceError()
     }
 
     @Test
     override fun testBagOfTypeError() {
-        // NOTE: This fails but is not significant
-        // prototype.testBagOfTypeError()
+        prototype.testBagOfTypeError()
     }
 }

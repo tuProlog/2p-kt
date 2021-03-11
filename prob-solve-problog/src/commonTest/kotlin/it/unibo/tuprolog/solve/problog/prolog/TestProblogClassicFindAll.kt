@@ -4,6 +4,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.TestFindAll
 import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFactory {
@@ -43,16 +44,20 @@ class TestProblogClassicFindAll : TestFindAll, SolverFactory by ProblogSolverFac
         prototype.testFindXtoDoubleAssigment()
     }
 
+    /* NOTE: Ignored because not significant. The test expects the solver to HALT (and it does),
+    * but strictly checks the message error that, in this case, is not the one expected due to the
+    * presence of meta-predicates such as Prob. */
+    @Ignore
     @Test
     override fun testFindXinGoal() {
-        // NOTE: This fails but is not significant
-        // prototype.testFindXinGoal()
+        prototype.testFindXinGoal()
     }
 
+    /* NOTE: See comment above */
+    @Ignore
     @Test
     override fun testFindXinNumber() {
-        // NOTE: This fails but is not significant
-        // prototype.testFindXinNumber()
+        prototype.testFindXinNumber()
     }
 
     @Test
