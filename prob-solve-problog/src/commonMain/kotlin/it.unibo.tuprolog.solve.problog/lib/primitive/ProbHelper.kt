@@ -95,8 +95,8 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                         )
                     )
                 }
-                /* Edge case: findall/3, findall/4, bagof/3 and bagof/4 */
-                "findall", "bagof" -> {
+                /* Edge case: findall/3, findall/4. NOTE: Should we handle `bagof` too? */
+                "findall" -> {
                     val goalArgs = goal.args.copyOf()
                     goalArgs[1] = goalArgs[1].withBodyExplanation(Var.anonymous())
                     yield(
@@ -104,14 +104,9 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             (first mguWith ProbExplanation.TRUE.toTerm())
                     )
                 }
-                "assert", "asserta", "assertz" -> {
-                    yield(
-                        third mguWith Struct.of(
-                            goal.functor,
-                            goal[0].withExplanation(first)
-                        )
-                    )
-                }
+                "assert", "asserta", "assertz" -> yield(
+                    (third mguWith goal) + (first mguWith ProbExplanation.TRUE.toTerm())
+                )
                 "retract", "retractall" -> {
                     yield(
                         third mguWith Struct.of(

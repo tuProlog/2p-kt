@@ -27,6 +27,7 @@ internal object ClauseMappingUtils {
 
     private var clauseIndex: Long = 1
     private val cascadeMappers = listOf(
+        DirectiveClauseMapper,
         DisjointAnnotationClauseMapper,
         ProbabilisticClauseMapper,
         EvidenceClauseMapper,

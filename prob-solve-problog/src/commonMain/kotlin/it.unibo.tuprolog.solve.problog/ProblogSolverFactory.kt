@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory
 import it.unibo.tuprolog.solve.classic.classic
+import it.unibo.tuprolog.solve.classic.stdlib.rule.Call
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.AliasedLibrary
@@ -16,6 +17,7 @@ import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
+import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.theory.Theory
 
 object ProblogSolverFactory : SolverFactory {
@@ -35,8 +37,34 @@ object ProblogSolverFactory : SolverFactory {
         }
     }
 
+    /* Minimum libraries always needed to solve queries */
+    private object MinimumBuiltins : AliasedLibrary by ProblogLib {
+
+        override val primitives: Map<Signature, Primitive> by lazy {
+            ProblogLib.primitives + sequenceOf(
+                EnsureExecutable
+            ).map { it.descriptionPair }.toMap()
+        }
+
+        override val theory: Theory by lazy {
+            ProblogLib.theory + Theory.indexedOf(
+                sequenceOf(
+                    Call
+                ).map { it.wrappedImplementation }
+            )
+        }
+    }
+
     override val defaultBuiltins: AliasedLibrary
         get() = DefaultBuiltins
+
+    private fun fixLibraries(libraries: Libraries): Libraries {
+        return if (!libraries.containsValue(DefaultBuiltins)) {
+            libraries.plus(MinimumBuiltins)
+        } else {
+            libraries
+        }
+    }
 
     override fun solverOf(
         libraries: Libraries,
@@ -50,7 +78,7 @@ object ProblogSolverFactory : SolverFactory {
     ): Solver =
         ProblogSolver(
             Solver.classic(
-                libraries,
+                fixLibraries(libraries),
                 flags,
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
@@ -73,7 +101,7 @@ object ProblogSolverFactory : SolverFactory {
     ): MutableSolver =
         MutableProblogSolver(
             MutableSolver.classic(
-                libraries,
+                fixLibraries(libraries),
                 flags,
                 ProblogTheory.of(staticKb),
                 ProblogTheory.of(dynamicKb),
