@@ -2,36 +2,19 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.exception.error.DomainError
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
+import it.unibo.tuprolog.solve.flags.MaxArity
 import it.unibo.tuprolog.solve.flags.Unknown
+import it.unibo.tuprolog.utils.indexed
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/*
- * [(set_prolog_flag(unknown, fail), current_prolog_flag(unknown, V)), [[V <-- fail]]].
- * [set_prolog_flag(X, warning), instantiation_error].
- * [set_prolog_flag(5, decimals), type_error(atom,5)].
- * [set_prolog_flag(date, 'July 1999'), domain_error(prolog_flag,date)].
- * [set_prolog_flag(debug, no), domain_error(flag_value,debug+no)].
- * [set_prolog_flag(max_arity, 40), permission_error(modify, flag, max_arity)].
- *
- * [set_prolog_flag(double_quotes, atom), success].
- * [X = "fred", [[X <-- fred]]].
- *
- * [set_prolog_flag(double_quotes, codes), success].
- * [X = "fred", [[X <-- [102,114,101,100]]]].
- *
- * [set_prolog_flag(double_quotes, chars), success].
- * [X = "fred", [[X <-- [f,r,e,d]]]].
- * [current_prolog_flag(debug, off), success].
- * [(set_prolog_flag(unknown, warning), current_prolog_flag(unknown, warning)), success].
- * [(set_prolog_flag(unknown, warning), current_prolog_flag(unknown, error)), failure].
- * [current_prolog_flag(debug, V), [[V <-- off]]].
- * [current_prolog_flag(5, V), type_error(atom,5)].
- * [current_prolog_flag(warning, V), domain_error(prolog_flag,warning)].
- */
-class TestFlagsImpl (private val solverFactory: SolverFactory) : TestFlags {
+class TestFlagsImpl(private val solverFactory: SolverFactory) : TestFlags {
     override fun defaultLastCallOptimizationIsOn() {
         prolog {
             val solver = solverFactory.solverWithDefaultBuiltins()
@@ -67,7 +50,6 @@ class TestFlagsImpl (private val solverFactory: SolverFactory) : TestFlags {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             for (value in Unknown.admissibleValues) {
-
                 val query = set_prolog_flag(Unknown.name, value) and current_prolog_flag(Unknown.name, V)
 
                 assertSolutionEquals(
@@ -91,8 +73,8 @@ class TestFlagsImpl (private val solverFactory: SolverFactory) : TestFlags {
             }
 
             for (term in ktListOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
-                var query = current_prolog_flag(term, `_`);
-                assertEquals(
+                var query = current_prolog_flag(term, `_`)
+                assertSolutionEquals(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -102,11 +84,11 @@ class TestFlagsImpl (private val solverFactory: SolverFactory) : TestFlags {
                             0
                         )
                     ),
-                    solver.solveOnce(query)
+                    solver.solveOnce(query, shortDuration)
                 )
 
-                query = set_prolog_flag(term, "value");
-                assertEquals(
+                query = set_prolog_flag(term, "value")
+                assertSolutionEquals(
                     query.halt(
                         TypeError.forArgument(
                             DummyInstances.executionContext,
@@ -116,33 +98,133 @@ class TestFlagsImpl (private val solverFactory: SolverFactory) : TestFlags {
                             0
                         )
                     ),
-                    solver.solveOnce(query)
+                    solver.solveOnce(query, shortDuration)
                 )
             }
         }
     }
 
     override fun gettingMissingFlagsFails() {
-        TODO("Not yet implemented")
+        prolog {
+            for (flag in ktListOf("a", "b", "c")) {
+                val solver = solverFactory.solverWithDefaultBuiltins()
+
+                assertFalse { solver.flags.containsKey(flag) }
+
+                val query = current_prolog_flag(flag, V)
+
+                assertSolutionEquals(
+                    query.no(),
+                    solver.solveOnce(query, shortDuration)
+                )
+            }
+        }
     }
 
     override fun settingMissingFlagsSucceeds() {
-        TODO("Not yet implemented")
+        prolog {
+            for ((value, flag) in ktListOf("a", "b", "c").asSequence().indexed()) {
+                val solver = solverFactory.solverWithDefaultBuiltins()
+
+                assertFalse { solver.flags.containsKey(flag) }
+
+                val query = set_prolog_flag(flag, value) and current_prolog_flag(flag, X)
+
+                assertSolutionEquals(
+                    query.yes(X to value),
+                    solver.solveOnce(query, shortDuration)
+                )
+
+                assertEquals(value.toTerm(), solver.flags[flag])
+            }
+        }
     }
 
     override fun gettingFlagsByVariableEnumeratesFlags() {
-        TODO("Not yet implemented")
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+            val defaultFlags = solver.flags.mapKeys { (k, _) -> k.toTerm() }
+
+            assertTrue { defaultFlags.isNotEmpty() }
+
+            val query = current_prolog_flag(F, X)
+
+            val selectedFlags = solver.solve(query, shortDuration)
+                .filterIsInstance<Solution.Yes>()
+                .map { it.substitution[F]!! to it.substitution[X]!! }
+                .toMap()
+
+            assertEquals(defaultFlags, selectedFlags)
+        }
     }
 
     override fun settingFlagsByVariableGeneratesInstantiationError() {
-        TODO("Not yet implemented")
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = set_prolog_flag(F, "value")
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        InstantiationError.forArgument(
+                            DummyInstances.executionContext,
+                            Signature("set_prolog_flag", 2),
+                            F,
+                            index = 0
+                        )
+                    )
+                ),
+                solver.solveList(query, shortDuration)
+            )
+        }
     }
 
     override fun settingWrongValueToLastCallOptimizationProvokesDomainError() {
-        TODO("Not yet implemented")
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = set_prolog_flag(LastCallOptimization.name, truthOf(true))
+
+            assertFalse { LastCallOptimization.admissibleValues.contains(truthOf(true)) }
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        DomainError.forFlagValues(
+                            DummyInstances.executionContext,
+                            Signature("set_prolog_flag", 2),
+                            LastCallOptimization.admissibleValues.asIterable(),
+                            truthOf(true),
+                            index = 1
+                        )
+                    )
+                ),
+                solver.solveList(query, shortDuration)
+            )
+        }
     }
 
     override fun attemptingToEditMaxArityFlagProvokesPermissionError() {
-        TODO("Not yet implemented")
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins()
+
+            val query = set_prolog_flag(MaxArity.name, 10)
+
+            assertSolutionEquals(
+                ktListOf(
+                    query.halt(
+                        PermissionError.of(
+                            DummyInstances.executionContext,
+                            Signature("set_prolog_flag", 2),
+                            PermissionError.Operation.MODIFY,
+                            PermissionError.Permission.FLAG,
+                            atomOf(MaxArity.name)
+                        )
+                    )
+                ),
+                solver.solveList(query, shortDuration)
+            )
+        }
     }
 }

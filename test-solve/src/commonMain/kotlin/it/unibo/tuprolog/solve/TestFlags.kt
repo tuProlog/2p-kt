@@ -23,5 +23,6 @@ interface TestFlags : SolverTest {
     fun settingWrongValueToLastCallOptimizationProvokesDomainError()
 
     fun attemptingToEditMaxArityFlagProvokesPermissionError()
+
     fun settingMissingFlagsSucceeds()
 }
