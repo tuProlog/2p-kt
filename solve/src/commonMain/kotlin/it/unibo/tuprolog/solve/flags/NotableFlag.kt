@@ -12,6 +12,10 @@ interface NotableFlag {
     @JsName("defaultValue")
     val defaultValue: Term
 
+    @JsName("isEditable")
+    val isEditable: Boolean
+        get() = true
+
     @JsName("admissibleValues")
     val admissibleValues: Sequence<Term>
 
