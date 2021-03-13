@@ -47,6 +47,8 @@ interface Clause : Struct {
 
     override fun freshCopy(scope: Scope): Clause
 
+    override fun asClause(): Clause = this
+
     companion object {
 
         const val FUNCTOR = CLAUSE_FUNCTOR

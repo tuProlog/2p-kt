@@ -60,6 +60,8 @@ interface Indicator : Struct {
     val indicatedArity: Int?
         get() = (arityTerm as? Integer)?.intValue?.toInt()?.takeIf { it >= 0 }
 
+    override fun asIndicator(): Indicator = this
+
     override fun freshCopy(): Indicator
 
     override fun freshCopy(scope: Scope): Indicator

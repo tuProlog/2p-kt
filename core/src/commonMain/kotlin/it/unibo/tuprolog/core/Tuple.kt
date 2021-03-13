@@ -26,6 +26,8 @@ interface Tuple : Collection {
     @JsName("right")
     val right: Term
 
+    override fun asTuple(): Tuple = this
+
     override fun toArray(): Array<Term> = unfoldedArray
 
     override fun toList(): KtList<Term> = unfoldedList

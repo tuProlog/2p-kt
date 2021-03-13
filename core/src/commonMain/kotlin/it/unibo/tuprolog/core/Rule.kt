@@ -21,6 +21,8 @@ interface Rule : Clause {
 
     override fun freshCopy(scope: Scope): Rule
 
+    override fun asRule(): Rule = this
+
     companion object {
 
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR

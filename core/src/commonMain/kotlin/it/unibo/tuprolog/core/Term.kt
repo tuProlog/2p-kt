@@ -386,9 +386,162 @@ interface Term : Comparable<Term>, Taggable<Term> {
     @JsName("accept")
     fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
 
-    override fun toString(): String
+    /**
+     * Casts the current [Term] to [Atom], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Atom]
+     * @return the current [Term], casted to [Atom]
+     */
+    @JsName("asAtom")
+    fun asAtom(): Atom = throw ClassCastException("Cannot cast $this to ${Atom::class.simpleName}")
 
-    override fun equals(other: Any?): Boolean
+    /**
+     * Casts the current [Term] to [Clause], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Clause]
+     * @return the current [Term], casted to [Clause]
+     */
+    @JsName("asClause")
+    fun asClause(): Clause = throw ClassCastException("Cannot cast $this to ${Clause::class.simpleName}")
 
-    override fun hashCode(): Int
+    /**
+     * Casts the current [Term] to [Cons], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Cons]
+     * @return the current [Term], casted to [Cons]
+     */
+    @JsName("asCons")
+    fun asCons(): Cons = throw ClassCastException("Cannot cast $this to ${Cons::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Constant], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Constant]
+     * @return the current [Term], casted to [Constant]
+     */
+    @JsName("asConstant")
+    fun asConstant(): Constant = throw ClassCastException("Cannot cast $this to ${Constant::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Directive], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Directive]
+     * @return the current [Term], casted to [Directive]
+     */
+    @JsName("asDirective")
+    fun asDirective(): Directive = throw ClassCastException("Cannot cast $this to ${Directive::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [EmptyList], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [EmptyList]
+     * @return the current [Term], casted to [EmptyList]
+     */
+    @JsName("asEmptyList")
+    fun asEmptyList(): EmptyList = throw ClassCastException("Cannot cast $this to ${EmptyList::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [EmptySet], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [EmptySet]
+     * @return the current [Term], casted to [EmptySet]
+     */
+    @JsName("asEmptySet")
+    fun asEmptySet(): EmptySet = throw ClassCastException("Cannot cast $this to ${EmptySet::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Fact], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Fact]
+     * @return the current [Term], casted to [Fact]
+     */
+    @JsName("asFact")
+    fun asFact(): Fact = throw ClassCastException("Cannot cast $this to ${Fact::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Indicator], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Indicator]
+     * @return the current [Term], casted to [Indicator]
+     */
+    @JsName("asIndicator")
+    fun asIndicator(): Indicator = throw ClassCastException("Cannot cast $this to ${Indicator::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Integer], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Integer]
+     * @return the current [Term], casted to [Integer]
+     */
+    @JsName("asInteger")
+    fun asInteger(): Integer = throw ClassCastException("Cannot cast $this to ${Integer::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [List], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [List]
+     * @return the current [Term], casted to [List]
+     */
+    @JsName("asList")
+    fun asList(): List = throw ClassCastException("Cannot cast $this to ${List::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Numeric], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Numeric]
+     * @return the current [Term], casted to [Numeric]
+     */
+    @JsName("asNumeric")
+    fun asNumeric(): Numeric = throw ClassCastException("Cannot cast $this to ${Numeric::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Real], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Real]
+     * @return the current [Term], casted to [Real]
+     */
+    @JsName("asReal")
+    fun asReal(): Real = throw ClassCastException("Cannot cast $this to ${Real::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Rule], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Rule]
+     * @return the current [Term], casted to [Rule]
+     */
+    @JsName("asRule")
+    fun asRule(): Rule = throw ClassCastException("Cannot cast $this to ${Rule::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Set], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Set]
+     * @return the current [Term], casted to [Set]
+     */
+    @JsName("asSet")
+    fun asSet(): Set = throw ClassCastException("Cannot cast $this to ${Set::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Struct], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Struct]
+     * @return the current [Term], casted to [Struct]
+     */
+    @JsName("asStruct")
+    fun asStruct(): Struct = throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Term]
+     * @return the current [Term]
+     */
+    @JsName("asTerm")
+    fun asTerm(): Term = this
+
+    /**
+     * Casts the current [Term] to [Truth], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Truth]
+     * @return the current [Term], casted to [Truth]
+     */
+    @JsName("asTruth")
+    fun asTruth(): Truth = throw ClassCastException("Cannot cast $this to ${Truth::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Tuple], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Tuple]
+     * @return the current [Term], casted to [Tuple]
+     */
+    @JsName("asTuple")
+    fun asTuple(): Tuple = throw ClassCastException("Cannot cast $this to ${Tuple::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Var], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Var]
+     * @return the current [Term], casted to [Var]
+     */
+    @JsName("asVar")
+    fun asVar(): Var = throw ClassCastException("Cannot cast $this to ${Var::class.simpleName}")
 }

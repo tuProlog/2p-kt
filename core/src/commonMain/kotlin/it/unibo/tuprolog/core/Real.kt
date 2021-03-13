@@ -24,6 +24,8 @@ interface Real : Numeric {
 
     override fun freshCopy(scope: Scope): Real
 
+    override fun asReal(): Real = this
+
     companion object {
 
         @JvmField
