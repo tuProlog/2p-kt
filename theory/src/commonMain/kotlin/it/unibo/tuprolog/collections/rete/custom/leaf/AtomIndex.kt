@@ -115,11 +115,8 @@ internal class AtomIndex(
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun Term.asAtom(): Atom =
-        this as Atom
-
     private fun Clause.asInnerAtom(): Atom =
-        this.nestedFirstArgument().asAtom()
+        this.nestedFirstArgument().castToAtom()
 
     private fun SituatedIndexedClause.asInnerAtom(): Atom =
         this.innerClause.nestedFirstArgument() as Atom

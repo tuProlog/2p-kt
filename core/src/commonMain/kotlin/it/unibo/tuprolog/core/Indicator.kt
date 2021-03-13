@@ -46,9 +46,7 @@ interface Indicator : Struct {
      */
     @JsName("isWellFormed")
     val isWellFormed: Boolean
-        get() = nameTerm is Atom &&
-            arityTerm is Integer &&
-            arityTerm.`as`<Integer>().intValue.signum >= 0
+        get() = nameTerm is Atom && arityTerm.let { it is Integer && it.intValue.signum >= 0 }
 
     /** The indicated functor name, if well-formed */
     @JsName("indicatedName")

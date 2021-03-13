@@ -33,6 +33,8 @@ interface Cons : LogicList {
 
     override fun freshCopy(scope: Scope): Cons
 
+    override fun asCons(): Cons = this
+
     companion object {
 
         const val FUNCTOR = CONS_FUNCTOR
