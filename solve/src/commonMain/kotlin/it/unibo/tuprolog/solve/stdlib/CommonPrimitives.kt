@@ -56,6 +56,7 @@ import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
 import it.unibo.tuprolog.solve.stdlib.primitive.SetOf
 import it.unibo.tuprolog.solve.stdlib.primitive.SetPersistent
+import it.unibo.tuprolog.solve.stdlib.primitive.SetPrologFlag
 import it.unibo.tuprolog.solve.stdlib.primitive.Sleep
 import it.unibo.tuprolog.solve.stdlib.primitive.SubAtom
 import it.unibo.tuprolog.solve.stdlib.primitive.TermGreaterThan
@@ -127,6 +128,7 @@ object CommonPrimitives {
             SetEphemeral,
             SetOf,
             SetPersistent,
+            SetPrologFlag,
             Sleep,
             SubAtom,
             TermGreaterThan,

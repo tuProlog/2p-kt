@@ -52,6 +52,29 @@ class DomainError(
 
     companion object {
 
+        @JsName("forFlagValues")
+        @JvmStatic
+        fun forFlagValues(
+            context: ExecutionContext,
+            procedure: Signature,
+            flagValues: Iterable<Term>,
+            actualValue: Term,
+            index: Int? = null
+        ): DomainError = message(
+            (index?.let { "The $it-th argument" } ?: "An argument") +
+                "of `${procedure.pretty()}` should be one of " +
+                flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
+                " but `${actualValue.pretty()}` has been provided instead"
+        ) { m, extra ->
+            DomainError(
+                message = m,
+                context = context,
+                expectedDomain = Expected.FLAG_VALUE,
+                actualValue = actualValue,
+                extraData = extra
+            )
+        }
+
         @JsName("forArgument")
         @JvmStatic
         fun forArgument(

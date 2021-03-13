@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.primitive
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
@@ -25,6 +26,7 @@ import it.unibo.tuprolog.solve.exception.error.RepresentationError.Limit.MAX_ARI
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOMIC
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
@@ -257,6 +259,12 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsAtom(index: Int): Solve.Request<C> =
             when (val arg = arguments[index]) {
                 !is Atom -> throw TypeError.forArgument(context, signature, ATOM, arg, index)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsConstant(index: Int): Solve.Request<C> =
+            when (val arg = arguments[index]) {
+                !is Constant -> throw TypeError.forArgument(context, signature, ATOMIC, arg, index)
                 else -> this
             }
 
