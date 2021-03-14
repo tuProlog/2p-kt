@@ -10,6 +10,11 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
+/**
+ * Base type for constant, alphanumeric [Term]s, a.k.a. strings.
+ * An [Atom] is at the same time a [String]-valued [Constant] and a 0-argument [Struct], whose [functor] is equal
+ * to [value].
+ */
 interface Atom : Struct, Constant {
 
     override val args: Array<Term>
