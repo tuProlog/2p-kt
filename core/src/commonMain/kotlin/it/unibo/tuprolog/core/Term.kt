@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
+import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import it.unibo.tuprolog.utils.setTags
 import kotlin.js.JsName
@@ -9,7 +10,7 @@ import kotlin.js.JsName
  * Base type for all logic terms.
  * [Term]s are immutable tree-like data structures.
  */
-interface Term : Comparable<Term>, Taggable<Term> {
+interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
 
     /**
      * Empty companion aimed at letting extensions be injected through extension methods
@@ -21,9 +22,8 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @param T must be a subtype of [Term]
      * @return the current term, cast'd into type [T], or `null`, in case the current term is not an instance of [T]
      */
-    @Suppress("UNCHECKED_CAST")
-    @JsName("as")
-    fun <T : Term> `as`(): T? = this as? T
+    @Suppress("RedundantOverride")
+    override fun <T : Term> `as`(): T? = super.`as`<T>()
 
     /**
      * Helper method aimed at down-casting [Term]s using a fluent style
@@ -31,9 +31,8 @@ interface Term : Comparable<Term>, Taggable<Term> {
      * @return the current term, cast'd into type [T]
      * @throws ClassCastException if the current term is not of type [T]
      */
-    @Suppress("UNCHECKED_CAST")
-    @JsName("castTo")
-    fun <T : Term> castTo(): T = this as T
+    @Suppress("RedundantOverride")
+    override fun <T : Term> castTo(): T = super.castTo<T>()
 
     /**
      * Compares this term to the provided one, returning a positive integer if this term _precedes_ [other],
