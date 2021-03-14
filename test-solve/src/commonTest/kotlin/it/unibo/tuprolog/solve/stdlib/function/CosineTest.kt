@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
@@ -23,7 +22,7 @@ internal class CosineTest {
 
     @Test
     fun computationCorrect() {
-        val toBeTested = Cosine.computeOf(Real.of(PI / 2.0)).`as`<Numeric>().decimalValue.toDouble()
+        val toBeTested = Cosine.computeOf(Real.of(PI / 2.0)).castToNumeric().decimalValue.toDouble()
         assertTrue("Cosine of \"PI/2\" should be closer to Zero") {
             toBeTested < 6.123233995736767E-17 && toBeTested > 6.123233995736765E-17
         }

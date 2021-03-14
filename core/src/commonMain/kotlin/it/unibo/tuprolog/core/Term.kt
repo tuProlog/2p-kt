@@ -701,4 +701,10 @@ interface Term : Comparable<Term>, Taggable<Term> {
      */
     @JsName("asVar")
     fun asVar(): Var? = null
+
+    override fun equals(other: Any?): Boolean // Leave this here to allow delegation in `: ... by`
+
+    override fun hashCode(): Int // Leave this here to allow delegation in `: ... by`
+
+    override fun toString(): String // Leave this here to allow delegation in `: ... by`
 }

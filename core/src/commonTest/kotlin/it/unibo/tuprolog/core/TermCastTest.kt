@@ -743,106 +743,106 @@ class TermCastTest {
         override fun visitVar(term: Var) {
             assertSame(term, term.castToVar())
             assertSame(term, term.asVar())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Var>())
+            assertSame(term, term.`as`<Var>())
         }
 
         override fun visitStruct(term: Struct) {
             assertSame(term, term.castToStruct())
             assertSame(term, term.asStruct())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Struct>())
+            assertSame(term, term.`as`<Struct>())
         }
 
         override fun visitAtom(term: Atom) {
             assertSame(term, term.castToAtom())
             assertSame(term, term.asAtom())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Atom>())
+            assertSame(term, term.`as`<Atom>())
         }
 
         override fun visitTruth(term: Truth) {
             assertSame(term, term.castToTruth())
             assertSame(term, term.asTruth())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Truth>())
+            assertSame(term, term.`as`<Truth>())
         }
 
         override fun visitInteger(term: Integer) {
             assertSame(term, term.castToInteger())
             assertSame(term, term.asInteger())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Integer>())
+            assertSame(term, term.`as`<Integer>())
         }
 
         override fun visitReal(term: Real) {
             assertSame(term, term.castToReal())
             assertSame(term, term.asReal())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Real>())
+            assertSame(term, term.`as`<Real>())
         }
 
         override fun visitSet(term: Set) {
             assertSame(term, term.castToSet())
             assertSame(term, term.asSet())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Set>())
+            assertSame(term, term.`as`<Set>())
         }
 
         override fun visitEmptySet(term: EmptySet) {
             assertSame(term, term.castToEmptySet())
             assertSame(term, term.asEmptySet())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<EmptySet>())
+            assertSame(term, term.`as`<EmptySet>())
         }
 
         override fun visitCons(term: Cons) {
             assertSame(term, term.castToCons())
             assertSame(term, term.asCons())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Cons>())
+            assertSame(term, term.`as`<Cons>())
         }
 
         override fun visitEmptyList(term: EmptyList) {
             assertSame(term, term.castToEmptyList())
             assertSame(term, term.asEmptyList())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<EmptyList>())
+            assertSame(term, term.`as`<EmptyList>())
         }
 
         override fun visitTuple(term: Tuple) {
             assertSame(term, term.castToTuple())
             assertSame(term, term.asTuple())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Tuple>())
+            assertSame(term, term.`as`<Tuple>())
         }
 
         override fun visitIndicator(term: Indicator) {
             assertSame(term, term.castToIndicator())
             assertSame(term, term.asIndicator())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Indicator>())
+            assertSame(term, term.`as`<Indicator>())
         }
 
         override fun visitRule(term: Rule) {
             assertSame(term, term.castToRule())
             assertSame(term, term.asRule())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Rule>())
+            assertSame(term, term.`as`<Rule>())
         }
 
         override fun visitFact(term: Fact) {
             assertSame(term, term.castToFact())
             assertSame(term, term.asFact())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Fact>())
+            assertSame(term, term.`as`<Fact>())
         }
 
         override fun visitDirective(term: Directive) {
             assertSame(term, term.castToDirective())
             assertSame(term, term.asDirective())
-            assertSame(term, term.castTo())
-            assertSame(term, term.`as`())
+            assertSame(term, term.castTo<Directive>())
+            assertSame(term, term.`as`<Directive>())
         }
     }
 }
