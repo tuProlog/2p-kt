@@ -69,6 +69,8 @@ interface Struct : Term {
 
     override fun freshCopy(scope: Scope): Struct
 
+    override fun asStruct(): Struct = this
+
     @JsName("append")
     fun append(argument: Term): Struct = addLast(argument)
 

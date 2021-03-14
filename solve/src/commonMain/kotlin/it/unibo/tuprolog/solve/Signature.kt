@@ -88,8 +88,8 @@ data class Signature(
                     functor == FUNCTOR && arity == 2 && args.first().isAtom -> when {
                         args.last().isInt -> {
                             Signature(
-                                args.first().`as`<Atom>().value,
-                                args.last().`as`<Integer>().intValue.toInt()
+                                args.first().castToAtom().value,
+                                args.last().castToInteger().intValue.toInt()
                             )
                         }
                         args.last().let {
@@ -98,8 +98,8 @@ data class Signature(
                                 it.args.last() == varargAtom
                         } -> {
                             Signature(
-                                args.first().`as`<Atom>().value,
-                                args.last().`as`<Struct>()[0].`as`<Integer>().intValue.toInt(),
+                                args.first().castToAtom().value,
+                                args.last().castToStruct()[0].castToInteger().intValue.toInt(),
                                 true
                             )
                         }

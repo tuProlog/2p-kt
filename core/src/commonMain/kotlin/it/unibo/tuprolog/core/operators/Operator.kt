@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.operators
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.core.Var
@@ -74,13 +73,14 @@ class Operator(val functor: String, val specifier: Specifier, val priority: Int)
                     args[0] is Integer && args[1] is Atom && args[2] is Atom -> {
                     try {
                         Operator(
-                            args[2].`as`<Atom>().value,
+                            args[2].castToAtom().value,
                             Specifier.fromTerm(args[1]),
-                            args[0].`as`<Numeric>().intValue.toInt()
+                            args[0].castToNumeric().intValue.toInt()
                         )
                     } catch (ex: IllegalArgumentException) {
                         null
-                    } catch (ex: IllegalStateException) { // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
+                    } catch (ex: IllegalStateException) {
+                        // Enum.valueOf throws IllegalStateException instead of IllegalArgumentException
                         null
                     }
                 }

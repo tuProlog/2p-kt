@@ -24,6 +24,8 @@ interface Integer : Numeric {
 
     override fun freshCopy(scope: Scope): Integer
 
+    override fun asInteger(): Integer = this
+
     companion object {
 
         @JvmField

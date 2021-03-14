@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionException
 import it.unibo.tuprolog.core.impl.SubstitutionImpl
+import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
 import it.unibo.tuprolog.utils.TagsOperator
 import kotlin.js.JsName
@@ -14,7 +15,7 @@ import kotlin.collections.Collection as KtCollection
  * - [Substitution.Unifier], which represent one possible assignment for a possibly empty set of [Var]s
  * - [Substitution.Fail], which represent the lack of possible assignments for any set of [Var]s
  */
-interface Substitution : Map<Var, Term>, Taggable<Substitution> {
+interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substitution> {
 
     /** Whether this [Substitution] is a successful one (i.e., a [Unifier]) */
     @JsName("isSuccess")
@@ -23,6 +24,38 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
     /** Whether this [Substitution] is a failed one */
     @JsName("isFailed")
     val isFailed: Boolean
+
+    /**
+     * Casts the current [Substitution] to [Unifier], if possible, or returns `null` otherwise
+     * @return the current [Substitution], casted to [Unifier], or `null`, if the current term is not an instance of [Unifier]
+     */
+    @JsName("asUnifier")
+    fun asUnifier(): Unifier? = null
+
+    /**
+     * Casts the current [Substitution] to [Unifier], if possible
+     * @throws ClassCastException if the current [Substitution] is not an instance of [Unifier]
+     * @return the current [Substitution], casted to [Unifier]
+     */
+    @JsName("castToUnifier")
+    fun castToUnifier(): Unifier =
+        asUnifier() ?: throw ClassCastException("Cannot cast $this to ${Unifier::class.simpleName}")
+
+    /**
+     * Casts the current [Substitution] to [Fail], if possible, or returns `null` otherwise
+     * @return the current [Substitution], casted to [Fail], or `null`, if the current term is not an instance of [Fail]
+     */
+    @JsName("asFail")
+    fun asFail(): Fail? = null
+
+    /**
+     * Casts the current [Substitution] to [Fail], if possible
+     * @throws ClassCastException if the current [Substitution] is not an instance of [Fail]
+     * @return the current [Substitution], casted to [Fail]
+     */
+    @JsName("castToFail")
+    fun castToFail(): Fail =
+        asFail() ?: throw ClassCastException("Cannot cast $this to ${Fail::class.simpleName}")
 
     /** Applies this [Substitution] to the given [Term], returning `null` if it is [Substitution.Fail] */
     @JsName("applyTo")
@@ -142,6 +175,8 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
         override fun applyTo(term: Term): Term
 
         override fun replaceTags(tags: Map<String, Any>): Unifier
+
+        override fun asUnifier(): Unifier = this
     }
 
     /** A type for __failed__ [Substitution]s, assigning no [Var] */
@@ -165,6 +200,8 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution> {
         override fun applyTo(term: Term): Nothing?
 
         override fun replaceTags(tags: Map<String, Any>): Fail
+
+        override fun asFail(): Fail = this
     }
 
     /** Substitution companion with factory functionality */

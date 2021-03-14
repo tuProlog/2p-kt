@@ -30,7 +30,7 @@ internal object Conjunction : PrimitiveWrapper<StreamsExecutionContext>(Tuple.FU
     override fun uncheckedImplementation(request: Solve.Request<StreamsExecutionContext>): Sequence<Solve.Response> =
         sequence {
             val subGoals = with(request) {
-                query.`as`<Tuple>().toSequence()
+                query.castToTuple().toSequence()
                     .orderWithStrategy(context, context.solverStrategies::predicationChoiceStrategy)
                     .toList()
             }

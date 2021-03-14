@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.magic
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -13,9 +14,9 @@ object MagicCut : Atom by Atom.of("!") {
     override val isConstant: Boolean
         get() = true
 
-    override fun toString(): String {
-        return FUNCTOR // different symbol for debugging purposes
-    }
+    override fun asConstant(): Constant = this
+
+    override fun toString(): String = FUNCTOR // different symbol for debugging purposes
 
     override fun freshCopy(): Atom = this
 

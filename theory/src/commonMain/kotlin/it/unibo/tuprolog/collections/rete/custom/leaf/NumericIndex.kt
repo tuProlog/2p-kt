@@ -115,11 +115,8 @@ internal class NumericIndex(
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun Term.asNumeric(): Numeric =
-        this as Numeric
-
     private fun Clause.asInnerNumeric(): Numeric =
-        this.nestedFirstArgument().asNumeric()
+        this.nestedFirstArgument().castToNumeric()
 
     private fun SituatedIndexedClause.asInnerNumeric(): Numeric =
         this.innerClause.nestedFirstArgument() as Numeric

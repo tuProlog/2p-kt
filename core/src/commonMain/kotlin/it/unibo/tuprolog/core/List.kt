@@ -38,6 +38,8 @@ interface List : Collection {
 
     override fun freshCopy(scope: Scope): List
 
+    override fun asList(): List = this
+
     companion object {
 
         const val CONS_FUNCTOR = Terms.CONS_FUNCTOR

@@ -1,5 +1,4 @@
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.FloatIntegerPart
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FloatFunctionUtils
@@ -43,7 +42,7 @@ internal class FloatIntegerPartTest {
             val (integerPart, _) = parts
             assertEquals(
                 integerPart,
-                FloatIntegerPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
+                FloatIntegerPart.computeOf(Numeric.of(input)).castToReal().value.toDouble()
             )
         }
     }

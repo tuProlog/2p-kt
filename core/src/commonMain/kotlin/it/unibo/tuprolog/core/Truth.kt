@@ -16,6 +16,8 @@ interface Truth : Atom {
 
     override fun freshCopy(scope: Scope): Truth
 
+    override fun asTruth(): Truth = this
+
     @Suppress("MayBeConstant")
     companion object {
 

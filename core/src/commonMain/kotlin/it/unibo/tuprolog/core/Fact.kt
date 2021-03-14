@@ -16,6 +16,8 @@ interface Fact : Rule {
 
     override fun freshCopy(scope: Scope): Fact
 
+    override fun asFact(): Fact = this
+
     companion object {
 
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR

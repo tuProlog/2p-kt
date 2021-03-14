@@ -33,6 +33,8 @@ interface Var : Term {
     @JsName("isNameWellFormed")
     val isNameWellFormed: Boolean
 
+    override fun asVar(): Var = this
+
     @Suppress("MayBeConstant")
     companion object {
 
@@ -52,8 +54,7 @@ interface Var : Term {
 
         @JvmStatic
         @JsName("escapeName")
-        fun escapeName(string: String): String =
-            "`$string`"
+        fun escapeName(string: String): String = "`$string`"
 
         @JvmStatic
         @JsName("escapeNameIfNecessary")

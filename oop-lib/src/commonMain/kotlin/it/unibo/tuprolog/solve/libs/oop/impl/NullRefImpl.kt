@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -13,11 +14,13 @@ internal object NullRefImpl : NullRef, Atom by Atom.of(NullRef.NULL_FUNCTOR) {
     override val isConstant: Boolean
         get() = true
 
+    override fun asConstant(): Constant = this
+
     override fun freshCopy(): Atom = this
 
     override fun freshCopy(scope: Scope): Atom = this
 
-    override fun <T : Term> `as`(): T = this as T
+    override fun <T : Term> `as`(): T? = this as? T
 
     override fun <T : Term> castTo(): T = this as T
 

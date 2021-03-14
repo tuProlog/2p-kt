@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
 import it.unibo.tuprolog.core.Numeric
-import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FloatFunctionUtils
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
@@ -26,7 +25,7 @@ internal class FloatFractionalPartTest {
             val (_, fractionalPart) = parts
             assertEquals(
                 fractionalPart,
-                FloatFractionalPart.computeOf(Numeric.of(input)).`as`<Real>().value.toDouble()
+                FloatFractionalPart.computeOf(Numeric.of(input)).castToReal().value.toDouble()
             )
         }
     }
