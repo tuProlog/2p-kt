@@ -76,7 +76,14 @@ internal class TermToObjectConverterImpl(
     }
 
     private fun explicitConversion(castExpression: Struct, term: Term, type: Term): Any? {
-        return convertInto(getType(castExpression, type), term)
+        val targetType = getType(castExpression, type)
+        try {
+            return convertInto(targetType, term)
+        } catch (e: TermToObjectConversionException) {
+            throw e
+        } catch (_: Exception) {
+            throw TermToObjectConversionException(term, targetType)
+        }
     }
 
     private fun getType(castExpression: Struct, typeTerm: Term): KClass<*> =

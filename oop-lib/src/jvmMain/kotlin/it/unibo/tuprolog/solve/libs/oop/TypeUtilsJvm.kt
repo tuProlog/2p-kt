@@ -28,7 +28,10 @@ actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
         "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
     }
-    return try {
+    val kotlinKlass = KotlinToJavaTypeMap[qualifiedName]
+    return if (kotlinKlass != null) {
+        Optional.of(kotlinKlass)
+    } else try {
         Optional.of(Class.forName(qualifiedName).kotlin)
     } catch (e: ClassNotFoundException) {
         Optional.none()
