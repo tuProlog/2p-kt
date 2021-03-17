@@ -1,10 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop
 
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
 
 private val TODO_EXCEPTION = NotImplementedError("OOP-Prolog integration is still not supported on JS")
 
@@ -40,55 +38,10 @@ private val classNamePattern = "^($id):($id(\\.$id)*)$".toRegex()
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern
 
-actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
-    throw TODO_EXCEPTION
-
-actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() = throw TODO_EXCEPTION
-
-actual fun KClass<*>.findMethod(methodName: String, admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    throw TODO_EXCEPTION
-
-actual fun KClass<*>.findProperty(propertyName: String, admissibleTypes: Set<KClass<*>>): KMutableProperty<*> =
-    throw TODO_EXCEPTION
-
-actual fun KClass<*>.findConstructor(admissibleTypes: List<Set<KClass<*>>>): KCallable<*> =
-    throw TODO_EXCEPTION
-
-actual val KClass<*>.fullName: String
-    get() = throw TODO_EXCEPTION
-
-actual val KClass<*>.name: String
-    get() = throw TODO_EXCEPTION
-
-actual fun KClass<*>.invoke(
-    objectConverter: TermToObjectConverter,
-    methodName: String,
-    arguments: List<Term>,
-    instance: Any?
-): Result {
-    throw TODO_EXCEPTION
-}
-
-actual fun KClass<*>.create(
-    objectConverter: TermToObjectConverter,
-    arguments: List<Term>
-): Result {
-    throw TODO_EXCEPTION
-}
-
-actual fun KClass<*>.assign(
-    objectConverter: TermToObjectConverter,
-    propertyName: String,
-    value: Term,
-    instance: Any?
-): Result {
-    throw TODO_EXCEPTION
-}
-
 actual val Any.identifier: String
     get() = identifier.hashCode().toString(16)
 
-actual fun KCallable<*>.pretty(): String {
-    return toString()
-}
+internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
+    instance: Any?,
+    action: () -> T
+): T = action()

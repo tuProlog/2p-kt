@@ -14,9 +14,11 @@ import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
+import it.unibo.tuprolog.solve.libs.oop.isSupertypeOf
 import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_TEMPLATE
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
+import it.unibo.tuprolog.utils.indexed
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
@@ -121,46 +123,54 @@ internal class TermToObjectConverterImpl(
         }
     }
 
-    override fun admissibleTypes(term: Term): Set<KClass<*>> {
+    override fun priorityOfConversion(type: KClass<*>, term: Term): Int? =
+        admissibleTypes(term).asSequence()
+            .indexed()
+            .firstOrNull { (_, it) -> type isSupertypeOf it }
+            ?.index
+
+    private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> {
         return when (term) {
-            is NullRef, is Var -> setOf(Nothing::class)
-            is ObjectRef -> setOf(term.`object`::class)
-            is Truth -> setOf(Boolean::class, String::class)
-            is Atom -> mutableSetOf<KClass<*>>(String::class).also {
+            is NullRef, is Var -> sequenceOf(Nothing::class)
+            is ObjectRef -> sequenceOf(term.`object`::class)
+            is Truth -> sequenceOf(Boolean::class, String::class)
+            is Atom -> {
+                var admissible = sequenceOf<KClass<*>>(String::class)
                 if (term.value.length == 1) {
-                    it += Char::class
+                    admissible += sequenceOf(Char::class)
                 }
+                admissible
             }
-            is Real -> setOf(
-                Double::class,
-                BigDecimal::class,
-                Float::class
-            )
-            is Integer -> mutableSetOf<KClass<*>>(BigInteger::class, BigDecimal::class).also {
+            is Real -> sequenceOf(Double::class, BigDecimal::class, Float::class)
+            is Integer -> {
+                var admissible = sequenceOf<KClass<*>>(BigInteger::class, BigDecimal::class)
                 if (term.intValue in BigInteger.of(Long.MIN_VALUE)..BigInteger.of(Long.MAX_VALUE)) {
-                    it += Long::class
+                    admissible += sequenceOf(Long::class)
                 }
                 if (term.intValue in BigInteger.of(Int.MIN_VALUE)..BigInteger.of(Int.MAX_VALUE)) {
-                    it += Int::class
+                    admissible += sequenceOf(Int::class)
                 }
                 if (term.intValue in BigInteger.of(Short.MIN_VALUE.toInt())..BigInteger.of(Short.MAX_VALUE.toInt())) {
-                    it += Short::class
+                    admissible += sequenceOf(Short::class)
                 }
                 if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt())..BigInteger.of(Byte.MAX_VALUE.toInt())) {
-                    it += Byte::class
+                    admissible += sequenceOf(Byte::class)
                 }
                 if (term.decimalValue in BigDecimal.of(Double.MIN_VALUE)..BigDecimal.of(Double.MAX_VALUE)) {
-                    it += Double::class
+                    admissible += sequenceOf(Double::class)
                 }
                 if (term.decimalValue in BigDecimal.of(Float.MIN_VALUE)..BigDecimal.of(Float.MAX_VALUE)) {
-                    it += Float::class
+                    admissible += sequenceOf(Float::class)
                 }
+                admissible
             }
             is Struct -> when {
-                term matches CAST_TEMPLATE -> setOf(getType(term, term[1]))
+                term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
                 else -> throw TermToObjectConversionException(term)
             }
             else -> throw TermToObjectConversionException(term)
         }
     }
+
+    override fun admissibleTypes(term: Term): Set<KClass<*>> = admissibleTypesByPriority(term).toSet()
 }

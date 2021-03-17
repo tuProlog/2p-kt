@@ -13,6 +13,8 @@ interface TermToObjectConverter {
 
     fun admissibleTypes(term: Term): Set<KClass<*>>
 
+    fun priorityOfConversion(type: KClass<*>, term: Term): Int?
+
     fun mostAdequateType(term: Term): KClass<*>
 
     fun convert(term: Term): Any? =
