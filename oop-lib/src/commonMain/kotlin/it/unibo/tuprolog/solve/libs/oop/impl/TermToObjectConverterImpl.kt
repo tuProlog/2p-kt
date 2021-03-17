@@ -107,21 +107,7 @@ internal class TermToObjectConverterImpl(
         return admissibleTypes(term).asSequence().map { convertInto(it, term) }
     }
 
-    override fun mostAdequateType(term: Term): KClass<*> {
-        return when (term) {
-            is NullRef, is Var -> Nothing::class
-            is ObjectRef -> term.`object`::class
-            is Truth -> Boolean::class
-            is Atom -> String::class
-            is Real -> BigDecimal::class
-            is Integer -> BigInteger::class
-            is Struct -> when {
-                term matches CAST_TEMPLATE -> getType(term, term[1])
-                else -> throw TermToObjectConversionException(term)
-            }
-            else -> throw TermToObjectConversionException(term)
-        }
-    }
+    override fun mostAdequateType(term: Term): KClass<*> = admissibleTypesByPriority(term).first()
 
     override fun priorityOfConversion(type: KClass<*>, term: Term): Int? =
         admissibleTypes(term).asSequence()
