@@ -18,7 +18,7 @@ class TestRefs {
         val bigInt = Integer.of(BigInteger.of(Long.MAX_VALUE) + BigInteger.ONE)
         ref.invoke("append", bigInt)
         val res = ref.invoke("toString")
-        val expected = "a${bigInt.decimalValue.toFloat()}"
+        val expected = "a${bigInt}"
         assertEquals(expected, res.asObjectRef()?.`object`)
         assertEquals(Atom.of(expected), res.toTerm())
         assertNotEquals(ObjectRef.of(expected), res.asObjectRef())

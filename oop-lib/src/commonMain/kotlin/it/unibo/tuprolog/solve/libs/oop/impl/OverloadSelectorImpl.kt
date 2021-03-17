@@ -27,9 +27,10 @@ internal class OverloadSelectorImpl(
             type.members
                 .filter { it.name == name }
                 .filter { it.visibility == KVisibility.PUBLIC }
-                .firstOrNull { method ->
-                    method.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-                } ?: throw MethodInvocationException(type, name, admissibleTypes)
+                .map { it to it.instanceParameters.score(admissibleTypes) }
+                .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
+                ?.first
+                ?: throw MethodInvocationException(type, name, admissibleTypes)
         } catch (e: IllegalStateException) {
             type.allSupertypes(strict = true).firstOrNull()?.let {
                 OverloadSelector.of(it, termToObjectConverter)
@@ -43,33 +44,23 @@ internal class OverloadSelectorImpl(
             .filter { it.name == name }
             .filter { it.visibility == KVisibility.PUBLIC }
             .filterIsInstance<KMutableProperty<*>>()
-            .firstOrNull { property ->
-                property.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(listOf(admissibleTypes))
-            } ?: throw PropertyAssignmentException(type, name, admissibleTypes)
+            .map { it to it.instanceParameters.score(listOf(admissibleTypes)) }
+            .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
+            ?.first
+            ?: throw PropertyAssignmentException(type, name, admissibleTypes)
     }
+
+    private val KCallable<*>.instanceParameters
+        get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }
 
     override fun findConstructor(arguments: List<Term>): KCallable<*> {
         val admissibleTypes = arguments.map { termToObjectConverter.admissibleTypes(it) }
         return type.constructors
             .filter { it.visibility == KVisibility.PUBLIC }
-            .firstOrNull { constructor ->
-                constructor.parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.match(admissibleTypes)
-            } ?: throw ConstructorInvocationException(type, admissibleTypes)
-    }
-
-    private fun List<KParameter>.match(types: List<Set<KClass<*>>>): Boolean {
-        if (size != types.size) return false
-        for (i in this.indices) {
-            val possible = types[i]
-            when (val formal = this[i].type.classifier) {
-                is KClass<*> -> {
-                    if (possible.none { formal isSupertypeOf it }) return false
-                }
-                is KTypeParameter -> return true
-                else -> return false
-            }
-        }
-        return true
+            .map { it to it.instanceParameters.score(admissibleTypes) }
+            .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
+            ?.first
+            ?: throw ConstructorInvocationException(type, admissibleTypes)
     }
 
     private fun List<KParameter>.score(types: List<Set<KClass<*>>>): Int? {
