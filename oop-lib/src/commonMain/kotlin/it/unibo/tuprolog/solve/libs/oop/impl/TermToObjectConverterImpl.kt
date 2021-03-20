@@ -14,9 +14,9 @@ import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
-import it.unibo.tuprolog.solve.libs.oop.isSupertypeOf
 import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_TEMPLATE
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
+import it.unibo.tuprolog.solve.libs.oop.subTypeDistance
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import it.unibo.tuprolog.utils.indexed
 import org.gciatto.kt.math.BigDecimal
@@ -111,9 +111,11 @@ internal class TermToObjectConverterImpl(
 
     override fun priorityOfConversion(type: KClass<*>, term: Term): Int? =
         admissibleTypes(term).asSequence()
+            .map { type.subTypeDistance(it) }
             .indexed()
-            .firstOrNull { (_, it) -> type isSupertypeOf it }
-            ?.index
+            .map { (index, dist) -> dist?.let { (index + 1) * (it + 1) } }
+            .filterNotNull()
+            .minByOrNull { it }
 
     private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> {
         return when (term) {
@@ -127,9 +129,9 @@ internal class TermToObjectConverterImpl(
                 }
                 admissible
             }
-            is Real -> sequenceOf(Double::class, BigDecimal::class, Float::class)
+            is Real -> sequenceOf(BigDecimal::class, Double::class, Float::class)
             is Integer -> {
-                var admissible = sequenceOf<KClass<*>>(BigInteger::class, BigDecimal::class)
+                var admissible = sequenceOf<KClass<*>>(BigInteger::class)
                 if (term.intValue in BigInteger.of(Long.MIN_VALUE)..BigInteger.of(Long.MAX_VALUE)) {
                     admissible += sequenceOf(Long::class)
                 }
@@ -142,6 +144,7 @@ internal class TermToObjectConverterImpl(
                 if (term.intValue in BigInteger.of(Byte.MIN_VALUE.toInt())..BigInteger.of(Byte.MAX_VALUE.toInt())) {
                     admissible += sequenceOf(Byte::class)
                 }
+                admissible += sequenceOf(BigDecimal::class)
                 if (term.decimalValue in BigDecimal.of(Double.MIN_VALUE)..BigDecimal.of(Double.MAX_VALUE)) {
                     admissible += sequenceOf(Double::class)
                 }

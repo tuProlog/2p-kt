@@ -4,6 +4,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Optional
+import it.unibo.tuprolog.utils.indexed
 import kotlin.jvm.JvmName
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -51,11 +52,16 @@ infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
 fun KClass<*>.isSupertypeOf(other: KClass<*>, strict: Boolean): Boolean =
     other.allSupertypes(strict).any { it == this }
 
+fun KClass<*>.superTypeDistance(other: KClass<*>): Int? =
+    other.allSupertypes(false).indexed().firstOrNull { (_, it) -> it == this }?.index
+
 infix fun KClass<*>.isSubtypeOf(other: KClass<*>): Boolean =
     isSubtypeOf(other, false)
 
 fun KClass<*>.isSubtypeOf(other: KClass<*>, strict: Boolean): Boolean =
     other.isSupertypeOf(this, strict)
+
+fun KClass<*>.subTypeDistance(other: KClass<*>): Int? = other.superTypeDistance(this)
 
 fun Any.invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
     this::class.invoke(objectConverter, methodName, arguments, this)

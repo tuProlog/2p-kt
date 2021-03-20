@@ -7,8 +7,6 @@ import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.ConstructorInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.MethodInvocationException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.PropertyAssignmentException
-import it.unibo.tuprolog.solve.libs.oop.isSupertypeOf
-import it.unibo.tuprolog.utils.indexed
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -22,57 +20,57 @@ internal class OverloadSelectorImpl(
 ) : OverloadSelector {
 
     override fun findMethod(name: String, arguments: List<Term>): KCallable<*> {
-        val admissibleTypes = arguments.map { termToObjectConverter.admissibleTypes(it) }
         return try {
             type.members
                 .filter { it.name == name }
                 .filter { it.visibility == KVisibility.PUBLIC }
-                .map { it to it.instanceParameters.score(admissibleTypes) }
+                .map { it to it.instanceParameters.score(arguments) }
                 .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
                 ?.first
-                ?: throw MethodInvocationException(type, name, admissibleTypes)
+                ?: throw MethodInvocationException(type, name, arguments.map { termToObjectConverter.admissibleTypes(it) })
         } catch (e: IllegalStateException) {
-            type.allSupertypes(strict = true).firstOrNull()?.let {
-                OverloadSelector.of(it, termToObjectConverter)
-            }?.findMethod(name, arguments) ?: throw MethodInvocationException(type, name, admissibleTypes)
+            type.allSupertypes(strict = true)
+                .firstOrNull()
+                ?.let { OverloadSelector.of(it, termToObjectConverter) }
+                ?.findMethod(name, arguments)
+                ?: throw MethodInvocationException(type, name, arguments.map { termToObjectConverter.admissibleTypes(it) })
         }
     }
 
     override fun findProperty(name: String, value: Term): KMutableProperty<*> {
-        val admissibleTypes = termToObjectConverter.admissibleTypes(value)
         return type.members
             .filter { it.name == name }
             .filter { it.visibility == KVisibility.PUBLIC }
             .filterIsInstance<KMutableProperty<*>>()
-            .map { it to it.instanceParameters.score(listOf(admissibleTypes)) }
+            .map { it to it.instanceParameters.score(listOf(value)) }
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
-            ?: throw PropertyAssignmentException(type, name, admissibleTypes)
+            ?: throw PropertyAssignmentException(type, name, termToObjectConverter.admissibleTypes(value))
     }
 
     private val KCallable<*>.instanceParameters
         get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }
 
     override fun findConstructor(arguments: List<Term>): KCallable<*> {
-        val admissibleTypes = arguments.map { termToObjectConverter.admissibleTypes(it) }
         return type.constructors
             .filter { it.visibility == KVisibility.PUBLIC }
-            .map { it to it.instanceParameters.score(admissibleTypes) }
+            .map { it to it.instanceParameters.score(arguments) }
             .minByOrNull { (_, score) -> score ?: Int.MAX_VALUE }
             ?.first
-            ?: throw ConstructorInvocationException(type, admissibleTypes)
+            ?: throw ConstructorInvocationException(type, arguments.map { termToObjectConverter.admissibleTypes(it) })
     }
 
-    private fun List<KParameter>.score(types: List<Set<KClass<*>>>): Int? {
-        if (size != types.size) return null
+    private fun List<KParameter>.score(arguments: List<Term>): Int? {
+        if (size != arguments.size) return null
         var score = 0
         for (i in this.indices) {
-            val possible = types[i].asSequence().indexed()
             when (val formal = this[i].type.classifier) {
                 is KClass<*> -> {
-                    score += possible.firstOrNull { (_, it) -> formal isSupertypeOf it }?.index ?: return null
+                    score += termToObjectConverter.priorityOfConversion(formal, arguments[i]) ?: return null
                 }
-                is KTypeParameter -> score += possible.count()
+                is KTypeParameter -> {
+                    score += termToObjectConverter.admissibleTypes(arguments[i]).count()
+                }
                 else -> return null
             }
         }
