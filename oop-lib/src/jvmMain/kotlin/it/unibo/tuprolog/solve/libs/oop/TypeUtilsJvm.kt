@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.utils.Optional
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.IllegalCallableAccessException
@@ -43,4 +45,6 @@ internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
     action()
 } catch (e: IllegalCallableAccessException) {
     throw RuntimePermissionException(this, instance, e)
+} catch (e: InvocationTargetException) {
+    throw OopRuntimeException(this, instance, e.cause ?: e)
 }
