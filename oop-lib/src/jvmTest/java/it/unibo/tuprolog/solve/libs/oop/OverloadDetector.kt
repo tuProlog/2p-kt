@@ -6,6 +6,8 @@ import kotlin.reflect.KClass
 
 interface OverloadDetector {
     val recordings: List<Pair<Any, KClass<*>>>
+    val size: Int
+
     fun call(x: Any): String
     fun call(x: String): String
     fun call(x: Boolean): String
@@ -18,4 +20,10 @@ interface OverloadDetector {
     fun call(x: Double): String
     fun call(x: BigInteger): String
     fun call(x: BigDecimal): String
+
+    fun toList(): List<Any>
+
+    companion object {
+        fun create(): OverloadDetector = OverloadDetectorImpl()
+    }
 }

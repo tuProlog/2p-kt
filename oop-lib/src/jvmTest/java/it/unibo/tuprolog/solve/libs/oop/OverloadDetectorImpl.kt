@@ -69,4 +69,11 @@ class OverloadDetectorImpl : OverloadDetector {
         _recordings.add(x to BigDecimal::class)
         return BigDecimal::class.name
     }
+
+    override fun toList(): List<Any> {
+        return _recordings.map { it.first }
+    }
+
+    override val size: Int
+        get() = _recordings.size
 }
