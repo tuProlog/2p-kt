@@ -74,6 +74,8 @@ class OverloadDetectorImpl : OverloadDetector {
         return _recordings.map { it.first }
     }
 
+    override fun reset() = _recordings.clear()
+
     override val size: Int
         get() = _recordings.size
 }

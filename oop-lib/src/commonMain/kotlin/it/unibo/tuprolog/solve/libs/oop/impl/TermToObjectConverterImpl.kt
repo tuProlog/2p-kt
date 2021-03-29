@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
 import it.unibo.tuprolog.solve.libs.oop.isSubtypeOf
+import it.unibo.tuprolog.solve.libs.oop.isSupertypeOf
 import it.unibo.tuprolog.solve.libs.oop.primitives.CAST_TEMPLATE
 import it.unibo.tuprolog.solve.libs.oop.primitives.DEALIASING_TEMPLATE
 import it.unibo.tuprolog.solve.libs.oop.subTypeDistance
@@ -27,9 +28,28 @@ internal class TermToObjectConverterImpl(
     private val typeFactory: TypeFactory,
     private val dealiaser: (Struct) -> TypeRef?
 ) : TermToObjectConverter {
+
+    companion object {
+        private val PRIMITIVE_TYPES = sequenceOf(
+            Long::class,
+            Int::class,
+            Short::class,
+            Byte::class,
+            Char::class,
+            Double::class,
+            Float::class,
+        )
+    }
+
     override fun convertInto(type: KClass<*>, term: Term): Any? {
         return when (term) {
-            is NullRef, is Var -> null
+            is NullRef, is Var -> {
+                if (PRIMITIVE_TYPES.any { it isSupertypeOf type }) {
+                    throw TermToObjectConversionException(term, type)
+                } else {
+                    null
+                }
+            }
             is ObjectRef -> {
                 if (term.`object`::class isSubtypeOf type) {
                     term.`object`
@@ -44,7 +64,13 @@ internal class TermToObjectConverterImpl(
             }
             is Atom -> when {
                 String::class isSubtypeOf type -> term.value
-                Char::class isSubtypeOf type -> term.value[0]
+                Char::class isSubtypeOf type -> {
+                    if (term.value.length == 1) {
+                        term.value[0]
+                    } else {
+                        throw TermToObjectConversionException(term, type)
+                    }
+                }
                 else -> throw TermToObjectConversionException(term, type)
             }
             is Real -> when {

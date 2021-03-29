@@ -23,6 +23,8 @@ interface OverloadDetector {
 
     fun toList(): List<Any>
 
+    fun reset()
+
     companion object {
         fun create(): OverloadDetector = OverloadDetectorImpl()
     }
