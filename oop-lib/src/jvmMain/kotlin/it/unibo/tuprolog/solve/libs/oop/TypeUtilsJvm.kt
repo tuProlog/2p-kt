@@ -11,10 +11,16 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
 actual val KClass<*>.companionObjectRef: Optional<out Any>
-    get() = Optional.of(companionObjectInstance)
+    get() = Optional.of(objectInstance ?: companionObjectInstance)
 
 actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
-    get() = Optional.of(companionObject)
+    get() = Optional.of(
+        if (objectInstance != null) {
+            this
+        } else {
+            companionObject
+        }
+    )
 
 actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {

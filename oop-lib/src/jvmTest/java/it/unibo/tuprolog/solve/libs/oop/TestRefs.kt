@@ -14,12 +14,10 @@ import it.unibo.tuprolog.utils.product
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import org.junit.Test
-import java.lang.NullPointerException
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class TestRefs {
 
@@ -155,8 +153,6 @@ class TestRefs {
                 assertTrue { case.term.let { it is Var || it is NullRef } }
             } catch (e: OopException) {
                 assertTrue { case.isFailed }
-                e.printStackTrace()
-                System.err.println(case.converted)
                 assertEquals(case.exception!!::class, e::class)
             }
         }
@@ -171,7 +167,7 @@ class TestRefs {
 
     @Test
     fun mostProperOverloadIsSelectedWhenInvokingObjectRefMethod() {
-       testMethodInvocation(bestCases) { it.term }
+        testMethodInvocation(bestCases) { it.term }
     }
 
     @Test
@@ -190,18 +186,18 @@ class TestRefs {
 
     @Test
     fun mostProperOverloadIsSelectedWhenInvokingTypeRefMethod() {
-        OverloadDetectorObject.reset()
         testMethodInvocation(
             bestCases,
+            detectorCreator = OverloadDetectorObject::refresh,
             refCreator = { TypeRef.of(OverloadDetectorObject::class) }
         ) { it.term }
     }
 
     @Test
     fun overloadCanBeSelectedViaExplicitCastWhenInvokingTypeRefMethod() {
-        OverloadDetectorObject.reset()
         testMethodInvocation(
             cases,
+            detectorCreator = OverloadDetectorObject::refresh,
             refCreator = { TypeRef.of(OverloadDetectorObject::class) }
         ) {
             Struct.of("as", it.term, Atom.of(it.type.fullName))
@@ -210,13 +206,12 @@ class TestRefs {
 
     @Test
     fun overloadSelectionMayFailWhenInvokingTypeRefMethod() {
-        OverloadDetectorObject.reset()
         testMethodInvocation(
             cornerCases,
+            detectorCreator = OverloadDetectorObject::refresh,
             refCreator = { TypeRef.of(OverloadDetectorObject::class) }
         ) {
             Struct.of("as", it.term, Atom.of(it.type.fullName))
         }
     }
-
 }
