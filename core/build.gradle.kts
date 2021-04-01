@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
 
 val tuPrologPackage get() = rootProject.group.toString()
@@ -34,6 +35,7 @@ kotlin {
                 it.inputs.file(infoKtFile)
             }
 
+            tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
             tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
         }
     }
