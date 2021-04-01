@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.KtlintCheckTask
-import org.jlleitschuh.gradle.ktlint.KtlintFormatTask
+import org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask
 
 val tuPrologPackage get() = rootProject.group.toString()
 val tuPrologPackageDir get() = tuPrologPackage.replace('.', File.separatorChar)
@@ -36,9 +34,7 @@ kotlin {
                 it.inputs.file(infoKtFile)
             }
 
-            tasks.withType<KotlinCompile<*>>().forEach(addDependecyAction)
-            tasks.withType<KtlintFormatTask>().forEach(addDependecyAction)
-            tasks.withType<KtlintCheckTask>().forEach(addDependecyAction)
+            tasks.withType<GenerateReportsTask>().forEach(addDependecyAction)
         }
     }
 }
