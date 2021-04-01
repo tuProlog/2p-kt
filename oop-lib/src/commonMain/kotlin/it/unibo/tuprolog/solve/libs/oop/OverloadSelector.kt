@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -23,6 +22,6 @@ interface OverloadSelector {
         fun of(
             type: KClass<*>,
             termToObjectConverter: TermToObjectConverter = TermToObjectConverter.default
-        ): OverloadSelector = OverloadSelectorImpl(type, termToObjectConverter)
+        ): OverloadSelector = overloadSelector(type, termToObjectConverter)
     }
 }

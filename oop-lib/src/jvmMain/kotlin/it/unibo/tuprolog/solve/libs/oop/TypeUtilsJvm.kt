@@ -2,10 +2,15 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
+import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
 import it.unibo.tuprolog.utils.Optional
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -56,3 +61,48 @@ internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
 } catch (e: IllegalArgumentException) {
     throw OopRuntimeException(this, instance, e.cause ?: e)
 }
+
+actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
+    supertypes.asSequence()
+        .map { it.classifier }
+        .filterIsInstance<KClass<*>>()
+        .flatMap { sequenceOf(it) + it.allSupertypes(true) }
+        .distinct()
+        .let { if (strict) it else sequenceOf(this) + it }
+
+actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
+    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
+        it.type.classifier as? KClass<*> ?: Any::class
+    }
+
+actual val KClass<*>.fullName: String
+    get() = qualifiedName!!
+
+actual val KClass<*>.name: String
+    get() = simpleName!!
+
+actual fun KCallable<*>.pretty(): String =
+    "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
+
+private fun KClassifier?.pretty(): String =
+    if (this is KClass<*>) {
+        fullName
+    } else {
+        "$this"
+    }
+
+private fun KParameter.pretty(): String =
+    when (kind) {
+        KParameter.Kind.INSTANCE -> "<this>"
+        KParameter.Kind.EXTENSION_RECEIVER -> "<this>:${type.classifier.pretty()}"
+        else -> "$name:${type.classifier}"
+    }
+
+actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
+    instance?.let { call(it, *args) } ?: call(*args)
+
+actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
+    get() = setter
+
+actual fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector =
+    OverloadSelectorImpl(type, termToObjectConverter)

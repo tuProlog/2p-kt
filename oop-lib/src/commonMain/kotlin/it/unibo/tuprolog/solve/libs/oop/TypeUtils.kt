@@ -8,8 +8,8 @@ import it.unibo.tuprolog.utils.indexed
 import kotlin.jvm.JvmName
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KParameter
+import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 
 internal const val id = "[a-zA-Z_][a-zA-Z0-9_]+"
 
@@ -25,26 +25,21 @@ expect fun kClassFromName(qualifiedName: String): Optional<out KClass<*>>
 
 internal expect fun <T> KCallable<*>.catchingPlatformSpecificException(instance: Any?, action: () -> T): T
 
-fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> =
-    supertypes.asSequence()
-        .map { it.classifier }
-        .filterIsInstance<KClass<*>>()
-        .flatMap { sequenceOf(it) + it.allSupertypes(true) }
-        .distinct()
-        .let {
-            if (strict) it else sequenceOf(this) + it
-        }
+expect fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>>
 
-val KCallable<*>.formalParameterTypes: List<KClass<*>>
-    get() = parameters.filterNot { it.kind == KParameter.Kind.INSTANCE }.map {
-        it.type.classifier as? KClass<*> ?: Any::class
-    }
+expect val KCallable<*>.formalParameterTypes: List<KClass<*>>
 
-val KClass<*>.fullName: String
-    get() = qualifiedName!!
+expect val KClass<*>.fullName: String
 
-val KClass<*>.name: String
-    get() = simpleName!!
+expect val KClass<*>.name: String
+
+expect fun KCallable<*>.pretty(): String
+
+expect fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T
+
+expect val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
+
+internal expect fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector
 
 infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
     isSupertypeOf(other, false)
@@ -63,7 +58,7 @@ fun KClass<*>.isSubtypeOf(other: KClass<*>, strict: Boolean): Boolean =
 
 fun KClass<*>.subTypeDistance(other: KClass<*>): Int? = other.superTypeDistance(this)
 
-fun Any.invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
+internal fun Any.invoke(objectConverter: TermToObjectConverter, methodName: String, arguments: List<Term>): Result =
     this::class.invoke(objectConverter, methodName, arguments, this)
 
 private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>): List<KClass<*>> {
@@ -81,7 +76,7 @@ private fun KCallable<*>.ensureArgumentsListIsOfSize(actualArguments: List<Term>
     }
 }
 
-fun KClass<*>.invoke(
+internal fun KClass<*>.invoke(
     objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
@@ -101,45 +96,28 @@ private fun KCallable<*>.callWithPrologArguments(
         converter.convertInto(formalArgumentsTypes[i], it)
     }.toTypedArray()
     return catchingPlatformSpecificException(instance) {
-        val result = if (instance == null) call(*args) else call(instance, *args)
+        val result = invoke(instance, *args)
         Result.Value(result)
     }
 }
 
-fun Any.assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Result =
+internal fun Any.assign(objectConverter: TermToObjectConverter, propertyName: String, value: Term): Result =
     this::class.assign(objectConverter, propertyName, value, this)
 
-fun KClass<*>.assign(
+internal fun KClass<*>.assign(
     objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
     instance: Any?
 ): Result {
-    val setterRef = OverloadSelector.of(this, objectConverter).findProperty(propertyName, value).setter
+    val setterRef = OverloadSelector.of(this, objectConverter).findProperty(propertyName, value).setterMethod
     return setterRef.callWithPrologArguments(objectConverter, listOf(value), instance)
 }
 
-fun KClass<*>.create(
+internal fun KClass<*>.create(
     objectConverter: TermToObjectConverter,
     arguments: List<Term>
 ): Result {
     val constructorRef = OverloadSelector.of(this, objectConverter).findConstructor(arguments)
     return constructorRef.callWithPrologArguments(objectConverter, arguments)
 }
-
-fun KCallable<*>.pretty(): String =
-    "$name(${parameters.map { it.pretty() }}): ${returnType.classifier.pretty()}"
-
-private fun KClassifier?.pretty(): String =
-    if (this is KClass<*>) {
-        fullName
-    } else {
-        "$this"
-    }
-
-private fun KParameter.pretty(): String =
-    when (kind) {
-        KParameter.Kind.INSTANCE -> "<this>"
-        KParameter.Kind.EXTENSION_RECEIVER -> "<this>:${type.classifier.pretty()}"
-        else -> "$name:${type.classifier}"
-    }
