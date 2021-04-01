@@ -31,7 +31,7 @@ internal object ClauseAssertionUtils {
                 expected,
                 actual,
                 message =
-                    """Comparing:
+                """Comparing:
                     |   actual: $actual
                     |     type: ${actual::class}
                     | expected: $expected

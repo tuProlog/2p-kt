@@ -14,6 +14,7 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
 
     private val cache = mutableMapOf<K, V>()
     private val insertionOrder = (0 until capacity).map { Optional.none<K>() }.toTypedArray()
+
     @Volatile
     private var nextFreeIndex = 0
 

@@ -19,6 +19,7 @@ internal object PrimitiveWrapperUtils {
 
     /** A default primitive result to be used in tests */
     internal val defaultPrimitiveResult = emptySequence<Nothing>()
+
     /** A test primitive */
     internal val primitive: Primitive = { defaultPrimitiveResult }
 

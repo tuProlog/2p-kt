@@ -19,6 +19,7 @@ internal object ConsUtils {
     private val headOfFirstList = Var.of("H")
     private val tailOfFirstList = Empty.list()
     private val elementsOfFirstList = listOf(headOfFirstList)
+
     /** Constructs a non ground Cons with one Term */
     internal fun oneElementList(constructor: (Term, Term) -> Cons) = constructor(headOfFirstList, tailOfFirstList)
 
@@ -26,6 +27,7 @@ internal object ConsUtils {
     private val tailOfSecondListElement = Var.of("T")
     private fun tailOfSecondList(constructor: (Term, Term) -> Cons) = constructor(tailOfSecondListElement, Empty.list())
     private val elementsOfSecondList = listOf(headOfSecondList, tailOfSecondListElement)
+
     /** Constructs a non ground Cons with two Terms */
     internal fun twoElementList(constructor: (Term, Term) -> Cons) =
         constructor(headOfSecondList, tailOfSecondList(constructor))
@@ -37,6 +39,7 @@ internal object ConsUtils {
         constructor(tailOfThirdListFirstElement, constructor(tailOfThirdListSecondElement, Empty.list()))
 
     private val elementsOfThirdList = listOf(headOfThirdList, tailOfThirdListFirstElement, tailOfThirdListSecondElement)
+
     /** Constructs a ground Cons with three Terms */
     internal fun threeElementList(constructor: (Term, Term) -> Cons) =
         constructor(headOfThirdList, tailOfThirdList(constructor))
@@ -44,6 +47,7 @@ internal object ConsUtils {
     private val headOfFourthList = Var.of("Head")
     private val tailOfFourthList = Var.of("Tail")
     private val elementsOfFourthList = listOf(headOfFourthList, tailOfFourthList)
+
     /** Constructs a non ground Cons with two Terms, without terminal emptyList */
     internal fun twoElementListWithPipe(constructor: (Term, Term) -> Cons) =
         constructor(headOfFourthList, tailOfFourthList)
@@ -55,6 +59,7 @@ internal object ConsUtils {
         constructor(tailOfFifthListFirstElement, tailOfFifthListSecondElement)
 
     private val elementsOfFifthList = listOf(headOfFifthList, tailOfFifthListFirstElement, tailOfFifthListSecondElement)
+
     /** Constructs a non ground Cons with three Terms, without terminal EmptyList */
     internal fun threeElementListWithPipe(constructor: (Term, Term) -> Cons) =
         constructor(headOfFifthList, tailOfFifthList(constructor))

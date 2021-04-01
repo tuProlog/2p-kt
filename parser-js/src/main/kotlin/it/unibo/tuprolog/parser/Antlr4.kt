@@ -8,13 +8,21 @@ package it.unibo.tuprolog.parser
  */
 open external class Token {
     var source: dynamic
+
     var type: Int; // token type of the token
+
     var channel: Int; // The parser ignores everything not on DEFAULT_CHANNEL
+
     var start: Int // optional; return -1 if not implemented.
+
     var stop: Int; // optional; return -1 if not implemented.
+
     var tokenIndex: Int; // from 0..n-1 of the token object in the input stream
+
     var line: Int; // line=1..n of the 1st character
+
     var column: Int; // beginning of the line at which it occurs, 0..n-1
+
     var text: String; // text of the token.
 
     companion object {
