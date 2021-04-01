@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import org.junit.Test
 import kotlin.reflect.KParameter
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -61,5 +62,32 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
                 method.call(x)
             }
         }
+    }
+
+    @Test
+    fun testDoubleInstanceMethods() {
+        val x = 42.0
+        for (method in Double::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+            assertExceptionIsThrown<Throwable> {
+                println("Testing $method ...")
+                method.call(x)
+            }
+        }
+    }
+
+    @Test
+    fun testFloatInstanceMethods() {
+        val x = 42f
+        for (method in Float::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+            assertExceptionIsThrown<Throwable> {
+                println("Testing $method ...")
+                method.call(x)
+            }
+        }
+    }
+
+    @Test
+    fun testInnerClasses() {
+        assertFalse(A.B::class.isInner)
     }
 }

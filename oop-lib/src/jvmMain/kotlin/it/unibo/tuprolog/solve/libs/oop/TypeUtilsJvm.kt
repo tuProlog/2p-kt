@@ -31,17 +31,39 @@ actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
         "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
     }
+    return kClassFromNameImpl(qualifiedName)
+}
+
+private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
     val kotlinKlass = KotlinToJavaTypeMap[qualifiedName]
     return if (kotlinKlass != null) {
         Optional.of(kotlinKlass)
-    } else try {
-        Optional.of(Class.forName(qualifiedName).kotlin)
-    } catch (e: ClassNotFoundException) {
+    } else {
+        javaClassForName(qualifiedName)?.let { return Optional.some(it.kotlin) }
+        var lastDot = qualifiedName.lastIndexOf('.')
+        var name = qualifiedName
+        while (lastDot >= 0) {
+            name = name.replaceAt(lastDot, '$')
+            javaClassForName(name)?.let { return Optional.some(it.kotlin) }
+            lastDot = qualifiedName.lastIndexOf('.')
+        }
         Optional.none()
     }
 }
 
-private val classNamePattern = "^$id(\\.$id)*$".toRegex()
+private fun String.replaceAt(index: Int, char: Char): String {
+    if (index < 0 || index >= length) throw IndexOutOfBoundsException()
+    return substring(0, index) + char + substring(index + 1)
+}
+
+private fun javaClassForName(qualifiedName: String): Class<*>? =
+    try {
+        Class.forName(qualifiedName)
+    } catch (e: ClassNotFoundException) {
+        null
+    }
+
+private val classNamePattern = "^$id(\\.$id(\\$$id)*)*$".toRegex()
 
 actual val CLASS_NAME_PATTERN: Regex
     get() = classNamePattern

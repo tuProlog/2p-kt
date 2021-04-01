@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 
-internal const val id = "[a-zA-Z_][a-zA-Z0-9_]+"
+internal const val id = "[a-zA-Z_][a-zA-Z0-9_]*"
 
 expect val Any.identifier: String
 
