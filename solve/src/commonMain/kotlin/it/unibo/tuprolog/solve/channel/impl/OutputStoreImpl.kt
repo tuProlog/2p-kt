@@ -14,12 +14,7 @@ internal class OutputStoreImpl(
     override val stdErr: OutputChannel<String>,
     override val warnings: OutputChannel<PrologWarning> = OutputChannel.warn(),
     outputChannels: Map<String, OutputChannel<String>> = emptyMap()
-) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(
-    outputChannels.toMutableMap()
-        .ensureAliasRefersToChannel(STDOUT, stdOut)
-        .ensureAliasRefersToChannel(STDERR, stdErr)
-        .setCurrent(STDOUT, stdOut)
-),
+) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {
 
     override fun setCurrent(alias: String): OutputStore =
@@ -39,4 +34,17 @@ internal class OutputStoreImpl(
 
     override fun minus(others: Sequence<String>): OutputStore =
         OutputStoreImpl(stdOut, stdErr, warnings, channels - others)
+
+    companion object {
+        private fun checkChannels(
+            stdOut: OutputChannel<String>,
+            stdErr: OutputChannel<String>,
+            channels: Map<String, OutputChannel<String>>
+        ): Map<String, OutputChannel<String>> {
+            return channels.toMutableMap()
+                .ensureAliasRefersToChannel(STDOUT, stdOut)
+                .ensureAliasRefersToChannel(STDERR, stdErr)
+                .setCurrent(STDOUT, stdOut)
+        }
+    }
 }

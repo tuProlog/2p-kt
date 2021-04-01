@@ -24,6 +24,7 @@ internal object SetUtils {
             arrayOf(Integer.of(1), Real.of(1.5), Truth.FALSE, Atom.of("ciao"))
         )
     }
+
     /** Contains [groundSets] wrapped with Tuple if needed to be used in constructing Set instances */
     internal val groundSetsTupleWrapped by lazy { groundSets.map { Tuple.wrapIfNeeded(*it) } }
 

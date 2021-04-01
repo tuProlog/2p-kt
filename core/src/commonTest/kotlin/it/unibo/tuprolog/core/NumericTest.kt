@@ -53,10 +53,12 @@ internal class NumericTest {
     @Test
     fun numericOfNumber() {
         val correctReal = RealUtils.decimalsAsDoubles.map { Real.of(it) }
+
         @Suppress("USELESS_CAST")
         val toTestReal = RealUtils.decimalsAsDoubles.map { it as Number }.map { Numeric.of(it) }
 
         val correctInteger = IntegerUtils.bigIntegers.map { Integer.of(it) }
+
         @Suppress("USELESS_CAST")
         val toTestInteger = IntegerUtils.onlyLongs.map { it as Number }.map { Numeric.of(it) }
 

@@ -27,6 +27,7 @@ fun main() {
         val term2 = structOf("f", numOf("-1"))
 
         val match = unificator.match(term1, term2) // true
+
         val result = unificator.unify(term1, term2) // f(1)
 
         println(match)

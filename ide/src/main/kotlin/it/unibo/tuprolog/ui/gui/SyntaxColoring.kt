@@ -23,6 +23,7 @@ class SyntaxColoring(
     @Volatile
     var delay: Duration = delay
         @Synchronized get
+
         @Synchronized set(value) {
             field = value
             if (isActive) {
@@ -34,6 +35,7 @@ class SyntaxColoring(
     @Volatile
     var operators: OperatorSet = operators
         @Synchronized get
+
         @Synchronized set(value) {
             field = value
             patternCache.invalidate()

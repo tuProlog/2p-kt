@@ -108,7 +108,7 @@ object TermFormatterUtils {
             expected,
             formatted,
             message =
-                """
+            """
                 |Formatting 
                 |   $actual
                 |with ${this::class} should result in

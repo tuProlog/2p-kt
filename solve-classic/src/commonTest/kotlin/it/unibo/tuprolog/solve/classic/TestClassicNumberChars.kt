@@ -6,6 +6,7 @@ import kotlin.test.Test
 
 class TestClassicNumberChars : TestNumberChars, SolverFactory by ClassicSolverFactory {
     private val prototype = TestNumberChars.prototype(this)
+
     @Test
     override fun testNumberCharsListIsVar() {
         prototype.testNumberCharsListIsVar()

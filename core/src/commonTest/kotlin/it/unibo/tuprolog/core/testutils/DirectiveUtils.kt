@@ -46,10 +46,13 @@ internal object DirectiveUtils {
 
     /** Contains well-formed Directives, ground and not */
     val wellFormedDirectives by lazy { groundWellFormedDirectives + nonGroundWellFormedDirectives }
+
     /** Contains not well-formed Directives, ground and not */
     val nonWellFormedDirectives by lazy { groundNonWellFormedDirectives + nonGroundNonWellFormedDirectives }
+
     /** Contains ground Directives (aka without variables), well-formed and not */
     val groundDirectives by lazy { groundWellFormedDirectives + groundNonWellFormedDirectives }
+
     /** Contains non ground Directives, with variables, well-formed and not*/
     val nonGroundDirectives by lazy { nonGroundWellFormedDirectives + nonGroundNonWellFormedDirectives }
 

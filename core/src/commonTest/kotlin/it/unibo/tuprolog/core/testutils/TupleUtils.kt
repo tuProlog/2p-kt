@@ -17,6 +17,7 @@ internal object TupleUtils {
     private val firstOfFirstTuple = Var.of("A")
     private val secondOfFirstTuple = Var.of("B")
     private val elementsOfFirstTuple = listOf(firstOfFirstTuple, secondOfFirstTuple)
+
     /** Constructs a Tuple with two Terms */
     internal fun twoElementTuple(constructor: (Term, Term) -> Tuple) =
         constructor(firstOfFirstTuple, secondOfFirstTuple)
@@ -28,6 +29,7 @@ internal object TupleUtils {
         constructor(secondOfSecondTuple, thirdOfSecondTuple)
 
     private val elementsOfSecondTuple = listOf(firstOfSecondTuple, secondOfSecondTuple, thirdOfSecondTuple)
+
     /** Constructs a Tuple with three Terms */
     internal fun threeElementTuple(constructor: (Term, Term) -> Tuple) =
         constructor(firstOfSecondTuple, rightOfSecondTuple(constructor))

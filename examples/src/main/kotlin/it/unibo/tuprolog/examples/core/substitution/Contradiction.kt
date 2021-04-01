@@ -16,6 +16,7 @@ fun main() {
         val sub2 = Substitution.of(varOf("X"), atomOf("nahor"))
 
         val substitution = sub1 + sub2 // contradiction!
+
         val result = substitution.applyTo(term) // father(X_0, isaac) (substitution could not be performed)
 
         println(substitution)

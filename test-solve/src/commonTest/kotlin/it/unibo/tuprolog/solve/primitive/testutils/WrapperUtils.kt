@@ -59,8 +59,10 @@ internal object WrapperUtils {
 
     /** All signatures under test */
     internal val allSignatures by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.first } }
+
     /** All [Struct]s matching signatures */
     internal val allMatchingRawStruct by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.second } }
+
     /** All [Struct]s not matching signatures */
     internal val allNotMatchingStruct by lazy { signaturesToMatchingAndNotMatchingStruct.map { it.third } }
 

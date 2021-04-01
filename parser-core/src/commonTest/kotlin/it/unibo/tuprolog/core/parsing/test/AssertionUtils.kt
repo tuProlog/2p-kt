@@ -16,7 +16,7 @@ fun assertTermsAreEqual(expected: Term, actual: Term) {
             expected,
             actual,
             message =
-                """Comparing:
+            """Comparing:
             |   actual: $actual
             |     type: ${actual::class}
             | expected: $expected

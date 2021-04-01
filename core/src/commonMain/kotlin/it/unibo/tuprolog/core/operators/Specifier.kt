@@ -22,16 +22,22 @@ import kotlin.jvm.JvmStatic
 enum class Specifier : ToTermConvertible {
     /** Postfix and no-associative */
     XF,
+
     /** Postfix and left-associative */
     YF,
+
     /** Prefix and non-associative */
     FX,
+
     /** Prefix and right-associative */
     FY,
+
     /** Infix and non-associative */
     XFX,
+
     /** Infix and right-associative */
     XFY,
+
     /** Infix and left-associative */
     YFX;
 
