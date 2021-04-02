@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import org.junit.Test
+import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -13,6 +13,8 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
             action()
             println("\t... works fine.")
             fail("A Kotlin bug has been fixed, please remove this test")
+        } catch (e: AssertionError) {
+            throw e
         } catch (e: Throwable) {
             println("\t... throws ${e::class}: ${e.message}.")
             e.printStackTrace()
@@ -20,10 +22,15 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
         }
     }
 
+    private val KClass<*>.instanceMembersWithNoArg
+        get() = members.asSequence()
+            .filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }
+            .filterNot { it.name in setOf("hashCode", "toString") }
+
     @Test
     fun testIntInstanceMethods() {
         val x = 42
-        for (method in Int::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Int::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Error> {
                 println("Testing $method ...")
                 method.call(x)
@@ -34,7 +41,7 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     @Test
     fun testLongInstanceMethods() {
         val x = 42L
-        for (method in Long::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Long::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Error> {
                 println("Testing $method ...")
                 method.call(x)
@@ -45,7 +52,7 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     @Test
     fun testCharInstanceMethods() {
         val x = 'b'
-        for (method in Char::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Char::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Error> {
                 println("Testing $method ...")
                 method.call(x)
@@ -56,7 +63,7 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     @Test
     fun testShortInstanceMethods() {
         val x = 42.toShort()
-        for (method in Char::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Char::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Throwable> {
                 println("Testing $method ...")
                 method.call(x)
@@ -67,7 +74,7 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     @Test
     fun testDoubleInstanceMethods() {
         val x = 42.0
-        for (method in Double::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Double::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Throwable> {
                 println("Testing $method ...")
                 method.call(x)
@@ -78,16 +85,11 @@ class TestKotlinReflectionWorkaroundsAreStillNecessary {
     @Test
     fun testFloatInstanceMethods() {
         val x = 42f
-        for (method in Float::class.members.filter { it.parameters.size == 1 && it.parameters[0].kind == KParameter.Kind.INSTANCE }) {
+        for (method in Float::class.instanceMembersWithNoArg) {
             assertExceptionIsThrown<Throwable> {
                 println("Testing $method ...")
                 method.call(x)
             }
         }
-    }
-
-    @Test
-    fun testInnerClasses() {
-        assertFalse(A.B::class.isInner)
     }
 }

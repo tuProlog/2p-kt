@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.RuntimePermissionException
 import it.unibo.tuprolog.solve.libs.oop.impl.OverloadSelectorImpl
+import it.unibo.tuprolog.utils.Cache
 import it.unibo.tuprolog.utils.Optional
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KCallable
@@ -11,6 +12,9 @@ import kotlin.reflect.KClassifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty2
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -27,11 +31,13 @@ actual val KClass<*>.companionObjectType: Optional<out KClass<*>>
         }
     )
 
+private val classCache = Cache.simpleLru<String, Optional<out KClass<*>>>(32)
+
 actual fun kClassFromName(qualifiedName: String): Optional<out KClass<*>> {
     require(CLASS_NAME_PATTERN.matches(qualifiedName)) {
         "`$qualifiedName` must match ${CLASS_NAME_PATTERN.pattern} while it doesn't"
     }
-    return kClassFromNameImpl(qualifiedName)
+    return classCache.getOrSet(qualifiedName) { kClassFromNameImpl(qualifiedName) }
 }
 
 private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
@@ -45,7 +51,7 @@ private fun kClassFromNameImpl(qualifiedName: String): Optional<out KClass<*>> {
         while (lastDot >= 0) {
             name = name.replaceAt(lastDot, '$')
             javaClassForName(name)?.let { return Optional.some(it.kotlin) }
-            lastDot = qualifiedName.lastIndexOf('.')
+            lastDot = name.lastIndexOf('.')
         }
         Optional.none()
     }
@@ -120,8 +126,20 @@ private fun KParameter.pretty(): String =
         else -> "$name:${type.classifier}"
     }
 
+@Suppress("UNCHECKED_CAST")
 actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
-    instance?.let { call(it, *args) } ?: call(*args)
+    when (this) {
+        is KProperty0<T> -> get()
+        is KProperty1<*, T> -> {
+            val property = this as KProperty1<Any?, T>
+            property.get(instance)
+        }
+        is KProperty2<*, *, T> -> {
+            val property = this as KProperty2<Any?, Any?, T>
+            property.get(instance, args[0])
+        }
+        else -> instance?.let { call(it, *args) } ?: call(*args)
+    }
 
 actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
     get() = setter

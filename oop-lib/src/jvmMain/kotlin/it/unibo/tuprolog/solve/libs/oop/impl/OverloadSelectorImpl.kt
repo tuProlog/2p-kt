@@ -20,6 +20,7 @@ internal class OverloadSelectorImpl(
 ) : OverloadSelector {
 
     override fun findMethod(name: String, arguments: List<Term>): KCallable<*> {
+        KotlinTypesHacks[type, name, arguments]?.let { return it }
         return try {
             type.members
                 .filter { it.name == name }

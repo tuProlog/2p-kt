@@ -29,7 +29,8 @@ private val map = TreeMap<String, KClass<*>>().also { tree ->
         Int::class,
         Float::class,
         Long::class,
-        Double::class
+        Double::class,
+        Nothing::class
     ).forEach { tree[it.qualifiedName!!] = it }
 }
 
