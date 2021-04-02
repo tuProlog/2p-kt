@@ -6,5 +6,12 @@ kotlin {
                 api(project(":solve"))
             }
         }
+
+        val commonTest by getting {
+            dependencies {
+                api(project(":test-solve"))
+                api(project(":solve-classic"))
+            }
+        }
     }
 }
