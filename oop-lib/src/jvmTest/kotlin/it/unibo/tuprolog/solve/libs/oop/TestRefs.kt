@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
 import org.junit.Test
@@ -77,14 +78,14 @@ class TestRefs {
     @Test
     fun overloadCanBeSelectedViaExplicitCastWhenInvokingObjectRefMethod() {
         testMethodInvocation(Conversions.explicitCases) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 
     @Test
     fun overloadSelectionMayFailWhenInvokingObjectRefMethod() {
         testMethodInvocation(Conversions.cornerCases) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 
@@ -104,7 +105,7 @@ class TestRefs {
             detectorCreator = OverloadDetectorObject::refresh,
             refCreator = { TypeRef.of(OverloadDetectorObject::class) }
         ) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 
@@ -115,7 +116,7 @@ class TestRefs {
             detectorCreator = OverloadDetectorObject::refresh,
             refCreator = { TypeRef.of(OverloadDetectorObject::class) }
         ) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 
@@ -127,14 +128,14 @@ class TestRefs {
     @Test
     fun constructorCanBeSelectedViaExplicitCastWhenInstantiatingTypeRef() {
         testConstructorInvocation(Conversions.explicitCases, ConstructorOverloadDetector::class) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 
     @Test
     fun constructorSelectionMayFailWhenInstantiatingTypeRef() {
         testConstructorInvocation(Conversions.cornerCases, ConstructorOverloadDetector::class) {
-            Struct.of("as", it.term, Atom.of(it.type.fullName))
+            Struct.of(CAST_OPERATOR, it.term, Atom.of(it.type.fullName))
         }
     }
 }

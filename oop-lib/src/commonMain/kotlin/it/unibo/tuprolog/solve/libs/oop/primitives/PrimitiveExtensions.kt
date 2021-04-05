@@ -1,3 +1,5 @@
+@file:JvmName("PrimitiveExtensions")
+
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.Atom
@@ -8,6 +10,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
+import it.unibo.tuprolog.solve.libs.oop.OOP.DEALIASING_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
@@ -20,15 +24,12 @@ import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.primitive.PrimitiveWrapper.Companion.ensuringArgumentIsStruct
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
-
-internal const val DEALIASING_OPERATOR = "$"
+import kotlin.jvm.JvmName
 
 internal val DEALIASING_TEMPLATE = Struct.of(DEALIASING_OPERATOR, Var.of("Alias"))
 
 internal val Term.isDealiasingExpression: Boolean
     get() = this is Struct && this matches DEALIASING_TEMPLATE && args[0] is Atom
-
-internal const val CAST_OPERATOR = "as"
 
 internal val CAST_TEMPLATE = Struct.template(CAST_OPERATOR, 2)
 

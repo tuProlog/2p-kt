@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.libs.oop.rules
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.libs.oop.OOP.ACCESS_OPERATOR
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 
 /**
@@ -11,7 +12,7 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
  * ```
  *
  */
-object Dot : RuleWrapper<ExecutionContext>(".", 2) {
+object Dot : RuleWrapper<ExecutionContext>(ACCESS_OPERATOR, 2) {
 
     private val Method by variables
     private val Ref by variables
