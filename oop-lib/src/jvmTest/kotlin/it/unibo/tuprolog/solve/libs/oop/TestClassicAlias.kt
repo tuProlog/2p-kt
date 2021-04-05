@@ -22,4 +22,9 @@ class TestClassicAlias : TestAlias, SolverFactory by ClassicSolverFactory {
     override fun testRegisterAndAlias() {
         prototype.testRegisterAndAlias()
     }
+
+    @Test
+    override fun testRegisterWithWrongArguments() {
+        prototype.testRegisterWithWrongArguments()
+    }
 }

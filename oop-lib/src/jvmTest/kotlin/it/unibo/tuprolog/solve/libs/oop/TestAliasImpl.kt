@@ -4,9 +4,13 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
+import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.assertSolutionEquals
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.libs.oop.primitives.Register
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
@@ -63,9 +67,8 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
     override fun testDefaultAliases() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Libraries.of(OOPLib)
-            )
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+
             assertAliasIsPresent(solver, "string", String::class)
             assertAliasIsPresent(solver, "array", Array::class)
             assertAliasIsPresent(solver, "arraylist", ArrayList::class)
@@ -93,9 +96,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
     override fun testAliasIsBacktrackable() {
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Libraries.of(OOPLib)
-            )
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
 
             val query = Alias.FUNCTOR(A, T)
             val solutions = solver.solveList(query)
@@ -135,9 +136,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
         val bTypeAlias = Alias.forObject("bType", bType.type)
 
         prolog {
-            val solver = solverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Libraries.of(OOPLib)
-            )
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
 
             val registerQuery1 = Register.functor(bInstanceAlias.ref, bInstanceAlias.alias)
             assertSolutionEquals(
@@ -165,6 +164,66 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             assertSolutionEquals(
                 ktListOf(aliasQuery2.yes()),
                 solver.solveList(aliasQuery2)
+            )
+        }
+    }
+
+    override fun testRegisterWithWrongArguments() {
+        prolog {
+            val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Libraries.of(OOPLib))
+
+            var query = Register.functor(X, "alias")
+            assertSolutionEquals(
+                query.halt(
+                    InstantiationError.forArgument(
+                        DummyInstances.executionContext,
+                        Register.signature,
+                        X,
+                        0
+                    )
+                ),
+                solver.solveOnce(query)
+            )
+
+            query = Register.functor(ObjectRef.NULL, A)
+            assertSolutionEquals(
+                query.halt(
+                    InstantiationError.forArgument(
+                        DummyInstances.executionContext,
+                        Register.signature,
+                        A,
+                        1
+                    )
+                ),
+                solver.solveOnce(query)
+            )
+
+            query = Register.functor(3, "alias")
+            assertSolutionEquals(
+                query.halt(
+                    TypeError.forArgument(
+                        DummyInstances.executionContext,
+                        Register.signature,
+                        TypeError.Expected.REFERENCE,
+                        intOf(3),
+                        0
+                    )
+                ),
+                solver.solveOnce(query)
+            )
+
+            query = Register.functor(ObjectRef.NULL, 3)
+            assertSolutionEquals(
+                query.halt(
+                    TypeError.forArgument(
+                        DummyInstances.executionContext,
+                        Register.signature,
+                        TypeError.Expected.CALLABLE,
+                        intOf(3),
+                        1
+                    )
+                ),
+                solver.solveOnce(query)
             )
         }
     }

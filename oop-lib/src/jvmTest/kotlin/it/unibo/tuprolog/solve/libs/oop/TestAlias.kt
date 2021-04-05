@@ -14,4 +14,6 @@ interface TestAlias : SolverTest {
     fun testAliasIsBacktrackable()
 
     fun testRegisterAndAlias()
+
+    fun testRegisterWithWrongArguments()
 }
