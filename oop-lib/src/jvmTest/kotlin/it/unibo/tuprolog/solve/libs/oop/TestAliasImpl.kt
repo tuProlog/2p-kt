@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.prolog
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverFactory
@@ -15,6 +18,19 @@ import kotlin.test.assertTrue
 
 class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
 
+    private fun aliasesByObject(obj: Any?): List<String> {
+        val ref = when (obj) {
+            is KClass<*> -> TypeRef.of(obj)
+            null -> ObjectRef.NULL
+            else -> ObjectRef.of(obj)
+        }
+        return OOPLib.theory[Struct.of(Alias.FUNCTOR, Var.anonymous(), ref)]
+            .map { it.head[0] as? Atom }
+            .filterNotNull()
+            .map { it.value }
+            .toList()
+    }
+
     private fun assertAliasIsPresent(solver: Solver, alias: String, type: KClass<*>) {
         prolog {
             val query1 = Alias.FUNCTOR(alias, T)
@@ -24,7 +40,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             )
             val query2 = Alias.FUNCTOR(A, TypeRef.of(type))
             assertSolutionEquals(
-                ktListOf(query2.yes(A to alias)),
+                aliasesByObject(type).map { query2.yes(A to it) },
                 solver.solveList(query2)
             )
         }
@@ -39,7 +55,7 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             )
             val query2 = Alias.FUNCTOR(A, ObjectRef.of(obj))
             assertSolutionEquals(
-                ktListOf(query2.yes(A to alias)),
+                aliasesByObject(obj).map { query2.yes(A to it) },
                 solver.solveList(query2)
             )
         }
