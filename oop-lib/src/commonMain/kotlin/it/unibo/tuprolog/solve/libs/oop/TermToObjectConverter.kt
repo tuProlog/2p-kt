@@ -24,7 +24,7 @@ interface TermToObjectConverter {
         @JvmStatic
         fun of(
             typeFactory: TypeFactory = TypeFactory.default,
-            dealiaser: (Struct) -> TypeRef? = { null }
+            dealiaser: (Struct) -> Ref? = { null }
         ): TermToObjectConverter = TermToObjectConverterImpl(typeFactory, dealiaser)
 
         @JvmStatic

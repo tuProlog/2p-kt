@@ -61,7 +61,8 @@ class RepresentationError(
             limit: Limit,
             cause: Throwable? = null
         ): RepresentationError = message(
-            "Reached representation limit while executing `${signature.pretty()}`: $limit"
+            "Reached representation limit while executing `${signature.pretty()}`: $limit" +
+                cause?.message?.let { ". $it" }
         ) { m, extra ->
             RepresentationError(
                 message = m,

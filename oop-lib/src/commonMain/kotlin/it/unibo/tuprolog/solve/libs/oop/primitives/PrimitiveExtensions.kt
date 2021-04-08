@@ -33,15 +33,20 @@ internal val Term.isDealiasingExpression: Boolean
 
 internal val CAST_TEMPLATE = Struct.template(CAST_OPERATOR, 2)
 
-fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): Solve.Request<C> =
-    when (val arg = arguments[index]) {
-        !is Ref -> throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, arg, index)
+fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsRef(index: Int): Solve.Request<C> {
+    val arg = arguments[index]
+    return when {
+        arg is Struct && arg matches DEALIASING_TEMPLATE && ensureAliasIsRegistered(arg) -> this
+        arg !is Ref -> throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, arg, index)
         else -> this
     }
+}
 
-fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: Int): Solve.Request<C> =
-    when (val arg = arguments[index]) {
-        !is ObjectRef -> throw TypeError.forArgument(
+fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: Int): Solve.Request<C> {
+    val arg = arguments[index]
+    return when {
+        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is ObjectRef -> this
+        arg !is ObjectRef -> throw TypeError.forArgument(
             context,
             signature,
             TypeError.Expected.OBJECT_REFERENCE,
@@ -50,12 +55,22 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsObjectRef(index: I
         )
         else -> this
     }
+}
 
-fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int): Solve.Request<C> =
-    when (val arg = arguments[index]) {
-        !is TypeRef -> throw TypeError.forArgument(context, signature, TypeError.Expected.TYPE_REFERENCE, arg, index)
+fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int): Solve.Request<C> {
+    val arg = arguments[index]
+    return when {
+        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is TypeRef -> this
+        arg !is TypeRef -> throw TypeError.forArgument(
+            context,
+            signature,
+            TypeError.Expected.TYPE_REFERENCE,
+            arg,
+            index
+        )
         else -> this
     }
+}
 
 fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): TypeRef? {
     ensuringArgumentIsStruct(index)
@@ -77,7 +92,7 @@ fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): Ty
     }
 }
 
-fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref {
+private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias: Struct): Ref? {
     val actualAlias = if (alias.isDealiasingExpression) {
         alias[0] as Struct
     } else {
@@ -92,8 +107,16 @@ fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref
         ?.solvedQuery
         ?.get(1)
         ?.castTo()
-        ?: throw NoSuchAnAliasException(alias)
 }
+
+fun <C : ExecutionContext> Solve.Request<C>.isAliasRegistered(alias: Struct): Boolean =
+    findRefFromAliasOrNull(alias) != null
+
+fun <C : ExecutionContext> Solve.Request<C>.ensureAliasIsRegistered(alias: Struct): Boolean =
+    if (isAliasRegistered(alias)) true else throw NoSuchAnAliasException(alias)
+
+fun <C : ExecutionContext> Solve.Request<C>.findRefFromAlias(alias: Struct): Ref =
+    findRefFromAliasOrNull(alias) ?: throw NoSuchAnAliasException(alias)
 
 inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExceptions(action: Req.() -> R): R {
     try {
@@ -106,9 +129,4 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
 }
 
 val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
-    get() = TermToObjectConverter.of {
-        when (val ref = findRefFromAlias(it)) {
-            is TypeRef -> ref
-            else -> null
-        }
-    }
+    get() = TermToObjectConverter.of { findRefFromAliasOrNull(it) }

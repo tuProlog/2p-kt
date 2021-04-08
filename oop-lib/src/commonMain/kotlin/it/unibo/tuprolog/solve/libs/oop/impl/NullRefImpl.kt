@@ -7,10 +7,10 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.libs.oop.NullRef
+import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 
 @Suppress("UNCHECKED_CAST")
-internal object NullRefImpl : NullRef, Atom by Atom.of(NullRef.NULL_FUNCTOR) {
-
+internal object NullRefImpl : NullRef, Atom by Atom.of(ObjectRef.nameOf(null)) {
     override val isConstant: Boolean
         get() = true
 

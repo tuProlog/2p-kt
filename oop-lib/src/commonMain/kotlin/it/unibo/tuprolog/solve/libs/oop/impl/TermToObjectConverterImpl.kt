@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.NullRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectRef
+import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
@@ -26,7 +27,7 @@ import kotlin.reflect.KClass
 
 internal class TermToObjectConverterImpl(
     private val typeFactory: TypeFactory,
-    private val dealiaser: (Struct) -> TypeRef?
+    private val dealiaser: (Struct) -> Ref?
 ) : TermToObjectConverter {
 
     override fun convertInto(type: KClass<*>, term: Term): Any? {
@@ -81,6 +82,10 @@ internal class TermToObjectConverterImpl(
             is Struct ->
                 when {
                     term matches CAST_TEMPLATE -> explicitConversion(term, term[0], term[1])
+                    term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
+                        is ObjectRef -> convertInto(type, ref)
+                        else -> throw TermToObjectConversionException(term)
+                    }
                     else -> throw TermToObjectConversionException(term)
                 }.also {
                     if (it != null && !(it::class isSubtypeOf type)) {
@@ -109,17 +114,17 @@ internal class TermToObjectConverterImpl(
                 typeFactory.typeFromName(typeTerm.value) ?: throw TermToObjectConversionException(castExpression)
             }
             is Struct -> when {
-                typeTerm matches DEALIASING_TEMPLATE -> {
-                    dealiaser(typeTerm)?.type ?: throw TermToObjectConversionException(castExpression)
+                typeTerm matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(typeTerm)) {
+                    is TypeRef -> ref.type
+                    else -> throw TermToObjectConversionException(castExpression)
                 }
                 else -> throw TermToObjectConversionException(castExpression)
             }
             else -> throw TermToObjectConversionException(castExpression)
         }
 
-    override fun possibleConversions(term: Term): Sequence<Any?> {
-        return admissibleTypes(term).asSequence().map { convertInto(it, term) }
-    }
+    override fun possibleConversions(term: Term): Sequence<Any?> =
+        admissibleTypes(term).asSequence().map { convertInto(it, term) }
 
     override fun mostAdequateType(term: Term): KClass<*> = admissibleTypesByPriority(term).first()
 
@@ -169,6 +174,10 @@ internal class TermToObjectConverterImpl(
             }
             is Struct -> when {
                 term matches CAST_TEMPLATE -> sequenceOf(getType(term, term[1]))
+                term matches DEALIASING_TEMPLATE -> when (val ref = dealiaser(term)) {
+                    is ObjectRef -> admissibleTypesByPriority(ref)
+                    else -> throw TermToObjectConversionException(term)
+                }
                 else -> throw TermToObjectConversionException(term)
             }
             else -> throw TermToObjectConversionException(term)

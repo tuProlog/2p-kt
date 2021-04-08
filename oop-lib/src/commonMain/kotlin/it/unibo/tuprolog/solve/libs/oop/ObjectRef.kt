@@ -2,12 +2,24 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.solve.libs.oop.impl.NullRefImpl
 import it.unibo.tuprolog.solve.libs.oop.impl.ObjectRefImpl
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
+import kotlin.reflect.KClass
 
 interface ObjectRef : Ref {
     val `object`: Any
 
     companion object {
+        @JvmStatic
+        fun nameOf(any: Any?): String =
+            when (any) {
+                null -> nameOf(Nothing::class, "null")
+                else -> nameOf(any::class, any.identifier)
+            }
+
+        private fun nameOf(type: KClass<*>, identifier: String): String =
+            "<object:${type.fullName}#$identifier>"
+
         @JvmStatic
         fun of(any: Any?): ObjectRef =
             when (any) {
@@ -15,7 +27,7 @@ interface ObjectRef : Ref {
                 else -> ObjectRefImpl(any)
             }
 
-        @JvmStatic
+        @JvmField
         @Suppress("MemberVisibilityCanBePrivate")
         val NULL: NullRef = NullRefImpl
     }
