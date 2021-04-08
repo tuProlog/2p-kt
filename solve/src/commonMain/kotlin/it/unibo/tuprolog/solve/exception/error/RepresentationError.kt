@@ -58,7 +58,8 @@ class RepresentationError(
         fun of(
             context: ExecutionContext,
             signature: Signature,
-            limit: Limit
+            limit: Limit,
+            cause: Throwable? = null
         ): RepresentationError = message(
             "Reached representation limit while executing `${signature.pretty()}`: $limit"
         ) { m, extra ->
@@ -66,7 +67,8 @@ class RepresentationError(
                 message = m,
                 context = context,
                 limit = limit,
-                extraData = extra
+                extraData = extra,
+                cause = cause
             )
         }
 

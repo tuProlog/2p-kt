@@ -16,10 +16,10 @@ class OopRuntimeException(
     inner: Throwable
 ) : OopException(
     inner.message ?: "Unhandled exception of type ${inner::class.fullName} while executing OOP code",
-    inner
+    cause = inner
 ) {
     override fun toPrologError(context: ExecutionContext, signature: Signature): PrologError =
-        SystemError.forUncaughtException(context, cause)
+        SystemError.forUncaughtException(context, this)
 
     override val message: String
         get() = super.message!!

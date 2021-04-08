@@ -52,7 +52,8 @@ class SystemError constructor(
                 SystemError(
                     message = m,
                     context = context,
-                    extraData = extra
+                    extraData = extra,
+                    cause = exception
                 )
             }
 

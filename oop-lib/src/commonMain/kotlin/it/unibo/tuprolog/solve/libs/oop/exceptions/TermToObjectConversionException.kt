@@ -23,7 +23,8 @@ class TermToObjectConversionException(
         return RepresentationError.of(
             context,
             signature,
-            RepresentationError.Limit.OOP_OBJECT
+            RepresentationError.Limit.OOP_OBJECT,
+            this
         )
     }
 

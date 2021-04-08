@@ -85,7 +85,7 @@ internal actual fun <T> KCallable<*>.catchingPlatformSpecificException(
 } catch (e: IllegalCallableAccessException) {
     throw RuntimePermissionException(this, instance, e)
 } catch (e: InvocationTargetException) {
-    throw OopRuntimeException(this, instance, e.cause ?: e)
+    throw OopRuntimeException(this, instance, e.targetException ?: e.cause ?: e)
 } catch (e: IllegalArgumentException) {
     throw OopRuntimeException(this, instance, e.cause ?: e)
 }

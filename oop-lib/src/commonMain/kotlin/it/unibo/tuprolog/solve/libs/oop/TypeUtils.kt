@@ -11,6 +11,16 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 
+private val PRIMITIVE_TYPES = setOf(
+    Long::class,
+    Int::class,
+    Short::class,
+    Byte::class,
+    Char::class,
+    Double::class,
+    Float::class,
+)
+
 internal const val id = "[a-zA-Z_][a-zA-Z0-9_]*"
 
 expect val Any.identifier: String
@@ -40,6 +50,8 @@ expect fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T
 expect val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
 
 internal expect fun overloadSelector(type: KClass<*>, termToObjectConverter: TermToObjectConverter): OverloadSelector
+
+val KClass<*>.isPrimitiveType: Boolean get() = this in PRIMITIVE_TYPES
 
 infix fun KClass<*>.isSupertypeOf(other: KClass<*>): Boolean =
     isSupertypeOf(other, false)
