@@ -103,7 +103,10 @@ class TestAliasImpl(private val solverFactory: SolverFactory) : TestAlias {
             val expected = ktListOf(
                 query.yes(A to "string", T to TypeRef.of(String::class)),
                 query.yes(A to "array", T to TypeRef.of(Array::class)),
+                query.yes(A to "list", T to TypeRef.of(List::class)),
                 query.yes(A to "arraylist", T to TypeRef.of(ArrayList::class)),
+                query.yes(A to "map", T to TypeRef.of(Map::class)),
+                query.yes(A to "hashmap", T to TypeRef.of(LinkedHashMap::class)),
                 query.yes(A to "int", T to TypeRef.of(Int::class)),
                 query.yes(A to "integer", T to TypeRef.of(Int::class)),
                 query.yes(A to "double", T to TypeRef.of(Double::class)),

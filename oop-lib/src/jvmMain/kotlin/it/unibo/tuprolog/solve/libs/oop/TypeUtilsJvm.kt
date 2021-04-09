@@ -138,7 +138,13 @@ actual fun <T> KCallable<T>.invoke(instance: Any?, vararg args: Any?): T =
             val property = this as KProperty2<Any?, Any?, T>
             property.get(instance, args[0])
         }
-        else -> instance?.let { call(it, *args) } ?: call(*args)
+        else -> {
+            if (instance == null) {
+                call(*args)
+            } else {
+                call(instance, *args)
+            }
+        }
     }
 
 actual val <T> KMutableProperty<T>.setterMethod: KFunction<Unit>
