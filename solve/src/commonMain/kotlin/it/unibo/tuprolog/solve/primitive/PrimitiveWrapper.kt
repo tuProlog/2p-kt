@@ -17,6 +17,7 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.NOT_LESS_THAN_ZERO
 import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.OPERATOR_SPECIFIER
+import it.unibo.tuprolog.solve.exception.error.DomainError.Expected.WELL_FORMED_LIST
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVATE_PROCEDURE
@@ -29,6 +30,7 @@ import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOM
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.ATOMIC
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.CHARACTER
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.INTEGER
+import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.LIST
 import it.unibo.tuprolog.solve.exception.error.TypeError.Expected.PREDICATE_INDICATOR
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.MaxArity
@@ -355,6 +357,21 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 term !is Integer || term.isCharacterCode() ->
                     throw RepresentationError.of(context, signature, RepresentationError.Limit.CHARACTER_CODE)
                 else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringTermIsWellFormedList(term: Term): Solve.Request<C> =
+            when {
+                term !is LogicList || !term.isWellFormed -> throw DomainError.forTerm(context, WELL_FORMED_LIST, term)
+                else -> this
+            }
+
+        fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedList(index: Int): Solve.Request<C> =
+            when (val term = arguments[index]) {
+                is LogicList -> when {
+                    term.isWellFormed -> this
+                    else -> throw DomainError.forArgument(context, signature, WELL_FORMED_LIST, term, index)
+                }
+                else -> throw TypeError.forArgument(context, signature, LIST, term, index)
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCharCode(index: Int): Solve.Request<C> =

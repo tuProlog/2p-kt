@@ -142,7 +142,6 @@ class DomainError(
      * A class describing the expected domain whose absence caused the error
      */
     enum class Expected : ToTermConvertible {
-
         ATOM_PROPERTY,
         BUFFERING_MODE,
         CHARACTER_CODE_LIST,
@@ -152,6 +151,7 @@ class DomainError(
         FLAG_VALUE,
         FORMAT_CONTROL_SEQUENCE,
         IO_MODE,
+        WELL_FORMED_LIST,
         NON_EMPTY_LIST,
         NOT_LESS_THAN_ZERO,
         OPERATOR_PRIORITY,
