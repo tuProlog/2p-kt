@@ -12,14 +12,14 @@ interface OutputStore : ChannelStore<String, OutputChannel<String>, OutputStore>
 
         const val STDERR = "stderr"
 
-        @JsName("default")
+        @JsName("fromStandard")
         @JvmStatic
         @JvmOverloads
-        fun default(
-            stdOut: OutputChannel<String> = OutputChannel.stdOut(),
-            stdErr: OutputChannel<String> = OutputChannel.stdErr(),
+        fun fromStandard(
+            output: OutputChannel<String> = OutputChannel.stdOut(),
+            error: OutputChannel<String> = OutputChannel.stdErr(),
             warnings: OutputChannel<PrologWarning> = OutputChannel.warn()
-        ): OutputStore = OutputStoreImpl(stdOut, stdErr, warnings, mapOf("user_output" to stdOut))
+        ): OutputStore = OutputStoreImpl(output, error, warnings, mapOf("user_output" to output))
 
         @JsName("of")
         @JvmStatic

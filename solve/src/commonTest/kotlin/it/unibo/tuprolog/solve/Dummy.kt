@@ -67,9 +67,9 @@ object Dummy {
 
         override val operators: OperatorSet = OperatorSet.EMPTY
 
-        override val inputChannels: InputStore = InputStore.default()
+        override val inputChannels: InputStore = InputStore.fromStandard()
 
-        override val outputChannels: OutputStore = OutputStore.default()
+        override val outputChannels: OutputStore = OutputStore.fromStandard()
     }
 
     object RuntimeException : TuPrologRuntimeException(null, Context)

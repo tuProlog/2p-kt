@@ -35,8 +35,8 @@ internal class StreamsSolver constructor(
     flags: FlagStore = FlagStore.empty(),
     staticKb: Theory = Theory.empty(),
     dynamicKb: Theory = Theory.empty(),
-    inputChannels: InputStore = InputStore.default(),
-    outputChannels: OutputStore = OutputStore.default()
+    inputChannels: InputStore = InputStore.fromStandard(),
+    outputChannels: OutputStore = OutputStore.fromStandard()
 ) : Solver {
 
     constructor(
@@ -53,8 +53,8 @@ internal class StreamsSolver constructor(
         flags,
         staticKb,
         dynamicKb,
-        InputStore.default(stdIn),
-        OutputStore.default(stdOut, stdErr, warnings),
+        InputStore.fromStandard(stdIn),
+        OutputStore.fromStandard(stdOut, stdErr, warnings),
     )
 
     private var executionContext: ExecutionContext = StreamsExecutionContext(

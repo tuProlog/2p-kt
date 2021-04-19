@@ -9,11 +9,11 @@ interface InputStore : ChannelStore<String, InputChannel<String>, InputStore> {
     companion object {
         const val STDIN = "stdin"
 
-        @JsName("default")
+        @JsName("fromStandard")
         @JvmStatic
         @JvmOverloads
-        fun default(stdIn: InputChannel<String> = InputChannel.stdIn()): InputStore =
-            InputStoreImpl(stdIn, mapOf("user_input" to stdIn))
+        fun fromStandard(input: InputChannel<String> = InputChannel.stdIn()): InputStore =
+            InputStoreImpl(input, mapOf("user_input" to input))
 
         @JsName("of")
         @JvmStatic

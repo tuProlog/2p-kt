@@ -26,8 +26,8 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
         flags: FlagStore = FlagStore.empty(),
         staticKb: Theory = Theory.empty(),
         dynamicKb: Theory = MutableTheory.empty(),
-        inputChannels: InputStore = InputStore.default(),
-        outputChannels: OutputStore = OutputStore.default(),
+        inputChannels: InputStore = InputStore.fromStandard(),
+        outputChannels: OutputStore = OutputStore.fromStandard(),
         trustKb: Boolean = false
     ) : super(libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels, trustKb)
 
@@ -195,6 +195,30 @@ internal class MutableClassicSolver : ClassicSolver, MutableSolver {
     override fun setFlag(flag: NotableFlag) {
         updateContext {
             copy(flags = flags + flag)
+        }
+    }
+
+    override fun setStandardInput(stdIn: InputChannel<String>) {
+        updateContext {
+            copy(inputChannels = inputChannels + (InputStore.STDIN to stdIn))
+        }
+    }
+
+    override fun setStandardError(stdErr: OutputChannel<String>) {
+        updateContext {
+            copy(outputChannels = outputChannels + (OutputStore.STDERR to stdErr))
+        }
+    }
+
+    override fun setStandardOutput(stdOut: OutputChannel<String>) {
+        updateContext {
+            copy(outputChannels = outputChannels + (OutputStore.STDOUT to stdOut))
+        }
+    }
+
+    override fun setWarnings(warnings: OutputChannel<PrologWarning>) {
+        updateContext {
+            copy(outputChannels = OutputStore.of(outputChannels, warnings))
         }
     }
 
