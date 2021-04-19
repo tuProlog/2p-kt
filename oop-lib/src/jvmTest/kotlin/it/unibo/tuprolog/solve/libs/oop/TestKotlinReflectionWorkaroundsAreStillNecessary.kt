@@ -1,11 +1,13 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
+@Ignore
 class TestKotlinReflectionWorkaroundsAreStillNecessary {
 
     private inline fun <reified T : Throwable> assertExceptionIsThrown(action: () -> Unit) {
