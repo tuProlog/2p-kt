@@ -180,6 +180,15 @@ interface Struct : Term {
     @JsName("getArgAt")
     fun getArgAt(index: Int): Term = args[index]
 
+    @JsName("setArgs")
+    fun setArgs(vararg args: Term): Struct
+
+    @JsName("setArgsIterable")
+    fun setArgs(args: Iterable<Term>): Struct
+
+    @JsName("setArgsSequence")
+    fun setArgs(args: Sequence<Term>): Struct
+
     /**
      * Alias for [getArgAt].
      * In Kotlin, this method enables the syntax `struct[index]`.

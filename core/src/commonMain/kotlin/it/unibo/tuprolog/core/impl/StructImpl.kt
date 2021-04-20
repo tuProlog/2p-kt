@@ -85,4 +85,10 @@ internal open class StructImpl(
         }
 
     override fun setFunctor(functor: String): Struct = Struct.of(functor, *args)
+
+    override fun setArgs(vararg args: Term): Struct = Struct.of(functor, *args)
+
+    override fun setArgs(args: Iterable<Term>): Struct = Struct.of(functor, args)
+
+    override fun setArgs(args: Sequence<Term>): Struct = Struct.of(functor, args)
 }
