@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
@@ -166,11 +167,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                     }
 
                     ruleSources.any { currentGoal in it } -> {
-                        val rules = ruleSources
-                            .flatMap { it[currentGoal] }
-                            .map { it.freshCopy() }
-                            .buffered()
-                            .ensureRules()
+                        val rules = ruleSources.flatMap { it.selectClauses(currentGoal) }.ensureRules()
                         if (context.isTailRecursive) {
                             StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
                         } else {
@@ -193,6 +190,15 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
             }
         }
     }
+
+    private fun Theory.selectClauses(term: Struct): Sequence<Clause> =
+        get(term).map { it.freshCopy() }.let {
+            if (isMutable) {
+                it.buffered()
+            } else {
+                it
+            }
+        }
 
     override fun clone(context: ClassicExecutionContext): StateRuleSelection = copy(context = context)
 }
