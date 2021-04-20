@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.theory.parsing
 
+import ClausesReaderImpl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.theory.Theory
 import java.io.InputStream
 import java.io.Reader
-import java.io.StringReader
 import kotlin.jvm.JvmStatic
 
 interface ClausesReader {
@@ -16,7 +16,7 @@ interface ClausesReader {
         Theory.of(readClausesLazily(inputStream, operators))
 
     fun readTheory(reader: Reader, operators: OperatorSet): Theory =
-        Theory.of(readClausesLazily(inputStream, operators))
+        Theory.of(readClausesLazily(reader, operators))
 
     fun readTheory(inputStream: InputStream): Theory = readTheory(inputStream, defaultOperatorSet)
 
@@ -35,7 +35,7 @@ interface ClausesReader {
         readClausesLazily(inputStream, operators).toList()
 
     fun readClauses(reader: Reader, operators: OperatorSet): List<Clause> =
-        readClausesLazily(inputStream).toList()
+        readClausesLazily(reader).toList()
 
     fun readClauses(inputStream: InputStream): List<Clause> = readClauses(inputStream, defaultOperatorSet)
 
@@ -43,18 +43,18 @@ interface ClausesReader {
 
     companion object {
         @JvmStatic
-        val withNoOperator = withOperators()
+        val withNoOperator: ClausesReader = withOperators()
 
         @JvmStatic
-        val withStandardOperators = withOperators(OperatorSet.STANDARD)
+        val withStandardOperators: ClausesReader = withOperators(OperatorSet.STANDARD)
 
         @JvmStatic
-        val withDefaultOperators = withOperators(OperatorSet.DEFAULT)
+        val withDefaultOperators: ClausesReader = withOperators(OperatorSet.DEFAULT)
 
         @JvmStatic
-        fun withOperators(operators: OperatorSet) = TODO()
+        fun withOperators(operators: OperatorSet): ClausesReader = ClausesReaderImpl(operators)
 
         @JvmStatic
-        fun withOperators(vararg operators: Operator) = withOperators(OperatorSet(*operators))
+        fun withOperators(vararg operators: Operator): ClausesReader = withOperators(OperatorSet(*operators))
     }
 }
