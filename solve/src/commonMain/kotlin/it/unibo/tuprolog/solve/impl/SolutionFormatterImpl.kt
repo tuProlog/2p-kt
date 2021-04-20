@@ -20,7 +20,7 @@ internal class SolutionFormatterImpl(private val termFormatter: TermFormatter) :
     }
 
     private fun formatException(e: TuPrologRuntimeException): String =
-        "halt: ${e.message ?: e::class.qualifiedName ?: "<no message>"}" +
+        "halt: ${e.message ?: "<no message>"}" +
             e.prologStackTrace.joinToString(STACK_ITEM_SEPARATOR, STACK_ITEM_SEPARATOR) { termFormatter.format(it) }
 
     private fun formatYes(value: Solution.Yes): String =
