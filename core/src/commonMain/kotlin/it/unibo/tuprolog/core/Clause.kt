@@ -52,6 +52,15 @@ interface Clause : Struct {
     @JsName("bodyItems")
     val bodyItems: Iterable<Term>
 
+    @JsName("bodySize")
+    val bodySize: Int
+
+    @JsName("bodyAsTuple")
+    val bodyAsTuple: Tuple?
+
+    @JsName("getBodyItem")
+    fun getBodyItem(index: Int): Term
+
     @JsName("setHead")
     fun setHead(head: Struct): Rule
 
@@ -109,14 +118,22 @@ interface Clause : Struct {
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct? = null, vararg body: Term): Clause =
+        fun of(head: Struct? = null, vararg body: Term): Clause = of(head, body.asIterable())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(head: Struct? = null, body: Iterable<Term>): Clause =
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
                     Directive.of(body.asIterable())
                 }
-                else -> Rule.of(head, *body)
+                else -> Rule.of(head, body)
             }
+
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(head: Struct? = null, body: Sequence<Term>): Clause = of(head, body.asIterable())
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic

@@ -1,9 +1,15 @@
 package it.unibo.tuprolog.core.impl
 
-import it.unibo.tuprolog.core.*
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Clause.Companion.bodyWellFormedVisitor
 import it.unibo.tuprolog.core.Clause.Companion.of
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
+import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.utils.insertAt
 
 internal abstract class ClauseImpl(
     override val head: Struct?,
@@ -29,11 +35,35 @@ internal abstract class ClauseImpl(
 
     override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 
-    override val bodyItems: Iterable<Term>
+    private val bodyItemsSequence: Sequence<Term>
         get() = when (val body = body) {
             is Tuple -> body.toSequence()
             else -> sequenceOf(body)
-        }.asIterable()
+        }
+
+    override val bodyItems: Iterable<Term>
+        get() = bodyItemsSequence.asIterable()
+
+    override val bodySize: Int
+        get() = when (val body = body) {
+            is Tuple -> body.size
+            else -> 1
+        }
+
+    override val bodyAsTuple: Tuple?
+        get() = body.asTuple()
+
+    private fun ensureIndexIsInBodyRange(index: Int) {
+        val size = bodySize
+        if (index < 0 || index >= size) {
+            throw IndexOutOfBoundsException("Attempt to access body item $index of a clause having $size body items")
+        }
+    }
+
+    override fun getBodyItem(index: Int): Term {
+        ensureIndexIsInBodyRange(index)
+        return bodyItemsSequence.drop(index).first()
+    }
 
     override fun setHead(head: Struct): Rule = Rule.of(head, body)
 
@@ -57,23 +87,18 @@ internal abstract class ClauseImpl(
 
     override fun setBodyItems(argument: Term, vararg arguments: Term): Clause = of(head, argument, *arguments)
 
-    override fun setBodyItems(arguments: Iterable<Term>): Clause = TODO()
+    override fun setBodyItems(arguments: Iterable<Term>): Clause = of(head, arguments)
 
-    override fun setBodyItems(arguments: Sequence<Term>): Clause = TODO()
+    override fun setBodyItems(arguments: Sequence<Term>): Clause = of(head, arguments)
 
     override fun insertBodyItem(index: Int, argument: Term): Clause {
-        TODO("Not yet implemented")
+        ensureIndexIsInBodyRange(index)
+        return of(head, bodyItemsSequence.insertAt(index, argument))
     }
 
-    override fun addFirstBodyItem(argument: Term): Clause {
-        TODO("Not yet implemented")
-    }
+    override fun addFirstBodyItem(argument: Term): Clause = of(head, sequenceOf(argument) + bodyItemsSequence)
 
-    override fun addLastBodyItem(argument: Term): Clause {
-        TODO("Not yet implemented")
-    }
+    override fun addLastBodyItem(argument: Term): Clause = of(head, bodyItemsSequence + sequenceOf(argument))
 
-    override fun appendBodyItem(argument: Term): Clause {
-        TODO("Not yet implemented")
-    }
+    override fun appendBodyItem(argument: Term): Clause = addLastBodyItem(argument)
 }

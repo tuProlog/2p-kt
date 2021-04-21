@@ -20,4 +20,20 @@ internal class FactImpl(
     override fun freshCopy(): Fact = super.freshCopy() as Fact
 
     override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
+
+    override fun setHeadFunctor(functor: String): Fact = super.setFunctor(functor).castToFact()
+
+    override fun setHeadArgs(vararg arguments: Term): Fact = super.setHeadArgs(*arguments).castToFact()
+
+    override fun setHeadArgs(arguments: Iterable<Term>): Fact = super.setHeadArgs(arguments).castToFact()
+
+    override fun setHeadArgs(arguments: Sequence<Term>): Fact = super.setHeadArgs(arguments).castToFact()
+
+    override fun insertHeadArg(index: Int, argument: Term): Fact = super.insertHeadArg(index, argument).castToFact()
+
+    override fun addFirstHeadArg(argument: Term): Fact = super.addFirstHeadArg(argument).castToFact()
+
+    override fun addLastHeadArg(argument: Term): Fact = super.addLastHeadArg(argument).castToFact()
+
+    override fun appendHeadArg(argument: Term): Fact = super.appendHeadArg(argument).castToFact()
 }
