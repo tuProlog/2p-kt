@@ -49,20 +49,91 @@ interface Clause : Struct {
 
     override fun asClause(): Clause = this
 
+    @JsName("bodyItems")
+    val bodyItems: Iterable<Term>
+
+    @JsName("bodySize")
+    val bodySize: Int
+
+    @JsName("bodyAsTuple")
+    val bodyAsTuple: Tuple?
+
+    @JsName("getBodyItem")
+    fun getBodyItem(index: Int): Term
+
+    @JsName("setHead")
+    fun setHead(head: Struct): Rule
+
+    @JsName("setBody")
+    fun setBody(body: Term): Clause
+
+    @JsName("setHeadFunctor")
+    fun setHeadFunctor(functor: String): Clause
+
+    @JsName("setHeadArgs")
+    fun setHeadArgs(vararg arguments: Term): Clause
+
+    @JsName("setHeadArgsIterable")
+    fun setHeadArgs(arguments: Iterable<Term>): Clause
+
+    @JsName("setHeadArgsSequence")
+    fun setHeadArgs(arguments: Sequence<Term>): Clause
+
+    @JsName("insertHeadArg")
+    fun insertHeadArg(index: Int, argument: Term): Clause
+
+    @JsName("addFirstHeadArg")
+    fun addFirstHeadArg(argument: Term): Clause
+
+    @JsName("addLastHeadArg")
+    fun addLastHeadArg(argument: Term): Clause
+
+    @JsName("appendHeadArg")
+    fun appendHeadArg(argument: Term): Clause
+
+    @JsName("setBodyItems")
+    fun setBodyItems(argument: Term, vararg arguments: Term): Clause
+
+    @JsName("setBodyItemsIterable")
+    fun setBodyItems(arguments: Iterable<Term>): Clause
+
+    @JsName("setBodyItemsSequence")
+    fun setBodyItems(arguments: Sequence<Term>): Clause
+
+    @JsName("insertBodyItem")
+    fun insertBodyItem(index: Int, argument: Term): Clause
+
+    @JsName("addFirstBodyItem")
+    fun addFirstBodyItem(argument: Term): Clause
+
+    @JsName("addLastBodyItem")
+    fun addLastBodyItem(argument: Term): Clause
+
+    @JsName("appendBodyItem")
+    fun appendBodyItem(argument: Term): Clause
+
     companion object {
 
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct? = null, vararg body: Term): Clause =
+        fun of(head: Struct? = null, vararg body: Term): Clause = of(head, body.asIterable())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(head: Struct? = null, body: Iterable<Term>): Clause =
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
                     Directive.of(body.asIterable())
                 }
-                else -> Rule.of(head, *body)
+                else -> Rule.of(head, body)
             }
+
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(head: Struct? = null, body: Sequence<Term>): Clause = of(head, body.asIterable())
 
         /** Contains notable functor in determining if a Clause [isWellFormed] */
         @JvmStatic

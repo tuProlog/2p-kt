@@ -30,6 +30,12 @@ class TermTest {
         override val isFunctorWellFormed: Boolean
             get() = Struct.isWellFormedFunctor(functor)
 
+        override fun setArgs(vararg args: Term): Struct = throw NotImplementedError()
+
+        override fun setArgs(args: Iterable<Term>): Struct = throw NotImplementedError()
+
+        override fun setArgs(args: Sequence<Term>): Struct = throw NotImplementedError()
+
         override fun equals(other: Any?): Boolean {
             return if (other is Term) equals(other, true) else false
         }

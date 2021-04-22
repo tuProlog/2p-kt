@@ -23,17 +23,68 @@ interface Rule : Clause {
 
     override fun asRule(): Rule = this
 
+    @JsName("headArgs")
+    val headArgs: Iterable<Term>
+
+    @JsName("headArity")
+    val headArity: Int
+
+    @JsName("getHeadArg")
+    fun getHeadArg(index: Int): Term
+
+    override fun setBody(body: Term): Rule
+
+    override fun setHeadFunctor(functor: String): Rule
+
+    override fun setHeadArgs(vararg arguments: Term): Rule
+
+    override fun setHeadArgs(arguments: Iterable<Term>): Rule
+
+    override fun setHeadArgs(arguments: Sequence<Term>): Rule
+
+    override fun insertHeadArg(index: Int, argument: Term): Rule
+
+    override fun addFirstHeadArg(argument: Term): Rule
+
+    override fun addLastHeadArg(argument: Term): Rule
+
+    override fun appendHeadArg(argument: Term): Rule
+
+    override fun setBodyItems(argument: Term, vararg arguments: Term): Rule
+
+    override fun setBodyItems(arguments: Iterable<Term>): Rule
+
+    override fun setBodyItems(arguments: Sequence<Term>): Rule
+
+    override fun insertBodyItem(index: Int, argument: Term): Rule
+
+    override fun addFirstBodyItem(argument: Term): Rule
+
+    override fun addLastBodyItem(argument: Term): Rule
+
+    override fun appendBodyItem(argument: Term): Rule
+
     companion object {
 
         const val FUNCTOR = Terms.CLAUSE_FUNCTOR
 
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct, vararg body: Term): Rule =
-            when {
-                body.isEmpty() || body.size == 1 && body[0].isTrue -> Fact.of(head)
-                else -> RuleImpl(head, Tuple.wrapIfNeeded(*body))
-            }
+        fun of(head: Struct, vararg body: Term): Rule = of(head, body.asIterable())
+
+        @JvmStatic
+        @JsName("ofIterable")
+        fun of(head: Struct, body: Iterable<Term>): Rule {
+            val i = body.iterator()
+            if (!i.hasNext()) return Fact.of(head)
+            val first = i.next()
+            if (!i.hasNext() && first.isTrue) return Fact.of(head)
+            return RuleImpl(head, Tuple.wrapIfNeeded(body))
+        }
+
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(head: Struct, body: Sequence<Term>): Rule = of(head, body.asIterable())
 
         @JvmStatic
         @JsName("template")
