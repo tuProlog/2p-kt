@@ -27,7 +27,7 @@ internal open class RuleImpl(
 
     override fun setBody(body: Term): Rule = super.setBody(body).castToRule()
 
-    override fun setHeadFunctor(functor: String): Rule = super.setFunctor(functor).castToRule()
+    override fun setHeadFunctor(functor: String): Rule = super.setHeadFunctor(functor).castToRule()
 
     override fun setHeadArgs(vararg arguments: Term): Rule = super.setHeadArgs(*arguments).castToRule()
 

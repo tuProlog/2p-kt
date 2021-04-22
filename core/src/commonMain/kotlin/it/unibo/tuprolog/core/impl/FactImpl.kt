@@ -21,7 +21,7 @@ internal class FactImpl(
 
     override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
 
-    override fun setHeadFunctor(functor: String): Fact = super.setFunctor(functor).castToFact()
+    override fun setHeadFunctor(functor: String): Fact = super.setHeadFunctor(functor).castToFact()
 
     override fun setHeadArgs(vararg arguments: Term): Fact = super.setHeadArgs(*arguments).castToFact()
 
