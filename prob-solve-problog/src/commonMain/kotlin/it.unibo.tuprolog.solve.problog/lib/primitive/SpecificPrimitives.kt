@@ -16,7 +16,6 @@ internal object SpecificPrimitives {
             ProbSolveEvidence,
             ProbSolveWithEvidence,
             ProbNegationAsFailure,
-            ProbExplDebug,
             ProbSetConfig,
         )
 
