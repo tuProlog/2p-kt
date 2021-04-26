@@ -1,9 +1,10 @@
-package it.unibo.tuprolog.solve.problog
+package it.unibo.tuprolog.solve.problog.probabilistic
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.probability
+import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.Theory
 import kotlin.math.abs

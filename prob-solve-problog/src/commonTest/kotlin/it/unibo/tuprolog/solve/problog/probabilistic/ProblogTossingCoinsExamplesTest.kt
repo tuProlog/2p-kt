@@ -1,6 +1,7 @@
-package it.unibo.tuprolog.solve.problog
+package it.unibo.tuprolog.solve.problog.probabilistic
 
 import it.unibo.tuprolog.core.parsing.parseAsStruct
+import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 

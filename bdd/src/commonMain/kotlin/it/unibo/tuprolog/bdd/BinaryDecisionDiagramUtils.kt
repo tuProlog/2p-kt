@@ -7,39 +7,46 @@
 package it.unibo.tuprolog.bdd
 
 import it.unibo.tuprolog.bdd.exception.BinaryDecisionDiagramOperationException
-import it.unibo.tuprolog.bdd.impl.AnyBinaryDecisionDiagramVisitor
-import it.unibo.tuprolog.bdd.impl.ExpansionBinaryDecisionDiagramVisitor
+import it.unibo.tuprolog.bdd.impl.AnyVisitor
+import it.unibo.tuprolog.bdd.impl.ExpansionVisitor
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 /**
- * Shortcut for the [BinaryDecisionDiagram.ofVariable] method.
+ * Shortcut for the [BinaryDecisionDiagram.variableOf] method.
  */
 @JsName("bddOf")
-fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.ofVariable(value)
+fun <T : Comparable<T>> bddOf(value: T): BinaryDecisionDiagram<T> =
+    BinaryDecisionDiagram.variableOf(value)
 
 /**
- * Shortcut for the [BinaryDecisionDiagram.ofTerminal] method.
+ * Shortcut for the [BinaryDecisionDiagram.terminalOf] method.
  */
 @JsName("bddTerminalOf")
-fun <T : Comparable<T>> bddTerminalOf(value: Boolean): BinaryDecisionDiagram<T> =
-    BinaryDecisionDiagram.ofTerminal(value)
+fun <T : Comparable<T>> bddTerminalOf(
+    value: Boolean
+): BinaryDecisionDiagram<T> = BinaryDecisionDiagram.terminalOf(value)
 
-/** Internal helper function to catch all exceptions and wrap them into BBD-specific ones. */
+/** Internal helper function to catch all exceptions and wrap them into
+ * BBD-specific ones. */
 internal fun <T> runOperationAndCatchErrors(action: () -> T): T {
     try {
         return action()
     } catch (e: Throwable) {
-        throw BinaryDecisionDiagramOperationException("BinaryDecisionDiagram operation failure", e)
+        throw BinaryDecisionDiagramOperationException(
+            "BinaryDecisionDiagram operation failure",
+            e
+        )
     }
 }
 
 /**
- * Formats a [BinaryDecisionDiagram] using Graphviz notation (https://graphviz.org/).
- * This provides a fast and widely supported solution to visualize the contents of a BDD.
+ * Formats a [BinaryDecisionDiagram] using Graphviz DOT notation
+ * (https://graphviz.org/). This provides a fast and widely supported solution
+ * to visualize the contents of a BDD.
  */
-@JsName("toGraphvizString")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
+@JsName("toDotString")
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toDotString(): String {
     return runOperationAndCatchErrors {
         val checkSet = mutableSetOf<Int>()
         val labelBuilder = StringBuilder()
@@ -50,9 +57,11 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
         labelBuilder.append("$falseValue [shape=circle, label=\"0\"]\n")
         labelBuilder.append("$trueValue [shape=circle, label=\"1\"]\n")
         this.expansion(falseValue, trueValue) { node, low, high ->
-            val nodeValue = node.hashCode() * 31 + low * 31 + high * 31
+            val nodeValue = Triple(node, low, high).hashCode()
             if (nodeValue !in checkSet) {
-                labelBuilder.append("$nodeValue [shape=record, label=\"$node\"]\n")
+                labelBuilder.append(
+                    "$nodeValue [shape=record, label=\"$node\"]\n"
+                )
                 graphBuilder.append("$nodeValue -> $low [style=dashed]\n")
                 graphBuilder.append("$nodeValue -> $high\n")
                 checkSet.add(nodeValue)
@@ -64,8 +73,10 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.toGraphvizString(): String {
 }
 
 /**
- * Applies a given operation over a [BinaryDecisionDiagram] using the Shannon Expansion.
- * The result if a reduction determined by the operation.
+ * Applies a given operation over a [BinaryDecisionDiagram] using
+ * the Shannon Expansion. The result is a reduction of a given diagram,
+ * determined by applying an operation recursively over a BDD with
+ * bottom-up order.
  */
 @JsName("expansion")
 fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
@@ -74,17 +85,26 @@ fun <T : Comparable<T>, E> BinaryDecisionDiagram<T>.expansion(
     operator: (node: T, low: E, high: E) -> E,
 ): E {
     return runOperationAndCatchErrors {
-        this.accept(ExpansionBinaryDecisionDiagramVisitor(operator, falseTerminal, trueTerminal))
+        this.accept(
+            ExpansionVisitor(
+                operator,
+                falseTerminal,
+                trueTerminal
+            )
+        )
     }
 }
 
 /**
- * Returns true if the [BinaryDecisionDiagram] has at least one variable element matching the given predicate.
+ * Returns true if the [BinaryDecisionDiagram] has at least one variable
+ * element matching the given predicate.
  */
 @JsName("anyWhere")
-fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(predicate: (T) -> Boolean): Boolean {
+fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(
+    predicate: (T) -> Boolean
+): Boolean {
     return runOperationAndCatchErrors {
-        this.accept(AnyBinaryDecisionDiagramVisitor(predicate))
+        this.accept(AnyVisitor(predicate))
     }
 }
 
@@ -99,17 +119,19 @@ fun <T : Comparable<T>> BinaryDecisionDiagram<T>.any(): Boolean {
 }
 
 /**
- * Returns a [BinaryDecisionDiagram] containing nodes of applying the given transform function to each
- * element in the original [BinaryDecisionDiagram]. The internal structure of the diagram is maintained.
+ * Returns a [BinaryDecisionDiagram] containing nodes of applying the given
+ * transform function to each element in the original [BinaryDecisionDiagram].
+ * The internal structure of the diagram is maintained.
  */
 @JsName("map")
 fun <T : Comparable<T>, E : Comparable<E>> BinaryDecisionDiagram<T>.map(
     mapper: (T) -> E
 ): BinaryDecisionDiagram<E> {
+    val builder = BinaryDecisionDiagramBuilder.reducedOf<E>()
     return runOperationAndCatchErrors {
         this.expansion(
-            BinaryDecisionDiagram.ofTerminal(false),
-            BinaryDecisionDiagram.ofTerminal(true)
-        ) { node, low, high -> BinaryDecisionDiagram.ofVariable(mapper(node), low, high) }
+            builder.buildTerminal(false),
+            builder.buildTerminal(true),
+        ) { node, low, high -> builder.buildVariable(mapper(node), low, high) }
     }
 }

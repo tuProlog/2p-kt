@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.problog.lib.knowledge
 
 import it.unibo.tuprolog.bdd.bddOf
 import it.unibo.tuprolog.bdd.bddTerminalOf
-import it.unibo.tuprolog.bdd.toGraphvizString
+import it.unibo.tuprolog.bdd.toDotString
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.BinaryDecisionDiagramExplanation
 import kotlin.js.JsName
 
@@ -91,7 +91,7 @@ internal interface ProbExplanation {
      */
     fun formatToGraphviz(): String {
         if (this is BinaryDecisionDiagramExplanation) {
-            return diagram.toGraphvizString()
+            return diagram.toDotString()
         }
         throw UnsupportedOperationException("Graphviz formatting is only supported for graph-like data structures.")
     }

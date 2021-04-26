@@ -11,7 +11,4 @@ import kotlin.jvm.JvmOverloads
 open class BinaryDecisionDiagramException @JvmOverloads constructor(
     override val message: String? = null,
     override val cause: Throwable? = null
-) : RuntimeException(message, cause) {
-
-    constructor(cause: Throwable?) : this(cause?.toString(), cause)
-}
+) : RuntimeException(message, cause)
