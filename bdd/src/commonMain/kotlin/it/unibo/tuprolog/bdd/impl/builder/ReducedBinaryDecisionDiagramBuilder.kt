@@ -2,13 +2,13 @@ package it.unibo.tuprolog.bdd.impl.builder
 
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagram
 import it.unibo.tuprolog.bdd.BinaryDecisionDiagramBuilder
-import it.unibo.tuprolog.bdd.BinaryDecisionDiagramBuilder.Companion.simpleOf
+import it.unibo.tuprolog.bdd.BinaryDecisionDiagramBuilder.Companion.defaultOf
 
 /**
  * Returns a [BinaryDecisionDiagramBuilder] instance that applies
  * reduction optimizations through the `reduce` algorithm, and
  * delegates the construction of each node to [delegate]. By default,
- * [delegate] is set as [simpleOf]. The following reductions are
+ * [delegate] is set as [defaultOf]. The following reductions are
  * performed:
  * - Removal of duplicate variable nodes
  * - Removal of duplicate terminal nodes

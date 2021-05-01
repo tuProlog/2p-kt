@@ -101,7 +101,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
             high: BinaryDecisionDiagram<E>
         ): BinaryDecisionDiagram<E> {
             return BinaryDecisionDiagramBuilder
-                .simpleOf<E>()
+                .defaultOf<E>()
                 .buildVariable(value, low, high)
         }
 
@@ -112,7 +112,7 @@ interface BinaryDecisionDiagram<T : Comparable<T>> {
             truth: Boolean
         ): BinaryDecisionDiagram<E> {
             return BinaryDecisionDiagramBuilder
-                .simpleOf<E>()
+                .defaultOf<E>()
                 .buildTerminal(truth)
         }
     }

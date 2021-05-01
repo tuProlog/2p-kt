@@ -15,7 +15,7 @@ import kotlin.js.JsName
  *
  * @author Jason Dellaluce
  */
-internal interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
+interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
 
     /**
      * Returns an instance of [BinaryDecisionDiagram.Variable] with
@@ -39,6 +39,17 @@ internal interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
 
     companion object {
         /**
+         * Returns a default [BinaryDecisionDiagramBuilder] instance. Different
+         * platforms can return different types of instances, to apply
+         * platform-specific optimizations. Note, no reduction optimization
+         * must be applied by the returned instance.
+         * */
+        @JsName("defaultOf")
+        fun <E : Comparable<E>> defaultOf(): BinaryDecisionDiagramBuilder<E> {
+            return createDefaultBinaryDecisionDiagramBuilder()
+        }
+
+        /**
          * Returns a simple [BinaryDecisionDiagramBuilder] instance that does
          * not apply platform-specific or reduction optimizations. This
          * provides basic means to build represent BDDs, and keeps the entire
@@ -52,9 +63,9 @@ internal interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
         /**
          * Returns a [BinaryDecisionDiagramBuilder] instance that applies
          * reduction optimizations through the `reduce` algorithm, and
-         * delegates the construction of each node to [delegate]. By default,
-         * [delegate] is set as [simpleOf]. The following reductions are
-         * performed:
+         * delegates the actual construction logic of each node to [delegate].
+         * By default, [delegate] is set as [defaultOf]. The following
+         * reductions are performed:
          * - Removal of duplicate variable nodes
          * - Removal of duplicate terminal nodes
          * - Removal of redundant variable nodes, which are
@@ -63,9 +74,15 @@ internal interface BinaryDecisionDiagramBuilder<T : Comparable<T>> {
          * */
         @JsName("reducedOf")
         fun <E : Comparable<E>> reducedOf(
-            delegate: BinaryDecisionDiagramBuilder<E> = simpleOf()
+            delegate: BinaryDecisionDiagramBuilder<E> = defaultOf()
         ): BinaryDecisionDiagramBuilder<E> {
             return ReducedBinaryDecisionDiagramBuilder(delegate)
         }
     }
 }
+
+/* Everything seems to be working, so perhaps this is an error of the IDE? */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+internal expect fun <E : Comparable<E>>
+createDefaultBinaryDecisionDiagramBuilder():
+    BinaryDecisionDiagramBuilder<E>
