@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.isDotRepresentation
+import it.unibo.tuprolog.solve.isDotGraphRepresentation
 import it.unibo.tuprolog.solve.isProbabilistic
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanationTerm
@@ -21,7 +21,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbQuery
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig
 import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toProbConfigTerm
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
-import it.unibo.tuprolog.solve.setDotRepresentation
+import it.unibo.tuprolog.solve.setDotGraphRepresentation
 import it.unibo.tuprolog.solve.setProbability
 import it.unibo.tuprolog.theory.Theory
 
@@ -93,10 +93,10 @@ internal open class ProblogSolver(
                     )
                     else -> newSolution.setProbability(Double.NaN)
                 }
-                if (options.isDotRepresentation &&
+                if (options.isDotGraphRepresentation &&
                     bddTerm is ProbExplanationTerm
                 ) {
-                    newSolution = newSolution.setDotRepresentation(
+                    newSolution = newSolution.setDotGraphRepresentation(
                         bddTerm.explanation.formatToGraphviz()
                     )
                 }

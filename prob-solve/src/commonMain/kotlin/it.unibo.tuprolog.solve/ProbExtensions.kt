@@ -38,20 +38,20 @@ fun <T : Taggable<T>, U : T> U.setProbability(
  * It so, solvers attempt to provide a string representation
  * of [Solution]s using using Graphviz DOT
  * notation (https://graphviz.org/). It can then be retrieved
- * through the [Solution.dotRepresentation] method. Note, this
+ * through the [Solution.dotGraphRepresentation] method. Note, this
  * option is ignored if [SolveOptions.isProbabilistic] is set
  * to false, as this is a feature specific to probabilistic
  * computation.
  */
-val SolveOptions.isDotRepresentation: Boolean
+val SolveOptions.isDotGraphRepresentation: Boolean
     get() = (customOptions[DOT_REPRESENTATION_OPTION_TAG] as Boolean?)
         ?: DEFAULT_DOT_REPRESENTATION_OPTION
 
 /**
  * Sets the DOT representation option to [value]. See
- * [SolveOptions.isDotRepresentation] for reference.
+ * [SolveOptions.isDotGraphRepresentation] for reference.
  */
-fun SolveOptions.setDotRepresentation(
+fun SolveOptions.setDotGraphRepresentation(
     value: Boolean
 ) = setOption(DOT_REPRESENTATION_OPTION_TAG, value)
 
@@ -75,12 +75,12 @@ fun SolveOptions.setProbabilistic(
  * defined over a graph data structure. Returns null if the functionality
  * is not supported.
  */
-val Solution.dotRepresentation: String? get() = getTag(DOT_REPRESENTATION_TAG)
+val Solution.dotGraphRepresentation: String? get() = getTag(DOT_REPRESENTATION_TAG)
 
 /**
  * Sets a string representation of the solution using Graphviz DOT
  * notation (https://graphviz.org/).
  */
-fun Solution.setDotRepresentation(
+fun Solution.setDotGraphRepresentation(
     value: String
 ) = setTag(DOT_REPRESENTATION_TAG, value)
