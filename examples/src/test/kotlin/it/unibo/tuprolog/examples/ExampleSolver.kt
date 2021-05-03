@@ -5,7 +5,12 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -14,9 +19,16 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.channel.InputChannel
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.classic.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.function.Compute
+import it.unibo.tuprolog.solve.function.ExpressionReducer
 import it.unibo.tuprolog.solve.library.AliasedLibrary
 import it.unibo.tuprolog.solve.library.Libraries
 import it.unibo.tuprolog.solve.library.Library
@@ -24,8 +36,11 @@ import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.Unificator.Companion.mguWith
+import org.gciatto.kt.math.BigInteger
 import org.junit.Ignore
 import org.junit.Test
+import kotlin.collections.List as KtList
 
 class ExampleSolver {
     @Test
@@ -40,7 +55,7 @@ class ExampleSolver {
 
         val goal = Struct.of("f", Var.of("X"))
 
-        val solutions: List<Solution> = prolog.solveList(goal)
+        val solutions: KtList<Solution> = prolog.solveList(goal)
 
         println(solutions.size) // 3
         println(solutions)
@@ -279,5 +294,174 @@ class ExampleSolver {
         ) {}
 
         println(myLibrary)
+    }
+
+    @Test
+    fun customPrimitive() {
+        val gt = Signature("gt", 2)
+
+        fun greaterThan(req: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
+            val arg1: Term = req.arguments[0] ; val arg2: Term = req.arguments[1]
+
+            if (arg1 !is Numeric) {
+                throw TypeError.forArgument(req.context, req.signature, TypeError.Expected.NUMBER, arg1, 0)
+            }
+            if (arg2 !is Numeric) {
+                throw TypeError.forArgument(req.context, req.signature, TypeError.Expected.NUMBER, arg2, 1)
+            }
+
+            return if (arg1.castToNumeric().decimalValue > arg2.castToNumeric().decimalValue) {
+                sequenceOf(req.replySuccess())
+            } else {
+                sequenceOf(req.replyFail())
+            }
+        }
+
+        val mylib = Library.aliased(alias = "prolog.mylib", primitives = mapOf(gt to ::greaterThan))
+
+        val solver = Solver.classic.solverOf(Libraries.of(mylib))
+
+        println(solver.solveOnce(Struct.of("gt", Integer.ONE, Integer.ZERO))) // yes
+        println(solver.solveOnce(Struct.of("gt", Integer.ZERO, Integer.ONE))) // no
+        println(solver.solveOnce(Struct.of("gt", Integer.ONE, Atom.of("a")))) // type_error
+    }
+
+    @Test
+    fun customBacktrackablePrimitive() {
+        val nat = Signature("nat", 1)
+
+        fun natural(req: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
+            return when (val arg1: Term = req.arguments[0]) {
+                is Numeric -> sequenceOf(if (arg1.intValue >= BigInteger.ZERO) req.replySuccess() else req.replyFail())
+                is Var -> generateSequence(0) { it + 1 }.map { Integer.of(it) }.map { it mguWith arg1 }.map { req.replyWith(it) }
+                else -> throw TypeError.forArgument(req.context, req.signature, TypeError.Expected.NUMBER, arg1, 0)
+            }
+        }
+
+        val mylib = Library.aliased(alias = "prolog.mylib", primitives = mapOf(nat to ::natural))
+
+        val solver = Solver.classic.solverOf(Libraries.of(mylib))
+
+        println(solver.solveOnce(Struct.of("nat", Integer.ONE))) // yes
+        println(solver.solveOnce(Struct.of("nat", Integer.MINUS_ONE))) // no
+        println(solver.solveOnce(Struct.of("nat", Atom.of("a")))) // type_error
+        println(solver.solve(Struct.of("nat", Var.of("X"))).take(3).toList()) // 0, 1, 2
+    }
+
+    @Test
+    fun customSideEffectPrimitive() {
+        val assert_all = Signature("assert_all", 1)
+
+        fun assertAll(req: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
+            return when (val arg1: Term = req.arguments[0]) {
+                is List -> req.replySuccess {
+                    addDynamicClauses(arg1.toList().filterIsInstance<Struct>().map { Rule.of(it) })
+                }
+                else -> throw TypeError.forArgument(req.context, req.signature, TypeError.Expected.LIST, arg1, 0)
+            }.let { sequenceOf(it) }
+        }
+
+        val mylib = Library.aliased(alias = "prolog.mylib", primitives = mapOf(assert_all to ::assertAll))
+
+        val solver = Solver.classic.solverOf(Libraries.of(mylib))
+
+        val factsToAdd = List.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+
+        println(solver.solveOnce(Struct.of("assert_all", factsToAdd))) // yes
+        println(solver.dynamicKb) // a. b. c.
+    }
+
+    @Test
+    fun customFunction() {
+        val next = Signature("next", 1)
+
+        fun next(req: Compute.Request<ExecutionContext>): Compute.Response {
+            return when (val arg1: Term = req.arguments[0]) {
+                is Integer -> req.replyWith(Integer.of(arg1.intValue + BigInteger.ONE))
+                else -> req.replyWith(arg1)
+            }
+        }
+
+        val mylib = Library.aliased(alias = "prolog.mylib", functions = mapOf(next to ::next))
+
+        val solver = Solver.classic.solverWithDefaultBuiltins(Libraries.of(mylib))
+
+        val goal = Struct.of("is", Var.of("X"), Struct.of("next", Integer.ONE)) // X is next(1)
+        println(solver.solveOnce(goal)) // X=2
+    }
+
+    @Test
+    fun reducePrimitive() {
+        val reduce = Signature("reduce", 2)
+
+        fun reduce(req: Solve.Request<ExecutionContext>): Sequence<Solve.Response> {
+            val arg1: Term = req.arguments[0]
+            return when (val arg2: Term = req.arguments[1]) {
+                is Var -> throw InstantiationError.forArgument(req.context, req.signature, arg2, 1)
+                else -> {
+                    val reducer = ExpressionReducer(req, 1)
+                    req.replyWith(arg1 mguWith arg2.accept(reducer))
+                }
+            }.let { sequenceOf(it) }
+        }
+
+        val mylib = Library.aliased(alias = "prolog.mylib", primitives = mapOf(reduce to ::reduce))
+
+        val solver = Solver.classic.solverWithDefaultBuiltins(Libraries.of(mylib))
+
+        val expression = Struct.of("f", Struct.of("+", Integer.ONE, Integer.of(2))) // f(1 + 2)
+
+        val goal = Struct.of("reduce", Var.of("X"), expression) // reduce(X, f(1 + 2))
+        println(solver.solveOnce(goal)) // X=f(3)
+    }
+
+    @Test
+    fun channels() {
+        val messages = mutableListOf<String>()
+
+        val solver = Solver.classic.solverWithDefaultBuiltins(
+            otherLibraries = Libraries.of(IOLib),
+            stdIn = InputChannel.of("hello"),
+            stdOut = OutputChannel.of { messages += it }
+        )
+
+        val goal = Scope.empty {
+            tupleOf(
+                structOf("get_char", varOf("X")),
+                structOf("write", varOf("X"))
+            )
+        } // ?- get_char(X), write(X).
+
+        for (i in 0 until "hello".length) {
+            println(solver.solveOnce(goal)) // X=h, H=e, H=l, ...
+        }
+
+        println(messages) // [h, e, l, l, o]
+    }
+
+    @Test
+    fun unknown() {
+        val solver1 = Solver.classic.solverOf(
+            flags = FlagStore.DEFAULT,
+            warnings = OutputChannel.warn() // default
+        )
+
+        solver1.solveOnce(Atom.of("missing")) // no (prints warning)
+        // No such a predicate: missing/0
+
+        val solver2 = Solver.classic.solverOf(
+            flags = FlagStore.DEFAULT.set(Unknown, Unknown.FAIL),
+            warnings = OutputChannel.warn() // default
+        )
+
+        solver2.solveOnce(Atom.of("missing")) // no (prints noting)
+
+        val solver3 = Solver.classic.solverOf(
+            flags = FlagStore.DEFAULT.set(Unknown, Unknown.ERROR),
+            warnings = OutputChannel.warn() // default
+        )
+
+        solver3.solveOnce(Atom.of("missing")) // halt
+        // existence_error(procedure, missing/0)
     }
 }
