@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.input
 import it.unibo.tuprolog.solve.function.testutils.ExpressionEvaluatorUtils.noFunctionRequest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 /**
  * Test class for [ExpressionReducerTest]
@@ -19,7 +18,7 @@ internal class ExpressionReducerTest {
     @Test
     fun doesNothingIfGivenExecutionContextDoesNotDefineFunctions() {
         inputFunctionOutputTriple.forEach { (input, _, _) ->
-            assertSame(input, input.accept(ExpressionReducer(noFunctionRequest)))
+            assertEquals(input, input.accept(ExpressionReducer(noFunctionRequest)))
         }
     }
 
