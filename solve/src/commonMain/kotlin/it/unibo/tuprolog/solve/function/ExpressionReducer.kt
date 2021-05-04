@@ -18,6 +18,10 @@ class ExpressionReducer<E : ExecutionContext>(
     index: Int? = null
 ) : AbstractEvaluator<E, Term>(request, index) {
     override fun unevaluable(struct: Struct): Term {
-        return struct.setArgs(struct.argsSequence.map { it.accept(this).apply { dynamicCheck(struct) } })
+        return if (struct.arity > 0) {
+            struct.setArgs(struct.argsSequence.map { it.accept(this).apply { dynamicCheck(struct) } })
+        } else {
+            struct
+        }
     }
 }
