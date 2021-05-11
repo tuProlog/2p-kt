@@ -139,14 +139,14 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="&gt;" />
-                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="&gt;&gt;" />
-                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="X">
+                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="Solve" />
+                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="Solve all" />
+                                <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="Stop">
                                     <HBox.margin>
                                         <Insets left="10.0" />
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="R">
+                                <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="Reset">
                                     <HBox.margin>
                                         <Insets left="10.0" />
                                     </HBox.margin>

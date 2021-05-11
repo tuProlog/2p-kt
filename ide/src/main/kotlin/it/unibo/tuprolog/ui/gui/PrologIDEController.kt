@@ -404,6 +404,8 @@ class PrologIDEController : Initializable {
             cleanUpAfterResolution()
             btnStop.isDisable = false
             txaStdin.isDisable = true
+            btnNext.text = "Next"
+            btnNextAll.text = "All next"
         }
     }
 
@@ -412,6 +414,8 @@ class PrologIDEController : Initializable {
             lblStatus.text = "Idle"
             btnStop.isDisable = true
             txaStdin.isDisable = false
+            btnNext.text = "Solve"
+            btnNextAll.text = "Solve all"
         }
     }
 
@@ -482,9 +486,10 @@ class PrologIDEController : Initializable {
     @FXML
     fun onResetButtonPressed(e: ActionEvent) {
         model.reset()
-        currentFileTab?.let { model.setCurrentFile(it.wholeText) }
+        // currentFileTab?.let { model.setCurrentFile(it.wholeText) }
         txaStdout.clear()
         txaStderr.clear()
+        lsvSolutions.items.clear()
     }
 
     private fun continueResolution(all: Boolean = false) {
