@@ -24,7 +24,10 @@ import java.util.EnumSet
 import java.util.concurrent.ExecutorService
 import kotlin.system.exitProcess
 
-internal class PrologIDEModelImpl(override val executor: ExecutorService, var customizer: ((MutableSolver) -> Unit)?) : PrologIDEModel {
+internal class PrologIDEModelImpl(
+    override val executor: ExecutorService,
+    var customizer: ((MutableSolver) -> Unit)? = {}
+) : PrologIDEModel {
 
     private data class FileContent(var text: String, var changed: Boolean = true) {
         fun text(text: String) {
@@ -150,6 +153,7 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
             }
             solver.invalidate()
             solver.regenerate()
+            loadCurrentFileAsStaticKB(onlyIfChanged = false)
         }
     }
 
@@ -182,17 +186,23 @@ internal class PrologIDEModelImpl(override val executor: ExecutorService, var cu
     }
 
     private fun newResolution(): Iterator<Solution> {
-        solver.value.let { s ->
+        loadCurrentFileAsStaticKB()
+        solver.value.let {
+            lastGoal = query.parseAsStruct(it.operators)
+            return it.solve(lastGoal!!, timeout).iterator()
+        }
+    }
+
+    private fun loadCurrentFileAsStaticKB(onlyIfChanged: Boolean = true) {
+        solver.value.let { solver ->
             currentFile?.let { files[it] }.let {
-                if (it?.changed != false) {
-                    val theory = it?.text()?.parseAsTheory(s.operators) ?: Theory.empty()
-                    s.resetDynamicKb()
-                    s.loadStaticKb(theory)
+                if (!onlyIfChanged || it?.changed != false) {
+                    val theory = it?.text()?.parseAsTheory(solver.operators) ?: Theory.empty()
+                    solver.resetDynamicKb()
+                    solver.loadStaticKb(theory)
+                    onNewStaticKb.push(SolverEvent(Unit, solver))
                 }
             }
-            lastGoal = query.parseAsStruct(s.operators)
-            onNewStaticKb.push(SolverEvent(Unit, s))
-            return s.solve(lastGoal!!, timeout).iterator()
         }
     }
 

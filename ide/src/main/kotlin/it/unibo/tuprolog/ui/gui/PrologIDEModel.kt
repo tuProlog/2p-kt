@@ -14,7 +14,7 @@ import java.util.concurrent.ForkJoinPool
 interface PrologIDEModel {
 
     companion object {
-        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor) {}
+        fun of(executor: ExecutorService = ForkJoinPool.commonPool()): PrologIDEModel = PrologIDEModelImpl(executor)
     }
 
     enum class State {
