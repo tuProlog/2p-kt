@@ -8,7 +8,9 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -136,21 +138,40 @@
                                 <Label text="?-" />
                                 <TextField fx:id="txfQuery" onAction="#onActionPerformedOnQuery" onKeyTyped="#onKeyTypedOnQuery" HBox.hgrow="SOMETIMES">
                                     <HBox.margin>
-                                        <Insets right="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="Solve" />
-                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="Solve all" />
+                        <Separator orientation="VERTICAL" />
+                                <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#onNextButtonPressed" text="Solve">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></Button>
+                                <Button fx:id="btnNextAll" mnemonicParsing="false" onAction="#onNextAllButtonPressed" text="Solve all">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></Button>
                                 <Button fx:id="btnStop" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#onStopButtonPressed" text="Stop">
                                     <HBox.margin>
-                                        <Insets left="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </Button>
                                 <Button fx:id="btnReset" mnemonicParsing="false" onAction="#onResetButtonPressed" text="Reset">
                                     <HBox.margin>
-                                        <Insets left="10.0" />
+                                        <Insets />
                                     </HBox.margin>
                                 </Button>
+                        <Separator orientation="VERTICAL" />
+                        <Label text="Timeout:" />
+                        <Slider fx:id="sldTimeout" blockIncrement="1.0" max="1600000.0" min="200000.0" snapToTicks="true" value="369897.0">
+                           <HBox.margin>
+                              <Insets left="5.0" right="5.0" />
+                           </HBox.margin>
+                        </Slider>
+                        <Label fx:id="lblTimeout" text="5 s">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
                             </children>
                         </HBox>
                     </top>

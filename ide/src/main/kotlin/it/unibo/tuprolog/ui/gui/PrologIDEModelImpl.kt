@@ -19,6 +19,7 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
 import it.unibo.tuprolog.utils.Cached
 import org.reactfx.EventSource
+import org.reactfx.EventStream
 import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
@@ -44,15 +45,22 @@ internal class PrologIDEModelImpl(
     private var solutionCount = 0
     private var lastGoal: Struct? = null
     private var stdin: String = ""
-    override var timeout: TimeDuration = 5000
     override var query: String = ""
-
     override var currentFile: File? = null
         set(value) {
             if (field != null && field != value) {
                 files[field]?.changed = true
             }
             field = value
+        }
+
+    override var timeout: TimeDuration = 5000
+        set(value) {
+            val changed = field != value
+            field = value
+            if (changed) {
+                onTimeoutChanged.push(value)
+            }
         }
 
     override fun newFile(): File =
@@ -262,6 +270,8 @@ internal class PrologIDEModelImpl(
 //    override var goal: Struct
 //        get() = TODO("Not yet implemented")
 //        set(value) {}
+
+    override val onTimeoutChanged: EventSource<TimeDuration> = EventSource()
 
     override val onFileSelected: EventSource<File> = EventSource()
 

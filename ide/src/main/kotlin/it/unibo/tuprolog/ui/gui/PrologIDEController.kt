@@ -7,9 +7,11 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.PrologWarning
 import it.unibo.tuprolog.theory.Theory
 import javafx.application.Platform
+import javafx.beans.value.ChangeListener
 import javafx.event.ActionEvent
 import javafx.event.Event
 import javafx.fxml.FXML
@@ -21,6 +23,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuItem
 import javafx.scene.control.ProgressBar
+import javafx.scene.control.Slider
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
@@ -37,8 +40,11 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
+import java.lang.Math.pow
 import java.net.URL
 import java.util.ResourceBundle
+import kotlin.math.log10
+import kotlin.math.round
 
 @Suppress("UNUSED_PARAMETER")
 class PrologIDEController : Initializable {
@@ -48,6 +54,12 @@ class PrologIDEController : Initializable {
     private var onClose = {}
 
     private var onAbout = {}
+
+    @FXML
+    private lateinit var sldTimeout: Slider
+
+    @FXML
+    private lateinit var lblTimeout: Label
 
     @FXML
     private lateinit var root: Parent
@@ -240,6 +252,11 @@ class PrologIDEController : Initializable {
         model.onFileSelected.subscribe(this::onFileSelected)
         model.onNewSolver.subscribe(this::onNewSolver)
         model.onNewStaticKb.subscribe(this::onNewStaticKb)
+        model.onTimeoutChanged.subscribe(this::onTimeoutChanged)
+
+        sldTimeout.valueProperty().addListener(ChangeListener { _, _, value -> onTimeoutSliderMoved(value) })
+
+        updateTimeoutView(model.timeout)
 
         lsvSolutions.setCellFactory { ListCellView { SolutionView.of(it) } }
         lsvWarnings.setCellFactory { ListCellView { Label(it.message) } }
@@ -259,6 +276,19 @@ class PrologIDEController : Initializable {
         Platform.runLater {
             streamsTabs.forEach { it.hideNotification() }
         }
+    }
+
+    private fun onTimeoutSliderMoved(value: Number) {
+        model.timeout = round(pow(10.0, value.toDouble() / 1.0e5)).toLong()
+    }
+
+    private fun onTimeoutChanged(newTimeout: TimeDuration) {
+        updateTimeoutView(newTimeout)
+    }
+
+    private fun updateTimeoutView(timeout: TimeDuration) {
+        val seconds = timeout / 1000.0
+        lblTimeout.text = String.format("%.3f s", seconds)
     }
 
     private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {

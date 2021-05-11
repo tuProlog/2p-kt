@@ -73,6 +73,8 @@ interface PrologIDEModel {
 
 //    var goal: Struct
 
+    val onTimeoutChanged: EventStream<TimeDuration>
+
     val onFileSelected: EventStream<File>
 
     val onFileCreated: EventStream<File>
