@@ -40,10 +40,10 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
-import java.lang.Math.pow
 import java.net.URL
+import java.time.Duration
 import java.util.ResourceBundle
-import kotlin.math.log10
+import kotlin.math.pow
 import kotlin.math.round
 
 @Suppress("UNUSED_PARAMETER")
@@ -279,7 +279,7 @@ class PrologIDEController : Initializable {
     }
 
     private fun onTimeoutSliderMoved(value: Number) {
-        model.timeout = round(pow(10.0, value.toDouble() / 1.0e5)).toLong()
+        model.timeout = round(10.0.pow(value.toDouble())).toLong()
     }
 
     private fun onTimeoutChanged(newTimeout: TimeDuration) {
@@ -287,9 +287,31 @@ class PrologIDEController : Initializable {
     }
 
     private fun updateTimeoutView(timeout: TimeDuration) {
-        val seconds = timeout / 1000.0
-        lblTimeout.text = String.format("%.3f s", seconds)
+        val duration = Duration.ofMillis(timeout)
+        lblTimeout.text = duration.pretty()
     }
+
+    private fun Duration.pretty(): String {
+        val milliseconds = toMillisPart()
+        val seconds = toSecondsPart()
+        val minutes = toMinutesPart()
+        val hours = toHoursPart()
+        val days = toDaysPart() % 365
+        val years = toDaysPart() / 365
+        return sequenceOf(
+            years.pretty("y"),
+            days.pretty("d"),
+            hours.pretty("h"),
+            minutes.pretty("m"),
+            seconds.pretty("s"),
+            milliseconds.pretty("ms")
+        ).filterNotNull().joinToString()
+    }
+
+    private fun Long.pretty(unit: String): String? =
+        if (this == 0L) null else "$this$unit"
+
+    private fun Int.pretty(unit: String): String? = toLong().pretty(unit)
 
     private fun onNewSolver(e: SolverEvent<Unit>) = onUiThread {
         updateContextSensitiveView(e)

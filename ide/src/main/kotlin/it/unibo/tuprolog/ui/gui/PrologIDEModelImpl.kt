@@ -19,7 +19,6 @@ import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.PrologIDEModel.State
 import it.unibo.tuprolog.utils.Cached
 import org.reactfx.EventSource
-import org.reactfx.EventStream
 import java.io.File
 import java.util.EnumSet
 import java.util.concurrent.ExecutorService
