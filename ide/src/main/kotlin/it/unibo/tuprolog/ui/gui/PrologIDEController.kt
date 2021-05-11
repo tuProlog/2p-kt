@@ -408,14 +408,15 @@ class PrologIDEController : Initializable {
             }
             tabLibraries.showNotification()
         }
-        if (event.staticKb != lastEvent?.staticKb) {
+        if (lastEvent?.staticKb?.let { event.staticKb.equals(it, useVarCompleteName = false) } == false) {
             txaStaticKb.text = event.staticKb.pretty()
             tabStaticKb.showNotification()
         }
-        if (event.dynamicKb != lastEvent?.dynamicKb) {
+        if (lastEvent?.dynamicKb?.let { event.dynamicKb.equals(it, useVarCompleteName = false) } == false) {
             txaDynamicKb.text = event.dynamicKb.pretty()
             tabDynamicKb.showNotification()
         }
+        lastEvent = event
     }
 
     private fun updatingContextSensitiveView(event: SolverEvent<*>, action: () -> Unit) {
