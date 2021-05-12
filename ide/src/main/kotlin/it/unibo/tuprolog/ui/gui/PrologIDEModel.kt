@@ -73,6 +73,10 @@ interface PrologIDEModel {
 
 //    var goal: Struct
 
+    val onReset: EventStream<SolverEvent<Unit>>
+
+    val onQuit: EventStream<Unit>
+
     val onTimeoutChanged: EventStream<TimeDuration>
 
     val onFileSelected: EventStream<File>

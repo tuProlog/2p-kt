@@ -76,7 +76,7 @@ class SyntaxError constructor(
             message(
                 """
                 |Syntax error at $row:$column while parsing clause $index: $message
-                |   ${input.errorDetector(row, column, message).replace("\n", "\n|   ")}
+                |   ${errorDetector(input, row, column, message).replace("\n", "\n|   ")}
                 """.trimMargin()
             ) { m, extra ->
                 SyntaxError(
@@ -96,9 +96,11 @@ class SyntaxError constructor(
             return result
         }
 
-        private fun String.errorDetector(line: Int, column: Int, message: String? = null): String {
-            val lines = this.lineSequence().drop(line - 1).take(1).toList()
-            if (lines.isEmpty()) return this
+        @JsName("errorDetector")
+        @JvmStatic
+        fun errorDetector(text: String, line: Int, column: Int, message: String? = null): String {
+            val lines = text.lineSequence().drop(line - 1).take(1).toList()
+            if (lines.isEmpty()) return text
             val padding = kotlin.math.max(line.log10(), (line - 1).log10())
             val prefix = if (line > 1) { "${(line - 1).toString().padStart(padding)}: ...\n" } else ""
             val culprit = "${line.toString().padStart(padding)}: ${lines.last()}\n"
