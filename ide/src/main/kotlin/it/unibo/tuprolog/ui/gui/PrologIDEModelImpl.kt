@@ -231,6 +231,7 @@ internal class PrologIDEModelImpl(
                             solver.loadStaticKb(theory)
                             onNewStaticKb.push(SolverEvent(Unit, solver))
                         } catch (e: ParseException) {
+                            content?.changed = true
                             throw SyntaxException.InTheorySyntaxError(file, e)
                         }
                     }
