@@ -21,12 +21,12 @@ data class SolverEvent<T>(
     constructor(event: T, other: ExecutionContextAware) :
         this(
             event = event,
-            dynamicKb = other.dynamicKb,
+            dynamicKb = other.dynamicKb.toImmutableTheory(),
             flags = other.flags,
             inputChannels = other.inputChannels,
             libraries = other.libraries,
             operators = other.operators,
             outputChannels = other.outputChannels,
-            staticKb = other.staticKb
+            staticKb = other.staticKb.toImmutableTheory()
         )
 }
