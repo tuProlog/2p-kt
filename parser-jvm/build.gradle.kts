@@ -11,11 +11,11 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-// configurations {
-//     compile {
-//         setExtendsFrom(emptyList())
-//     }
-// }
+configurations {
+    api {
+        setExtendsFrom(emptyList()) // removes undesired dependency from antlr configuration
+    }
+}
 
 tasks.generateGrammarSource {
     maxHeapSize = "64m"
