@@ -64,7 +64,7 @@ class EvaluationError(
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(toString())
 
-        override fun toString(): String = super.toString().toLowerCase()
+        override fun toString(): String = super.toString().lowercase()
 
         companion object {
 
@@ -74,7 +74,7 @@ class EvaluationError(
             fun fromTerm(term: Term): Type? = when (term) {
                 is Atom ->
                     try {
-                        valueOf(term.value.toUpperCase())
+                        valueOf(term.value.uppercase())
                     } catch (e: IllegalArgumentException) {
                         null
                     } catch (e: IllegalStateException) {

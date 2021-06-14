@@ -347,8 +347,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
                 }
             }
 
-        private val MIN_CHAR = BigInteger.of(Char.MIN_VALUE.toInt())
-        private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.toInt())
+        private val MIN_CHAR = BigInteger.of(Char.MIN_VALUE.code)
+        private val MAX_CHAR = BigInteger.of(Char.MAX_VALUE.code)
 
         fun Integer.isCharacterCode(): Boolean = intValue !in MIN_CHAR..MAX_CHAR
 

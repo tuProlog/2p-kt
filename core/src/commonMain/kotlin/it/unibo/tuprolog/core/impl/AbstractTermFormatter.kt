@@ -25,7 +25,7 @@ internal abstract class AbstractTermFormatter(
 
     companion object {
         private val TWENTY_SIX = BigInteger.of(26)
-        private const val A_INDEX = 'A'.toInt()
+        private const val A_INDEX = 'A'.code
     }
 
     override fun defaultValue(term: Term): String = term.toString()

@@ -28,7 +28,7 @@ internal class TypeErrorExpectedTest {
     fun typeErrorExpectedOfReturnsPredefinedInstanceIfNameCorrect() {
         TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
             assertSame(instance, TypeError.Expected.of(name))
-            assertSame(instance, TypeError.Expected.of(name.toUpperCase()))
+            assertSame(instance, TypeError.Expected.of(name.uppercase()))
         }
     }
 
@@ -53,7 +53,7 @@ internal class TypeErrorExpectedTest {
     fun typeErrorExpectedFromTermWorkForPredefinedTerms() {
         TypeErrorExpectedUtils.predefinedErrorNamesToInstances.forEach { (name, instance) ->
             assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name))!!)
-            assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name.toUpperCase()))!!)
+            assertSame(instance, TypeError.Expected.fromTerm(Atom.of(name.uppercase()))!!)
             assertSame(instance, TypeError.Expected.fromTerm(instance.toTerm())!!)
         }
     }

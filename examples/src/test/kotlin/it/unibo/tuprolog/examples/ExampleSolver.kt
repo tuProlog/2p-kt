@@ -259,6 +259,7 @@ class ExampleSolver {
         println(solver.libraries.keys) // [prolog.lang, prolog.io, prolog.oop]
     }
 
+    @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     @Test
     fun definingLibraries() {
         val myLibrary = object : AliasedLibrary by

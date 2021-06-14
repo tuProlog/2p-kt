@@ -160,7 +160,7 @@ class ExistenceError(
         OOP_PROPERTY;
 
         /** The type expected string description */
-        private val type: String by lazy { name.toLowerCase() }
+        private val type: String by lazy { name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(type)

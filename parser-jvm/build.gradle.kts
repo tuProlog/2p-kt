@@ -1,4 +1,5 @@
 plugins {
+    java
     antlr
 }
 
@@ -10,16 +11,17 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-configurations {
-    compile {
-        setExtendsFrom(emptyList())
-    }
-}
+// configurations {
+//     compile {
+//         setExtendsFrom(emptyList())
+//     }
+// }
 
 tasks.generateGrammarSource {
     maxHeapSize = "64m"
     arguments = arguments + listOf("-visitor", "-long-messages")
     outputDirectory = File("${project.buildDir}/generated-src/antlr/main/it/unibo/tuprolog/parser")
+    tasks.compileKotlin.orNull?.dependsOn(this)
 }
 
 tasks.getByName<Jar>("sourcesJar") {

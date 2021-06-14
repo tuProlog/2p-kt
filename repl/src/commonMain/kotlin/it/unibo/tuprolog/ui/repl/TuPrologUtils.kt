@@ -41,7 +41,7 @@ object TuPrologUtils {
     }
 
     fun printParseException(e: ParseException) {
-        TermUi.echo("# ${e.message?.capitalize()}", err = true)
+        TermUi.echo("# ${e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}", err = true)
     }
 
     private fun printEndOfSolutions() {

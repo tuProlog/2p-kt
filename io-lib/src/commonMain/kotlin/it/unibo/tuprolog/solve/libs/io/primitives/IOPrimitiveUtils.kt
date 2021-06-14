@@ -279,7 +279,7 @@ object IOPrimitiveUtils {
         if (term !in IOMode.atomValues) {
             throw DomainError.forArgument(context, signature, DomainError.Expected.IO_MODE, term, index)
         }
-        return IOMode.valueOf(term.value.toUpperCase())
+        return IOMode.valueOf(term.value.uppercase())
     }
 
     fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsVarOrStream(index: Int): Channel<String>? {
@@ -400,7 +400,7 @@ object IOPrimitiveUtils {
 
     fun Solve.Request<ExecutionContext>.peekCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
-            val code = channel.peek()?.get(0)?.toInt() ?: -1
+            val code = channel.peek()?.get(0)?.code ?: -1
             replyWith(arg mguWith Integer.of(code))
         } catch (_: IllegalStateException) {
             replyFail()
@@ -418,7 +418,7 @@ object IOPrimitiveUtils {
 
     fun Solve.Request<ExecutionContext>.readCodeAndReply(channel: InputChannel<String>, arg: Term): Solve.Response {
         return try {
-            val code = channel.read()?.get(0)?.toInt() ?: -1
+            val code = channel.read()?.get(0)?.code ?: -1
             replyWith(arg mguWith Integer.of(code))
         } catch (_: IllegalStateException) {
             replyFail()

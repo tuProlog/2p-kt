@@ -207,7 +207,7 @@ internal object EquationUtils {
     internal fun countDeepGeneratedEquations(term: Term): Int = when (term) {
         is Var -> 1
         is Constant -> 1
-        is Struct -> term.argsSequence.sumBy { countDeepGeneratedEquations(it) }
+        is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
         else -> fail("Should never be there")
     }
 }

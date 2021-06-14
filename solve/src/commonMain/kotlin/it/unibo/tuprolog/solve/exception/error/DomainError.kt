@@ -184,7 +184,7 @@ class DomainError(
 
         /** The expected domain string description */
         @JsName("domain")
-        val domain: String by lazy { name.toLowerCase() }
+        val domain: String by lazy { name.lowercase() }
 
         /** A function to transform the type to corresponding [Atom] representation */
         override fun toTerm(): Atom = Atom.of(domain)
@@ -196,7 +196,7 @@ class DomainError(
             /** Returns the Expected instance described by [domain]; creates a new instance only if [domain] was not predefined */
             @JsName("of")
             @JvmStatic
-            fun of(domain: String): Expected = valueOf(domain.toUpperCase())
+            fun of(domain: String): Expected = valueOf(domain.uppercase())
 
             /** Gets [Expected] instance from [term] representation, if possible */
             @JsName("fromTerm")

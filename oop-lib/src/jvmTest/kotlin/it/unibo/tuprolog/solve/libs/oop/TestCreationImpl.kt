@@ -42,7 +42,7 @@ class TestCreationImpl(protected val solverFactory: SolverFactory) : TestCreatio
                 is Solution.Yes -> solver.solveOnce(query).substitution[X]?.let {
                     assertTrue(it is ObjectRef)
                     assertEquals(detectorType, it.`object`::class)
-                    assertEquals(
+                    assertEquals<Pair<*, *>?>(
                         case.converted to case.type,
                         (it.`object` as? ConstructorOverloadDetector)?.args
                     )

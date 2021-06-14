@@ -43,6 +43,7 @@ import org.fxmisc.richtext.CodeArea
 import java.io.File
 import java.net.URL
 import java.time.Duration
+import java.util.Locale
 import java.util.ResourceBundle
 import kotlin.math.pow
 import kotlin.math.round
@@ -465,7 +466,9 @@ class PrologIDEController : Initializable {
             }
             else -> {
                 dialog.headerText = "Error"
-                dialog.dialogPane.content = exception.message?.capitalize()?.toMonospacedText()
+                dialog.dialogPane.content = exception.message?.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                }?.toMonospacedText()
             }
         }
         dialog.dialogPane.minHeight = Region.USE_PREF_SIZE

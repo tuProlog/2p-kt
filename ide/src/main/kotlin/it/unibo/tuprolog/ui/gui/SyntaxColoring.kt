@@ -221,17 +221,17 @@ class SyntaxColoring(
 
         private val MatchResult.styleClass: String
             get() = when {
-                groups[KEYWORD] != null -> KEYWORD.toLowerCase()
-                groups[PAREN] != null -> PAREN.toLowerCase()
-                groups[NUMBER] != null -> NUMBER.toLowerCase()
-                groups[BRACE] != null -> BRACE.toLowerCase()
-                groups[BRACKET] != null -> BRACKET.toLowerCase()
-                groups[STRING] != null -> STRING.toLowerCase()
-                groups[COMMENT] != null -> COMMENT.toLowerCase()
-                groups[VARIABLE] != null -> VARIABLE.toLowerCase()
-                groups[ATOM] != null -> ATOM.toLowerCase()
-                groups[FUNCTOR] != null -> FUNCTOR.toLowerCase()
-                groups[FULLSTOP] != null -> FULLSTOP.toLowerCase()
+                groups[KEYWORD] != null -> KEYWORD.lowercase()
+                groups[PAREN] != null -> PAREN.lowercase()
+                groups[NUMBER] != null -> NUMBER.lowercase()
+                groups[BRACE] != null -> BRACE.lowercase()
+                groups[BRACKET] != null -> BRACKET.lowercase()
+                groups[STRING] != null -> STRING.lowercase()
+                groups[COMMENT] != null -> COMMENT.lowercase()
+                groups[VARIABLE] != null -> VARIABLE.lowercase()
+                groups[ATOM] != null -> ATOM.lowercase()
+                groups[FUNCTOR] != null -> FUNCTOR.lowercase()
+                groups[FULLSTOP] != null -> FULLSTOP.lowercase()
                 else -> ""
             }
     }

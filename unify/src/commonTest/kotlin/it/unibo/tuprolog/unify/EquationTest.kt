@@ -128,7 +128,7 @@ internal class EquationTest {
 
     @Test
     fun equationAllOfShouldReturnCorrectNumberOfEquations() {
-        val correct = EquationUtils.allIdentityEquations.sumBy { (lhs, _) -> countDeepGeneratedEquations(lhs) }
+        val correct = EquationUtils.allIdentityEquations.sumOf { (lhs, _) -> countDeepGeneratedEquations(lhs) }
         val toBeTested = EquationUtils.allIdentityEquations.flatMap { Equation.allOf(it).asIterable() }.count()
 
         assertEquals(correct, toBeTested)
