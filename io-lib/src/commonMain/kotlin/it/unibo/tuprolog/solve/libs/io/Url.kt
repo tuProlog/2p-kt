@@ -55,21 +55,19 @@ interface Url {
             val protocolGroup =
                 """(${protocol.str { "?<$it>" }}[\w]+)"""
             val unitGroup =
-                """(\/?${unit.str { "?$it" }}[a-z]\:)"""
+                """(\/?${unit.str { "?$it" }}[a-z]:)"""
             val hostGroup =
-                """(${host.str { "?<$it>" }}[^\s/]+[.][a-z]{2,})"""
+                """(${host.str { "?<$it>" }}[^\s\/]+[.][a-z]{2,})"""
             val portGroup =
                 """(${port.str { "?<$it>" }}\d+)"""
             val pathGroup =
-                """(${path.str { "?<$it>" }}(?:\/[^\s?\#\/]+)*\/?)"""
+                """(${path.str { "?<$it>" }}(?:\/[^\s?#\/]+)*\/?)"""
             val queryGroup =
                 """(${query.str { "?<$it>" }}[^\s\/?#]+)"""
             val anchorGroup =
                 """(${anchor.str { "?<$it>" }}.*)"""
-            return Regex(
-                """$protocolGroup\:\/+(?:$unitGroup|$hostGroup(?:\:$portGroup)?)?$pathGroup(?:\?$queryGroup?)?(?:\#$anchorGroup)?""",
-                RegexOption.IGNORE_CASE
-            )
+            val pattern = """$protocolGroup:\/+(?:$unitGroup|$hostGroup(?::$portGroup)?)?$pathGroup(?:\?$queryGroup?)?(?:#$anchorGroup)?"""
+            return Regex(pattern, RegexOption.IGNORE_CASE)
         }
 
         @JvmStatic
@@ -80,9 +78,7 @@ interface Url {
             return match
                 // ?.let { it as? MatchNamedGroupCollection }
                 ?.let { groups ->
-                    UrlField.values()
-                        .map { it to (groups[it.ordinal + 1]?.value) }
-                        .toMap()
+                    UrlField.values().associate { it to (groups[it.ordinal + 1]?.value) }
                 }
         }
 
