@@ -13,14 +13,15 @@ internal open class LazyConsWithImplicitLast(
 
     override val head: Term by lazy { cursor.current!! }
 
-    override val tail: Term
-        get() = cursor.next.let {
+    override val tail: Term by lazy {
+        cursor.next.let {
             when {
                 it.isOver -> EmptyList.instance
                 it.next.isOver -> it.current!!
                 else -> LazyConsWithImplicitLast(it)
             }
         }
+    }
 
     override val args: Array<Term> get() = arrayOf(head, tail)
 
