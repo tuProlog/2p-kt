@@ -10,7 +10,16 @@ internal data class MapperCursor<T, R>(
         get() = MapperCursor(wrapped.next, mapper)
 
     override val current: R?
-        get() = wrapped.current.let { if (it == null) null else mapper(it) }
+        get() = nestedCurrent?.let(mapper)
+
+    private val nestedCurrent: T?
+        get() {
+            var cursor: Cursor<out T> = wrapped
+            while (cursor is MapperCursor<*, *>) {
+                cursor = cursor.wrapped as Cursor<out T>
+            }
+            return cursor.current
+        }
 
     override val hasNext: Boolean
         get() = wrapped.hasNext
