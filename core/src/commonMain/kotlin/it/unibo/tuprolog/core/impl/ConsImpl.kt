@@ -13,10 +13,10 @@ internal class ConsImpl(
 ) : AbstractCons(arrayOf(head, tail), tags), Cons {
 
     override val weight: Int = 1 + when (val tail = tail) {
-            is EmptyList -> 0
-            is AbstractCons -> tail.weight
-            else -> 1
-        }
+        is EmptyList -> 0
+        is AbstractCons -> tail.weight
+        else -> 1
+    }
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         if (weight >= SWITCH_TO_LAZY_THRESHOLD) {

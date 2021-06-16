@@ -93,7 +93,6 @@ interface List : Collection {
         fun from(items: Iterable<Term>): List =
             from(items, null)
 
-
         @JvmStatic
         @JsName("fromSequence")
         fun from(items: Sequence<Term>, last: Term?): List =
@@ -108,8 +107,8 @@ interface List : Collection {
         @JsName("fromList")
         fun from(items: KtList<Term>, last: Term?): List {
             if (items.isEmpty()) {
-                return (last ?: empty()) as? List ?:
-                    throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+                return (last ?: empty()) as? List
+                    ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
             }
             val i = items.asReversed().iterator()
             var right = if (last == null) {

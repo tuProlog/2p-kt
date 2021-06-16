@@ -29,7 +29,7 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
 
     protected abstract fun copyWithTags(tags: Map<String, Any>): Term
 
-    override fun apply(substitution: Substitution): Term  = when (substitution) {
+    override fun apply(substitution: Substitution): Term = when (substitution) {
         is Substitution.Unifier -> {
             if (isUnifierSkippable(substitution)) {
                 this
