@@ -56,11 +56,15 @@ interface List : Collection {
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(items: Iterable<Term>): List = from(items.toList(), empty())
+        fun of(items: Iterable<Term>): List = from(items.cursor(), empty())
+
+        @JvmStatic
+        @JsName("ofList")
+        fun of(items: KtList<Term>): List = from(items, empty())
 
         @JvmStatic
         @JsName("ofSequence")
-        fun of(items: Sequence<Term>): List = from(items.toList(), empty())
+        fun of(items: Sequence<Term>): List = from(items.cursor(), empty())
 
         @JvmStatic
         @JsName("from")
@@ -94,8 +98,22 @@ interface List : Collection {
 
         @JvmStatic
         @JsName("fromList")
-        fun from(items: KtList<Term>, last: Term?): List =
-            from(items.cursor(), last)
+        fun from(items: KtList<Term>, last: Term?): List {
+            if (items.isEmpty() && last?.isList != true) {
+                throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+            }
+            val i = items.asReversed().iterator()
+            var right = if (last == null) {
+                i.next()
+                items.last()
+            } else {
+                last
+            }
+            while (i.hasNext()) {
+                right = Cons.of(i.next(), right)
+            }
+            return right as List
+        }
 
         @JvmStatic
         @JsName("fromListNullTerminated")
