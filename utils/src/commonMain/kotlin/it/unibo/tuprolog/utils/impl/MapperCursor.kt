@@ -1,11 +1,10 @@
 package it.unibo.tuprolog.utils.impl
 
 import it.unibo.tuprolog.utils.Cursor
-import kotlin.jvm.Synchronized
 
-internal class MapperCursor<T, R>(
-    wrapped: Cursor<out T>,
-    mapper: (T) -> R
+internal data class MapperCursor<T, R>(
+    private val wrapped: Cursor<out T>,
+    private val mapper: (T) -> R
 ) : AbstractCursor<R>() {
 
     init {
@@ -14,28 +13,10 @@ internal class MapperCursor<T, R>(
         }
     }
 
-    private var wrappedCursor: Cursor<out T>? = wrapped
+    override val next: Cursor<out R>
+        get() = wrapped.next.map(mapper)
 
-    private var mapperFunction: ((T) -> R)? = mapper
-
-    private var edits: Byte = 2
-
-    override val next: Cursor<out R> by lazy {
-        wrappedCursor!!.next.map(mapperFunction!!).thenCleanMemoryIfPossible()
-    }
-
-    override val current: R? by lazy {
-        wrappedCursor!!.current?.let(mapperFunction!!).thenCleanMemoryIfPossible()
-    }
-
-    @Synchronized
-    private fun <T> T.thenCleanMemoryIfPossible(): T {
-        if (--edits == 0.toByte()) {
-            wrappedCursor = null
-            mapperFunction = null
-        }
-        return this
-    }
+    override val current: R? = wrapped.current?.let(mapper)
 
     override val hasNext: Boolean
         get() = true
