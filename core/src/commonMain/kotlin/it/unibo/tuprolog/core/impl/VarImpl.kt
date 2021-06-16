@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
@@ -68,4 +69,8 @@ internal class VarImpl(
         other is Var && equalsToVar(other, useVarCompleteName)
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
+
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = this !in unifier
+
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term = unifier[this] ?: this
 }

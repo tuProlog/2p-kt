@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 
 @Suppress("EqualsOrHashCode")
 internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap()) : Term {
@@ -26,4 +28,19 @@ internal abstract class TermImpl(override val tags: Map<String, Any> = emptyMap(
         }
 
     protected abstract fun copyWithTags(tags: Map<String, Any>): Term
+
+    override fun apply(substitution: Substitution): Term  = when {
+        substitution is Substitution.Unifier -> {
+            if (isUnifierSkippable(substitution)) {
+                this
+            } else {
+                applyNonEmptyUnifier(substitution)
+            }
+        }
+        else -> throw SubstitutionApplicationException(this, substitution)
+    }
+
+    protected open fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || this.isGround
+
+    protected open fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term = this
 }
