@@ -1,24 +1,45 @@
 package it.unibo.tuprolog.utils.impl
 
 import it.unibo.tuprolog.utils.Cursor
+import kotlin.jvm.Synchronized
 
-internal data class MapperCursor<T, R>(
-    private val wrapped: Cursor<out T>,
-    private val mapper: (T) -> R
+internal class MapperCursor<T, R>(
+    wrapped: Cursor<out T>,
+    mapper: (T) -> R
 ) : AbstractCursor<R>() {
-    override val next: Cursor<out R>
-        get() = MapperCursor(wrapped.next, mapper)
 
-    override val current: R?
-        get() = wrapped.current?.let(mapper)
+    init {
+        require(wrapped !is EmptyCursor) {
+            "Cannot create a ${MapperCursor::class.simpleName} out of an ${EmptyCursor::class.simpleName}"
+        }
+    }
+
+    private var wrappedCursor: Cursor<out T>? = wrapped
+
+    private var mapperFunction: ((T) -> R)? = mapper
+
+    private var edits: Byte = 2
+
+    override val next: Cursor<out R> by lazy {
+        wrappedCursor!!.next.map(mapperFunction!!).thenCleanMemoryIfPossible()
+    }
+
+    override val current: R? by lazy {
+        wrappedCursor!!.current?.let(mapperFunction!!).thenCleanMemoryIfPossible()
+    }
+
+    @Synchronized
+    private fun <T> T.thenCleanMemoryIfPossible(): T {
+        if (--edits == 0.toByte()) {
+            wrappedCursor = null
+            mapperFunction = null
+        }
+        return this
+    }
 
     override val hasNext: Boolean
-        get() = wrapped.hasNext
+        get() = true
 
     override val isOver: Boolean
-        get() = wrapped.isOver
-
-    override fun toString(): String {
-        return super<AbstractCursor>.toString()
-    }
+        get() = false
 }

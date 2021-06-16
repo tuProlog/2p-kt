@@ -10,4 +10,8 @@ internal abstract class AbstractCursor<T> : Cursor<T> {
             else -> "[$current, ...]"
         }
     }
+
+    override fun <R> map(mapper: (T) -> R): Cursor<out R> {
+        return MapperCursor(this, mapper)
+    }
 }

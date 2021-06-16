@@ -19,9 +19,7 @@ interface Cursor<T> {
     val isOver: Boolean
 
     @JsName("map")
-    fun <R> map(mapper: (T) -> R): Cursor<out R> {
-        return MapperCursor(this, mapper)
-    }
+    fun <R> map(mapper: (T) -> R): Cursor<out R>
 
     @JsName("iterator")
     fun iterator(): Iterator<T> =
