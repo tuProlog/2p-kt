@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
-import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
@@ -51,15 +50,9 @@ internal abstract class AbstractCons(
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
     }
 
-    override fun apply(substitution: Substitution): Term {
-        return when {
-            substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
-            substitution.isEmpty() -> this
-            else -> applyNonEmptyUnifier(substitution as Substitution.Unifier)
-        }
-    }
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty()
 
-    protected abstract fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term
+    abstract override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term
 
     abstract override fun copyWithTags(tags: Map<String, Any>): AbstractCons
 

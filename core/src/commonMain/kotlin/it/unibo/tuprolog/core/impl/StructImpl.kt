@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.setTags
 
@@ -91,4 +92,7 @@ internal open class StructImpl(
     override fun setArgs(args: Iterable<Term>): Struct = Struct.of(functor, args)
 
     override fun setArgs(args: Sequence<Term>): Struct = Struct.of(functor, args)
+
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
+        Struct.of(this.functor, this.argsList.map { it.apply(unifier) }).setTags(tags)
 }

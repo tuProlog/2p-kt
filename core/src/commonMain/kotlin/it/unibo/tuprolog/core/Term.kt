@@ -3,7 +3,6 @@ package it.unibo.tuprolog.core
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.Castable
 import it.unibo.tuprolog.utils.Taggable
-import it.unibo.tuprolog.utils.setTags
 import kotlin.js.JsName
 
 /**
@@ -320,13 +319,7 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
      */
     @JsName("applySubstitution")
-    fun apply(substitution: Substitution): Term = when {
-        substitution is Substitution.Fail -> throw SubstitutionApplicationException(this, substitution)
-        substitution.isEmpty() || this.isGround -> this
-        this is Var -> substitution[this] ?: this
-        this is Struct -> Struct.of(this.functor, this.argsList.map { it.apply(substitution) }).setTags(tags)
-        else -> this
-    }
+    fun apply(substitution: Substitution): Term
 
     /**
      * Applies one or more [Substitution]s to the current term, producing a new [Term] which differs from the current
