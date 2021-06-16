@@ -56,7 +56,11 @@ interface List : Collection {
 
         @JvmStatic
         @JsName("ofIterable")
-        fun of(items: Iterable<Term>): List = from(items.cursor(), empty())
+        fun of(items: Iterable<Term>): List =
+            when (items) {
+                is KtList<Term> -> from(items, empty())
+                else -> from(items.cursor(), empty())
+            }
 
         @JvmStatic
         @JsName("ofList")
@@ -69,7 +73,7 @@ interface List : Collection {
         @JvmStatic
         @JsName("from")
         fun from(vararg items: Term, last: Term?): List =
-            from(items.cursor(), last)
+            from(items.toList(), last)
 
         @JvmStatic
         @JsName("fromNullTerminated")
@@ -79,12 +83,16 @@ interface List : Collection {
         @JvmStatic
         @JsName("fromIterable")
         fun from(items: Iterable<Term>, last: Term?): List =
-            from(items.cursor(), last)
+            when (items) {
+                is KtList<Term> -> from(items, last)
+                else -> from(items.cursor(), last)
+            }
 
         @JvmStatic
         @JsName("fromIterableNullTerminated")
         fun from(items: Iterable<Term>): List =
             from(items, null)
+
 
         @JvmStatic
         @JsName("fromSequence")
@@ -99,8 +107,9 @@ interface List : Collection {
         @JvmStatic
         @JsName("fromList")
         fun from(items: KtList<Term>, last: Term?): List {
-            if (items.isEmpty() && last?.isList != true) {
-                throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
+            if (items.isEmpty()) {
+                return (last ?: empty()) as? List ?:
+                    throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
             }
             val i = items.asReversed().iterator()
             var right = if (last == null) {

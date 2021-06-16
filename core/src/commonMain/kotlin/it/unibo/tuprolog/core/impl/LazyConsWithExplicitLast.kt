@@ -8,13 +8,14 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 
-internal open class LazyConsWithExplicitLast(
+internal class LazyConsWithExplicitLast(
     private val cursor: Cursor<out Term>,
     private val termination: Term = EmptyList.instance,
     tags: Map<String, Any> = emptyMap()
 ) : AbstractCons(emptyArray(), tags), Cons {
 
-    override val head: Term by lazy { cursor.current!! }
+    override val head: Term
+        get() = cursor.current!!
 
     override val tail: Term by lazy {
         cursor.next.let {

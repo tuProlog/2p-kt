@@ -14,6 +14,13 @@ internal abstract class AbstractCons(
     tags: Map<String, Any> = emptyMap()
 ) : CollectionImpl(CONS_FUNCTOR, args, tags), Cons {
 
+    companion object {
+        const val SWITCH_TO_LAZY_THRESHOLD = 100
+    }
+
+    internal open val weight: Int
+        get() = 1
+
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { LogicListIterator.All(this) }.asSequence()
 

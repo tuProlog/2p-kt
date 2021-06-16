@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Cursor
 
-internal open class LazyConsWithImplicitLast(
+internal class LazyConsWithImplicitLast(
     private val cursor: Cursor<out Term>,
     tags: Map<String, Any> = emptyMap()
 ) : AbstractCons(emptyArray(), tags), Cons {
