@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
@@ -95,4 +96,6 @@ internal open class StructImpl(
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         Struct.of(this.functor, this.argsList.map { it.apply(unifier) }).setTags(tags)
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
 }

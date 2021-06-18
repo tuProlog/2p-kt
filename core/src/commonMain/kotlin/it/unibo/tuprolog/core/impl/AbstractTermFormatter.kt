@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
@@ -60,49 +61,60 @@ internal abstract class AbstractTermFormatter(
         }
     }
 
-    override fun visit(term: Collection): String =
+    protected fun <T : Struct> visitStruct(term: T, actualVisit: (T) -> String): String =
         if (ignoreOps) {
             visitStruct(term)
         } else {
-            super.visit(term)
+            actualVisit(term)
         }
 
-    override fun visit(term: Clause): String =
-        if (ignoreOps) {
-            visitStruct(term)
-        } else {
-            super.visit(term)
+    override fun visitCollection(term: Collection): String =
+        visitStruct(term) { defaultValue(term) }
+
+    override fun visitList(term: List): String = visitCollection(term)
+
+    override fun visitEmptyList(term: EmptyList): String = defaultValue(term)
+
+    override fun visitCons(term: Cons): String =
+        visitStruct(term) {
+            with(term.unfoldedList) {
+                val last = last()
+                val base = subList(0, lastIndex).joinToString(", ", "[", "") {
+                    it.accept(itemFormatter())
+                }
+                val lastString = if (last is EmptyList) {
+                    "]"
+                } else {
+                    " | ${last.accept(itemFormatter())}]"
+                }
+                base + lastString
+            }
         }
 
     override fun visitSet(term: Set): String =
-        term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
-
-    protected open fun itemFormatter(): TermFormatter = this
-
-    protected open fun childFormatter(): TermFormatter = this
-
-    override fun visitCons(term: Cons): String =
-        with(term.unfoldedList) {
-            val last = last()
-            val base = subList(0, lastIndex).joinToString(", ", "[", "") {
-                it.accept(itemFormatter())
-            }
-            val lastString = if (last is EmptyList) {
-                "]"
-            } else {
-                " | ${last.accept(itemFormatter())}]"
-            }
-            return base + lastString
+        visitStruct(term) {
+            term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
         }
 
     override fun visitTuple(term: Tuple): String =
-        term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        visitStruct(term) {
+            term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        }
+
+    override fun visitClause(term: Clause): String =
+        visitStruct(term) {
+            term.accept(this)
+        }
 
     override fun visitRule(term: Rule): String = visitStruct(term)
 
     override fun visitFact(term: Fact): String = visitRule(term)
 
     override fun visitDirective(term: Directive): String = visitStruct(term)
+
+    protected open fun itemFormatter(): TermFormatter = this
+
+    protected open fun childFormatter(): TermFormatter = this
 
     override fun visitIndicator(term: Indicator): String = visitStruct(term)
 }

@@ -374,7 +374,7 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      * @return an object of type [T], produced by [visitor] through its visit
      */
     @JsName("accept")
-    fun <T> accept(visitor: TermVisitor<T>): T = visitor.visit(this)
+    fun <T> accept(visitor: TermVisitor<T>): T
 
     /**
      * Casts the current [Term] to [Atom], if possible

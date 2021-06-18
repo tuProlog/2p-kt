@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.utils.insertAt
@@ -101,4 +102,6 @@ internal abstract class ClauseImpl(
     override fun addLastBodyItem(argument: Term): Clause = of(head, bodyItemsSequence + sequenceOf(argument))
 
     override fun appendBodyItem(argument: Term): Clause = addLastBodyItem(argument)
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitClause(this)
 }

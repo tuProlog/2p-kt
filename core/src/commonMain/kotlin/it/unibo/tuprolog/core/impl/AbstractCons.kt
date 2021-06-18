@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
@@ -73,4 +74,6 @@ internal abstract class AbstractCons(
             last = unfoldedList.last().freshCopy(scope)
         ).setTags(tags) as Cons
     }
+
+    final override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCons(this)
 }

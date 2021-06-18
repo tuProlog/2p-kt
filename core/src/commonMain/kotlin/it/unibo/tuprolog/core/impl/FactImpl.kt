@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Truth
 
 internal class FactImpl(
@@ -36,4 +37,6 @@ internal class FactImpl(
     override fun addLastHeadArg(argument: Term): Fact = super.addLastHeadArg(argument).castToFact()
 
     override fun appendHeadArg(argument: Term): Fact = super.appendHeadArg(argument).castToFact()
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitFact(this)
 }

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.itemWiseEquals
@@ -45,4 +46,6 @@ internal abstract class CollectionImpl(
                 a.equals(b, useVarCompleteName)
             }
         } ?: false
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 }

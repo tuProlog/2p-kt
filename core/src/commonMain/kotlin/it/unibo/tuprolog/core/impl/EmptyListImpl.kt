@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
 
 internal class EmptyListImpl(
@@ -27,4 +28,6 @@ internal class EmptyListImpl(
     override fun freshCopy(): EmptyList = this
 
     override fun freshCopy(scope: Scope): EmptyList = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitEmptyList(this)
 }

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -39,4 +40,6 @@ internal class RealImpl(
     override fun freshCopy(): Real = this
 
     override fun freshCopy(scope: Scope): Real = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitReal(this)
 }

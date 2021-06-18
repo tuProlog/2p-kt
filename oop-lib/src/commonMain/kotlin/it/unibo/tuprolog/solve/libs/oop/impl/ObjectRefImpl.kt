@@ -42,6 +42,5 @@ internal class ObjectRefImpl(override val `object`: Any) : ObjectRef, Atom by At
 
     override fun get(substitution: Substitution, vararg substitutions: Substitution): Term = this
 
-    override fun <T> accept(visitor: TermVisitor<T>): T =
-        visitor.visit(this)
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitAtom(this)
 }

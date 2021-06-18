@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 internal class DirectiveImpl(
     override val body: Term,
@@ -17,4 +18,6 @@ internal class DirectiveImpl(
     override fun freshCopy(): Directive = super.freshCopy() as Directive
 
     override fun freshCopy(scope: Scope): Directive = super.freshCopy(scope) as Directive
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitDirective(this)
 }

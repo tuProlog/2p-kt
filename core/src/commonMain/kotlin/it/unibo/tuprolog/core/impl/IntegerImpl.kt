@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -45,4 +46,6 @@ internal class IntegerImpl(
     override fun freshCopy(): Integer = this
 
     override fun freshCopy(scope: Scope): Integer = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitInteger(this)
 }

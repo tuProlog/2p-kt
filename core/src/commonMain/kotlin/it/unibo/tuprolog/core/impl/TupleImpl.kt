@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.TupleIterator
@@ -35,4 +36,6 @@ internal class TupleImpl(
             isGround -> this
             else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTuple(this)
 }

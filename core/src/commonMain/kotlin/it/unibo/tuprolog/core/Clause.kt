@@ -147,7 +147,7 @@ interface Clause : Struct {
 
             override fun defaultValue(term: Term): Boolean = term !is Numeric
 
-            override fun visit(term: Struct): Boolean = when {
+            override fun visitStruct(term: Struct): Boolean = when {
                 term.functor in notableFunctors && term.arity == 2 ->
                     term.argsSequence
                         .map { arg -> arg.accept(this) }
@@ -161,18 +161,16 @@ interface Clause : Struct {
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
 
-                override fun visit(term: Struct): Term = when {
-                    term is Clause -> visit(term)
+                override fun visitStruct(term: Struct): Term = when {
                     term.functor in notableFunctors && term.arity == 2 ->
                         Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-
                     else -> term
                 }
 
-                override fun visit(term: Clause): Term = of(term.head, visit(term.body))
+                override fun visitClause(term: Clause): Term = of(term.head, term.body.accept(this))
 
-                override fun visit(term: Var): Term = when (term) {
-                    in unifier -> visit(unifier[term]!!)
+                override fun visitVar(term: Var): Term = when (term) {
+                    in unifier -> unifier[term]!!.accept(this)
                     else -> Struct.of("call", term)
                 }
             }

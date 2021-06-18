@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.EmptySet
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 
 internal class EmptySetImpl(
@@ -26,4 +27,6 @@ internal class EmptySetImpl(
     override fun freshCopy(): EmptySet = this
 
     override fun freshCopy(scope: Scope): EmptySet = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitEmptySet(this)
 }

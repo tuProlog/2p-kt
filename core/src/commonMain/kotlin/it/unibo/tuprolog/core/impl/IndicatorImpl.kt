@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 
 /**
@@ -32,4 +33,6 @@ internal class IndicatorImpl(
     override fun freshCopy(): Indicator = super.freshCopy() as Indicator
 
     override fun freshCopy(scope: Scope): Indicator = super.freshCopy(scope) as Indicator
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitIndicator(this)
 }

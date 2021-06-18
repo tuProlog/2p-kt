@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 internal open class RuleImpl(
     override val head: Struct,
@@ -57,4 +58,6 @@ internal open class RuleImpl(
     override fun addLastBodyItem(argument: Term): Rule = super.addLastBodyItem(argument).castToRule()
 
     override fun appendBodyItem(argument: Term): Rule = super.appendBodyItem(argument).castToRule()
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitRule(this)
 }

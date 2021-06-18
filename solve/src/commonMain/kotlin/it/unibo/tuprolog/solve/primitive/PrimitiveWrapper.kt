@@ -100,16 +100,15 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             object : TermVisitor<TypeError?> {
                 override fun defaultValue(term: Term): Nothing? = null
 
-                override fun visit(term: Struct) = when {
+                override fun visitStruct(term: Struct) = when {
                     term.functor in Clause.notableFunctors && term.arity == 2 -> {
                         term.argsSequence.map { it.accept(this) }.filterNotNull().firstOrNull()
                     }
                     else -> defaultValue(term)
                 }
 
-                override fun visit(term: Numeric): TypeError {
-                    return TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
-                }
+                override fun visitNumeric(term: Numeric): TypeError =
+                    TypeError.forGoal(context, procedure, TypeError.Expected.CALLABLE, term)
             }
 
         fun <C : ExecutionContext> Solve.Request<C>.checkTermIsRecursivelyCallable(term: Term): TypeError? =

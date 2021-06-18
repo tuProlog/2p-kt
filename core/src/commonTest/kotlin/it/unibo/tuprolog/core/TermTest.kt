@@ -64,6 +64,8 @@ class TermTest {
                 MyStruct(functor, args.map { it[substitution] }.toTypedArray())
             }
         }
+
+        override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
     }
 
     private val X = Var.of("X")
