@@ -29,7 +29,7 @@ internal abstract class AbstractCons(
 
     override val args: Array<Term> get() = super<CollectionImpl>.args
 
-    override val isWellFormed: Boolean by lazy { last is EmptyList }
+    override val isWellFormed: Boolean by lazy { last.isEmptyList }
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 

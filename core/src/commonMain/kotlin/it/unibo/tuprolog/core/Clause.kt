@@ -145,7 +145,9 @@ interface Clause : Struct {
         @JsName("bodyWellFormedVisitor")
         val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
-            override fun defaultValue(term: Term): Boolean = term !is Numeric
+            override fun defaultValue(term: Term): Boolean = true
+
+            override fun visitNumeric(term: Numeric): Boolean = false
 
             override fun visitStruct(term: Struct): Boolean = when {
                 term.functor in notableFunctors && term.arity == 2 ->

@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.visitors.whenNumeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -11,7 +12,11 @@ import org.gciatto.kt.math.BigInteger
 internal abstract class NumericImpl(tags: Map<String, Any>) : TermImpl(tags), Numeric {
 
     override fun structurallyEquals(other: Term): Boolean =
-        other is NumericImpl && decimalValue.compareTo(other.decimalValue) == 0
+        whenNumeric(
+            term = other,
+            ifNumeric = { decimalValue.compareTo(it.decimalValue) == 0 },
+            otherwise = { false }
+        )
 
     abstract override val decimalValue: BigDecimal
 

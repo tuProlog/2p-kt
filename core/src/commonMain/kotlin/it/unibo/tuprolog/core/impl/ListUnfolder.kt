@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 
 internal class ListUnfolder(list: List) : Iterator<Term> {
 
@@ -12,20 +13,21 @@ internal class ListUnfolder(list: List) : Iterator<Term> {
     override fun hasNext(): Boolean = current != null
 
     override fun next(): Term {
-        return when (val x = current) {
-            is Cons -> {
-                current = x.tail
-                x
+        return current?.accept(object : TermVisitor<Term> {
+            override fun visitCons(term: Cons): Term {
+                current = term.tail
+                return term
             }
-            is EmptyList -> {
+
+            override fun visitEmptyList(term: EmptyList): Term {
                 current = null
-                x
+                return term
             }
-            null -> throw NoSuchElementException()
-            else -> {
+
+            override fun defaultValue(term: Term): Term {
                 current = null
-                x
+                return term
             }
-        }
+        }) ?: throw NoSuchElementException()
     }
 }

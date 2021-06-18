@@ -1,0 +1,1251 @@
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/AbstractTermFormatter.kt:85:                val lastString = if (last is EmptyList) {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ClauseImplscor.kt:41:            is Tuple -> body.toSequence()
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ClauseImpl.kt:50:            is Tuple -> body.size
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ConsImpl.kt:16:        is EmptyList -> 0
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ConsImpl.kt:17:        is AbstractCons -> tail.weight
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/IntegerImpl.kt:25:        if (other == null || other !is Integer) return false
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/IntegerImpl.kt:34:    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean = other is Integer && equalsToInteger(other)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/IntegerImpl.kt:40:            is Integer -> value.compareTo(other.value)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/LazyConsWithExplicitLast.kt:35:            if (current is LazyConsWithExplicitLast) {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/LazyConsWithExplicitLast.kt:37:            } else if (current is List) {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ListUnfolder.kt:16:            is Cons -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/ListUnfolder.kt:20:            is EmptyList -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/NumericImpl.kt:14:        other is NumericImpl && decimalValue.compareTo(other.decimalValue) == 0
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/RealImpl.kt:24:        if (other == null || other !is Real) return false
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/RealImpl.kt:33:        return other is Real && equalsToReal(other)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SetUnfolder.kt:18:                is Tuple -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SetUnfolder.kt:30:                is EmptySet -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SetUnfolder.kt:34:                is Set -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/StructImpl.kt:30:        other is Struct &&
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/StructImpl.kt:86:            throw IndexOutOfBoundsException("Index $index is out of bounds ${args.indices}")
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:34:        is Substitution.Fail -> FailImpl(tags)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:46:        is Substitution.Fail -> FailImpl(tags)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:66:        // NOTE: no check for contradictions is made upon object construction
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:174:        /** Crates a Substitution from given substitution pairs; if any contradiction is found, the result will be [Substitution.Fail] */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:180:        /** Utility function to check if any of provided Substitution is failed */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:194:                    // if var is present and different, contradiction is present
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:226:                while (current is Var && current in mappings && current !in alreadyUsedKeys) {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/SubstitutionImpl.kt:237:                        term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/TermImpl.kt:33:        is Substitution.Unifier -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/TupleUnfolder.kt:14:            is Tuple -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/VarImpl.kt:36:    override fun structurallyEquals(other: Term): Boolean = other is VarImpl
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/VarImpl.kt:54:        if (other == null || other !is Var) return false
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/impl/VarImpl.kt:70:        other is Var && equalsToVar(other, useVarCompleteName)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:9: * A predicate indicator is used to denote predicates or functors.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:11: * It is a ground term of the form `Name/Arity` where `Name` is an [Atom] denoting the name of a predicate or a functor
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:12: * and `Arity` is a non-negative [Integer] denoting the number of its arguments.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:41:     * Whether this Indicator is well-formed
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:43:     * An indicator is well-formed when:
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:44:     * - its [nameTerm] is an [Atom]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:45:     * - its [arityTerm] is a non-negative [Integer]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Indicator.kt:49:        get() = nameTerm is Atom && arityTerm.let { it is Integer && it.intValue.signum >= 0 }
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/ListIterator.kt:11:            is Cons -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/ListIterator.kt:15:            is EmptyList -> onEmptyList(x)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/ListIterator.kt:52:        private fun ListIterator.hasNextSkippingLast(): Boolean = current != null && current !is EmptyList
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/List.kt:61:                is KtList<Term> -> from(items, empty())
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/List.kt:87:                is KtList<Term> -> from(items, last)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Numeric.kt:75:            // avoiding string format is necessary for "floats", to maintain full precision during conversions
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Numeric.kt:76:            is Float -> of(value)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Operator.kt:73:                    args[0] is Integer && args[1] is Atom && args[2] is Atom -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/OperatorSet.kt:79:                sequenceOf("is").map { Operator(it, Specifier.XFX, 700) }
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:44:    /** Whether this specifier is a prefix one */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:49:    /** Whether this specifier is an infix one */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:54:    /** Whether this specifier is a postfix one */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:85:         * @throws IllegalArgumentException if provided [Atom] value "upperCased" is not present in this enum
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:100:         * @throws IllegalArgumentException if provided term is not an [Atom] or [Atom] value "upperCased" is not present in this enum
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/operators/Specifier.kt:106:                is Atom -> fromTerm(term)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/SetIterator.kt:7:    override fun hasNext(): Boolean = current != null && current !is EmptySet
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/SetIterator.kt:11:            is Tuple -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/SetIterator.kt:15:            is Set -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/SetIterator.kt:17:                    is Tuple -> {
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/SetIterator.kt:27:            is EmptySet, null -> throw NoSuchElementException()
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:20: * A [Struct] is characterised by a [functor] and a given (non-negative) amount of [args], namely [arity].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:86:     * Creates a novel [Struct] which is a copy of the current one, expect that is has one more argument.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:87:     * The novel [argument] is appended at the end of the new [Struct]'s arguments list.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:88:     * @param argument is a [Term] of any sort
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:89:     * @return a new [Struct], whose [functor] is equals to the current one,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:90:     * whose [arity] is greater than the current one, and whose last argument is [argument]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:96:     * Creates a novel [Struct] which is a copy of the current one, expect that is has one more argument.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:97:     * The novel [argument] is appended at the beginning of the new [Struct]'s arguments list.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:98:     * @param argument is a [Term] of any sort
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:99:     * @return a new [Struct], whose [functor] is equals to the current one,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:100:     * whose [arity] is greater than the current one, and whose first argument is [argument]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:106:     * Creates a novel [Struct] which is a copy of the current one, expect that is has one more argument.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:107:     * The novel [argument] is inserted into the new [Struct]'s arguments list, at index [index], wheres subsequent
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:109:     * @param index is the index the new [argument] should be inserted into
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:110:     * @param argument is a [Term] of any sort
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:111:     * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:112:     * @return a new [Struct], whose [functor] is equals to the current one,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:113:     * whose [arity] is greater than the current one, and whose [index]-th argument is [argument]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:119:     * Creates a novel [Struct] which is a copy of the current one, expect that is has a different functor.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:120:     * @param functor is a [String] representing the new functor
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:121:     * @return a new [Struct], whose functor is [functor], and whose [arity] and arguments list are equal
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:147:     * This is equal to the length of [args] and to the size of [argsList].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:176:     * @param index is the index the argument which should be retrieved
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:177:     * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:203:         * A functor is well-formed if and only if:
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:238:         * Wraps the provided [string] within single quotes, but only if it is not well-formed.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:239:         * Well-formed check is performed via the [isWellFormedFunctor] method.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:313:         * @throws IllegalArgumentException is [arity] is a negative [Int]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:335:         * @param functor is the [String] to be used as functor of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:336:         * @param args is the [KtList] of [Term]s to be used as argument list of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:344:                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first() is Struct ->
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:366:         * @param functor is the [String] to be used as functor of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:367:         * @param args is the `vararg` array of [Term]s to be used as argument list of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:386:         * @param functor is the [String] to be used as functor of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:387:         * @param args is the [Sequence] of [Term]s to be used as argument list of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:406:         * @param functor is the [String] to be used as functor of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:407:         * @param args is the [Iterable] of [Term]s to be used as argument list of the new [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:421:         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:435:         * Then, if [terminal] is non-null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:439:         * where `T` is the value of [terminal], and `t_n` is the last item in [terms].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:440:         * Conversely, if [terminal] is null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:479:         * Then, if [terminal] is non-null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:483:         * where `T` is the value of [terminal], and `t_n` is the last item in [terms].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:484:         * Conversely, if [terminal] is null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:509:         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:523:         * Then, if [terminal] is non-null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:527:         * where `T` is the value of [terminal], and `t_n` is the last item in [terms].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:528:         * Conversely, if [terminal] is null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:553:         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:567:         * Then, if [terminal] is non-null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:571:         * where `T` is the value of [terminal], and `t_n` is the last item in [terms].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:572:         * Conversely, if [terminal] is null, this method constructs the [Struct]ure
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Struct.kt:597:         * Of course, this method will return an instance of either [Tuple] in case the argument [operator] is adequate.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:20:    /** Whether this [Substitution] is a successful one (i.e., a [Unifier]) */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:24:    /** Whether this [Substitution] is a failed one */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:30:     * @return the current [Substitution], casted to [Unifier], or `null`, if the current term is not an instance of [Unifier]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:37:     * @throws ClassCastException if the current [Substitution] is not an instance of [Unifier]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:46:     * @return the current [Substitution], casted to [Fail], or `null`, if the current term is not an instance of [Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:53:     * @throws ClassCastException if the current [Substitution] is not an instance of [Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:60:    /** Applies this [Substitution] to the given [Term], returning `null` if it is [Substitution.Fail] */
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:78:     * Creates a new [Substitution] that is the *composition* (a.k.a. union) of `this` and [other].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:79:     * The composition is not guaranteed to be a [Substitution.Unifier], even if both arguments are.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:81:     * - If one of arguments is of type [Substitution.Fail], the result is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:82:     * - If the set of assignments attained by composing the two substitutions is contradictory -- i.e.,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:83:     * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:84:     * - Otherwise, the result is an instance of [Substitution.Unifier]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:92:     * Creates a new [Substitution] that is the *composition* (a.k.a. union) of `this` and [other].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:93:     * The composition is not guaranteed to be a [Substitution.Unifier], even if both arguments are.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:95:     * - If one of arguments is of type [Substitution.Fail], the result is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:96:     * - If the set of assignments attained by composing the two substitutions is contradictory -- i.e.,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:97:     * if the same [Var] is assigned to different [Term]s --, the result is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:98:     * - Otherwise, the result is an instance of [Substitution.Unifier]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:141:     * Returns a new substitution containing all key-value pairs whose key is in [variables].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:249:         * The variable is created on the fly by name, via [Var.of]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:257:         * The variable is created on the fly by name, via [Var.of]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:265:         * If any contradiction is found, an instance of [Substitution.Fail] is returned
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:274:         * If any contradiction is found, a [SubstitutionException] is thrown
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:283:         * If any contradiction is found, an instance of [Substitution.Fail] is returned
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:292:         * If any contradiction is found, a [SubstitutionException] is thrown
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:300:         * If any contradiction is found, an instance of [Substitution.Fail] is returned
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:309:         * If any contradiction is found, a [SubstitutionException] is thrown
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Substitution.kt:317:         * If any failure or contradiction is found, the result will be [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:28:                is Var -> VarComparator.compare(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:34:                is Real -> RealComparator.compare(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:35:                is Var -> 1
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:41:                is Integer -> IntegerComparator.compare(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:42:                is Var, is Real -> 1
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:48:                is Atom -> AtomComparator.compare(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:49:                is Struct -> -1
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:55:                is Struct -> StructComparator.compare(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:61:                is Var -> compareVarAndTerm(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:62:                is Real -> compareRealAndTerm(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:63:                is Integer -> compareIntegerAndTerm(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:64:                is Atom -> compareAtomAndTerm(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:65:                is Struct -> compareStructAndTerm(a, b)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermComparator.kt:66:                else -> throw IllegalStateException("Cannot compare ${a::class} with ${b::class}. This is a bug.")
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:43:     * @param value is the [Term] to be converted in [String]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:89:         * So for instance the term `A_1 + B_2` is represented as `'+'(A, B)`.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:92:         * So for instance, the term `A_3 + A_4` is represented as `'+'(A1, A2)`.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:103:         * So for instance, assuming an infix operator `+` is contained in [operatorSet], the term `A_1 + B_2` is
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:104:         * would be represented as `A + B`, if [prettyVariables] is `true`, or `A_1 + B_2` otherwise.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:116:         * So for instance, assuming an infix operator `+` is contained in [operatorSet], the term `A_1 + B_2` is
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:128:         * So for instance the term `A_1 + B_2` is represented as `A + B`, if [prettyVariables] is `true`,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TermFormatter.kt:141:         * So for instance the term `A_1 + B_2` is represented as `A + B`.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:22:     * @return the current term, cast'd into type [T], or `null`, in case the current term is not an instance of [T]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:31:     * @throws ClassCastException if the current term is not of type [T]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:39:     * @param other is the term to be compared against this term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:46:     * Checks whether an[other] term is _equals_ to the current one or not,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:49:     * If [useVarCompleteName] is `true`, [Var]iables are compared through their
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:53:     * For example, if [useVarCompleteName] is `true` the following comparison should fail:
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:59:     * @param other is the [Term] the current [Term] should be compared with
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:69:     * Checks whether an[other] term is _structurally equals_ to the current one or not.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:70:     * Structural equivalence is a looser type of equivalence (w.r.t. term equivalence)
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:72:     * - numbers are compared by value, e.g. `1` is structurally equal to `1.0`
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:73:     * - variables are always considered equal, e.g. `f(X)` is structurally equal to `f(_)`
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:74:     * @param other is the [Term] the current [Term] should be compared with
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:82:     * Notice that no occurrence-check is performed.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:92:     * Checks whether the current term is a variable.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:93:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:94:     * is an instance of [Var].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:95:     * @return `true` if the current term is a variable, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:101:     * Checks whether the current term is ground.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:102:     * A term is ground is ground if and only if it does not contain any variable.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:103:     * This method is guaranteed to return `true` if and only if the [variables] property
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:105:     * @return `true` if the current term is ground, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:111:     * Checks whether the current term is a structure, i.e., either a compound term or an atom.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:112:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:113:     * is an instance of [Struct].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:114:     * @return `true` if the current term is a structure, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:120:     * Checks whether the current term is an atom.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:121:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:122:     * is an instance of [Atom].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:123:     * @return `true` if the current term is an atom, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:129:     * Checks whether the current term is a constant, i.e., either an atom or a number.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:130:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:131:     * is an instance of [Constant].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:132:     * @return `true` if the current term is a constant, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:138:     * Checks whether the current term is a number, i.e., either an integer or a real number.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:139:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:140:     * is an instance of [Numeric].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:141:     * @return `true` if the current term is a number, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:147:     * Checks whether the current term is an integer.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:148:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:149:     * is an instance of [Integer].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:150:     * @return `true` if the current term is an integer number, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:156:     * Checks whether the current term is a real number.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:157:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:158:     * is an instance of [Real].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:159:     * @return `true` if the current term is a real number, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:165:     * Checks whether the current term is a (logic) list, i.e., either an empty list or a [Cons].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:166:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:167:     * is an instance of [List].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:168:     * @return `true` if the current term is a logic list, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:174:     * Checks whether the current term is a logic tuple, i.e., a right-recursive conjunction of 2 or more terms.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:175:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:176:     * is an instance of [Tuple].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:177:     * @return `true` if the current term is a logic tuple, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:183:     * Checks whether the current term is a logic set.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:184:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:185:     * is an instance of [Set].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:186:     * @return `true` if the current term is a logic set, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:192:     * Checks whether the current term is an empty logic set.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:193:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:194:     * is an instance of [EmptySet].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:195:     * @return `true` if the current term is an empty logic set, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:201:     * Checks whether the current term is a clause, i.e., either a rule or a directive.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:202:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:203:     * is an instance of [Clause].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:204:     * @return `true` if the current term is a clause, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:210:     * Checks whether the current term is a rule, or a fact.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:211:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:212:     * is an instance of [Rule].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:213:     * @return `true` if the current term is a rule, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:219:     * Checks whether the current term is a fact.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:220:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:221:     * is an instance of [Fact].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:222:     * @return `true` if the current term is a fact, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:228:     * Checks whether the current term is a directive.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:229:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:230:     * is an instance of [Directive].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:231:     * @return `true` if the current term is a directive, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:237:     * Checks whether the current term is a cons.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:238:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:239:     * is an instance of [Cons].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:240:     * @return `true` if the current term is a cons, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:246:     * Checks whether the current term is an empty logic list.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:247:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:248:     * is an instance of [EmptyList].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:249:     * @return `true` if the current term is an empty logic list, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:255:     * Checks whether the current term is the `true` atom.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:256:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:257:     * is an instance of [Truth] and its [Truth.value] is `"true"`.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:258:     * @return `true` if the current term is `"true"`, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:264:     * Checks whether the current term is the either the `fail` atom or the `false` atom.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:265:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:266:     * is an instance of [Truth] and its [Truth.value] is `"fail"` or `"false"`.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:267:     * @return `true` if the current term is either `"fail"` or `"false"`, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:273:     * Checks whether the current term is an indicator.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:274:     * This method is guaranteed to return `true` if and only if the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:275:     * is an instance of [Indicator].
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:276:     * @return `true` if the current term is an indicator, or `false`, otherwise
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:282:     * Returns a fresh copy of this Term, that is, an instance of Term which is equal to the current one in any aspect,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:284:     * This means that it could return itself, if no variable is present (ground term), or a new Term with freshly
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:292:     * Notice that, if the current term is ground, the same object may be returned as a result by this method.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:294:     * @return a fresh copy of the current term which is different because variables are consistently renamed
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:305:     * @return a fresh copy of the current term which is different because variables are consistently renamed
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:314:     * Notice that, if the current term is ground, or the provided substitution is empty,
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:317:     * @param substitution is the [Substitution] to be applied to the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:319:     * @throws [SubstitutionApplicationException] if the provided substitution is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:331:     * @param substitution is the first [Substitution] to be applied to the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:332:     * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:334:     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:344:     * This is an alias for [apply] aimed at supporting a square-brackets syntax for substitutions applications in
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:353:     * @param substitution is the first [Substitution] to be applied to the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:354:     * @param substitutions is the vararg argument representing the 2nd, 3rd, etc., [Substitution]s to be applied
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:356:     * @throws [SubstitutionApplicationException] if the composition of the provided substitutions is of type [Substitution.Fail]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:367:     * Such an object is then returned as a result by this method.
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:372:     * @param visitor is a [TermVisitor], i.e., an object aimed at navigating the current term
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:373:     * @param T is the type of the object built by [visitor] through its visit
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:381:     * @throws ClassCastException if the current [Term] is not an instance of [Atom]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:390:     * @throws ClassCastException if the current [Term] is not an instance of [Clause]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:399:     * @throws ClassCastException if the current [Term] is not an instance of [Cons]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:408:     * @throws ClassCastException if the current [Term] is not an instance of [Constant]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:417:     * @throws ClassCastException if the current [Term] is not an instance of [Directive]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:426:     * @throws ClassCastException if the current [Term] is not an instance of [EmptyList]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:435:     * @throws ClassCastException if the current [Term] is not an instance of [EmptySet]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:444:     * @throws ClassCastException if the current [Term] is not an instance of [Fact]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:453:     * @throws ClassCastException if the current [Term] is not an instance of [Indicator]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:462:     * @throws ClassCastException if the current [Term] is not an instance of [Integer]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:471:     * @throws ClassCastException if the current [Term] is not an instance of [List]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:480:     * @throws ClassCastException if the current [Term] is not an instance of [Numeric]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:489:     * @throws ClassCastException if the current [Term] is not an instance of [Real]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:498:     * @throws ClassCastException if the current [Term] is not an instance of [Rule]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:507:     * @throws ClassCastException if the current [Term] is not an instance of [Set]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:516:     * @throws ClassCastException if the current [Term] is not an instance of [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:532:     * @throws ClassCastException if the current [Term] is not an instance of [Truth]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:541:     * @throws ClassCastException if the current [Term] is not an instance of [Tuple]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:550:     * @throws ClassCastException if the current [Term] is not an instance of [Var]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:559:     * @return the current [Term], casted to [Atom], or `null`, if the current term is not an instance of [Atom]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:566:     * @return the current [Term], casted to [Clause], or `null`, if the current term is not an instance of [Clause]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:573:     * @return the current [Term], casted to [Cons], or `null`, if the current term is not an instance of [Cons]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:580:     * @return the current [Term], casted to [Constant], or `null`, if the current term is not an instance of [Constant]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:587:     * @return the current [Term], casted to [Directive], or `null`, if the current term is not an instance of [Directive]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:594:     * @return the current [Term], casted to [EmptyList], or `null`, if the current term is not an instance of [EmptyList]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:601:     * @return the current [Term], casted to [EmptySet], or `null`, if the current term is not an instance of [EmptySet]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:608:     * @return the current [Term], casted to [Fact], or `null`, if the current term is not an instance of [Fact]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:615:     * @return the current [Term], casted to [Indicator], or `null`, if the current term is not an instance of [Indicator]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:622:     * @return the current [Term], casted to [Integer], or `null`, if the current term is not an instance of [Integer]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:629:     * @return the current [Term], casted to [List], or `null`, if the current term is not an instance of [List]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:636:     * @return the current [Term], casted to [Numeric], or `null`, if the current term is not an instance of [Numeric]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:643:     * @return the current [Term], casted to [Real], or `null`, if the current term is not an instance of [Real]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:650:     * @return the current [Term], casted to [Rule], or `null`, if the current term is not an instance of [Rule]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:657:     * @return the current [Term], casted to [Set], or `null`, if the current term is not an instance of [Set]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:664:     * @return the current [Term], casted to [Struct], or `null`, if the current term is not an instance of [Struct]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:678:     * @return the current [Term], casted to [Truth], or `null`, if the current term is not an instance of [Truth]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:685:     * @return the current [Term], casted to [Tuple], or `null`, if the current term is not an instance of [Tuple]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/Term.kt:692:     * @return the current [Term], casted to [Var], or `null`, if the current term is not an instance of [Var]
+core/src/commonMain/kotlin/it/unibo/tuprolog/core/TupleIterator.kt:11:            is Tuple -> {
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/ClauseTest.kt:38:     * For example, the [Clause] `product(A) :- A, A` is stored in the database, after preparation for execution,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/ClauseTest.kt:42:        is Clause -> Clause.of(term.head, replaceCorrectVarWithCalls(term.body))
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/ClauseTest.kt:43:        is Struct ->
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/ClauseTest.kt:49:        is Var -> Struct.of("call", term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/operators/testutils/OperatorSetUtils.kt:42:            Triple("is", Specifier.XFX, 700),
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/StructTest.kt:58:            args.size == 2 && Clause.FUNCTOR == functor && args.first() is Struct
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/SubstitutionUnifierTest.kt:40:        assertTrue { unifier.getByName("A") is Integer }
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/SubstitutionUnifierTest.kt:41:        assertTrue { unifier.getByName("B") is Atom }
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/TermTest.kt:40:            return if (other is Term) equals(other, true) else false
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/TermTest.kt:44:            return other is MyStruct && other.arity == arity && other.functor == functor &&
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/TermTest.kt:49:            return other is MyStruct && other.arity == arity && other.functor == functor &&
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/AssertionUtils.kt:31:        assertTrue("$actual should be structurally equal to $expected, while it is not") {
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/AssertionUtils.kt:34:        assertTrue("$actual  should be structurally equal to $expected, while it is not") {
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/AtomUtils.kt:26:            "is",
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/ConstantUtils.kt:17:    /** Asserts that a freshCopy of a ground [Term] is the [Term] itself */
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/ConstantUtils.kt:23:    /** Asserts that a freshCopy with Scope of an Constant is the Constant itself */
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/ConstantUtils.kt:29:    /** Assert that apply called (in its variants) on a Constant is the Constant itself */
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermFormatterUtils.kt:118:                |is produced instead
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:38:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:39:        assertTrue(any is Var)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:64:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:65:            any is Struct,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:66:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:67:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:68:            any is Constant
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:74:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:75:        assertTrue(any is Constant)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:76:        assertTrue(any is Numeric)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:101:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:102:            any is Struct,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:103:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:104:            any is Cons
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:112:        assertTrue(any is Real)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:123:        assertTrue(any is Integer)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:132:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:133:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:157:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:158:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:159:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:160:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:161:            any is Tuple,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:162:            any is Constant,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:163:            any is Indicator
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:169:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:170:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:171:        assertTrue(any is Constant)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:172:        assertTrue(any is Atom)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:193:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:194:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:195:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:196:            any is Cons
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:204:        assertTrue(any is Atom) // to enable smart casts in kotlin
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:213:            any is LogicList,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:214:            any is LogicSet,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:215:            any is Empty,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:216:            any is Truth
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:224:        assertTrue(any is Truth)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:234:            any is LogicSet,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:235:            any is LogicList,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:236:            any is Empty,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:237:            any is EmptySet,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:238:            any is EmptyList
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:244:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:245:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:246:        assertTrue(any is Tuple)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:272:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:273:            any is Atom,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:274:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:275:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:276:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:277:            any is Constant,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:278:            any is Indicator
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:284:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:285:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:286:        assertTrue(any is Indicator)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:312:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:313:            any is Atom,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:314:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:315:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:316:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:317:            any is Constant,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:318:            any is Tuple
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:324:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:325:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:326:        assertTrue(any is LogicList)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:327:        assertTrue(any is Cons)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:353:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:354:            any is Atom,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:355:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:356:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:357:            any is Constant
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:363:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:364:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:365:        assertTrue(any is LogicSet)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:391:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:392:            any is LogicList,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:393:            any is Clause,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:394:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:395:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:396:            any is Constant
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:404:        assertTrue(any is Empty)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:409:            any is Truth
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:417:        assertTrue(any is LogicList)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:418:        assertTrue(any is EmptyList)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:428:            any is LogicSet,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:429:            any is EmptySet
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:437:        assertTrue(any is LogicSet)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:438:        assertTrue(any is EmptySet)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:448:            any is LogicList,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:449:            any is EmptyList
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:455:        assertTrue(any is Term)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:456:        assertTrue(any is Struct)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:457:        assertTrue(any is Clause)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:480:            any is Var,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:481:            any is Numeric,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:482:            any is Cons,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:483:            any is LogicSet,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:484:            any is LogicList,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:485:            any is Atom,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:486:            any is Constant,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:487:            any is Indicator
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:495:        assertTrue(any is Rule)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:500:            any is Directive
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:508:        assertTrue(any is Directive)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:514:            any is Rule,
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:515:            any is Fact
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:523:        assertTrue(any is Rule)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:524:        assertTrue(any is Fact)
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/TermTypeAssertionUtils.kt:533:            any is Directive
+core/src/commonTest/kotlin/it/unibo/tuprolog/core/testutils/VarUtils.kt:25:    /** Asserts that the refreshed variable is not tied to the original variable, except for the name */
+core/src/jsTest/kotlin/it/unibo/tuprolog/TestPlatform.kt:9:        // assumes testing is performed on node
+core/src/jvmTest/kotlin/SetExample.kt:12:    println(s[0] is Tuple)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:22:        is Term -> any
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:23:        is ToTermConvertible -> any.toTerm()
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:24:        is BigInteger -> prologScope.numOf(any)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:25:        is BigDecimal -> prologScope.numOf(any)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:26:        is Number -> when {
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:30:        is String -> when {
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:34:        is Boolean -> any.toTruth()
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:35:        is Array<*> -> any.map { toTerm(it!!) }.extToTerm()
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:36:        is Sequence<*> -> any.map { toTerm(it!!) }.extToTerm()
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverter.kt:37:        is Iterable<*> -> any.map { toTerm(it!!) }.extToTerm()
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:40:    /** Creates a structure whose functor is `'='/2` (term unification operator) */
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:86:    infix fun Any.`is`(other: Any): Struct = structOf("is", this.toTerm(), other.toTerm())
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:94:            is Struct -> return ruleOf(t, other.toTerm())
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:148:            is Clause -> t
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:149:            is Struct -> return factOf(t)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:157:            is Directive -> t
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:158:            is Struct -> return directiveOf(t)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:166:            is Fact -> t
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:167:            is Struct -> return factOf(t)
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:181:            is Var -> this[t]
+dsl-core/src/commonMain/kotlin/it/unibo/tuprolog/dsl/PrologScope.kt:188:            is Var -> this.containsKey(t)
+dsl-core/src/jvmMain/kotlin/it/unibo/tuprolog/dsl/AnyToTermConverterImpl.kt:8:        get() = this is Int || this is Long
+dsl-solve/src/commonTest/kotlin/it/unibo/tuprolog/dsl/solve/TestPrologWithResolution.kt:28:                if (sol is Solution.Yes) {
+examples/src/main/kotlin/it/unibo/tuprolog/examples/solve/SolverExample.kt:22:    if (arg1 !is Numeric) {
+examples/src/main/kotlin/it/unibo/tuprolog/examples/solve/SolverExample.kt:30:    if (arg2 !is Numeric) {
+examples/src/main/kotlin/it/unibo/tuprolog/examples/solve/SolverExample.kt:64:                is Solution.No -> println("no.\n")
+examples/src/main/kotlin/it/unibo/tuprolog/examples/solve/SolverExample.kt:65:                is Solution.Yes -> {
+examples/src/main/kotlin/it/unibo/tuprolog/examples/solve/SolverExample.kt:72:                is Solution.Halt -> {
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/CustomUnificator.kt:18:                first is Integer && second is Integer ->
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/CustomUnificator.kt:20:                first is Numeric && second is Numeric ->
+examples/src/main/kotlin/it/unibo/tuprolog/examples/unify/Failure.kt:19:    println(substitution is Substitution.Fail) // true
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/PrologIDEController.kt:459:            is SyntaxException.InTheorySyntaxError -> {
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/PrologIDEController.kt:463:            is SyntaxException.InQuerySyntaxError -> {
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/SolutionView.kt:85:            if (solution.exception is TimeOutException) {
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/SyntaxColoring.kt:89:            throw IllegalStateException("Syntax coloring is already active")
+ide/src/main/kotlin/it/unibo/tuprolog/ui/gui/SyntaxColoring.kt:100:                throw IllegalStateException("Syntax coloring is not active")
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/Close1.kt:17:                is InputChannel<*> -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/Close1.kt:22:                is OutputChannel<*> -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:138:                is InputChannel<*> -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:147:                is OutputChannel<*> -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:211:            is Var -> null
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:249:            is Var -> return this
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:250:            is Struct -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:264:        if (term !is Atom) {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:288:            is Var -> return null
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:289:            is Struct -> when {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:307:            is Var -> this
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:308:            is Atom -> when {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:320:            term is Var -> this
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:321:            term !is Integer -> ensuringArgumentIsInteger(index)
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:333:            term is Atom -> {
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:357:            is InputChannel<String> -> channel
+io-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/io/primitives/IOPrimitiveUtils.kt:363:            is OutputChannel<String> -> channel
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestConsultImpl.kt:28:                assertTrue { solutions.single() is Solution.Yes }
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestConsultImpl.kt:50:                    assertTrue { it is Solution.Halt }
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestConsultImpl.kt:52:                    assertTrue { solution.exception is SyntaxError }
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestConsultImpl.kt:75:                    assertTrue { it is Solution.Halt }
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestConsultImpl.kt:77:                    assertTrue { solution.exception is SystemError }
+io-lib/src/commonTest/kotlin/it/unibo/tuprolog/solve/libs/io/TestIncludeImpl.kt:91:                assertTrue { events[0] is InitializationIssue }
+io-lib/src/jsMain/kotlin/it/unibo/tuprolog/solve/libs/io/ChannelUtilsJs.kt:8:    throw IllegalStateException("Reading terms is still not supported for JS")
+io-lib/src/jsMain/kotlin/it/unibo/tuprolog/solve/libs/io/FileSystem.kt:64://     throw IOException("Reading a local file in browser is not supported, yet")
+io-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/io/ChannelUtilsJvm.kt:14:    if (this !is ReaderChannel) {
+io-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/io/ChannelUtilsJvm.kt:15:        throw IllegalStateException("Channel $streamTerm does not supporting reading terms, as it is of type ${this::class.simpleName}")
+io-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/io/UrlUtilsJvm.kt:22:    is JvmUrl -> url
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/ConstructorInvocationException.kt:17:    "There is no constructor on type ${type.fullName} which accepts " +
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/MalformedAliasException.kt:18:    "This is not a dealiasing expression `$dealiasingExpression` in the form ${
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/MethodInvocationException.kt:18:    "There is no method on type ${type.fullName} which is named `$missingMethodName` and accepts " +
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/NoSuchAnAliasException.kt:16:    "There exists no reference whose alias is `${dealiasingExpression[0]}`"
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/NoSuchAnAliasException.kt:21:        require(dealiasingExpression[0] is Struct)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/PropertyAssignmentException.kt:18:    "There is no property on type ${type.fullName} which is named `$missingPropertyName` and can be " +
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/exceptions/RuntimePermissionException.kt:23:    } + "is not permitted",
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/ObjectToTermConverterImpl.kt:20:                is String -> Atom.of(source)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/ObjectToTermConverterImpl.kt:21:                is Number -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/ObjectToTermConverterImpl.kt:25:                is Char -> Atom.of(charArrayOf(source).concatToString())
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/ObjectToTermConverterImpl.kt:26:                is Boolean -> Truth.of(source)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:35:            is NullRef, is Var -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:42:            is ObjectRef -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:49:            is Truth -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:54:            is Atom -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:65:            is Real -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:71:            is Integer -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:82:            is Struct ->
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:86:                        is ObjectRef -> convertInto(type, ref)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:112:            is TypeRef -> typeTerm.type
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:113:            is Atom -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:116:            is Struct -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:118:                    is TypeRef -> ref.type
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:141:            is NullRef, is Var -> sequenceOf(Nothing::class)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:142:            is ObjectRef -> sequenceOf(term.`object`::class)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:143:            is Truth -> sequenceOf(Boolean::class, String::class)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:144:            is Atom -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:151:            is Real -> sequenceOf(BigDecimal::class, Double::class, Float::class)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:152:            is Integer -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:175:            is Struct -> when {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TermToObjectConverterImpl.kt:178:                    is ObjectRef -> admissibleTypesByPriority(ref)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TypeRefImpl.kt:32:            is Optional.Some<out Any> -> companionObjectRef.value.invoke(objectConverter, methodName, arguments)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/TypeRefImpl.kt:59:            is Optional.Some<out Any> -> companionObjectRef.value.assign(objectConverter, propertyName, value)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractInvoke.kt:27:                is Ref -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractInvoke.kt:30:                is Struct -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractInvoke.kt:41:            is Result.Value -> resultTerm mguWith result.getInvocationResult()
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractIterableItems.kt:27:            first is Var && second is Var ->
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractIterableItems.kt:29:            second is List -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/AbstractIterableItems.kt:35:            first is ObjectRef -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/ArrayItems.kt:7:        get() = this is Array<*>
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Assign.kt:24:                is Ref -> first
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Cast.kt:22:                is Struct -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Cast.kt:31:                is Var -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/ListItems.kt:7:        get() = this is List<*>
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/NullRef.kt:9:    override fun testType(term: Term): Boolean = term is NullRefTerm
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/ObjectRef.kt:9:    override fun testType(term: Term): Boolean = term is ObjectRefTerm
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:32:    get() = this is Struct && this matches DEALIASING_TEMPLATE && args[0] is Atom
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:39:        arg is Struct && arg matches DEALIASING_TEMPLATE && ensureAliasIsRegistered(arg) -> this
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:40:        arg !is Ref -> throw TypeError.forArgument(context, signature, TypeError.Expected.REFERENCE, arg, index)
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:48:        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is ObjectRef -> this
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:49:        arg !is ObjectRef -> throw TypeError.forArgument(
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:63:        arg is Struct && arg matches DEALIASING_TEMPLATE && findRefFromAlias(arg) is TypeRef -> this
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:64:        arg !is TypeRef -> throw TypeError.forArgument(
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:79:        arg is TypeRef -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:82:        arg is Atom -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/PrimitiveExtensions.kt:85:        arg is Struct && arg.isDealiasingExpression -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Ref.kt:9:    override fun testType(term: Term): Boolean = term is RefTerm
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/SetItems.kt:7:        get() = this is Set<*>
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Type.kt:24:            first is Var && second is Var -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Type.kt:28:            first is Var -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/Type.kt:33:            second is Var -> {
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/primitives/TypeRef.kt:9:    override fun testType(term: Term): Boolean = term is TypeRefTerm
+oop-lib/src/commonMain/kotlin/it/unibo/tuprolog/solve/libs/oop/Result.kt:30:                if (it is ObjectRef) it else ObjectRef.of(value)
+oop-lib/src/jsMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJs.kt:9:private val TODO_EXCEPTION = NotImplementedError("OOP-Prolog integration is still not supported on JS")
+oop-lib/src/jsMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJs.kt:20:        "`$qualifiedName` should match ${CLASS_NAME_PATTERN.pattern}, while is doesn't"
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/OverloadSelectorImpl.kt:69:                is KClass<*> -> {
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/impl/OverloadSelectorImpl.kt:72:                is KTypeParameter -> {
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJvm.kt:116:    if (this is KClass<*>) {
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJvm.kt:132:        is KProperty0<T> -> get()
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJvm.kt:133:        is KProperty1<*, T> -> {
+oop-lib/src/jvmMain/kotlin/it/unibo/tuprolog/solve/libs/oop/TypeUtilsJvm.kt:137:        is KProperty2<*, *, T> -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestAliasImpl.kt:27:            is KClass<*> -> TypeRef.of(obj)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:32:                is Solution.Halt -> when (val exception = solution.exception) {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:33:                    is SystemError -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:34:                        assertTrue(exception.cause is OopRuntimeException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:35:                        assertTrue(exception.cause?.cause is NullPointerException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:37:                    is RepresentationError -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:38:                        assertTrue(exception.cause is TermToObjectConversionException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:42:                is Solution.Yes -> solver.solveOnce(query).substitution[X]?.let {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestCreationImpl.kt:43:                    assertTrue(it is ObjectRef)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:42:                is Solution.Halt -> when (val exception = solution.exception) {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:43:                    is SystemError -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:44:                        assertTrue(exception.cause is OopRuntimeException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:45:                        assertTrue(exception.cause?.cause is NullPointerException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:47:                    is RepresentationError -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:48:                        assertTrue(exception.cause is TermToObjectConversionException)
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestInvocationImpl.kt:52:                is Solution.Yes -> {
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestKotlinReflectionWorkaroundsAreStillNecessary.kt:23:            assertTrue("Expected exception type ${T::class}, actual: ${e::class}") { e is T }
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestRefs.kt:31:                assertTrue { result is Result.Value }
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestRefs.kt:35:                assertTrue { case.term.let { it is Var || it is NullRef } }
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestRefs.kt:60:                assertTrue { result is Result.Value }
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestRefs.kt:61:                assertTrue { result.asObjectRef()?.`object` is ConstructorOverloadDetector }
+oop-lib/src/jvmTest/kotlin/it/unibo/tuprolog/solve/libs/oop/TestRefs.kt:65:                assertTrue { case.term.let { it is Var || it is NullRef } }
+parser-core/src/commonMain/kotlin/it/unibo/tuprolog/core/parsing/TermParserExtensions.kt:26:        is Clause -> this
+parser-core/src/commonMain/kotlin/it/unibo/tuprolog/core/parsing/TermParserExtensions.kt:27:        is Struct -> Fact.of(this)
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/AssertionUtils.kt:28:            expected is Var && actual is Var -> {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/AssertionUtils.kt:31:            expected is Constant && actual is Constant -> {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/AssertionUtils.kt:34:            expected is Struct && actual is Struct -> {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:127:        "element_at(X,[_|L],K) :- K > 1, K1 is K - 1, element_at(X,L,K1)" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:129:                (("K" greaterThan 1) and (("K1" `is` ("K" - 1)) and ("element_at"("X", "L", "K1"))))
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:134:        "my_length([_|L],N) :- my_length(L,N1), N is N1 + 1" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:136:                ("my_length"("L", "N1") and (("N" `is` ("N1".toTerm() + 1))))
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:180:        "count(X,[X|Xs],Ys,K,T) :- K1 is K + 1, count(X,Xs,Ys,K1,T)" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:182:                (("K1" `is` ("K".toTerm() + 1)) and ("count"("X", "Xs", "Ys", "K1", "T")))
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:184:        "map_upper_bound(XMax, YMax) :- map_size(XSize, YSize), XMax is XSize - 1, YMax is YSize - 1" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:186:                ("map_size"("XSize", "YSize") and (("XMax" `is` ("XSize" - 1)) and ("YMax" `is` ("YSize" - 1))))
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:196:        "draw_char(X, Y) :- tty_size(_, XSize), X >= XSize, NY is Y + 1, draw_char(0, NY)" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:198:                ("tty_size"(`_`, "XSize") and (("X" greaterThanOrEqualsTo "XSize") and (("NY" `is` ("Y".toTerm() + 1)) and ("draw_char"(0, "NY")))))
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:200:        "Y < YMsgs -> write(' ') ; display_offset(XOff, YOff), XMap is X + XOff, YMap is Y + YOff, get_character(XMap, YMap, C), format('~s', [C])" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:204:                        ("XMap" `is` ("X".toTerm() + "XOff")) and (
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:205:                            ("YMap" `is` ("Y".toTerm() + "YOff")) and
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:211:        "display_offset(X, Y) :- player(XPos, YPos), tty_size(YSize, XSize), message_lines(YMsgs), X is XPos - floor(XSize / 2), Y is YPos - floor((YSize - YMsgs) / 2)" to prolog {
+parser-core/src/commonTest/kotlin/it/unibo/tuprolog/core/parsing/test/ParsingExamples.kt:217:                                ("X" `is` ("XPos" - "floor"("XSize" / 2))) and (("Y" `is` ("YPos" - "floor"(("YSize" - "YMsgs") / 2))))
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:30:            if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:34:                    is Atom -> {
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:37:                    is LogicList -> {
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:38:                        if (operator.toSequence().all { it is Atom }) {
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:24:                return if (obj is Token) {
+parser-core/src/jsMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:40:                if (recognizer is PrologParser) {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:32:            if (op is Struct && op.arity == 3 && op.functor == "op" && op[0] is Numeric && op[1] is Atom && op.isGround) {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:42:                    is Atom -> {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:45:                    is LogicList -> {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/DynamicOpListener.kt:46:                        if (operator.toSequence().all { it is Atom }) {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:28:                return if (obj is Token) {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:43:                if (recognizer is PrologParser) {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:172:                ex.cause is RecognitionException -> {
+parser-core/src/jvmMain/kotlin/it/unibo/tuprolog/core/parsing/PrologParserFactory.kt:203:                ex.cause is RecognitionException -> throw ex.cause as RecognitionException
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:106:        val input = "_ + A + _B is _1 + _a + _+"
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:109:        lexer.addOperators("+", "is")
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:136:            assertEquals("is", it.text)
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:167:        val input = "1 ? a is c :- d"
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:170:        lexer.addOperators("?", "is", ":-")
+parser-js/src/test/kotlin/it/unibo/tuprolog/parser/TestLexerKt.kt:189:            assertEquals("is", it.text)
+repl/src/commonMain/kotlin/it/unibo/tuprolog/ui/repl/TuPrologUtils.kt:17:            is Solution.Yes -> {
+repl/src/commonMain/kotlin/it/unibo/tuprolog/ui/repl/TuPrologUtils.kt:20:            is Solution.No -> {
+repl/src/commonMain/kotlin/it/unibo/tuprolog/ui/repl/TuPrologUtils.kt:23:            is Solution.Halt -> {
+repl/src/commonMain/kotlin/it/unibo/tuprolog/ui/repl/TuPrologUtils.kt:35:            is HaltException -> {
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:15:            is Boolean -> deobjectifyBoolean(`object`)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:16:            is Int, Long, Short, Byte, Float, Double -> deobjectifyNumber(`object`)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:17:            is String -> deobjectifyString(`object`)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:24:            is Array<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:45:            is String -> scope.realOf(actualValue as String)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:46:            is Double -> scope.realOf(actualValue as Double)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:53:            is String -> scope.intOf(actualValue as String)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeobjectifier.kt:54:            is Int -> scope.intOf(actualValue as Int)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeserializer.kt:14:            is MimeType.Xml -> throw NotImplementedError("XML is currently not supported in JS")
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeserializer.kt:15:            is MimeType.Json -> JSON.parse(string)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermDeserializer.kt:16:            is MimeType.Yaml -> YAML.parse(string)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermSerializer.kt:17:            is MimeType.Xml -> throw NotImplementedError("XML is currently not supported in JS")
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermSerializer.kt:18:            is MimeType.Json -> JSON.stringify(objectified)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTermSerializer.kt:19:            is MimeType.Yaml -> YAML.stringify(objectified)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:7:            is MimeType.Xml -> throw NotImplementedError()
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:8:            is MimeType.Yaml -> YAML.parse(string)
+serialize-core/src/jsMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:9:            is MimeType.Json -> JSON.parse(string)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:18:            is Boolean -> deobjectifyBoolean(`object`)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:19:            is Number -> deobjectifyNumber(`object`)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:20:            is String -> deobjectifyString(`object`)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:21:            is Map<*, *> -> deobjectifyMap(`object`)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:28:            is List<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:49:            is String -> scope.realOf(actualValue)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:50:            is Number -> deobjectifyNumber(actualValue) as? Real ?: throw DeobjectificationException(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:57:            is String -> scope.intOf(actualValue)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:58:            is Number -> deobjectifyNumber(actualValue) as? LogicInteger ?: throw DeobjectificationException(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:130:            is Int -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:131:            is Long -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:132:            is Double -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:133:            is Byte -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:134:            is Short -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:135:            is Float -> scope.numOf(value)
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:136:            is BigInteger -> LogicInteger.of(value.toString())
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTermDeobjectifier.kt:137:            is BigDecimal -> Real.of(value.toString())
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:10:            obj1 is Number && obj2 is Number -> obj1.toString() == obj2.toString()
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:11:            obj1 is List<*> && obj2 is List<*> -> when {
+serialize-core/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/ObjectsUtils.kt:17:            obj1 is Map<*, *> && obj2 is Map<*, *> -> when {
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheoryDeobjectifier.kt:17:            is Array<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheoryDeserializer.kt:14:            is MimeType.Xml -> throw NotImplementedError("XML is currently not supported in JS")
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheoryDeserializer.kt:15:            is MimeType.Json -> JSON.parse(string)
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheoryDeserializer.kt:16:            is MimeType.Yaml -> YAML.parse(string)
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheorySerializer.kt:17:            is MimeType.Xml -> throw NotImplementedError("XML is currently not supported in JS")
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheorySerializer.kt:18:            is MimeType.Json -> JSON.stringify(objectified)
+serialize-theory/src/jsMain/kotlin/it/unibo/tuprolog/serialize/JsTheorySerializer.kt:19:            is MimeType.Yaml -> YAML.stringify(objectified)
+serialize-theory/src/jvmMain/kotlin/it/unibo/tuprolog/serialize/JvmTheoryDeobjectifier.kt:17:            is List<*> -> `object`.map { deobjectify(it ?: throw DeobjectificationException(`object`)) }
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/ChoicePointContext.kt:15:// This assertion fails on JS since depth is undefined
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/EndState.kt:13:        get() = solution is Solution.Yes && context.hasOpenAlternatives
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateException.kt:26:            is MessageError -> content
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateException.kt:33:            is MessageError -> SystemError.forUncaughtError(this)
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateException.kt:51:            is PrologError -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateException.kt:55:                    catchGoal is Struct && catchGoal.isCatch() -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateException.kt:59:                            catcher is Substitution.Unifier -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StatePrimitiveExecution.kt:29:            is Solution.Yes -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StatePrimitiveExecution.kt:38:            is Solution.No -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StatePrimitiveExecution.kt:41:            is Solution.Halt -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StatePrimitiveSelection.kt:25:                is Var -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StatePrimitiveSelection.kt:34:                is Struct -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleExecution.kt:15:            is Substitution.Unifier -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:89:    private fun Term.isCut(): Boolean = this is Atom && value == "!"
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:109:            cutLimit is CutLimit.None ||
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:137:            is Var -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:146:            is Struct -> with(context) {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:150:                    currentGoal is Truth -> {
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/StateRuleSelection.kt:159:                        val cutLimit = computeCutLimit(currentGoal is MagicCut)
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/Utils.kt:22:    map { require(it is Rule); it as Rule }.cursor()
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/Utils.kt:26:        is Tuple -> toSequence().flatMap { it.unfoldGoals() }
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/fsm/Utils.kt:33:            is Var -> Struct.of("call", it)
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/impl/AbstractSolutionIterator.kt:16:    final override fun hasNext(): Boolean = state.let { it !is EndState || it.hasOpenAlternatives }
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/impl/AbstractSolutionIterator.kt:23:        } while (state !is EndState)
+solve-classic/src/commonMain/kotlin/it/unibo/tuprolog/solve/classic/stdlib/primitive/Throw.kt:15:            error is Struct && error.functor == "error" && error.arity in 1..2 -> {
+solve-classic/src/commonTest/kotlin/it/unibo/tuprolog/solve/TestStaticFactory.kt:17:        assertTrue { solver is ClassicSolver }
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractChannel.kt:46:            throw IllegalStateException("Channel is already closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractInputChannel.kt:15:        get() = if (isClosed) throw IllegalStateException("Input channel is closed") else true
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractInputChannel.kt:21:        if (isClosed) throw IllegalStateException("Input channel is closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractInputChannel.kt:30:        if (isClosed) throw IllegalStateException("Input channel is closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractInputChannel.kt:48:            if (isClosed) throw IllegalStateException("Input channel is closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractOutputChannel.kt:10:        if (isClosed) throw IllegalStateException("Output channel is closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/channel/impl/AbstractOutputChannel.kt:23:        if (isClosed) throw IllegalStateException("Output channel is closed")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClauseListener.kt:26:            is Directive -> onDirective(clause)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClauseListener.kt:27:            is Fact -> onFact(clause)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClauseListener.kt:28:            is Rule -> onRule(clause)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClausePartitioner.kt:87:        if (name is Atom) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClausePartitioner.kt:94:        if (priority is Integer) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClausePartitioner.kt:97:                if (name is Atom) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClausePartitioner.kt:108:        if (goal is Atom) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/ClausePartitioner.kt:115:        if (goal is Struct) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/directives/DirectiveListener.kt:35:            is Directive -> listenDirective(clause)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/DomainError.kt:14: * The domain error occurs when something has the correct type but the value is not admissible
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/DomainError.kt:107:            "Term `${actualValue.pretty()}` is not a valid $expectedDomain"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/DomainError.kt:126:            "Subgoal `${actualValue.pretty()}` of ${procedure.pretty()} is not $expectedDomain term"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/DomainError.kt:205:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/ErrorUtils.kt:21:     * For example if the [errorDescription] is `instantiation_error` the corresponding error struct, according to prolog standard, will be
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/ErrorUtils.kt:24:     * If the error [errorDescription] is composite like `type_error(callable, Goal)` the corresponding struct, according to prolog standard, will be
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/EvaluationError.kt:75:                is Atom ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/ExistenceError.kt:14: * The existence error occurs when an object on which an operation is to be performed does not exist
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/ExistenceError.kt:99:            "There exists no stream whose alias is `$alias`"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/ExistenceError.kt:181:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/InstantiationError.kt:13: * The instantiation error occurs when some Term is a Variable, and it should not
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/InstantiationError.kt:57:                    "of ${procedure.pretty()} is unexpectedly not instantiated"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/MessageError.kt:9: * The [MessageError] is used whenever no other [PrologError] instance is suitable for representing the error
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/PermissionError.kt:14: * A permission error occurs when an attempt to perform a prohibited operation is made
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/PermissionError.kt:74:                "operation of type `$operation` is not possible on $permission: ${culprit.pretty()}"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/PermissionError.kt:124:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/PermissionError.kt:164:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/RepresentationError.kt:112:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/SystemError.kt:73:                is MessageError -> content.pretty()
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/TypeError.kt:15: * The type error occurs when something is not of [Expected] type
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/TypeError.kt:126:            "Subgoal `${culprit.pretty()}` of ${procedure.pretty()} is not a $expectedType term"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/exception/error/TypeError.kt:189:                is Atom -> of(term.value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:25:    /** Static Knowledge-base, that is a KB that *can't* change executing goals */
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:29:    /** Dynamic Knowledge-base, that is a KB that *can* change executing goals */
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:46:     * Returns `null` if the channel is closed
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:54:     * Returns `null` if the channel is closed
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:61:     * Returns `null` if the channel is closed
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContextAware.kt:68:     * Returns `null` if the channel is closed
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContext.kt:16:// TODO: 25/09/2019 solverStrategies should go here... in common with other implementations, if the idea is approved
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/flags/FlagStore.kt:29:            throw IllegalArgumentException("Value $value is not admissible for flag $notableFlag")
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/flags/NotableFlag.kt:34:                "$value is not an admissible value for flag $name"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/AbstractEvaluator.kt:57:     * This is a stub implementation, that does nothing
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/AbstractEvaluator.kt:64:     * This is a stub implementation, that does nothing
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:26: * Throws a [TypeError] in case a non-evaluable sub-term is met.
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:40:            this is Var ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:42:            this is Atom ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:44:            this is Struct && this.extractSignature() !in allowedArithmeticSignatures ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:52:            // the argument of an arithmetic functor is evaluated to a non-numeric value
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:53:            this !is Numeric ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:56:            // the argument of a bitwise operator is evaluated to a non-integer value
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ArithmeticEvaluator.kt:57:            this !is Integer && enclosingTerm.extractSignature() in bitwiseStandardOperatorsSignatures ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:25:                term1 is Integer && term2 is Integer -> mathFunction(term1, term2, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:26:                term1 is Real && term2 is Integer -> mathFunction(term1, term2, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:27:                term1 is Integer && term2 is Real -> mathFunction(term1, term2, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:28:                term1 is Real && term2 is Real -> mathFunction(term1, term2, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:29:                term1 is Var -> throw InstantiationError.forArgument(context, signature, term1, 0)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/BinaryMathFunction.kt:30:                term2 is Var -> throw InstantiationError.forArgument(context, signature, term2, 1)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/Compute.kt:20:        /** Arguments with which the function is invoked in this [Request] */
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ExpressionEvaluator.kt:10: * Throws a [TypeError] in case a non-evaluable sub-term is met.
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/ExpressionReducer.kt:11: * If the input expression is non-evaluable, it remains unaffected and no error is thrown
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/UnaryMathFunction.kt:21:                is Integer -> mathFunction(term, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/function/UnaryMathFunction.kt:22:                is Real -> mathFunction(term, context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/AbstractSolver.kt:118:                is Solution.No -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/AbstractSolver.kt:121:                is Solution.Halt -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionFormatterImpl.kt:12:        is Solution.Yes -> formatYes(value)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionFormatterImpl.kt:13:        is Solution.No -> "no."
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionFormatterImpl.kt:14:        is Solution.Halt -> when (val e = value.exception) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionFormatterImpl.kt:15:            is TimeOutException -> "timeout."
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionFormatterImpl.kt:16:            is HaltException -> "halt: ${e.exitStatus}"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionImpl.kt:36:        if (this is Solution.Yes && yes != null) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionImpl.kt:39:        if (this is Solution.No && no != null) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionImpl.kt:42:        if (this is Solution.Halt && halt != null) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/impl/SolutionImpl.kt:107:            return filter { v, t -> (v in toRetain) || (t !is Var) || (t in toRetain) }
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/library/Library.kt:51:    /** Checks whether the provided signature, is protected in this library */
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/MutableSolver.kt:21: * of the solver -- e.g.  affecting the KB -- while no resolution process is ongoing.
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:119:            arguments.withIndex().firstOrNull { it.value is Var }?.let {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:174:                is Indicator -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:177:                        name is Var -> throw InstantiationError.forArgument(context, signature, name, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:178:                        arity is Var -> throw InstantiationError.forArgument(context, signature, arity, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:179:                        name !is Atom -> throw TypeError.forArgument(context, signature, ATOM, name, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:180:                        arity !is Integer -> throw TypeError.forArgument(context, signature, INTEGER, arity, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:193:            message: String = "Primitive for ${signature.name}/${signature.arity} is not implemented, yet"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:197:            message: String = "Operation ${signature.name}/${signature.arity} is not supported"
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:205:                candidate is Clause -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:211:                candidate is Struct && candidate.functor == Clause.FUNCTOR && candidate.arity == 2 ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:213:                candidate is Struct -> return this
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:223:                !is Numeric -> throw TypeError.forArgument(context, signature, TypeError.Expected.NUMBER, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:229:                !is Struct -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:238:                !is Var -> throw TypeError.forArgument(
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:250:                !is Struct, is Atom -> throw TypeError.forArgument(
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:262:                !is Atom -> throw TypeError.forArgument(context, signature, ATOM, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:268:                !is Constant -> throw TypeError.forArgument(context, signature, ATOMIC, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:284:                is Atom -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:299:                    arg !is Atom -> throw DomainError.forArgument(context, signature, OPERATOR_SPECIFIER, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:313:                !is Integer -> throw TypeError.forArgument(context, signature, INTEGER, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:319:                !is LogicList -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, arg, index)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:338:                    arg !is Integer || arg.intValue < BigInteger.ZERO -> throw DomainError.forArgument(
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:356:                term !is Integer || term.isCharacterCode() ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:363:                term !is LogicList || !term.isWellFormed -> throw DomainError.forTerm(context, WELL_FORMED_LIST, term)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/PrimitiveWrapper.kt:369:                is LogicList -> when {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:27:        /** Arguments with which the goal is invoked in this [Request] */
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:64:            is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, *sideEffects)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:75:            is Substitution.Unifier -> replySuccess(substitution, sideEffectManager, buildSideEffects)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:27:                if (it is Theory) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:38:                    is MutableTheory -> it
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:39:                    is Theory -> it.toMutableTheory()
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:117:                if (it is FlagStore) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:168:                is AliasedLibrary -> require(lib.alias == alias)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:174:                if (it is AliasedLibrary) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/sideffects/SideEffect.kt:233:                if (it is OperatorSet) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Signature.kt:64:    // for example: if user query is `ciao(1, 2)` with Signature("ciao", 2, false), it should be matched with
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Signature.kt:96:                            it is Struct && it.functor == varargStructFunctor && it.arity == 2 &&
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Signature.kt:111:        } catch (ex: IllegalArgumentException) { // caught when parsed arity is negative
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Signature.kt:118:            is Struct -> fromSignatureTerm(term)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:43:     * @return the current [Solution], casted to [Yes], or `null`, if the current term is not an instance of [Yes]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:50:     * @throws ClassCastException if the current [Solution] is not an instance of [Yes]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:58:     * @return the current [Solution], casted to [No], or `null`, if the current term is not an instance of [No]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:65:     * @throws ClassCastException if the current [Solution] is not an instance of [No]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:73:     * @return the current [Solution], casted to [Halt], or `null`, if the current term is not an instance of [Halt]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solution.kt:80:     * @throws ClassCastException if the current [Solution] is not an instance of [Halt]
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractAssert.kt:21:            is Clause -> first
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractAssert.kt:22:            is Struct -> Fact.of(first)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractCollectionOf.kt:30:            is Substitution.Unifier -> when (val vars = mgu[VARS]) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractCollectionOf.kt:31:                is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractCollectionOf.kt:32:                is Var -> setOf(vars)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractCollectionOf.kt:37:        val goal = if (mgu is Substitution.Unifier) mgu[GOAL] else second
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractCollectionOf.kt:41:                    is Solution.Halt -> throw it.exception.pushContext(context)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractGetData.kt:15:            is Var ->
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractGetData.kt:17:                    .filter { (_, v) -> v is Term }
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractGetData.kt:22:            is Atom -> when (val value = data[first.value]) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AbstractGetData.kt:23:                is Term -> sequenceOf(replyWith(second mguWith value))
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Arg.kt:25:                    is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Arg.kt:29:                            sub is Substitution.Unifier
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Arg.kt:34:                    is Integer -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomChars.kt:17:            first is Var && second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomChars.kt:21:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomChars.kt:26:                        if (it is Atom) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomChars.kt:35:            second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomCodes.kt:19:            is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomCodes.kt:25:                        is Integer -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomCodes.kt:29:                        is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomCodes.kt:42:                if (second !is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomConcat.kt:23:            third is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomConcat.kt:32:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomConcat.kt:41:            second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Atomic.kt:9:    override fun testType(term: Term): Boolean = term is Constant
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Atom.kt:8:    override fun testType(term: Term): Boolean = term is it.unibo.tuprolog.core.Atom
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomLength.kt:16:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/AtomLength.kt:20:            second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Between.kt:29:            is LogicInteger -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Between.kt:33:            is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Callable.kt:9:    override fun testType(term: Term): Boolean = term is Struct
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/CharCode.kt:16:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Clause.kt:24:        if (second !is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Compound.kt:10:        term is Struct && term.arity > 0
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/CurrentOp.kt:25:            it.all { sub -> sub is Substitution.Unifier }
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/CurrentPrologFlag.kt:17:        is Atom, is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/EnsureExecutable.kt:16:            is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Float.kt:9:    override fun testType(term: Term): Boolean = term is Real
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:28:        is Struct -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:29:            if (third !is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:34:        is Numeric -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:35:            if (third !is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:40:        is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:42:                is Atom -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:47:                is Numeric -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Functor.kt:59:                is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Integer.kt:8:    override fun testType(term: Term): Boolean = term is it.unibo.tuprolog.core.Integer
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Is.kt:12: * Implementation of 'is'/2 predicate
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Is.kt:16:object Is : BinaryRelation.Functional<ExecutionContext>("is") {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Natural.kt:15:            is Var -> generateValues().map { replySuccess(Substitution.of(first, it)) }
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Natural.kt:16:            is Integer -> sequenceOf(replyWith(checkValue(first)))
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NonVar.kt:8:    override fun testType(term: Term): Boolean = term !is it.unibo.tuprolog.core.Var
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberChars.kt:18:            first is Var && second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberChars.kt:23:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberChars.kt:29:            second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberCodes.kt:19:            is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberCodes.kt:25:                        is Integer -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberCodes.kt:29:                        is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/NumberCodes.kt:43:                if (second !is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Number.kt:9:    override fun testType(term: Term): Boolean = term is Numeric
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/RetractAll.kt:16:        val clause = if (first is Clause) first else Rule.of(first as Struct, Var.anonymous())
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/RetractAll.kt:19:            is RetractResult.Success -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Retract.kt:20:            is Clause -> first
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Retract.kt:21:            is Struct -> Rule.of(first, Var.anonymous())
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Retract.kt:27:                is Clause -> (first mguWith it) as Substitution.Unifier
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Reverse.kt:15:            first is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Reverse.kt:19:            second is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Sleep.kt:13: * The predicate execution always succeeds, unless the resolution process is halted because of a [TimeOutException].
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Sleep.kt:14: * Furthermore, the resolution of a `sleep(N)` sub-goal is guaranteed to require at least `N` milliseconds
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:21:        return if (fifth is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:24:            if (second is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:25:                if (fourth is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:35:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:52:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:73:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:90:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:99:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:111:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/SubAtom.kt:119:                        if (third is Var) {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:33:            is Struct -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:35:                    is LogicList -> decompose(first, second)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:36:                    is Var -> decompose(first, second)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:42:            is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:44:                    is LogicList -> recompose(first, second)
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Univ.kt:45:                    is Var -> {
+solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/Var.kt:8:    override fun testType(term: Term): Boolean = term is it.unibo.tuprolog.core.Var
+solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/directives/TestDirectivePartitioning.kt:38:            rule { "h"(X) impliedBy (Y `is` (X - 1) and "h"(Y)) },
+solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/directives/TestDirectivePartitioning.kt:44:        { it is Fact && it.head.let { h -> h.functor == name && h.arity == arity } }
+solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/TestSolutionMetadata.kt:82:            if (solution is Solution.Yes) {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/AbstractTimedState.kt:29:        solve.executionMaxDuration == TimeDuration.MAX_VALUE -> behaveTimed() // optimized without check, when maxDuration is infinite
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:39:    /** The *True* state is reached when a successful computational path has ended */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:45:            require(solve.solution is Solution.Yes) { "True end state can be created only with Solution.Yes. Current: `${solve.solution}`" }
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:49:    /** The *False* state is reached when a failed computational path has ended */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:55:            require(solve.solution is Solution.No) { "False end state can be created only with Solution.No. Current: `${solve.solution}`" }
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:59:    /** The *Halt* state is reached when an [HaltException] is caught, terminating the computation */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateEnd.kt:65:            require(solve.solution is Solution.Halt) { "Halt end state can be created only with Solution.Halt. Current: `${solve.solution}`" }
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateGoalEvaluation.kt:19: * State responsible of solving a selected Goal, if it is a primitive
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateGoalEvaluation.kt:49:                if (it.solution is Solution.Halt) return@sequence // if halt reached, overall computation should stop
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateInit.kt:25:                // current goal is already demonstrated
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:72:                            if (subState is FinalState && subState.solve.solution.query == subSolveRequest.query) {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:78:                                if (subState !is StateEnd.False || !hasAlternatives || cutNextSiblings) {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:92:                                if (subState is StateEnd.Halt) return@sequence // if halt reached, overall computation should stop
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:93:                            } else yield(it) // return wrapped subState as is, only if not interested in it
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/StateRuleSelection.kt:123:            is Solution.Yes -> copy(substitution = substitution - unusedVariables.asIterable())
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/StateMachineExecutor.kt:19:        // drop(1) is to exclude provided [state] from next states' sequence
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/StateMachineExecutor.kt:26:     * This method is useful when implementing internal computation and
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/StateMachineExecutor.kt:49:        is AlreadyExecutedState -> this.wrappedState
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:23:    /** Valued when this execution context is child of a choicePoint context, indicating a point where to cut */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:53:     * @param isChoicePointChild whether this solve request is child of a ChoicePoint
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:74:    /** Method that updates clauseScopedParent to include upper scope parents; this is needed to maintain Cut functionality through Response chain */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:86:     * - if cut was called, and the first "scoped" choice point context is to be cut
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SideEffectManagerImpl.kt:117:     * That implements expected ISO behaviour, for which *call/1 is said to be opaque (or not transparent) to cut.*
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SolverUtils.kt:24:/** Check whether the receiver term is a well-formed predication */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SolverUtils.kt:30: * For example, the goal `A` is transformed, after preparation for execution, as the Term: `call(A)`
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/SolverUtils.kt:73: * @param isChoicePointChild Whether this new request is considered a child of a Choice Point
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/SolverStrategies.kt:20:    /** Determines "when and what" is considered successfully demonstrated, during solution process */
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/solver/StreamsExecutionContext.kt:121:/** Extension method to get [SideEffectManagerImpl], if this context is of right type*/
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Call.kt:35:                    message = "call/1 argument is neither a Variable nor a well-formed goal",
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Conjunction.kt:54:     * @param accumulatedSubstitutions This is a substitution accumulator, that maintains the diff from the [mainRequest] substitution
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Conjunction.kt:55:     * @param previousResponseSideEffectManager This is the previous response side effect manager, needed to propagate information during execution
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Conjunction.kt:90:                    goalResponse.solution is Solution.Yes &&
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Conjunction.kt:110:                    if (goalResponse.solution !is Solution.No || (!previousGoalsHadAlternatives && !currentHasAlternatives) || cutExecuted) {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Conjunction.kt:119:            if (cutExecuted || goalResponse.solution is Solution.Halt) {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Not.kt:25:                    is Solution.Yes -> {
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Not.kt:30:                    is Solution.No -> yield(request.replySuccess(request.context.substitution))
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Throw.kt:29:                    is Substitution.Unifier -> sequenceOf(
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Throw.kt:45:                            // if unhandled error is a PrologError, rethrow outside
+solve-streams/src/commonMain/kotlin/it/unibo/tuprolog/solve/streams/stdlib/primitive/Throw.kt:48:                            // if current unhandled exception is some other error, launch it as message
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/testutils/CallUtils.kt:109:     * A request to test that [Call] limits [Cut] to have effect only inside its goal; `call/1` is said to be *opaque* (or not transparent) to cut.
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/testutils/CallUtils.kt:132:     * Utility function to test whether the cause of errors generated is correctly filled
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/testutils/CallUtils.kt:135:     * in the end the generated solution's error chain is checked to match with [expectedErrorSolution]'s chain
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/primitive/testutils/CatchUtils.kt:85:            .filter { (_, solutionList) -> solutionList.none { it is Solution.Halt } }
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/integrationtest/StateIntegrationTesting.kt:70:                        (it as? Solution.Yes)?.copy(substitution = it.substitution.filter { _, t -> t !is Var }) ?: it
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateUtils.kt:28:        assertTrue { actualNextStateSequence.single() is S }
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateUtils.kt:33:        assertTrue("Expected state type to be ${S::class} but was ${state::class}") { state is S }
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateUtils.kt:52:        is Solve.Response -> sideEffectManager
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateUtils.kt:53:        is Solve.Request<*> -> context.getSideEffectManager()
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/streams/solver/fsm/impl/testutils/StateUtils.kt:54:    } ?: fail("SideEffectManager is not present in $this")
+solve-streams/src/commonTest/kotlin/it/unibo/tuprolog/solve/TestStaticFactory.kt:17:        assertTrue { solver is StreamsSolver }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/DummyInstances.kt:15: * Utils singleton that contains dummy instances, to be used when in a test something is not important
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestAbolishImpl.kt:86:            val query = (current_prolog_flag("max_arity", A) and ((X `is` (A + 1)) and abolish("foo" / X)))
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestAbolish.kt:42:     * ?- (current_prolog_flag(max_arity,A), X is A + 1, abolish(foo/X)).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestBigListImpl.kt:18:                        M `is` (N - 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestDirectivesImpl.kt:212:                assertTrue { events[0] is InitializationIssue }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestDirectivesImpl.kt:226:        theoryOf(directive { initGoal(X `is` (Y + 1)) })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestDirectivesImpl.kt:240:                assertTrue { events[0] is InitializationIssue }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestFlagsImpl.kt:72:                assertTrue { sol.substitution[F] is Atom }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestFunctorImpl.kt:273:                (X `is` (A + 1)) and functor(T, "foo", X)
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestFunctor.kt:157:     * ?- (current_prolog_flag(max_arity,A), X is A + 1, functor(T, foo, X)).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestingClauseTheories.kt:343:     *       M1 is M + 1,
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestingClauseTheories.kt:354:                            ("M1" `is` (varOf("M") + 1)) and
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:12:            val query = "Result" `is` (numOf(3) + realOf(11.0))
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:26:            val query = ("X" `=` (intOf(1) + intOf(2))) and ("Y" `is` ("X" * intOf(3)))
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:40:            val query = "foo" `is` intOf(77)
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:54:            val query = intOf(77) `is` "N"
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:62:                            Signature("is", 2),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:77:            val query = intOf(77) `is` "foo"
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:85:                            Signature("is", 2),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIsImpl.kt:101:            val query = "X" `is` float(intOf(3))
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:12:     * ?- 'is'(Result,3 + 11.0).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:22:     * ?- (X = 1 + 2, 'is'(Y, X * 3)).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:32:     * ?- 'is'(foo,77).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:41:     * ?- 'is'(77, N).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:51:     * ?- 'is'(77, foo).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestIs.kt:61:     * ?- 'is'(X,float(3)).
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestRecursionImpl.kt:28:                    T `is` (X - 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestRecursionImpl.kt:39:                    T `is` (X + 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestRecursionImpl.kt:102:                    M `is` (N - 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolutionPresentationImpl.kt:17:            assertTrue { sol is Solution.Yes }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:233:            assertTrue { observedWarnings[0] is MissingPredicate }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:695:                                        expectedSolutions.any { it is Solution.Halt } ->
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:788:                                        it is Solution.Halt &&
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:790:                                            it.exception !is TimeOutException
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:841:                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:842:                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:848:                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ no() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:849:                                    expectedSolutions.first() is Solution.No -> hasSolutions({ yes() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:855:                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:856:                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:862:                                    expectedSolutions.first() is Solution.Yes -> hasSolutions({ yes() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestSolverImpl.kt:863:                                    expectedSolutions.first() is Solution.No -> hasSolutions({ no() })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:26:            val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:43:                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:52:            val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:69:                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:78:            val solver = solverFactory.solverWithDefaultBuiltins(staticKb = threeLayersTheory { X `is` (Y + 1) })
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestStackTraceImpl.kt:95:                ktListOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:57:        assertTrue("Thrown error `${error::class}` is not of expected type `${E::class}`") { error is E }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:64: * 1) In case of a [Solution.halt], the contained exception is checked only to be of the correct expected class
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:80:        expected is Solution.Halt -> {
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:84:            assertTrue(reportMsg(expected, actual, "Solution is not Halt")) { actual is Solution.Halt }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:91:                is PrologError -> {
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:96:                            "Exception is not PrologError"
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:98:                    ) { actual.exception is PrologError }
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:139: * @param equalityAssertion the equality assertion is delegated to [assertSolutionEquals] by default
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:198:            is Solution.Yes -> {
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:202:            is Solution.Halt -> println("halt.\n\t${it.exception}")
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TestUtils.kt:203:            is Solution.No -> println("no.")
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TimeRelatedTheories.kt:35:     * thus a [TimeOutException] is returned as the first solution
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TimeRelatedTheories.kt:51:     * thus a [TimeOutException] is returned as the second solution
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TimeRelatedTheories.kt:68:     * thus a [TimeOutException] is returned as the third solution
+test-solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/TimeRelatedTheories.kt:85:     * thus no [TimeOutException] is returned and 3 positive solutions are returned instead
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/function/testutils/ExpressionEvaluatorUtils.kt:33:    /** Test data is in the form (input, transforming function, expected output) */
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/magic/MagicCutTest.kt:21:            Atom.of("!") !is MagicCut
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/magic/MagicCutTest.kt:24:            Atom.of("¡") !is MagicCut
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/IsTest.kt:24:                is Substitution.Unifier -> {
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/IsTest.kt:27:                            it is Solution.Yes
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/IsTest.kt:32:                is Substitution.Fail -> {
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/IsTest.kt:35:                            it is Solution.No
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/BinaryRelationUtils.kt:23:            termRelation.wrappedImplementation(input).single().solution is Solution.Yes
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/BinaryRelationUtils.kt:26:            termRelation.wrappedImplementation(input).single().solution is Solution.No
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TermOrderingUtils.kt:29:            standardOrderRelation.wrappedImplementation(input).single().solution is Solution.Yes
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TermOrderingUtils.kt:32:            standardOrderRelation.wrappedImplementation(input).single().solution is Solution.No
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:97:            is Numeric -> false
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:98:            is Struct -> when {
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:109:        typeTest(AtomPrimitive.functor) { it is Atom }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:113:        typeTest(Atomic.functor) { it is Constant }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:117:        typeTest(Callable.functor) { it is Struct }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:121:        typeTest(Compound.functor) { it is Struct && it.arity > 0 }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:130:                request.arguments[0] is Var -> InstantiationError::class
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:138:        typeTest(FloatPrimitive.functor) { it is Real }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:146:        typeTest(IntegerPrimitive.functor) { it is Integer }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:150:        typeTest(NonVar.functor) { it !is Var }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:154:        typeTest(NumberTerm.functor) { it is Numeric }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:158:        typeTest(VarPrimitive.functor) { it is Var }
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:168:            unaryPredicate.wrappedImplementation(input).single().solution is Solution.Yes
+test-solve/src/commonTest/kotlin/it/unibo/tuprolog/solve/stdlib/primitive/testutils/TypeTestingUtils.kt:171:            unaryPredicate.wrappedImplementation(input).single().solution is Solution.No
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/impl/MutableReteClauseMultiSet.kt:29:        return if (other is MutableClauseMultiSet) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/impl/MutableReteClauseQueue.kt:54:        return if (other is MutableClauseQueue) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/impl/ReteClauseMultiSet.kt:38:        return if (other is ClauseMultiSet && other !is MutableClauseMultiSet) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/impl/ReteClauseQueue.kt:61:        return if (other is ClauseQueue && other !is MutableClauseQueue) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/clause/SituatedIndexedClause.kt:9:    /**Effectfully removes this [Clause] from whatever it is situated*/
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/clause/SituatedIndexedClause.kt:38:                    if (other !is SituatedIndexedClause) return false
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/IndexingLeaf.kt:11:     * such a condition is never met. The concept of "first" may vary between implementations */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/leaf/CompoundIndex.kt:160:        this.head!!.nestedFirstArgument(nestingLevel) is Var
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:106:            is Numeric -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:112:            is Atom -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:118:            is Var -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:136:            is Numeric -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:140:            is Atom -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:144:            is Var -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:158:            is Numeric ->
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:163:            is Atom ->
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:168:            is Var ->
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:184:            is Numeric -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:188:            is Atom -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:192:            is Var -> Utils.flattenIndexed(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:206:            is Numeric -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:210:            is Atom -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:214:            is Var -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:228:            is Numeric -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:234:            is Atom -> {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:240:            is Var -> Utils.comparePriority(
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:288:            is Numeric -> numericIndex
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:289:            is Atom -> atomicIndex
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:290:            is Var -> variableIndex
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FamilyArityReteNode.kt:295:        this.head!!.nestedFirstArgument(nestingLevel + 1) is Var
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/nodes/FunctorIndexingNode.kt:108:        this is Rule && this.head.nestedFirstArgument(nestingLevel) is Var
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTree.kt:11:    /**Returns all the [Clause] this [ReteTree] is storing*/
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTree.kt:21:    /**Tells if the given [Clause] is stored in this [ReteTree]*/
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/Utils.kt:27:     * No checks are performed upon the validity of the Struct this extension method is called upon. */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/Utils.kt:34:     * No checks are performed upon the validity of the Struct this extension method is called upon. */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/Utils.kt:41:     * No checks are performed upon the validity of the Struct this extension method is called upon. */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/Utils.kt:48:            while (currentTerm is Struct) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/Utils.kt:91:    /**Compares two nullable [SituatedIndexedClause]. If both are null, null is returned*/
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/AbstractIntermediateReteNode.kt:23:        filterValues { node -> node is ChildNodeType }
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/AbstractReteNode.kt:17:    /** Called when a non-zero-limit removal is required inside a node */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/RootNode.kt:17:            is Directive ->
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/RootNode.kt:20:            is Rule -> element.head.functor.let {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/RootNode.kt:31:                is Directive -> children[null]
+theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/generic/set/RootNode.kt:32:                is Rule -> children[element.head.functor]
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/AbstractTheory.kt:29:        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/AbstractTheory.kt:40:        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/AbstractTheory.kt:56:        if (other !is Theory) return false
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/IndexedTheory.kt:38:            is RetrieveResult.Failure ->
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/IndexedTheory.kt:54:            if (result is RetrieveResult.Success) {
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/IndexedTheory.kt:71:            is RetrieveResult.Failure -> RetractResult.Failure(this)
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/impl/MutableIndexedTheory.kt:46:            is RetrieveResult.Success -> RetractResult.Success(this@MutableIndexedTheory, clauses)
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/RetractResult.kt:9:    /** The result always present value, is the clause database resulting from the operation execution */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/Theory.kt:55:    /** Checks if given clause is contained in this theory */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/Theory.kt:59:    /** Checks if given clause is present in this theory */
+theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/Theory.kt:140:    /** An enhanced toString that prints the theory in a Prolog program format, if [asPrologText] is `true` */
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/prototypes/PrototypeClauseMultiSetTestImpl.kt:42:            is RetrieveResult.Success -> res.clauses.asSequence()
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/prototypes/PrototypeClauseQueueTestImpl.kt:76:            is RetrieveResult.Success -> res.clauses.asSequence()
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTreeAssertionUtils.kt:79:                fail(message?.invoke(e) ?: "Item $e is out of sequence")
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTreeAssertionUtils.kt:114:                fail(message?.invoke(e) ?: "Item $e is not present")
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTreeAssertionUtils.kt:138:                fail(message?.invoke(clause) ?: "Item $clause is already present")
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArgNodeTest.kt:80:        // notice that no check is made, at this level, to ensure that inserted clause has correct "term" at correct "index"
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArgNodeTest.kt:98:        // note that no check is made, at this level, to guarantee that no args headed rules should not be inserted there
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArityNodeTest.kt:71:        // notice that no check is made, at this level, to ensure that inserted clause has correct "arity"
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArityNodeTest.kt:156:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArityNodeTest.kt:169:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/ArityNodeTest.kt:180:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/DirectiveNodeTest.kt:92:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/DirectiveNodeTest.kt:103:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/DirectiveNodeTest.kt:112:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/FunctorNodeTest.kt:108:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/FunctorNodeTest.kt:121:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/FunctorNodeTest.kt:132:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/NoArgsNodeTest.kt:52:        // no check is present to ensure that a correct clause is inserted as a child
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/NoArgsNodeTest.kt:96:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/NoArgsNodeTest.kt:107:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/NoArgsNodeTest.kt:118:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RootNodeTest.kt:120:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RootNodeTest.kt:133:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RootNodeTest.kt:144:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RuleNodeTest.kt:92:                init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RuleNodeTest.kt:103:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/collections/rete/nodes/set/RuleNodeTest.kt:112:            init() // because removal of side-effects is needed
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ClauseAssertionUtils.kt:43:                expected is Var && actual is Var -> {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ClauseAssertionUtils.kt:46:                expected is Constant && actual is Constant -> {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ClauseAssertionUtils.kt:49:                expected is Struct && actual is Struct -> {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ReteNodeUtils.kt:126:    /** Asserts that rete node is empty */
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/ReteNodeUtils.kt:249:                clauseHead?.let { clause is Rule && it structurallyEquals clause.head }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/TheoryUtils.kt:25:    /** Contains well formed clauses (the head is a [Struct] and the body doesn't contain [Numeric] values) */
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/TheoryUtils.kt:40:            .filterKeys { it is Rule && it.body.isVariable }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/testutils/TheoryUtils.kt:45:        get() = rulesQueryWithVarBodyResultsMap.filterKeys { rule -> rule.head.argsSequence.all { it is Var } }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:185:            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:196:            clausesQueryResultsMap.filterKeys { it is Rule }.mapKeys { it.key as Rule }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:275:        if (filledTheory is MutableTheory) {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:283:        if (filledTheory is MutableTheory) {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:340:                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:341:                else assertTrue { retractResult is RetractResult.Success }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:361:                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:362:                else assertTrue { retractResult is RetractResult.Success }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:401:                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:402:                else assertTrue { retractResult is RetractResult.Success }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:422:                if (result.isEmpty()) assertTrue { retractResult is RetractResult.Failure }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:423:                else assertTrue { retractResult is RetractResult.Success }
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:439:        if (first is MutableTheory && second is MutableTheory) {
+theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:441:        } else if (first !is MutableTheory && second !is MutableTheory) {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:24:    /** Implements the so called occur-check; checks if the [variable] is present in [term] */
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:27:            is Var -> checkTermsEquality(variable, term)
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:28:            is Struct -> term.variables.any { occurrenceCheck(variable, it) }
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:50:            if (i == exceptIndex || equations[i] is Contradiction || equations[i] is Identity) continue
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:73:                    is Contradiction -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:76:                    is Identity -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:80:                    is Assignment -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:91:                    is Comparison -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:95:                                is Identity -> continue@insertion
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:96:                                is Contradiction -> return failed()
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/CachedUnificator.kt:25:            is Optional.Some -> cached.value
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/CachedUnificator.kt:41:            is Optional.Some -> cached.value
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:78:                lhs is Var && rhs is Var -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Assignment(lhs, rhs)
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:79:                lhs is Var -> Assignment(lhs, rhs)
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:80:                rhs is Var -> Assignment(rhs, lhs)
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:81:                lhs is Constant && rhs is Constant ->
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:84:                lhs is Constant || rhs is Constant -> Contradiction(lhs, rhs)
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:85:                lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) ->
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:142:                    l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:143:                    l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:156:                    l is Tuple && r is Tuple -> sequenceOf(of(l.left, r.left, equalityChecker))
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:172:                (lhs is Atom && rhs is Atom) -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:175:                lhs is LogicList && rhs is LogicList -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:178:                lhs is Tuple && rhs is Tuple -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:181:                lhs is Struct && rhs is Struct && lhs.arity == rhs.arity && lhs.functor == rhs.functor -> {
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:12:    /** The context (in terms of already present bindings) in which the unification is performed */
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:25:    /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them */
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:30:    /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them.
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:61:         * LRU cache whose capacity is [DEFAULT_CACHE_CAPACITY]
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:94:                        first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:95:                        first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:125:         * @param other is the [Unificator] to be made cached
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:126:         * @param capacity is the maximum amount of items the cache may store
+unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:132:            if (other is CachedUnificator) {
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:27:    /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:238:        assertTrue(toBeTested1 is Equation.Identity<*>)
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:244:        assertTrue(toBeTested2 is Equation.Assignment<*, *>)
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:252:        assertFalse(toBeTested is Equation.Identity<*>)
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:78:    /** A list of equations that should be interpreted as Assignments (left item is a Var always) */
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:102:            // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:179:            equationSequence.all { it is Equation.Identity<*> }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:185:            equationSequence.none { it is Equation.Identity<*> }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:191:            equationSequence.any { it is Equation.Contradiction<*, *> }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:197:            equationSequence.none { it is Equation.Comparison<*, *> }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:203:            equationSequence.any { it is Equation.Assignment<*, *> }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:208:        is Var -> 1
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:209:        is Constant -> 1
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:210:        is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:171:    /** Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu] */
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:198:    /** Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch] */
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:225:    /** Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm] */
+unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:271:     * the last equation is used to launch the [lastEquationAssertion] and verify at last if solving equations consecutively,
+unify/src/jvmTest/kotlin/it/unibo/tuprolog/unify/TestThreadSafety.kt:31:            assertTrue { res.get() is Substitution.Unifier }
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:8: * @param K is the type of the keys used for indexing items in this cache
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:9: * @param V is the type of the values stored in this cache
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:25:     * @param key is the key used for indexing the pair
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:26:     * @param value is the value corresponding to [key]
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:33:     * @param key is the key used for indexing the pair
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:39:     * Retrieves the cached value corresponding to the provided [key], or stores a cache for the key in case it is missing
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:40:     * @param key is the key used for indexing the pair
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:41:     * @param valueGenerator is the function aimed at generating the value to be cached
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:46:            is Optional.Some -> got.value
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Castable.kt:10:     * @throws ClassCastException if the current object is not an instance of [U]
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Castable.kt:17:     * @return the current object, casted to [U], or `null`, if the current object is not an instance of [U]
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/ConjunctionCursor.kt:12:            second is LazyCursor -> second.next
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/LRUCache.kt:28:            if (evictedKey is Optional.Some) {
+utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/MapperCursor.kt:11:        require(wrapped !is EmptyCursor) {
+utils/src/commonTest/kotlin/it/unibo/tuprolog/utils/TestCursor.kt:22:                current.next is Cursor<out T>
+utils/src/jvmMain/kotlin/it/unibo/tuprolog/utils/Deque.kt:22:    if (this is LinkedList) {
+utils/src/jvmMain/kotlin/it/unibo/tuprolog/utils/Deque.kt:42:    return if (this is LinkedList) {

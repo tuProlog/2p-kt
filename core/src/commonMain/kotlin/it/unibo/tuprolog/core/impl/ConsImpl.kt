@@ -12,10 +12,12 @@ internal class ConsImpl(
     tags: Map<String, Any> = emptyMap()
 ) : AbstractCons(arrayOf(head, tail), tags), Cons {
 
-    override val weight: Int = 1 + when (val tail = tail) {
-        is EmptyList -> 0
-        is AbstractCons -> tail.weight
-        else -> 1
+    override val weight: Int = 1 + tail.let {
+        when {
+            tail.isEmptyList -> 0
+            tail is AbstractCons -> tail.weight
+            else -> 1
+        }
     }
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
