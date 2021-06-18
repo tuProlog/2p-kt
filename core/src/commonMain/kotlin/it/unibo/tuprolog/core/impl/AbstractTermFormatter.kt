@@ -61,7 +61,7 @@ internal abstract class AbstractTermFormatter(
         }
     }
 
-    protected fun <T : Struct> visitStruct(term: T, actualVisit: (T) -> String): String =
+    private fun <T : Struct> visitStructImpl(term: T, actualVisit: (T) -> String): String =
         if (ignoreOps) {
             visitStruct(term)
         } else {
@@ -69,20 +69,20 @@ internal abstract class AbstractTermFormatter(
         }
 
     override fun visitCollection(term: Collection): String =
-        visitStruct(term) { defaultValue(term) }
+        visitStructImpl(term) { defaultValue(term) }
 
     override fun visitList(term: List): String = visitCollection(term)
 
     override fun visitEmptyList(term: EmptyList): String = defaultValue(term)
 
     override fun visitCons(term: Cons): String =
-        visitStruct(term) {
+        visitStructImpl(term) {
             with(term.unfoldedList) {
                 val last = last()
                 val base = subList(0, lastIndex).joinToString(", ", "[", "") {
                     it.accept(itemFormatter())
                 }
-                val lastString = if (last is EmptyList) {
+                val lastString = if (last.isEmptyList) {
                     "]"
                 } else {
                     " | ${last.accept(itemFormatter())}]"
@@ -92,17 +92,17 @@ internal abstract class AbstractTermFormatter(
         }
 
     override fun visitSet(term: Set): String =
-        visitStruct(term) {
+        visitStructImpl(term) {
             term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
         }
 
     override fun visitTuple(term: Tuple): String =
-        visitStruct(term) {
+        visitStructImpl(term) {
             term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
         }
 
     override fun visitClause(term: Clause): String =
-        visitStruct(term) {
+        visitStructImpl(term) {
             term.accept(this)
         }
 
