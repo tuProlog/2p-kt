@@ -9,7 +9,7 @@ internal data class ConjunctionCursor<T>(val first: Cursor<out T>, val second: C
     override val next: Cursor<out T> by lazy {
         when {
             first.hasNext -> ConjunctionCursor(first.next, second)
-            second is LazyCursor -> second.next
+            second.isLazy -> second.next
             else -> second
         }
     }
@@ -20,7 +20,5 @@ internal data class ConjunctionCursor<T>(val first: Cursor<out T>, val second: C
     override val hasNext: Boolean
         get() = first.hasNext || second.hasNext
 
-    override fun toString(): String {
-        return super<AbstractCursor>.toString()
-    }
+    override fun toString(): String = super<AbstractCursor>.toString()
 }

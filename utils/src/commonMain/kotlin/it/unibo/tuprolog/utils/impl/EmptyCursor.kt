@@ -15,9 +15,7 @@ internal object EmptyCursor : AbstractCursor<Nothing>() {
     override val isOver: Boolean
         get() = true
 
-    override fun toString(): String {
-        return super<AbstractCursor>.toString()
-    }
+    override fun toString(): String = super<AbstractCursor>.toString()
 
     override fun <R> map(mapper: (Nothing) -> R): Cursor<out R> = this
 }

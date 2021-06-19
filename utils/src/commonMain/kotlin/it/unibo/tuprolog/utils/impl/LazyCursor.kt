@@ -8,6 +8,9 @@ internal data class LazyCursor<T>(val delegate: Iterator<T>) : AbstractCursor<T>
         NonLastCursor(delegate)
     }
 
+    override val isLazy: Boolean
+        get() = false
+
     override val next: Cursor<out T>
         get() = wrapped.next
 
