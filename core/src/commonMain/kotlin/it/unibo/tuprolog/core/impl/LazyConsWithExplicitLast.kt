@@ -34,8 +34,8 @@ internal class LazyConsWithExplicitLast(
         while (current.isCons) {
             if (current is LazyConsWithExplicitLast) {
                 current = current.termination
-            } else if (current is List) {
-                current = current.last
+            } else if (current.isList) {
+                current = current.castToList().last
             }
         }
         current

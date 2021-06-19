@@ -19,7 +19,7 @@ internal abstract class AbstractCons(
         const val SWITCH_TO_LAZY_THRESHOLD = 100
     }
 
-    internal open val weight: Int
+    override val estimatedLength: Int
         get() = 1
 
     override val unfoldedSequence: Sequence<Term>

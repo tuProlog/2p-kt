@@ -52,7 +52,7 @@ sealed class ListIterator(list: List) : Iterator<Term> {
     class All(list: List) : ListIterator(list)
 
     companion object {
-        private fun ListIterator.hasNextSkippingLast(): Boolean = current != null && current !is EmptyList
+        private fun ListIterator.hasNextSkippingLast(): Boolean = current.let { it != null && !it.isEmptyList }
 
         @Suppress("UNUSED_PARAMETER")
         private fun ListIterator.onEmptyListSkippingLast(item: EmptyList): Term = throw NoSuchElementException()

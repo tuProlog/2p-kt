@@ -19,6 +19,16 @@ interface List : Collection {
     @JsName("last")
     val last: Term
 
+    /**
+     * Estimated length of this list.
+     * This property is part of the [List] interface to enable efficiency tweaks.
+     * It is NOT intended for external usage
+     *
+     * DO NOT assume this returns the correct length of the current list.
+     */
+    @JsName("estimatedLength")
+    val estimatedLength: Int
+
     override val unfoldedSequence: Sequence<Term>
 
     override val unfoldedList: KtList<Term>
