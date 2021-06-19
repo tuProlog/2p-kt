@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term

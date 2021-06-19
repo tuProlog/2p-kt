@@ -24,7 +24,7 @@ interface TermComparator<T : Term> : Comparator<T> {
     object DefaultComparator : TermComparator<Term> {
 
         private fun compareVarAndTerm(a: Var, b: Term): Int =
-            when{
+            when {
                 b.isVariable -> VarComparator.compare(a, b.castToVar())
                 else -> -1
             }
