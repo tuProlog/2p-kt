@@ -21,9 +21,11 @@ class SetIterator(set: Set) : Iterator<Term> {
     private val innerSetIteratorVisitor = SetIteratorVisitor()
 
     private val outerSetIteratorVisitor = object : SetIteratorVisitor() {
-        override fun visitSet(term: Set): Term = term.accept(innerSetIteratorVisitor)
+        override fun visitSet(term: Set): Term =
+            term[0].accept(innerSetIteratorVisitor)
 
-        override fun visitEmptySet(term: EmptySet): Term = throw throw NoSuchElementException()
+        override fun visitEmptySet(term: EmptySet): Term =
+            throw throw NoSuchElementException()
     }
 
     override fun next(): Term = current?.accept(outerSetIteratorVisitor) ?: throw NoSuchElementException()
