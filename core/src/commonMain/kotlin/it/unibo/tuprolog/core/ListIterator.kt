@@ -6,20 +6,23 @@ sealed class ListIterator(list: List) : Iterator<Term> {
 
     override fun hasNext(): Boolean = current != null
 
-    override fun next(): Term {
-        return when (val x = current) {
-            is Cons -> {
-                current = x.tail
-                x.head
-            }
-            is EmptyList -> onEmptyList(x)
-            null -> throw NoSuchElementException()
-            else -> {
-                current = null
-                x
-            }
+    private val listIteratorVisitor = object : TermVisitor<Term> {
+        override fun visitCons(term: Cons): Term {
+            current = term.tail
+            return term.head
+        }
+
+        override fun visitEmptyList(term: EmptyList): Term {
+            return onEmptyList(term)
+        }
+
+        override fun defaultValue(term: Term): Term {
+            current = null
+            return term
         }
     }
+
+    override fun next(): Term = current?.accept(listIteratorVisitor) ?: throw NoSuchElementException()
 
     open fun onEmptyList(item: EmptyList): Term {
         current = null

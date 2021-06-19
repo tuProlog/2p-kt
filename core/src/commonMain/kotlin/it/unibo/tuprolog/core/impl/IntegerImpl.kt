@@ -33,7 +33,8 @@ internal class IntegerImpl(
     private inline fun equalsToInteger(other: Integer) =
         value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean = other is Integer && equalsToInteger(other)
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
+        whenInteger(other, ifInteger = { equalsToInteger(it) }, otherwise = { false })
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 

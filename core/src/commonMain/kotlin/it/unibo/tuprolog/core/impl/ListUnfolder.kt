@@ -13,21 +13,23 @@ internal class ListUnfolder(list: List) : Iterator<Term> {
     override fun hasNext(): Boolean = current != null
 
     override fun next(): Term {
-        return current?.accept(object : TermVisitor<Term> {
-            override fun visitCons(term: Cons): Term {
-                current = term.tail
-                return term
-            }
+        return current?.accept(listUnfolderVisitor) ?: throw NoSuchElementException()
+    }
 
-            override fun visitEmptyList(term: EmptyList): Term {
-                current = null
-                return term
-            }
+    private val listUnfolderVisitor = object : TermVisitor<Term> {
+        override fun visitCons(term: Cons): Term {
+            current = term.tail
+            return term
+        }
 
-            override fun defaultValue(term: Term): Term {
-                current = null
-                return term
-            }
-        }) ?: throw NoSuchElementException()
+        override fun visitEmptyList(term: EmptyList): Term {
+            current = null
+            return term
+        }
+
+        override fun defaultValue(term: Term): Term {
+            current = null
+            return term
+        }
     }
 }

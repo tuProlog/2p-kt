@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.visitors.whenVar
 import it.unibo.tuprolog.utils.setTags
 import kotlin.jvm.Synchronized
 
@@ -33,7 +34,7 @@ internal class VarImpl(
 
     override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
 
-    override fun structurallyEquals(other: Term): Boolean = other is VarImpl
+    override fun structurallyEquals(other: Term): Boolean = other.isVariable
 
     override fun copyWithTags(tags: Map<String, Any>): Var = VarImpl(name, identifier, tags)
 
@@ -67,7 +68,7 @@ internal class VarImpl(
         }
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other is Var && equalsToVar(other, useVarCompleteName)
+        whenVar(other, ifVar = { equalsToVar(it, useVarCompleteName) }, otherwise = { false })
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 

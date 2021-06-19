@@ -36,7 +36,13 @@ actual fun <T> whenAtom(term: Term, ifAtom: (Atom) -> T, otherwise: (Term) -> T)
 
 actual fun <T> whenTruth(term: Term, ifTruth: (Truth) -> T, otherwise: (Term) -> T): T = TODO()
 
-actual fun <T> whenNumeric(term: Term, ifNumeric: (Numeric) -> T, ifInteger: (Integer) -> T, ifReal: (Real) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenNumeric(
+    term: Term,
+    ifNumeric: (Numeric) -> T,
+    ifInteger: (Integer) -> T,
+    ifReal: (Real) -> T,
+    otherwise: (Term) -> T
+): T = TODO()
 
 actual fun <T> whenInteger(term: Term, ifInteger: (Integer) -> T, otherwise: (Term) -> T): T = TODO()
 
@@ -48,7 +54,13 @@ actual fun <T> whenEmpty(term: Term, ifEmpty: (Empty) -> T, otherwise: (Term) ->
 
 actual fun <T> whenEmptySet(term: Term, ifEmptySet: (EmptySet) -> T, otherwise: (Term) -> T): T = TODO()
 
-actual fun <T> whenList(term: Term, ifList: (List) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenList(
+    term: Term,
+    ifList: (List) -> T,
+    ifCons: (Cons) -> T,
+    ifEmptyList: (EmptyList) -> T,
+    otherwise: (Term) -> T
+): T = TODO()
 
 actual fun <T> whenCons(term: Term, ifCons: (Cons) -> T, otherwise: (Term) -> T): T = TODO()
 

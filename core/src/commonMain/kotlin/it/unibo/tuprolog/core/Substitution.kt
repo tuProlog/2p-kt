@@ -61,6 +61,13 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substi
     @JsName("applyTo")
     fun applyTo(term: Term): Term?
 
+    @JsName("whenIs")
+    fun <T> whenIs(
+        unifier: ((Unifier) -> T)? = null,
+        fail: ((Fail) -> T)? = null,
+        otherwise: ((Substitution) -> T) = { throw IllegalStateException("Cannot handle solution $it") }
+    ): T
+
     /** Retrieves the original variable name of the provided [variable], if any, or `null` otherwise
      *
      * Consider for instance the substitution `{ X -> Y, Y -> Z }`,

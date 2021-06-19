@@ -40,8 +40,8 @@ expect fun <T> whenTruth(term: Term, ifTruth: (Truth) -> T, otherwise: (Term) ->
 expect fun <T> whenNumeric(
     term: Term,
     ifNumeric: (Numeric) -> T,
-    ifInteger: (Integer) -> T = { ifNumeric(it) },
-    ifReal: (Real) -> T = { ifNumeric(it) },
+    ifInteger: (Integer) -> T = ifNumeric,
+    ifReal: (Real) -> T = ifNumeric,
     otherwise: (Term) -> T = ::illegalCase
 ): T
 
@@ -55,7 +55,13 @@ expect fun <T> whenEmpty(term: Term, ifEmpty: (Empty) -> T, otherwise: (Term) ->
 
 expect fun <T> whenEmptySet(term: Term, ifEmptySet: (EmptySet) -> T, otherwise: (Term) -> T = ::illegalCase): T
 
-expect fun <T> whenList(term: Term, ifList: (List) -> T, otherwise: (Term) -> T = ::illegalCase): T
+expect fun <T> whenList(
+    term: Term,
+    ifList: (List) -> T,
+    ifCons: (Cons) -> T = ifList,
+    ifEmptyList: (EmptyList) -> T = ifList,
+    otherwise: (Term) -> T = ::illegalCase
+): T
 
 expect fun <T> whenCons(term: Term, ifCons: (Cons) -> T, otherwise: (Term) -> T = ::illegalCase): T
 

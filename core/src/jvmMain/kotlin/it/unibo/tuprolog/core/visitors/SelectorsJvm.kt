@@ -59,13 +59,18 @@ actual fun <T> whenTruth(term: Term, ifTruth: (Truth) -> T, otherwise: (Term) ->
         else -> otherwise(term)
     }
 
-actual fun <T> whenNumeric(term: Term, ifNumeric: (Numeric) -> T, ifInteger: (Integer) -> T, ifReal: (Real) -> T, otherwise: (Term) -> T): T =
-    when (term) {
-        is Integer -> ifInteger(term)
-        is Real -> ifReal(term)
-        is Numeric -> ifNumeric(term)
-        else -> otherwise(term)
-    }
+actual fun <T> whenNumeric(
+    term: Term,
+    ifNumeric: (Numeric) -> T,
+    ifInteger: (Integer) -> T,
+    ifReal: (Real) -> T,
+    otherwise: (Term) -> T
+): T = when (term) {
+    is Integer -> ifInteger(term)
+    is Real -> ifReal(term)
+    is Numeric -> ifNumeric(term)
+    else -> otherwise(term)
+}
 
 actual fun <T> whenInteger(term: Term, ifInteger: (Integer) -> T, otherwise: (Term) -> T): T =
     when (term) {
@@ -97,11 +102,18 @@ actual fun <T> whenEmptySet(term: Term, ifEmptySet: (EmptySet) -> T, otherwise: 
         else -> otherwise(term)
     }
 
-actual fun <T> whenList(term: Term, ifList: (List) -> T, otherwise: (Term) -> T): T =
-    when (term) {
-        is List -> ifList(term)
-        else -> otherwise(term)
-    }
+actual fun <T> whenList(
+    term: Term,
+    ifList: (List) -> T,
+    ifCons: (Cons) -> T,
+    ifEmptyList: (EmptyList) -> T,
+    otherwise: (Term) -> T
+): T = when (term) {
+    is EmptyList -> ifEmptyList(term)
+    is Cons -> ifCons(term)
+    is List -> ifList(term)
+    else -> otherwise(term)
+}
 
 actual fun <T> whenCons(term: Term, ifCons: (Cons) -> T, otherwise: (Term) -> T): T =
     when (term) {

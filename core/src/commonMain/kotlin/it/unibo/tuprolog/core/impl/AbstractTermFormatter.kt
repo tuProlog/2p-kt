@@ -16,6 +16,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.Tuple
+import it.unibo.tuprolog.core.visitors.whenInteger
 import org.gciatto.kt.math.BigInteger
 
 internal abstract class AbstractTermFormatter(
@@ -43,7 +44,8 @@ internal abstract class AbstractTermFormatter(
     }
 
     private fun isNumberedVar(term: Struct): Boolean =
-        term.functor == "\$VAR" && term.arity == 1 && term[0].let { it is Integer && it.value >= BigInteger.ZERO }
+        term.functor == "\$VAR" && term.arity == 1 &&
+            whenInteger(term[0], ifInteger = { it.value >= BigInteger.ZERO }, otherwise = { false })
 
     private fun numberedVar(integer: Integer): String {
         val letterIndex = (integer.value % TWENTY_SIX).toInt() + A_INDEX

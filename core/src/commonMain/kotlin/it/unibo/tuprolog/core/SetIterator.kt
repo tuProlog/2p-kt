@@ -1,34 +1,30 @@
 package it.unibo.tuprolog.core
 
-class SetIterator(Set: Set) : Iterator<Term> {
+class SetIterator(set: Set) : Iterator<Term> {
 
-    private var current: Term? = Set
+    private open inner class SetIteratorVisitor : TermVisitor<Term> {
+        override fun visitTuple(term: Tuple): Term {
+            current = term.right
+            return term.left
+        }
 
-    override fun hasNext(): Boolean = current != null && current !is EmptySet
-
-    override fun next(): Term {
-        return when (val x = current) {
-            is Tuple -> {
-                current = x.right
-                x.left
-            }
-            is Set -> {
-                when (val y = x[0]) {
-                    is Tuple -> {
-                        current = y.right
-                        y.left
-                    }
-                    else -> {
-                        current = null
-                        y
-                    }
-                }
-            }
-            is EmptySet, null -> throw NoSuchElementException()
-            else -> {
-                current = null
-                x
-            }
+        override fun defaultValue(term: Term): Term {
+            current = null
+            return term
         }
     }
+
+    private var current: Term? = set
+
+    override fun hasNext(): Boolean = current.let { it != null && !it.isEmptySet }
+
+    private val innerSetIteratorVisitor = SetIteratorVisitor()
+
+    private val outerSetIteratorVisitor = object : SetIteratorVisitor() {
+        override fun visitSet(term: Set): Term = term.accept(innerSetIteratorVisitor)
+
+        override fun visitEmptySet(term: EmptySet): Term = throw throw NoSuchElementException()
+    }
+
+    override fun next(): Term = current?.accept(outerSetIteratorVisitor) ?: throw NoSuchElementException()
 }

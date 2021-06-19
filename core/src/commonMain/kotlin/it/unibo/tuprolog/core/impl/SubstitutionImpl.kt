@@ -30,10 +30,11 @@ internal sealed class SubstitutionImpl : Substitution {
         }
     }
 
-    override operator fun minus(keys: Iterable<Var>): SubstitutionImpl = when (this) {
-        is Substitution.Fail -> FailImpl(tags)
-        else -> UnifierImpl.of(this as Map<Var, Term> - keys, tags)
-    }
+    override operator fun minus(keys: Iterable<Var>): SubstitutionImpl =
+        whenIs(
+            unifier = { UnifierImpl.of(this as Map<Var, Term> - keys, tags) },
+            fail = { FailImpl(tags) }
+        )
 
     override fun minus(variable: Var): Substitution = minus(listOf(variable))
 
@@ -42,15 +43,30 @@ internal sealed class SubstitutionImpl : Substitution {
 
     override operator fun minus(other: Substitution): SubstitutionImpl = this - other.keys
 
-    override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl = when (this) {
-        is Substitution.Fail -> FailImpl(tags)
-        else -> UnifierImpl.of((this as Map<Var, Term>).filter(predicate), tags)
-    }
+    override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl =
+        whenIs(
+            unifier = { UnifierImpl.of((this as Map<Var, Term>).filter(predicate), tags) },
+            fail = { FailImpl(tags) }
+        )
 
     override fun filter(variables: KtCollection<Var>): SubstitutionImpl = filter { k, _ -> k in variables }
 
     override fun filter(predicate: (key: Var, value: Term) -> Boolean): SubstitutionImpl =
         filter { (key, value) -> predicate(key, value) }
+
+    override fun <T> whenIs(
+        unifier: ((Substitution.Unifier) -> T)?,
+        fail: ((Substitution.Fail) -> T)?,
+        otherwise: (Substitution) -> T
+    ): T {
+        if (isSuccess && unifier != null) {
+            return unifier(castToUnifier())
+        }
+        if (isFailed && fail != null) {
+            return fail(castToFail())
+        }
+        return otherwise(this)
+    }
 
     /** Creates a new Successful Substitution (aka Unifier) with given mappings (after some checks) */
     class UnifierImpl private constructor(
@@ -207,9 +223,9 @@ internal sealed class SubstitutionImpl : Substitution {
                 with(substitutionPairs.iterator()) { next(); !hasNext() } -> false // one pair, no contradiction
                 else ->
                     mutableMapOf<Var, Term>().let { alreadySeenSubstitutions ->
-                        substitutionPairs.forEach { (`var`, substitution) ->
-                            when (val alreadyPresent = alreadySeenSubstitutions[`var`]) {
-                                null -> alreadySeenSubstitutions[`var`] = substitution
+                        substitutionPairs.forEach { (variable, substitution) ->
+                            when (val alreadyPresent = alreadySeenSubstitutions[variable]) {
+                                null -> alreadySeenSubstitutions[variable] = substitution
                                 else -> if (alreadyPresent != substitution) return@let true // contradiction found
                             }
                         }
@@ -223,9 +239,11 @@ internal sealed class SubstitutionImpl : Substitution {
             fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
                 val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
                 var current: Term = mappings.getValue(this)
-                while (current is Var && current in mappings && current !in alreadyUsedKeys) {
-                    alreadyUsedKeys += current
-                    current = mappings.getValue(current)
+                while (current.isVariable && current in mappings && current !in alreadyUsedKeys) {
+                    current.castToVar().let {
+                        alreadyUsedKeys += it
+                        current = mappings.getValue(it)
+                    }
                 }
                 return current
             }
@@ -234,7 +252,7 @@ internal sealed class SubstitutionImpl : Substitution {
                 size < 2 -> this
                 else ->
                     this.mapValues { (varKey, term) ->
-                        term.takeIf { it !is Var } ?: varKey.trimVariableChain(this)
+                        term.takeIf { !it.isVariable } ?: varKey.trimVariableChain(this)
                     }
             }
         }
