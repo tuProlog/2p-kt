@@ -23,8 +23,11 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 
-actual fun <T> whenVar(term: Term, ifVar: (Var) -> T, otherwise: (Term) -> T): T =
-    term.accept(WhenVar(ifVar, otherwise))
+actual fun <T> whenVar(
+    term: Term,
+    ifVar: (Var) -> T,
+    otherwise: (Term) -> T
+): T = term.accept(WhenVar(ifVar, otherwise))
 
 actual fun <T> whenConstant(term: Term, ifConstant: (Constant) -> T, otherwise: (Term) -> T): T = TODO()
 
@@ -42,11 +45,13 @@ actual fun <T> whenNumeric(
     ifInteger: (Integer) -> T,
     ifReal: (Real) -> T,
     otherwise: (Term) -> T
-): T = TODO()
+): T = term.accept(WhenNumeric(ifNumeric, ifInteger, ifReal, otherwise))
 
-actual fun <T> whenInteger(term: Term, ifInteger: (Integer) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenInteger(term: Term, ifInteger: (Integer) -> T, otherwise: (Term) -> T): T =
+    whenNumeric(term, otherwise, ifInteger, otherwise, otherwise)
 
-actual fun <T> whenReal(term: Term, ifReal: (Real) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenReal(term: Term, ifReal: (Real) -> T, otherwise: (Term) -> T): T =
+    whenNumeric(term, otherwise, otherwise, ifReal, otherwise)
 
 actual fun <T> whenSet(term: Term, ifSet: (Set) -> T, otherwise: (Term) -> T): T = TODO()
 
@@ -66,7 +71,8 @@ actual fun <T> whenCons(term: Term, ifCons: (Cons) -> T, otherwise: (Term) -> T)
 
 actual fun <T> whenEmptyList(term: Term, ifEmptyList: (EmptyList) -> T, otherwise: (Term) -> T): T = TODO()
 
-actual fun <T> whenTuple(term: Term, ifTuple: (Tuple) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenTuple(term: Term, ifTuple: (Tuple) -> T, otherwise: (Term) -> T): T =
+    term.accept(WhenTuple(ifTuple, otherwise))
 
 actual fun <T> whenIndicator(term: Term, ifIndicator: (Indicator) -> T, otherwise: (Term) -> T): T = TODO()
 
