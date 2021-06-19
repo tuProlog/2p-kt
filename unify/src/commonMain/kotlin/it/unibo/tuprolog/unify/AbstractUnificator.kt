@@ -16,7 +16,7 @@ import kotlin.jvm.JvmOverloads
 abstract class AbstractUnificator @JvmOverloads constructor(override val context: Substitution = empty()) : Unificator {
 
     /** The context converted to equivalent equations */
-    private val contextEquations: Iterable<Equation<Var, Term>> by lazy { context.toEquations() }
+    private val contextEquations: Iterable<Equation> by lazy { context.toEquations() }
 
     /** Checks provided [Term]s for equality */
     protected abstract fun checkTermsEquality(first: Term, second: Term): Boolean
@@ -30,10 +30,10 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
         }
 
     /** Returns the sequence of equations resulting from the comparison of given [Term]s */
-    private fun equationsFor(term1: Term, term2: Term): Sequence<Equation<Term, Term>> =
+    private fun equationsFor(term1: Term, term2: Term): Sequence<Equation> =
         Equation.allOf(term1, term2, this::checkTermsEquality)
 
-    private fun equationsFor(substitution1: Substitution, substitution2: Substitution): Sequence<Equation<Term, Term>> =
+    private fun equationsFor(substitution1: Substitution, substitution2: Substitution): Sequence<Equation> =
         Equation.from(
             (substitution1.asSequence() + substitution2.asSequence()).map { it.toPair() }
         )
@@ -41,7 +41,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     /** A function to apply given [substitution] to [equations], skipping the equation at given [exceptIndex] */
     private fun applySubstitutionToEquations(
         substitution: Substitution,
-        equations: MutableList<Equation<Term, Term>>,
+        equations: MutableList<Equation>,
         exceptIndex: Int
     ): Boolean {
         var changed = false
@@ -61,7 +61,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
         return changed
     }
 
-    private fun mgu(equations: MutableList<Equation<Term, Term>>, occurCheckEnabled: Boolean): Substitution {
+    private fun mgu(equations: MutableList<Equation>, occurCheckEnabled: Boolean): Substitution {
         var changed = true
 
         while (changed) {
@@ -78,11 +78,11 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
                         changed = true
                     }
                     is Assignment -> {
-                        if (occurCheckEnabled && occurrenceCheck(eq.lhs as Var, eq.rhs)) {
+                        if (occurCheckEnabled && occurrenceCheck(eq.lhs, eq.rhs)) {
                             return failed()
                         } else {
                             changed = changed || applySubstitutionToEquations(
-                                Substitution.of(eq.lhs as Var, eq.rhs),
+                                Substitution.of(eq.lhs, eq.rhs),
                                 equations,
                                 eqIterator.previousIndex()
                             )
@@ -103,7 +103,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
             }
         }
 
-        return equations.filterIsInstance<Assignment<Var, Term>>().toSubstitution()
+        return equations.filterIsInstance<Assignment>().toSubstitution()
     }
 
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
