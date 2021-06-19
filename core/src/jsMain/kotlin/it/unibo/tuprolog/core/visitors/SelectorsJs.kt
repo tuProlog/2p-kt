@@ -31,7 +31,8 @@ actual fun <T> whenVar(
 
 actual fun <T> whenConstant(term: Term, ifConstant: (Constant) -> T, otherwise: (Term) -> T): T = TODO()
 
-actual fun <T> whenStruct(term: Term, ifStruct: (Struct) -> T, otherwise: (Term) -> T): T = TODO()
+actual fun <T> whenStruct(term: Term, ifStruct: (Struct) -> T, otherwise: (Term) -> T): T =
+    term.accept(WhenStruct(ifStruct, otherwise))
 
 actual fun <T> whenCollection(term: Term, ifCollection: (Collection) -> T, otherwise: (Term) -> T): T = TODO()
 
