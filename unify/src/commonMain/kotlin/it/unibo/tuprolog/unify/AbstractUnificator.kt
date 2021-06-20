@@ -1,15 +1,10 @@
 package it.unibo.tuprolog.unify
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.unify.Equation.Assignment
-import it.unibo.tuprolog.unify.Equation.Comparison
-import it.unibo.tuprolog.unify.Equation.Contradiction
-import it.unibo.tuprolog.unify.Equation.Identity
 import it.unibo.tuprolog.utils.dequeOf
 import kotlin.jvm.JvmOverloads
 
@@ -23,9 +18,9 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
 
     /** Implements the so called occur-check; checks if the [variable] is present in [term] */
     private fun occurrenceCheck(variable: Var, term: Term): Boolean =
-        when (term) {
-            is Var -> checkTermsEquality(variable, term)
-            is Struct -> term.variables.any { occurrenceCheck(variable, it) }
+        when {
+            term.isVariable -> checkTermsEquality(variable, term)
+            term.isStruct -> term.variables.any { occurrenceCheck(variable, it) }
             else -> false
         }
 
@@ -47,7 +42,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
         var changed = false
 
         for (i in equations.indices) {
-            if (i == exceptIndex || equations[i] is Contradiction || equations[i] is Identity) continue
+            if (i == exceptIndex || equations[i].isContradiction || equations[i].isIdentity) continue
 
             val currentEq = equations[i]
             val (newLhs, newRhs) = currentEq.apply(substitution).toPair()
@@ -69,31 +64,33 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
             val eqIterator = equations.listIterator()
 
             while (eqIterator.hasNext()) {
-                when (val eq = eqIterator.next()) {
-                    is Contradiction -> {
-                        return failed()
+                val eq = eqIterator.next()
+                when {
+                    eq.isContradiction -> {
+                        return failed() // short circuit
                     }
-                    is Identity -> {
+                    eq.isIdentity -> {
                         eqIterator.remove()
                         changed = true
                     }
-                    is Assignment -> {
-                        if (occurCheckEnabled && occurrenceCheck(eq.lhs, eq.rhs)) {
+                    eq.isAssignment -> {
+                        val assignment = eq.castToAssignment()
+                        if (occurCheckEnabled && occurrenceCheck(assignment.lhs, eq.rhs)) {
                             return failed()
                         } else {
                             changed = changed || applySubstitutionToEquations(
-                                Substitution.of(eq.lhs, eq.rhs),
+                                assignment.toSubstitution(),
                                 equations,
                                 eqIterator.previousIndex()
                             )
                         }
                     }
-                    is Comparison -> {
+                    eq.isComparison -> {
                         eqIterator.remove()
                         insertion@ for (it in equationsFor(eq.lhs, eq.rhs)) {
-                            when (it) {
-                                is Identity -> continue@insertion
-                                is Contradiction -> return failed()
+                            when {
+                                it.isIdentity -> continue@insertion
+                                it.isContradiction -> return failed()
                                 else -> eqIterator.add(it)
                             }
                         }
@@ -103,7 +100,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
             }
         }
 
-        return equations.filterIsInstance<Assignment>().toSubstitution()
+        return equations.filter { it.isAssignment }.toSubstitution()
     }
 
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {

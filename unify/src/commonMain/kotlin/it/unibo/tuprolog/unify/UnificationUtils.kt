@@ -9,6 +9,7 @@ import kotlin.jvm.JvmName
 
 fun Equation.toAssignmentPair(): Pair<Var, Term> =
     when {
+        isAssignment -> castToAssignment().toPair()
         lhs.isVariable -> lhs.castToVar() to rhs
         rhs.isVariable -> rhs.castToVar() to lhs
         else -> throw IllegalArgumentException("Equation contains no variables: $this")

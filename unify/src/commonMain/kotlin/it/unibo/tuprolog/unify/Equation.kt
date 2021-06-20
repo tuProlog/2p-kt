@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.ToTermConvertible
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.utils.Castable
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -21,27 +22,82 @@ sealed class Equation(
     @JsName("lhs") open val lhs: Term,
     /** The right-hand side of the equation */
     @JsName("rhs") open val rhs: Term
-) : ToTermConvertible {
+) : ToTermConvertible, Castable<Equation> {
+
+    open val isIdentity: Boolean
+        get() = false
+
+    open fun asIdentity(): Identity? = null
+
+    fun castToIdentity(): Identity =
+        asIdentity() ?: throw ClassCastException("Cannot cast $this to ${Identity::class.simpleName}")
+
+    open val isAssignment: Boolean
+        get() = false
+
+    open fun asAssignment(): Assignment? = null
+
+    fun castToAssignment(): Assignment =
+        asAssignment() ?: throw ClassCastException("Cannot cast $this to ${Assignment::class.simpleName}")
+
+    open val isComparison: Boolean
+        get() = false
+
+    open fun asComparison(): Comparison? = null
+
+    fun castToComparison(): Comparison =
+        asComparison() ?: throw ClassCastException("Cannot cast $this to ${Comparison::class.simpleName}")
+
+    open val isContradiction: Boolean
+        get() = false
+
+    open fun asContradiction(): Contradiction? = null
+
+    fun castToContradiction(): Contradiction =
+        asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
+
 
     /** An equation of identical [Term]s */
-    data class Identity(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs)
+    data class Identity(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isIdentity: Boolean
+            get() = true
+
+        override fun asIdentity(): Identity = this
+    }
 
     /** An equation stating [Var] = [Term] */
     data class Assignment(override val lhs: Var, override val rhs: Term) : Equation(lhs, rhs) {
         @JsName("toSubstitution")
         fun toSubstitution(): Substitution.Unifier = Substitution.unifier(lhs, rhs)
+
+        override fun toPair(): Pair<Var, Term> = lhs to rhs
+
+        override val isAssignment: Boolean
+            get() = true
+
+        override fun asAssignment(): Assignment = this
     }
 
     /** An equation comparing [Term]s, possibly different */
-    data class Comparison(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs)
+    data class Comparison(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isComparison: Boolean
+            get() = true
+
+        override fun asComparison(): Comparison = this
+    }
 
     /** A contradicting equation, trying to equate non equal [Term]s */
-    data class Contradiction(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs)
+    data class Contradiction(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
+        override val isContradiction: Boolean
+            get() = true
+
+        override fun asContradiction(): Contradiction = this
+    }
 
     override fun toTerm(): Struct = Struct.of("=", lhs, rhs)
 
     @JsName("toPair")
-    fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
+    open fun toPair(): Pair<Term, Term> = Pair(lhs, rhs)
 
     @JsName("swap")
     fun swap(): Equation = of(rhs, lhs)
