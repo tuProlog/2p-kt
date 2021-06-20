@@ -56,7 +56,6 @@ sealed class Equation(
     fun castToContradiction(): Contradiction =
         asContradiction() ?: throw ClassCastException("Cannot cast $this to ${Contradiction::class.simpleName}")
 
-
     /** An equation of identical [Term]s */
     data class Identity(override val lhs: Term, override val rhs: Term) : Equation(lhs, rhs) {
         override val isIdentity: Boolean
