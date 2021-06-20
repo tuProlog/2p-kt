@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.utils.dequeOf
 import kotlin.jvm.JvmOverloads
 
 abstract class AbstractUnificator @JvmOverloads constructor(override val context: Substitution = empty()) : Unificator {
@@ -105,7 +104,7 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
 
     override fun mgu(term1: Term, term2: Term, occurCheckEnabled: Boolean): Substitution {
         if (context.isFailed) return failed()
-        val equations = dequeOf(contextEquations + equationsFor(term1, term2))
+        val equations = newDeque(contextEquations.asSequence() + equationsFor(term1, term2))
         return mgu(equations, occurCheckEnabled)
     }
 
@@ -116,7 +115,9 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     ): Substitution {
         if (context.isFailed) return failed()
 
-        val equations = dequeOf(contextEquations + equationsFor(substitution1, substitution2))
+        val equations = newDeque(contextEquations.asSequence() + equationsFor(substitution1, substitution2))
         return mgu(equations, occurCheckEnabled)
     }
+
+    private fun <T> newDeque(items: Sequence<T>): MutableList<T> = items.toCollection(arrayListOf())
 }
