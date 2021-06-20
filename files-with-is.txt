@@ -692,59 +692,6 @@ theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:422
 theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:423:                else assertTrue { retractResult is RetractResult.Success }
 theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:439:        if (first is MutableTheory && second is MutableTheory) {
 theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/PrototypeTheoryTest.kt:441:        } else if (first !is MutableTheory && second !is MutableTheory) {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:24:    /** Implements the so called occur-check; checks if the [variable] is present in [term] */
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:27:            is Var -> checkTermsEquality(variable, term)
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:28:            is Struct -> term.variables.any { occurrenceCheck(variable, it) }
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:50:            if (i == exceptIndex || equations[i] is Contradiction || equations[i] is Identity) continue
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:73:                    is Contradiction -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:76:                    is Identity -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:80:                    is Assignment -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:91:                    is Comparison -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:95:                                is Identity -> continue@insertion
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/AbstractUnificator.kt:96:                                is Contradiction -> return failed()
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/CachedUnificator.kt:25:            is Optional.Some -> cached.value
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/CachedUnificator.kt:41:            is Optional.Some -> cached.value
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:78:                lhs is Var && rhs is Var -> if (equalityChecker(lhs, rhs)) Identity(lhs, rhs) else Assignment(lhs, rhs)
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:79:                lhs is Var -> Assignment(lhs, rhs)
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:80:                rhs is Var -> Assignment(rhs, lhs)
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:81:                lhs is Constant && rhs is Constant ->
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:84:                lhs is Constant || rhs is Constant -> Contradiction(lhs, rhs)
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:85:                lhs is Struct && rhs is Struct && (lhs.arity != rhs.arity || lhs.functor != rhs.functor) ->
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:142:                    l is Cons && r is Cons -> sequenceOf(of(l.head, r.head, equalityChecker))
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:143:                    l is LogicList && r is LogicList -> sequenceOf(of(l, r, equalityChecker))
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:156:                    l is Tuple && r is Tuple -> sequenceOf(of(l.left, r.left, equalityChecker))
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:172:                (lhs is Atom && rhs is Atom) -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:175:                lhs is LogicList && rhs is LogicList -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:178:                lhs is Tuple && rhs is Tuple -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Equation.kt:181:                lhs is Struct && rhs is Struct && lhs.arity == rhs.arity && lhs.functor == rhs.functor -> {
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:12:    /** The context (in terms of already present bindings) in which the unification is performed */
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:25:    /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them */
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:30:    /** Tells whether two [Term]s match each other, that is there's a Most General Unifier for them.
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:61:         * LRU cache whose capacity is [DEFAULT_CACHE_CAPACITY]
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:94:                        first is Integer && second is Integer -> first.value.compareTo(second.value) == 0
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:95:                        first is Numeric && second is Numeric -> first.decimalValue.compareTo(second.decimalValue) == 0
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:125:         * @param other is the [Unificator] to be made cached
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:126:         * @param capacity is the maximum amount of items the cache may store
-unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:132:            if (other is CachedUnificator) {
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:27:    /** Correct instances of equations, whose type is recognizable without exploring in deep the components */
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:238:        assertTrue(toBeTested1 is Equation.Identity<*>)
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:244:        assertTrue(toBeTested2 is Equation.Assignment<*, *>)
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/EquationTest.kt:252:        assertFalse(toBeTested is Equation.Identity<*>)
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:78:    /** A list of equations that should be interpreted as Assignments (left item is a Var always) */
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:102:            // if rhs Term is variable, do not shuffle! Because will _not_ be automatically swapped back like others
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:179:            equationSequence.all { it is Equation.Identity<*> }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:185:            equationSequence.none { it is Equation.Identity<*> }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:191:            equationSequence.any { it is Equation.Contradiction<*, *> }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:197:            equationSequence.none { it is Equation.Comparison<*, *> }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:203:            equationSequence.any { it is Equation.Assignment<*, *> }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:208:        is Var -> 1
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:209:        is Constant -> 1
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/EquationUtils.kt:210:        is Struct -> term.argsSequence.sumOf { countDeepGeneratedEquations(it) }
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:171:    /** Asserts that mgu computed with [mguStrategy] over [equation] is equals to [expectedMgu] */
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:198:    /** Asserts that match computed with [matchStrategy] over [equation] is equals to [expectedMatch] */
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:225:    /** Asserts that unified term computed with [unifyStrategy] over [equation] is equals to [expectedUnifiedTerm] */
-unify/src/commonTest/kotlin/it/unibo/tuprolog/unify/testutils/UnificatorUtils.kt:271:     * the last equation is used to launch the [lastEquationAssertion] and verify at last if solving equations consecutively,
-unify/src/jvmTest/kotlin/it/unibo/tuprolog/unify/TestThreadSafety.kt:31:            assertTrue { res.get() is Substitution.Unifier }
 utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:8: * @param K is the type of the keys used for indexing items in this cache
 utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:9: * @param V is the type of the values stored in this cache
 utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/Cache.kt:25:     * @param key is the key used for indexing the pair
@@ -760,5 +707,3 @@ utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/ConjunctionCursor.kt:12
 utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/LRUCache.kt:28:            if (evictedKey is Optional.Some) {
 utils/src/commonMain/kotlin/it/unibo/tuprolog/utils/impl/MapperCursor.kt:11:        require(wrapped !is EmptyCursor) {
 utils/src/commonTest/kotlin/it/unibo/tuprolog/utils/TestCursor.kt:22:                current.next is Cursor<out T>
-utils/src/jvmMain/kotlin/it/unibo/tuprolog/utils/Deque.kt:22:    if (this is LinkedList) {
-utils/src/jvmMain/kotlin/it/unibo/tuprolog/utils/Deque.kt:42:    return if (this is LinkedList) {
