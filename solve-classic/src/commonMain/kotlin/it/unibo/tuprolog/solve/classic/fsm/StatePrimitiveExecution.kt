@@ -2,7 +2,6 @@ package it.unibo.tuprolog.solve.classic.fsm
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.classic.ClassicExecutionContext
 import it.unibo.tuprolog.solve.exception.TuPrologRuntimeException
 import it.unibo.tuprolog.utils.Cursor
@@ -25,29 +24,24 @@ data class StatePrimitiveExecution(override val context: ClassicExecutionContext
     }
 
     override fun computeNext(): State = try {
-        when (val sol = context.primitives.current?.solution) {
-            is Solution.Yes -> {
+        context.primitives.current?.solution?.whenIs(
+            yes = {
                 StateGoalSelection(
                     context.copyFromCurrentPrimitive(
                         goals = context.goals.next,
                         procedureFromAncestor = 1,
-                        substitution = (context.substitution + sol.substitution)
+                        substitution = (context.substitution + it.substitution)
                     )
                 )
-            }
-            is Solution.No -> {
+            },
+            no = {
                 StateBacktracking(context.parent!!.copyFromCurrentPrimitive())
-            }
-            is Solution.Halt -> {
-                StateException(sol.exception.updateLastContext(context.skipThrow()), context.copyFromCurrentPrimitive())
-            }
-            null -> {
-                StateBacktracking(context.copyFromCurrentPrimitive())
-            }
-            else -> {
-                throw IllegalStateException("This should never happen")
-            }
-        }
+            },
+            halt = {
+                StateException(it.exception.updateLastContext(context.skipThrow()), context.copyFromCurrentPrimitive())
+            },
+            otherwise = { throw IllegalStateException("This should never happen") }
+        ) ?: StateBacktracking(context.copyFromCurrentPrimitive())
     } catch (exception: TuPrologRuntimeException) {
         StateException(exception.updateLastContext(context.skipThrow()), context.copy(step = nextStep()))
     }

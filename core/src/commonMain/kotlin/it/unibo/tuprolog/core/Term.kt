@@ -117,6 +117,15 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     val isStruct: Boolean get() = false
 
     /**
+     * Checks whether the current term is a truth value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Truth].
+     * @return `true` if the current term is a truth value, or `false`, otherwise
+     */
+    @JsName("isTruth")
+    val isTruth: Boolean get() = false
+
+    /**
      * Checks whether the current term is a collection, i.e., a list, a tuple, or a set.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Collection].

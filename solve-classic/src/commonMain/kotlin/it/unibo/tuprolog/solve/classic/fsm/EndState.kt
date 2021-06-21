@@ -10,5 +10,10 @@ interface EndState : State {
 
     @JsName("hasOpenAlternatives")
     val hasOpenAlternatives: Boolean
-        get() = solution is Solution.Yes && context.hasOpenAlternatives
+        get() = solution.isYes && context.hasOpenAlternatives
+
+    override val isEndState: Boolean
+        get() = true
+
+    override fun asEndState(): EndState = this
 }

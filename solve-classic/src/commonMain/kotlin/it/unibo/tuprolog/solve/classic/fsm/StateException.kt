@@ -46,36 +46,44 @@ data class StateException(
             context.parent!!.copy(step = nextStep())
         )
 
+    private fun handleStruct(catchGoal: Struct, error: PrologError): State =
+        when {
+            catchGoal.isCatch() -> {
+                val catcher = catchGoal[1] mguWith error.getExceptionContent()
+                handleCatch(catchGoal, catcher)
+            }
+            context.isRoot -> finalState
+            else -> handleExceptionInParentContext
+        }
+
+    private fun handleCatch(catchGoal: Struct, catcher: Substitution) =
+        when {
+            catcher.isSuccess -> {
+                val newSubstitution =
+                    (context.substitution + catcher).filter(context.interestingVariables)
+                val subGoals = catchGoal[2][newSubstitution]
+                val newGoals = subGoals.toGoals() + context.goals.next
+
+                StateGoalSelection(
+                    context.copy(
+                        goals = newGoals,
+                        rules = Cursor.empty(),
+                        primitives = Cursor.empty(),
+                        substitution = newSubstitution.castToUnifier(),
+                        step = nextStep()
+                    )
+                )
+            }
+            context.isRoot -> finalState
+            else -> handleExceptionInParentContext
+        }
+
     override fun computeNext(): State {
         return when (exception) {
             is PrologError -> {
                 val catchGoal = context.currentGoal!!
-
                 when {
-                    catchGoal is Struct && catchGoal.isCatch() -> {
-                        val catcher = catchGoal[1] mguWith exception.getExceptionContent()
-
-                        when {
-                            catcher is Substitution.Unifier -> {
-                                val newSubstitution =
-                                    (context.substitution + catcher).filter(context.interestingVariables)
-                                val subGoals = catchGoal[2][newSubstitution]
-                                val newGoals = subGoals.toGoals() + context.goals.next
-
-                                StateGoalSelection(
-                                    context.copy(
-                                        goals = newGoals,
-                                        rules = Cursor.empty(),
-                                        primitives = Cursor.empty(),
-                                        substitution = newSubstitution as Substitution.Unifier,
-                                        step = nextStep()
-                                    )
-                                )
-                            }
-                            context.isRoot -> finalState
-                            else -> handleExceptionInParentContext
-                        }
-                    }
+                    catchGoal.isStruct -> handleStruct(catchGoal.castToStruct(), exception)
                     context.isRoot -> finalState
                     else -> handleExceptionInParentContext
                 }
