@@ -143,7 +143,7 @@ interface List : Collection {
         fun from(items: Cursor<out Term>, last: Term?): List {
             return when {
                 items.isOver ->
-                    (last ?: empty()) as? List
+                    (last ?: empty()).asList()
                         ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)

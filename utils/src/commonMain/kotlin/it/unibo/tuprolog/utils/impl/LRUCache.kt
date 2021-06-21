@@ -84,8 +84,8 @@ internal class LRUCache<K, V>(override val capacity: Int) : Cache<K, V> {
             (0 until capacity).asSequence().map { (it + nextFreeIndex) % capacity }
         }
         return indexes.map { insertionOrder[it] }
-            .filterIsInstance<Optional.Some<K>>()
-            .map { it.value }
+            .filter { it.isPresent }
+            .map { it.value!! }
             .map { it to cache[it]!! }
             .buffered()
     }

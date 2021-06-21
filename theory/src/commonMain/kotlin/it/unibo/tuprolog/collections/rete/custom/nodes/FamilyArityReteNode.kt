@@ -9,11 +9,8 @@ import it.unibo.tuprolog.collections.rete.custom.leaf.AtomIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.CompoundIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.NumericIndex
 import it.unibo.tuprolog.collections.rete.custom.leaf.VariableIndex
-import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -24,10 +21,13 @@ internal open class FamilyArityReteNode(
 
     protected val numericIndex: IndexingLeaf =
         NumericIndex(ordered, nestingLevel)
+
     protected val atomicIndex: IndexingLeaf =
         AtomIndex(ordered, nestingLevel)
+
     protected val variableIndex: IndexingLeaf =
         VariableIndex(ordered)
+
     protected val compoundIndex: IndexingLeaf =
         CompoundIndex(ordered, nestingLevel + 1)
 
@@ -101,21 +101,22 @@ internal open class FamilyArityReteNode(
     private fun getUnordered(clause: Clause): Sequence<Clause> =
         getUnorderedIndexed(clause).map { it.innerClause }
 
-    protected fun retractAllOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        when (clause.nestedFirstArgument()) {
-            is Numeric -> {
+    protected fun retractAllOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
                     numericIndex.retractAllIndexed(clause)
                 )
             }
-            is Atom -> {
+            innerFirst.isAtom -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
                     atomicIndex.retractAllIndexed(clause)
                 )
             }
-            is Var -> {
+            innerFirst.isVariable -> {
                 Utils.merge(
                     variableIndex.retractAllIndexed(clause),
                     numericIndex.retractAllIndexed(clause),
@@ -130,18 +131,20 @@ internal open class FamilyArityReteNode(
                 )
             }
         }
+    }
 
-    protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        when (clause.nestedFirstArgument()) {
-            is Numeric -> Utils.flattenIndexed(
+    protected fun retractAllUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> Utils.flattenIndexed(
                 variableIndex.retractAllIndexed(clause),
                 numericIndex.retractAllIndexed(clause)
             )
-            is Atom -> Utils.flattenIndexed(
+            innerFirst.isAtom -> Utils.flattenIndexed(
                 variableIndex.retractAllIndexed(clause),
                 atomicIndex.retractAllIndexed(clause)
             )
-            is Var -> Utils.flattenIndexed(
+            innerFirst.isVariable -> Utils.flattenIndexed(
                 variableIndex.retractAllIndexed(clause),
                 numericIndex.retractAllIndexed(clause),
                 atomicIndex.retractAllIndexed(clause),
@@ -152,20 +155,22 @@ internal open class FamilyArityReteNode(
                 compoundIndex.retractAllIndexed(clause)
             )
         }
+    }
 
-    protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        when (clause.nestedFirstArgument()) {
-            is Numeric ->
+    protected fun getOrderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
                     numericIndex.getIndexed(clause)
                 )
-            is Atom ->
+            innerFirst.isAtom ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
                     atomicIndex.getIndexed(clause)
                 )
-            is Var ->
+            innerFirst.isVariable ->
                 Utils.merge(
                     variableIndex.getIndexed(clause),
                     numericIndex.getIndexed(clause),
@@ -178,18 +183,20 @@ internal open class FamilyArityReteNode(
                     compoundIndex.getIndexed(clause)
                 )
         }
+    }
 
-    protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> =
-        when (clause.nestedFirstArgument()) {
-            is Numeric -> Utils.flattenIndexed(
+    protected fun getUnorderedIndexed(clause: Clause): Sequence<SituatedIndexedClause> {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> Utils.flattenIndexed(
                 variableIndex.getIndexed(clause),
                 numericIndex.getIndexed(clause)
             )
-            is Atom -> Utils.flattenIndexed(
+            innerFirst.isAtom -> Utils.flattenIndexed(
                 variableIndex.getIndexed(clause),
                 atomicIndex.getIndexed(clause)
             )
-            is Var -> Utils.flattenIndexed(
+            innerFirst.isVariable -> Utils.flattenIndexed(
                 variableIndex.getIndexed(clause),
                 numericIndex.getIndexed(clause),
                 atomicIndex.getIndexed(clause),
@@ -200,18 +207,20 @@ internal open class FamilyArityReteNode(
                 compoundIndex.getIndexed(clause)
             )
         }
+    }
 
-    protected fun anyLookahead(clause: Clause): SituatedIndexedClause? =
-        when (clause.nestedFirstArgument()) {
-            is Numeric -> {
+    protected fun anyLookahead(clause: Clause): SituatedIndexedClause? {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> {
                 variableIndex.getFirstIndexed(clause)
                     ?: numericIndex.getFirstIndexed(clause)
             }
-            is Atom -> {
+            innerFirst.isAtom -> {
                 variableIndex.getFirstIndexed(clause)
                     ?: atomicIndex.getFirstIndexed(clause)
             }
-            is Var -> {
+            innerFirst.isVariable -> {
                 variableIndex.getFirstIndexed(clause)
                     ?: numericIndex.getFirstIndexed(clause)
                     ?: atomicIndex.getFirstIndexed(clause)
@@ -222,6 +231,7 @@ internal open class FamilyArityReteNode(
                     ?: compoundIndex.getFirstIndexed(clause)
             }
         }
+    }
 
     protected fun orderedLookahead(clause: Clause): SituatedIndexedClause? {
         val innerFirst = clause.nestedFirstArgument()

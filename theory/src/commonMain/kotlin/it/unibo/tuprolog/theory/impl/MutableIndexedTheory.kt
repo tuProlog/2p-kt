@@ -52,8 +52,8 @@ internal class MutableIndexedTheory private constructor(
     override fun retract(clauses: Iterable<Clause>): RetractResult<MutableIndexedTheory> {
         val retracted = clauses.asSequence()
             .map { queue.retrieve(it) }
-            .filterIsInstance<RetrieveResult.Success<*>>()
-            .flatMap { it.clauses.asSequence() }
+            .filter { it.isSuccess }
+            .flatMap { it.clauses!!.asSequence() }
             .toList()
         return if (retracted.isEmpty()) RetractResult.Failure(this)
         else RetractResult.Success(this, retracted)

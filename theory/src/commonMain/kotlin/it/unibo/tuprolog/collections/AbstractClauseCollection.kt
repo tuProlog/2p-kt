@@ -15,7 +15,8 @@ protected constructor(protected val rete: ReteTree) : ClauseCollection {
 
     override fun contains(element: Clause): Boolean = rete.get(element).any()
 
-    override fun containsAll(elements: Iterable<Clause>): Boolean = elements.all { it in this }
+    @Suppress("RedundantAsSequence")
+    override fun containsAll(elements: Iterable<Clause>): Boolean = elements.asSequence().all { it in this }
 
     abstract override fun add(clause: Clause): Self
 

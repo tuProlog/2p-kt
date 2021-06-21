@@ -31,8 +31,9 @@ internal open class StructImpl(
             functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it)
         }
 
+    @Suppress("RedundantAsSequence")
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (0 until arity).all { this[it] structurallyEquals other[it] }
+        (0 until arity).asSequence().all { this[it] structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
@@ -40,8 +41,9 @@ internal open class StructImpl(
     final override fun equals(other: Any?): Boolean =
         asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
+    @Suppress("RedundantAsSequence")
     protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
+        (0 until arity).asSequence().all { args[it].equals(other[it], useVarCompleteName) }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
         other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
