@@ -16,7 +16,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.visitors.whenInteger
 import org.gciatto.kt.math.BigInteger
 
 internal abstract class AbstractTermFormatter(
