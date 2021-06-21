@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Substitution.Unifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.TagsOperator
@@ -18,7 +19,7 @@ internal sealed class SubstitutionImpl : Substitution {
 
     override fun plus(other: Substitution): Substitution = plus(other) { x, y -> x + y }
 
-    override fun plus(other: Substitution, tagsMerger: TagsOperator): SubstitutionImpl = when {
+    override fun plus(other: Substitution, tagsMerger: TagsOperator): Substitution = when {
         anyFailed(this, other) || anyContradiction(this, other) -> {
             FailImpl(tagsMerger(tags, other.tags))
         }
@@ -30,32 +31,36 @@ internal sealed class SubstitutionImpl : Substitution {
         }
     }
 
-    override operator fun minus(keys: Iterable<Var>): SubstitutionImpl =
-        whenIs(
-            unifier = { UnifierImpl.of(this as Map<Var, Term> - keys, tags) },
+    override operator fun minus(keys: Iterable<Var>): Substitution {
+        val thiz: Map<Var, Term> = this
+        return whenIs(
+            unifier = { UnifierImpl.of(thiz - keys, tags) },
             fail = { FailImpl(tags) }
         )
+    }
 
     override fun minus(variable: Var): Substitution = minus(listOf(variable))
 
     override fun minus(variable: Var, vararg otherVariables: Var): Substitution =
         minus(listOf(variable, *otherVariables))
 
-    override operator fun minus(other: Substitution): SubstitutionImpl = this - other.keys
+    override operator fun minus(other: Substitution): Substitution = this - other.keys
 
-    override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): SubstitutionImpl =
-        whenIs(
-            unifier = { UnifierImpl.of((this as Map<Var, Term>).filter(predicate), tags) },
+    override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Substitution {
+        val thiz: Map<Var, Term> = this
+        return whenIs(
+            unifier = { UnifierImpl.of(thiz.filter(predicate), tags) },
             fail = { FailImpl(tags) }
         )
+    }
 
-    override fun filter(variables: KtCollection<Var>): SubstitutionImpl = filter { k, _ -> k in variables }
+    override fun filter(variables: KtCollection<Var>): Substitution = filter { k, _ -> k in variables }
 
-    override fun filter(predicate: (key: Var, value: Term) -> Boolean): SubstitutionImpl =
+    override fun filter(predicate: (key: Var, value: Term) -> Boolean): Substitution =
         filter { (key, value) -> predicate(key, value) }
 
     override fun <T> whenIs(
-        unifier: ((Substitution.Unifier) -> T)?,
+        unifier: ((Unifier) -> T)?,
         fail: ((Substitution.Fail) -> T)?,
         otherwise: (Substitution) -> T
     ): T {
@@ -72,7 +77,7 @@ internal sealed class SubstitutionImpl : Substitution {
     class UnifierImpl private constructor(
         private val assignments: Map<Var, Term>,
         override val tags: Map<String, Any>
-    ) : SubstitutionImpl(), Substitution.Unifier, Map<Var, Term> by (assignments) {
+    ) : SubstitutionImpl(), Unifier, Map<Var, Term> by (assignments) {
 
         companion object {
             fun of(mappings: Map<Var, Term>, tags: Map<String, Any> = emptyMap()) =
@@ -102,22 +107,23 @@ internal sealed class SubstitutionImpl : Substitution {
         override val isSuccess: Boolean
             get() = true
 
-        override fun minus(keys: Iterable<Var>): UnifierImpl = super.minus(keys) as UnifierImpl
+        override fun minus(keys: Iterable<Var>): Unifier = super.minus(keys).castToUnifier()
 
-        override fun minus(other: Substitution): UnifierImpl = super.minus(other) as UnifierImpl
+        override fun minus(other: Substitution): Unifier = super.minus(other).castToUnifier()
 
-        override fun minus(variable: Var): UnifierImpl = super.minus(variable) as UnifierImpl
+        override fun minus(variable: Var): Unifier = super.minus(variable).castToUnifier()
 
-        override fun minus(variable: Var, vararg otherVariables: Var): UnifierImpl =
-            super.minus(variable, *otherVariables) as UnifierImpl
+        override fun minus(variable: Var, vararg otherVariables: Var): Unifier =
+            super.minus(variable, *otherVariables).castToUnifier()
 
-        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): UnifierImpl =
-            super.filter(predicate) as UnifierImpl
+        override fun filter(predicate: (Map.Entry<Var, Term>) -> Boolean): Unifier =
+            super.filter(predicate).castToUnifier()
 
-        override fun filter(predicate: (key: Var, value: Term) -> Boolean): UnifierImpl =
-            super.filter(predicate) as UnifierImpl
+        override fun filter(predicate: (key: Var, value: Term) -> Boolean): Unifier =
+            super.filter(predicate).castToUnifier()
 
-        override fun filter(variables: KtCollection<Var>): UnifierImpl = super.filter(variables) as UnifierImpl
+        override fun filter(variables: KtCollection<Var>): Unifier =
+            super.filter(variables).castToUnifier()
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -137,7 +143,7 @@ internal sealed class SubstitutionImpl : Substitution {
 
         override fun applyTo(term: Term): Term = term.apply(this)
 
-        override fun replaceTags(tags: Map<String, Any>): UnifierImpl =
+        override fun replaceTags(tags: Map<String, Any>): Unifier =
             if (tags == this.tags) this else UnifierImpl(assignments, tags)
     }
 

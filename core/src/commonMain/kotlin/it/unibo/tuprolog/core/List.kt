@@ -117,7 +117,7 @@ interface List : Collection {
         @JsName("fromList")
         fun from(items: KtList<Term>, last: Term?): List {
             if (items.isEmpty()) {
-                return (last ?: empty()) as? List
+                return (last ?: empty()).asList()
                     ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
             }
             val i = items.asReversed().iterator()
@@ -130,7 +130,7 @@ interface List : Collection {
             while (i.hasNext()) {
                 right = Cons.of(i.next(), right)
             }
-            return right as List
+            return right.castToList()
         }
 
         @JvmStatic

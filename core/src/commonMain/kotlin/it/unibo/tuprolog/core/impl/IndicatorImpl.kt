@@ -30,9 +30,9 @@ internal class IndicatorImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Indicator = IndicatorImpl(nameTerm, arityTerm, tags)
 
-    override fun freshCopy(): Indicator = super.freshCopy() as Indicator
+    override fun freshCopy(): Indicator = super.freshCopy().castToIndicator()
 
-    override fun freshCopy(scope: Scope): Indicator = super.freshCopy(scope) as Indicator
+    override fun freshCopy(scope: Scope): Indicator = super.freshCopy(scope).castToIndicator()
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitIndicator(this)
 }

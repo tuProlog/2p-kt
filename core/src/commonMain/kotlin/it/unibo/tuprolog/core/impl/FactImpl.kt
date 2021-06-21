@@ -18,9 +18,9 @@ internal class FactImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Fact = FactImpl(head, tags)
 
-    override fun freshCopy(): Fact = super.freshCopy() as Fact
+    override fun freshCopy(): Fact = super.freshCopy().castToFact()
 
-    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope) as Fact
+    override fun freshCopy(scope: Scope): Fact = super.freshCopy(scope).castToFact()
 
     override fun setHeadFunctor(functor: String): Fact = super.setHeadFunctor(functor).castToFact()
 

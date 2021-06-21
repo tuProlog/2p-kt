@@ -215,7 +215,7 @@ interface Substitution : Map<Var, Term>, Taggable<Substitution>, Castable<Substi
     companion object {
 
         private inline fun <T> castToUnifierOrThrowException(arg: T, ctor: (T) -> Substitution): Unifier =
-            ctor(arg).let { it as? Unifier ?: throw SubstitutionException(it) }
+            ctor(arg).let { it.asUnifier() ?: throw SubstitutionException(it) }
 
         private val FAILED: Fail = SubstitutionImpl.FailImpl()
 

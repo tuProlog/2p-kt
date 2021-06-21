@@ -32,9 +32,9 @@ internal abstract class ClauseImpl(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): Clause
 
-    override fun freshCopy(): Clause = super.freshCopy() as Clause
+    override fun freshCopy(): Clause = super.freshCopy().castToClause()
 
-    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
+    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope).castToClause()
 
     private val bodyItemsSequence: Sequence<Term>
         get() = body.let {

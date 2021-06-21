@@ -35,7 +35,7 @@ internal abstract class AbstractTermFormatter(
 
     override fun visitStruct(term: Struct): String {
         if (numberVars && isNumberedVar(term)) {
-            return numberedVar(term[0] as Integer)
+            return numberedVar(term[0].castToInteger())
         }
         val functor = formatFunctor(term)
         val args = term.argsSequence.map { it.accept(childFormatter()) }.joinToString(", ", "(", ")")

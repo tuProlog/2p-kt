@@ -26,7 +26,7 @@ internal open class SetImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): LogicSet = SetImpl(item, tags)
 
-    override fun freshCopy(): LogicSet = super.freshCopy() as LogicSet
+    override fun freshCopy(): LogicSet = super.freshCopy().castToSet()
 
     override fun freshCopy(scope: Scope): LogicSet =
         when {

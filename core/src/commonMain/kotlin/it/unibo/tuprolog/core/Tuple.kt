@@ -88,9 +88,9 @@ interface Tuple : Collection {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"
             }
-
-            return terms.slice(0 until terms.lastIndex)
-                .foldRight(terms.last()) { l, r -> TupleImpl(l, r) } as Tuple
+            return terms.slice(0 until terms.lastIndex).foldRight(terms.last()) { l, r ->
+                TupleImpl(l, r)
+            }.castToTuple()
         }
     }
 }

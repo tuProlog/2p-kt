@@ -14,9 +14,9 @@ internal open class RuleImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Rule = RuleImpl(head, body, tags)
 
-    override fun freshCopy(): Rule = super.freshCopy() as Rule
+    override fun freshCopy(): Rule = super.freshCopy().castToRule()
 
-    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope) as Rule
+    override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope).castToRule()
 
     override val headArgs: Iterable<Term>
         get() = head.argsList

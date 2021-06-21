@@ -183,6 +183,6 @@ interface Clause : Struct {
          * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
          * as the Term: `product(A) :- call(A), call(A)`
          */
-        internal val defaultPreparationForExecutionVisitor = preparationForExecutionVisitor()
+        internal val defaultPreparationForExecutionVisitor: TermVisitor<Term> = preparationForExecutionVisitor()
     }
 }

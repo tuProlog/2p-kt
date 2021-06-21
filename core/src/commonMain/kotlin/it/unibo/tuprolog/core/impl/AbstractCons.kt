@@ -63,15 +63,15 @@ internal abstract class AbstractCons(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): AbstractCons
 
-    override fun freshCopy(): Cons = super.freshCopy() as Cons
+    override fun freshCopy(): Cons = super.freshCopy().castToCons()
 
     override fun freshCopy(scope: Scope): Cons = when {
         isGround -> this
-        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags) as Cons
+        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags).castToCons()
         else -> scope.listFrom(
             unfoldedList.subList(0, unfoldedList.lastIndex).map { it.freshCopy(scope) },
             last = unfoldedList.last().freshCopy(scope)
-        ).setTags(tags) as Cons
+        ).setTags(tags).castToCons()
     }
 
     final override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCons(this)

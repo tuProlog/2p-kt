@@ -67,7 +67,7 @@ internal class VarImpl(
         }
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isVariable && other.castToVar().let { equalsToVar(it, useVarCompleteName) }
+        other.isVariable && equalsToVar(other.castToVar(), useVarCompleteName)
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 

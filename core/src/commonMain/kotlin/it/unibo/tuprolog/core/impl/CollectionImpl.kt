@@ -29,9 +29,9 @@ internal abstract class CollectionImpl(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): Collection
 
-    override fun freshCopy(): Collection = super.freshCopy() as Collection
+    override fun freshCopy(): Collection = super.freshCopy().castToCollection()
 
-    override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope) as Collection
+    override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope).castToCollection()
 
     override fun itemsAreStructurallyEqual(other: Struct): Boolean =
         other.asCollection()?.let {

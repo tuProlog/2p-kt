@@ -29,7 +29,7 @@ internal class TupleImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
 
-    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
+    override fun freshCopy(): Tuple = super.freshCopy().castToTuple()
 
     override fun freshCopy(scope: Scope): Tuple =
         when {
