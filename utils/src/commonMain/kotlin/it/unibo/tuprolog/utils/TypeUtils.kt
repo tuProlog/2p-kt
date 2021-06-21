@@ -1,3 +1,3 @@
 package it.unibo.tuprolog.utils
 
-expect fun <T> Any.forceCast(): T
+expect fun <T> Any?.forceCast(): T

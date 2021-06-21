@@ -22,9 +22,9 @@ internal class IntegerImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Integer) return false
-
-        return equalsToInteger(other)
+        val integer = asTerm(other)?.asInteger()
+        if (integer === null) return false
+        return equalsToInteger(integer)
     }
 
     @Suppress("NOTHING_TO_INLINE")

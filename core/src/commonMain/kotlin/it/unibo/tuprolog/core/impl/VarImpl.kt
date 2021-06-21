@@ -51,9 +51,9 @@ internal class VarImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Var) return false
-
-        return equalsByCompleteName(other)
+        val otherVar = asTerm(other)?.asVar()
+        if (otherVar === null) return false
+        return equalsByCompleteName(otherVar)
     }
 
     @Suppress("NOTHING_TO_INLINE")

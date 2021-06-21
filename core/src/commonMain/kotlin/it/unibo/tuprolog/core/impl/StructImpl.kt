@@ -38,7 +38,7 @@ internal open class StructImpl(
         get() = Struct.isWellFormedFunctor(functor)
 
     final override fun equals(other: Any?): Boolean =
-        (other as? Struct)?.let { equalsImpl(it, true) } ?: false
+        asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
     protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
         (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }

@@ -21,8 +21,9 @@ internal class RealImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Real) return false
-        return equalsToReal(other)
+        val real = asTerm(other)?.asReal()
+        if (real === null) return false
+        return equalsToReal(real)
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -30,7 +31,7 @@ internal class RealImpl(
         value.compareTo(other.value) == 0
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other.isReal && other.castToReal().let { equalsToReal(it) }
+        other.isReal && equalsToReal(other.castToReal())
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 
