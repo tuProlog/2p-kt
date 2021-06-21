@@ -117,6 +117,15 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
     val isStruct: Boolean get() = false
 
     /**
+     * Checks whether the current term is a collection, i.e., a list, a tuple, or a set.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Collection].
+     * @return `true` if the current term is a collection, or `false`, otherwise
+     */
+    @JsName("isCollection")
+    val isCollection: Boolean get() = false
+
+    /**
      * Checks whether the current term is an atom.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Atom].
@@ -521,6 +530,15 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
         asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Collection], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Collection]
+     * @return the current [Term], casted to [Collection]
+     */
+    @JsName("castToCollection")
+    fun castToCollection(): Collection =
+        asCollection() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Term]
      * @return the current [Term]
      */
@@ -665,6 +683,13 @@ interface Term : Comparable<Term>, Taggable<Term>, Castable<Term> {
      */
     @JsName("asStruct")
     fun asStruct(): Struct? = null
+
+    /**
+     * Casts the current [Term] to [Collection], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Collection], or `null`, if the current term is not an instance of [Collection]
+     */
+    @JsName("asCollection")
+    fun asCollection(): Collection? = null
 
     /**
      * Casts the current [Term] to [Term]

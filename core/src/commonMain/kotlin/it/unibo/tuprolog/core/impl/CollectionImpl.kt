@@ -34,14 +34,14 @@ internal abstract class CollectionImpl(
     override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope) as Collection
 
     override fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (other as? Collection)?.let {
+        other.asCollection()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.structurallyEquals(b)
             }
         } ?: false
 
     override fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (other as? Collection)?.let {
+        other.asCollection()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.equals(b, useVarCompleteName)
             }
