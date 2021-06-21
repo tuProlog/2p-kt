@@ -5,8 +5,6 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.visitors.whenInteger
-import it.unibo.tuprolog.core.visitors.whenNumeric
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -34,16 +32,15 @@ internal class IntegerImpl(
         value.compareTo(other.value) == 0
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        whenInteger(other, ifInteger = { equalsToInteger(it) }, otherwise = { false })
+        other.isInt && equalsToInteger(other.castToInteger())
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
-        whenNumeric(
-            term = other,
-            ifInteger = { value.compareTo(it.value) },
-            ifNumeric = { super<NumericImpl>.compareValueTo(it) }
-        )
+        when {
+            other.isInt -> value.compareTo(other.castToInteger().value)
+            else -> super<NumericImpl>.compareValueTo(other)
+        }
 
     override fun copyWithTags(tags: Map<String, Any>): Integer = IntegerImpl(value, tags)
 

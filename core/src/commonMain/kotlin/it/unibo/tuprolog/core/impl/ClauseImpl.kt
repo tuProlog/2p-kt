@@ -10,7 +10,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.visitors.whenTuple
 import it.unibo.tuprolog.utils.insertAt
 
 internal abstract class ClauseImpl(
@@ -38,21 +37,23 @@ internal abstract class ClauseImpl(
     override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
 
     private val bodyItemsSequence: Sequence<Term>
-        get() = whenTuple(
-            term = body,
-            ifTuple = { it.toSequence() },
-            otherwise = { sequenceOf(it) }
-        )
+        get() = body.let {
+            when {
+                it.isTuple -> it.castToTuple().toSequence()
+                else -> sequenceOf(it)
+            }
+        }
 
     override val bodyItems: Iterable<Term>
         get() = bodyItemsSequence.asIterable()
 
     override val bodySize: Int
-        get() = whenTuple(
-            term = body,
-            ifTuple = { it.size },
-            otherwise = { 1 }
-        )
+        get() = body.let {
+            when {
+                it.isTuple -> it.castToTuple().size
+                else -> 1
+            }
+        }
 
     override val bodyAsTuple: Tuple?
         get() = body.asTuple()

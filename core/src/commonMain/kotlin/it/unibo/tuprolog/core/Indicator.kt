@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 import it.unibo.tuprolog.core.impl.IndicatorImpl
-import it.unibo.tuprolog.core.visitors.whenInteger
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -47,7 +46,7 @@ interface Indicator : Struct {
      */
     @JsName("isWellFormed")
     val isWellFormed: Boolean
-        get() = nameTerm.isAtom && whenInteger(arityTerm, ifInteger = { it.intValue.signum >= 0 }, otherwise = { false })
+        get() = nameTerm.isAtom && arityTerm.let { it.isInt && it.castToInteger().intValue.signum >= 0 }
 
     /** The indicated functor name, if well-formed */
     @JsName("indicatedName")

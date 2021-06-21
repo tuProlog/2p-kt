@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.visitors.whenVar
 import it.unibo.tuprolog.utils.setTags
 import kotlin.jvm.Synchronized
 
@@ -68,7 +67,7 @@ internal class VarImpl(
         }
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        whenVar(other, ifVar = { equalsToVar(it, useVarCompleteName) }, otherwise = { false })
+        other.isVariable && other.castToVar().let { equalsToVar(it, useVarCompleteName) }
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 

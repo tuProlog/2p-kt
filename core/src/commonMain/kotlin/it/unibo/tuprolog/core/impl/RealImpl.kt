@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.visitors.whenReal
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -31,7 +30,7 @@ internal class RealImpl(
         value.compareTo(other.value) == 0
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        whenReal(other, ifReal = { equalsToReal(it) }, otherwise = { false })
+        other.isReal && other.castToReal().let { equalsToReal(it) }
 
     override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
 

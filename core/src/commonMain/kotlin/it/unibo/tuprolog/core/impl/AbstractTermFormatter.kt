@@ -44,8 +44,9 @@ internal abstract class AbstractTermFormatter(
     }
 
     private fun isNumberedVar(term: Struct): Boolean =
-        term.functor == "\$VAR" && term.arity == 1 &&
-            whenInteger(term[0], ifInteger = { it.value >= BigInteger.ZERO }, otherwise = { false })
+        term.functor == "\$VAR" && term.arity == 1 && term[0].let {
+            it.isInt && it.castToInteger().value >= BigInteger.ZERO
+        }
 
     private fun numberedVar(integer: Integer): String {
         val letterIndex = (integer.value % TWENTY_SIX).toInt() + A_INDEX

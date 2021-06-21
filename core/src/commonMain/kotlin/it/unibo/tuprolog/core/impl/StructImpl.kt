@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.visitors.whenStruct
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
@@ -28,11 +27,9 @@ internal open class StructImpl(
         StructImpl(functor, args, tags)
 
     final override fun structurallyEquals(other: Term): Boolean =
-        whenStruct(
-            term = other,
-            ifStruct = { functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it) },
-            otherwise = { false }
-        )
+        other.isStruct && other.castToStruct().let {
+            functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it)
+        }
 
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
         (0 until arity).all { this[it] structurallyEquals other[it] }
