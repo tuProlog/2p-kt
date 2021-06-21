@@ -13,8 +13,8 @@ import kotlin.jvm.JvmName
  */
 @JsName("prepareForExecution")
 fun Clause.prepareForExecution(): Clause =
-    accept(Clause.defaultPreparationForExecutionVisitor) as Clause
+    accept(Clause.defaultPreparationForExecutionVisitor).castToClause()
 
 @JsName("prepareForExecutionWithUnifier")
 fun Clause.prepareForExecution(unifier: Substitution.Unifier): Clause =
-    accept(Clause.preparationForExecutionVisitor(unifier)) as Clause
+    accept(Clause.preparationForExecutionVisitor(unifier)).castToClause()

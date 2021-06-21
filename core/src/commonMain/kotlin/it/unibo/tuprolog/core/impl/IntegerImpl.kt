@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 
@@ -21,22 +22,23 @@ internal class IntegerImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Integer) return false
-
-        return equalsToInteger(other)
+        val integer = asTerm(other)?.asInteger()
+        if (integer === null) return false
+        return equalsToInteger(integer)
     }
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun equalsToInteger(other: Integer) =
         value.compareTo(other.value) == 0
 
-    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean = other is Integer && equalsToInteger(other)
+    override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
+        other.isInt && equalsToInteger(other.castToInteger())
 
     override val hashCodeCache: Int by lazy { value.hashCode() }
 
     override fun compareValueTo(other: Numeric): Int =
-        when (other) {
-            is Integer -> value.compareTo(other.value)
+        when {
+            other.isInt -> value.compareTo(other.castToInteger().value)
             else -> super<NumericImpl>.compareValueTo(other)
         }
 
@@ -45,4 +47,6 @@ internal class IntegerImpl(
     override fun freshCopy(): Integer = this
 
     override fun freshCopy(scope: Scope): Integer = this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitInteger(this)
 }

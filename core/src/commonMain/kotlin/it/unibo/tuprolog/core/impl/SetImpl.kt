@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.SetIterator
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.SET_FUNCTOR
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.Set as LogicSet
@@ -25,11 +26,13 @@ internal open class SetImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): LogicSet = SetImpl(item, tags)
 
-    override fun freshCopy(): LogicSet = super.freshCopy() as LogicSet
+    override fun freshCopy(): LogicSet = super.freshCopy().castToSet()
 
     override fun freshCopy(scope: Scope): LogicSet =
         when {
             isGround -> this
             else -> scope.setOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitSet(this)
 }

@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
 
@@ -23,8 +24,8 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
 
     override fun defaultValue(term: Term): T = casting { term }
 
-    override fun visit(term: Term): T =
-        super.visit(term.apply { staticCheck() })
+    override fun visitTerm(term: Term): T =
+        defaultValue(term.apply { staticCheck() })
 
     override fun visitAtom(term: Atom): T = casting {
         visitStruct(term)
@@ -47,7 +48,8 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
         } ?: unevaluable(term)
     }
 
-    protected open fun unevaluable(struct: Struct): T = casting { struct }
+    open fun unevaluable(struct: Struct): Term =
+        throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
 
     /**
      * Template method to implement static checks, i.e. those checks that can be made before evaluating sub-expressions

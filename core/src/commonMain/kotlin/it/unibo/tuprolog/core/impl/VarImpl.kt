@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
@@ -32,7 +33,7 @@ internal class VarImpl(
 
     override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
 
-    override fun structurallyEquals(other: Term): Boolean = other is VarImpl
+    override fun structurallyEquals(other: Term): Boolean = other.isVariable
 
     override fun copyWithTags(tags: Map<String, Any>): Var = VarImpl(name, identifier, tags)
 
@@ -50,9 +51,9 @@ internal class VarImpl(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is Var) return false
-
-        return equalsByCompleteName(other)
+        val otherVar = asTerm(other)?.asVar()
+        if (otherVar === null) return false
+        return equalsByCompleteName(otherVar)
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -66,11 +67,13 @@ internal class VarImpl(
         }
 
     override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        other is Var && equalsToVar(other, useVarCompleteName)
+        other.isVariable && equalsToVar(other.castToVar(), useVarCompleteName)
 
     override val hashCodeCache: Int by lazy { completeName.hashCode() }
 
     override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = this !in unifier
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term = unifier[this] ?: this
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitVar(this)
 }

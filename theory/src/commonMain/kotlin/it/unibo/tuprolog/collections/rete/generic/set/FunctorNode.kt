@@ -10,6 +10,11 @@ internal data class FunctorNode(
     override val children: MutableMap<Int, ReteNode<*, Rule>> = mutableMapOf()
 ) : AbstractIntermediateReteNode<Int, Rule>(children) {
 
+    override val isFunctorNode: Boolean
+        get() = true
+
+    override fun asFunctorNode(): FunctorNode = this
+
     override val header = "Functor($functor)"
 
     override fun put(element: Rule, beforeOthers: Boolean) {

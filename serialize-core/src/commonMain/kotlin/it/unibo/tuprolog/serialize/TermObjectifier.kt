@@ -6,7 +6,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 interface TermObjectifier : Objectifier<Term>, TermVisitor<Any> {
-    override fun objectify(value: Term): Any = visit(value)
+    override fun objectify(value: Term): Any = value.accept(this)
 
     companion object {
         @JsName("default")

@@ -33,13 +33,11 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
         directives.add(clause + this)
     }
 
-    override fun retractFirst(clause: Clause): Sequence<Clause> {
-        return Utils.removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
-    }
+    override fun retractFirst(clause: Clause): Sequence<Clause> =
+        Utils.removeAllLazily(directives, clause).map { it.innerClause }.take(1).buffered()
 
-    override fun retractAll(clause: Clause): Sequence<Clause> {
-        return Utils.removeAllLazily(directives, clause).map { it.innerClause }.buffered()
-    }
+    override fun retractAll(clause: Clause): Sequence<Clause> =
+        Utils.removeAllLazily(directives, clause).map { it.innerClause }.buffered()
 
     override fun getCache(): Sequence<SituatedIndexedClause> =
         directives.asSequence().map {
@@ -48,7 +46,7 @@ internal class DirectiveIndex(private val ordered: Boolean) : TopLevelReteNode {
                 object : Retractable {
                     override fun retractIndexed(indexed: SituatedIndexedClause) {
                         TODO(
-                            "Directives are adapted as a SituatedIndexedClause, but they are not actually not stored " +
+                            "Directives are adapted as a SituatedIndexedClause, but they are not actually stored " +
                                 "with this type. Given their particular semantic, try retracting directly with a proper " +
                                 "query, or opening a pull request implementing this indexing class as a proper typed data " +
                                 "structure"

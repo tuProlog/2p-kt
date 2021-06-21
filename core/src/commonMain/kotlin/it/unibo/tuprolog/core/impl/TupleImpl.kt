@@ -2,6 +2,7 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.TupleIterator
@@ -28,11 +29,13 @@ internal class TupleImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
 
-    override fun freshCopy(): Tuple = super.freshCopy() as Tuple
+    override fun freshCopy(): Tuple = super.freshCopy().castToTuple()
 
     override fun freshCopy(scope: Scope): Tuple =
         when {
             isGround -> this
             else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTuple(this)
 }

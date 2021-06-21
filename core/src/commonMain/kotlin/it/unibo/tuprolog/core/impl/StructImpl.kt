@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
@@ -26,25 +27,26 @@ internal open class StructImpl(
         StructImpl(functor, args, tags)
 
     final override fun structurallyEquals(other: Term): Boolean =
-        other is Struct &&
-            functor == other.functor &&
-            arity == other.arity &&
-            itemsAreStructurallyEqual(other)
+        other.isStruct && other.castToStruct().let {
+            functor == it.functor && arity == it.arity && itemsAreStructurallyEqual(it)
+        }
 
+    @Suppress("RedundantAsSequence")
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (0 until arity).all { this[it] structurallyEquals other[it] }
+        (0 until arity).asSequence().all { this[it] structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
 
     final override fun equals(other: Any?): Boolean =
-        (other as? Struct)?.let { equalsImpl(it, true) } ?: false
+        asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
+    @Suppress("RedundantAsSequence")
     protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
+        (0 until arity).asSequence().all { args[it].equals(other[it], useVarCompleteName) }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        (other as? Struct)?.let { equalsImpl(it, useVarCompleteName) } ?: false
+        other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
 
     private fun equalsImpl(other: Struct, useVarCompleteName: Boolean): Boolean {
         if (this === other) return true
@@ -95,4 +97,6 @@ internal open class StructImpl(
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         Struct.of(this.functor, this.argsList.map { it.apply(unifier) }).setTags(tags)
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
 }

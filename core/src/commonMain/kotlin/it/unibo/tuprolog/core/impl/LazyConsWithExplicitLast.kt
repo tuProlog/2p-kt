@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.EmptyList
-import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Cursor
@@ -34,8 +33,8 @@ internal class LazyConsWithExplicitLast(
         while (current.isCons) {
             if (current is LazyConsWithExplicitLast) {
                 current = current.termination
-            } else if (current is List) {
-                current = current.last
+            } else if (current.isList) {
+                current = current.castToList().last
             }
         }
         current

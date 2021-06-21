@@ -61,4 +61,7 @@ internal class MutableReteClauseQueue private constructor(
     override fun hashCode(): Int {
         return MutableClauseQueue.hashCode(this)
     }
+
+    override val self: MutableReteClauseQueue
+        get() = this
 }

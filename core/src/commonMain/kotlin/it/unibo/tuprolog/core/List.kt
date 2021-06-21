@@ -19,6 +19,16 @@ interface List : Collection {
     @JsName("last")
     val last: Term
 
+    /**
+     * Estimated length of this list.
+     * This property is part of the [List] interface to enable efficiency tweaks.
+     * It is NOT intended for external usage
+     *
+     * DO NOT assume this returns the correct length of the current list.
+     */
+    @JsName("estimatedLength")
+    val estimatedLength: Int
+
     override val unfoldedSequence: Sequence<Term>
 
     override val unfoldedList: KtList<Term>
@@ -107,7 +117,7 @@ interface List : Collection {
         @JsName("fromList")
         fun from(items: KtList<Term>, last: Term?): List {
             if (items.isEmpty()) {
-                return (last ?: empty()) as? List
+                return (last ?: empty()).asList()
                     ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
             }
             val i = items.asReversed().iterator()
@@ -120,7 +130,7 @@ interface List : Collection {
             while (i.hasNext()) {
                 right = Cons.of(i.next(), right)
             }
-            return right as List
+            return right.castToList()
         }
 
         @JvmStatic
@@ -133,7 +143,7 @@ interface List : Collection {
         fun from(items: Cursor<out Term>, last: Term?): List {
             return when {
                 items.isOver ->
-                    (last ?: empty()) as? List
+                    (last ?: empty()).asList()
                         ?: throw IllegalArgumentException("Cannot create a list out of the provided arguments: $items, $last")
                 last == null -> LazyConsWithImplicitLast(items)
                 else -> LazyConsWithExplicitLast(items, last)

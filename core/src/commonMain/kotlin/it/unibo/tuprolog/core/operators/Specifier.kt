@@ -102,8 +102,8 @@ enum class Specifier : ToTermConvertible {
         @JvmStatic
         @JsName("fromTerm")
         fun fromTerm(term: Term): Specifier =
-            when (term) {
-                is Atom -> fromTerm(term)
+            when {
+                term.isAtom -> fromTerm(term.castToAtom())
                 else -> throw IllegalArgumentException("Argument `$term` must be an atom")
             }
     }

@@ -145,9 +145,11 @@ interface Clause : Struct {
         @JsName("bodyWellFormedVisitor")
         val bodyWellFormedVisitor: TermVisitor<Boolean> = object : TermVisitor<Boolean> {
 
-            override fun defaultValue(term: Term): Boolean = term !is Numeric
+            override fun defaultValue(term: Term): Boolean = true
 
-            override fun visit(term: Struct): Boolean = when {
+            override fun visitNumeric(term: Numeric): Boolean = false
+
+            override fun visitStruct(term: Struct): Boolean = when {
                 term.functor in notableFunctors && term.arity == 2 ->
                     term.argsSequence
                         .map { arg -> arg.accept(this) }
@@ -161,18 +163,16 @@ interface Clause : Struct {
             object : TermVisitor<Term> {
                 override fun defaultValue(term: Term) = term
 
-                override fun visit(term: Struct): Term = when {
-                    term is Clause -> visit(term)
+                override fun visitStruct(term: Struct): Term = when {
                     term.functor in notableFunctors && term.arity == 2 ->
                         Struct.of(term.functor, term.argsSequence.map { arg -> arg.accept(this) })
-
                     else -> term
                 }
 
-                override fun visit(term: Clause): Term = of(term.head, visit(term.body))
+                override fun visitClause(term: Clause): Term = of(term.head, term.body.accept(this))
 
-                override fun visit(term: Var): Term = when (term) {
-                    in unifier -> visit(unifier[term]!!)
+                override fun visitVar(term: Var): Term = when (term) {
+                    in unifier -> unifier[term]!!.accept(this)
                     else -> Struct.of("call", term)
                 }
             }
@@ -183,6 +183,6 @@ interface Clause : Struct {
          * For example, the [Clause] `product(A) :- A, A` is transformed, after preparation for execution,
          * as the Term: `product(A) :- call(A), call(A)`
          */
-        internal val defaultPreparationForExecutionVisitor = preparationForExecutionVisitor()
+        internal val defaultPreparationForExecutionVisitor: TermVisitor<Term> = preparationForExecutionVisitor()
     }
 }

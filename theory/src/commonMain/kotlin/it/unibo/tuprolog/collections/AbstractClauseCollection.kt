@@ -6,17 +6,17 @@ import it.unibo.tuprolog.core.Clause
 internal abstract class AbstractClauseCollection<Self : AbstractClauseCollection<Self>>
 protected constructor(protected val rete: ReteTree) : ClauseCollection {
 
+    protected abstract val self: Self
+
     override val size: Int
         get() = rete.clauses.count()
 
-    override fun isEmpty(): Boolean =
-        size == 0
+    override fun isEmpty(): Boolean = size == 0
 
-    override fun contains(element: Clause): Boolean =
-        rete.get(element).any()
+    override fun contains(element: Clause): Boolean = rete.get(element).any()
 
-    override fun containsAll(elements: Iterable<Clause>): Boolean =
-        elements.all { it in this }
+    @Suppress("RedundantAsSequence")
+    override fun containsAll(elements: Iterable<Clause>): Boolean = elements.asSequence().all { it in this }
 
     abstract override fun add(clause: Clause): Self
 
@@ -26,10 +26,7 @@ protected constructor(protected val rete: ReteTree) : ClauseCollection {
 
     abstract override fun retrieveAll(clause: Clause): RetrieveResult<out Self>
 
-    override fun iterator(): Iterator<Clause> =
-        rete.clauses.iterator()
+    override fun iterator(): Iterator<Clause> = rete.clauses.iterator()
 
-    override fun toString(): String {
-        return "${this::class.simpleName}(${this.joinToString(", ")})"
-    }
+    override fun toString(): String = "${this::class.simpleName}(${this.joinToString(", ")})"
 }

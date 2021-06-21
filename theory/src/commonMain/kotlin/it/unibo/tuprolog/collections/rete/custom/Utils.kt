@@ -2,6 +2,7 @@ package it.unibo.tuprolog.collections.rete.custom
 
 import it.unibo.tuprolog.collections.rete.custom.clause.IndexedClause
 import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
+import it.unibo.tuprolog.collections.rete.takeFirstAfterSkipping
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -26,28 +27,24 @@ internal object Utils {
     /**Calculate the arity of the first argument of any [Struct], at the given nesting level.
      * No checks are performed upon the validity of the Struct this extension method is called upon. */
     fun Struct.arityOfNestedFirstArgument(nestingLevel: Int): Int =
-        this.firstArguments().drop(nestingLevel).first().let {
-            (it as Struct).arity
-        }
+        this.firstArguments().takeFirstAfterSkipping(nestingLevel).let { it.castToStruct().arity }
 
     /**Calculate the functor of the first argument of any [Struct], at the given nesting level.
      * No checks are performed upon the validity of the Struct this extension method is called upon. */
     fun Struct.functorOfNestedFirstArgument(nestingLevel: Int): String =
-        this.firstArguments().drop(nestingLevel).first().let {
-            (it as Struct).functor
-        }
+        this.firstArguments().takeFirstAfterSkipping(nestingLevel).let { it.castToStruct().functor }
 
     /**Calculate the [Term] representing the first argument of any [Struct], at the given nesting level.
      * No checks are performed upon the validity of the Struct this extension method is called upon. */
     fun Struct.nestedFirstArgument(nestingLevel: Int): Term =
-        this.firstArguments().drop(nestingLevel).first()
+        this.firstArguments().takeFirstAfterSkipping(nestingLevel)
 
     private fun Struct.firstArguments(): Sequence<Term> =
         sequence {
             var currentTerm: Term = this@firstArguments
-            while (currentTerm is Struct) {
+            while (currentTerm.isStruct) {
                 yield(currentTerm)
-                currentTerm = currentTerm[0]
+                currentTerm = currentTerm.castToStruct().getArgAt(0)
             }
             yield(currentTerm)
         }

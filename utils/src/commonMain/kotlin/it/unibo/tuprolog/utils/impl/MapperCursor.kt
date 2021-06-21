@@ -8,8 +8,8 @@ internal data class MapperCursor<T, R>(
 ) : AbstractCursor<R>() {
 
     init {
-        require(wrapped !is EmptyCursor) {
-            "Cannot create a ${MapperCursor::class.simpleName} out of an ${EmptyCursor::class.simpleName}"
+        require(!wrapped.isOver) {
+            "Cannot create a ${MapperCursor::class.simpleName} out a cursor which is over"
         }
     }
 

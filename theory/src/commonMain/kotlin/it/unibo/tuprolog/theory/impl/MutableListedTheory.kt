@@ -30,6 +30,8 @@ internal class MutableListedTheory private constructor(
         checkClausesCorrect(clauses)
     }
 
+    override fun toMutableTheory(): MutableTheory = super<MutableTheory>.toMutableTheory()
+
     override fun createNewTheory(clauses: Sequence<Clause>, tags: Map<String, Any>): AbstractTheory =
         MutableListedTheory(clauses, tags)
 
@@ -109,12 +111,12 @@ internal class MutableListedTheory private constructor(
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableListedTheory> = retract(clauses.asIterable())
 
-    override fun abolish(indicator: Indicator): MutableListedTheory = super.abolish(indicator) as MutableListedTheory
+    override fun abolish(indicator: Indicator): MutableTheory = super.abolish(indicator).toMutableTheory()
 
     override fun toImmutableTheory(): Theory = Theory.listedOf(this)
 
     override fun replaceTags(tags: Map<String, Any>): MutableListedTheory =
         if (tags === this.tags) this else MutableListedTheory(clauses, tags)
 
-    override fun clone(): MutableTheory = super.clone() as MutableTheory
+    override fun clone(): MutableTheory = super.clone().toMutableTheory()
 }

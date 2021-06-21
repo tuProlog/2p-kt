@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Tuple
 
 internal class TupleUnfolder(tuple: Tuple) : Iterator<Term> {
@@ -9,17 +10,17 @@ internal class TupleUnfolder(tuple: Tuple) : Iterator<Term> {
 
     override fun hasNext(): Boolean = current != null
 
-    override fun next(): Term {
-        return when (val x = current) {
-            is Tuple -> {
-                current = x.right
-                x
-            }
-            null -> throw NoSuchElementException()
-            else -> {
-                current = null
-                x
-            }
+    private val tupleUnfolderVisitor = object : TermVisitor<Term> {
+        override fun visitTuple(term: Tuple): Term {
+            current = term.right
+            return term
+        }
+
+        override fun defaultValue(term: Term): Term {
+            current = null
+            return term
         }
     }
+
+    override fun next(): Term = current?.accept(tupleUnfolderVisitor) ?: throw NoSuchElementException()
 }

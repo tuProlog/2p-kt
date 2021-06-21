@@ -16,9 +16,9 @@ internal abstract class AbstractTermFormatterForVariables(
     override fun visitVar(term: Var): String {
         return if (term.isAnonymous) {
             ANONYMOUS_VAR_NAME
-        } else if (term.name in variables) {
+        } else if (variables.containsKey(term.name)) {
             val homonymous = variables[term.name]!!
-            if (term in homonymous) {
+            if (homonymous.containsKey(term)) {
                 formatVar(term, homonymous[term]!!)
             } else {
                 val homonymousCount = homonymous.size

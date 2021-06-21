@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.utils.insertAt
@@ -31,23 +32,27 @@ internal abstract class ClauseImpl(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): Clause
 
-    override fun freshCopy(): Clause = super.freshCopy() as Clause
+    override fun freshCopy(): Clause = super.freshCopy().castToClause()
 
-    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope) as Clause
+    override fun freshCopy(scope: Scope): Clause = super.freshCopy(scope).castToClause()
 
     private val bodyItemsSequence: Sequence<Term>
-        get() = when (val body = body) {
-            is Tuple -> body.toSequence()
-            else -> sequenceOf(body)
+        get() = body.let {
+            when {
+                it.isTuple -> it.castToTuple().toSequence()
+                else -> sequenceOf(it)
+            }
         }
 
     override val bodyItems: Iterable<Term>
         get() = bodyItemsSequence.asIterable()
 
     override val bodySize: Int
-        get() = when (val body = body) {
-            is Tuple -> body.size
-            else -> 1
+        get() = body.let {
+            when {
+                it.isTuple -> it.castToTuple().size
+                else -> 1
+            }
         }
 
     override val bodyAsTuple: Tuple?
@@ -101,4 +106,6 @@ internal abstract class ClauseImpl(
     override fun addLastBodyItem(argument: Term): Clause = of(head, bodyItemsSequence + sequenceOf(argument))
 
     override fun appendBodyItem(argument: Term): Clause = addLastBodyItem(argument)
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitClause(this)
 }

@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
 import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
@@ -18,7 +18,7 @@ internal abstract class AbstractCons(
         const val SWITCH_TO_LAZY_THRESHOLD = 100
     }
 
-    internal open val weight: Int
+    override val estimatedLength: Int
         get() = 1
 
     override val unfoldedSequence: Sequence<Term>
@@ -28,7 +28,7 @@ internal abstract class AbstractCons(
 
     override val args: Array<Term> get() = super<CollectionImpl>.args
 
-    override val isWellFormed: Boolean by lazy { last is EmptyList }
+    override val isWellFormed: Boolean by lazy { last.isEmptyList }
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 
@@ -63,14 +63,16 @@ internal abstract class AbstractCons(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): AbstractCons
 
-    override fun freshCopy(): Cons = super.freshCopy() as Cons
+    override fun freshCopy(): Cons = super.freshCopy().castToCons()
 
     override fun freshCopy(scope: Scope): Cons = when {
         isGround -> this
-        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags) as Cons
+        isWellFormed -> scope.listOf(toSequence().map { it.freshCopy(scope) }).setTags(tags).castToCons()
         else -> scope.listFrom(
             unfoldedList.subList(0, unfoldedList.lastIndex).map { it.freshCopy(scope) },
             last = unfoldedList.last().freshCopy(scope)
-        ).setTags(tags) as Cons
+        ).setTags(tags).castToCons()
     }
+
+    final override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCons(this)
 }

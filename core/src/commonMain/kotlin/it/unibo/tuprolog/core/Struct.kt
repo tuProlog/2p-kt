@@ -341,8 +341,8 @@ interface Struct : Term {
         fun of(functor: String, args: KtList<Term>): Struct =
             when {
                 args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first() is Struct ->
-                    Rule.of(args.first() as Struct, args.last())
+                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
+                    Rule.of(args.first().castToStruct(), args.last())
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                 args.size == 1 && SET_FUNCTOR == functor -> Set.of(args)

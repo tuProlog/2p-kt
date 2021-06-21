@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Set
 import it.unibo.tuprolog.core.Struct
@@ -34,7 +35,7 @@ internal abstract class AbstractTermFormatter(
 
     override fun visitStruct(term: Struct): String {
         if (numberVars && isNumberedVar(term)) {
-            return numberedVar(term[0] as Integer)
+            return numberedVar(term[0].castToInteger())
         }
         val functor = formatFunctor(term)
         val args = term.argsSequence.map { it.accept(childFormatter()) }.joinToString(", ", "(", ")")
@@ -42,7 +43,9 @@ internal abstract class AbstractTermFormatter(
     }
 
     private fun isNumberedVar(term: Struct): Boolean =
-        term.functor == "\$VAR" && term.arity == 1 && term[0].let { it is Integer && it.value >= BigInteger.ZERO }
+        term.functor == "\$VAR" && term.arity == 1 && term[0].let {
+            it.isInt && it.castToInteger().value >= BigInteger.ZERO
+        }
 
     private fun numberedVar(integer: Integer): String {
         val letterIndex = (integer.value % TWENTY_SIX).toInt() + A_INDEX
@@ -60,49 +63,60 @@ internal abstract class AbstractTermFormatter(
         }
     }
 
-    override fun visit(term: Collection): String =
+    private fun <T : Struct> visitStructImpl(term: T, actualVisit: (T) -> String): String =
         if (ignoreOps) {
             visitStruct(term)
         } else {
-            super.visit(term)
+            actualVisit(term)
         }
 
-    override fun visit(term: Clause): String =
-        if (ignoreOps) {
-            visitStruct(term)
-        } else {
-            super.visit(term)
+    override fun visitCollection(term: Collection): String =
+        visitStructImpl(term) { defaultValue(term) }
+
+    override fun visitList(term: List): String = visitCollection(term)
+
+    override fun visitEmptyList(term: EmptyList): String = defaultValue(term)
+
+    override fun visitCons(term: Cons): String =
+        visitStructImpl(term) {
+            with(term.unfoldedList) {
+                val last = last()
+                val base = subList(0, lastIndex).joinToString(", ", "[", "") {
+                    it.accept(itemFormatter())
+                }
+                val lastString = if (last.isEmptyList) {
+                    "]"
+                } else {
+                    " | ${last.accept(itemFormatter())}]"
+                }
+                base + lastString
+            }
         }
 
     override fun visitSet(term: Set): String =
-        term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
-
-    protected open fun itemFormatter(): TermFormatter = this
-
-    protected open fun childFormatter(): TermFormatter = this
-
-    override fun visitCons(term: Cons): String =
-        with(term.unfoldedList) {
-            val last = last()
-            val base = subList(0, lastIndex).joinToString(", ", "[", "") {
-                it.accept(itemFormatter())
-            }
-            val lastString = if (last is EmptyList) {
-                "]"
-            } else {
-                " | ${last.accept(itemFormatter())}]"
-            }
-            return base + lastString
+        visitStructImpl(term) {
+            term.unfoldedSequence.joinToString(", ", "{", "}") { it.accept(childFormatter()) }
         }
 
     override fun visitTuple(term: Tuple): String =
-        term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        visitStructImpl(term) {
+            term.unfoldedSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        }
+
+    override fun visitClause(term: Clause): String =
+        visitStructImpl(term) {
+            term.accept(this)
+        }
 
     override fun visitRule(term: Rule): String = visitStruct(term)
 
     override fun visitFact(term: Fact): String = visitRule(term)
 
     override fun visitDirective(term: Directive): String = visitStruct(term)
+
+    protected open fun itemFormatter(): TermFormatter = this
+
+    protected open fun childFormatter(): TermFormatter = this
 
     override fun visitIndicator(term: Indicator): String = visitStruct(term)
 }

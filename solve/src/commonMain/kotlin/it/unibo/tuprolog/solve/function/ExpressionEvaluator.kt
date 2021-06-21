@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.function
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.TypeError
@@ -16,8 +15,4 @@ import it.unibo.tuprolog.solve.primitive.Solve
 class ExpressionEvaluator<E : ExecutionContext>(
     request: Solve.Request<E>,
     index: Int? = null
-) : AbstractEvaluator<E, Term>(request, index) {
-
-    override fun unevaluable(struct: Struct): Term =
-        throw TypeError.forArgument(request.context, request.signature, TypeError.Expected.EVALUABLE, struct, index)
-}
+) : AbstractEvaluator<E, Term>(request, index)

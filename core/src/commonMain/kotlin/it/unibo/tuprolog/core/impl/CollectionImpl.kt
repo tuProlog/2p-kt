@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Collection
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.itemWiseEquals
@@ -28,21 +29,23 @@ internal abstract class CollectionImpl(
 
     abstract override fun copyWithTags(tags: Map<String, Any>): Collection
 
-    override fun freshCopy(): Collection = super.freshCopy() as Collection
+    override fun freshCopy(): Collection = super.freshCopy().castToCollection()
 
-    override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope) as Collection
+    override fun freshCopy(scope: Scope): Collection = super.freshCopy(scope).castToCollection()
 
     override fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (other as? Collection)?.let {
+        other.asCollection()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.structurallyEquals(b)
             }
         } ?: false
 
     override fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (other as? Collection)?.let {
+        other.asCollection()?.let {
             itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
                 a.equals(b, useVarCompleteName)
             }
         } ?: false
+
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 }

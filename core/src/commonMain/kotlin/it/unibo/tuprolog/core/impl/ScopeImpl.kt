@@ -27,9 +27,9 @@ import it.unibo.tuprolog.core.Set as LogicSet
 @Suppress("RemoveRedundantQualifierName")
 internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scope {
 
-    override fun contains(variable: Var): Boolean = variable.name in _variables
+    override fun contains(variable: Var): Boolean = _variables.containsKey(variable.name)
 
-    override fun contains(variable: String): Boolean = variable in _variables
+    override fun contains(variable: String): Boolean = _variables.containsKey(variable)
 
     override fun get(variable: String): Var? = _variables[variable]
 
@@ -38,7 +38,7 @@ internal class ScopeImpl(private val _variables: MutableMap<String, Var>) : Scop
 
     @Synchronized
     override fun varOf(name: String): Var {
-        if (name !in _variables) {
+        if (!_variables.containsKey(name)) {
             _variables[name] = Var.of(name)
         }
         return _variables[name]!!
