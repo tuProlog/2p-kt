@@ -107,7 +107,7 @@ internal class FunctorIndexingNode(
         this.isRule && this.castToRule().head.nestedFirstArgument(nestingLevel).isVariable
 
     private fun Clause.nestedArity(): Int =
-        (this as? Rule)?.head?.arityOfNestedFirstArgument(nestingLevel)
+        asRule()?.head?.arityOfNestedFirstArgument(nestingLevel)
             ?: error("The nestedArity method cannot be invoked on non-rule clauses")
 
     private fun IndexedClause.nestedArity(): Int =

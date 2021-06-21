@@ -44,7 +44,7 @@ internal open class StructImpl(
         (0 until arity).all { args[it].equals(other[it], useVarCompleteName) }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
-        (other as? Struct)?.let { equalsImpl(it, useVarCompleteName) } ?: false
+        other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
 
     private fun equalsImpl(other: Struct, useVarCompleteName: Boolean): Boolean {
         if (this === other) return true
