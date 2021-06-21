@@ -223,21 +223,22 @@ internal open class FamilyArityReteNode(
             }
         }
 
-    protected fun orderedLookahead(clause: Clause): SituatedIndexedClause? =
-        when (clause.nestedFirstArgument()) {
-            is Numeric -> {
+    protected fun orderedLookahead(clause: Clause): SituatedIndexedClause? {
+        val innerFirst = clause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> {
                 Utils.comparePriority(
                     numericIndex.getFirstIndexed(clause),
                     variableIndex.getFirstIndexed(clause)
                 )
             }
-            is Atom -> {
+            innerFirst.isAtom -> {
                 Utils.comparePriority(
                     atomicIndex.getFirstIndexed(clause),
                     variableIndex.getFirstIndexed(clause)
                 )
             }
-            is Var -> Utils.comparePriority(
+            innerFirst.isVariable -> Utils.comparePriority(
                 Utils.comparePriority(
                     numericIndex.getFirstIndexed(clause),
                     atomicIndex.getFirstIndexed(clause)
@@ -252,6 +253,7 @@ internal open class FamilyArityReteNode(
                 compoundIndex.getFirstIndexed(clause)
             )
         }
+    }
 
     override fun invalidateCache() {
         theoryCache.invalidate()
@@ -283,14 +285,16 @@ internal open class FamilyArityReteNode(
     private fun Clause.nestedFirstArgument(): Term =
         this.head!!.nestedFirstArgument(nestingLevel + 1)
 
-    private fun assertByFirstParameter(clause: IndexedClause): IndexingLeaf =
-        when (clause.innerClause.nestedFirstArgument()) {
-            is Numeric -> numericIndex
-            is Atom -> atomicIndex
-            is Var -> variableIndex
+    private fun assertByFirstParameter(clause: IndexedClause): IndexingLeaf {
+        val innerFirst = clause.innerClause.nestedFirstArgument()
+        return when {
+            innerFirst.isNumber -> numericIndex
+            innerFirst.isAtom -> atomicIndex
+            innerFirst.isVariable -> variableIndex
             else -> compoundIndex
         }
+    }
 
     private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel + 1) is Var
+        this.head!!.nestedFirstArgument(nestingLevel + 1).isVariable
 }

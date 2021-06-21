@@ -1,10 +1,75 @@
 package it.unibo.tuprolog.collections.rete.generic
 
+import it.unibo.tuprolog.collections.rete.generic.set.ArgNode
+import it.unibo.tuprolog.collections.rete.generic.set.ArityNode
+import it.unibo.tuprolog.collections.rete.generic.set.DirectiveNode
+import it.unibo.tuprolog.collections.rete.generic.set.FunctorNode
+import it.unibo.tuprolog.collections.rete.generic.set.NoArgsNode
+import it.unibo.tuprolog.collections.rete.generic.set.RootNode
+import it.unibo.tuprolog.collections.rete.generic.set.RuleNode
+import it.unibo.tuprolog.core.Clause
 import kotlin.jvm.JvmStatic
 
 /** Abstract base class for Rete Tree nodes */
-internal abstract class AbstractReteNode<K, E>(override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()) :
-    ReteNode<K, E> {
+internal abstract class AbstractReteNode<K, E : Clause>(
+    override val children: MutableMap<K, ReteNode<*, E>> = mutableMapOf()
+) : ReteNode<K, E> {
+
+    override val isFunctorNode: Boolean
+        get() = false
+
+    override fun asFunctorNode(): FunctorNode? = null
+
+    override fun castToFunctorNode(): FunctorNode =
+        asFunctorNode() ?: throw ClassCastException("Cannot cast $this to ${FunctorNode::class.simpleName}")
+
+    override val isArgNode: Boolean
+        get() = false
+
+    override fun asArgNode(): ArgNode? = null
+
+    override fun castToArgNode(): ArgNode =
+        asArgNode() ?: throw ClassCastException("Cannot cast $this to ${ArgNode::class.simpleName}")
+
+    override val isArityNode: Boolean
+        get() = false
+
+    override fun asArityNode(): ArityNode? = null
+
+    override fun castToArityNode(): ArityNode =
+        asArityNode() ?: throw ClassCastException("Cannot cast $this to ${ArityNode::class.simpleName}")
+
+    override val isDirectiveNode: Boolean
+        get() = false
+
+    override fun asDirectiveNode(): DirectiveNode? = null
+
+    override fun castToDirectiveNode(): DirectiveNode =
+        asDirectiveNode() ?: throw ClassCastException("Cannot cast $this to ${DirectiveNode::class.simpleName}")
+
+    override val isRootNode: Boolean
+        get() = false
+
+    override fun asRootNode(): RootNode? = null
+
+    override fun castToRootNode(): RootNode =
+        asRootNode() ?: throw ClassCastException("Cannot cast $this to ${RootNode::class.simpleName}")
+
+    override val isRuleNode: Boolean
+        get() = false
+
+    override fun asRuleNode(): RuleNode? = null
+
+    override fun castToRuleNode(): RuleNode =
+        asRuleNode() ?: throw ClassCastException("Cannot cast $this to ${RuleNode::class.simpleName}")
+
+    override val isNoArgsNode: Boolean
+        get() = false
+
+    override fun asNoArgsNode(): NoArgsNode? = null
+
+    override fun castToNoArgsNode(): NoArgsNode =
+        asNoArgsNode() ?: throw ClassCastException("Cannot cast $this to ${NoArgsNode::class.simpleName}")
 
     /** Description for current Rete Tree Node */
     protected abstract val header: String

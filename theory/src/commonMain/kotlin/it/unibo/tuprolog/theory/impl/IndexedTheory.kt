@@ -2,7 +2,6 @@ package it.unibo.tuprolog.theory.impl
 
 import it.unibo.tuprolog.collections.ClauseQueue
 import it.unibo.tuprolog.collections.MutableClauseQueue
-import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
@@ -34,12 +33,12 @@ internal class IndexedTheory private constructor(
 
     override fun retract(clause: Clause): RetractResult<IndexedTheory> {
         val newTheory = ClauseQueue.of(clauses)
-        return when (val retracted = newTheory.retrieveFirst(clause)) {
-            is RetrieveResult.Failure ->
-                RetractResult.Failure(this)
+        val retracted = newTheory.retrieveFirst(clause)
+        return when {
+            retracted.isFailure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
                 IndexedTheory(retracted.collection, tags),
-                (retracted as RetrieveResult.Success).clauses
+                retracted.clauses!!
             )
         }
     }
@@ -51,8 +50,8 @@ internal class IndexedTheory private constructor(
         val removed = dequeOf<Clause>()
         for (clause in clauses) {
             val result = newTheory.retrieveFirst(clause)
-            if (result is RetrieveResult.Success) {
-                removed.addAll(result.clauses)
+            if (result.isSuccess) {
+                removed.addAll(result.clauses!!)
             }
         }
         return if (removed.isEmpty()) {
@@ -67,11 +66,12 @@ internal class IndexedTheory private constructor(
 
     override fun retractAll(clause: Clause): RetractResult<IndexedTheory> {
         val newTheory = ClauseQueue.of(clauses)
-        return when (val retracted = newTheory.retrieveAll(clause)) {
-            is RetrieveResult.Failure -> RetractResult.Failure(this)
+        val retracted = newTheory.retrieveAll(clause)
+        return when {
+            retracted.isFailure -> RetractResult.Failure(this)
             else -> RetractResult.Success(
                 IndexedTheory(retracted.collection, tags),
-                (retracted as RetrieveResult.Success).clauses
+                retracted.clauses!!
             )
         }
     }

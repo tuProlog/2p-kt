@@ -8,6 +8,11 @@ import it.unibo.tuprolog.core.Rule
 internal data class NoArgsNode(override val children: MutableMap<Nothing?, ReteNode<*, Rule>> = mutableMapOf()) :
     AbstractIntermediateReteNode<Nothing?, Rule>(children) {
 
+    override val isNoArgsNode: Boolean
+        get() = true
+
+    override fun asNoArgsNode(): NoArgsNode = this
+
     override val header = "NoArguments"
 
     override fun put(element: Rule, beforeOthers: Boolean) =

@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.collections.rete.generic
 
+import it.unibo.tuprolog.core.Clause
 import kotlin.math.min
 
 /** A leaf Rete Node */
-internal abstract class AbstractLeafReteNode<E>(override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf()) :
-    AbstractReteNode<Nothing, E>(children) {
+internal abstract class AbstractLeafReteNode<E : Clause>(
+    override val children: MutableMap<Nothing, ReteNode<*, E>> = mutableMapOf()
+) : AbstractReteNode<Nothing, E>(children) {
 
     /** Internal data structure to store leaf elements */
     protected abstract val leafElements: MutableList<E>

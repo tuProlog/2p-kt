@@ -9,7 +9,6 @@ import it.unibo.tuprolog.collections.rete.custom.clause.SituatedIndexedClause
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexing
 import it.unibo.tuprolog.collections.rete.custom.nodes.FunctorIndexingNode
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.Cached
 import it.unibo.tuprolog.utils.dequeOf
 
@@ -157,7 +156,7 @@ internal class CompoundIndex(
         this.innerClause.head!!.functorOfNestedFirstArgument(nestingLevel)
 
     private fun Clause.isGlobal(): Boolean =
-        this.head!!.nestedFirstArgument(nestingLevel) is Var
+        this.head!!.nestedFirstArgument(nestingLevel).isVariable
 
     override fun invalidateCache() {
         theoryCache.invalidate()

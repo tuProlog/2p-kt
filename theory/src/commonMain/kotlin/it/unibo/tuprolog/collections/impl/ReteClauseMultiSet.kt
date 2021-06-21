@@ -43,4 +43,7 @@ internal class ReteClauseMultiSet private constructor(
     }
 
     override fun hashCode(): Int = hashCodeCache
+
+    override val self: ReteClauseMultiSet
+        get() = this
 }

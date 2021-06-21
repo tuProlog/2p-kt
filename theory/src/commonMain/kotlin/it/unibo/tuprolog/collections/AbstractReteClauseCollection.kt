@@ -30,32 +30,18 @@ protected constructor(
     override fun retrieve(clause: Clause): RetrieveResult<out Self> {
         val newTheory = rete.deepCopy()
         val retracted = newTheory.retractFirst(clause)
-
-        @Suppress("UNCHECKED_CAST")
         return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this as Self)
-            else ->
-                RetrieveResult.Success(
-                    newCollectionBuilder(newTheory),
-                    retracted.toList()
-                )
+            retracted.none() -> RetrieveResult.Failure(self)
+            else -> RetrieveResult.Success(newCollectionBuilder(newTheory), retracted.toList())
         }
     }
 
     override fun retrieveAll(clause: Clause): RetrieveResult<out Self> {
         val newTheory = rete.deepCopy()
         val retracted = newTheory.retractAll(clause)
-
-        @Suppress("UNCHECKED_CAST")
         return when {
-            retracted.none() ->
-                RetrieveResult.Failure(this as Self)
-            else ->
-                RetrieveResult.Success(
-                    newCollectionBuilder(newTheory),
-                    retracted.toList()
-                )
+            retracted.none() -> RetrieveResult.Failure(self)
+            else -> RetrieveResult.Success(newCollectionBuilder(newTheory), retracted.toList())
         }
     }
 }

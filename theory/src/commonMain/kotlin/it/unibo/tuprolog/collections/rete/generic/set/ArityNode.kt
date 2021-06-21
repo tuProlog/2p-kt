@@ -22,8 +22,11 @@ internal data class ArityNode(
         element.head.arity > 0 -> {
             val headFirstArg = element.head[0]
             val child = children.getOrElse(headFirstArg) {
-                children.retrieve<ArgNode> { head -> head != null && head structurallyEquals headFirstArg }
-                    .singleOrNull()
+                children.retrieve(
+                    keyFilter = { head -> head != null && head structurallyEquals headFirstArg },
+                    typeChecker = { it.isArgNode },
+                    caster = { it.castToArgNode() }
+                ).singleOrNull()
             }
 
             child ?: ArgNode(0, headFirstArg)
@@ -34,9 +37,13 @@ internal data class ArityNode(
     }.put(element, beforeOthers)
 
     override fun selectChildren(element: Rule) = when {
-        element.head.arity > 0 ->
-            children.retrieve<ArgNode> { head -> head != null && head matches element.head[0] }
-
+        element.head.arity > 0 -> {
+            children.retrieve(
+                keyFilter = { head -> head != null && head matches element.head[0] },
+                typeChecker = { it.isArgNode },
+                caster = { it.castToArgNode() }
+            )
+        }
         else -> sequenceOf(children[null])
     }
 
