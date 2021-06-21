@@ -44,7 +44,7 @@ class TestCursor {
             assertEquals(
                 iterExpected.next(),
                 iterActual.next(),
-                "Items with index ${i - 1} to not correspond"
+                "Items with index ${i - 1} does not correspond"
             )
             i++
         }
