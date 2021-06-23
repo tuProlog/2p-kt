@@ -15,9 +15,12 @@ import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
 
-fun Sequence<Clause>.ensureRules(): Cursor<out Rule> =
+fun Sequence<Clause>.toRulesCursor(): Cursor<out Rule> =
+    ensureRules().cursor()
+
+fun Sequence<Clause>.ensureRules(): Sequence<Rule> =
     @Suppress("USELESS_CAST")
-    map { require(it.isRule); it.castToRule() }.cursor()
+    map { require(it.isRule); it.castToRule() }
 
 fun Term.unfoldGoals(): Sequence<Term> =
     when {

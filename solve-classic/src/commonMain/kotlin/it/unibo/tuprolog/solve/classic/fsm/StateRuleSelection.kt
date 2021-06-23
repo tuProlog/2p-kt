@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.classic.fsm
 
-import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
@@ -18,7 +18,9 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.buffered
+import it.unibo.tuprolog.utils.cursor
 
 data class StateRuleSelection(override val context: ClassicExecutionContext) : AbstractState(context) {
 
@@ -176,7 +178,7 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
                     }
 
                     ruleSources.any { currentGoalStruct in it } -> {
-                        val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.ensureRules()
+                        val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
                         if (context.isTailRecursive) {
                             StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
                         } else {
@@ -200,14 +202,14 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
         }
     }
 
-    private fun Theory.selectClauses(term: Struct): Sequence<Clause> =
-        get(term).map { it.freshCopy() }.let {
+    private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
+        get(term).map { it.freshCopy() }.ensureRules()/*.let {
             if (isMutable) {
                 it.buffered()
             } else {
                 it
             }
-        }
+        }*/.buffered()
 
     override fun clone(context: ClassicExecutionContext): StateRuleSelection = copy(context = context)
 }
