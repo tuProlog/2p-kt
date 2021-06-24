@@ -18,7 +18,6 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
@@ -203,13 +202,13 @@ data class StateRuleSelection(override val context: ClassicExecutionContext) : A
     }
 
     private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
-        get(term).map { it.freshCopy() }.ensureRules()/*.let {
+        get(term).map { it.freshCopy() }.ensureRules().let {
             if (isMutable) {
                 it.buffered()
             } else {
                 it
             }
-        }*/.buffered()
+        }
 
     override fun clone(context: ClassicExecutionContext): StateRuleSelection = copy(context = context)
 }
