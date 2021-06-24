@@ -34,7 +34,7 @@ internal class StateRuleSelectionTest {
     /** A Solve.Request with three databases and three different facts, to test how they should be used/combined in searching */
     private val threeDBSolveRequest = Solve.Request(
         theQuery.extractSignature(),
-        theQuery.argsList,
+        theQuery.args,
         StreamsExecutionContext(
             libraries = Libraries.of(
                 Library.aliased(

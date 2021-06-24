@@ -139,12 +139,12 @@ internal class SetImplTest {
     fun freshCopyMergesDifferentVariablesWithSameName() {
         val setWithSameVarName = SetImpl(Tuple.of(Var.of("A"), Var.of("A"), Var.of("A")))
 
-        assertAllVsAll(setWithSameVarName.argsList) { anElement, anotherElement ->
+        assertAllVsAll(setWithSameVarName.args) { anElement, anotherElement ->
             assertEqualities(anElement, anotherElement)
             assertSame(anElement, anotherElement)
         }
 
         val setCopied = setWithSameVarName.freshCopy()
-        assertAllVsAll(setCopied.argsList, ::assertEqualities)
+        assertAllVsAll(setCopied.args, ::assertEqualities)
     }
 }

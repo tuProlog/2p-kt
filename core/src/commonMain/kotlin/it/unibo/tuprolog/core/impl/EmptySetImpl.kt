@@ -10,17 +10,17 @@ internal class EmptySetImpl(
     tags: Map<String, Any> = emptyMap()
 ) : SetImpl(null, tags), EmptySet {
 
-    override val args: Array<Term> by lazy { super<EmptySet>.args }
+    override val argsArray: Array<Term> get() = emptyArray()
 
-    override val argsList: List<Term> by lazy { super<SetImpl>.argsList }
+    override val args: List<Term> get() = emptyList()
 
     override val functor: String = super<EmptySet>.functor
 
-    override val isGround: Boolean by lazy { super<EmptySet>.isGround }
+    override val isGround: Boolean get() = super<SetImpl>.isGround
 
     override val size: Int get() = 0
 
-    override val variables: Sequence<Var> by lazy { super<EmptySet>.variables }
+    override val variables: Sequence<Var> = emptySequence()
 
     override fun copyWithTags(tags: Map<String, Any>): EmptySet = EmptySetImpl(tags)
 

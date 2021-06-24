@@ -45,11 +45,10 @@ internal class TupleImplTest {
     @Test
     fun argsCorrect() {
         val tupleInstancesArgs =
-            tupleInstancesLefts.zip(tupleInstancesRights).map { (left, right) -> arrayOf(left, right) }
+            tupleInstancesLefts.zip(tupleInstancesRights).map { (left, right) -> listOf(left, right) }
 
         onCorrespondingItems(tupleInstancesArgs, tupleInstances.map { it.args }) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-            assertTrue { expected.contentDeepEquals(actual) }
+            assertEquals(expected, actual)
         }
     }
 

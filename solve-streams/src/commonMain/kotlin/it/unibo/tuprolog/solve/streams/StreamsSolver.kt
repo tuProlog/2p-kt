@@ -80,7 +80,7 @@ internal class StreamsSolver constructor(
         var solutionSequence = solveToFinalStates(
             Solve.Request(
                 goal.extractSignature(),
-                goal.argsList,
+                goal.args,
                 executionContext as StreamsExecutionContext,
                 executionMaxDuration = options.timeout
             )

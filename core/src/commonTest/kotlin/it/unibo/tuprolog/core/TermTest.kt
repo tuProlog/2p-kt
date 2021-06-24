@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
+import kotlin.collections.List as KtList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -9,14 +10,14 @@ import kotlin.test.assertTrue
 
 class TermTest {
 
-    private data class MyStruct(override val functor: String, override val args: Array<Term>) : Struct {
+    private data class MyStruct(override val functor: String, override val args: KtList<Term>) : Struct {
 
         override fun freshCopy(): Struct {
             return freshCopy(Scope.empty())
         }
 
         override fun freshCopy(scope: Scope): Struct {
-            return MyStruct(functor, args.map { it.freshCopy(scope) }.toTypedArray())
+            return MyStruct(functor, args.map { it.freshCopy(scope) })
         }
 
         override fun addLast(argument: Term): Struct = throw NotImplementedError()
@@ -61,7 +62,7 @@ class TermTest {
             return if (substitution.isFailed) {
                 throw SubstitutionApplicationException(this, substitution)
             } else {
-                MyStruct(functor, args.map { it[substitution] }.toTypedArray())
+                MyStruct(functor, args.map { it[substitution] })
             }
         }
 
@@ -73,12 +74,12 @@ class TermTest {
     private val sub = Substitution.unifier(X, Integer.ONE)
 
     private val compounds = listOf(
-        MyStruct("f", arrayOf(X)),
+        MyStruct("f", listOf(X)),
         Struct.of("g", X),
         List.of(X),
         Set.of(X),
         Tuple.of(X, X),
-        Fact.of(MyStruct("f", arrayOf(X))),
+        Fact.of(MyStruct("f", listOf(X))),
         Fact.of(Struct.of("g", X)),
         Fact.of(List.of(X)),
         Fact.of(Set.of(X)),
@@ -86,12 +87,12 @@ class TermTest {
     )
 
     private val expected = listOf(
-        MyStruct("f", arrayOf(Integer.ONE)),
+        MyStruct("f", listOf(Integer.ONE)),
         Struct.of("g", Integer.ONE),
         List.of(Integer.ONE),
         Set.of(Integer.ONE),
         Tuple.of(Integer.ONE, Integer.ONE),
-        Fact.of(MyStruct("f", arrayOf(Integer.ONE))),
+        Fact.of(MyStruct("f", listOf(Integer.ONE))),
         Fact.of(Struct.of("g", Integer.ONE)),
         Fact.of(List.of(Integer.ONE)),
         Fact.of(Set.of(Integer.ONE)),

@@ -15,16 +15,16 @@ internal class IndicatorImpl(
     override val nameTerm: Term,
     override val arityTerm: Term,
     tags: Map<String, Any> = emptyMap()
-) : StructImpl(INDICATOR_FUNCTOR, arrayOf(nameTerm, arityTerm), tags), Indicator {
+) : StructImpl(INDICATOR_FUNCTOR, listOf(nameTerm, arityTerm), tags), Indicator {
 
     override val functor: String
         get() = INDICATOR_FUNCTOR
 
-    override val args: Array<Term> by lazy { super<StructImpl>.args }
+    override val argsArray: Array<Term> get() = super<StructImpl>.argsArray
 
-    override val indicatedName: String? by lazy { super.indicatedName }
+    override val indicatedName: String? get() = super.indicatedName
 
-    override val indicatedArity: Int? by lazy { super.indicatedArity }
+    override val indicatedArity: Int? get() = super.indicatedArity
 
     override fun toString(): String = "$nameTerm${Indicator.FUNCTOR}$arityTerm"
 

@@ -12,7 +12,7 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 
 internal abstract class CollectionImpl(
     functor: String,
-    args: Array<Term>,
+    args: List<Term>,
     tags: Map<String, Any>
 ) : StructImpl(functor, args, tags), Collection {
 

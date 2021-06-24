@@ -11,7 +11,7 @@ import it.unibo.tuprolog.core.Set as LogicSet
 internal open class SetImpl(
     private val item: Term?,
     tags: Map<String, Any> = emptyMap()
-) : CollectionImpl(SET_FUNCTOR, listOfNotNull(item).toTypedArray(), tags), LogicSet {
+) : CollectionImpl(SET_FUNCTOR, listOfNotNull(item), tags), LogicSet {
 
     override val functor: String = super<LogicSet>.functor
 

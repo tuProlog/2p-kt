@@ -12,7 +12,7 @@ internal class TupleImpl(
     override val left: Term,
     override val right: Term,
     tags: Map<String, Any> = emptyMap()
-) : CollectionImpl(TUPLE_FUNCTOR, arrayOf(left, right), tags), Tuple {
+) : CollectionImpl(TUPLE_FUNCTOR, listOf(left, right), tags), Tuple {
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { TupleIterator(this) }.asSequence()
@@ -23,7 +23,7 @@ internal class TupleImpl(
 
     override val functor: String = TUPLE_FUNCTOR
 
-    override val args: Array<Term> get() = super<CollectionImpl>.args
+    override val argsArray: Array<Term> get() = super<CollectionImpl>.argsArray
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
 

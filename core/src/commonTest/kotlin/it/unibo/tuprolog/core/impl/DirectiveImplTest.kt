@@ -78,11 +78,10 @@ internal class DirectiveImplTest {
 
     @Test
     fun argsCorrect() {
-        val correctArgs = DirectiveUtils.mixedDirectives.map { arrayOf(it) }
+        val correctArgs = DirectiveUtils.mixedDirectives.map { listOf(it) }
 
         onCorrespondingItems(correctArgs, mixedDirectivesInstances.map { it.args }) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-            assertTrue { expected.contentDeepEquals(actual) }
+            assertEquals(expected, actual)
         }
     }
 

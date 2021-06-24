@@ -5,14 +5,18 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.utils.itemWiseHashCode
 import it.unibo.tuprolog.utils.setTags
 
 @Suppress("EqualsOrHashCode")
 internal open class StructImpl(
     override val functor: String,
-    override val args: Array<Term>,
+    override val args: List<Term>,
     tags: Map<String, Any> = emptyMap()
 ) : TermImpl(tags), Struct {
+
+    constructor(functor: String, args: Array<Term>, tags: Map<String, Any> = emptyMap()) :
+        this(functor, listOf(*args), tags)
 
     override val isGround: Boolean by lazy { super<Struct>.isGround }
 
@@ -33,17 +37,20 @@ internal open class StructImpl(
 
     @Suppress("RedundantAsSequence")
     protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (0 until arity).asSequence().all { this[it] structurallyEquals other[it] }
+        (0 until arity).asSequence().all { getArgAt(it) structurallyEquals other[it] }
 
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
+
+    override val argsArray: Array<Term>
+        get() = args.toTypedArray()
 
     final override fun equals(other: Any?): Boolean =
         asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
     @Suppress("RedundantAsSequence")
     protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (0 until arity).asSequence().all { args[it].equals(other[it], useVarCompleteName) }
+        (0 until arity).asSequence().all { getArgAt(it).equals(other[it], useVarCompleteName) }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
         other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false
@@ -63,7 +70,7 @@ internal open class StructImpl(
         result
     }
 
-    protected open fun argsHashCode(): Int = args.contentHashCode()
+    protected open fun argsHashCode(): Int = itemWiseHashCode(args)
 
     override fun toString(): String {
         val escaped = Struct.escapeFunctorIfNecessary(functor)
@@ -71,23 +78,24 @@ internal open class StructImpl(
         return "$quoted${if (arity > 0) "(${args.joinToString(", ")})" else ""}"
     }
 
-    override fun addLast(argument: Term): Struct = Struct.of(functor, *args, argument)
+    override fun addLast(argument: Term): Struct = Struct.of(functor, args + argument)
 
-    override fun addFirst(argument: Term): Struct = Struct.of(functor, argument, *args)
+    override fun addFirst(argument: Term): Struct = Struct.of(functor, listOf(argument) + args)
 
     override fun insertAt(index: Int, argument: Term): Struct =
-        if (index in args.indices) {
+        if (index in 0 until arity) {
+            val argsArray = args.toTypedArray()
             Struct.of(
                 functor,
-                *args.sliceArray(0 until index),
+                *argsArray.sliceArray(0 until index),
                 argument,
-                *args.sliceArray(index..args.lastIndex)
+                *argsArray.sliceArray(index until arity)
             )
         } else {
             throw IndexOutOfBoundsException("Index $index is out of bounds ${args.indices}")
         }
 
-    override fun setFunctor(functor: String): Struct = Struct.of(functor, *args)
+    override fun setFunctor(functor: String): Struct = Struct.of(functor, args)
 
     override fun setArgs(vararg args: Term): Struct = Struct.of(functor, *args)
 
@@ -96,7 +104,7 @@ internal open class StructImpl(
     override fun setArgs(args: Sequence<Term>): Struct = Struct.of(functor, args)
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
-        Struct.of(this.functor, this.argsList.map { it.apply(unifier) }).setTags(tags)
+        Struct.of(this.functor, this.args.map { it.apply(unifier) }).setTags(tags)
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
 }

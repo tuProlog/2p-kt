@@ -9,7 +9,7 @@ import it.unibo.tuprolog.utils.Cursor
 internal class LazyConsWithImplicitLast(
     private val cursor: Cursor<out Term>,
     tags: Map<String, Any> = emptyMap()
-) : AbstractCons(emptyArray(), tags), Cons {
+) : AbstractCons(emptyList(), tags), Cons {
 
     override val head: Term by lazy { cursor.current!! }
 
@@ -23,7 +23,9 @@ internal class LazyConsWithImplicitLast(
         }
     }
 
-    override val args: Array<Term> get() = arrayOf(head, tail)
+    override val argsArray: Array<Term> get() = arrayOf(head, tail)
+
+    override val args: List<Term> by lazy { listOf(head, tail) }
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyConsWithImplicitLast(cursor.map { it.apply(unifier) }, tags)

@@ -32,7 +32,7 @@ internal class SubstitutionFailTest {
 
     @Test
     fun failedSubstitutionApplicationReturnsNull() {
-        val someTerms = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, *args) }
+        val someTerms = StructUtils.mixedStructs.map { (functor, args) -> Struct.of(functor, args) }
 
         someTerms.forEach { term -> assertEquals(null, failedSubstitution.applyTo(term)) }
     }

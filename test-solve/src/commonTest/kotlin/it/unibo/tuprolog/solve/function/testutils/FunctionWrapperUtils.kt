@@ -42,7 +42,7 @@ internal object FunctionWrapperUtils {
     /** All under test requests */
     private val allRequests by lazy {
         (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
-            .map { createFunctionRequest(it.extractSignature(), it.argsList) }
+            .map { createFunctionRequest(it.extractSignature(), it.args) }
     }
 
     /** All ground requests */

@@ -17,7 +17,7 @@ import kotlin.jvm.JvmStatic
  */
 interface Atom : Struct, Constant {
 
-    override val args: Array<Term>
+    override val argsArray: Array<Term>
         get() = arrayOf()
 
     override val arity: Int
@@ -41,7 +41,7 @@ interface Atom : Struct, Constant {
     override val value: String
         get() = functor
 
-    override val argsList: kotlin.collections.List<Term>
+    override val args: kotlin.collections.List<Term>
         get() = emptyList()
 
     override val variables: Sequence<Var>

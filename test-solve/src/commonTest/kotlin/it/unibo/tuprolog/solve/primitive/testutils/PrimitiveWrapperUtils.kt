@@ -36,7 +36,7 @@ internal object PrimitiveWrapperUtils {
     /** All under test requests */
     private val allRequests by lazy {
         (WrapperUtils.allMatchingRawStruct + WrapperUtils.allNotMatchingStruct).flatten()
-            .map { createPrimitiveRequest(it.extractSignature(), it.argsList) }
+            .map { createPrimitiveRequest(it.extractSignature(), it.args) }
     }
 
     /** All ground requests */

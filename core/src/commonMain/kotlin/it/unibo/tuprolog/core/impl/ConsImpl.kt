@@ -9,7 +9,7 @@ internal class ConsImpl(
     override val head: Term,
     override val tail: Term,
     tags: Map<String, Any> = emptyMap()
-) : AbstractCons(arrayOf(head, tail), tags), Cons {
+) : AbstractCons(listOf(head, tail), tags), Cons {
 
     override val estimatedLength: Int = 1 + (tail.asList()?.estimatedLength ?: 1)
 

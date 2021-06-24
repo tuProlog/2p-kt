@@ -23,7 +23,7 @@ interface Cons : LogicList {
     override val functor: String
         get() = CONS_FUNCTOR
 
-    override val args: Array<Term>
+    override val argsArray: Array<Term>
         get() = arrayOf(head, tail)
 
     override val arity: Int

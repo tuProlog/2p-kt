@@ -15,7 +15,7 @@ interface Tuple : Collection {
     override val functor: String
         get() = TUPLE_FUNCTOR
 
-    override val args: Array<Term>
+    override val argsArray: Array<Term>
         get() = arrayOf(left, right)
 
     override val arity: Int

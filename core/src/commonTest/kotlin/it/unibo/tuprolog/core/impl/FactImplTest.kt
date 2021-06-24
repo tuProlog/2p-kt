@@ -34,7 +34,7 @@ internal class FactImplTest {
     fun argsCorrect() {
         val correctFactArgs = FactUtils.mixedFacts.map { listOf(it, Truth.TRUE) }
 
-        onCorrespondingItems(correctFactArgs, mixedFactInstances.map { it.args.toList() }) { expected, actual ->
+        onCorrespondingItems(correctFactArgs, mixedFactInstances.map { it.args }) { expected, actual ->
             assertEquals(expected, actual)
         }
     }

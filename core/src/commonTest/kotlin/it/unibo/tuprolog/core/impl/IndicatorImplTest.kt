@@ -44,11 +44,10 @@ internal class IndicatorImplTest {
 
     @Test
     fun argCorrect() {
-        val correctArgs = IndicatorUtils.mixedIndicators.map { (name, arity) -> arrayOf(name, arity) }
+        val correctArgs = IndicatorUtils.mixedIndicators.map { (name, arity) -> listOf(name, arity) }
 
         onCorrespondingItems(correctArgs, indicatorInstances.map { it.args }) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-            assertTrue { expected.contentDeepEquals(actual) }
+            assertEquals(expected, actual)
         }
     }
 

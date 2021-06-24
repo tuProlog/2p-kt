@@ -43,7 +43,7 @@ internal class JvmTermObjectifier : TermObjectifier {
     override fun visitStruct(term: Struct): Map<String, Any> =
         mapOf(
             "fun" to term.functor,
-            "args" to term.argsList.map { it.accept(this) }
+            "args" to term.args.map { it.accept(this) }
         )
 
     override fun visitAtom(term: Atom): String =

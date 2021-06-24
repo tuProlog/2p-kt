@@ -108,4 +108,4 @@ fun ClassicExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
 fun ClassicExecutionContext.toRequest(
     goal: Struct,
     signature: Signature
-) = Solve.Request(signature, goal.argsList, this, executionMaxDuration = maxDuration)
+) = Solve.Request(signature, goal.args, this, executionMaxDuration = maxDuration)

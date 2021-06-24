@@ -19,7 +19,7 @@ internal open class RuleImpl(
     override fun freshCopy(scope: Scope): Rule = super.freshCopy(scope).castToRule()
 
     override val headArgs: Iterable<Term>
-        get() = head.argsList
+        get() = head.args
 
     override val headArity: Int
         get() = head.arity

@@ -67,33 +67,33 @@ internal object StructUtils {
     /** For non special Structs are intended all valid Structs that has not a corresponding representation in any Struct subclass */
     internal val nonSpecialStructs by lazy {
         listOf(
-            "ciao" to arrayOf<Term>(Truth.TRUE),
-            "myFunctor" to arrayOf<Term>(Atom.of("hello"), Atom.of("world"), Atom.of("!")),
-            "varFunctor" to arrayOf<Term>(Var.of("A"), Var.of("B")),
-            "{}" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
-            "[]" to arrayOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
-            "." to arrayOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
-            "," to arrayOf<Term>(EmptyList(), EmptySet(), Truth.TRUE),
-            "/" to arrayOf<Term>(Truth.FALSE),
-            "sameVar" to Scope.empty { arrayOf<Term>(varOf("X"), varOf("X")) }
+            "ciao" to listOf<Term>(Truth.TRUE),
+            "myFunctor" to listOf<Term>(Atom.of("hello"), Atom.of("world"), Atom.of("!")),
+            "varFunctor" to listOf<Term>(Var.of("A"), Var.of("B")),
+            "{}" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
+            "[]" to listOf<Term>(Integer.of(1), Integer.of(2), Integer.of(3)),
+            "." to listOf(Real.of(0.1), Real.of(0.5f), Var.of("MyVar")),
+            "," to listOf<Term>(EmptyList(), EmptySet(), Truth.TRUE),
+            "/" to listOf<Term>(Truth.FALSE),
+            "sameVar" to Scope.empty { ktListOf<Term>(varOf("X"), varOf("X")) }
         )
     }
 
     /** Special Structs are those Structs that can be mapped exactly in a subclass of Struct */
     internal val specialStructs by lazy {
         listOf(
-            Cons.FUNCTOR to arrayOf<Term>(Var.of("H"), Var.of("T")),
-            LogicSet.FUNCTOR to arrayOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
-            Tuple.FUNCTOR to arrayOf<Term>(Atom.of("left"), Atom.of("right")),
-            Clause.FUNCTOR to arrayOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
-            Clause.FUNCTOR to arrayOf<Term>(Atom.of("myDirective")),
-            Clause.FUNCTOR to arrayOf<Term>(Atom.of("myFact"), Truth.TRUE),
-            "myAtom" to arrayOf(),
-            Empty.EMPTY_LIST_FUNCTOR to arrayOf(),
-            Empty.EMPTY_SET_FUNCTOR to arrayOf(),
-            Truth.TRUE_FUNCTOR to arrayOf(),
-            Truth.FAIL_FUNCTOR to arrayOf(),
-            Indicator.FUNCTOR to arrayOf<Term>(Atom.of("func"), Integer.of(4))
+            Cons.FUNCTOR to listOf<Term>(Var.of("H"), Var.of("T")),
+            LogicSet.FUNCTOR to listOf(Tuple.wrapIfNeeded(Atom.of("My atom"))),
+            Tuple.FUNCTOR to listOf<Term>(Atom.of("left"), Atom.of("right")),
+            Clause.FUNCTOR to listOf<Term>(Atom.of("rule1"), Atom.of("rule2")),
+            Clause.FUNCTOR to listOf<Term>(Atom.of("myDirective")),
+            Clause.FUNCTOR to listOf<Term>(Atom.of("myFact"), Truth.TRUE),
+            "myAtom" to listOf(),
+            Empty.EMPTY_LIST_FUNCTOR to listOf(),
+            Empty.EMPTY_SET_FUNCTOR to listOf(),
+            Truth.TRUE_FUNCTOR to listOf(),
+            Truth.FAIL_FUNCTOR to listOf(),
+            Indicator.FUNCTOR to listOf<Term>(Atom.of("func"), Integer.of(4))
         )
     }
 

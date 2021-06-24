@@ -42,11 +42,10 @@ internal class ConsImplTest {
 
     @Test
     fun argsCorrect() {
-        val consInstancesArgs = consInstancesHeads.zip(consInstancesTails).map { (head, tail) -> arrayOf(head, tail) }
+        val consInstancesArgs = consInstancesHeads.zip(consInstancesTails).map { (head, tail) -> listOf(head, tail) }
 
         onCorrespondingItems(consInstancesArgs, consInstances.map { it.args }) { expectedArgs, actualArgs ->
-            assertEquals(expectedArgs.toList(), actualArgs.toList())
-            assertTrue { expectedArgs.contentDeepEquals(actualArgs) }
+            assertEquals(expectedArgs, actualArgs)
         }
     }
 

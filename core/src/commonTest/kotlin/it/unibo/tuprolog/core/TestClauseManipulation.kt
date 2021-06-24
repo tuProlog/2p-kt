@@ -50,15 +50,15 @@ class TestClauseManipulation {
         val otherHead = Struct.of("f", Atom.of("a"), Atom.of("b"))
         assertEquals(
             directive,
-            directive.setHeadArgs(*otherHead.args)
+            directive.setHeadArgs(*otherHead.args.toTypedArray())
         )
         assertEquals(
             Rule.of(otherHead, rule.body),
-            rule.setHeadArgs(*otherHead.args)
+            rule.setHeadArgs(*otherHead.args.toTypedArray())
         )
         assertEquals(
             Fact.of(otherHead),
-            fact.setHeadArgs(*otherHead.args)
+            fact.setHeadArgs(*otherHead.args.toTypedArray())
         )
     }
 
@@ -133,11 +133,11 @@ class TestClauseManipulation {
     @Test
     fun testHeadInspection() {
         assertEquals(
-            rule.head.argsList,
+            rule.head.args,
             rule.headArgs.toList()
         )
         assertEquals(
-            fact.head.argsList,
+            fact.head.args,
             fact.headArgs.toList()
         )
         assertEquals(

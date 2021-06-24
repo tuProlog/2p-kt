@@ -11,7 +11,7 @@ internal class LazyConsWithExplicitLast(
     private val cursor: Cursor<out Term>,
     private val termination: Term = EmptyList.instance,
     tags: Map<String, Any> = emptyMap()
-) : AbstractCons(emptyArray(), tags), Cons {
+) : AbstractCons(emptyList(), tags), Cons {
 
     override val head: Term
         get() = cursor.current!!
@@ -26,8 +26,6 @@ internal class LazyConsWithExplicitLast(
         }
     }
 
-    override val args: Array<Term> get() = arrayOf(head, tail)
-
     override val last: Term by lazy {
         var current: Term = this
         while (current.isCons) {
@@ -39,6 +37,10 @@ internal class LazyConsWithExplicitLast(
         }
         current
     }
+
+    override val argsArray: Array<Term> get() = arrayOf(head, tail)
+
+    override val args: List<Term> by lazy { listOf(head, tail) }
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyConsWithImplicitLast(unfoldedSequence.map { it.apply(unifier) }.cursor(), tags)

@@ -52,8 +52,7 @@ internal class StructImplTest {
             StructUtils.mixedStructArguments,
             mixedStructInstances.map { it.args }
         ) { expected, actual ->
-            assertEquals(expected.toList(), actual.toList())
-            assertTrue { expected.contentDeepEquals(actual) }
+            assertEquals(expected, actual)
         }
     }
 
@@ -61,7 +60,7 @@ internal class StructImplTest {
     fun argsListCorrect() {
         val correctArgsLists = StructUtils.mixedStructArguments.map { it.toList() }
 
-        onCorrespondingItems(correctArgsLists, mixedStructInstances.map { it.argsList }) { expected, actual ->
+        onCorrespondingItems(correctArgsLists, mixedStructInstances.map { it.args }) { expected, actual ->
             assertEquals(expected, actual)
         }
     }

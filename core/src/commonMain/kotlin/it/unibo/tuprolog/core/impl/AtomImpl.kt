@@ -9,11 +9,12 @@ import it.unibo.tuprolog.core.Var
 internal open class AtomImpl(
     override val functor: String,
     tags: Map<String, Any> = emptyMap()
-) : StructImpl(functor, emptyArray(), tags), Atom {
+) : StructImpl(functor, emptyList(), tags), Atom {
 
-    override val args: Array<Term> = super<StructImpl>.args
+    override val argsArray: Array<Term>
+        get() = emptyArray()
 
-    override val argsList: List<Term>
+    override val args: List<Term>
         get() = emptyList()
 
     override val isGround: Boolean

@@ -16,13 +16,13 @@ internal abstract class ClauseImpl(
     override val head: Struct?,
     override val body: Term,
     tags: Map<String, Any>
-) : StructImpl(CLAUSE_FUNCTOR, (if (head === null) arrayOf(body) else arrayOf(head, body)), tags), Clause {
+) : StructImpl(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags), Clause {
 
     override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
 
     override val functor: String = super<Clause>.functor
 
-    override val args: Array<Term> by lazy { super<StructImpl>.args }
+    override val argsArray: Array<Term> get() = super<StructImpl>.argsArray
 
     override fun toString(): String =
         when (head) {

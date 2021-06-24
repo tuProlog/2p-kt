@@ -149,8 +149,8 @@ abstract class PrologError(
                             actualMessage,
                             cause,
                             contexts,
-                            DomainError.Expected.fromTerm(args[0])!!,
-                            args[1],
+                            DomainError.Expected.fromTerm(getArgAt(0))!!,
+                            getArgAt(1),
                             extraData
                         )
                     functor == TypeError.typeFunctor && arity == 2 ->
@@ -158,8 +158,8 @@ abstract class PrologError(
                             actualMessage,
                             cause,
                             contexts,
-                            TypeError.Expected.fromTerm(args[0])!!,
-                            args[1],
+                            TypeError.Expected.fromTerm(getArgAt(0))!!,
+                            getArgAt(1),
                             extraData
                         )
                     functor == EvaluationError.typeFunctor && arity == 1 ->
@@ -167,7 +167,7 @@ abstract class PrologError(
                             actualMessage,
                             cause,
                             contexts,
-                            EvaluationError.Type.fromTerm(args[0])!!,
+                            EvaluationError.Type.fromTerm(getArgAt(0))!!,
                             extraData
                         )
                     functor == PermissionError.typeFunctor && arity == 3 ->
@@ -175,9 +175,9 @@ abstract class PrologError(
                             actualMessage,
                             cause,
                             contexts,
-                            Operation.fromTerm(args[0])!!,
-                            Permission.fromTerm(args[1])!!,
-                            args[2],
+                            Operation.fromTerm(getArgAt(0))!!,
+                            Permission.fromTerm(getArgAt(1))!!,
+                            getArgAt(2),
                             extraData
                         )
                     else -> customError(message, cause, contexts, type, extraData)

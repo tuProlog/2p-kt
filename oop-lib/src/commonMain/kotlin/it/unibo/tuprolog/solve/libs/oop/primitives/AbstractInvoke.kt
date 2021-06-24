@@ -37,7 +37,7 @@ abstract class AbstractInvoke(suffix: String) : TernaryRelation.Functional<Execu
     }
 
     private fun Solve.Request<ExecutionContext>.actuallyInvoke(ref: Ref, method: Struct, resultTerm: Term): Substitution {
-        return when (val result = ref.invoke(termToObjectConverter, method.functor, *method.args)) {
+        return when (val result = ref.invoke(termToObjectConverter, method.functor, method.args)) {
             is Result.Value -> resultTerm mguWith result.getInvocationResult()
             else -> Substitution.failed()
         }

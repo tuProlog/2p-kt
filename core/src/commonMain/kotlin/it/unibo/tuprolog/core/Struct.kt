@@ -35,7 +35,7 @@ interface Struct : Term {
         get() = isClause && arity == 1
 
     override val isFact: Boolean
-        get() = isRule && args[1].isTrue
+        get() = isRule && getArgAt(1).isTrue
 
     override val isTuple: Boolean
         get() = functor == TUPLE_FUNCTOR && arity == 2
@@ -139,12 +139,14 @@ interface Struct : Term {
     /**
      * Array of arguments of this [Struct].
      */
-    @JsName("args")
-    val args: Array<Term>
+    @JsName("argsArray")
+    @Deprecated("Use args")
+    val argsArray: Array<Term>
+        get() = args.toTypedArray()
 
     /**
      * The total amount of arguments of this [Struct].
-     * This is equal to the length of [args] and to the size of [argsList].
+     * This is equal to the length of [args].
      */
     @JsName("arity")
     val arity: Int
@@ -161,21 +163,20 @@ interface Struct : Term {
      * List of arguments of this [Struct].
      */
     @JsName("argsList")
-    val argsList: KtList<Term>
-        get() = listOf(*args)
+    val args: KtList<Term>
 
     /**
      * Sequence of arguments of this [Struct].
      */
     @JsName("argsSequence")
     val argsSequence: Sequence<Term>
-        get() = sequenceOf(*args)
+        get() = args.asSequence()
 
     /**
      * Gets the [index]-th argument if this [Struct].
      * @param index is the index the argument which should be retrieved
      * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
-     * @return the [Term] having position [index] in [argsList]
+     * @return the [Term] having position [index] in [args]
      */
     @JsName("getArgAt")
     fun getArgAt(index: Int): Term = args[index]
@@ -348,7 +349,7 @@ interface Struct : Term {
                 args.size == 1 && SET_FUNCTOR == functor -> Set.of(args)
                 args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
-                else -> StructImpl(functor, args.toTypedArray(), emptyMap())
+                else -> StructImpl(functor, args, emptyMap())
             }
 
         /**

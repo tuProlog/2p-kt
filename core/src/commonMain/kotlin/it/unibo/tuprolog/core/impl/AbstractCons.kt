@@ -10,7 +10,7 @@ import it.unibo.tuprolog.utils.setTags
 import it.unibo.tuprolog.core.ListIterator as LogicListIterator
 
 internal abstract class AbstractCons(
-    args: Array<Term>,
+    args: List<Term>,
     tags: Map<String, Any> = emptyMap()
 ) : CollectionImpl(CONS_FUNCTOR, args, tags), Cons {
 
@@ -26,7 +26,7 @@ internal abstract class AbstractCons(
 
     override val functor: String = CONS_FUNCTOR
 
-    override val args: Array<Term> get() = super<CollectionImpl>.args
+    override val argsArray: Array<Term> get() = super<CollectionImpl>.argsArray
 
     override val isWellFormed: Boolean by lazy { last.isEmptyList }
 
