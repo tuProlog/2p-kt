@@ -23,6 +23,8 @@ internal class LazyConsWithImplicitLast(
         }
     }
 
+    override val last: Term by lazy { super.last }
+
     override val args: List<Term> = LazyTwoItemsList({ head }, { tail })
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =

@@ -13,6 +13,11 @@ internal class ConsImpl(
 
     override val isGround: Boolean = checkGroundness()
 
+    override val last: Term = when {
+        tail.isList -> tail.castToList().last
+        else -> tail
+    }
+
     override fun checkGroundness(): Boolean = head.isGround && tail.isGround
 
     override val estimatedLength: Int = 1 + (tail.asList()?.estimatedLength ?: 1)

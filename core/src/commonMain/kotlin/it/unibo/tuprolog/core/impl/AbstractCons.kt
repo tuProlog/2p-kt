@@ -44,7 +44,8 @@ internal abstract class AbstractCons(
 
     override fun toSequence(): Sequence<Term> = LogicListIterator.SkippingLast(this).asSequence()
 
-    override val last: Term by lazy { unfoldedSequence.last() }
+    override val last: Term
+        get() = unfoldedSequence.last()
 
     override fun toString(): String {
         val (ending, take) = if (isWellFormed) {
