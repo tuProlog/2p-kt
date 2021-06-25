@@ -1,38 +1,14 @@
 package it.unibo.tuprolog.utils.impl
 
-internal class MapperCursor<T, R> : AbstractCursor<R> {
-
-    constructor(wrapped: AbstractCursor<out T>, mapper: (T) -> R) {
-        this.wrapped = wrapped
-        this.mapper = mapper
-        this.current = wrapped.current?.let(mapper)
-    }
-
-    constructor(wrapped: AbstractCursor<out T>, mapper: (T) -> R, current: R?) {
-        this.wrapped = wrapped
-        this.mapper = mapper
-        this.current = current
-    }
-
-    private val wrapped: AbstractCursor<out T>
-
+internal class MapperCursor<T, R>(
+    private val wrapped: AbstractCursor<out T>,
     private val mapper: (T) -> R
-
-    override val current: R?
-
-    private var hasNextValue: Boolean = false
-
-    private var nextValue: R? = null
+) : AbstractCursor<R>() {
 
     override val next: AbstractCursor<out R>
-        get() = if (hasNextValue) {
-            wrapped.next.quickMap(nextValue, mapper)
-        } else {
-            wrapped.next.map(mapper).also {
-                hasNextValue = true
-                nextValue = it.current
-            }
-        }
+        get() = wrapped.next.map(mapper)
+
+    override val current: R by lazy { mapper(wrapped.current!!) }
 
     override val hasNext: Boolean
         get() = true
@@ -57,4 +33,6 @@ internal class MapperCursor<T, R> : AbstractCursor<R> {
         result = 31 * result + mapper.hashCode()
         return result
     }
+
+    override fun <X> map(mapper: (R) -> X): AbstractCursor<out X> = ValueCursor(mapper(current), next.map(mapper))
 }

@@ -28,9 +28,6 @@ internal abstract class AbstractCursor<T> : Cursor<T> {
 
     override fun <R> map(mapper: (T) -> R): AbstractCursor<out R> = MapperCursor(this, mapper)
 
-    open fun <R> quickMap(current: R?, mapper: (T) -> R): AbstractCursor<out R> =
-        MapperCursor(this, mapper, current)
-
     companion object {
         fun <T> of(source: Iterator<T>): AbstractCursor<out T> =
             if (source.hasNext()) {

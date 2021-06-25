@@ -105,4 +105,30 @@ class TestCursor {
         testCursor(cursor)
         assertCursorContains(cursor, items.toList() + items.toList())
     }
+
+    @Test
+    fun testCursorDoNotRepeatSequence() {
+        var x: Int = 0
+        val cursor = items.asSequence().map { x++; x }.cursor().map { it * 2 }
+        testCursor(cursor)
+        assertCursorContains(cursor, items.map { it * 2 })
+        assertEquals(items.count(), x)
+    }
+
+    @Test
+    fun stressMapping() {
+        val N = 100000
+        var x: Int = 0
+        var cursor = items.cursor()
+        for (i in 0 until N) {
+            cursor = cursor.map {
+                x++;
+                it + 1
+            }
+            assertTrue { x <= items.count() * (i + 1) }
+        }
+        testCursor(cursor)
+        assertCursorContains(cursor, items.map { it + N })
+        assertEquals(items.count() * N, x)
+    }
 }

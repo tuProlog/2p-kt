@@ -16,6 +16,4 @@ internal object EmptyCursor : AbstractCursor<Nothing>() {
     override fun toString(): String = super<AbstractCursor>.toString()
 
     override fun <R> map(mapper: (Nothing) -> R): AbstractCursor<out R> = this
-
-    override fun <R> quickMap(current: R?, mapper: (Nothing) -> R): AbstractCursor<out R> = this
 }

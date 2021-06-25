@@ -21,11 +21,7 @@ internal data class LazyCursor<T>(val delegate: Iterator<T>) : AbstractCursor<T>
     override val isOver: Boolean
         get() = false
 
-    override fun toString(): String {
-        return super<AbstractCursor>.toString()
-    }
+    override fun toString(): String = super<AbstractCursor>.toString()
 
-    override fun iterator(): Iterator<T> {
-        return wrapped.iterator()
-    }
+    override fun iterator(): Iterator<T> = wrapped.iterator()
 }
