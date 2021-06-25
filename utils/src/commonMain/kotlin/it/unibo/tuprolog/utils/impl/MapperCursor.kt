@@ -34,5 +34,6 @@ internal class MapperCursor<T, R>(
         return result
     }
 
-    override fun <X> map(mapper: (R) -> X): AbstractCursor<out X> = ValueCursor(mapper(current), next.map(mapper))
+    override fun <X> map(mapper: (R) -> X): AbstractCursor<out X> =
+        ValueCursor(mapper(current), next.map(mapper))
 }

@@ -26,6 +26,12 @@ internal class EmptyListImpl(
     override val estimatedLength: Int
         get() = 0
 
+    override val size: Int
+        get() = 0
+
+    override val isWellFormed: Boolean
+        get() = true
+
     override fun copyWithTags(tags: Map<String, Any>): EmptyList = EmptyListImpl(tags)
 
     override fun freshCopy(): EmptyList = this

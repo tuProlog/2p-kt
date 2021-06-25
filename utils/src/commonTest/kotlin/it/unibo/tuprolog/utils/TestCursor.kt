@@ -122,7 +122,7 @@ class TestCursor {
         var cursor = items.cursor()
         for (i in 0 until N) {
             cursor = cursor.map {
-                x++;
+                x++
                 it + 1
             }
             assertTrue { x <= items.count() * (i + 1) }
