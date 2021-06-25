@@ -9,14 +9,16 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
 import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
+import kotlin.collections.Collection as KtCollection
+import kotlin.collections.List as KtList
 
 internal abstract class CollectionImpl(
     functor: String,
-    args: List<Term>,
+    args: KtList<Term>,
     tags: Map<String, Any>
 ) : StructImpl(functor, args, tags), Collection {
 
-    override val unfoldedList: List<Term> by lazy { dequeOf(unfoldedSequence) }
+    override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
 
     override val unfoldedArray: Array<Term>
         get() = unfoldedList.toTypedArray()
@@ -48,4 +50,75 @@ internal abstract class CollectionImpl(
         } ?: false
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
+
+    protected class LazyTwoItemsList<T>(firstGenerator: () -> T, secondGenerator: () -> T) : KtList<T> {
+        private val first: T by lazy(firstGenerator)
+
+        private val second: T by lazy(secondGenerator)
+
+        override val size: Int
+            get() = 2
+
+        override fun contains(element: T): Boolean =
+            first == element || second == element
+
+        override fun containsAll(elements: KtCollection<T>): Boolean =
+            elements.any { contains(it) }
+
+        override fun get(index: Int): T = when(index) {
+            0 -> first
+            1 -> second
+            else -> throw IndexOutOfBoundsException("Index out of range: $index")
+        }
+
+        override fun indexOf(element: T): Int = when (element) {
+            first -> 0
+            second -> 1
+            else -> -1
+        }
+
+        override fun isEmpty(): Boolean = false
+
+        override fun iterator(): Iterator<T> = iterator {
+            yield(first)
+            yield(second)
+        }
+
+        override fun lastIndexOf(element: T): Int = when (element) {
+            second -> 1
+            first -> 0
+            else -> -1
+        }
+
+        override fun listIterator(): ListIterator<T> = listIterator(0)
+
+        override fun listIterator(index: Int): ListIterator<T> = object : ListIterator<T> {
+            private var currentIndex = index
+
+            override fun hasNext(): Boolean = currentIndex < size
+
+            override fun hasPrevious(): Boolean = currentIndex > 0
+
+            override fun next(): T =
+                if (hasNext()) {
+                    get(currentIndex++)
+                } else {
+                    throw NoSuchElementException()
+                }
+
+            override fun nextIndex(): Int = index + 1
+
+            override fun previous(): T =
+                if (hasPrevious()) {
+                    get(currentIndex--)
+                } else {
+                    throw NoSuchElementException()
+                }
+
+            override fun previousIndex(): Int = currentIndex - 1
+        }
+
+        override fun subList(fromIndex: Int, toIndex: Int): KtList<T> =
+            (fromIndex until toIndex).map { get(it) }
+    }
 }
