@@ -21,8 +21,22 @@ internal abstract class AbstractCursor<T> : Cursor<T> {
         }
     }
 
+    abstract override val next: AbstractCursor<out T>
+
     override val isLazy: Boolean
         get() = false
 
-    override fun <R> map(mapper: (T) -> R): Cursor<out R> = MapperCursor(this, mapper)
+    override fun <R> map(mapper: (T) -> R): AbstractCursor<out R> = MapperCursor(this, mapper)
+
+    open fun <R> quickMap(current: R?, mapper: (T) -> R): AbstractCursor<out R> =
+        MapperCursor(this, mapper, current)
+
+    companion object {
+        fun <T> of(source: Iterator<T>): AbstractCursor<out T> =
+            if (source.hasNext()) {
+                LazyCursor(source)
+            } else {
+                EmptyCursor
+            }
+    }
 }

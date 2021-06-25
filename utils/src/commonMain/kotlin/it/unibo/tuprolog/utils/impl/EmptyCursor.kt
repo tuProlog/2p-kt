@@ -1,9 +1,7 @@
 package it.unibo.tuprolog.utils.impl
 
-import it.unibo.tuprolog.utils.Cursor
-
 internal object EmptyCursor : AbstractCursor<Nothing>() {
-    override val next: Cursor<Nothing>
+    override val next: AbstractCursor<Nothing>
         get() = throw NoSuchElementException()
 
     override val current: Nothing?
@@ -17,5 +15,7 @@ internal object EmptyCursor : AbstractCursor<Nothing>() {
 
     override fun toString(): String = super<AbstractCursor>.toString()
 
-    override fun <R> map(mapper: (Nothing) -> R): Cursor<out R> = this
+    override fun <R> map(mapper: (Nothing) -> R): AbstractCursor<out R> = this
+
+    override fun <R> quickMap(current: R?, mapper: (Nothing) -> R): AbstractCursor<out R> = this
 }
