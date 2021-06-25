@@ -23,11 +23,15 @@ internal abstract class CollectionImpl(
     override val unfoldedArray: Array<Term>
         get() = unfoldedList.toTypedArray()
 
-    override val isGround: Boolean by lazy { unfoldedSequence.all { it.isGround } }
+    override val isGround: Boolean
+        get() = checkGroundness()
+
+    override fun checkGroundness(): Boolean = unfoldedSequence.all { it.isGround }
 
     override fun argsHashCode(): Int = itemWiseHashCode(unfoldedSequence)
 
-    override val variables: Sequence<Var> by lazy { unfoldedSequence.flatMap { it.variables } }
+    override val variables: Sequence<Var>
+        get() = unfoldedSequence.flatMap { it.variables }
 
     abstract override fun copyWithTags(tags: Map<String, Any>): Collection
 
@@ -65,7 +69,7 @@ internal abstract class CollectionImpl(
         override fun containsAll(elements: KtCollection<T>): Boolean =
             elements.any { contains(it) }
 
-        override fun get(index: Int): T = when(index) {
+        override fun get(index: Int): T = when (index) {
             0 -> first
             1 -> second
             else -> throw IndexOutOfBoundsException("Index out of range: $index")

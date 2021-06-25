@@ -14,6 +14,10 @@ internal class TupleImpl(
     tags: Map<String, Any> = emptyMap()
 ) : CollectionImpl(TUPLE_FUNCTOR, listOf(left, right), tags), Tuple {
 
+    override val isGround: Boolean = checkGroundness()
+
+    override fun checkGroundness(): Boolean = left.isGround && right.isGround
+
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { TupleIterator(this) }.asSequence()
 

@@ -55,8 +55,6 @@ internal abstract class AbstractCons(
         return unfoldedSequence.take(take).joinToString(", ", "[", ending)
     }
 
-    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty()
-
     abstract override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term
 
     abstract override fun copyWithTags(tags: Map<String, Any>): AbstractCons

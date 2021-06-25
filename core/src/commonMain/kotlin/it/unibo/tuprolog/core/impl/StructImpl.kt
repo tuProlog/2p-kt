@@ -18,7 +18,9 @@ internal open class StructImpl(
     constructor(functor: String, args: Array<Term>, tags: Map<String, Any> = emptyMap()) :
         this(functor, listOf(*args), tags)
 
-    override val isGround: Boolean by lazy { super<Struct>.isGround }
+    override val isGround: Boolean by lazy { checkGroundness() }
+
+    protected open fun checkGroundness(): Boolean = variables.none()
 
     override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
@@ -36,8 +38,14 @@ internal open class StructImpl(
         }
 
     @Suppress("RedundantAsSequence")
-    protected open fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        (0 until arity).asSequence().all { getArgAt(it) structurallyEquals other[it] }
+    protected open fun itemsAreStructurallyEqual(other: Struct): Boolean {
+        for (i in 0 until arity) {
+            if (!getArgAt(i).structurallyEquals(other[i])) {
+                return false
+            }
+        }
+        return true
+    }
 
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
@@ -46,8 +54,14 @@ internal open class StructImpl(
         asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 
     @Suppress("RedundantAsSequence")
-    protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean =
-        (0 until arity).asSequence().all { getArgAt(it).equals(other[it], useVarCompleteName) }
+    protected open fun itemsAreEqual(other: Struct, useVarCompleteName: Boolean): Boolean {
+        for (i in 0 until arity) {
+            if (!getArgAt(i).equals(other[i], useVarCompleteName)) {
+                return false
+            }
+        }
+        return true
+    }
 
     final override fun equals(other: Term, useVarCompleteName: Boolean): Boolean =
         other.asStruct()?.let { equalsImpl(it, useVarCompleteName) } ?: false

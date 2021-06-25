@@ -14,7 +14,7 @@ internal class EmptySetImpl(
 
     override val functor: String = super<EmptySet>.functor
 
-    override val isGround: Boolean get() = super<SetImpl>.isGround
+    override val isGround: Boolean get() = true
 
     override val size: Int get() = 0
 

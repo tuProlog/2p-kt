@@ -13,6 +13,10 @@ internal open class SetImpl(
     tags: Map<String, Any> = emptyMap()
 ) : CollectionImpl(SET_FUNCTOR, listOfNotNull(item), tags), LogicSet {
 
+    override val isGround: Boolean = checkGroundness()
+
+    override fun checkGroundness(): Boolean = item?.isGround ?: true
+
     override val functor: String = super<LogicSet>.functor
 
     override val unfoldedSequence: Sequence<Term>

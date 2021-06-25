@@ -30,4 +30,6 @@ internal class LazyConsWithImplicitLast(
 
     override fun copyWithTags(tags: Map<String, Any>): LazyConsWithImplicitLast =
         if (this.tags === tags) this else LazyConsWithImplicitLast(cursor, tags)
+
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty()
 }

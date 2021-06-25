@@ -11,6 +11,10 @@ internal class ConsImpl(
     tags: Map<String, Any> = emptyMap()
 ) : AbstractCons(listOf(head, tail), tags), Cons {
 
+    override val isGround: Boolean = checkGroundness()
+
+    override fun checkGroundness(): Boolean = head.isGround && tail.isGround
+
     override val estimatedLength: Int = 1 + (tail.asList()?.estimatedLength ?: 1)
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
