@@ -40,8 +40,8 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
     ): Boolean {
         var changed = false
 
-        for (i in equations.indices) {
-            if (i == exceptIndex || equations[i].isContradiction || equations[i].isIdentity) continue
+        fun handleIndex(i: Int) {
+            if (equations[i].isContradiction || equations[i].isIdentity) return
 
             val currentEq = equations[i]
             val (newLhs, newRhs) = currentEq.apply(substitution).toPair()
@@ -51,6 +51,9 @@ abstract class AbstractUnificator @JvmOverloads constructor(override val context
                 changed = true
             }
         }
+
+        for (i in 0 until exceptIndex) handleIndex(i)
+        for (i in (exceptIndex + 1) until equations.size) handleIndex(i)
 
         return changed
     }
