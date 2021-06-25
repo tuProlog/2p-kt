@@ -25,9 +25,6 @@ interface Clause : Struct {
     @JsName("isWellFormed")
     val isWellFormed: Boolean
 
-    override val argsArray: Array<Term>
-        get() = (if (head === null) arrayOf(body) else arrayOf(head!!, body))
-
     override val arity: Int
         get() = (if (head === null) 1 else 2)
 

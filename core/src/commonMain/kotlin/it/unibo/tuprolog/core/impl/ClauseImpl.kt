@@ -22,8 +22,6 @@ internal abstract class ClauseImpl(
 
     override val functor: String = super<Clause>.functor
 
-    override val argsArray: Array<Term> get() = super<StructImpl>.argsArray
-
     override fun toString(): String =
         when (head) {
             null -> "$functor $body"

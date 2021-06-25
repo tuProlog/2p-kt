@@ -38,8 +38,6 @@ internal class LazyConsWithExplicitLast(
         current
     }
 
-    override val argsArray: Array<Term> get() = arrayOf(head, tail)
-
     override val args: List<Term> by lazy { listOf(head, tail) }
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =

@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
-import kotlin.collections.List as KtList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+import kotlin.collections.List as KtList
 
 class TermTest {
 

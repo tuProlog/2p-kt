@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.impl.AtomImpl
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
+import kotlin.collections.List as KtList
 
 /**
  * Base type for constant, alphanumeric [Term]s, a.k.a. strings.
@@ -16,9 +17,6 @@ import kotlin.jvm.JvmStatic
  * to [value].
  */
 interface Atom : Struct, Constant {
-
-    override val argsArray: Array<Term>
-        get() = arrayOf()
 
     override val arity: Int
         get() = 0
@@ -41,7 +39,7 @@ interface Atom : Struct, Constant {
     override val value: String
         get() = functor
 
-    override val args: kotlin.collections.List<Term>
+    override val args: KtList<Term>
         get() = emptyList()
 
     override val variables: Sequence<Var>

@@ -20,8 +20,6 @@ internal class IndicatorImpl(
     override val functor: String
         get() = INDICATOR_FUNCTOR
 
-    override val argsArray: Array<Term> get() = super<StructImpl>.argsArray
-
     override val indicatedName: String? get() = super.indicatedName
 
     override val indicatedArity: Int? get() = super.indicatedArity

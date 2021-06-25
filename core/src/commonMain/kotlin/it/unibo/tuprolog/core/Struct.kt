@@ -137,14 +137,6 @@ interface Struct : Term {
     val isFunctorWellFormed: Boolean
 
     /**
-     * Array of arguments of this [Struct].
-     */
-    @JsName("argsArray")
-    @Deprecated("Use args")
-    val argsArray: Array<Term>
-        get() = args.toTypedArray()
-
-    /**
      * The total amount of arguments of this [Struct].
      * This is equal to the length of [args].
      */

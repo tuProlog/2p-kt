@@ -23,9 +23,6 @@ interface Indicator : Struct {
     override val functor: String
         get() = INDICATOR_FUNCTOR
 
-    override val argsArray: Array<Term>
-        get() = arrayOf(nameTerm, arityTerm)
-
     override val arity: Int
         get() = 2
 

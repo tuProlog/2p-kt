@@ -117,7 +117,9 @@ internal class TermFormatterWithPrettyExpressions private constructor (
         val infix = struct.isInfix()
         if (infix != null) {
             return addingParenthesesIfForced(struct) {
-                "${getArgAt(0).accept(childFormatter(infix.second))}${functor.prefix}$functor${functor.suffix}${argsArray[1].accept(childFormatter(infix.second))}"
+                getArgAt(0).accept(childFormatter(infix.second)) +
+                    "${functor.prefix}$functor${functor.suffix}" +
+                    getArgAt(1).accept(childFormatter(infix.second))
             }
         }
         val lowerPriority = struct.isLowerPriority()

@@ -23,8 +23,6 @@ internal class TupleImpl(
 
     override val functor: String = TUPLE_FUNCTOR
 
-    override val argsArray: Array<Term> get() = super<CollectionImpl>.argsArray
-
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)

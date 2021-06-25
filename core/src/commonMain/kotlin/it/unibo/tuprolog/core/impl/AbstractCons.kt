@@ -26,8 +26,6 @@ internal abstract class AbstractCons(
 
     override val functor: String = CONS_FUNCTOR
 
-    override val argsArray: Array<Term> get() = super<CollectionImpl>.argsArray
-
     override val isWellFormed: Boolean by lazy { last.isEmptyList }
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()

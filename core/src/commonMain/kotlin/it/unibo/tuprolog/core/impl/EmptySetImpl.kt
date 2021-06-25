@@ -10,8 +10,6 @@ internal class EmptySetImpl(
     tags: Map<String, Any> = emptyMap()
 ) : SetImpl(null, tags), EmptySet {
 
-    override val argsArray: Array<Term> get() = emptyArray()
-
     override val args: List<Term> get() = emptyList()
 
     override val functor: String = super<EmptySet>.functor

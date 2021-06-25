@@ -42,9 +42,6 @@ internal open class StructImpl(
     override val isFunctorWellFormed: Boolean
         get() = Struct.isWellFormedFunctor(functor)
 
-    override val argsArray: Array<Term>
-        get() = args.toTypedArray()
-
     final override fun equals(other: Any?): Boolean =
         asTerm(other)?.asStruct()?.let { equalsImpl(it, true) } ?: false
 

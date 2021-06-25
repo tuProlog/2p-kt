@@ -11,9 +11,6 @@ internal open class AtomImpl(
     tags: Map<String, Any> = emptyMap()
 ) : StructImpl(functor, emptyList(), tags), Atom {
 
-    override val argsArray: Array<Term>
-        get() = emptyArray()
-
     override val args: List<Term>
         get() = emptyList()
 
