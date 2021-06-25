@@ -88,7 +88,7 @@ internal class StructImplTest {
         val trueAtom = AtomImpl("true")
         val trueTruth = Truth.TRUE
 
-        assertEquals(trueStruct, trueAtom)
+        assertEquals<Struct>(trueStruct, trueAtom)
         assertEquals<Struct>(trueStruct, trueTruth)
     }
 

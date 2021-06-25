@@ -16,7 +16,7 @@ internal abstract class CollectionImpl(
     functor: String,
     args: KtList<Term>,
     tags: Map<String, Any>
-) : StructImpl(functor, args, tags), Collection {
+) : AbstractStruct(functor, args, tags), Collection {
 
     override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
 
