@@ -1,9 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Operation.ACCESS
@@ -21,16 +20,17 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
         ensuringArgumentIsStruct(0)
-        if (second !is Var) {
+        if (!second.isVariable) {
             ensuringArgumentIsCallable(1)
         }
-        val head = first as Struct
+        val head = first.castToStruct()
         val headSignature = head.extractSignature()
         if (context.libraries.hasProtected(headSignature)) {
             throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
         }
+        val template = Rule.of(head, second)
         return (context.staticKb[head] + context.dynamicKb[head].buffered()).map {
-            (it.head mguWith head) + (it.body mguWith second)
+            it mguWith template
         }.filter {
             it.isSuccess
         }
