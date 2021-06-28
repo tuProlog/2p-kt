@@ -2,12 +2,8 @@ package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.CLAUSE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.CONS_FUNCTOR
-import it.unibo.tuprolog.core.Terms.EMPTY_LIST_FUNCTOR
-import it.unibo.tuprolog.core.Terms.EMPTY_SET_FUNCTOR
-import it.unibo.tuprolog.core.Terms.FAIL_FUNCTOR
 import it.unibo.tuprolog.core.Terms.INDICATOR_FUNCTOR
 import it.unibo.tuprolog.core.Terms.SET_FUNCTOR
-import it.unibo.tuprolog.core.Terms.TRUE_FUNCTOR
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.impl.StructImpl
 import kotlin.js.JsName
@@ -24,48 +20,6 @@ interface Struct : Term {
 
     override val isStruct: Boolean
         get() = true
-
-    override val isClause: Boolean
-        get() = CLAUSE_FUNCTOR == functor
-
-    override val isRule: Boolean
-        get() = isClause && arity == 2
-
-    override val isDirective: Boolean
-        get() = isClause && arity == 1
-
-    override val isFact: Boolean
-        get() = isRule && getArgAt(1).isTrue
-
-    override val isTuple: Boolean
-        get() = functor == TUPLE_FUNCTOR && arity == 2
-
-    override val isAtom: Boolean
-        get() = arity == 0
-
-    override val isList: Boolean
-        get() = isCons || isEmptyList
-
-    override val isCons: Boolean
-        get() = CONS_FUNCTOR == functor && arity == 2
-
-    override val isSet: Boolean
-        get() = (SET_FUNCTOR == functor && arity == 1) || isEmptySet
-
-    override val isEmptySet: Boolean
-        get() = EMPTY_SET_FUNCTOR == functor && arity == 0
-
-    override val isEmptyList: Boolean
-        get() = EMPTY_LIST_FUNCTOR == functor && arity == 0
-
-    override val isTrue: Boolean
-        get() = isAtom && TRUE_FUNCTOR == functor
-
-    override val isFail: Boolean
-        get() = isAtom && FAIL_FUNCTOR == functor
-
-    override val isIndicator: Boolean
-        get() = Indicator.FUNCTOR == functor && arity == 2
 
     override val variables: Sequence<Var>
         get() = argsSequence.flatMap { it.variables }
