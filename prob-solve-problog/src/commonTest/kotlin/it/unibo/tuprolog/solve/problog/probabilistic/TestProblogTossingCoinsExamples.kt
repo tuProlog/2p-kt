@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
-class ProblogTossingCoinsExamplesTest {
+class TestProblogTossingCoinsExamples {
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/01_coins.html#basic-problog-probabilistic-facts-and-clauses

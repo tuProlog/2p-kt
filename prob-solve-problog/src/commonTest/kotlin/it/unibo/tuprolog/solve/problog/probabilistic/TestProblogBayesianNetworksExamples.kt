@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
-class ProblogBayesianNetworksExamplesTest {
+class TestProblogBayesianNetworksExamples {
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/02_bayes.html#probabilistic-facts

@@ -5,7 +5,7 @@ import it.unibo.tuprolog.solve.problog.ProblogSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import kotlin.test.Test
 
-class ProblogRollingDiceExamplesTest {
+class TestProblogRollingDiceExamples {
 
     /***
      * https://dtai.cs.kuleuven.be/problog/tutorial/basic/03_dice.html#annotated-disjunctions-dealing-with-multi-valued-variables
