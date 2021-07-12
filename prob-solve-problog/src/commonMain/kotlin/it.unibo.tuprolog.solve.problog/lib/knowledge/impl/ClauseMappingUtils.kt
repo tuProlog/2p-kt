@@ -26,9 +26,10 @@ import it.unibo.tuprolog.utils.setTag
 internal object ClauseMappingUtils {
 
     private var clauseIndex: Long = 1
+
     private val cascadeMappers = listOf(
         DirectiveClauseMapper,
-        DisjointAnnotationClauseMapper,
+        AnnotatedDisjunctionClauseMapper,
         ProbabilisticClauseMapper,
         EvidenceClauseMapper,
         PrologClauseMapper,

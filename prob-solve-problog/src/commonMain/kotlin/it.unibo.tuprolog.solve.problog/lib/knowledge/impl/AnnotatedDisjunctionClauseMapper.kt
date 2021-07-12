@@ -12,7 +12,7 @@ import it.unibo.tuprolog.solve.problog.lib.knowledge.ProbExplanation
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 
 /**
- * Implements a [ClauseMapper] that handles the case of Probabilistic Disjoint Annotations.
+ * Implements a [ClauseMapper] that handles the case of Probabilistic Annotated Disjunctions.
  * Those are a specific kind of [Clause]s in which the head is composed by a set of disjoint terms.
  * During probabilistic query resolution a clause of this kind can only be selected with only one
  * of its heads, so that it can't happen to have two different heads from the same annotate disjoint clause
@@ -26,7 +26,7 @@ import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
  *
  * @author Jason Dellaluce
  */
-internal object DisjointAnnotationClauseMapper : ClauseMapper {
+internal object AnnotatedDisjunctionClauseMapper : ClauseMapper {
     override fun isCompatible(clause: Clause): Boolean {
         return clause is Rule && clause.head.functor == Semicolon.FUNCTOR
     }

@@ -9,9 +9,7 @@ internal object SpecificPrimitives {
         sequenceOf(
             ProbHelper,
             ProbSolve,
-            ProbExplNot,
             ProbExplAnd,
-            ProbCalc,
             ProbQuery,
             ProbSolveEvidence,
             ProbSolveWithEvidence,

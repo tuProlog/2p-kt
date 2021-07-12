@@ -20,12 +20,8 @@ import it.unibo.tuprolog.bdd.BinaryDecisionDiagramVisitor
  * */
 internal class CastVisitor<T : Comparable<T>, E> :
     BinaryDecisionDiagramVisitor<T, E> {
-    var onTerminal: (
-        (it: BinaryDecisionDiagram.Terminal<T>) -> E
-    )? = null
-    var onVariable: (
-        (it: BinaryDecisionDiagram.Variable<T>) -> E
-    )? = null
+    var onTerminal: ((o: BinaryDecisionDiagram.Terminal<T>) -> E)? = null
+    var onVariable: ((o: BinaryDecisionDiagram.Variable<T>) -> E)? = null
 
     override fun visit(
         node: BinaryDecisionDiagram.Terminal<T>

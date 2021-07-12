@@ -25,8 +25,8 @@ internal data class SimpleBinaryDecisionDiagramVariable<T : Comparable<T>>(
         other as SimpleBinaryDecisionDiagramVariable<*>
 
         if (value != other.value) return false
-        if (low.hashCode() != other.low.hashCode()) return false
-        if (high.hashCode() != other.high.hashCode()) return false
+        if (low != other.low) return false
+        if (high != other.high) return false
 
         return true
     }

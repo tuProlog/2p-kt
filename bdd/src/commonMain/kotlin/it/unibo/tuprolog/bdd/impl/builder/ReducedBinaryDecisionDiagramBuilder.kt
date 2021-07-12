@@ -26,7 +26,7 @@ internal class ReducedBinaryDecisionDiagramBuilder<T : Comparable<T>>(
         low: BinaryDecisionDiagram<T>,
         high: BinaryDecisionDiagram<T>
     ): BinaryDecisionDiagram<T> {
-        if (low === high) {
+        if (low == high) {
             return low
         }
 
