@@ -31,4 +31,9 @@ class TestClassicClause : TestClause, SolverFactory by ClassicSolverFactory {
     override fun testClauseAtomBody() {
         prototype.testClauseAtomBody()
     }
+
+    @Test
+    override fun testClauseVariables() {
+        prototype.testClauseVariables()
+    }
 }

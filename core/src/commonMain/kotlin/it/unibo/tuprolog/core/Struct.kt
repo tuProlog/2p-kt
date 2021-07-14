@@ -26,7 +26,11 @@ interface Struct : Term {
         get() = true
 
     override val isClause: Boolean
-        get() = CLAUSE_FUNCTOR == functor
+        get() = CLAUSE_FUNCTOR == functor && when (arity) {
+            2 -> getArgAt(0).isStruct
+            1 -> true
+            else -> false
+        }
 
     override val isRule: Boolean
         get() = isClause && arity == 2

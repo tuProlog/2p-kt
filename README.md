@@ -279,8 +279,8 @@ Notice that the JS dependencies of `2P_MODULE` should be automatically imported.
 
 Working with the 2P-Kt codebase requires a number of tools to be installed and properly configured on your system:
 - JDK 11+ (please ensure the `JAVA_HOME` environment variable is properly) configured
-- Kotlin 1.4.30+
-- Gradle 6.8+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
+- Kotlin 1.5.10+
+- Gradle 7.1+ (please ensure the `GRADLE_HOME` environment variable is properly configured)
 - Git 2.20+
 
 ### Develop 2P-Kt with IntelliJ Idea

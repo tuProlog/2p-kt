@@ -69,7 +69,13 @@ object ParsingExamples {
         "'+'(1, 2)" to prolog { structOf("+", 1, 2) },
         "'-'(1, 2)" to prolog { structOf("-", 1, 2) },
         "'$'(1, 2)" to prolog { structOf("$", 1, 2) },
-        "'F'(1, 2)" to prolog { structOf("F", 1, 2) }
+        "'F'(1, 2)" to prolog { structOf("F", 1, 2) },
+        "'true'(3)" to prolog { structOf("true", 3) },
+        "'false'(4)" to prolog { structOf("false", 4) },
+        "'fail'(5)" to prolog { structOf("fail", 5) },
+        "true(0)" to prolog { structOf("true", 0) },
+        "false(1)" to prolog { structOf("false", 1) },
+        "fail(2)" to prolog { structOf("fail", 2) }
     )
 
     val expressions: Sequence<Pair<String, Term>> = sequenceOf(
