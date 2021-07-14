@@ -100,7 +100,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                 }
                 /* Edge case: findall/3, findall/4. NOTE: Should we handle `bagof` too? */
                 "findall" -> {
-                    val goalArgs = goal.args.copyOf()
+                    val goalArgs = goal.args.toTypedArray()
                     goalArgs[1] = goalArgs[1].withBodyExplanation(Var.anonymous())
                     yield(
                         (third mguWith Struct.of(goal.functor, *goalArgs)) +

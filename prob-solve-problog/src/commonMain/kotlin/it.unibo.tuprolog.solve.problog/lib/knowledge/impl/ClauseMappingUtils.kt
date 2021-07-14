@@ -91,7 +91,7 @@ internal fun Term.withExplanation(explanation: Term): Struct {
     return if (!this.isWrappableWithExplanation) {
         this.withExplanationNonWrappable(explanation)
     } else when (this) {
-        is Struct -> Struct.of(this.functor, *(this.args + explanation))
+        is Struct -> Struct.of(this.functor, this.args + explanation)
         else -> Struct.of(this.toString(), explanation)
     }
 }

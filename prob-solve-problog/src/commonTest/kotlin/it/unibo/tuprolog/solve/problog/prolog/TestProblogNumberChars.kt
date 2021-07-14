@@ -7,6 +7,7 @@ import kotlin.test.Test
 
 class TestProblogNumberChars : TestNumberChars, SolverFactory by ProblogSolverFactory {
     private val prototype = TestNumberChars.prototype(this)
+
     @Test
     override fun testNumberCharsListIsVar() {
         prototype.testNumberCharsListIsVar()

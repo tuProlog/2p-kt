@@ -100,6 +100,22 @@ internal class MutableProblogSolver(
         solver.setFlag(flag)
     }
 
+    override fun setStandardInput(stdIn: InputChannel<String>) {
+        solver.setStandardInput(stdIn)
+    }
+
+    override fun setStandardError(stdErr: OutputChannel<String>) {
+        solver.setStandardError(stdErr)
+    }
+
+    override fun setStandardOutput(stdOut: OutputChannel<String>) {
+        solver.setStandardOutput(stdOut)
+    }
+
+    override fun setWarnings(warnings: OutputChannel<PrologWarning>) {
+        solver.setWarnings(warnings)
+    }
+
     override fun copy(
         libraries: Libraries,
         flags: FlagStore,
